@@ -23,15 +23,15 @@
 							<toolbar align="start"
 								sclass="toolbar-start">
 								<button id="btnWriteoffPay"
-									label="${c:l('btnWriteoffPay.label')}"  />
+									label="${c:l('btnWriteoffPay.label')}" sclass="z-toolbarbutton" />
 								<button id="btnWriteoffReCal"
-									label="${c:l('btnWriteoffReCal.label')}"  />
+									label="${c:l('btnWriteoffReCal.label')}" sclass="z-toolbarbutton" />
 								<button id="btnWriteoffCal"
-									label="${c:l('btnWriteoffCal.label')}"  />
+									label="${c:l('btnWriteoffCal.label')}" sclass="z-toolbarbutton"  />
 								<button id="btnNotes" 
 									label="${c:l('btnNotes.label')}"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									autodisable="btnWriteoffPay,btnWriteoffReCal,btnWriteoffCal,btnNotes" />
+									autodisable="btnWriteoffPay,btnWriteoffReCal,btnWriteoffCal,btnNotes" sclass="z-toolbarbutton" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
@@ -46,10 +46,10 @@
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="btnHelp"
 									label="${c:l('label_Help')}"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+									tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnClose"
 									label="${c:l('label_Close')}"
-									tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>

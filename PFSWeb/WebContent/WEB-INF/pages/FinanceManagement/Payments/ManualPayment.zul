@@ -26,23 +26,23 @@
 					sclass="toolbar-start">
 					<button id="btnPay" label="${c:l('btnPay.label')}"
 						tooltiptext="${c:l('btnPay.tooltiptext')}" 
-						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" sclass="z-toolbarbutton" />
 					<button id="btnChangeRepay" 
 						label="${c:l('btnChangeRepayment.label')}"
 						tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" sclass="z-toolbarbutton" />
 					<button id="btnCalcRepayments" 
 						label="${c:l('btnCalcRepayments.label')}"
 						tooltiptext="${c:l('btnCalcRepayments.tooltiptext')}"
-						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" sclass="z-toolbarbutton" />
 					<button id="btnNotes" 
 						label="${c:l('btnNotes.label')}"
 						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" />
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes" sclass="z-toolbarbutton" />
 					<button id="btnPrint" 
 						 label="${c:l('label_Print')}"
 						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
-						tooltiptext="${c:l('btnPrint.tooltiptext')}"  visible="false"/>	
+						tooltiptext="${c:l('btnPrint.tooltiptext')}"  visible="false" sclass="z-toolbarbutton" />	
 				</toolbar>
 
 				<!-- SEARCH AREA -->
@@ -58,11 +58,11 @@
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnHelp,btnClose" />
+						autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
 					<button id="btnClose" 
 						label="${c:l('btnClose.label')}"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnHelp,btnClose" />
+						autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

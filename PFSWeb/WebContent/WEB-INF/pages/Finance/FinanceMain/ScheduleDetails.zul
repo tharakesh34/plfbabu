@@ -48,56 +48,56 @@
 					id="btnAddReviewRate"
 					label="${c:l('btnAddRateChange.label')}"
 					tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
-					 disabled="true" />
+					 disabled="true" sclass="z-toolbarbutton" />
 				<button id="btnChangeRepay"
 					label="${c:l('btnChangeRepayment.label')}"
 					tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-					 disabled="true" />
+					 disabled="true" sclass="z-toolbarbutton" />
 				<button
 					id="btnAddDisbursement"
 					label="${c:l('btnAddDisbursement.label')}"
 					tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
-					 disabled="true" />
+					 disabled="true" sclass="z-toolbarbutton" />
 				<button
 					id="btnAddDefferment"
 					label="${c:l('btnAddDefferment.label')}"
 					tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
-					 disabled="true" />
+					 disabled="true" sclass="z-toolbarbutton" />
 				<button
 					id="btnRmvDefferment"
 					label="${c:l('btnRmvDefferment.label')}"
 					tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
-					 disabled="true" />
+					 disabled="true" sclass="z-toolbarbutton"  />
 				<space width="2px" />
 				<button id="btnAddTerms"
 					label="${c:l('btnAddTerm.label')}"
-					tooltiptext="${c:l('btnAddTerms.tooltiptext')}"
+					tooltiptext="${c:l('btnAddTerms.tooltiptext')}" sclass="z-toolbarbutton"
 					 />
 				<space width="2px" />
 				<button id="btnRmvTerms"
 					label="${c:l('btnRmvTerm.label')}"
-					tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"
+					tooltiptext="${c:l('btnRmvTerms.tooltiptext')}" sclass="z-toolbarbutton"
 					 />
 				<space width="2px" />
 				<button id="btnReCalcualte"
 					label="${c:l('btnReCalcualte.label')}"
-					tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"
+					tooltiptext="${c:l('btnReCalcualte.tooltiptext')}" sclass="z-toolbarbutton"
 					 />
 				<space width="2px" />
 				<button id="btnSubSchedule"
 					label="${c:l('btnSubSchedule.label')}"
-					tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"
+					tooltiptext="${c:l('btnSubSchedule.tooltiptext')}" sclass="z-toolbarbutton"
 					 />
 				<space width="2px" />
 				<button id="btnChangeProfit"
 					label="${c:l('btnChangeProfit.label')}"
-					tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"
+					tooltiptext="${c:l('btnChangeProfit.tooltiptext')}" sclass="z-toolbarbutton"
 					 />
 				<space width="2px" />
 				<button
 					id="btnPrintSchedule" 
 					label="${c:l('label_Print')}"
-					tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+					tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}" sclass="z-toolbarbutton"
 					disabled="true" />
 				<space width="2px" />
 			</toolbar>

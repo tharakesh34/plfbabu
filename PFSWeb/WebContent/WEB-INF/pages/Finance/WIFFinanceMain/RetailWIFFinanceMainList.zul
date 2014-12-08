@@ -19,33 +19,33 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_WIFFinanceMainList_WIFFinanceMainSearchDialog"
 							label="${c:l('label_Filter')}"
 							autodisable="button_WIFFinanceMainList_WIFFinanceMainSearchDialog,button_WIFFinanceMainList_PrintList,button_WIFFinanceMainList_NewWIFFinanceMain,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_WIFFinanceMainList_WIFFinanceMainSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_WIFFinanceMainList_WIFFinanceMainSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_WIFFinanceMainList_PrintList"
 							label="${c:l('label_Print')}"
 							autodisable="button_WIFFinanceMainList_WIFFinanceMainSearchDialog,button_WIFFinanceMainList_PrintList,button_WIFFinanceMainList_NewWIFFinanceMain,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_WIFFinanceMainList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_WIFFinanceMainList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button
 							id="button_WIFFinanceMainList_NewWIFFinanceMain"
 							label="${c:l('label_New')}"
 							autodisable="button_WIFFinanceMainList_WIFFinanceMainSearchDialog,button_WIFFinanceMainList_PrintList,button_WIFFinanceMainList_NewWIFFinanceMain,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_WIFFinanceMainList_NewWIFFinanceMain.tooltiptext')}" />
+							tooltiptext="${c:l('button_WIFFinanceMainList_NewWIFFinanceMain.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_WIFFinanceMainList_WIFFinanceMainSearchDialog,button_WIFFinanceMainList_PrintList,button_WIFFinanceMainList_NewWIFFinanceMain,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp"
 							label="${c:l('label_Help')}"
 							autodisable="button_WIFFinanceMainList_WIFFinanceMainSearchDialog,button_WIFFinanceMainList_PrintList,button_WIFFinanceMainList_NewWIFFinanceMain,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

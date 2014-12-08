@@ -22,19 +22,18 @@
 							sclass="hboxRemoveWhiteStrips"  width="100%"
 							style=" padding:1px;">
 							<toolbar align="start"
-								style="border:none;">
+								sclass="toolbar-start">
 								<label
 									value="${c:l('panel_SharesLoanDetailList.title')}"
 									sclass="listboxHeading">
 								</label>
 							</toolbar>
 							<toolbar align="end"
-								style="float:right; border-style: none; padding:0px;"
-								>
+								sclass="toolbar-end">
 								<button
 									id="button_SharesDetailList_NewSharesDetail"
 									 label="${c:l('label_New')}"
-									tooltiptext="${c:l('button_SharesDetailList_NewSharesDetail')}" />
+									tooltiptext="${c:l('button_SharesDetailList_NewSharesDetail')}" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>

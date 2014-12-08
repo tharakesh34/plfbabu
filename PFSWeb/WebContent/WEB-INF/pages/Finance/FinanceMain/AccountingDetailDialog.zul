@@ -70,7 +70,7 @@
 									sclass="toolbar-start">
 									<button
 										label="${c:l('label_RuleExecute.label')}" id="btnAccounting"
-										tooltiptext="${c:l('btnAccounting.tooltiptext')}"
+										tooltiptext="${c:l('btnAccounting.tooltiptext')}" sclass="z-toolbarbutton"
 										 />
 								</toolbar>
 								<toolbar align="center"
@@ -100,7 +100,7 @@
 									sclass="toolbar-end">
 									<button id="btnPrintAccounting"
 										 label="${c:l('label_Print')}"
-										tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" visible="true" />
+										tooltiptext="${c:l('btnPrintAccounting.tooltiptext')}" visible="true"  sclass="z-toolbarbutton" />
 								</toolbar>
 							</hbox>
 						</div>

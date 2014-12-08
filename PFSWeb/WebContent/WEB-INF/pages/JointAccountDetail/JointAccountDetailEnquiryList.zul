@@ -15,32 +15,32 @@
 					<label value="" />	
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_JountAccountDetailList_NewJountAccountDetail"
-							 image="/images/icons/addnew.png" visible="false"/>
+							 image="/images/icons/addnew.png" visible="false" sclass="z-toolbarbutton" />
 						<button
 							id="button_JountAccountDetailList_JountAccountDetailSearch"
 							 image="/images/icons/search.png"
 							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JountAccountDetailList_JountAccountDetailSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_JountAccountDetailList_JountAccountDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_JountAccountDetailList_PrintList" 
 							image="/images/icons/print.png" visible="false"
 							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JountAccountDetailList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_JountAccountDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" 
 							image="/images/icons/reload.png"
 							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							image="/images/icons/help.png"
 							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

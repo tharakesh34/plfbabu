@@ -25,11 +25,11 @@
 							id="button_SuspenseList_SuspenseSearchDialog" 
 							label = "${c:l('label_Filter')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_SuspenseList_SuspenseSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_SuspenseList_SuspenseSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="button_SuspenseList_PrintList"
 							 label = "${c:l('label_Print')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_SuspenseList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_SuspenseList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -37,11 +37,11 @@
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_SuspenseList_SuspenseSearchDialog,button_SuspenseList_PrintList,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

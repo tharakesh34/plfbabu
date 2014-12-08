@@ -12,11 +12,11 @@
 		apply="${customerDedupListCtrl}" closable="true" width="800px">
 
 		<!-- COMMON BUTTONS -->
-				<toolbar align="start" style="float:left; border-style: none;">
+				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnCancel"   image="/images/icons/btn_cancel2_16x16.gif"
-						  tooltiptext="${c:l('btnCancel.tooltiptext')}"/>
+						  tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 					 <button id="btnSave"   image="/images/icons/btn_save2_16x16.gif"
-     					  tooltiptext="${c:l('btnSave.tooltiptext')}"/>						
+     					  tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />						
 				</toolbar>
 	
 

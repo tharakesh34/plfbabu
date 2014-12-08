@@ -17,39 +17,39 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
+					sclass="toolbar-start" width="150px">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
+					sclass="toolbar-center">
 					<hbox align="center" style="padding: 2px">
 						<button
 							id="button_ProductFinanceTypeList_ProductFinanceTypeSearchDialog"
 							 label = "${c:l('label_Filter')}"
-							tooltiptext="${c:l('button_ProductFinanceTypeList_ProductFinanceTypeSearchDialog.tooltiptext')}" />
+							tooltiptext="${c:l('button_ProductFinanceTypeList_ProductFinanceTypeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_ProductFinanceTypeList_PrintList" 
 							label = "${c:l('label_Print')}"
-							tooltiptext="${c:l('button_ProductFinanceTypeList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_ProductFinanceTypeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button
 						id="button_ProductFinanceTypeList_NewProductFinanceType"
 						 label = "${c:l('label_New')}"
-						tooltiptext="${c:l('button_ProductFinanceTypeList_NewProductFinanceType.tooltiptext')}" />
+						tooltiptext="${c:l('button_ProductFinanceTypeList_NewProductFinanceType.tooltiptext')}" sclass="z-toolbarbutton" />
 
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

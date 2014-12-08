@@ -26,35 +26,35 @@
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
 						,btnUnSelectGroups,btnUnSelectAllGroups"
-								visible="false" />
+								visible="false" sclass="z-toolbarbutton" />
 							<!-- label="${c:l('btnNew.label')}"	 -->
 							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
 						,btnUnSelectGroups,btnUnSelectAllGroups"
-								visible="false" />
+								visible="false" sclass="z-toolbarbutton" />
 							<button id="btnDelete" 
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
 						,btnUnSelectGroups,btnUnSelectAllGroups"
-								visible="false" />
+								visible="false" sclass="z-toolbarbutton" />
 							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
-						,btnUnSelectGroups,btnUnSelectAllGroups" />
+						,btnUnSelectGroups,btnUnSelectAllGroups" sclass="z-toolbarbutton" />
 							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
-						,btnUnSelectGroups,btnUnSelectAllGroups" />
+						,btnUnSelectGroups,btnUnSelectAllGroups" sclass="z-toolbarbutton" />
 							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
-						,btnUnSelectGroups,btnUnSelectAllGroups" />
+						,btnUnSelectGroups,btnUnSelectAllGroups" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -72,12 +72,12 @@
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh,btnClose
 						,btn_SearchGroups,btnSelectGroups
-						,btnUnSelectGroups,btnUnSelectAllGroups" />
+						,btnUnSelectGroups,btnUnSelectAllGroups" sclass="z-toolbarbutton" />
 							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnRefresh
 						,btnClose,btn_SearchGroups,btnSelectGroups
-						,btnUnSelectGroups,btnUnSelectAllGroups" />
+						,btnUnSelectGroups,btnUnSelectAllGroups" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>

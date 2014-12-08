@@ -124,10 +124,10 @@
 								<hbox align="start">
 									<button id="btnSearch" height="20"
 										label="${c:l('btnSearch.label')}"
-										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 									<button id="btnClose" height="20"
 										label="${c:l('btnClose.label')}"
-										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+										tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 									<label
 										id="label_FinanceMainSearchResult" />
 								</hbox>

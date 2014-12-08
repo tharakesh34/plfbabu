@@ -15,34 +15,34 @@
 					<label value="" />	
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_MailTemplateList_NewMailTemplate"
 							 label = "${c:l('label_New')}" visible="false"
 							autodisable="button_MailTemplateList_MailTemplateSearch,button_MailTemplateList_PrintList,button_MailTemplateList_NewMailTemplate,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MailTemplateList_NewMailTemplate.tooltiptext')}" />
+							tooltiptext="${c:l('button_MailTemplateList_NewMailTemplate.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_MailTemplateList_MailTemplateSearch"
 							 image="/images/icons/search.png"
 							autodisable="button_MailTemplateList_MailTemplateSearch,button_MailTemplateList_PrintList,button_MailTemplateList_NewMailTemplate,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MailTemplateList_MailTemplateSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_MailTemplateList_MailTemplateSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_MailTemplateList_PrintList" 
 							label = "${c:l('label_Print')}" visible="false"
 							autodisable="button_MailTemplateList_MailTemplateSearch,button_MailTemplateList_PrintList,button_MailTemplateList_NewMailTemplate,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_MailTemplateList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_MailTemplateList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_MailTemplateList_MailTemplateSearch,button_MailTemplateList_PrintList,button_MailTemplateList_NewMailTemplate,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_MailTemplateList_MailTemplateSearch,button_MailTemplateList_PrintList,button_MailTemplateList_NewMailTemplate,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

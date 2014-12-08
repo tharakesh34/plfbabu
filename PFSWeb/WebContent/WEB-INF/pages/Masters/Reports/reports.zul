@@ -10,10 +10,10 @@
 	<window id="window_Report" border="normal" apply="com.pennant.webui.masters.reports.ReportsCtrl"
 		width="100%" height="100%" sizable="false">
 	
-				CRUD BUTTONS
-				<toolbar align="end" style="float:right; border-style: none;" width = "100%">
-					<button id="btnHelp"  label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" />
-					<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" />
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end" width = "100%">
+					<button id="btnHelp"  label = "${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnClose"  tooltiptext="${c:l('btnClose.tooltiptext')}" image="/images/icons/btn_exitdoor2_16x16.gif" sclass="z-toolbarbutton" />
 				</toolbar>	
 		<iframe id="report" height="740px" width="100%" align="center"/>
 	

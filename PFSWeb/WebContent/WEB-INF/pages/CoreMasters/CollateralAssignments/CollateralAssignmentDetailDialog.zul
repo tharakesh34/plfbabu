@@ -18,23 +18,23 @@
 					width="100%" widths="30%,50%,20%">
 
 					<toolbar align="start"
-						style="border-style: none;">
+						sclass="toolbar-start">
 					</toolbar>
 
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnHelp,btnClose" />
+							autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
 						<button id="btnClose" 
 							image="/images/icons/btn_exitdoor2_16x16.gif"
 							tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnHelp,btnClose" />
+							autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

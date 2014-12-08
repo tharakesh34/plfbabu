@@ -72,7 +72,7 @@
 										sclass="hboxRemoveWhiteStrips" width="100%"
 										widths="30%,40%,30%">
 										<toolbar align="start"
-											style="border-style: none;" width="100%">
+											sclass="toolbar-start" width="100%">
 											<space spacing="2px" />
 											<label
 												id="label_BillingList"
@@ -81,19 +81,19 @@
 											<space spacing="2px" />
 										</toolbar>
 										<toolbar align="center"
-											style="border-style: none;" width="100%">
+											sclass="toolbar-center" width="100%">
 											<space spacing="2px" />
 											<button id="btnPrintBilling"
 												label="${c:l('label_Print')}"
-												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}" sclass="z-toolbarbutton"
 												 />
 											<space spacing="2px" />
 										</toolbar>
 										<toolbar align="end"
-											style="border-style: none;" width="100%">
+											sclass="toolbar-end" width="100%">
 											<button id="btnNewBilling"
 												label="${c:l('label_New')}"
-												tooltiptext="${c:l('btnNewContributor.tooltiptext')}"
+												tooltiptext="${c:l('btnNewContributor.tooltiptext')}" sclass="z-toolbarbutton"
 												 />
 											<space spacing="5px" />
 										</toolbar>

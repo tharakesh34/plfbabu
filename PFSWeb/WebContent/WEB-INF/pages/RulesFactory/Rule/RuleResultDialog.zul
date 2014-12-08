@@ -97,39 +97,39 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 					<button id="btnSave"
 						image="/images/icons/btn_save2_16x16.gif"
 						tooltiptext="${c:l('btnSave.tooltiptext')}"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
-						w:onClick="validateJs(false,true);" />
+						w:onClick="validateJs(false,true);" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<button id="btnValidate"
 						tooltiptext="${c:l('button_Validation.tooltiptext')}"
 						image="/images/icons/tick_16.png"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
-						w:onClick="validateJs(false,false);" />
+						w:onClick="validateJs(false,false);" sclass="z-toolbarbutton" />
 					<button id="btnSimulate"
 						tooltiptext="${c:l('button_Simulation.tooltiptext')}"
 						image="/images/icons/start.gif"
 						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate"
-						w:onClick="validateJs(true,false);" />
+						w:onClick="validateJs(true,false);" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" sclass="z-toolbarbutton" />
 					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" />
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnSimulate" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -23,7 +23,7 @@
 						</toolbar>
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnClose" 
-								label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}" />
+								label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>

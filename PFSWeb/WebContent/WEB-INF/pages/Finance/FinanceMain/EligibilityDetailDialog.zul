@@ -60,11 +60,11 @@
 							</rows>
 						</grid>
 						<toolbar align="start"
-							style="border-style: none;" width="100%">
+							sclass="toolbar-start" width="100%">
 							<button
 								label="${c:l('label_RuleExecute.label')}" id="btnElgRule"
 								tooltiptext="${c:l('btnExecuteElgRule.tooltiptext')}"
-								 />
+								sclass="z-toolbarbutton" />
 							<space width="200px" />
 							<label id="label_ElgRuleSummary"
 								value="${c:l('label_Summary.label')}"

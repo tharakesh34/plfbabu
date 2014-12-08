@@ -35,10 +35,10 @@
 				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnSave" 
 						label="${c:l('btnSave.label')}"
-						tooltiptext="${c:l('btnSave.tooltiptext')}" />
+						tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnCancel" 
 						label="${c:l('btnCancel.label')}"
-						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 
 				</toolbar>
 
@@ -52,7 +52,7 @@
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" 
 						label="${c:l('btnClose.label')}"
-						tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 			</hbox>

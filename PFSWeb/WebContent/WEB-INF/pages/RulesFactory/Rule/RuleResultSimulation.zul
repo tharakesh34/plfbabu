@@ -27,7 +27,7 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnClose" 
-						tooltiptext="Close" label="${c:l('label_Close')}" />
+						tooltiptext="Close" label="${c:l('label_Close')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

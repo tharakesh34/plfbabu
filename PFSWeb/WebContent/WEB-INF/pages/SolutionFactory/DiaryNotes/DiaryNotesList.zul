@@ -18,28 +18,28 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<button
 						id="button_DiaryNotesList_DiaryNotesSearchDialog" 
 						label = "${c:l('label_Filter')}"
-						tooltiptext="${c:l('button_DiaryNotesList_DiaryNotesSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_DiaryNotesList_DiaryNotesSearchDialog.tooltiptext')}" sclass="z-toolbarbutton"  />
 					<button id="button_DiaryNotesList_PrintList"
 						 label = "${c:l('label_Print')}"
-						tooltiptext="${c:l('button_DiaryNotesList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_DiaryNotesList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="fborder-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="button_DiaryNotesList_NewDiaryNotes"
 						 label = "${c:l('label_New')}"
-						tooltiptext="${c:l('button_DiaryNotesList_NewDiaryNotes.tooltiptext')}" />
+						tooltiptext="${c:l('button_DiaryNotesList_NewDiaryNotes.tooltiptext')}" sclass="z-toolbarbutton" />
 
 					<button id="btnRefresh" 
 						label = "${c:l('label_Refresh')}"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -23,26 +23,26 @@
 							<button id="btnNew" 
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 							<button id="btnEdit" 
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchUsrLanguage
-						        ,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 							<button id="btnDelete" visible="false"
 								 tooltiptext="${c:l('btnDelete.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 							<button id="btnCancel" 
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnNotes" 
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,
-						        btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -59,11 +59,11 @@
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 							<button id="btnClose" 
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose
-						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" />
+						        ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>

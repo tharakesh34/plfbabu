@@ -107,31 +107,31 @@
 								sclass="toolbar-start">
 								<button id="btnNew" 
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnEdit" 
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnDelete" 
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnSave" 
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									w:onClick="validateJs('3');"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnCancel" 
-									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnNotes" 
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnValidate"
 									tooltiptext="validate" label="${c:l('label_Validate')}"
-									w:onClick="validateJs('1');" />
+									w:onClick="validateJs('1');" sclass="z-toolbarbutton" />
 								<button id="btnSimulate"
 									tooltiptext="simulate" label="${c:l('label_Simulate')}"
-									w:onClick="validateJs('2');" />
+									w:onClick="validateJs('2');" sclass="z-toolbarbutton" />
 								<button id="btnValidateSave"
 									tooltiptext="simulate" label="${c:l('label_ValidateSave')}"
-									visible="false" />
+									visible="false" sclass="z-toolbarbutton" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
@@ -148,10 +148,10 @@
 								<button id="btnHelp" 
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnClose" 
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>

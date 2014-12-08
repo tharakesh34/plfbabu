@@ -18,7 +18,7 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"  sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center" >
 						<button
 							id="button_BaseRateList_BaseRateSearchDialog" 
 							label = "${c:l('label_Filter')}"
@@ -31,7 +31,7 @@
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"  sclass="toolbar-end">
+				<toolbar align="end"  sclass="toolbar-end" >
 					<button id="button_BaseRateList_NewBaseRate"
 						 label = "${c:l('label_New')}"
 						autodisable="button_BaseRateList_BaseRateSearchDialog,button_BaseRateList_PrintList,button_BaseRateList_NewBaseRate,btnRefresh,btnHelp"

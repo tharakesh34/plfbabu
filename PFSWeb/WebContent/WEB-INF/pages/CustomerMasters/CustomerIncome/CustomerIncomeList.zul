@@ -18,38 +18,38 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<button
 						id="button_CustomerIncomeList_CustomerIncomeSearchDialog"
 						 label="${c:l('label_Filter')}"
 						autodisable="button_CustomerIncomeList_CustomerIncomeSearchDialog,button_CustomerIncomeList_PrintList,
 									button_CustomerIncomeList_NewCustomerIncome,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_CustomerIncomeList_CustomerIncomeSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerIncomeList_CustomerIncomeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_CustomerIncomeList_PrintList"
 						 label="${c:l('label_Print')}"
 						autodisable="button_CustomerIncomeList_CustomerIncomeSearchDialog,button_CustomerIncomeList_PrintList,
 									button_CustomerIncomeList_NewCustomerIncome,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_CustomerIncomeList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerIncomeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button
 						id="button_CustomerIncomeList_NewCustomerIncome" 
 						label="${c:l('label_New')}"
 						autodisable="button_CustomerIncomeList_CustomerIncomeSearchDialog,button_CustomerIncomeList_PrintList,
 									button_CustomerIncomeList_NewCustomerIncome,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_CustomerIncomeList_NewCustomerIncome.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerIncomeList_NewCustomerIncome.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						autodisable="button_CustomerIncomeList_CustomerIncomeSearchDialog,button_CustomerIncomeList_PrintList,
 									button_CustomerIncomeList_NewCustomerIncome,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"  sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						autodisable="button_CustomerIncomeList_CustomerIncomeSearchDialog,button_CustomerIncomeList_PrintList,
 									button_CustomerIncomeList_NewCustomerIncome,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

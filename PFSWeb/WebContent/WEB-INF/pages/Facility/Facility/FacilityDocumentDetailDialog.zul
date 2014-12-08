@@ -29,12 +29,11 @@
 									>
 								</toolbar>
 								<toolbar align="end"
-									sclass="toolbar-end"
-									>
+									sclass="toolbar-end">
 									<button id="btnNew_DocumentDetails"
 										 label="${c:l('label_New')}"
 										tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}"
-										autodisable="btnNew_DocumentDetails" />
+										autodisable="btnNew_DocumentDetails"  sclass="z-toolbarbutton"/>
 								</toolbar>
 								<space width="2px" />
 							</hbox>

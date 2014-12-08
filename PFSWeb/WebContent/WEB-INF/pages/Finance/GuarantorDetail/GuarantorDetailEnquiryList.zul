@@ -15,32 +15,32 @@
 					<label value="" />	
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_GuarantorDetailList_NewGuarantorDetail"
-							 image="/images/icons/addnew.png" visible="false"/>
+							 image="/images/icons/addnew.png" visible="false" sclass="z-toolbarbutton" />
 						<button
 							id="button_GuarantorDetailList_GuarantorDetailSearch"
 							 image="/images/icons/search.png"
 							autodisable="button_GuarantorDetailList_GuarantorDetailSearch,button_GuarantorDetailList_PrintList,button_GuarantorDetailList_NewGuarantorDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_GuarantorDetailList_GuarantorDetailSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_GuarantorDetailList_GuarantorDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_GuarantorDetailList_PrintList" 
 							image="/images/icons/print.png" visible="false"
 							autodisable="button_GuarantorDetailList_GuarantorDetailSearch,button_GuarantorDetailList_PrintList,button_GuarantorDetailList_NewGuarantorDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_GuarantorDetailList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_GuarantorDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" 
 							image="/images/icons/reload.png"
 							autodisable="button_GuarantorDetailList_GuarantorDetailSearch,button_GuarantorDetailList_PrintList,button_GuarantorDetailList_NewGuarantorDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							image="/images/icons/help.png"
 							autodisable="button_GuarantorDetailList_GuarantorDetailSearch,button_GuarantorDetailList_PrintList,button_GuarantorDetailList_NewGuarantorDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

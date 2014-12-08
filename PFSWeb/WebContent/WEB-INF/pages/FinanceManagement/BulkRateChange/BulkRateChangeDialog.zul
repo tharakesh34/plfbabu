@@ -21,21 +21,21 @@
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew" 
 								visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
 							<button id="btnEdit" 
 								visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
 							<button id="btnDelete"  visible="false"
 								 tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
 							<button id="btnSave" 
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
 							<button id="btnCancel" 
 								visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnPrint" sclass="z-toolbarbutton" />
 							<button id="btnNotes" 
-								tooltiptext="${c:l('btnNotes.tooltiptext')}" />
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -43,16 +43,16 @@
 							sclass="toolbar-center">
 							<button id="btnPreview" 
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
-								label="PREVIEW" />
+								label="PREVIEW" sclass="z-toolbarbutton" />
 							<button id="btnProceed" 
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
-								label="PROCEED" />
+								label="PROCEED" sclass="z-toolbarbutton" />
 							<button id="btnRecal"  visible="false"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
-								label="Recalculate" />
+								label="Recalculate" sclass="z-toolbarbutton" />
 							<button id="btnPrint" height="24px" visible="false"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnRecal,btnPrint"
-								label="Print" />
+								label="Print" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
@@ -60,15 +60,15 @@
 							<button id="btnRefresh" 
 								visible="false" label="${c:l('label_Refresh')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
-								tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+								tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnHelp" 
 								label="${c:l('label_Help')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnClose" 
 								label="${c:l('label_Close')}"
 								autodisable="btnRefresh,btnHelp,btnPreview,btnProceed,btnClose,btnPrint"
-								tooltiptext="${c:l('btnClose.tooltiptext')}" />
+								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>

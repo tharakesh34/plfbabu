@@ -16,15 +16,15 @@
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 				width="100%">
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end"
 					<button id="btnHelp" 
 						label = "${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
 						tooltiptext="${c:l('btnClose.tooltiptext')}"
-						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"  sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

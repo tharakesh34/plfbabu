@@ -30,30 +30,30 @@
 								sclass="toolbar-start">
 								<button id="btnNew"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnNew.tooltiptext')}" />
+									tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnEdit"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnEdit.tooltiptext')}" />
+									tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnDelete"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnDelete.tooltiptext')}" />
+									tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnSave"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnSave.tooltiptext')}" />
+									tooltiptext="${c:l('btnSave.tooltiptext')}"  sclass="z-toolbarbutton"/>
 								<button id="btnCancel"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnNotes"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 								<button id="btnReadValues"
 									label="${c:l('label_Generate')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnReadValues.tooltiptext')}" />
+									tooltiptext="${c:l('btnReadValues.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnSimulation"
 									label="${c:l('label_Simulate')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnSimulation.tooltiptext')}" />
+									tooltiptext="${c:l('btnSimulation.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
@@ -68,10 +68,10 @@
 								<button id="btnHelp"
 									label="${c:l('label_Help')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"  sclass="z-toolbarbutton"/>
 								<button id="btnClose"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReadValues,btnSimulation"
-									tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>

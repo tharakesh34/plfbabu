@@ -16,26 +16,26 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;" width="150px">
+					sclass="toolbar-start" width="150px">
 					<hbox align="center">
 						<button id="btn_Simulate" 
 							image="/images/icons/gear_16.png"
-							tooltiptext="${c:l('button_Simulation.tooltiptext')}" />
+							tooltiptext="${c:l('button_Simulation.tooltiptext')}" sclass="z-toolbarbutton" />
 					</hbox>
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
+					sclass="toolbar-center">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
-						tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

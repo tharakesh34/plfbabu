@@ -18,38 +18,38 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center" style="border-style: none;">
+				<toolbar align="center" sclass="toolbar-center">
 					<button
 						id="button_CustomerPRelationList_CustomerPRelationSearchDialog"
 						 label = "${c:l('label_Filter')}"
 						autodisable="button_CustomerPRelationList_CustomerPRelationSearchDialog,button_CustomerPRelationList_PrintList,
 											 button_CustomerPRelationList_NewCustomerPRelation, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_CustomerPRelationList_CustomerPRelationSearchDialog.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerPRelationList_CustomerPRelationSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="button_CustomerPRelationList_PrintList"
 						 label="${c:l('label_Print')}"
 						autodisable="button_CustomerPRelationList_CustomerPRelationSearchDialog,button_CustomerPRelationList_PrintList,
 											 button_CustomerPRelationList_NewCustomerPRelation, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_CustomerPRelationList_PrintList.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerPRelationList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end" style="border-style: none;">
+				<toolbar align="end" sclass="toolbar-end">
 					<button
 						id="button_CustomerPRelationList_NewCustomerPRelation"
 						 label="${c:l('label_New')}"
 						autodisable="button_CustomerPRelationList_CustomerPRelationSearchDialog,button_CustomerPRelationList_PrintList,
 											 button_CustomerPRelationList_NewCustomerPRelation, btnRefresh, btnHelp"
-						tooltiptext="${c:l('button_CustomerPRelationList_NewCustomerPRelation.tooltiptext')}" />
+						tooltiptext="${c:l('button_CustomerPRelationList_NewCustomerPRelation.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
 						label="${c:l('label_Refresh')}"
 						autodisable="button_CustomerPRelationList_CustomerPRelationSearchDialog,button_CustomerPRelationList_PrintList,
 											 button_CustomerPRelationList_NewCustomerPRelation, btnRefresh, btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnHelp" 
 						label="${c:l('label_Help')}"
 						autodisable="button_CustomerPRelationList_CustomerPRelationSearchDialog,button_CustomerPRelationList_PrintList,
 											 button_CustomerPRelationList_NewCustomerPRelation, btnRefresh, btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

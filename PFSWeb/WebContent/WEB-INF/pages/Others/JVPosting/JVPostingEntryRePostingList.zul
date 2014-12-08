@@ -14,25 +14,25 @@
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 					width="100%" widths="30%,40%,30%">
 					<toolbar align="start"
-						style="border-style: none;">
+						sclass="toolbar-start">
 						<button id="btnNewJVPostingEntry" 
 							label="${c:l('label_New')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-							tooltiptext="${c:l('btnNew.tooltiptext')}" />
+							tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
-					<toolbar align="center" >
+					<toolbar align="center" sclass="toolbar-center">
 						<label id="label_JVPostingEntryList_Title"
 							style="font-weight:bold; font-size: 12px;" />
 					</toolbar>
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnSearch" 
 							label="${c:l('label_Filter')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-							tooltiptext="${c:l('button_JVPostingList_JVPostingSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_JVPostingList_JVPostingSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>

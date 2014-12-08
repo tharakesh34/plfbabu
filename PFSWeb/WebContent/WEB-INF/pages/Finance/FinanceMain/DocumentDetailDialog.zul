@@ -62,25 +62,22 @@
 								</row>
 							</rows>
 						</grid>
-						<div sclass="z-toolbar" style="padding:0"
-							>
+						<div sclass="z-toolbar" style="padding:0">
 							<hbox pack="stretch"
 								sclass="hboxRemoveWhiteStrips"  width="100%"
 								style=" padding:0px;">
 								<toolbar align="start"
-									style="float:left; border-style: none; padding:0px;"
+									sclass="toolbar-start"
 									width="300px" >
 								</toolbar>
 								<toolbar align="center"
-									style="float:left; border-style: none; padding:0px;"
-									>
+									sclass="toolbar-center">
 								</toolbar>
 								<toolbar align="end"
-									style="float:right; border-style: none; padding:0px;"
-									>
+									sclass="toolbar-end">
 									<button id="btnNew_DocumentDetails"
 										 label="${c:l('label_New')}"
-										tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" />
+										tooltiptext="${c:l('button_FinanceCheckListList_NewFinanceCheckList.tooltiptext')}" sclass="z-toolbarbutton" />
 								</toolbar>
 								<space width="2px" />
 							</hbox>

@@ -18,30 +18,30 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="float:left; border-style: none;">
+					sclass="toolbar-start">
 
 					<button id="btnSave" 
 						image="/images/icons/btn_save2_16x16.gif"
-						tooltiptext="${c:l('btnSave.tooltiptext')}" />
+						tooltiptext="${c:l('btnSave.tooltiptext')}"  sclass="z-toolbarbutton" />
 					<button id="btnCancel" 
 						image="/images/icons/btn_cancel2_16x16.gif"
-						tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 
 				</toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center"
-					style="float:left; border-style: none;">
+					sclass="toolbar-center">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 
 					<button id="btnClose" 
 						image="/images/icons/btn_exitdoor2_16x16.gif"
-						tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 				</toolbar>
 
 			</hbox>

@@ -17,10 +17,10 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end"
-					style="float:right; border-style: none;">
+					sclass="toolbar-end">
 
 					<button id="btnClose" 
-						tooltiptext="Close" image="/images/icons/btn_close_16x16.gif" />
+						tooltiptext="Close" image="/images/icons/btn_close_16x16.gif" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -44,7 +44,7 @@
 				<toolbar align="start" sclass="toolbar-start">
 					<button id="btnStartJob" 
 						tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}"
-						label="Start" />
+						label="Start" sclass="z-toolbarbutton" />
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center">
 					<label id="lable_current_step" style="font-weight: bold; font-size:12px;color:#FF4500;" />
@@ -60,7 +60,7 @@
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="btnStaleJob" 
 						tooltiptext="${c:l('label_BatchAdminCtrl_Terminate.tooltiptext')}"
-						label="${c:l('label_BatchAdminCtrl_Terminate.value')}" />
+						label="${c:l('label_BatchAdminCtrl_Terminate.value')}" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>

@@ -16,7 +16,7 @@
 
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start"
-					style="border-style: none;" width="150px" sclass="toolbar-start">
+					 width="150px" sclass="toolbar-start">
 					<hbox align="center" style="padding: 2px"></hbox>
 				</toolbar>
 

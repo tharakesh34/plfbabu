@@ -110,18 +110,18 @@
 								sclass="toolbar-start" width="100%">
 								<button
 									label="${c:l('label_AddExpense.value')}" id="btnAddExpense"
-									tooltiptext="${c:l('btnAddExpense.tooltiptext')}" />
+									tooltiptext="${c:l('btnAddExpense.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button
 									label="${c:l('label_AddContractAdvance.value')}"
 									id="btnAddContractAdv"
-									tooltiptext="${c:l('btnAddContractAdvance.tooltiptext')}" />
+									tooltiptext="${c:l('btnAddContractAdvance.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button
 									label="${c:l('label_AddBilling.value')}" id="btnAddBilling"
-									tooltiptext="${c:l('btnAddBilling.tooltiptext')}" />
+									tooltiptext="${c:l('btnAddBilling.tooltiptext')}"  sclass="z-toolbarbutton"/>
 								<button
 									label="${c:l('label_AddConsultingFee.value')}"
 									id="btnAddConsultingFee"
-									tooltiptext="${c:l('btnAddConsultingFee.tooltiptext')}" />
+									tooltiptext="${c:l('btnAddConsultingFee.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 
 
@@ -129,7 +129,7 @@
 								width="100%">
 								<button id="btnAddContributor"
 									label="${c:l('label_AddContractor.value')}"
-									tooltiptext="${c:l('btnAddContractor.tooltiptext')}" />
+									tooltiptext="${c:l('btnAddContractor.tooltiptext')}" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 						<listbox id="listBoxContributorDetails"
