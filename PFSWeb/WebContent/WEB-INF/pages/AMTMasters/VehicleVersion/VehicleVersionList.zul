@@ -68,8 +68,8 @@
 								<listbox
 									id="sortOperator_vehicleVersionId" width="43px" mold="select"
 									rows="1" />
-								<textbox id="vehicleVersionId"
-									width="171px" maxlength="19" />
+								<intbox id="vehicleVersionId"
+									width="171px" maxlength="3" />
 							</row>
 							<row>
 								<label
@@ -78,8 +78,8 @@
 								<listbox
 									id="sortOperator_vehicleModelId" width="43px" mold="select"
 									rows="1" />
-								<textbox id="vehicleModelId"
-									width="171px" maxlength="19" />
+								<intbox id="vehicleModelId"
+									width="171px" maxlength="3" />
 								<label
 									id="label_VehicleVersionSearch_VehicleVersionCode"
 									value="${c:l('label_VehicleVersionSearch_VehicleVersionCode.value')}" />
