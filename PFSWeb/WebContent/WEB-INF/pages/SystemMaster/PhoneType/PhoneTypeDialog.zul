@@ -98,7 +98,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<intbox id="phoneTypePriority"
-										width="90px" maxlength="14">
+										width="90px" maxlength="3">
 									</intbox>
 								</hbox>
 							</row>
