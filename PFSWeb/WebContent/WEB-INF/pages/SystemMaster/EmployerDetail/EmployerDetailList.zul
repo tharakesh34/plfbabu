@@ -63,13 +63,12 @@
 							<rows>
 								<row>
 									<label
-										id="label_EmployerDetailList_EmpIndustry"
-										value="${c:l('label_EmployerDetailList_EmpIndustry.value')}" />
-									<listbox
-										id="sortOperator_EmpIndustry" width="43px" mold="select"
-										rows="1" />
-									<textbox id="empIndustry"
-										width="100px" maxlength="8" />
+										id="label_EmployerDetailList_EmpID"
+										value="${c:l('label_EmployerDetailList_EmpID.value')}" />
+									<listbox id="sortOperator_EmpID"
+										width="43px" mold="select" rows="1" />
+									<intbox id="empID" width="100px"
+										maxlength="3" />
 									<label
 										id="label_EmployerDetailList_EmpName"
 										value="${c:l('label_EmployerDetailList_EmpName.value')}" />
@@ -79,6 +78,14 @@
 										maxlength="50" />
 								</row>
 								<row>
+								    <label 
+								        id="label_EmployerDetailList_EmpIndustry"
+										value="${c:l('label_EmployerDetailList_EmpIndustry.value')}" />
+									<listbox
+										id="sortOperator_EmpIndustry" width="43px" mold="select"
+										rows="1" />
+									<textbox id="empIndustry"
+										width="100px" maxlength="8" />
 									<label
 										id="label_EmployerDetailList_EmpPOBox"
 										value="${c:l('label_EmployerDetailList_EmpPOBox.value')}" />
@@ -86,6 +93,8 @@
 										width="43px" mold="select" rows="1" />
 									<textbox id="empPOBox" width="100px"
 										maxlength="8" />
+								</row>
+								<row>
 									<label
 										id="label_EmployerDetailList_EmpCity"
 										value="${c:l('label_EmployerDetailList_EmpCity.value')}" />
@@ -93,8 +102,6 @@
 										width="43px" mold="select" rows="1" />
 									<textbox id="empCity" width="100px"
 										maxlength="8" />
-								</row>
-								<row>
 									<label
 										id="label_EmployerDetailList_EmpAlocationType"
 										value="${c:l('label_EmployerDetailList_EmpAlocationType.value')}" />
