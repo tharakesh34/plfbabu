@@ -289,7 +289,7 @@ public class VehicleModelDAOImpl extends BasisNextidDaoImpl<VehicleModel>
 		updateSql.append(" Where VehicleModelId =:VehicleModelId");
 
 		if (!type.endsWith("_TEMP")) {
-			updateSql.append("AND Version= :Version-1");
+			updateSql.append(" AND Version= :Version-1");
 		}
 		logger.debug("updateSql: "+ updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleModel);
