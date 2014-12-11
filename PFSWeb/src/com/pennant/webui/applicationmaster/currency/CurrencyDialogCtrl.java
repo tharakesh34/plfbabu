@@ -442,8 +442,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	   }else{
 		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
 			if (details != null) {
-				this.ccyDrRateBasisCode.setValue(details.getLovValue());
-				this.lovDescCcyDrRateBasisCodeName.setValue(details.getLovValue()+"-"+
+				this.ccyDrRateBasisCode.setValue(details.getIntRateBasisCode());
+				this.lovDescCcyDrRateBasisCodeName.setValue(details.getIntRateBasisCode()+"-"+
 						details.getIntRateBasisDesc());
 			}
 	   }
@@ -461,8 +461,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	   }else{
 		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
 			if (details != null) {
-				this.ccyCrRateBasisCode.setValue(details.getLovValue());
-				this.lovDescCcyCrRateBasisCodeName.setValue(details.getLovValue()+"-"+
+				this.ccyCrRateBasisCode.setValue(details.getIntRateBasisCode());
+				this.lovDescCcyCrRateBasisCodeName.setValue(details.getIntRateBasisCode()+"-"+
 						details.getIntRateBasisDesc());
 			}
 	   }
