@@ -1081,8 +1081,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		} else {
 			Department details = (Department) dataObject;
 			if (details != null) {
-				this.rOfficerDeptCode.setValue(details.getLovValue());
-				this.lovDescROfficerDeptCodeName.setValue(details.getLovValue()	+ "-" + details.getDeptDesc());
+				this.rOfficerDeptCode.setValue(details.getDeptCode());
+				this.lovDescROfficerDeptCodeName.setValue(details.getDeptCode()	+ "-" + details.getDeptDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
