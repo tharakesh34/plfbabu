@@ -223,7 +223,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// Empty sent any required attributes
 		this.phoneTypeCode.setMaxlength(8);
 		this.phoneTypeDesc.setMaxlength(50);
-		this.phoneTypePriority.setMaxlength(10);
+		this.phoneTypePriority.setMaxlength(3);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -774,6 +774,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
+		this.phoneTypeCode.setReadonly(true);
 		this.phoneTypeDesc.setReadonly(true);
 		this.phoneTypePriority.setReadonly(true);
 		this.phoneTypeIsActive.setDisabled(true);
