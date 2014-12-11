@@ -763,12 +763,23 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.incomeExpense.setDisabled(false);
 			this.category.setDisabled(false);
 			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.incomeExpense);
+			readOnlyComponent(false, this.category);
+			readOnlyComponent(false, this.margin);
 		} else {
 			this.incomeTypeCode.setReadonly(true);
 			this.incomeExpense.setDisabled(true);
 			this.category.setDisabled(true);
 			this.btnCancel.setVisible(true);
+			readOnlyComponent(false, this.incomeExpense);
+			readOnlyComponent(false, this.category);
+			readOnlyComponent(false, this.margin);
 		}
+		
+		/*readOnlyComponent(isReadOnly("IncomeTypeDialog_incomeExpense"), this.incomeExpense);
+		readOnlyComponent(isReadOnly("IncomeTypeDialog_category"), this.category);
+		readOnlyComponent(isReadOnly("IncomeTypeDialog_margin"), this.margin);*/
+		
 		this.incomeTypeDesc.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
 		this.margin.setReadonly(isReadOnly("IncomeTypeDialog_incomeTypeDesc"));
 		this.incomeTypeIsActive.setDisabled(isReadOnly("IncomeTypeDialog_incomeTypeIsActive"));
@@ -796,6 +807,10 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doReadOnly() {
 		logger.debug("Entering");
 
+		readOnlyComponent(true, this.incomeExpense);
+		readOnlyComponent(true, this.category);
+		readOnlyComponent(true, this.margin);
+		this.incomeExpense.setReadonly(true);
 		this.incomeTypeCode.setReadonly(true);
 		this.incomeTypeDesc.setReadonly(true);
 		this.incomeTypeIsActive.setDisabled(true);
