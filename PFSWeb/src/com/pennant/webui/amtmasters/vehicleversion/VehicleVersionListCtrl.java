@@ -57,6 +57,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -109,9 +110,9 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 	protected Paging pagingVehicleVersionList; 				// autowired
 	protected Listbox listBoxVehicleVersion; 				// autowired
 
-	protected Textbox vehicleVersionId; 				// autowired
+	protected Intbox vehicleVersionId; 				// autowired
 	protected Listbox sortOperator_vehicleVersionId; 	// autowired
-	protected Textbox vehicleModelId; 					// autowired
+	protected Intbox vehicleModelId; 					// autowired
 	protected Listbox sortOperator_vehicleModelId; 		// autowired
 	protected Textbox vehicleVersionCode; 				// autowired
 	protected Listbox sortOperator_vehicleVersionCode; 	// autowired
@@ -415,9 +416,9 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
 		this.sortOperator_vehicleVersionId.setSelectedIndex(0);
-		this.vehicleVersionId.setValue("");
+		this.vehicleVersionId.setText("");
 		this.sortOperator_vehicleModelId.setSelectedIndex(0);
-		this.vehicleModelId.setValue("");
+		this.vehicleModelId.setText("");
 		this.sortOperator_vehicleVersionCode.setSelectedIndex(0);
 		this.vehicleVersionCode.setValue("");
 		if (isWorkFlowEnabled()) {
@@ -466,12 +467,12 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> impl
 		this.searchObj.clearFilters();
 
 		// VehicleModelID
-		if (!StringUtils.trimToEmpty(this.vehicleModelId.getValue()).equals("")) {
+		if (this.vehicleModelId.intValue() != 0) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_vehicleModelId.getSelectedItem(),
-					this.vehicleModelId.getValue(), "VehicleModelId");
+					this.vehicleModelId.intValue(), "VehicleModelId");
 		}
 		//VehicleVersionId
-		if (!StringUtils.trimToEmpty(this.vehicleVersionId.getValue()).equals("")) {
+		if (this.vehicleVersionId.intValue() != 0) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_vehicleVersionId.getSelectedItem(),
 					this.vehicleVersionId.getValue(), "VehicleVersionId");
 		}
