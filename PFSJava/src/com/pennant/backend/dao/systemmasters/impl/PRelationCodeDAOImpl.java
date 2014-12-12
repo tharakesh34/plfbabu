@@ -293,7 +293,7 @@ public class PRelationCodeDAOImpl extends BasisCodeDAO<PRelationCode> implements
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PRelationCode =:PRelationCode");
 		if (!type.endsWith("_TEMP")) {
-			updateSql.append("  AND Version= :Version-1");
+			updateSql.append(" AND Version= :Version-1");
 		}
 
 		logger.debug("updateSql: "+ updateSql.toString());
