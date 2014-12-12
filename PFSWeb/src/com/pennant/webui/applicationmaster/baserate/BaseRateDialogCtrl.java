@@ -673,10 +673,10 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 					"label_BaseRateDialog_BREffDate.value"), true));
      		
 			}
-		if (!this.bRRate.isReadonly()){
+		/*if (!this.bRRate.isReadonly()){
 			this.bRRate.setConstraint(new RateValidator(13,9,
 					Labels.getLabel("label_BaseRateDialog_BRRate.value"),true));
-		}
+		}*/
 		logger.debug("Leaving");
 	}
 
