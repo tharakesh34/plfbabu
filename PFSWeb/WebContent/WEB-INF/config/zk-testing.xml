@@ -5,7 +5,7 @@
 		</id-generator-class>
 	</system-config>
 	<library-property>
-		<name>org.zkoss.zk.ui.uuidRecycle.disabled </name>
+		<name>org.zkoss.zk.ui.uuidRecycle.disabled</name>
 		<value>true</value>
 	</library-property>
 </zk>
