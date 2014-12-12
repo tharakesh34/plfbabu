@@ -57,6 +57,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -109,7 +110,10 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	protected Borderlayout borderLayout_EmployerDetailList; // autowired
 	protected Paging pagingEmployerDetailList; // autowired
 	protected Listbox listBoxEmployerDetail; // autowired
-
+	
+	protected Intbox empID; // autowired
+	protected Listbox sortOperator_EmpID; // autowired/
+	
 	protected Textbox empIndustry; // autowired
 	protected Listbox sortOperator_EmpIndustry; // autowired/
 
@@ -185,6 +189,10 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 		}else{
 			wfAvailable=false;
 		}
+		
+		this.sortOperator_EmpID.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_EmpID.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		
 		this.sortOperator_EmpIndustry.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_EmpIndustry.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
@@ -376,6 +384,8 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		logger.debug(event.toString());
+		this.sortOperator_EmpID.setSelectedIndex(0);
+		this.empID.setText("");
 		this.sortOperator_EmpIndustry.setSelectedIndex(0);
 		this.empIndustry.setValue("");
 		this.sortOperator_EmpName.setSelectedIndex(0);
@@ -526,6 +536,12 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> impl
 
 		this.searchObj.clearFilters();
 
+		if (this.empID.intValue() != 0) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_EmpID.getSelectedItem(),
+					this.empID.intValue(), "EmployerId");
+		}
+		
 		if (!StringUtils.trimToEmpty(this.empIndustry.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj,
 					this.sortOperator_EmpIndustry.getSelectedItem(),
