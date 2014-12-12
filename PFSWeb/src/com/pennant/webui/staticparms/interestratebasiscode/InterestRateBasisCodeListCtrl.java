@@ -275,9 +275,9 @@ public class InterestRateBasisCodeListCtrl extends GFCBaseListCtrl<InterestRateB
 
 		getUserWorkspace().alocateAuthorities("InterestRateBasisCodeList");
 		this.button_InterestRateBasisCodeList_NewInterestRateBasisCode.setVisible(getUserWorkspace()
-				.isAllowed("button_InterestRateBasisCodeList_NewInterestRateBasisCode"));
+				.isAllowed("button_InterestRateBasisCodeList_NewInterestRateBa"));
 		this.button_InterestRateBasisCodeList_InterestRateBasisCodeSearchDialog.setVisible(getUserWorkspace()
-				.isAllowed("button_InterestRateBasisCodeList_InterestRateBasisCodeFindDialog"));
+				.isAllowed("button_InterestRateBasisCodeList_InterestRateBasis"));
 		this.button_InterestRateBasisCodeList_PrintList.setVisible(getUserWorkspace()
 				.isAllowed("button_InterestRateBasisCodeList_PrintList"));
 		logger.debug("Leaving");
