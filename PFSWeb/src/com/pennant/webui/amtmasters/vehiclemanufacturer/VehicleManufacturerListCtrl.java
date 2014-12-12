@@ -206,7 +206,8 @@ public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufact
 
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<VehicleManufacturer>(VehicleManufacturer.class,getListRows());
-		this.searchObj.addSort("ManufacturerId", false);
+		//this.searchObj.addSort("ManufacturerId", false);
+		this.searchObj.addSort("manufacturerName", false);
 		this.searchObj.addField("manufacturerId");
 		this.searchObj.addField("manufacturerName");
 		this.searchObj.addField("recordStatus");
