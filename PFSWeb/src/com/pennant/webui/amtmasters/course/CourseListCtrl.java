@@ -119,6 +119,7 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 
 	// List headers
 	protected Listheader listheader_CourseName; // autowired
+	protected Listheader listheader_CourseDesc; // autowired
 	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
 
@@ -193,6 +194,9 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> implements Serializa
 
 		this.listheader_CourseName.setSortAscending(new FieldComparator("courseName", true));
 		this.listheader_CourseName.setSortDescending(new FieldComparator("courseName", false));
+		
+		this.listheader_CourseDesc.setSortAscending(new FieldComparator("courseDesc", true));
+		this.listheader_CourseDesc.setSortDescending(new FieldComparator("courseDesc", false));
 		
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
