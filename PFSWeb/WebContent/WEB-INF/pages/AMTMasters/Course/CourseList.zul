@@ -65,11 +65,9 @@
 									<label id="label_CourseSearch_CourseName" value="${c:l('label_CourseSearch_CourseName.value')}" />
 									<listbox id="sortOperator_courseName" width="43px" mold="select" rows="1" />
 									  <uppercasebox  id="courseName" width="130px" maxlength="10" />
-								</row>
-								<row visible = "false">
 									<label id="label_CourseSearch_CourseDesc" value="${c:l('label_CourseSearch_CourseDesc.value')}" />
 									<listbox id="sortOperator_courseDesc" width="43px" mold="select" rows="1" />
-									 <textbox id="courseDesc" width="330px" maxlength="50" />
+									<textbox id="courseDesc" width="330px" maxlength="50" />
 								</row>
 								<row id="row_AlwWorkflow">
 									<label id="label_CourseSearch_RecordStatus" value="${c:l('label_CourseSearch_RecordStatus.value')}" />
@@ -85,13 +83,16 @@
 						<listhead sizable="true">
 							<listheader id="listheader_CourseName"
 								label="${c:l('listheader_CourseName.label')}" sort="auto"
-								width="100%" />
+								hflex="min" />
+							<listheader id="listheader_CourseDesc"
+								label="${c:l('listheader_CourseDesc.label')}" sort="auto"
+								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-								width="0%" />
+								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								width="0%" />
+								hflex="min" />
 						</listhead>		
 			
 					</listbox>
