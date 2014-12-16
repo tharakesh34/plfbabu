@@ -384,7 +384,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else{
 			SplRateCode details= (SplRateCode) dataObject;
 			if (details != null) {
-				this.sRType.setValue(details.getLovValue());
+				this.sRType.setValue(details.getSRType());
 				this.lovDescSRTypeName.setValue(details.getSRType()+"-"+details.getSRTypeDesc());
 			}
 		}
