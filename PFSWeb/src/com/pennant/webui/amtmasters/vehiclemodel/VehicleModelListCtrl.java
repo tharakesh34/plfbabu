@@ -192,8 +192,8 @@ public class VehicleModelListCtrl extends GFCBaseListCtrl<VehicleModel> implemen
 		this.pagingVehicleModelList.setPageSize(getListRows());
 		this.pagingVehicleModelList.setDetailed(true);
 		
-		this.listheader_VehicleManufacterId.setSortAscending(new FieldComparator("Manufacturer", true));
-		this.listheader_VehicleManufacterId.setSortDescending(new FieldComparator("Manufacturer", false));
+		this.listheader_VehicleManufacterId.setSortAscending(new FieldComparator("VehicleModelId", true));
+		this.listheader_VehicleManufacterId.setSortDescending(new FieldComparator("VehicleModelId", false));
 		this.listheader_VehicleModelDesc.setSortAscending(new FieldComparator("vehicleModelDesc", true));
 		this.listheader_VehicleModelDesc.setSortDescending(new FieldComparator("vehicleModelDesc", false));
 		
