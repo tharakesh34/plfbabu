@@ -70,6 +70,8 @@ public class CourseListModelItemRenderer implements ListitemRenderer<Course>, Se
 		Listcell lc;
 	  	lc = new Listcell(course.getCourseName());
 		lc.setParent(item);
+		lc = new Listcell(course.getCourseDesc());
+		lc.setParent(item);
 	  	lc = new Listcell(course.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(course.getRecordType()));
