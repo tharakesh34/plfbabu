@@ -1618,13 +1618,16 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}
 		doSetProvProp();
+		doSetCityProp();
 		logger.debug("Leaving" + event.toString());
 	}	
 	
 	private void doSetProvProp(){
 		if (!StringUtils.trimToEmpty(mortgAddrCountryTemp).equals(this.custAddrCountry.getValue())){
+			this.custAddrProvince.setObject("");
 			this.custAddrProvince.setValue("");
 			this.custAddrProvince.setDescription("");
+			this.custAddrCity.setObject("");
 			this.custAddrCity.setValue("");
 			this.custAddrCity.setDescription("");
 		}
@@ -1656,6 +1659,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 	
 	private void doSetCityProp(){
 		if (!StringUtils.trimToEmpty(mortgAddrProvinceTemp).equals(this.custAddrProvince.getValue())){
+			this.custAddrCity.setObject("");
 			this.custAddrCity.setValue("");
 			this.custAddrCity.setDescription("");   
 		}
