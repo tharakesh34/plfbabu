@@ -1223,12 +1223,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("reviewrate", true);
 			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-			map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 			// call the zul-file with the parameters packed in a map
 			try {
@@ -1258,12 +1258,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("disbursement", true);
 			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-			map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 			map.put("isWIF",isWIF);
 
 			// call the ZUL-file with the parameters packed in a map
@@ -1293,12 +1293,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("repayment", true);
 			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-			map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
@@ -1322,11 +1322,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("reviewrate", true);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1348,11 +1348,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("repayment", true);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1373,10 +1373,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	public void onClick$btnChangeProfit(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeProfitDialog.zul",window_ScheduleDetailDialog,map);
@@ -1397,7 +1397,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 		
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData",getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		
@@ -1420,11 +1420,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	public void onClick$btnAddDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("disbursement", true);
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("isWIF", isWIF);
 		
 		try {
@@ -1447,10 +1447,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 		
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		
 		try {
 			Executions.createComponents(
@@ -1472,11 +1472,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addDeff", true);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1498,11 +1498,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addDeff", false);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1524,11 +1524,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", true);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1550,11 +1550,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", false);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1576,10 +1576,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData",getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(
@@ -1601,10 +1601,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinanceDetail().getFinScheduleData());
+		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
-		map.put("feeChargeAmt", getFinanceDetail().getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
 		try {
 			Executions.createComponents(

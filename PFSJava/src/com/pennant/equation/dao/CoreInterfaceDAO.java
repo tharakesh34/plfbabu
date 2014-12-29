@@ -9,6 +9,8 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 
 public interface CoreInterfaceDAO {
 
@@ -35,4 +37,9 @@ public interface CoreInterfaceDAO {
 	void updateAccountTypeDetails(List<EquationAccountType> accountTypes);
 	void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
 	void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
+   ////++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
+	public void saveIncomeAccounts(FinIncomeAccount finIncomeAccount);
+	public List<FinIncomeAccount> fetchIncomeAccountDetails(FinIncomeAccount finIncomeAccount) ;
+	public boolean checkIncomeTransactionsExist(IncomeAccountTransaction incomeAccountTransaction);
+	public void saveIncomeAccTransactions(List<IncomeAccountTransaction> incomeAccountTransactions);
 }

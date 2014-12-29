@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -124,8 +125,7 @@ public interface FinanceDetailService {
 	boolean checkFirstTaskOwnerAccess(String productCode, long usrLogin);
 	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
-	FinanceDetail checkDiscrepancy(FinanceDetail financeDetail);
-	FinanceDetail getDiscrepancies(FinanceDetail financeDetail);
+	List<ErrorDetails> getDiscrepancies(FinanceDetail financeDetail);
 	List<FeeRule> getApprovedFeeRules(String finReference, boolean isWIF);
 	List<CustomerIncome> prepareIncomeDetails();
 	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer, String productCode,

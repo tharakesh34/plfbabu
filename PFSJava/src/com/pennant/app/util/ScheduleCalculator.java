@@ -2962,6 +2962,7 @@ public class ScheduleCalculator {
 						curSchd.setDefRepaySchd(curSchd.getDefRepaySchd().add(detail.getDefRpySchdPft().add(detail.getDefRpySchdPri())));
 						curSchd.setDefProfitSchd(curSchd.getDefProfitSchd().add(detail.getDefRpySchdPft()));
 						curSchd.setDefPrincipalSchd(curSchd.getDefPrincipalSchd().add(detail.getDefRpySchdPri()));
+						curSchd.setDeferedPay(true);
 						break;
 					}
 				}

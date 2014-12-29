@@ -52,6 +52,8 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 
 public interface DailyDownloadProcess {
 	
@@ -69,4 +71,5 @@ public interface DailyDownloadProcess {
 	
 	List<EquationCustomerRating> importCustomerRatingDetails() throws EquationInterfaceException;
 
+	List<IncomeAccountTransaction>  importIncomeAccTransactions(List<FinIncomeAccount> finIncomeAccounts) throws Exception;
 }

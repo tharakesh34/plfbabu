@@ -40,7 +40,7 @@
 								<row>
 									<label id="label_FinApprovalStsInquiryList_FinReference" value="${c:l('listheader_FinApprovalStsInquiryList_FinReference.label')}" />
 									<listbox id="sortOperator_finReference" width="43px" mold="select" rows="1" />
-									<textbox id="finReference" width="108px" maxlength="19" />
+									<textbox id="finReference" width="108px" maxlength="20" />
 									<cell colspan="3" style = "padding:0px" >
 										<radiogroup style = "padding:0px" >
 											<radio id="fromApproved" selected="true" label="${c:l('common.fetch.fromapproved')}" ></radio>

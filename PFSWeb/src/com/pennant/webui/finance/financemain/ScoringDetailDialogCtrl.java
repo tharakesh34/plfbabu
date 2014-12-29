@@ -404,14 +404,15 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 			for (FinanceReferenceDetail finrefdet : financeReferenceDetail) {
 				
 				FinanceScoreHeader header = null;
-				for (FinanceScoreHeader financeScoreHeader : scoringHeaderList) {
-					if(financeScoreHeader.getGroupId() == finrefdet.getFinRefId()) {
-						header = financeScoreHeader;
-						this.setScoreExecuted(true);
-						break;
+				if (scoringHeaderList != null) {
+					for (FinanceScoreHeader financeScoreHeader : scoringHeaderList) {
+						if (financeScoreHeader.getGroupId() == finrefdet.getFinRefId()) {
+							header = financeScoreHeader;
+							this.setScoreExecuted(true);
+							break;
+						}
 					}
 				}
-				
 				if(isExecute){
 					this.setScoreExecuted(true);
 				}

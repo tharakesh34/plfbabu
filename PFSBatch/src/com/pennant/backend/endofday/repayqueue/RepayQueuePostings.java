@@ -235,22 +235,27 @@ public class RepayQueuePostings implements Tasklet {
 					List<Object> returnList = getPostingsUtil().postingsEODRepayProcess(financeMain, scheduleDetails, pftDetail, 
 							dateValueDate, finRepayQueue, repayAmountBal, allowRIAInvestment, linkedTranId);
 					
+					boolean isRepayFailed =false;
 					if(!(Boolean)returnList.get(0)){
 						//THROW ERROR FOR POSTINGS NOT SUCCESS
 						logger.error("Postings Failed for Repayment Process: "+returnList.get(1));
 						//throw new Exception("Postings Failed for Repayments Process: "+returnList.get(1));
+						isRepayFailed = (Boolean) returnList.get(2);
 					}
 					
-					//Create log entry for Action for Schedule Repayments Modification
-					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-					entryDetail.setFinReference(finReference);
-					entryDetail.setEventAction(PennantConstants.SCH_REPAY);
-					entryDetail.setSchdlRecal(false);
-					entryDetail.setPostDate(dateValueDate);
-					entryDetail.setReversalCompleted(false);
-					getFinLogEntryDetailDAO().save(entryDetail);
-					
-					repayments++;
+					if (!isRepayFailed) {
+						// Create log entry for Action for Schedule Repayments
+						// Modification
+						FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+						entryDetail.setFinReference(finReference);
+						entryDetail.setEventAction(PennantConstants.SCH_REPAY);
+						entryDetail.setSchdlRecal(false);
+						entryDetail.setPostDate(dateValueDate);
+						entryDetail.setReversalCompleted(false);
+						getFinLogEntryDetailDAO().save(entryDetail);
+
+						repayments++;
+					}
 					
 					scheduleDetails = null;
 				} else {

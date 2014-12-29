@@ -153,6 +153,7 @@ public class PennantConstants {
 	public static final String method_doFundsAvailConfirmed = "doFundsAvailConfirmed";
 	public static final String method_doCheckProspectCustomer = "doCheckProspectCustomer";
 	public static final String WF_Audit_Notes = "Notes;";
+	public static final String WF_DiscrepancyCheck = "Discrepancy";
 	
 	//Work Flow Conditional Checking Codes
 	public static final String WF_PAST_DUE_OVERRIDE 		= "Past Due with Override";
@@ -162,6 +163,9 @@ public class PennantConstants {
 	public static final String WF_EXCESS_LESS_THAN_10 		= "Excess < 10%";
 	public static final String WF_EXCESS_BETWEEN_10_20 		= "Excess 10-20%";
 	public static final String WF_NO_LIMIT 					= "No Limit";
+	
+	public static final String DISCREPANCY_WARNING		    = "Warning";
+	public static final String DISCREPANCY_ERROR		    = "Error";
 
 	//Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";

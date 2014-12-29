@@ -840,7 +840,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-			setDiscrepancy(getFinanceDetail());
+			if (moduleDefiner.equals("")){
+				setDiscrepancy(getFinanceDetail());
+	        }
 			setDialog(this.window_MudarabaFinanceMainDialog);
 
 		} catch (final Exception e) {
@@ -2167,11 +2169,11 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-
+		recSave = false;
 		if (this.userAction.getSelectedItem() != null){
 			if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") ||
 					this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel") ||
-					this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Resubmit")) {
+					this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
@@ -2503,7 +2505,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
-			if (PennantConstants.WF_Audit_Notes.equals(getWorkFlow().getAuditingReq(taskId, afinanceMain))) {
+			if (getWorkFlow().getAuditingReq(taskId, afinanceMain).contains(PennantConstants.WF_Audit_Notes)) {
 				try {
 					if (!isNotes_Entered()) {
 						PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
@@ -2564,28 +2566,26 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					}*/
 
 				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doDiscrepancy)) {
-					aFinanceDetail = getFinanceDetailService().checkDiscrepancy(aFinanceDetail);
-					String discrepancy = StringUtils.trimToEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain().getDiscrepancy());
+					
+					List<ErrorDetails> discrepancies = getFinanceDetailService().getDiscrepancies(aFinanceDetail);
+					boolean isDispError = getDiscrepancyDetails(discrepancies,aFinanceDetail, false);
+					String discrepancyDetails =  aFinanceDetail.getFinScheduleData().getFinanceMain().getLimitStatus();
 					String msg = "";
-					if (!StringUtils.trimToEmpty(discrepancy).equals("")) {
-						if(discrepancy.equals(PennantConstants.WF_PAST_DUE_OVERRIDE)){
-							msg = Labels.getLabel("message.Discrepancy_PastDue",new String[]{discrepancy});
-						}else if(discrepancy.equals(PennantConstants.WF_PAST_DUE)){
-							msg = Labels.getLabel("message.Discrepancy_PastDue_OverDue",new String[]{discrepancy});
-						}else if(discrepancy.equals(PennantConstants.WF_LIMIT_EXPIRED)){
-							msg = Labels.getLabel("message.Discrepancy_LimitExpired",new String[]{discrepancy});
-						}else if(discrepancy.equals(PennantConstants.WF_NO_LIMIT)){
-							msg = Labels.getLabel("message.Discrepancy_NoLimit",new String[]{discrepancy});
-						}else{
-							msg = Labels.getLabel("message.Discrepancy_Check",new String[]{discrepancy});
-						}
+					if (!StringUtils.trimToEmpty(discrepancyDetails).equals("")) {
 						final String title = Labels.getLabel("title.Discrepancy");
-						int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
-						if (conf != MultiLineMessageBox.YES) {
+						MultiLineMessageBox.doSetTemplate();
+						if(isDispError){
+							msg = Labels.getLabel("message.Discrepancy_Error",new String[]{discrepancyDetails+"\n"});
+							MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK, Messagebox.ERROR, true);
 							return false;
+						}else{
+							msg = Labels.getLabel("message.Discrepancy_Warning",new String[]{discrepancyDetails+"\n"});
+							int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
+							if (conf != MultiLineMessageBox.YES) {
+								return false;
+							}
 						}
 					}
-
 				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doClearQueues)) {
 					
 					aFinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
@@ -2629,6 +2629,29 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 			}
 
+			if (getWorkFlow().getAuditingReq(taskId, afinanceMain).contains(PennantConstants.WF_DiscrepancyCheck)){
+				
+				List<ErrorDetails> discrepancies = getFinanceDetailService().getDiscrepancies(aFinanceDetail);
+				boolean isDispError = getDiscrepancyDetails(discrepancies,aFinanceDetail, false);
+				String discrepancyDetails =  aFinanceDetail.getFinScheduleData().getFinanceMain().getLimitStatus();
+				String msg = "";
+				if (!StringUtils.trimToEmpty(discrepancyDetails).equals("")) {
+					final String title = Labels.getLabel("title.Discrepancy");
+					MultiLineMessageBox.doSetTemplate();
+					if(isDispError){
+						msg = Labels.getLabel("message.Discrepancy_Error",new String[]{discrepancyDetails+"\n"});
+						MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK, Messagebox.ERROR, true);
+						return false;
+					}else{
+						msg = Labels.getLabel("message.Discrepancy_Warning",new String[]{discrepancyDetails+"\n"});
+						int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
+						if (conf != MultiLineMessageBox.YES) {
+							return false;
+						}
+					}
+				}
+			}
+			
 			FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
@@ -2828,6 +2851,11 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					}
 				} catch (Exception e) {
 				}
+				if (moduleDefiner.equals("")){
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(PennantAppUtil.unFormateAmount
+							(this.finAmount.getValue(), details.getCcyEditField()));
+					setDiscrepancy(getFinanceDetail());
+		        }
 			}
 		}
 
@@ -3705,7 +3733,9 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
-		setDiscrepancy(getFinanceDetail());	
+		if (moduleDefiner.equals("")){
+			setDiscrepancy(getFinanceDetail());
+        }	
 		logger.debug("Leaving");
 	}
 	

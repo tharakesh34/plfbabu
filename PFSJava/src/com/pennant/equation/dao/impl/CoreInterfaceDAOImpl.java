@@ -20,6 +20,8 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 
 public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
@@ -586,5 +588,121 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 			e.printStackTrace();
 		}
 	}
+	
+	
+
+	// ++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
+	
+	
+	
+	/**
+	 *  Method for saving FinIncomeAccount Details
+	 */
+	@Override
+	public void saveIncomeAccounts(FinIncomeAccount finIncomeAccount) {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql = new StringBuilder(" Insert into FinIncomeAccounts Select *, :LastMntOn  from ( " );		
+		insertSql.append(" Select T1.FinReference,T1.Account as IncomeAccount,T3.CustId,T3.FinType,T1.AcCcy" );
+	    insertSql.append(" from Postings T1 With(NoLock) Inner Join " );
+		insertSql.append(" (Select finReference,MAX(ValueDate)ValueDate from Postings" );
+		insertSql.append(" Where  TranDesc='Murabaha Income' and FinEvent='AMZ' Group By " );
+		insertSql.append(" finReference)T2 ON   T1.finReference=T2.finReference and T1.ValueDate=T2.ValueDate" );
+		insertSql.append(" INNER JOIN FinPftDetails T3 With(NoLock) ON T3.FinReference=T2.finReference" );
+		insertSql.append(" Where  TranDesc='Murabaha Income' and FinEvent='AMZ' Union	" );
+		insertSql.append(" Select T1.FinReference,T1.Account,T3.CustId,T3.FinType,T1.AcCcy from Postings" );
+	    insertSql.append(" T1 With(NoLock) Inner Join " );
+	    insertSql.append(" (Select finReference,MAX(ValueDate)ValueDate from Postings With(NoLock)" );
+	    insertSql.append(" 	Where   FinEvent='AMZSUSP' and TranDesc='Murabaha Income' Group By finReference)T2 " );
+		insertSql.append(" ON T1.finReference=T2.finReference and T1.ValueDate=T2.ValueDate " );
+		insertSql.append(" INNER JOIN FinPftDetails T3 With(NoLock) ON T3.FinReference=T2.finReference" );
+		insertSql.append(" Where   FinEvent='AMZSUSP' and TranDesc='Murabaha Income')T" );
+		
+		
+		logger.debug("deleteSql: "+ insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIncomeAccount);
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 *  Method for fetching Income Account Details
+	 */
+	@Override
+	public List<FinIncomeAccount> fetchIncomeAccountDetails(FinIncomeAccount finIncomeAccount) {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder("Select Distinct IncomeAccount,LastMntOn From FinIncomeAccounts ");
+		selectSql.append(" Where LastMntOn = :LastMntOn");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIncomeAccount);
+		RowMapper<FinIncomeAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinIncomeAccount.class);
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	/**
+	 *  Method for checking Income Transactions Exist For Current Month
+	 */
+	@Override
+	public boolean checkIncomeTransactionsExist(IncomeAccountTransaction incomeAccountTransaction) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) from IncomeAccTxns ");
+		selectSql.append(" Where LastMntOn = :LastMntOn");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(incomeAccountTransaction);
+
+		try {
+			int result = this.namedParameterJdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+			logger.debug("Leaving");
+			return result > 0 ? true : false;
+		}catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 *  Method for saving Income Account Transactions
+	 */
+	@Override
+	public void saveIncomeAccTransactions(List<IncomeAccountTransaction> incomeAccountTransactions){
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAccTxns" );
+		insertSql.append(" (IncomeAccount, ProfitAmount, ManualAmount, PffPostingAmount, LastMntOn)" );
+		insertSql.append(" Values(:IncomeAccount, :ProfitAmount, :ManualAmount, :PffPostingAmount, :LastMntOn)");
+		
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(incomeAccountTransactions.toArray());
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+	}
+	
 	
 }

@@ -63,7 +63,7 @@ public interface FinODDetailsDAO {
 	void updateTotals(FinODDetails detail);
 	void resetTotals(FinODDetails detail);
 	int getFinODDays(String finReference, String type);
-	FinODDetails getFinODSummary(String finReference, String type);
+	FinODDetails getFinODSummary(String finReference, int graceDays,boolean crbCheck, String type);
 	int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor);
 	Long checkCustPastDue(long custID);
 	void updateBatch(FinODDetails finOdDetails);

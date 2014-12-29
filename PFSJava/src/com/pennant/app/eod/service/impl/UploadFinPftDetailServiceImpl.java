@@ -9,13 +9,13 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.eod.service.UploadFinPftDetailService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -113,6 +113,8 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				finPftDetail.setEarlyPaidAmt(resultSet.getBigDecimal("EarlyPaidAmt")); 
 				finPftDetail.setODPrincipal(resultSet.getBigDecimal("ODPrincipal")); 
 				finPftDetail.setODProfit(resultSet.getBigDecimal("ODProfit")); 
+				finPftDetail.setCRBODPrincipal(resultSet.getBigDecimal("CRBODPrincipal")); 
+				finPftDetail.setCRBODProfit(resultSet.getBigDecimal("CRBODProfit")); 
 				finPftDetail.setPenaltyPaid(resultSet.getBigDecimal("PenaltyPaid")); 
 				finPftDetail.setPenaltyDue(resultSet.getBigDecimal("PenaltyDue")); 
 				finPftDetail.setPenaltyWaived(resultSet.getBigDecimal("PenaltyWaived")); 
@@ -130,12 +132,13 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				finPftDetail.setFinStatus(resultSet.getString("FinStatus")); 
 				finPftDetail.setFinStsReason(resultSet.getString("FinStsReason")); 
 				finPftDetail.setFinWorstStatus(resultSet.getString("FinWorstStatus")); 
-				finPftDetail.setTakafulPaidAmt(resultSet.getBigDecimal("TAKAFULPaidAmt")); 
+				finPftDetail.setTAKAFULPaidAmt(resultSet.getBigDecimal("TAKAFULPaidAmt")); 
 				finPftDetail.setAdminPaidAmt(resultSet.getBigDecimal("AdminPaidAmt")); 
-				finPftDetail.setTakafulInsCal(resultSet.getBigDecimal("TAKAFULInsCal")); 
+				finPftDetail.setTAKAFULInsCal(resultSet.getBigDecimal("TAKAFULInsCal")); 
 				finPftDetail.setNOInst(resultSet.getLong("NOInst")); 
 				finPftDetail.setNOPaidInst(resultSet.getLong("NOPaidInst")); 
 				finPftDetail.setNOODInst(resultSet.getLong("NOODInst"));
+				finPftDetail.setCRBODInst(resultSet.getInt("CRBODInst"));
 				finPftDetail.setFinAccount(resultSet.getString("FinAccount"));
 				finPftDetail.setFinAcType(resultSet.getString("FinAcType"));
 				finPftDetail.setDisbAccountId(resultSet.getString("DisbAccountId"));
@@ -151,8 +154,11 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				finPftDetail.setFirstRepayAmt(resultSet.getBigDecimal("FirstRepayAmt")); 
 				finPftDetail.setLastRepayAmt(resultSet.getBigDecimal("LastRepayAmt"));
 				finPftDetail.setoDDays(resultSet.getInt("ODDays"));
+				finPftDetail.setCRBODDays(resultSet.getInt("CRBODDays"));
 				finPftDetail.setFirstODDate(resultSet.getDate("FirstODDate")); 
 				finPftDetail.setLastODDate(resultSet.getDate("LastODDate")); 
+				finPftDetail.setCRBFirstODDate(resultSet.getDate("CRBFirstODDate")); 
+				finPftDetail.setCRBLastODDate(resultSet.getDate("CRBLastODDate")); 
 				finPftDetail.setClosingStatus(resultSet.getString("ClosingStatus"));
 				finPftDetail.setFinCategory(resultSet.getString("FinCategory"));
 				finPftDetail.setLastRpySchDate(resultSet.getDate("LastRpySchDate"));
@@ -165,6 +171,7 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				finPftDetail.setLatestWriteOffDate(resultSet.getDate("LatestWriteOffDate"));
 				finPftDetail.setTotalWriteoff(resultSet.getBigDecimal("TotalWriteoff"));
 				
+				finPftDetail.setSalariedCustomer(StringUtils.trimToEmpty(resultSet.getString("CustEmpSts")).equals(PennantConstants.CUSTEMPCODE));
 				if(context != null) {
 					BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(resultSet.getRow()));
 				} else {
@@ -172,7 +179,8 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 				}
 				
 				finPftDetails.add(finPftDetail);
-				if(finPftDetails.size() == Integer.parseInt(SystemParameterDetails.getSystemParameterValue("UPLOAD_PFT_DTL_COUNT").toString())) { 
+				// Number of finances to be uploaded for each call to AS400 is dependent on the array size mentioned in the AS400 program PTPFF21R 
+				if(finPftDetails.size() == 80) { 
 					getUploadProfitDetailProcess().doUploadPftDetails(finPftDetails, isFirstCall);
 
 					isFirstCall = false;
@@ -204,30 +212,33 @@ public class UploadFinPftDetailServiceImpl implements UploadFinPftDetailService 
 	}
 
 	private String getQuery() {
-		StringBuilder selectSql = new StringBuilder(" SELECT FinReference, CustCIF, FinBranch, FinType,"); 
-		selectSql.append(" LastMdfDate, TotalPftSchd, TotalPftCpz, TotalPftPaid,"); 
-		selectSql.append(" TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal,");
-		selectSql.append(" TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal,");
-		selectSql.append(" TdPftAccrued, TdPftAccrueSusp,  TdPftAmortized, TdPftAmortizedSusp,");
-		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillNBD, AcrTillLBD,");
-		selectSql.append(" AcrTodayToNBD, AmzTillNBD, AmzTillLBD, AmzTodayToNBD,");
-		selectSql.append(" RepayFrq, FinCcy, FinPurpose, FinContractDate,");
-		selectSql.append(" FinApprovedDate, FinStartDate, MaturityDate,FullPaidDate,");
-		selectSql.append(" FinAmount, DownPayment, CurReducingRate, curFlatRate,");
-		selectSql.append(" TotalpriSchd, EarlyPaidAmt, ODPrincipal, ODProfit,");
-		selectSql.append(" PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate,");
-		selectSql.append(" NSchdPri, NSchdPft, NSchdPriDue, NSchdPftDue,");
-		selectSql.append(" AccruePft, EarnedPft,Unearned, PftInSusp, SuspPft,");
-		selectSql.append(" PftAccrueTsfd, FinStatus, FinStsReason,");
-		selectSql.append(" FinWorstStatus, TAKAFULPaidAmt, AdminPaidAmt,"); 
-		selectSql.append(" TAKAFULInsCal, NOInst, NOPaidInst, NOODInst, FinAccount,");
-		selectSql.append(" FinAcType, DisbAccountId, DisbActCcy, RepayAccountId,");
-		selectSql.append(" FinCustPftAccount,IncomeAccount, UEIncomeSuspAccount,");
-		selectSql.append(" FinCommitmentRef, FinIsActive, NORepayments, FirstRepayDate,");
-		selectSql.append(" FirstRepayAmt, LastRepayAmt, ODDays, FirstODDate, LastODDate,");
-		selectSql.append(" ClosingStatus, FinCategory, LastRpySchDate, NextRpySchDate, LastRpySchPri, LastRpySchPft, ");
-		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, LatestWriteOffDate, TotalWriteoff ");
-		selectSql.append(" FROM  FinPftDetails ");
+		
+		StringBuilder selectSql = new StringBuilder(" SELECT T1.FinReference, T1.CustCIF, T1.FinBranch, T1.FinType,"); 
+		selectSql.append(" T1.LastMdfDate, T1.TotalPftSchd, T1.TotalPftCpz, T1.TotalPftPaid,"); 
+		selectSql.append(" T1.TotalPftBal, T1.TotalPftPaidInAdv, T1.TotalPriPaid, T1.TotalPriBal,");
+		selectSql.append(" T1.TdSchdPft, T1.TdPftCpz, T1.TdSchdPftPaid, T1.TdSchdPftBal,");
+		selectSql.append(" T1.TdPftAccrued, T1.TdPftAccrueSusp, T1.TdPftAmortized, T1.TdPftAmortizedSusp,");
+		selectSql.append(" T1.TdSchdPri, T1.TdSchdPriPaid, T1.TdSchdPriBal, T1.AcrTillNBD, T1.AcrTillLBD,");
+		selectSql.append(" T1.AcrTodayToNBD, T1.AmzTillNBD, T1.AmzTillLBD, T1.AmzTodayToNBD,");
+		selectSql.append(" T1.RepayFrq, T1.FinCcy, T1.FinPurpose, T1.FinContractDate,");
+		selectSql.append(" T1.FinApprovedDate, T1.FinStartDate, T1.MaturityDate, T1.FullPaidDate,");
+		selectSql.append(" T1.FinAmount, T1.DownPayment, T1.CurReducingRate, T1.curFlatRate,");
+		selectSql.append(" T1.TotalpriSchd, T1.EarlyPaidAmt, T1.ODPrincipal, T1.ODProfit,T1.CRBODPrincipal, T1.CRBODProfit,");
+		selectSql.append(" T1.PenaltyPaid, T1.PenaltyDue, T1.PenaltyWaived, T1.NSchdDate,");
+		selectSql.append(" T1.NSchdPri, T1.NSchdPft, T1.NSchdPriDue, T1.NSchdPftDue,");
+		selectSql.append(" T1.AccruePft, T1.EarnedPft, T1.Unearned, T1.PftInSusp, T1.SuspPft,");
+		selectSql.append(" T1.PftAccrueTsfd, T1.FinStatus, T1.FinStsReason,");
+		selectSql.append(" T1.FinWorstStatus, T1.TAKAFULPaidAmt, T1.AdminPaidAmt,"); 
+		selectSql.append(" T1.TAKAFULInsCal, T1.NOInst, T1.NOPaidInst, T1.NOODInst,T1.CRBODInst, T1.FinAccount,");
+		selectSql.append(" T1.FinAcType, T1.DisbAccountId, T1.DisbActCcy, T1.RepayAccountId,");
+		selectSql.append(" T1.FinCustPftAccount, T1.IncomeAccount, T1.UEIncomeSuspAccount,");
+		selectSql.append(" T1.FinCommitmentRef, T1.FinIsActive, T1.NORepayments, T1.FirstRepayDate,");
+		selectSql.append(" T1.FirstRepayAmt, T1.LastRepayAmt,T1.CRBODDays, T1.ODDays, T1.FirstODDate, T1.LastODDate,T1.CRBFirstODDate, T1.CRBLastODDate, ");
+		selectSql.append(" T1.ClosingStatus, T1.FinCategory, T1.LastRpySchDate, T1.NextRpySchDate, T1.LastRpySchPri, T1.LastRpySchPft,");
+		selectSql.append(" T1.LatestRpyDate, T1.LatestRpyPri, T1.LatestRpyPft, T1.LatestWriteOffDate, T1.TotalWriteoff , ");
+		selectSql.append(" T2.CustEmpSts");
+		selectSql.append(" FROM  FinPftDetails T1 INNER JOIN Customers T2 ON  T1.CustCIF = T2.CustCIF");
+
 
 		logger.debug("selectSql: " + selectSql.toString());
 

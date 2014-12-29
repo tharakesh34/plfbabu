@@ -87,6 +87,10 @@ public class FinODDetails implements java.io.Serializable {
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc;
 	
+	//CRB Report Fields
+	private BigDecimal CRBFinCurODPri = BigDecimal.ZERO;
+	private BigDecimal CRBFinCurODPft = BigDecimal.ZERO;
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -301,6 +305,19 @@ public class FinODDetails implements java.io.Serializable {
     	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
     }
 	
+	public BigDecimal getCRBFinCurODPri() {
+	    return CRBFinCurODPri;
+    }
+	public void setCRBFinCurODPri(BigDecimal cRBFinCurODPri) {
+	    CRBFinCurODPri = cRBFinCurODPri;
+    }
+	public BigDecimal getCRBFinCurODPft() {
+	    return CRBFinCurODPft;
+    }
+	public void setCRBFinCurODPft(BigDecimal cRBFinCurODPft) {
+	    CRBFinCurODPft = cRBFinCurODPft;
+    }
+	
 	
 	// Overidden Equals method to handle the comparision
 	public boolean equals(FinODDetails finODDetails) {
@@ -319,4 +336,5 @@ public class FinODDetails implements java.io.Serializable {
 		}
 		return false;
 	}
+	
 }

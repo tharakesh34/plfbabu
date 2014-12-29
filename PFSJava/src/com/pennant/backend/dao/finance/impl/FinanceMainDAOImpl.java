@@ -1095,20 +1095,20 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
     }
 	public FinanceSummary getFinanceProfitDetails(String finRef) {
 		logger.debug("Entering");
-		FinanceSummary financeMain = new FinanceSummary();
+		FinanceSummary summary = new FinanceSummary();
 		
 		StringBuilder selectSql = new StringBuilder("Select * from FinanceProfitEnquiry_View");
 		selectSql.append("  where FinReference = '"+finRef+"'");
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(summary);
 		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
 		try {
-			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			summary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			financeMain = null;
+			summary = new FinanceSummary();
 		}
 		logger.debug("Leaving");
-		return financeMain;
+		return summary;
 	}
 
 	/**

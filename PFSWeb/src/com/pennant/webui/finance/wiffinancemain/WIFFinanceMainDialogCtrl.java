@@ -5637,6 +5637,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_numberOfTerms = totRepayTerms;
 		
 		Date grcpftDate = null;
+		getFinanceDetail().setFinScheduleData(scheduleData);
 		List<FinanceScheduleDetail> list = scheduleData.getFinanceScheduleDetails();
 		FinanceMain main = scheduleData.getFinanceMain();
 		

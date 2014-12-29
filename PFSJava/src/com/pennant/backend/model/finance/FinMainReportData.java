@@ -2,12 +2,15 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 public class FinMainReportData implements Serializable{
 
@@ -894,7 +897,7 @@ public class FinMainReportData implements Serializable{
 		reportData.setFinCustPftAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getFinCustPftAccount()));
 		reportData.setDownPayBank(PennantApplicationUtil.amountFormate(financeMain.getDownPayBank(), ccyFormatter));
 		reportData.setDownPayAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getDownPayAccount()));
-		if(!financeMain.getDownPayAccount().equals("")){
+		if(!StringUtils.trimToEmpty(financeMain.getDownPayAccount()).equals("")){
 			reportData.setApplyDownPay("TRUE");
 		}
 		reportData.setDownPaySupl(PennantApplicationUtil.amountFormate(financeMain.getDownPaySupl(), ccyFormatter));
@@ -904,7 +907,7 @@ public class FinMainReportData implements Serializable{
 		}
 		reportData.setFrqDefferments(String.valueOf(financeMain.getFrqDefferments()));
 		reportData.setFinPurpose(financeMain.getFinPurpose()+"-"+StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
-		reportData.setFinCommitRef(financeMain.getFinCommitmentRef());
+		reportData.setFinCommitRef(StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()));
 		reportData.setDepreciationFrq(FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());
 		reportData.setOverdueDays(financeMain.getFinStatus() +"/"+financeSummary.getFinCurODDays());
 		
@@ -916,26 +919,28 @@ public class FinMainReportData implements Serializable{
 		}
 		
 		// Grace Period Details
-		reportData.setAllowGrace(financeMain.isAllowGrcCpz() ? "True" : "False");
-		reportData.setGrcPeriodEndDate(PennantApplicationUtil.formateDate(financeMain.getGrcPeriodEndDate(), PennantConstants.dateFormate));
-		reportData.setGrcRateBasis(financeMain.getGrcRateBasis().equals("#") ? financeMain.getGrcRateBasis() : "");
-		reportData.setGrcPftRate(PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2)+" %");
-		reportData.setGraceBaseRate(StringUtils.trimToEmpty(financeMain.getGraceBaseRate()).equals("") ? "" : financeMain.getGraceBaseRate() +"-"+financeMain.getLovDescGraceBaseRateName());
-		reportData.setGraceSpecialRate(StringUtils.trimToEmpty(financeMain.getGraceSpecialRate()).equals("") ? "" : financeMain.getGraceSpecialRate() +"-"+financeMain.getLovDescGraceSpecialRateName());
-		reportData.setGrcMargin(PennantApplicationUtil.formatRate(financeMain.getGrcMargin().doubleValue(), 2));
-		reportData.setGracePftFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGracePftFrqCode()).getFrequencyDescription());
-		reportData.setNextGrcPftDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcPftDate(), PennantConstants.dateFormate));
-		reportData.setGrcPftRvwFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
-		reportData.setNextGrcPftRvwDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormate));
-		reportData.setGrcCpzFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
-		reportData.setNextGrcCpzDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormate));
-		reportData.setAllowGrcRepay(financeMain.isAllowGrcRepay() ? "True" : "False");
-		reportData.setGrcSchdMethod(financeMain.getGrcSchdMthd().equals("#") ? financeMain.getGrcSchdMthd() : "" );
+		reportData.setAllowGrace(financeMain.isAllowGrcPeriod()? "TRUE" : "FALSE");
+		if(financeMain.isAllowGrcPeriod()){
+			reportData.setGrcPeriodEndDate(PennantApplicationUtil.formateDate(financeMain.getGrcPeriodEndDate(), PennantConstants.dateFormate));
+			reportData.setGrcRateBasis(StringUtils.trimToEmpty(financeMain.getGrcRateBasis()).equals("#") ? financeMain.getGrcRateBasis() : "");
+			reportData.setGrcPftRate(PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2)+" %");
+			reportData.setGraceBaseRate(StringUtils.trimToEmpty(financeMain.getGraceBaseRate()).equals("") ? "" : financeMain.getGraceBaseRate() +"-"+financeMain.getLovDescGraceBaseRateName());
+			reportData.setGraceSpecialRate(StringUtils.trimToEmpty(financeMain.getGraceSpecialRate()).equals("") ? "" : financeMain.getGraceSpecialRate() +"-"+financeMain.getLovDescGraceSpecialRateName());
+			reportData.setGrcMargin(PennantApplicationUtil.formatRate(financeMain.getGrcMargin().doubleValue(), 2));
+			reportData.setGracePftFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGracePftFrqCode()).getFrequencyDescription());
+			reportData.setNextGrcPftDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcPftDate(), PennantConstants.dateFormate));
+			reportData.setGrcPftRvwFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
+			reportData.setNextGrcPftRvwDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormate));
+			reportData.setGrcCpzFrq(FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
+			reportData.setNextGrcCpzDate(PennantApplicationUtil.formateDate(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormate));
+			reportData.setAllowGrcRepay(financeMain.isAllowGrcRepay() ? "True" : "False");
+			reportData.setGrcSchdMethod(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals("#") ? financeMain.getGrcSchdMthd() : "" );
+		}
 
 		//  Repay Details 
 		reportData.setNumberOfTerms(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
 		reportData.setReqRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getFinRepaymentAmount(), ccyFormatter));
-		reportData.setRepayRateBasis(financeMain.getRepayRateBasis().equals("#") ? "" : financeMain.getRepayRateBasis());
+		reportData.setRepayRateBasis(financeMain.getRepayRateBasis().equals("#") ? "" : getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
 		reportData.setRepayProfitRate(PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2)+" %");
 		reportData.setRepayBaseRate(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()).equals("") ? "" : financeMain.getRepayBaseRate() +"-"+financeMain.getLovDescRepayBaseRateName());
 		if(!StringUtils.trimToEmpty(financeMain.getRepayBaseRate()).equals("")){
@@ -943,7 +948,7 @@ public class FinMainReportData implements Serializable{
 		}
 		reportData.setRepaySpecialRate(StringUtils.trimToEmpty(financeMain.getRepaySpecialRate()).equals("") ? "" : financeMain.getRepaySpecialRate() +"-"+financeMain.getLovDescRepaySpecialRateName());
 		reportData.setRepayMargin(PennantApplicationUtil.formatRate(financeMain.getRepayMargin().doubleValue(), 2));
-		reportData.setScheduleMethod(financeMain.getScheduleMethod().equals("#") ? "" : financeMain.getLovDescScheduleMethodName());
+		reportData.setScheduleMethod(StringUtils.trimToEmpty(financeMain.getScheduleMethod()).equals("#") ? "" : financeMain.getLovDescScheduleMethodName());
 		reportData.setRepayPftFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayPftFrq()).getFrequencyDescription());
 		reportData.setNextRepayPftDate(PennantApplicationUtil.formateDate(financeMain.getNextRepayPftDate(), PennantConstants.dateFormate));
 		reportData.setRepayRevFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayRvwFrq()).getFrequencyDescription());
@@ -1025,6 +1030,17 @@ public class FinMainReportData implements Serializable{
 				ccyFormatter));
 
 		return reportData;
+	}
+	
+	private String getlabelDesc(String value, List<ValueLabel> list) {
+		if(value != null){
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getValue().equalsIgnoreCase(value)) {
+					return list.get(i).getLabel();
+				}
+			}
+		}
+		return "";
 	}
 	public String getApplyDownPay() {
 	    return applyDownPay;

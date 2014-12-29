@@ -50,50 +50,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
-import org.zkoss.zk.ui.ComponentNotFoundException;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zkmax.zul.Portalchildren;
 import org.zkoss.zkmax.zul.Portallayout;
-import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Center;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listgroup;
-import org.zkoss.zul.Listhead;
-import org.zkoss.zul.Listheader;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Panel;
-import org.zkoss.zul.Panelchildren;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
-import org.zkoss.zul.Tabpanel;
-import org.zkoss.zul.Tabpanels;
-import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.dashboard.DashBoard;
-import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.dashboarddetail.DashboardPosition;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.service.dashboard.DetailStatisticsService;
-import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.common.menu.domain.MenuPendingDetail;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.PTMessageUtils;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -127,7 +105,6 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 	public Groupbox second;
 	public DetailStatisticsService DetailStatisticsService;
 	public DashBoard dashBoard;
-	public Listbox listbox;
 
 	private DashboardCreate dashboardCreate;
 	// it stores current dash boards and is it maximized
@@ -195,16 +172,10 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 				Portalchildren pc = (Portalchildren) dashBoardsPortalLayout
 						.getChildren().get(
 								dashBoardPosition.get(key).getDashboardCol());
-				if(key.equals("PENDING_RCD_ROLE")){
-					pc.appendChild(createPanelListBox(
-							getDashBoard().getDashboardConfigMap().get(key), pc));
-					pc.setWidth("80%");
-					pc.setHeight("90%");
-				}else{
 				Panel dashBoradPanel = dashboardCreate.createPanel(
 						getDashBoard().getDashboardConfigMap().get(key), pc);
 				pc.appendChild(dashBoradPanel);
-				}
+
 				/*
 				 * to be implemented for maximized panel should be in maximized
 				 * after refresh . if(currentDashBords.containsKey(key)){
@@ -230,148 +201,16 @@ public class WelcomeCtrl extends GFCBaseListCtrl<DashBoard> implements Serializa
 				if (dashBoardsPortalLayout.getChildren().size() > selectedColumnIdx) {
 					Portalchildren pc = (Portalchildren) dashBoardsPortalLayout
 							.getChildren().get(selectedColumnIdx);
-					if(cbDashBordsList.getSelectedItem().getValue().toString().equals("PENDING_RCD_ROLE")){
-						pc.appendChild(createPanelListBox(
-								getDashBoard().getDashboardConfigMap().get(
-										this.cbDashBordsList.getSelectedItem()
-												.getValue().toString()), pc));
-						pc.setWidth("80%");
-						pc.setHeight("90%");
-					}else{
 					pc.appendChild(dashboardCreate.createPanel(
 							getDashBoard().getDashboardConfigMap().get(
 									this.cbDashBordsList.getSelectedItem()
 											.getValue().toString()), pc));
-					}
 				}
 			}
 		}
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public  Panel  createPanelListBox(DashboardConfiguration info,Portalchildren portalchildren) {
-		logger.debug("Entering ");
-		Panel dashboardPanel = new Panel();
- 		dashboardPanel.setBorder("normal");
-		dashboardPanel.setCollapsible(true);
-		dashboardPanel.setClosable(true);  
-		dashboardPanel.setMaximizable(true);
-		dashboardPanel.appendChild(new Panelchildren());
-		dashboardPanel.setId(info.getDashboardCode());
-		dashboardPanel.setTitle(info.getDashboardDesc());
-		Panelchildren panelchildren = dashboardPanel.getPanelchildren();
-		Listhead listhead = new Listhead();
-		listbox = new Listbox();
-		listbox.setHeight("100%");
-		listbox.setRows(6);
-		listbox.appendChild(listhead);
-		Listheader listheaderFinRef = new Listheader("Finance Reference");
-		listhead.appendChild(listheaderFinRef);
-		Listheader listheaderCIF = new Listheader("Customer CIF");
-		listhead.appendChild(listheaderCIF);
-		panelchildren.appendChild(listbox);
-		doFillDetailListBox(listbox);
-		dashboardPanel.appendChild(panelchildren);
-		logger.debug("Leaving");
-		return dashboardPanel;
-	}
-	
-	public void doFillDetailListBox(Listbox listbox) {
-		logger.debug("Entering");
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<MenuPendingDetail> jdbcSearchObject = new JdbcSearchObject<MenuPendingDetail>(MenuPendingDetail.class);
-		jdbcSearchObject.addTabelName("FinancePendingDetailsByRole_View");
-		//jdbcSearchObject.addFilterEqual("NextRoleCode", getRole());
-		List<MenuPendingDetail> menuPendingDetails = pagedListService.getBySearchObject(jdbcSearchObject);
-		listbox.getItems().clear();
-		Listgroup group = null;
-		Listitem item = null;
-		Listcell cell = null;
-		String menuCode = "";
-		if(menuPendingDetails != null){
-			for (MenuPendingDetail menuPendingDetail : menuPendingDetails){
-				if(!menuCode.equalsIgnoreCase(menuPendingDetail.getMenuCode())){
-					group = new Listgroup();
-					cell = new Listcell(menuPendingDetail.getMenuCode());
-					cell.setParent(group);
-					this.listbox.appendChild(group);
-				}
-				menuCode = menuPendingDetail.getMenuCode();
-				item = new Listitem();
-				item.setId(menuPendingDetail.getMenuCode());
-				Listcell lc;
-				lc = new Listcell(menuPendingDetail.getFinReference());
-				lc.setParent(item);
-				lc = new Listcell(menuPendingDetail.getCustCIF());
-				lc.setParent(item);
-				item.setAttribute("data", menuPendingDetail);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onDetailListBoxDoubleClicked");
-				listbox.appendChild(item);
-			}
-		}
-		logger.debug("Leaving");
-	}
-	
-	public void onDetailListBoxDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering");
-		final Listitem item = this.listbox.getSelectedItem();
-		final MenuPendingDetail menuPendingDetail = (MenuPendingDetail) item.getAttribute("data");
-		if(menuPendingDetail != null){
-		openZulpage(menuPendingDetail);
-		}
-		logger.debug("Leaving");
-	}
-
-	public void openZulpage(MenuPendingDetail menuPendingDetail) throws InterruptedException{
-		try {
-			
-				/* get an instance of the borderlayout defined in the zul-file */
-				final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-				/* get an instance of the searched CENTER layout area */
-				final Center center = bl.getCenter();
-
-				final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
-						.getFellow("tabsIndexCenter");
-
-				// Check if the tab is already open, if not than create them
-				Tab checkTab = null;
-				try {
-					checkTab = (Tab) tabs.getFellow("tab_" + menuPendingDetail.getMenuCode());
-					checkTab.setSelected(true);
-				} catch (final ComponentNotFoundException ex) {
-					// Ignore if can not get tab.
-				}
-
-				if (checkTab == null) {
-					final Tab tab = new Tab();
-					tab.setId("tab_" +  menuPendingDetail.getMenuCode());
-					tab.setLabel( menuPendingDetail.getMenuCode());
-					tab.setClosable(true);
-
-					tab.setParent(tabs);
-
-					final Tabpanels tabpanels = (Tabpanels) center.getFellow("divCenter")
-							.getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter")
-							.getFellow("tabpanelsBoxIndexCenter");
-					final Tabpanel tabpanel = new Tabpanel();
-					tabpanel.setHeight("100%");
-					tabpanel.setStyle("padding: 0px;");
-					tabpanel.setParent(tabpanels);
-
-					Executions.createComponents(menuPendingDetail.getMenuZulPath(), tabpanel, null);
-					tab.setSelected(true);
-				}
-		
-			if (logger.isDebugEnabled()) {
-				logger.debug("--> calling zul-file: " + menuPendingDetail.getMenuZulPath());
-			}
-		} catch (final Exception e) {
-			PTMessageUtils.showErrorMessage(e.toString());
-		}
-
-	}
-	
-	
 	/**
 	 * When user clicks on save button
 	 * 

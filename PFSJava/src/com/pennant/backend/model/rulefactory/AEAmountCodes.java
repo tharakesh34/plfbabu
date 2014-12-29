@@ -62,8 +62,10 @@ public class AEAmountCodes {
 	private int ttlMnts = 0;
 	private int ttlTerms = 0;
 	private int ODDays = 0;
+	private int CRBODDays = 0;
 	private int daysFromFullyPaid = 0;
 	private int ODInst = 0;
+	private int CRBODInst = 0;
 	private int paidInst = 0;
 
 	private BigDecimal PROVDUE = BigDecimal.ZERO;
@@ -94,6 +96,8 @@ public class AEAmountCodes {
 	private BigDecimal lastRepayAmt = BigDecimal.ZERO;
 	private BigDecimal priOD = BigDecimal.ZERO;
 	private BigDecimal pftOD = BigDecimal.ZERO;
+	private BigDecimal CRBPriOD = BigDecimal.ZERO;
+	private BigDecimal CRBPftOD = BigDecimal.ZERO;
 	private BigDecimal penaltyPaid = BigDecimal.ZERO;
 	private BigDecimal penaltyDue = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
@@ -101,6 +105,8 @@ public class AEAmountCodes {
 	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
 	private Date firstODDate;
 	private Date lastODDate;
+	private Date cRBFirstODDate;
+	private Date cRBLastODDate;
 	
 	private Date 	   lastRpySchDate;//Either Partially or Fully
 	private Date 	   nextRpySchDate;//Either partially or Fully
@@ -778,5 +784,44 @@ public class AEAmountCodes {
 	public void setDepreciatePri(BigDecimal depreciatePri) {
 	    this.depreciatePri = depreciatePri;
     }
+	
+	public Date getCRBFirstODDate() {
+	    return cRBFirstODDate;
+    }
+	public void setCRBFirstODDate(Date cRBFirstODDate) {
+	    this.cRBFirstODDate = cRBFirstODDate;
+    }
+	
+	public Date getCRBLastODDate() {
+	    return cRBLastODDate;
+    }
+	public void setCRBLastODDate(Date cRBLastODDate) {
+	    this.cRBLastODDate = cRBLastODDate;
+    }
+	public int getCRBODDays() {
+	    return CRBODDays;
+    }
+	public void setCRBODDays(int cRBODDays) {
+	    CRBODDays = cRBODDays;
+    }
+	public int getCRBODInst() {
+	    return CRBODInst;
+    }
+	public void setCRBODInst(int cRBODInst) {
+	    CRBODInst = cRBODInst;
+    }
+	public BigDecimal getCRBPriOD() {
+		return CRBPriOD;
+	}
+	public void setCRBPriOD(BigDecimal cRBPriOD) {
+		CRBPriOD = cRBPriOD;
+	}
+	public BigDecimal getCRBPftOD() {
+		return CRBPftOD;
+	}
+	public void setCRBPftOD(BigDecimal cRBPftOD) {
+		CRBPftOD = cRBPftOD;
+	}
+	
 	
 }

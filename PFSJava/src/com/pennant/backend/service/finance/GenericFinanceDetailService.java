@@ -1138,6 +1138,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	                        if(pftDetail.getLastODDate() != null && pftDetail.getLastODDate().compareTo(pastdueDefDateList.get(i)) == 0){
 	                        	pftDetail.setLastODDate(null);
 	                        }
+	                        if(pftDetail.getCRBFirstODDate() != null && pftDetail.getCRBFirstODDate().compareTo(pastdueDefDateList.get(i)) == 0){
+	                        	pftDetail.setCRBFirstODDate(null);
+	                        }
+	                        if(pftDetail.getCRBLastODDate() != null && pftDetail.getCRBLastODDate().compareTo(pastdueDefDateList.get(i)) == 0){
+	                        	pftDetail.setCRBLastODDate(null);
+	                        }
                         }
 						
 						if(StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(PennantConstants.ADD_DEFF)){

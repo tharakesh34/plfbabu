@@ -274,6 +274,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (!isPostingSuccess) {
 			actreturnList.add(isPostingSuccess);
 			actreturnList.add(resultList.get(3));
+			actreturnList.add(true);
+			
+			//Overdue Details preparation
+			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true);
+		
 			logger.debug("Leaving");
 			return actreturnList;
 		}
@@ -288,6 +293,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (!isPostingSuccess) {
 			actreturnList.add(isPostingSuccess);
 			actreturnList.add(returnList.get(2));
+			actreturnList.add(false);
 			logger.debug("Leaving");
 			return actreturnList;
 		}
@@ -700,7 +706,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (isLatePay) {
 
 			//Overdue Details preparation
-			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true);
+			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, isEODProcess);
 		
 			//SUSPENSE
 			if (isEODProcess) {

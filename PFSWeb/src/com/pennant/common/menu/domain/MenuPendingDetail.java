@@ -53,19 +53,28 @@ public class MenuPendingDetail implements java.io.Serializable {
 		
 	private static final long serialVersionUID = -306657295035931426L;
 	
+	private String menuRef;
 	private String menuCode;
 	private String finReference;
 	private String custCIF;
+	private String custShrtName;
 	private String menuZulPath;
 	
 	
+	
+	public String getMenuRef() {
+		return menuRef;
+	}
+	public void setMenuRef(String menuRef) {
+		this.menuRef = menuRef;
+	}
+
 	public String getMenuCode() {
 		return menuCode;
 	}
 	public void setMenuCode(String menuCode) {
 		this.menuCode = menuCode;
 	}
-	
 	public String getFinReference() {
 		return finReference;
 	}
@@ -80,6 +89,12 @@ public class MenuPendingDetail implements java.io.Serializable {
 		this.custCIF = custCIF;
 	}
 	
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
+	}
 	public String getMenuZulPath() {
 		return menuZulPath;
 	}

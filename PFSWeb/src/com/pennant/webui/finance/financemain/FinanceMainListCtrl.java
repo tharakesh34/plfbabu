@@ -241,7 +241,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		this.listheader_CustomerCIF.setSortAscending(new FieldComparator("lovDescCustCIF", true));
 		this.listheader_CustomerCIF.setSortDescending(new FieldComparator("lovDescCustCIF", false));
-		this.listheader_CustomerName.setSortDescending(new FieldComparator("LovDescCustShrtName", true));
+		this.listheader_CustomerName.setSortDescending(new FieldComparator("LovDescCustShrtName", false));
 		this.listheader_CustomerName.setSortAscending(new FieldComparator("LovDescCustShrtName", true));
 		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
 		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));

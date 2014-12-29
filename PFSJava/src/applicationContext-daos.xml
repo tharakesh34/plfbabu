@@ -6016,6 +6016,7 @@
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 	
 	<!--============ Account process Util ============== -->

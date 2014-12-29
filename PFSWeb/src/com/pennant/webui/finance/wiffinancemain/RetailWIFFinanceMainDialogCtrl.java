@@ -6368,6 +6368,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.oldVar_numberOfTerms = totRepayTerms;
 		
 		Date grcpftDate = null;
+		getFinanceDetail().setFinScheduleData(scheduleData);
 		List<FinanceScheduleDetail> list = scheduleData.getFinanceScheduleDetails();
 		FinanceMain main = scheduleData.getFinanceMain();
 		

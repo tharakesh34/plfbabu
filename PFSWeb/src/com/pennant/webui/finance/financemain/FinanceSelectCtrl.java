@@ -56,6 +56,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
@@ -191,6 +192,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
 	private FinanceMain financeMain;
+	private boolean isDashboard = false;
+	private boolean isDetailScreen = false;
 	
 	/**
 	 * Default constructor
@@ -358,7 +361,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 				} 
 			}
 		}
-
+		if (args.containsKey("isDashboard")) {
+			if (args.containsKey("moduleDefiner")) {
+			this.moduleDefiner = (String)(args.get("moduleDefiner"));
+			}
+			this.isDashboard = true ;
+			Events.postEvent("onClick$btnSearch", window_FinanceSelect,event);
+			if (args.containsKey("detailScreen")) {
+				this.isDetailScreen = true;
+				if (args.containsKey("FinanceReference")) {
+				this.finReference.setValue((String)(args.get("FinanceReference")));
+				}
+				Events.postEvent("onFinanceItemDoubleClicked", window_FinanceSelect,event);
+			}
+			
+		}
         if(moduleDefiner.equals(PennantConstants.TAKAFULPREMIUMEXCLUDE)){
         	this.listheader_RecordStatus.setVisible(false);
         }
@@ -713,6 +730,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 
 		this.searchObject = new JdbcSearchObject<FinanceMain>(FinanceMain.class); 
 		this.searchObject.addTabelName("FinanceMaintenance_View");
+		if(isDashboard){
+			this.searchObject.addFilterEqual("RcdMaintainSts", moduleDefiner);
+		}
 		if(!workflowCode.equals("")){
 			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
@@ -965,7 +985,20 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	@SuppressWarnings("rawtypes")
 	public void onFinanceItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final Listitem item = this.getListBoxFinance().getSelectedItem();
+		final Listitem item;
+		if(isDashboard && isDetailScreen){
+			List<FinanceMain> financeMainList = getPagedListWrapper().getPagedListService().getBySearchObject(this.searchObject);
+			if(this.listBoxFinance != null && this.listBoxFinance.getItems().size() == 1 
+					&& financeMainList != null && financeMainList.size() == 1){
+				item = (Listitem)this.listBoxFinance.getFirstChild().getNextSibling();
+				final FinanceMain aFinanceMain = (FinanceMain) financeMainList.get(0);
+				item.setAttribute("data", aFinanceMain);
+			}else{
+				return;
+			}
+		}else{
+			item = this.getListBoxFinance().getSelectedItem();
+		}
 		if (!moduleDefiner.equals("") && !moduleDefiner.equals(PennantConstants.SCH_REPAY) && 
 				!moduleDefiner.equals(PennantConstants.SCH_EARLYPAY) && 
 				!moduleDefiner.equals(PennantConstants.SCH_EARLYPAYENQ) &&
@@ -1025,6 +1058,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 				}
 			}
 		}
+		this.isDashboard = false;
+		this.isDetailScreen = false;
 		//doClose();
 		logger.debug("Leaving"+ event.toString());
 	}
@@ -1687,6 +1722,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			this.listBoxFinance.getItems().clear();
 			this.searchObject.clearFilters();		
 			paging(getSearchObj());
+			this.isDashboard = false;
+			this.isDetailScreen = false;
 		}
 		logger.debug("Leaving" + event.toString());
 		

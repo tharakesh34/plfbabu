@@ -196,6 +196,10 @@ public class ReportGenerationPromptDialogCtrl extends  GFCBaseListCtrl<ReportCon
 			// get the parameters map that are overHanded by creation.
 			final Map<String, Object> args = getCreationArgsMap(event);
 			// READ OVERHANDED parameters !
+			if (args.containsKey("MonthEndReportEvent")) {
+				event = (Event) args.get("MonthEndReportEvent");
+			}
+			
 			if (args.containsKey("ReportConfiguration")) {
 				reportConfiguration=(ReportConfiguration) args.get("ReportConfiguration");
 			}else{

@@ -1112,6 +1112,29 @@
 		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
 	</bean>
 	
+	
+	<!-- Month End Download Details Updation  -->
+	<bean id="monthEndDownloadProcessTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="monthEndDownloadProcessTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="monthEndDownloadProcessTarget" class="com.pennant.backend.endofday.monthenddownload.MonthEndDownloadProcess">
+		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+	</bean>
+	
+	
+	
 	<!-- Remove Finance Maintenance Details  -->
 	<bean id="removeMaintenanceProcessTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -1211,6 +1234,20 @@
 		<!-- Daily Download Details -->
 		<step id="dailyDownload">
 			<tasklet ref="dailyDownloadProcessTasklet" />
+			<next on="*" to="monthEndDownloadDecision" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- End Of Month Decision For Month End Download -->
+		<decision id="monthEndDownloadDecision" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="monthEndDownload" />
+			<next on="NotEndOfMonth" to="refreshRateChanges" />
+			<fail on="FAILED"/>
+		</decision>
+		
+		<!-- Month End Download Details -->
+		<step id="monthEndDownload">
+			<tasklet ref="monthEndDownloadProcessTasklet" />
 			<next on="*" to="refreshRateChanges" />
 			<fail on="FAILED"/>
 		</step>

@@ -42,6 +42,7 @@ package com.pennant.equation.service.impl;
  ********************************************************************************************
  */
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,10 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.service.DailyDownloadProcess;
+import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.HostConnection;
 
 public class DailyDownloadProcessImpl implements DailyDownloadProcess{
@@ -191,8 +195,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	
 	/**
 	 * Method for Importing Customer Type Details
-	 */
-	@Override
+	 */	@Override
 	public List<EquationCustomerType> importCustomerTypeDetails() throws EquationInterfaceException {
 		logger.debug("Entering");
 		
@@ -570,6 +573,61 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		getHostConnection().callAPI(pcmlDoc, pcml);
 		logger.debug(" After PCML Call");
 		return pcmlDoc;
+	}
+	
+	// ++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
+	public List<IncomeAccountTransaction>  importIncomeAccTransactions(List<FinIncomeAccount> finIncomeAccounts) throws Exception{
+		logger.debug("Entering");
+
+		AS400 as400 = null;
+		ProgramCallDocument pcmlDoc = null;
+		String pcml = "PTPFFSAR"; //Get Income Account Details
+		List<IncomeAccountTransaction> accountList  = null;
+		int[] indices = new int[1]; 	// Indices for access array value
+
+		try {
+
+			as400 = this.hostConnection.getConnection();
+			pcmlDoc = new ProgramCallDocument(as400, pcml);
+			FinIncomeAccount coreAcct = null;
+			pcmlDoc.setValue(pcml + ".@REQDTA.@dsReqCount", finIncomeAccounts.size());// Account Number
+			pcmlDoc.setValue(pcml + ".@REQDTA.@dsReqStartDt", DateUtility.formatDate(finIncomeAccounts.get(0).getLastMntOn(),"dd/MM/yyyy").replace("/", ""));// Account Number
+			for (indices[0] = 0; indices[0] < finIncomeAccounts.size(); indices[0]++){
+				coreAcct = finIncomeAccounts.get(indices[0]);
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.dsReqAccNum",indices, coreAcct.getIncomeAccount());// Account Number
+			}
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
+			pcmlDoc.setValue(pcml + ".@ERPRM", ""); 	
+
+			logger.debug(" Before PCML Call");
+			getHostConnection().callAPI(pcmlDoc, pcml);
+			logger.debug(" After PCML Call");
+			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {			
+				indices = new int[1]; // Indices for access array value
+				IncomeAccountTransaction account = null;
+				accountList  = new ArrayList<IncomeAccountTransaction>();
+				int dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.@NORES").toString());            	// Number of records returned 
+				for (indices[0] = 0; indices[0] < dsRspCount; indices[0]++){
+					account = new IncomeAccountTransaction();
+					account.setIncomeAccount(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspAccNum",indices).toString()); //Income Account
+					account.setProfitAmount(new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPftAma",indices).toString()))); //Profit Amount
+					account.setManualAmount(new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspManAma",indices).toString()))); //Manual Amount
+					account.setPffPostingAmount(new BigDecimal((pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPffAma",indices).toString()))); //Pff Posting Amount
+					account.setLastMntOn(finIncomeAccounts.get(0).getLastMntOn()); 				//Last Maintained Date 
+					accountList.add(account);
+				}
+			}
+		}
+		catch (Exception e) {
+			logger.error("Exception " + e);
+			throw e;
+		}  finally {
+			getHostConnection().closeConnection(as400);
+			pcmlDoc  =  null;
+			as400    =  null;
+		}
+		logger.debug("Leaving");
+		return accountList;
 	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

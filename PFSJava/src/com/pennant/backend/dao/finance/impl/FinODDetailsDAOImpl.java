@@ -305,12 +305,18 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
         return 0;
 	}
 	@Override
-	public FinODDetails getFinODSummary(String finReference,String type) {
+	public FinODDetails getFinODSummary(String finReference,int graceDays,boolean crbCheck, String type) {
 		logger.debug("Entering");
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
+		finODDetails.setFinCurODDays(graceDays);
+		
 		StringBuilder selectSql = new StringBuilder("select FinReference, sum(TotPenaltyAmt) as TotPenaltyAmt, sum(TotWaived) as TotWaived");
 		selectSql.append(" , sum(TotPenaltyPaid) as TotPenaltyPaid, sum(TotPenaltyBal) as  TotPenaltyBal, SUM(FinCurODPri) AS FinCurODPri, SUM(FinCurODPft) AS FinCurODPft");
+		if(crbCheck){
+			selectSql.append("  ,SUM(CASE WHEN FinCurODDays > :FinCurODDays THEN FinCurODPri ELSE 0 END) AS CRBFinCurODPri, ");
+			selectSql.append(" 	SUM(CASE WHEN FinCurODDays > :FinCurODDays THEN FinCurODPft ELSE 0 END) AS CRBFinCurODPft  ");
+		}
 		selectSql.append(" From FinODDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WITH(NOLOCK) Where FinReference =:FinReference GROUP BY FinReference ");

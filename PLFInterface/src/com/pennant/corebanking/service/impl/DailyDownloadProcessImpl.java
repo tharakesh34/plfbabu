@@ -55,6 +55,8 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.service.DailyDownloadProcess;
 
 public class DailyDownloadProcessImpl implements DailyDownloadProcess{
@@ -141,6 +143,16 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return null;
 	}
 	
+	/**
+	 * Method for importing Income Details for checking Core banking balances with PFF Application
+	 */
+	@Override
+	public List<IncomeAccountTransaction> importIncomeAccTransactions(
+			List<FinIncomeAccount> finIncomeAccounts) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -151,4 +163,5 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	public void setInterfaceDAO(InterfaceDAO interfaceDAO) {
 		this.interfaceDAO = interfaceDAO;
 	}
+
 }

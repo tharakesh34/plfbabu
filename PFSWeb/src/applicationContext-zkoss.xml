@@ -3947,7 +3947,12 @@
 		scope="prototype" parent="basisCtrl" />
 
 	<!--============ Report Generation Prompt Details ============== -->
-
+   
+    <bean id="dealWiseIncomeReportCtrl"
+		class="com.pennant.webui.reports.DealWiseIncomeReportCtrl" scope="prototype" parent="basisListCtrl">
+		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+	</bean>
+    
 	<bean id="reportGenerationPromptDialogCtrl"
 		class="com.pennant.webui.reports.ReportGenerationPromptDialogCtrl"
 		scope="prototype" parent="basisListCtrl">

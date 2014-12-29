@@ -69,7 +69,7 @@
 							<rows>
 								<row id = "row1">
 									<label id="label_FinApprovalStsInquiryDialog_FinReference" value="${c:l('label_FinApprovalStsInquiryDialog_FinReference.label')}" />
-									<textbox id="finReference" width="200px" maxlength="19" />
+									<textbox id="finReference" width="200px" maxlength="20" />
 									<label id="label_FinApprovalStsInquiryDialog_FinBranch" value="${c:l('label_FinApprovalStsInquiryDialog_FinBranch.label')}" />
 									<textbox id="finBranch" width="200px" maxlength="19" />
 								</row>

@@ -42,8 +42,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -72,6 +74,7 @@ public class AEAmounts implements Serializable {
 	private Date dateRefundCheck = new Date();
 	private Date dateAccrueValue = new Date();
 	private Date dateODFrom = new Date();
+	private Date dateCRBODFrom = new Date();
 	private Date dateLastFullyPaid = new Date();
 	private Date dateSuspPftTfr = new Date();
 
@@ -79,6 +82,7 @@ public class AEAmounts implements Serializable {
 	private Date dateCurRecord = new Date();
 
 	private boolean isOverDue = false;
+	private boolean isCRBOverDue = false;
 	private boolean isFutureDeal = false;
 	private boolean isEOD = false;
 	private boolean isSusp = false;
@@ -98,6 +102,9 @@ public class AEAmounts implements Serializable {
 	
 	private static FinanceSuspHeadDAO suspHeadDAO;
 	private static FinODDetailsDAO finODDetailsDAO;
+	private static CustomerDAO customerDAO;
+
+	private int crbGraceODDays = 0;
 
 	public AEAmounts() {
 		super();
@@ -128,19 +135,28 @@ public class AEAmounts implements Serializable {
 		amzTillRepay = zeroValue;
 		accrueTillSusp = zeroValue;
 
-		//Fetch Finance Suspense Head Object Details
-		Date suspDate = getSuspHeadDAO().getCustSuspDate(financeMain.getCustID());
-
+		//Fetch Customer Object Details
+		Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
+		
 		isSusp = false;
 		aeAmountCodes = new AEAmountCodes();
-		if (suspDate != null) {
-			dateSuspPftTfr = suspDate;
+		if (customer != null && customer.getCustStsChgDate() != null) {
+			dateSuspPftTfr = customer.getCustStsChgDate();
 			aeAmountCodes.setPftInSusp(true);
 			isSusp = true;
 
 			//TODO Calculate datePftTranfered
 			dateSuspPftTfr = DateUtility.getMonthStartDate(dateSuspPftTfr);
 		}
+		
+		String parmCode = null;
+		if (customer != null && PennantConstants.PFF_CUSTCTG_INDIV.equals(customer.getCustCtgCode())) {
+			parmCode = "CRBGRACE_INDV_ODDAYS";
+		} else {
+			parmCode = "CRBGRACE_CORP_ODDAYS";
+		}
+		
+		crbGraceODDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue(parmCode).toString());
 
 		String phase = StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_PHASE).toString());
 		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
@@ -148,7 +164,9 @@ public class AEAmounts implements Serializable {
 		}
 
 		isOverDue = false;
+		isCRBOverDue = false;
 		dateODFrom = financeMain.getFinStartDate();
+		dateCRBODFrom = financeMain.getFinStartDate();
 		dateLastFullyPaid = financeMain.getFinStartDate();
 
 		if (valueDate.before(financeMain.getFinStartDate())) {
@@ -164,6 +182,7 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setNextRepayPftDate(financeMain.getNextRepayPftDate());
 		aeAmountCodes.setNextRepayRvwDate(financeMain.getNextRepayRvwDate());
 		aeAmountCodes.setODInst(0);
+		aeAmountCodes.setCRBODInst(0);
 		aeAmountCodes.setPftInAdv(zeroValue);
 
 		// FIND Schedule and Repayment Dates
@@ -355,14 +374,31 @@ public class AEAmounts implements Serializable {
 			if(pftDetail.getFirstODDate() == null){
 				aeAmountCodes.setFirstODDate(dateODFrom);
 			}
+			
+			if (isCRBOverDue) {
+				
+				// CRB Detail : Day or EOD/SOD
+				if (isEOD) {
+					aeAmountCodes.setCRBODDays(DateUtility.getDaysBetween(dateCRBODFrom, dateAccrueValue));
+				} else {
+					aeAmountCodes.setCRBODDays(DateUtility.getDaysBetween(dateCRBODFrom, valueDate));
+				}
 
+				//First Overdue Date after CRB Reported Grace days
+				if(pftDetail.getCRBFirstODDate() == null){
+					aeAmountCodes.setCRBFirstODDate(dateCRBODFrom);
+				}
+			}
+			
 			//Fetch Finance Overdue Details
 			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(
-			        financeMain.getFinReference(), "");
+			        financeMain.getFinReference(), crbGraceODDays , true, "");
 
 			if (finODDetails != null) {
 				aeAmountCodes.setPriOD(finODDetails.getFinCurODPri());
 				aeAmountCodes.setPftOD(finODDetails.getFinCurODPft());
+				aeAmountCodes.setCRBPriOD(finODDetails.getCRBFinCurODPri());
+				aeAmountCodes.setCRBPftOD(finODDetails.getCRBFinCurODPft());
 				aeAmountCodes.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
 				aeAmountCodes.setPenaltyDue(finODDetails.getTotPenaltyBal());
 				aeAmountCodes.setPenaltyWaived(finODDetails.getTotWaived());
@@ -370,6 +406,7 @@ public class AEAmounts implements Serializable {
 
 		} else {
 			aeAmountCodes.setODDays(0);
+			aeAmountCodes.setCRBODDays(0);
 		}
 
 		// Last Fully Paid Days
@@ -513,6 +550,31 @@ public class AEAmounts implements Serializable {
 					aeAmountCodes.setODInst(1);
 					aeAmountCodes.setLastODDate(dateODFrom);
 					isOverDue = true;
+				}
+			}
+			
+			//Over Due Calculations
+			if (isOverdueSchd && isCRBOverDue) {
+				int days = DateUtility.getDaysBetween(dateCurRecord, dateAccrueValue);
+				if(days > crbGraceODDays){
+					aeAmountCodes.setCRBODInst(aeAmountCodes.getCRBODInst() + 1);
+					aeAmountCodes.setCRBLastODDate(dateCurRecord);
+				}
+			}
+			
+			if (isOverdueSchd && !isCRBOverDue) {
+				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) != 0
+						|| curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) != 0
+						|| curSchd.getDefPrincipalSchd().compareTo(curSchd.getDefSchdPriPaid()) != 0
+						|| curSchd.getDefProfitSchd().compareTo(curSchd.getDefSchdPftPaid()) != 0) {
+					
+					int days = DateUtility.getDaysBetween(dateCurRecord, dateAccrueValue);
+					if(days > crbGraceODDays){
+						dateCRBODFrom = curSchd.getSchDate();
+						aeAmountCodes.setCRBODInst(1);
+						aeAmountCodes.setCRBLastODDate(dateCRBODFrom);
+						isCRBOverDue = true;
+					}
 				}
 			}
 
@@ -932,4 +994,10 @@ public class AEAmounts implements Serializable {
 		AEAmounts.finODDetailsDAO = finODDetailsDAO;
 	}
 
+	public static CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		AEAmounts.customerDAO = customerDAO;
+	}
 }

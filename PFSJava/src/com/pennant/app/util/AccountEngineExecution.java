@@ -756,7 +756,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setCustId(dataSet.getCustId());
 			returnDataSet.setTranDesc(transactionEntry.getTransDesc());
 			returnDataSet.setPostDate(dataSet.getPostDate());
-			returnDataSet.setValueDate(dataSet.getValueDate());
+			returnDataSet.setValueDate(dataSet.getPostDate());
 			returnDataSet.setTranCode(transactionEntry.getTranscationCode());
 			returnDataSet.setRevTranCode(transactionEntry.getRvsTransactionCode());
 			returnDataSet.setDrOrCr(transactionEntry.getDebitcredit());

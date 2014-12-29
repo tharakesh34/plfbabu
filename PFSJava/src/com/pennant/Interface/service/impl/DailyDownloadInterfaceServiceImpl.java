@@ -16,6 +16,8 @@ import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
+import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.service.DailyDownloadProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 
@@ -584,6 +586,66 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
+	
+	// ++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
+
+	@Override
+    public void processIncomeAccountDetails(FinIncomeAccount finIncomeAccount) {
+		logger.debug("Entering");
+		getCoreInterfaceDAO().saveIncomeAccounts(finIncomeAccount);
+		logger.debug("Leaving");
+    }
+	
+	@Override
+	public boolean processIncomeAccTransactions(FinIncomeAccount finIncomeAcc) {
+		logger.debug("Entering");
+		boolean isExecuted = true;
+		try{
+
+			IncomeAccountTransaction incomeAccountTransaction = new IncomeAccountTransaction();
+			incomeAccountTransaction.setLastMntOn(finIncomeAcc.getLastMntOn());
+
+			//Check Whether This Month Income Account Transactions Already Exist
+			boolean monthIncomeTxnsExist = getCoreInterfaceDAO().checkIncomeTransactionsExist(incomeAccountTransaction);
+
+			if(!monthIncomeTxnsExist){
+
+				List<FinIncomeAccount> tempIncomeAccounts = new ArrayList<FinIncomeAccount>();
+				List<IncomeAccountTransaction> saveIncomeAccTransactions = new ArrayList<IncomeAccountTransaction>();
+
+				//Fetch Existing Income Account Details
+				List<FinIncomeAccount> incomeAccounts = getCoreInterfaceDAO().fetchIncomeAccountDetails(finIncomeAcc);
+
+				if(incomeAccounts!= null ) {
+
+					//Import Income Account Transactions From Core System
+					for (FinIncomeAccount finIncomeAccount : incomeAccounts) {
+						tempIncomeAccounts.add(finIncomeAccount);
+						if(tempIncomeAccounts.size()==498){
+							saveIncomeAccTransactions.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
+							tempIncomeAccounts.clear();
+						}
+					}
+					if(tempIncomeAccounts.size() > 0){
+						saveIncomeAccTransactions.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
+						tempIncomeAccounts.clear();
+					}
+
+					if(saveIncomeAccTransactions != null && !saveIncomeAccTransactions.isEmpty()){
+						getCoreInterfaceDAO().saveIncomeAccTransactions(saveIncomeAccTransactions);
+					}
+				}
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

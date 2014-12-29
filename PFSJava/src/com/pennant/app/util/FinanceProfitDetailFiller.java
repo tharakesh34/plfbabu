@@ -161,6 +161,19 @@ public class FinanceProfitDetailFiller implements Serializable {
 		if(aeAmountCodes.getLastODDate() != null){
 			pftDetail.setLastODDate(aeAmountCodes.getLastODDate());
 		}
+		
+		//CRB Field Details
+		pftDetail.setCRBODDays(aeAmountCodes.getCRBODDays());
+		pftDetail.setCRBODInst(aeAmountCodes.getCRBODInst());
+		pftDetail.setCRBODPrincipal(aeAmountCodes.getCRBPriOD());
+		pftDetail.setCRBODProfit(aeAmountCodes.getCRBPftOD());
+		if(pftDetail.getCRBFirstODDate() == null){
+			pftDetail.setCRBFirstODDate(aeAmountCodes.getCRBFirstODDate());
+		}
+		
+		if(aeAmountCodes.getCRBLastODDate() != null){
+			pftDetail.setCRBLastODDate(aeAmountCodes.getCRBLastODDate());
+		}
 
 		logger.debug("Leaving");
 		return pftDetail;

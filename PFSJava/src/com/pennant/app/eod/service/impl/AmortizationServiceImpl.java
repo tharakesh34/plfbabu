@@ -140,6 +140,8 @@ public class AmortizationServiceImpl implements AmortizationService {
 				finPftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 				finPftDetail.setFirstODDate(resultSet.getDate("FirstODDate"));
 				finPftDetail.setLastODDate(resultSet.getDate("LastODDate"));
+				finPftDetail.setCRBFirstODDate(resultSet.getDate("CRBFirstODDate"));
+				finPftDetail.setCRBLastODDate(resultSet.getDate("CRBLastODDate"));
 				
 				financeMain = getFinanceMainDAO().getFinanceMainForPftCalc(finReference);
 				scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finReference);
@@ -502,7 +504,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 	private String getSelectQuery() {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp, " );
-		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate FROM FinanceMain F ");
+		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
 		sqlQuery.append(" WHERE P.FinIsActive = '1'");
 		//selQuery.append(" AND MaturityDate >= '"+  dateValueDate +"'");

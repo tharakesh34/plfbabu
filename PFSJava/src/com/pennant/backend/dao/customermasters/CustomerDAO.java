@@ -86,5 +86,5 @@ public interface CustomerDAO {
 	 AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy);
 	 String getCustWorstStsDesc(long custID);
 	 String getCustWorstStsbyCurFinSts(long custID, String finReference, String curFinSts);
- 	
+	 Customer getCustomerByID(final long id);
 } 

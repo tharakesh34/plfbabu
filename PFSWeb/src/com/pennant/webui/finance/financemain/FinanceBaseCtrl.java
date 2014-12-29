@@ -94,6 +94,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
@@ -360,7 +361,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Hbox			hbox_cbbApproved;						// autoWired
 	protected Checkbox 		cbbApproved;							// autoWired
 	protected Row 			row_discrepancy1;						// autoWired
-	protected Row 			row_discrepancy2;						// autoWired
  
 	protected Label 		recordStatus; 							// autoWired
 	protected Radiogroup 	userAction;								// autoWired
@@ -517,8 +517,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button 		btnHelp; 								// autoWired
 	protected Button 		btnNotes; 								// autoWired
 
-	protected Label labelDiscrepancy1;
-	protected Label labelDiscrepancy2;
+	protected Vbox          discrepancies; 							// autoWired
 
 	//Main Tab Details
 
@@ -6566,42 +6565,112 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	 * @param financeDetail
 	 */
 	protected void setDiscrepancy(FinanceDetail financeDetail){
-		if (this.row_discrepancy1 !=null && this.labelDiscrepancy1!=null && 
-				this.row_discrepancy1 !=null && this.labelDiscrepancy1!=null ) {
-			
-			String discrepancy = "";
-			String limitStatus = "";
+		logger.debug("Entering");
+		if (this.row_discrepancy1 !=null && this.discrepancies != null){
+			String limitSts ="";
+			this.discrepancies.getChildren().clear();
 			long custId = financeDetail.getFinScheduleData().getFinanceMain().getCustID();
-			
 			if(custId != 0 && custId != Long.MIN_VALUE){
-
-				FinanceDetail fDetail = getFinanceDetailService().getDiscrepancies(financeDetail);
-				discrepancy = StringUtils.trimToEmpty(fDetail.getFinScheduleData().getFinanceMain().getDiscrepancy());
-				limitStatus = StringUtils.trimToEmpty(fDetail.getFinScheduleData().getFinanceMain().getLimitStatus());
-
-				discrepancy = PennantStaticListUtil.getlabelDesc(discrepancy, PennantStaticListUtil.getWorkFlowConditionList());
-				//limitStatus = PennantStaticListUtil.getlabelDesc(limitStatus, PennantStaticListUtil.getWorkFlowConditionList());
+				List<ErrorDetails> discrepancies = getFinanceDetailService().getDiscrepancies(financeDetail);
+				getDiscrepancyDetails(discrepancies,financeDetail,true);
+				limitSts = financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus();
 			}
-			
-			this.row_discrepancy1.setVisible(false);
-			this.labelDiscrepancy1.setValue("None");
-			/*
-			this.row_discrepancy2.setVisible(false);
-			this.labelDiscrepancy2.setValue("None");*/
-			if (!discrepancy.equals("") || !limitStatus.equals("") ) {
+			if(!StringUtils.trimToEmpty(limitSts).equals("")){
 				this.row_discrepancy1.setVisible(true);
-				this.labelDiscrepancy1.setValue("1. " + discrepancy);
-				if(!limitStatus.equals("")){
-					if(discrepancy.equals("")){
-						this.labelDiscrepancy1.setValue("1. " + limitStatus);
-						this.row_discrepancy2.setVisible(false);
-					}else{
-						this.labelDiscrepancy2.setValue("2. " + limitStatus);
-						this.row_discrepancy2.setVisible(true);
-					}
+				if(limitSts.contains("//")){
+				String[] discrepancies = limitSts.split("//");
+				Label label;
+				label= new Label(discrepancies[0]);
+				label.setMultiline(true);
+				label.setStyle("color:red;font-weight:bold;font-size:13px");
+				this.discrepancies.appendChild(label);
+				this.discrepancies.setWidth("97%");
+				label= new Label(discrepancies[1]);
+				label.setMultiline(true);
+				label.setStyle("color:#7B68EE;font-weight:bold;font-size:13px");
+				this.discrepancies.appendChild(label);
+				}else{
+					Label label= new Label(limitSts);
+					label.setMultiline(true);
+					label.setStyle("color:red;font-weight:bold;font-size:13px");
+				this.discrepancies.appendChild(label);
 				}
+			}else{
+				this.row_discrepancy1.setVisible(false);
 			}
 		}
+		logger.debug("Leaving");
+    }
+	
+	public boolean getDiscrepancyDetails(List<ErrorDetails> discrepancies,FinanceDetail finDetail,boolean isDesc){
+		logger.debug("Entering");
+		String dispMsg="",errorMsg ="", warningMsg ="";
+		int  warningCount = 1, errorCount = 1;
+		String newline = isDesc?"\n":"\n\n";
+		String errorDetailCodes ="";
+		boolean isDiscError = false ;
+		if(discrepancies != null){
+			for (ErrorDetails errorDetail : discrepancies) {
+				if(errorDetail.getErrorParameters() != null && errorDetail.getErrorParameters().length > 0){
+					String errCodeTemp = "";
+					for(String errParameter : errorDetail.getErrorParameters()){
+						if(errCodeTemp.equals("")){
+							errCodeTemp = errParameter;
+						}else{
+							errCodeTemp = errCodeTemp + "|" + errParameter;
+						}
+					}
+					errorDetailCodes = errorDetailCodes + errorDetail.getErrorCode() + "(" +errCodeTemp+")" + ";";
+				}else{
+					errorDetailCodes = errorDetailCodes + errorDetail.getErrorCode() + ";";
+				}
+				if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
+					errorMsg = errorMsg +  errorCount + ". "+ errorDetail.getError()+ newline;
+					errorCount++;
+				}else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)){
+					warningMsg = warningMsg + warningCount + ". "+ errorDetail.getError()+ newline;
+					warningCount++;
+				}
+			}
+			if(errorDetailCodes.length() > 0 && errorDetailCodes.charAt(errorDetailCodes.length()-1) == ';'){
+				errorDetailCodes = errorDetailCodes.substring(0,errorDetailCodes.length()-1);
+			}
+		}
+		if(isDesc){
+			if(!errorMsg.equals("")){
+				dispMsg = "Error :" +"\n"+errorMsg;
+				finDetail.getFinScheduleData().getFinanceMain().setLimitStatus(dispMsg);
+				isDiscError = true;
+			}
+			if(!warningMsg.equals("")){
+				dispMsg = dispMsg +"//" +"Warning :" +"\n"+warningMsg;
+				finDetail.getFinScheduleData().getFinanceMain().setLimitStatus(dispMsg);
+				isDiscError = false;
+			}
+		}else{
+			if(!errorMsg.equals("")){
+				finDetail.getFinScheduleData().getFinanceMain().setLimitStatus(errorMsg);
+				isDiscError = true;
+			}else if(!warningMsg.equals("")){
+				finDetail.getFinScheduleData().getFinanceMain().setLimitStatus(warningMsg);
+				isDiscError = false;
+			}
+		}
+		finDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(errorDetailCodes);
+		logger.debug("Leaving");
+		return isDiscError;
+	}
+	
+	
+	/**
+	 * Method for getting Discrepancies based on Finance Amount
+	 */
+	public void onFulfill$finAmount(Event event){
+		logger.debug("Entering " + event.toString());
+		int formatter = getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
+		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter));
+		setDiscrepancy(getFinanceDetail());
+		logger.debug("Leaving " + event.toString());
 	}
 	
 	/**
@@ -6822,6 +6891,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		
 		Date grcpftDate = null;
 		FinanceMain main = scheduleData.getFinanceMain();
+		getFinanceDetail().setFinScheduleData(scheduleData);
 		if(main.isNewRecord() || main.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 			
 			boolean pftchecked = false;

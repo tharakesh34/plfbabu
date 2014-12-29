@@ -36,7 +36,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.util.CalculationUtil;
@@ -2433,6 +2432,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (summaryRequired) {
+			
+			//If Penalty Rates Required to show on Finance Inquiry Screen
+			//finSchData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, ""));
 
 			//Finance Summary Details Preparation
 			final Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
@@ -2453,7 +2455,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			finSchData.setFinanceSummary(summary);
 			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
 
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference, "");
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference, 0, false, "");
 			if (finODDetails != null) {
 				summary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
 				summary.setFinODTotWaived(finODDetails.getTotWaived());
@@ -2682,61 +2684,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeMain;
 	}
 	
-	
-	public FinanceDetail getDiscrepancies(FinanceDetail financeDetail){
+
+	public List<ErrorDetails> getDiscrepancies(FinanceDetail financeDetail){
 		logger.debug("Entering");
 
+        List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus("");
 		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
-		//Check Customer has Past Due or not and Stop Proceeding further if exist
-		long oDDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
-		if(oDDays > 0){
-			financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);
-			logger.debug("Leaving");
-		}
-		getCustomerLimitStatus(financeDetail,true);
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-	
-	/**
-	 * Method for Check Discrepancy in Workflow Level
-	 */
-	public FinanceDetail checkDiscrepancy(FinanceDetail financeDetail){
-		logger.debug("Entering");
-
-		financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy("");
-		//Check Customer has Past Due or not and Stop Proceeding further if exist
-		long oDDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
+		
+		long ODDays = getFinODDetailsDAO().checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
 		int allowedDays = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MAX_ALLOW_ODDAYS").toString());
-		if(oDDays >  0 ){
-			if(oDDays <= allowedDays){
-				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE_OVERRIDE);
+		if(ODDays >  0 ){
+			if(ODDays <= allowedDays){
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS001",
+						new String[]{String.valueOf(ODDays)}, null), ""));
 			}else{
-				financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(PennantConstants.WF_PAST_DUE);
-				return financeDetail;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS002",
+						new String[]{String.valueOf(ODDays)},null), ""));
 			}
 		}
-				 
-		getCustomerLimitStatus(financeDetail,false);
-		if(!financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus().equals("")){
-			financeDetail.getFinScheduleData().getFinanceMain().setDiscrepancy(
-				financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus());
-		}
-
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-	
-	/**
-	 * Get Customer Limits 
-	 * @param financeDetail
-	 * @param isDesc  send as false for the conditions used for workflow
-	 * @return
-	 */
-	private FinanceDetail getCustomerLimitStatus(FinanceDetail financeDetail, boolean isDesc){
-		logger.debug("Entering");
-
-		financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus("");
+		
 		//Check Limit Status of Customer
 		CustomerLimit custLimit = null;
 		List<CustomerLimit> customerLimitList = null;
@@ -2750,7 +2717,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			custLimit.setCustLocation(" ");
 		} else {
 			logger.debug("Leaving");
-			return financeDetail;
+			return errorDetails;
 		}
 
 		try {
@@ -2758,81 +2725,113 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} catch (Exception e) {
 			logger.debug("Exception " + e.getMessage());
 			logger.debug("Leaving");
-			return financeDetail;
+			return errorDetails;
 		}
 
 		if (customerLimitList != null && customerLimitList.size() > 0) {
 
-			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
+			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 			String limitType = "";
 			
+				//###Release PFFV1.0.6 - Changed Finance Amount to Finance Amount - Downpay Amount.
 			BigDecimal finAmount =  financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
 			BigDecimal downpaybank = financeDetail.getFinScheduleData().getFinanceMain().getDownPayBank();						
 			BigDecimal downpaySuppl = financeDetail.getFinScheduleData().getFinanceMain().getDownPaySupl();
 			finAmount = finAmount.subtract(downpaybank==null?BigDecimal.ZERO:downpaybank).subtract(downpaySuppl==null?BigDecimal.ZERO:downpaySuppl);
-			
+			BigDecimal calcFinAmount = BigDecimal.ZERO;
 			for (CustomerLimit limit : customerLimitList) {
 				if(!limit.getCustCountry().equals("")){
-					limitType = "Country ( " + limit.getCustCountry() + " - " + limit.getCustCountryDesc() + " )";
+					if(limit.getCustCountry().equalsIgnoreCase(PennantConstants.COUNTRY_BEHRAIN)){
+						continue;
+					}
+					limitType = " ( " + limit.getCustCountry() + " - " + limit.getCustCountryDesc() + " )";
 				}else if(!limit.getCustGrpCode().equals("")){
-					limitType = "Customer Group ( " + limit.getCustGrpCode() + " - " + limit.getCustGrpDesc() + " ) ";
+					limitType = " ( " + limit.getCustGrpCode() + " - " + limit.getCustGrpDesc() + " ) ";
 				}else {
 					limitType = "Customer";
 				}
-				if(limit.getLimitExpiry() != null && limit.getLimitExpiry().compareTo(curBussDate) < 0){
-					if(isDesc){
-						financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("LIMIT_EXPIRED", new String[]{limitType,limit.getLimitCategoryDesc()}));
+				
+				if(limit.getLimitCategory().equals("")){
+					if(!limit.getCustGrpCode().equals("")){
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS006",
+								new String[]{limitType},null), ""));
+					}else if(!limit.getCustCountry().equals("")){
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS009",
+								new String[]{limitType},null), ""));
 					}else{
-						financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_LIMIT_EXPIRED);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS003",
+								null, null), ""));
 					}
-					logger.debug("Leaving");
-					return financeDetail;
+						continue;
 				}
 				
+				if(limit.getLimitExpiry() != null && limit.getLimitExpiry().compareTo(curBussDate) < 0){
 					
-				Currency lCurrency = null;
-				if (!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
-					lCurrency = getCurrencyDAO().getCurrencyById(limit.getLimitCurrency(), "");
-					Currency fCurrency = getCurrencyDAO().getCurrencyById(
-							financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), "");
-					finAmount = CalculationUtil.getConvertedAmount(fCurrency, lCurrency, finAmount);
-				}  
-				BigDecimal excessAmount = limit.getRiskAmount().add(finAmount).subtract(limit.getLimitAmount());
-				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-					if(limit.getLimitAmount().compareTo(BigDecimal.ZERO) == 0){
-						if(isDesc){
-							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_GREATER_THAN_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
-						}else{
-							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_GREATER_THAN_20);
-						}
+					if(!limit.getCustGrpCode().equals("")){
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS007",
+								new String[]{limitType,limit.getLimitCategoryDesc()},null), ""));
+					}else if(!limit.getCustCountry().equals("")){
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS010",
+								new String[]{limitType,limit.getLimitCategoryDesc()},null), ""));
 					}else{
-						BigDecimal excessPerc = excessAmount.multiply(BigDecimal.valueOf(100)).divide(limit.getLimitAmount(), 0, RoundingMode.HALF_DOWN);
-						if(excessPerc.compareTo(BigDecimal.TEN) <= 0  ){
-							if(isDesc){
-								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_LESS_THAN_10", new String[]{limitType,limit.getLimitCategoryDesc()}));
-							}else{
-								financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_LESS_THAN_10);
-							}
-						}else if(excessPerc.compareTo(BigDecimal.TEN) > 0 && excessPerc.compareTo(new BigDecimal(20)) <= 0){
-							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(Labels.getLabel("EXCESS_BETWEEN_10_20", new String[]{limitType,limit.getLimitCategoryDesc()}));
-						}else{
-							financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_EXCESS_BETWEEN_10_20);
-						}
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS004",
+								new String[]{limit.getLimitCategoryDesc()},null), ""));
 					}
 					logger.debug("Leaving");
-					if(!StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getLimitStatus()).equals("")){
-						return financeDetail;
-					}
 				}
 
+				Currency lCurrency = null;
+				if (!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals("") ){
+					if(!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
+						lCurrency = getCurrencyDAO().getCurrencyById(limit.getLimitCurrency(), "");
+						Currency fCurrency = getCurrencyDAO().getCurrencyById(
+								financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), "");
+						calcFinAmount = CalculationUtil.getConvertedAmount(fCurrency, lCurrency, finAmount);
+					}  else{
+						calcFinAmount = finAmount;
+					}
+				}
+				BigDecimal excessAmount = limit.getRiskAmount().add(calcFinAmount).subtract(limit.getLimitAmount());
+				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal excessPerc  ;
+					if(limit.getLimitAmount().compareTo(BigDecimal.ZERO) == 0){
+						excessPerc = new BigDecimal(100);
+						/*
+						if(!limit.getCustGrpCode().equals("")){
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS007",
+									new String[]{limitType,limit.getLimitCategoryDesc()},null), ""));
+						}else if(!limit.getCustCountry().equals("")){
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS008",
+									new String[]{limitType,limit.getLimitCategoryDesc()},null), ""));
+						}else{
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS006",
+									new String[]{limit.getLimitCategoryDesc()}, null), ""));
+						}
+					*/}else{
+						excessPerc = excessAmount.multiply(new BigDecimal(100)).divide(limit.getLimitAmount(), 2, RoundingMode.HALF_DOWN);
+					}
+						if(!limit.getCustCountry().equals("")){
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS011",
+									new String[]{excessPerc.toString(), PennantApplicationUtil.amountFormate(
+											excessAmount, financeDetail.getFinScheduleData().getFinanceMain().getLovDescFinFormatter()).toString(),limitType,limit.getLimitCategoryDesc()},null), ""));
+						}else if(!limit.getCustGrpCode().equals("")){
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS008",
+									new String[]{excessPerc.toString(), PennantApplicationUtil.amountFormate(
+											excessAmount, financeDetail.getFinScheduleData().getFinanceMain().getLovDescFinFormatter()).toString(),limitType,limit.getLimitCategoryDesc()},null), ""));
+						}else{
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "DS005",
+									new String[]{excessPerc.toString(), PennantApplicationUtil.amountFormate(
+											excessAmount, financeDetail.getFinScheduleData().getFinanceMain().getLovDescFinFormatter()).toString(),limit.getLimitCategoryDesc()},null), ""));
+						}
+				
+				}
 			}
-		}else{
-			financeDetail.getFinScheduleData().getFinanceMain().setLimitStatus(PennantConstants.WF_NO_LIMIT);
 		}
-		logger.debug("Entering");
-		return financeDetail;
+		logger.debug("Leaving");
+		return errorDetails;
+	
 	}
-
+	
 	/**
 	 * Method for Checking exception List based upon Requirements
 	 */

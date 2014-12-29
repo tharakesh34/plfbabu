@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -349,33 +348,6 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
-	/**
-	 * Method for Fetch Finance Suspend Details List
-	 */
-	@Override
-	public Date getCustSuspDate(long custId) {
-		logger.debug("Entering");
-		
-		FinanceSuspHead suspHead = new FinanceSuspHead();
-		suspHead.setCustId(custId);
-		
-		StringBuilder selectSql =new StringBuilder("Select CustStsChgDate FROM Customers where CustId = :CustId ");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspHead);
-		logger.debug("Leaving");
-		
-		Date suspFromDate = null;
-		try {
-			suspFromDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Date.class);
-        } catch (Exception e) {
-        	logger.error(e.getMessage());
-        	suspFromDate = null;
-        }
-		return suspFromDate;
-	}
-
 	/**
 	 * This method updates the Record FinanceSuspHead Flag
 	 */

@@ -322,6 +322,8 @@ public class HolidayMaster implements java.io.Serializable {
 							Integer.parseInt(holiday[i]), ""));//holidayDesc[i]
 				}
 			}
+		}else{
+			holidayList = new ArrayList<HolidayDetail>(1);
 		}
 		return holidayList;
 	}

@@ -1106,6 +1106,28 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return pastDue;
     }
 
+	@Override
+	public Customer getCustomerByID(final long id) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setId(id);		
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  CustCtgCode, CustStsChgDate");
+		selectSql.append(" FROM  Customers");
+		selectSql.append(" Where CustID =:CustID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		
+		try{
+			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			customer = null;
+		}
+		logger.debug("Leaving");
+		return customer;
+	}
 		
 	private ErrorDetails  getError(String errorId, String custCIF,String custCtgCode, String userLanguage){
 		String[][] parms= new String[2][2]; 

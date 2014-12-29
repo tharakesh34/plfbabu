@@ -55,6 +55,8 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal EarlyPaidAmt =  BigDecimal.ZERO;
 	private BigDecimal ODPrincipal =  BigDecimal.ZERO;
 	private BigDecimal ODProfit =  BigDecimal.ZERO;
+	private BigDecimal CRBODPrincipal =  BigDecimal.ZERO;
+	private BigDecimal CRBODProfit =  BigDecimal.ZERO;
 	private BigDecimal PenaltyPaid =  BigDecimal.ZERO;
 	private BigDecimal PenaltyDue =  BigDecimal.ZERO;
 	private BigDecimal PenaltyWaived =  BigDecimal.ZERO;
@@ -80,6 +82,7 @@ public class FinanceProfitDetail implements Serializable {
 	private long       NOInst =  Long.MIN_VALUE;
 	private long       NOPaidInst =  Long.MIN_VALUE;
 	private long       NOODInst =  Long.MIN_VALUE;
+	private long       CRBODInst =  Long.MIN_VALUE;
 	private String     FinAccount;
 	private String     FinAcType;
 	private String     DisbAccountId;
@@ -95,8 +98,11 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal FirstRepayAmt =  BigDecimal.ZERO;
 	private BigDecimal LastRepayAmt =  BigDecimal.ZERO;
 	private int 	   oDDays = 0;
+	private int 	   CRBODDays = 0;
 	private Date 	   firstODDate;
 	private Date 	   lastODDate;
+	private Date 	   cRBFirstODDate;
+	private Date 	   cRBLastODDate;
 
 	private String     closingStatus;
 	private String     finCategory;
@@ -807,6 +813,44 @@ public class FinanceProfitDetail implements Serializable {
     }
 	public void setDepreciatePri(BigDecimal depreciatePri) {
 	    this.depreciatePri = depreciatePri;
+    }
+	
+	public Date getCRBFirstODDate() {
+	    return cRBFirstODDate;
+    }
+	public void setCRBFirstODDate(Date cRBFirstODDate) {
+	    this.cRBFirstODDate = cRBFirstODDate;
+    }
+	
+	public Date getCRBLastODDate() {
+	    return cRBLastODDate;
+    }
+	public void setCRBLastODDate(Date cRBLastODDate) {
+	    this.cRBLastODDate = cRBLastODDate;
+    }
+	public int getCRBODDays() {
+	    return CRBODDays;
+    }
+	public void setCRBODDays(int cRBODDays) {
+	    CRBODDays = cRBODDays;
+    }
+	public long getCRBODInst() {
+	    return CRBODInst;
+    }
+	public void setCRBODInst(long cRBODInst) {
+	    CRBODInst = cRBODInst;
+    }
+	public BigDecimal getCRBODPrincipal() {
+	    return CRBODPrincipal;
+    }
+	public void setCRBODPrincipal(BigDecimal cRBODPrincipal) {
+	    CRBODPrincipal = cRBODPrincipal;
+    }
+	public BigDecimal getCRBODProfit() {
+	    return CRBODProfit;
+    }
+	public void setCRBODProfit(BigDecimal cRBODProfit) {
+	    CRBODProfit = cRBODProfit;
     }
 	
 }
