@@ -131,15 +131,7 @@
 									id="label_SalesOfficerDialog_SalesOffDept"
 									value="${c:l('label_SalesOfficerDialog_SalesOffDept.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="salesOffDept"
-										width="72px" visible="false" />
-									<textbox
-										id="lovDescSalesOffDeptName" width="200px" readonly="true" />
-									<button
-										id="btnSearchSalesOffDept"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="salesOffDept" />
 								</hbox>
 							</row>
 							<row visible="true">

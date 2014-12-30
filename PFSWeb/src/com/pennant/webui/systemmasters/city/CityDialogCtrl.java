@@ -66,6 +66,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -86,7 +87,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,14 +108,14 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window 		window_CityDialog; 		// autoWired
 
-	protected Textbox 		pCCountry; 				// autoWired
-	protected Textbox 		pCProvince; 			// autoWired
+	protected ExtendedCombobox 		pCCountry; 				// autoWired
+	protected ExtendedCombobox 		pCProvince; 			// autoWired
 	protected Uppercasebox	pCCity; 				// autoWired
 	protected Textbox 		pCCityName; 			// autoWired
 	protected Label   		recordStatus; 			// autoWired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
-	
+	 private transient String  cityCountryTemp;
 
 	// not autoWired Var's
 	private City city; // overHanded per parameter
@@ -144,12 +144,8 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnHelp; 		// autoWired
 	protected Button btnNotes; 		// autoWired
 
-	protected Button 			btnSearchPCCountry;  // autoWired
-	protected Textbox 			lovDescPCCountryName;
 	private transient String 	oldVar_lovDescPCCountryName;
 
-	protected Button 			btnSearchPCProvince; // autoWired
-	protected Textbox 			lovDescPCProvinceName;
 	private transient String 	oldVar_lovDescPCProvinceName;
 
 	// ServiceDAOs / Domain Classes
@@ -236,6 +232,18 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.pCCity.setMaxlength(8);
 		this.pCCityName.setMaxlength(50);
 
+		this.pCCountry.setMandatoryStyle(true);
+		this.pCCountry.setModuleName("Country");
+		this.pCCountry.setValueColumn("CountryCode");
+		this.pCCountry.setDescColumn("CountryDesc");
+		this.pCCountry.setValidateColumns(new String[]{"CountryCode"});
+		
+		this.pCProvince.setMandatoryStyle(true);
+		this.pCProvince.setModuleName("Province");
+		this.pCProvince.setValueColumn("CPProvince");
+		this.pCProvince.setDescColumn("CPProvinceName");
+		this.pCProvince.setValidateColumns(new String[]{"CPProvince"});
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -255,7 +263,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doCheckRights() {
 		logger.debug("Entering ");
 		getUserWorkspace().alocateAuthorities("CityDialog");
-
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnDelete"));
@@ -372,49 +379,47 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchPCCountry(Event event){
+	public void onFulfill$pCCountry(Event event){
 		logger.debug("Entering" + event.toString());
-		String country = this.pCCountry.getValue();
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_CityDialog,"Country");
+		Object dataObject = pCCountry.getObject();
 		if (dataObject instanceof String){
 			this.pCCountry.setValue(dataObject.toString());
-			this.lovDescPCCountryName.setValue("");
+			this.pCCountry.setDescription("");
 		}else{
 			Country details= (Country) dataObject;
 			if (details != null) {
 				this.pCCountry.setValue(details.getCountryCode());
-				this.lovDescPCCountryName.setValue(details.getCountryCode()+"-"+
-						details.getCountryDesc());
+				this.pCCountry.setDescription(details.getCountryDesc());
 			}
 		}
-
-		if (!StringUtils.trimToEmpty(country).equals(this.pCCountry.getValue())){
-			this.pCProvince.setValue("");
-			this.lovDescPCProvinceName.setValue("");
-		}
-
-		this.btnSearchPCProvince.setDisabled(false);
+		doSetProvProp();
 		logger.debug("Leaving" + event.toString());
 
 	}
+	private void doSetProvProp(){
+		if (!StringUtils.trimToEmpty(cityCountryTemp).equals(this.pCCountry.getValue())){
+			this.pCProvince.setObject("");
+			this.pCProvince.setValue("");
+			this.pCProvince.setDescription("");
+		}
+		cityCountryTemp = this.pCCountry.getValue();
+		Filter[] filtersProvince = new Filter[1] ;
+		filtersProvince[0]= new Filter("CPCountry", this.pCCountry.getValue(), Filter.OP_EQUAL);
+		this.pCProvince.setFilters(filtersProvince);
+	}
+	
 
-	public void onClick$btnSearchPCProvince(Event event){
-		logger.debug("Entering" + event.toString());	   
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("CPCountry", this.pCCountry.getValue(), Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_CityDialog,"Province",filters);
-
+	public void onFulfill$pCProvince(Event event){
+		logger.debug("Entering" + event.toString());	
+		Object dataObject = pCProvince.getObject();
 		if (dataObject instanceof String){
 			this.pCProvince.setValue(dataObject.toString());
-			this.lovDescPCProvinceName.setValue("");
+			this.pCProvince.setDescription("");
 		}else{
 			Province details= (Province) dataObject;
 			if (details != null) {
 				this.pCProvince.setValue(details.getCPProvince());
-				this.lovDescPCProvinceName.setValue(details.getCPProvince()+"-"+
-						details.getCPProvinceName());
+				this.pCProvince.setDescription(details.getCPProvinceName());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -496,14 +501,14 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.recordStatus.setValue(aCity.getRecordStatus());
 
 		if(aCity.isNewRecord()){
-			this.lovDescPCCountryName.setValue("");
-			this.lovDescPCProvinceName.setValue("");
+			this.pCCountry.setDescription("");
+			this.pCProvince.setDescription("");
 		}else{
-			this.lovDescPCCountryName.setValue(aCity.getPCCountry()+"-"+
-					aCity.getLovDescPCCountryName());
-			this.lovDescPCProvinceName.setValue(aCity.getPCProvince()+"-"+ 
-					aCity.getLovDescPCProvinceName());
+			this.pCCountry.setDescription(aCity.getLovDescPCCountryName());
+			this.pCProvince.setDescription(aCity.getLovDescPCProvinceName());
 		}
+		cityCountryTemp = this.pCCountry.getValue();
+		doSetProvProp();
 		logger.debug("Leaving ");
 	}
 
@@ -519,15 +524,15 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aCity.setLovDescPCCountryName(this.lovDescPCCountryName.getValue());
-			aCity.setPCCountry(this.pCCountry.getValue().toUpperCase());
+			aCity.setLovDescPCCountryName(this.pCCountry.getValue());
+			aCity.setPCCountry(this.pCCountry.getValidatedValue().toUpperCase());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 
 		try {
-			aCity.setLovDescPCProvinceName(this.lovDescPCProvinceName.getValue());
-			aCity.setPCProvince(this.pCProvince.getValue());
+			aCity.setLovDescPCProvinceName(this.pCProvince.getDescription());
+			aCity.setPCProvince(this.pCProvince.getValidatedValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -582,18 +587,18 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			setCity(aCity);
 		}
-
+		
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aCity.isNew()) {
-			this.btnSearchPCCountry.setVisible(true);
-			this.btnSearchPCProvince.setVisible(true);
+			this.pCCountry.setVisible(true);
+			this.pCProvince.setVisible(true);
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
 			this.pCCountry.focus();
 		} else {
-			this.btnSearchPCCountry.setVisible(false);
-			this.btnSearchPCProvince.setVisible(false);
+			this.pCCountry.setReadonly(true);
+			this.pCProvince.setReadonly(true);
 			this.pCCityName.focus();
 			if (isWorkFlowEnabled()){
 				if (!StringUtils.trimToEmpty(aCity.getRecordType()).equals("")){
@@ -637,8 +642,8 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_pCCityName = this.pCCityName.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 
-		this.oldVar_lovDescPCCountryName = this.lovDescPCCountryName.getValue();
-		this.oldVar_lovDescPCProvinceName = this.lovDescPCProvinceName.getValue();
+		this.oldVar_lovDescPCCountryName = this.pCCountry.getDescription();
+		this.oldVar_lovDescPCProvinceName = this.pCProvince.getDescription();
 		logger.debug("Leaving ");
 
 	}
@@ -654,8 +659,8 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.pCCityName.setValue(this.oldVar_pCCityName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
-		this.lovDescPCCountryName.setValue(this.oldVar_lovDescPCCountryName);
-		this.lovDescPCProvinceName.setValue(this.oldVar_lovDescPCProvinceName);
+		this.pCCountry.setDescription(this.oldVar_lovDescPCCountryName);
+		this.pCProvince.setDescription(this.oldVar_lovDescPCProvinceName);
 
 		if(isWorkFlowEnabled()){
 			this.userAction.setSelectedIndex(0);	
@@ -723,9 +728,9 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescPCCountryName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.pCCountry.setConstraint(new PTStringValidator(Labels.getLabel(
 				"label_CityDialog_PCCountry.value"), null, true));
-		this.lovDescPCProvinceName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.pCProvince.setConstraint(new PTStringValidator(Labels.getLabel(
 				"label_CityDialog_PCProvince.value"), null, true));
 
 		logger.debug("Leaving");
@@ -736,8 +741,8 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescPCCountryName.setConstraint("");
-		this.lovDescPCProvinceName.setConstraint("");
+		this.pCCountry.setConstraint("");
+		this.pCProvince.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -750,8 +755,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.pCProvince.setErrorMessage("");
 		this.pCCity.setErrorMessage("");
 		this.pCCityName.setErrorMessage("");
-		this.lovDescPCCountryName.setErrorMessage("");
-		this.lovDescPCProvinceName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -850,16 +853,16 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
+		
 		if (getCity().isNewRecord()){			
 			this.pCCity.setReadonly(false);
 			this.btnCancel.setVisible(false);
 		}else{
 			this.pCCity.setReadonly(true);
-			this.btnSearchPCCountry.setVisible(false);
-			this.btnSearchPCProvince.setVisible(false);
+			this.pCCountry.setReadonly(true);
+			this.pCProvince.setReadonly(true);
 			this.btnCancel.setVisible(true);
-		}		
-
+		}
 		this.pCCityName.setReadonly(isReadOnly("CityDialog_pCCityName"));
 
 		if (isWorkFlowEnabled()){

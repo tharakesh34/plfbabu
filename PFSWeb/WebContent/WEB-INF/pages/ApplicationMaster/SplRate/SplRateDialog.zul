@@ -73,17 +73,7 @@
 								<label id="label_SplRateDialog_SRType"
 									value="${c:l('label_SplRateDialog_SRType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<hbox>
-										<textbox id="sRType"
-											width="72px" visible="false" />
-										<textbox id="lovDescSRTypeName"
-											width="250px" readonly="true" />
-										<button
-											id="btnSearchSRType"
-											image="/images/icons/LOVSearch.png"  />
-									</hbox>
+								<extendedcombobox id ="sRType" />
 								</hbox>
 							</row>
 							<row>

@@ -96,16 +96,7 @@
 									id="label_RelationshipOfficerDialog_ROfficerDeptCode"
 									value="${c:l('label_RelationshipOfficerDialog_ROfficerDeptCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="rOfficerDeptCode"
-										width="72px" visible="false" />
-									<textbox
-										id="lovDescROfficerDeptCodeName" width="200px"
-										readonly="true" />
-									<button
-										id="btnSearchROfficerDeptCode"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id = "rOfficerDeptCode" />
 								</hbox>
 							</row>
 							<row visible="true">

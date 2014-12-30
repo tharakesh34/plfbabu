@@ -68,9 +68,9 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
@@ -92,7 +92,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -113,7 +112,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window 	 window_SplRateDialog; 	// autoWired
-	protected Textbox 	 sRType; 				// autoWired
+	protected ExtendedCombobox 	 sRType; 				// autoWired
 	protected Datebox 	 sREffDate; 			// autoWired
 	protected Decimalbox sRRate; 				// autoWired
 	protected Checkbox 	 deleteRate; 			// autoWired
@@ -150,8 +149,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button  btnHelp; 			// autoWire
 	protected Button  btnNotes; 		// autoWire
 	
-	protected Button  btnSearchSRType; 	// autoWire
-	protected Textbox lovDescSRTypeName;
 	private transient String 		oldVar_lovDescSRTypeName;
 	
 	// ServiceDAOs / Domain Classes
@@ -239,6 +236,12 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.sRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.sRRate.setScale(9);
 
+		this.sRType.setMandatoryStyle(true);
+		this.sRType.setModuleName("SplRateCode");
+		this.sRType.setValueColumn("SRType");
+		this.sRType.setDescColumn("SRTypeDesc");
+		this.sRType.setValidateColumns(new String[]{"SRType"});
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -375,17 +378,17 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchSRType(Event event){
+	public void onFulfill$sRType(Event event){
 		logger.debug("Entering" + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_SplRateDialog,"SplRateCode");
+		Object dataObject = sRType.getObject();
 		if (dataObject instanceof String){
 			this.sRType.setValue(dataObject.toString());
-			this.lovDescSRTypeName.setValue("");
+			this.sRType.setDescription("");
 		}else{
 			SplRateCode details= (SplRateCode) dataObject;
 			if (details != null) {
 				this.sRType.setValue(details.getSRType());
-				this.lovDescSRTypeName.setValue(details.getSRType()+"-"+details.getSRTypeDesc());
+				this.sRType.setDescription(details.getSRTypeDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -465,9 +468,9 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.deleteRate.setChecked(aSplRate.isDelExistingRates());
 
 		if (aSplRate.isNewRecord()){
-			this.lovDescSRTypeName.setValue("");
+			this.sRType.setDescription("");
 		}else{
-			this.lovDescSRTypeName.setValue(aSplRate.getSRType()+"-"+aSplRate.getLovDescSRTypeName());
+			this.sRType.setDescription(aSplRate.getLovDescSRTypeName());
 		}
 		this.recordStatus.setValue(aSplRate.getRecordStatus());
 		logger.debug("Leaving");
@@ -485,8 +488,8 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aSplRate.setLovDescSRTypeName(this.lovDescSRTypeName.getValue());
-			aSplRate.setSRType(this.sRType.getValue());	
+			aSplRate.setLovDescSRTypeName(this.sRType.getDescription());
+			aSplRate.setSRType(this.sRType.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -629,7 +632,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_sRType = this.sRType.getValue();
-		this.oldVar_lovDescSRTypeName = this.lovDescSRTypeName.getValue();
+		this.oldVar_lovDescSRTypeName = this.sRType.getDescription();
 		this.oldVar_sREffDate = PennantAppUtil.getTimestamp(this.sREffDate.getValue());	
 		this.oldVar_sRRate = this.sRRate.getValue();
 		this.oldVar_deleteRate = this.deleteRate.isChecked();
@@ -643,7 +646,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.sRType.setValue(this.oldVar_sRType);
-		this.lovDescSRTypeName.setValue(this.oldVar_lovDescSRTypeName);
+		this.sRType.setDescription(this.oldVar_lovDescSRTypeName);
 		this.sREffDate.setValue(this.oldVar_sREffDate);
 		this.sRRate.setValue(this.oldVar_sRRate);
 		this.deleteRate.setChecked(this.oldVar_deleteRate);
@@ -722,7 +725,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSRTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateDialog_SRType.value"), null, true));
+		this.sRType.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateDialog_SRType.value"), null, true));
 		logger.debug("Leaving");
 	}
 	
@@ -731,7 +734,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSRTypeName.setConstraint("");
+		this.sRType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -742,7 +745,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Enterring");
 		this.sREffDate.setErrorMessage("");
 		this.sRRate.setErrorMessage("");
-		this.lovDescSRTypeName.setErrorMessage("");
+		this.sRType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -840,11 +843,11 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doEdit() {
 		logger.debug("Entering");
 		if (getSplRate().isNewRecord()){
-			this.btnSearchSRType.setDisabled(false);
+			this.sRType.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.sREffDate.setDisabled(false);
 		}else{
-			this.btnSearchSRType.setDisabled(true);
+			this.sRType.setReadonly(true);
 			this.sREffDate.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
@@ -875,7 +878,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchSRType.setDisabled(true);
+		this.sRType.setReadonly(true);
 		this.sREffDate.setDisabled(true);
 		this.sRRate.setReadonly(true);
 		this.deleteRate.setDisabled(true);
@@ -897,7 +900,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		// remove validation, if there are a save before
 		this.sRType.setValue("");
-		this.lovDescSRTypeName.setValue("");
+		this.sRType.setDescription("");
 		this.sREffDate.setText("");
 		this.sRRate.setValue("");
 		logger.debug("Leaving");

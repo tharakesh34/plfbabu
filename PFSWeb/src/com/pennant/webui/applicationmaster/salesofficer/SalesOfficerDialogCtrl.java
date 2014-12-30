@@ -67,6 +67,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
@@ -84,7 +85,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -111,7 +111,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Textbox 	salesOffMName; 				// autoWired
 	protected Textbox 	salesOffLName;			    // autoWired
 	protected Textbox 	salesOffShrtName; 			// autoWired
-	protected Textbox 	salesOffDept; 				// autoWired
+	protected ExtendedCombobox 	salesOffDept; 				// autoWired
 	protected Checkbox 	salesOffIsActive; 			// autoWired
 
 	protected Label 		recordStatus; 			// autoWired
@@ -149,8 +149,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	protected Button btnHelp; 				// autoWire
 	protected Button btnNotes;		 		// autoWire
 	
-	protected Button btnSearchSalesOffDept; // autoWire
-	protected Textbox lovDescSalesOffDeptName;
 	private transient String 		oldVar_lovDescSalesOffDeptName;
 	
 	// ServiceDAOs / Domain Classes
@@ -243,6 +241,12 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffShrtName.setMaxlength(50);
 		this.salesOffDept.setMaxlength(8);
 
+		this.salesOffDept.setMandatoryStyle(true);
+		this.salesOffDept.setModuleName("Department");
+		this.salesOffDept.setValueColumn("DeptCode");
+		this.salesOffDept.setDescColumn("DeptDesc");
+		this.salesOffDept.setValidateColumns(new String[]{"DeptCode"});
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -459,12 +463,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffIsActive.setChecked(aSalesOfficer.isSalesOffIsActive());
 
 		if (aSalesOfficer.isNewRecord()) {
-			this.lovDescSalesOffDeptName.setValue("");
+			this.salesOffDept.setDescription("");
 		} else {
-			this.lovDescSalesOffDeptName.setValue(aSalesOfficer
-					.getSalesOffDept()
-					+ "-"
-					+ aSalesOfficer.getLovDescSalesOffDeptName());
+			this.salesOffDept.setDescription(aSalesOfficer.getLovDescSalesOffDeptName());
 		}
 		this.recordStatus.setValue(aSalesOfficer.getRecordStatus());
 		
@@ -512,10 +513,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 			wve.add(we);
 		}
 		try {
-			aSalesOfficer
-					.setLovDescSalesOffDeptName(this.lovDescSalesOffDeptName
-							.getValue());
-			aSalesOfficer.setSalesOffDept(this.salesOffDept.getValue());
+			aSalesOfficer.setLovDescSalesOffDeptName(this.salesOffDept.getDescription());
+			aSalesOfficer.setSalesOffDept(this.salesOffDept.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -617,8 +616,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.oldVar_salesOffLName = this.salesOffLName.getValue();
 		this.oldVar_salesOffShrtName = this.salesOffShrtName.getValue();
 		this.oldVar_salesOffDept = this.salesOffDept.getValue();
-		this.oldVar_lovDescSalesOffDeptName = this.lovDescSalesOffDeptName
-				.getValue();
+		this.oldVar_lovDescSalesOffDeptName = this.salesOffDept.getDescription();
 		this.oldVar_salesOffIsActive = this.salesOffIsActive.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
@@ -635,8 +633,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffLName.setValue(this.oldVar_salesOffLName);
 		this.salesOffShrtName.setValue(this.oldVar_salesOffShrtName);
 		this.salesOffDept.setValue(this.oldVar_salesOffDept);
-		this.lovDescSalesOffDeptName
-				.setValue(this.oldVar_lovDescSalesOffDeptName);
+		this.salesOffDept.setDescription(this.oldVar_lovDescSalesOffDeptName);
 		this.salesOffIsActive.setChecked(this.oldVar_salesOffIsActive);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -724,7 +721,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescSalesOffDeptName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), 
+		this.salesOffDept.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), 
 				null, true));
 	}
 
@@ -732,7 +729,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
-		this.lovDescSalesOffDeptName.setConstraint("");
+		this.salesOffDept.setConstraint("");
 	}
 
 	/**
@@ -745,7 +742,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffMName.setErrorMessage("");
 		this.salesOffLName.setErrorMessage("");
 		this.salesOffShrtName.setErrorMessage("");
-		this.lovDescSalesOffDeptName.setErrorMessage("");
+		this.salesOffDept.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -850,8 +847,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffLName"));
 		this.salesOffShrtName
 				.setReadonly(isReadOnly("SalesOfficerDialog_salesOffShrtName"));
-		this.btnSearchSalesOffDept
-				.setDisabled(isReadOnly("SalesOfficerDialog_salesOffDept"));
+		this.salesOffDept.setReadonly(isReadOnly("SalesOfficerDialog_salesOffDept"));
 		this.salesOffIsActive
 				.setDisabled(isReadOnly("SalesOfficerDialog_salesOffIsActive"));
 
@@ -885,7 +881,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffMName.setReadonly(true);
 		this.salesOffLName.setReadonly(true);
 		this.salesOffShrtName.setReadonly(true);
-		this.btnSearchSalesOffDept.setDisabled(true);
+		this.salesOffDept.setReadonly(true);
 		this.salesOffIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -914,7 +910,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffLName.setValue("");
 		this.salesOffShrtName.setValue("");
 		this.salesOffDept.setValue("");
-		this.lovDescSalesOffDeptName.setValue("");
+		this.salesOffDept.setDescription("");
 		this.salesOffIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
@@ -1190,19 +1186,17 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	// ++++++++++++ Search Button Component Events ++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchSalesOffDept(Event event) {
+	public void onFulfill$salesOffDept(Event event) {
 
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_SalesOfficerDialog, "Department");
+		Object dataObject =salesOffDept.getObject();
 		if (dataObject instanceof String) {
 			this.salesOffDept.setValue(dataObject.toString());
-			this.lovDescSalesOffDeptName.setValue("");
+			this.salesOffDept.setDescription("");
 		} else {
 			Department details = (Department) dataObject;
 			if (details != null) {
 				this.salesOffDept.setValue(details.getDeptCode());
-				this.lovDescSalesOffDeptName.setValue(details.getDeptCode()
-						+ "-" + details.getDeptDesc());
+				this.salesOffDept.setDescription(details.getDeptDesc());
 			}
 		}
 	}

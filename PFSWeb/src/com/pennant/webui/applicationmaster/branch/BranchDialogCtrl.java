@@ -67,6 +67,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -88,7 +89,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -115,13 +115,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		branchAddrLine1; 	// autoWired
 	protected Textbox 		branchAddrLine2; 	// autoWired
 	protected Textbox 		branchPOBox; 		// autoWired
-	protected Textbox 		branchCity; 		// autoWired
-	protected Textbox 		branchProvince; 	// autoWired
-	protected Textbox 		branchCountry; 		// autoWired
+	protected ExtendedCombobox 		branchCity; 		// autoWired
+	protected ExtendedCombobox 		branchProvince; 	// autoWired
+	protected ExtendedCombobox 		branchCountry; 		// autoWired
 	protected Textbox 		branchFax; 			// autoWired
 	protected Textbox 		branchTel; 			// autoWired
 	protected Textbox 		branchSwiftBankCode;// autoWired
-	protected Textbox 		branchSwiftCountry; // autoWired
+	protected ExtendedCombobox 		branchSwiftCountry; // autoWired
 	protected Textbox 		branchSwiftLocCode; // autoWired
 	protected Textbox 		branchSwiftBrnCde; 	// autoWired
 	protected Textbox 		branchSortCode; 	// autoWired
@@ -171,22 +171,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnHelp; 	// autoWired
 	protected Button btnNotes; 	// autoWired
 	
-	protected Button 			btnSearchBranchCity; // autoWired
-	protected Textbox 			lovDescBranchCityName;
 	private transient String 	oldVar_lovDescBranchCityName;
-	protected Button 			btnSearchBranchProvince; // autoWired
-	protected Textbox 			lovDescBranchProvinceName;
 	private transient String 	oldVar_lovDescBranchProvinceName;
-	protected Button 			btnSearchBranchCountry; // autoWired
-	protected Textbox 			lovDescBranchCountryName;
 	private transient String 	oldVar_lovDescBranchCountryName;
-	protected Button 			btnSearchBranchSwiftCountry; // autoWired
-	protected Textbox 			lovDescBranchSwiftCountryName;
 	private transient String 	oldVar_lovDescBranchSwiftCountryName;
 	
 	// ServiceDAOs / Domain Classes
 	private transient BranchService branchService;
 	private transient PagedListService pagedListService;
+	private transient String sBranchCountry;
+	private transient String sBranchProvince;
 
 	/**
 	 * default constructor.<br>
@@ -276,6 +270,32 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchSwiftLocCode.setMaxlength(2);
 		this.branchSwiftBrnCde.setMaxlength(3);
 		this.branchSortCode.setMaxlength(4);
+		
+		this.branchCountry.setMandatoryStyle(true);
+		this.branchCountry.setModuleName("Country");
+		this.branchCountry.setValueColumn("CountryCode");
+		this.branchCountry.setDescColumn("CountryDesc");
+		this.branchCountry.setValidateColumns(new String[]{"CountryCode"});
+		
+		this.branchProvince.setMaxlength(8);
+		this.branchProvince.setMandatoryStyle(true);
+		this.branchProvince.setModuleName("Province");
+		this.branchProvince.setValueColumn("CPProvince");
+		this.branchProvince.setDescColumn("CPProvinceName");
+		this.branchProvince.setValidateColumns(new String[] {"CPProvince"});
+		
+		this.branchCity.setMaxlength(8);
+		this.branchCity.setMandatoryStyle(true);
+		this.branchCity.setModuleName("City");
+		this.branchCity.setValueColumn("PCCity");
+		this.branchCity.setDescColumn("PCCityName");
+		this.branchCity.setValidateColumns(new String[] {"PCCity"});
+		
+		this.branchSwiftCountry.setMandatoryStyle(true);
+		this.branchSwiftCountry.setModuleName("Country");
+		this.branchSwiftCountry.setValueColumn("CountryCode");
+		this.branchSwiftCountry.setDescColumn("CountryDesc");
+		this.branchSwiftCountry.setValidateColumns(new String[]{"CountryCode"});
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -497,26 +517,25 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchIsActive.setChecked(aBranch.isBranchIsActive());
 
 	if (aBranch.isNewRecord()){
-		   this.lovDescBranchCityName.setValue("");
-		   this.lovDescBranchProvinceName.setValue("");
-		   this.lovDescBranchCountryName.setValue("");
-		   this.lovDescBranchSwiftCountryName.setValue("");
+		   this.branchCity.setDescription("");
+		   this.branchProvince.setDescription("");
+		   this.branchCountry.setDescription("");
+		   this.branchSwiftCountry.setDescription("");
+			
 	}else{
-		   this.lovDescBranchCityName.setValue(aBranch.getBranchCity()+"-"+
-				   aBranch.getLovDescBranchCityName());
-		   this.lovDescBranchProvinceName.setValue(aBranch.getBranchProvince()+"-"+
-				   aBranch.getLovDescBranchProvinceName());
-		   this.lovDescBranchCountryName.setValue(aBranch.getBranchCountry()+"-"+
-				   aBranch.getLovDescBranchCountryName());
-		   this.lovDescBranchSwiftCountryName.setValue(aBranch.getBranchSwiftCountry()+"-"+
-				   aBranch.getLovDescBranchSwiftCountryName());
+		   this.branchCity.setDescription(aBranch.getLovDescBranchCityName());
+		   this.branchProvince.setDescription(aBranch.getLovDescBranchProvinceName());
+		   this.branchCountry.setDescription(aBranch.getLovDescBranchCountryName());
+		   this.branchSwiftCountry.setDescription(aBranch.getLovDescBranchSwiftCountryName());
 	}
 		this.recordStatus.setValue(aBranch.getRecordStatus());
-		
 		if(aBranch.isNew() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.branchIsActive.setChecked(true);
 			this.branchIsActive.setDisabled(true);
 		}
+		sBranchCountry = this.branchCountry.getValue();
+		sBranchProvince = this.branchProvince.getValue();
+		doSetProvProp();
 		logger.debug("Leaving");
 	}
 
@@ -558,20 +577,20 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-	 		aBranch.setLovDescBranchCityName(this.lovDescBranchCityName.getValue());
-	 		aBranch.setBranchCity(this.branchCity.getValue());	
+	 		aBranch.setLovDescBranchCityName(this.branchCity.getDescription());
+	 		aBranch.setBranchCity(this.branchCity.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aBranch.setLovDescBranchProvinceName(this.lovDescBranchProvinceName.getValue());
-	 		aBranch.setBranchProvince(this.branchProvince.getValue());	
+	 		aBranch.setLovDescBranchProvinceName(this.branchProvince.getDescription());
+	 		aBranch.setBranchProvince(this.branchProvince.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aBranch.setLovDescBranchCountryName(this.lovDescBranchCountryName.getValue());
-	 		aBranch.setBranchCountry(this.branchCountry.getValue());	
+	 		aBranch.setLovDescBranchCountryName(this.branchCountry.getDescription());
+	 		aBranch.setBranchCountry(this.branchCountry.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -591,8 +610,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-		    aBranch.setBranchSwiftCountry(this.branchSwiftCountry.getValue().toUpperCase());	
-		    aBranch.setLovDescBranchSwiftCountryName(this.lovDescBranchSwiftCountryName.getValue());
+		    aBranch.setBranchSwiftCountry(this.branchSwiftCountry.getValidatedValue().toUpperCase());	
+		    aBranch.setLovDescBranchSwiftCountryName(this.branchSwiftCountry.getDescription());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -706,16 +725,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_branchAddrLine2 = this.branchAddrLine2.getValue();
 		this.oldVar_branchPOBox = this.branchPOBox.getValue();
  		this.oldVar_branchCity = this.branchCity.getValue();
- 		this.oldVar_lovDescBranchCityName = this.lovDescBranchCityName.getValue();
+ 		this.oldVar_lovDescBranchCityName = this.branchCity.getDescription();
  		this.oldVar_branchProvince = this.branchProvince.getValue();
- 		this.oldVar_lovDescBranchProvinceName = this.lovDescBranchProvinceName.getValue();
+ 		this.oldVar_lovDescBranchProvinceName = this.branchProvince.getDescription();
  		this.oldVar_branchCountry = this.branchCountry.getValue();
- 		this.oldVar_lovDescBranchCountryName = this.lovDescBranchCountryName.getValue();
+ 		this.oldVar_lovDescBranchCountryName = this.branchCountry.getDescription();
 		this.oldVar_branchFax = this.branchFax.getValue();
 		this.oldVar_branchTel = this.branchTel.getValue();
 		this.oldVar_branchSwiftBankCode = this.branchSwiftBankCode.getValue();
 		this.oldVar_branchSwiftCountry = this.branchSwiftCountry.getValue();
- 		this.oldVar_lovDescBranchSwiftCountryName = this.lovDescBranchSwiftCountryName.getValue();
+ 		this.oldVar_lovDescBranchSwiftCountryName = this.branchSwiftCountry.getDescription();
 		this.oldVar_branchSwiftLocCode = this.branchSwiftLocCode.getValue();
 		this.oldVar_branchSwiftBrnCde = this.branchSwiftBrnCde.getValue();
 		this.oldVar_branchSortCode = this.branchSortCode.getValue();
@@ -735,16 +754,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchAddrLine2.setValue(this.oldVar_branchAddrLine2);
 		this.branchPOBox.setValue(this.oldVar_branchPOBox);
  		this.branchCity.setValue(this.oldVar_branchCity);
- 		this.lovDescBranchCityName.setValue(this.oldVar_lovDescBranchCityName);
+ 		this.branchCity.setDescription(this.oldVar_lovDescBranchCityName);
  		this.branchProvince.setValue(this.oldVar_branchProvince);
- 		this.lovDescBranchProvinceName.setValue(this.oldVar_lovDescBranchProvinceName);
+ 		this.branchProvince.setDescription(this.oldVar_lovDescBranchProvinceName);
  		this.branchCountry.setValue(this.oldVar_branchCountry);
- 		this.lovDescBranchCountryName.setValue(this.oldVar_lovDescBranchCountryName);
+ 		this.branchCountry.setDescription(this.oldVar_lovDescBranchCountryName);
 		this.branchFax.setValue(this.oldVar_branchFax);
 		this.branchTel.setValue(this.oldVar_branchTel);
 		this.branchSwiftBankCode.setValue(this.oldVar_branchSwiftBankCode);
 		this.branchSwiftCountry.setValue(this.oldVar_branchSwiftCountry);
-		this.lovDescBranchSwiftCountryName.setValue(this.oldVar_lovDescBranchSwiftCountryName);
+		this.branchSwiftCountry.setDescription(this.oldVar_lovDescBranchSwiftCountryName);
 		this.branchSwiftLocCode.setValue(this.oldVar_branchSwiftLocCode);
 		this.branchSwiftBrnCde.setValue(this.oldVar_branchSwiftBrnCde);
 		this.branchSortCode.setValue(this.oldVar_branchSortCode);
@@ -890,13 +909,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBranchCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value")
+		this.branchCity.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value")
 				 , null, true));
-		this.lovDescBranchProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), 
+		this.branchProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), 
 				null, true));
-		this.lovDescBranchCountryName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.branchCountry.setConstraint(new PTStringValidator(Labels.getLabel(
 						"label_BranchDialog_BranchCountry.value"), null, true));
-		this.lovDescBranchSwiftCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"),
+		this.branchSwiftCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"),
 				null, true));
 		logger.debug("Leaving");
 	}
@@ -906,10 +925,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBranchCityName.setConstraint("");
-		this.lovDescBranchProvinceName.setConstraint("");
-		this.lovDescBranchCountryName.setConstraint("");
-		this.lovDescBranchSwiftCountryName.setConstraint("");
+		this.branchCity.setConstraint("");
+		this.branchProvince.setConstraint("");
+		this.branchCountry.setConstraint("");
+		this.branchSwiftCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -930,10 +949,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchSwiftLocCode.setErrorMessage("");
 		this.branchSwiftBrnCde.setErrorMessage("");
 		this.branchSortCode.setErrorMessage("");
-		this.lovDescBranchCityName.setErrorMessage("");
-		this.lovDescBranchProvinceName.setErrorMessage("");
-		this.lovDescBranchCountryName.setErrorMessage("");
-		this.lovDescBranchSwiftCountryName.setErrorMessage("");
+		this.branchCity.setErrorMessage("");
+		this.branchProvince.setErrorMessage("");
+		this.branchCountry.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -1032,25 +1050,23 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (getBranch().isNewRecord()){
 		  	this.branchCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
-			this.btnSearchBranchProvince.setVisible(false);
-			this.btnSearchBranchCity.setVisible(false);
 		}else{
 			this.branchCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-	
+		
 		this.branchDesc.setReadonly(isReadOnly("BranchDialog_branchDesc"));
 		this.branchAddrLine1.setReadonly(isReadOnly("BranchDialog_branchAddrLine1"));
 		this.branchAddrLine2.setReadonly(isReadOnly("BranchDialog_branchAddrLine2"));
 		this.branchPOBox.setReadonly(isReadOnly("BranchDialog_branchPOBox"));
-	  	this.btnSearchBranchCity.setDisabled(isReadOnly("BranchDialog_branchCity"));
-	  	this.btnSearchBranchProvince.setDisabled(isReadOnly("BranchDialog_branchProvince"));
-	  	this.btnSearchBranchCountry.setDisabled(isReadOnly("BranchDialog_branchCountry"));
+	  	this.branchCity.setReadonly(isReadOnly("BranchDialog_branchCity"));
+	  	this.branchProvince.setReadonly(isReadOnly("BranchDialog_branchProvince"));
+	  	this.branchCountry.setReadonly(isReadOnly("BranchDialog_branchCountry"));
 		this.branchFax.setReadonly(isReadOnly("BranchDialog_branchFax"));
 		this.branchTel.setReadonly(isReadOnly("BranchDialog_branchTel"));
 		this.branchSwiftBankCode.setReadonly(isReadOnly("BranchDialog_branchSwiftBankCde"));
 		this.branchSwiftCountry.setReadonly(isReadOnly("BranchDialog_branchSwiftCountry"));
-		this.btnSearchBranchSwiftCountry.setDisabled(isReadOnly("BranchDialog_branchCountry"));
+		this.branchSwiftCountry.setReadonly(isReadOnly("BranchDialog_branchCountry"));
 		this.branchSwiftLocCode.setReadonly(isReadOnly("BranchDialog_branchSwiftLocCode"));
 		this.branchSwiftBrnCde.setReadonly(isReadOnly("BranchDialog_branchSwiftBrnCde"));
 		this.branchSortCode.setReadonly(isReadOnly("BranchDialog_branchSortCode"));
@@ -1084,14 +1100,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchAddrLine1.setReadonly(true);
 		this.branchAddrLine2.setReadonly(true);
 		this.branchPOBox.setReadonly(true);
-		this.btnSearchBranchCity.setDisabled(true);
-		this.btnSearchBranchProvince.setDisabled(true);
-		this.btnSearchBranchCountry.setDisabled(true);
+		this.branchCity.setReadonly(true);
+		this.branchProvince.setReadonly(true);
+		this.branchCountry.setReadonly(true);
 		this.branchFax.setReadonly(true);
 		this.branchTel.setReadonly(true);
 		this.branchSwiftBankCode.setReadonly(true);
 		this.branchSwiftCountry.setReadonly(true);
-		this.btnSearchBranchSwiftCountry.setDisabled(true);
 		this.branchSwiftLocCode.setReadonly(true);
 		this.branchSwiftBrnCde.setReadonly(true);
 		this.branchSortCode.setReadonly(true);
@@ -1122,16 +1137,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchAddrLine2.setValue("");
 		this.branchPOBox.setValue("");
 	  	this.branchCity.setValue("");
-		this.lovDescBranchCityName.setValue("");
+		this.branchCity.setDescription("");
 	  	this.branchProvince.setValue("");
-		this.lovDescBranchProvinceName.setValue("");
+		this.branchProvince.setDescription("");
 	  	this.branchCountry.setValue("");
-		this.lovDescBranchCountryName.setValue("");
+		this.branchCountry.setDescription("");
 		this.branchFax.setValue("");
 		this.branchTel.setValue("");
 		this.branchSwiftBankCode.setValue("");
 		this.branchSwiftCountry.setValue("");
-		this.lovDescBranchSwiftCountryName.setValue("");
+		this.branchSwiftCountry.setDescription("");
 		this.branchSwiftLocCode.setValue("");
 		this.branchSwiftBrnCde.setValue("");
 		this.branchSortCode.setValue("");
@@ -1377,107 +1392,103 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	 public void onFulfill$branchCountry(Event event){
+		   logger.debug("Entering"+event.toString());
+		   Object dataObject = branchCountry.getObject();
+		   if (dataObject instanceof String){
+			   this.branchCountry.setValue(dataObject.toString());
+			   this.branchCountry.setDescription("");
+			  
+		   }else{
+			   Country details= (Country) dataObject;
+			   if (details != null) {
+				   this.branchCountry.setValue(details.getCountryCode());
+				   this.branchCountry.setDescription(details.getCountryDesc());
+			   }
+		   }
+		   doSetProvProp();
+		   doSetCityProp();
+		   logger.debug("Leaving"+event.toString());
+	   }
+	 
+	 public void onFulfill$branchProvince(Event event){
+		   logger.debug("Entering"+event.toString());
+		   Object dataObject = branchProvince.getObject();
+		   if (dataObject instanceof String){
+			   this.branchProvince.setValue(dataObject.toString());
+			   this.branchProvince.setDescription("");
+			 
+		   }else{
+			   Province details= (Province) dataObject;
+			   if (details != null) {
+				   this.branchProvince.setValue(details.getCPProvince());
+				   this.branchProvince.setDescription(details.getCPProvinceName());
+				  
+			   }
+		   }
+		   doSetCityProp();
+		   logger.debug("Leaving"+event.toString());
+	   }
 
-   public void onClick$btnSearchBranchCity(Event event){
+	 
+   public void onFulfill$branchCity(Event event){
 	   logger.debug("Entering"+event.toString());
-	   Filter[] filters = new Filter[1] ;
-	   filters[0]= new Filter("PCProvince", this.branchProvince.getValue(), Filter.OP_EQUAL);  
-	   
-	   Object dataObject = ExtendedSearchListBox.show(this.window_BranchDialog,"City",filters);
+	   Object dataObject = branchCity.getObject();
 	   if (dataObject instanceof String){
 		   this.branchCity.setValue(dataObject.toString());
-		   this.lovDescBranchCityName.setValue("");
+		   this.branchCity.setDescription("");
 	   }else{
 		   City details= (City) dataObject;
 		   if (details != null) {
 			   this.branchCity.setValue(details.getPCCity());
-			   this.lovDescBranchCityName.setValue(details.getPCCity()+"-"+
-			   details.getPCCityName());
+			   this.branchCity.setDescription(details.getPCCityName());
 			   }
 		   }
 	   logger.debug("Leaving"+event.toString());
 	}
    
-   public void onClick$btnSearchBranchProvince(Event event){
-	   logger.debug("Entering"+event.toString());
-	   String sBranchProvince= this.branchProvince.getValue();
-	   Filter[] filters = new Filter[1] ;
-	   filters[0]= new Filter("CPCountry", this.branchCountry.getValue(), Filter.OP_EQUAL);  
-
-	   Object dataObject = ExtendedSearchListBox.show(
-			   this.window_BranchDialog,"Province",filters);
-	   if (dataObject instanceof String){
-		   this.branchProvince.setValue(dataObject.toString());
-		   this.lovDescBranchProvinceName.setValue("");
-	   }else{
-		   Province details= (Province) dataObject;
-		   if (details != null) {
-			   this.branchProvince.setValue(details.getCPProvince());
-			   this.lovDescBranchProvinceName.setValue(details.getCPProvince()+"-"+
-					   details.getCPProvinceName());
-		   }
-	   }
-	   if (!StringUtils.trimToEmpty(sBranchProvince).equals(this.branchProvince.getValue())){
-		   this.branchCity.setValue("");
-		   this.lovDescBranchCityName.setValue("");
-	   }
-	   if(this.branchProvince.getValue()!=""){
-
-		   this.btnSearchBranchCity.setVisible(true); 
-	   }
-	   else{
-		   this.btnSearchBranchCity.setVisible(false);
-	   }
-	   logger.debug("Leaving"+event.toString());
-   }
-
-   public void onClick$btnSearchBranchCountry(Event event){
-	   logger.debug("Entering"+event.toString());
-	   String sBranchCountry= this.branchCountry.getValue();
-
-	   Object dataObject = ExtendedSearchListBox.show(this.window_BranchDialog,"Country");
-	   if (dataObject instanceof String){
-		   this.branchCountry.setValue(dataObject.toString());
-		   this.lovDescBranchCountryName.setValue("");
-	   }else{
-		   Country details= (Country) dataObject;
-		   if (details != null) {
-			   this.branchCountry.setValue(details.getCountryCode());
-			   this.lovDescBranchCountryName.setValue(details.getCountryCode()+"-"+
-					   details.getCountryDesc());
-		   }
-	   }
+  
+   private void doSetProvProp(){
 	   if (!StringUtils.trimToEmpty(sBranchCountry).equals(this.branchCountry.getValue())){
 		   this.branchProvince.setValue("");
+		   this.branchProvince.setObject("");
+		   this.branchProvince.setDescription("");
 		   this.branchCity.setValue("");
-		   this.lovDescBranchProvinceName.setValue("");
-		   this.lovDescBranchCityName.setValue("");
-		   this.btnSearchBranchCity.setVisible(false);
+		   this.branchCity.setDescription("");
+		   this.branchCity.setObject("");
+		   
 	   } 
-	   if(this.branchCountry.getValue()!=""){
-		   this.btnSearchBranchProvince.setVisible(true);		  
-	   }
-	   else{
-		   this.btnSearchBranchCity.setVisible(false);
-		   this.btnSearchBranchProvince.setVisible(false);
-
-	   }
-	   logger.debug("Leaving"+event.toString());
+	   sBranchCountry = this.branchCountry.getValue();
+		Filter[] filtersProvince = new Filter[1] ;
+		filtersProvince[0]= new Filter("CPCountry", this.branchCountry.getValue(), Filter.OP_EQUAL);
+		this.branchProvince.setFilters(filtersProvince);
    }
    
-   public void onClick$btnSearchBranchSwiftCountry(Event event){
+   private void doSetCityProp(){
+		if (!StringUtils.trimToEmpty(sBranchProvince).equals(this.branchProvince.getValue())){
+			this.branchCity.setObject("");
+			this.branchCity.setValue("");
+			this.branchCity.setDescription("");   
+		}
+		sBranchProvince= this.branchProvince.getValue();
+		Filter[] filtersCity = new Filter[2] ;
+		filtersCity[0] = new Filter("PCCountry", this.branchCountry.getValue(),Filter.OP_EQUAL);
+		filtersCity[1]= new Filter("PCProvince", this.branchProvince.getValue(), Filter.OP_EQUAL);
+		this.branchCity.setFilters(filtersCity);
+	}
+   public void onFulfill$branchSwiftCountry(Event event){
 	   logger.debug("Entering"+event.toString());
 
-	   Object dataObject = ExtendedSearchListBox.show(this.window_BranchDialog,"Country");
+	   Object dataObject = branchSwiftCountry.getObject(); 
 	   if (dataObject instanceof String){
 		   this.branchSwiftCountry.setValue(dataObject.toString());
-		   this.lovDescBranchSwiftCountryName.setValue("");
+		   this.branchSwiftCountry.setDescription("");
 	   }else{
 		   Country details= (Country) dataObject;
 		   if (details != null) {
 			   this.branchSwiftCountry.setValue(details.getCountryCode());
-			   this.lovDescBranchSwiftCountryName.setValue(details.getCountryCode()+"-"+
-					   details.getCountryDesc());
+			   this.branchSwiftCountry.setDescription(details.getCountryDesc());
 		   }
 	   }
 	   logger.debug("Leaving"+event.toString());

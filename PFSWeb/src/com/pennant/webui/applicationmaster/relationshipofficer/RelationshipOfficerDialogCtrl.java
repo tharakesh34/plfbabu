@@ -67,6 +67,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -84,7 +85,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,7 +108,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	protected Window window_RelationshipOfficerDialog; 	// autoWired
 	protected Textbox rOfficerCode; 					// autoWired
 	protected Textbox rOfficerDesc; 					// autoWired
-	protected Textbox rOfficerDeptCode; 				// autoWired
+	protected ExtendedCombobox rOfficerDeptCode; 				// autoWired
 	protected Checkbox rOfficerIsActive; 				// autoWired
 
 	protected Label recordStatus; 						// autoWired
@@ -144,8 +144,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	protected Button btnHelp; 					// autoWire
 	protected Button btnNotes; 					// autoWire
 
-	protected Button btnSearchROfficerDeptCode; // autoWire
-	protected Textbox lovDescROfficerDeptCodeName;
 	private transient String oldVar_lovDescROfficerDeptCodeName;
 
 	// ServiceDAOs / Domain Classes
@@ -232,6 +230,12 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.rOfficerCode.setMaxlength(8);
 		this.rOfficerDesc.setMaxlength(50);
 		this.rOfficerDeptCode.setMaxlength(8);
+		
+		this.rOfficerDeptCode.setMandatoryStyle(true);
+		this.rOfficerDeptCode.setModuleName("Department");
+		this.rOfficerDeptCode.setValueColumn("DeptCode");
+		this.rOfficerDeptCode.setDescColumn("DeptDesc");
+		this.rOfficerDeptCode.setValidateColumns(new String[]{"DeptCode"});
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -442,10 +446,9 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.rOfficerIsActive.setChecked(aRelationshipOfficer.isROfficerIsActive());
 
 		if (aRelationshipOfficer.isNewRecord()) {
-			this.lovDescROfficerDeptCodeName.setValue("");
+			this.rOfficerDeptCode.setDescription("");
 		} else {
-			this.lovDescROfficerDeptCodeName.setValue(aRelationshipOfficer.getROfficerDeptCode()
-					+ "-" + aRelationshipOfficer.getLovDescROfficerDeptCodeName());
+			this.rOfficerDeptCode.setDescription(aRelationshipOfficer.getLovDescROfficerDeptCodeName());
 		}
 		this.recordStatus.setValue(aRelationshipOfficer.getRecordStatus());
 		
@@ -478,8 +481,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 			wve.add(we);
 		}
 		try {
-			aRelationshipOfficer.setLovDescROfficerDeptCodeName(this.lovDescROfficerDeptCodeName.getValue());
-			aRelationshipOfficer.setROfficerDeptCode(this.rOfficerDeptCode.getValue());
+			aRelationshipOfficer.setLovDescROfficerDeptCodeName(this.rOfficerDeptCode.getDescription());
+			aRelationshipOfficer.setROfficerDeptCode(this.rOfficerDeptCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -576,7 +579,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.oldVar_rOfficerCode = this.rOfficerCode.getValue();
 		this.oldVar_rOfficerDesc = this.rOfficerDesc.getValue();
 		this.oldVar_rOfficerDeptCode = this.rOfficerDeptCode.getValue();
-		this.oldVar_lovDescROfficerDeptCodeName = this.lovDescROfficerDeptCodeName.getValue();
+		this.oldVar_lovDescROfficerDeptCodeName = this.rOfficerDeptCode.getDescription();
 		this.oldVar_rOfficerIsActive = this.rOfficerIsActive.isChecked();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
@@ -590,7 +593,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.rOfficerCode.setValue(this.oldVar_rOfficerCode);
 		this.rOfficerDesc.setValue(this.oldVar_rOfficerDesc);
 		this.rOfficerDeptCode.setValue(this.oldVar_rOfficerDeptCode);
-		this.lovDescROfficerDeptCodeName.setValue(this.oldVar_lovDescROfficerDeptCodeName);
+		this.rOfficerDeptCode.setDescription(this.oldVar_lovDescROfficerDeptCodeName);
 		this.rOfficerIsActive.setChecked(this.oldVar_rOfficerIsActive);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -655,14 +658,14 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescROfficerDeptCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true));
+		this.rOfficerDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true));
 	}
 
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
-		this.lovDescROfficerDeptCodeName.setConstraint("");
+		this.rOfficerDeptCode.setConstraint("");
 	}
 
 	/**
@@ -672,7 +675,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Enterring");
 		this.rOfficerCode.setErrorMessage("");
 		this.rOfficerDesc.setErrorMessage("");
-		this.lovDescROfficerDeptCodeName.setErrorMessage("");
+		this.rOfficerDeptCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -766,7 +769,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 
 		this.rOfficerDesc.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDesc"));
-		this.btnSearchROfficerDeptCode.setDisabled(isReadOnly("RelationshipOfficerDialog_rOfficerDeptCode"));
+		this.rOfficerDeptCode.setReadonly(isReadOnly("RelationshipOfficerDialog_rOfficerDeptCode"));
 		this.rOfficerIsActive.setDisabled(isReadOnly("RelationshipOfficerDialog_rOfficerIsActive"));
 
 		if (isWorkFlowEnabled()) {
@@ -796,7 +799,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Entering");
 		this.rOfficerCode.setReadonly(true);
 		this.rOfficerDesc.setReadonly(true);
-		this.btnSearchROfficerDeptCode.setDisabled(true);
+		this.rOfficerDeptCode.setReadonly(true);
 		this.rOfficerIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -822,7 +825,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.rOfficerCode.setValue("");
 		this.rOfficerDesc.setValue("");
 		this.rOfficerDeptCode.setValue("");
-		this.lovDescROfficerDeptCodeName.setValue("");
+		this.rOfficerDeptCode.setDescription("");
 		this.rOfficerIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
@@ -1071,18 +1074,18 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	// ++++++++++++ Search Button Component Events ++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchROfficerDeptCode(Event event) {
+	public void onFullfill$rOfficerDeptCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_RelationshipOfficerDialog, "Department");
+		Object dataObject = rOfficerDeptCode.getObject(); 
 		if (dataObject instanceof String) {
 			this.rOfficerDeptCode.setValue(dataObject.toString());
-			this.lovDescROfficerDeptCodeName.setValue("");
+			this.rOfficerDeptCode.setDescription("");
 		} else {
 			Department details = (Department) dataObject;
 			if (details != null) {
 				this.rOfficerDeptCode.setValue(details.getDeptCode());
-				this.lovDescROfficerDeptCodeName.setValue(details.getDeptCode()	+ "-" + details.getDeptDesc());
+				this.rOfficerDeptCode.setDescription(details.getDeptDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

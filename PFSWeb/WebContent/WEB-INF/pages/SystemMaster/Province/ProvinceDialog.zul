@@ -73,15 +73,7 @@
 									id="label_ProvinceDialog_CPCountry"
 									value="${c:l('label_ProvinceDialog_CPCountry.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="cPCountry" width="18px"
-										visible="false" readonly="true" />
-									<textbox id="lovDescCPCountryName"
-										width="160px" readonly="true" />
-									<button
-										id="btnSearchCPCountry"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="cPCountry" />
 								</hbox>
 							</row>
 							<row>

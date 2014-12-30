@@ -125,15 +125,7 @@
 									id="label_BranchDialog_BranchCountry"
 									value="${c:l('label_BranchDialog_BranchCountry.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="branchCountry"
-										width="100px" visible="false" />
-									<textbox
-										id="lovDescBranchCountryName" width="150px" readonly="true" />
-									<button
-										id="btnSearchBranchCountry"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="branchCountry" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -141,29 +133,13 @@
 									id="label_BranchDialog_BranchProvince"
 									value="${c:l('label_BranchDialog_BranchProvince.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="branchProvince"
-										width="100px" visible="false" />
-									<textbox
-										id="lovDescBranchProvinceName" width="150px" readonly="true" />
-									<button
-										id="btnSearchBranchProvince"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="branchProvince" />
 								</hbox>
 								<label
 									id="label_BranchDialog_BranchCity"
 									value="${c:l('label_BranchDialog_BranchCity.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="branchCity"
-										width="100px" visible="false" />
-									<textbox id="lovDescBranchCityName"
-										width="150px" readonly="true" />
-									<button
-										id="btnSearchBranchCity"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="branchCity" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -198,16 +174,7 @@
 									id="label_BranchDialog_BranchSwiftCountry"
 									value="${c:l('label_BranchDialog_BranchSwiftCountry.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="branchSwiftCountry"
-										maxlength="2" width="18px" visible="false" />
-									<textbox
-										id="lovDescBranchSwiftCountryName" width="150px"
-										readonly="true" />
-									<button
-										id="btnSearchBranchSwiftCountry"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="branchSwiftCountry" />
 								</hbox>
 							</row>
 							<row visible="true">

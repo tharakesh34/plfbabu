@@ -66,6 +66,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -84,7 +85,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -106,7 +106,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window  window_ProvinceDialog;// autoWired
-	protected Textbox cPCountry; 			// autoWired
+	protected ExtendedCombobox cPCountry; 			// autoWired
 	protected Uppercasebox cPProvince; 			// autoWired
 	protected Textbox cPProvinceName; 		// autoWired
 
@@ -141,9 +141,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnClose; 	// autoWire
 	protected Button btnHelp; 	// autoWire
 	protected Button btnNotes; 	// autoWire
-
-	protected Button  btnSearchCPCountry; // autoWire
-	protected Textbox lovDescCPCountryName;
 
 	// ServiceDAOs / Domain Classes
 	private transient ProvinceService  provinceService;
@@ -229,6 +226,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cPProvince.setMaxlength(8);
 		this.cPProvinceName.setMaxlength(50);
 
+		this.cPCountry.setMandatoryStyle(true);
+		this.cPCountry.setModuleName("Country");
+		this.cPCountry.setValueColumn("CountryCode");
+		this.cPCountry.setDescColumn("CountryDesc");
+		this.cPCountry.setValidateColumns(new String[]{"CountryCode"} );
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -365,19 +368,17 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchCPCountry(Event event){
+	public void onFulfill$cPCountry(Event event){
 		logger.debug("Entering");	   
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_ProvinceDialog, "Country");
+		Object dataObject =cPCountry.getObject();
 		if (dataObject instanceof String){
 			this.cPCountry.setValue(dataObject.toString());
-			this.lovDescCPCountryName.setValue("");
+			this.cPCountry.setDescription("");
 		}else{
 			Country details= (Country) dataObject;
 			if (details != null) {
 				this.cPCountry.setValue(details.getLovValue());
-				this.lovDescCPCountryName.setValue(details.getLovValue() + "-"
-						+ details.getCountryDesc());
+				this.cPCountry.setDescription(details.getCountryDesc());
 			}
 		}
 		logger.debug("Leaving");
@@ -457,10 +458,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cPProvinceName.setValue(aProvince.getCPProvinceName());
 
 		if (aProvince.isNewRecord()){
-			this.lovDescCPCountryName.setValue("");
+			this.cPCountry.setDescription("");
 		}else{
-			this.lovDescCPCountryName.setValue(aProvince.getCPCountry() + "-"
-					+ aProvince.getLovDescCPCountryName());
+			this.cPCountry.setDescription(aProvince.getLovDescCPCountryName());
 		}
 		this.recordStatus.setValue(aProvince.getRecordStatus());
 		logger.debug("Leaving");
@@ -478,8 +478,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aProvince.setLovDescCPCountryName(this.lovDescCPCountryName.getValue());
-			aProvince.setCPCountry(this.cPCountry.getValue());	
+			aProvince.setLovDescCPCountryName(this.cPCountry.getDescription());
+			aProvince.setCPCountry(this.cPCountry.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -580,7 +580,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_cPCountry = this.cPCountry.getValue();
-		this.oldVar_lovDescCPCountryName = this.lovDescCPCountryName.getValue();
+		this.oldVar_lovDescCPCountryName = this.cPCountry.getDescription();
 		this.oldVar_cPProvince = this.cPProvince.getValue();
 		this.oldVar_cPProvinceName = this.cPProvinceName.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
@@ -593,7 +593,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.cPCountry.setValue(this.oldVar_cPCountry);
-		this.lovDescCPCountryName.setValue(this.oldVar_lovDescCPCountryName);
+		this.cPCountry.setDescription(this.oldVar_lovDescCPCountryName);
 		this.cPProvince.setValue(this.oldVar_cPProvince);
 		this.cPProvinceName.setValue(this.oldVar_cPProvinceName);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
@@ -662,7 +662,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCPCountryName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.cPCountry.setConstraint(new PTStringValidator(Labels.getLabel(
 						"label_ProvinceDialog_CPCountry.value"), null, true));
 		logger.debug("Leaving");
 	}
@@ -671,7 +671,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCPCountryName.setConstraint("");
+		this.cPCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -682,7 +682,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Enterring");
 		this.cPProvince.setErrorMessage("");
 		this.cPProvinceName.setErrorMessage("");
-		this.lovDescCPCountryName.setErrorMessage("");
+		this.cPCountry.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -783,11 +783,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doEdit() {
 		logger.debug("Entering");
 		if (getProvince().isNewRecord()){
-			this.btnSearchCPCountry.setDisabled(false);
+			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.cPProvince.setReadonly(false);
 		}else{
-			this.btnSearchCPCountry.setDisabled(true);
+			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
 		}
@@ -817,7 +817,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchCPCountry.setDisabled(true);
+		this.cPCountry.setReadonly(true);
 		this.cPProvince.setReadonly(true);
 		this.cPProvinceName.setReadonly(true);
 
@@ -841,7 +841,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 		this.cPCountry.setValue("");
-		this.lovDescCPCountryName.setValue("");
+		this.cPCountry.setDescription("");
 		this.cPProvince.setValue("");
 		this.cPProvinceName.setValue("");
 		logger.debug("Leaving");

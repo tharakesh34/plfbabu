@@ -86,15 +86,7 @@
 									id="label_IndustryDialog_SubSectorCode"
 									value="${c:l('label_IndustryDialog_SubSectorCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="subSectorCode"
-										width="72px" visible="false" />
-									<textbox
-										id="lovDescSubSectorCodeName" width="450px" readonly="true" />
-									<button
-										id="btnSearchSubSector"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="subSectorCode" />
 								</hbox>
 							</row>
 							<row visible="true">

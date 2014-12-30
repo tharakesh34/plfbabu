@@ -69,6 +69,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -89,7 +90,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -113,7 +113,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Window 		window_IndustryDialog; 	// autoWired
 
 	protected Textbox 		industryCode; 			// autoWired
-	protected Textbox 		subSectorCode; 			// autoWired
+	protected ExtendedCombobox 		subSectorCode; 			// autoWired
 	protected Textbox 		industryDesc; 			// autoWired
 	protected Decimalbox 	industryLimit; 			// autoWired
 	protected Checkbox 		industryIsActive; 		// autoWired
@@ -135,8 +135,6 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient boolean 		oldVar_industryIsActive;
 	private transient String 		oldVar_recordStatus;
 
-	protected Button btnSearchSubSector; 		// autoWired
-	protected Textbox lovDescSubSectorCodeName;
 	private transient String oldVar_lovDescSubSector;
 
 	private transient boolean validationOn;
@@ -240,6 +238,12 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.industryLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.industryLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.industryLimit.setScale(0);
+		
+		this.subSectorCode.setMandatoryStyle(true);
+		this.subSectorCode.setModuleName("SubSector");
+		this.subSectorCode.setValueColumn("SubSectorCode");
+		this.subSectorCode.setDescColumn("SubSectorDesc");
+		this.subSectorCode.setValidateColumns(new String[]{"SubSectorCode"});
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -450,9 +454,9 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.industryIsActive.setChecked(aIndustry.isIndustryIsActive());
 
 		if (aIndustry.isNewRecord()) {
-			this.lovDescSubSectorCodeName.setValue("");
+			this.subSectorCode.setDescription("");
 		} else {
-			this.lovDescSubSectorCodeName.setValue(aIndustry.getSubSectorCode()	+ "-" + aIndustry.getLovDescSubSectorCodeName());
+			this.subSectorCode.setDescription(aIndustry.getLovDescSubSectorCodeName());
 		}
 		this.recordStatus.setValue(aIndustry.getRecordStatus());
 		
@@ -481,10 +485,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			aIndustry.setLovDescSubSectorCodeName(this.lovDescSubSectorCodeName
-					.getValue());
-			aIndustry.setSubSectorCode(this.subSectorCode.getValue()
-					.toUpperCase());
+			aIndustry.setLovDescSubSectorCodeName(this.subSectorCode.getDescription());
+			aIndustry.setSubSectorCode(this.subSectorCode.getValidatedValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -558,7 +560,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 				if (!StringUtils.trimToEmpty(aIndustry.getRecordType()).equals("")) {
 					this.btnNotes.setVisible(true);
 				}
-				this.btnSearchSubSector.setVisible(true);
+				this.subSectorCode.setVisible(true);
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
@@ -594,7 +596,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.oldVar_industryCode = this.industryCode.getValue();
 		this.oldVar_subSectorCode = this.subSectorCode.getValue();
-		this.oldVar_lovDescSubSector = this.lovDescSubSectorCodeName.getValue();
+		this.oldVar_lovDescSubSector = this.subSectorCode.getDescription();
 		this.oldVar_industryDesc = this.industryDesc.getValue();
 		this.oldVar_industryLimit = this.industryLimit.getValue();
 		this.oldVar_industryIsActive = this.industryIsActive.isChecked();
@@ -609,7 +611,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		this.industryCode.setValue(this.oldVar_industryCode);
 		this.subSectorCode.setValue(this.oldVar_subSectorCode);
-		this.lovDescSubSectorCodeName.setValue(this.oldVar_lovDescSubSector);
+		this.subSectorCode.setDescription(this.oldVar_lovDescSubSector);
 		this.industryDesc.setValue(this.oldVar_industryDesc);
 		this.industryLimit.setValue(this.oldVar_industryLimit);
 		this.industryIsActive.setChecked(this.oldVar_industryIsActive);
@@ -696,7 +698,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSubSectorCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel(
+		this.subSectorCode.setConstraint("NO EMPTY:"+ Labels.getLabel(
 				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_IndustryDialog_SubSectorCode.value") }));
 		logger.debug("Leaving");
 	}
@@ -706,7 +708,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescSubSectorCodeName.setConstraint("");
+		this.subSectorCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -808,12 +810,12 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (getIndustry().isNewRecord()) {
 			this.industryCode.setReadonly(false);
 			this.subSectorCode.setReadonly(false);
-			this.btnSearchSubSector.setDisabled(false);
+			this.subSectorCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
 		} else {
 			this.industryCode.setReadonly(true);
 			this.subSectorCode.setReadonly(true);
-			this.btnSearchSubSector.setDisabled(true);
+			this.subSectorCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
 		this.industryDesc.setReadonly(isReadOnly("IndustryDialog_industryDesc"));
@@ -845,7 +847,6 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		this.industryCode.setReadonly(true);
 		this.subSectorCode.setReadonly(true);
-		this.btnSearchSubSector.setDisabled(true);
 		this.industryDesc.setReadonly(true);
 		this.industryLimit.setReadonly(true);
 		this.industryIsActive.setDisabled(true);
@@ -871,7 +872,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// remove validation, if there are a save before
 		this.industryCode.setValue("");
 		this.subSectorCode.setValue("");
-		this.lovDescSubSectorCodeName.setValue("");
+		this.subSectorCode.setDescription("");
 		this.industryDesc.setValue("");
 		this.industryLimit.setValue("");
 		this.industryIsActive.setChecked(false);
@@ -1124,18 +1125,18 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchSubSector(Event event) {
+	public void onFulfill$subSectorCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_IndustryDialog, "SubSector");
+		Object dataObject =subSectorCode.getObject();
 		if (dataObject instanceof String) {
 			this.subSectorCode.setValue(dataObject.toString());
-			this.lovDescSubSectorCodeName.setValue("");
+			this.subSectorCode.setDescription("");
 		} else {
 			SubSector details = (SubSector) dataObject;
 			if (details != null) {
 				this.subSectorCode.setValue(details.getSubSectorCode());
-				this.lovDescSubSectorCodeName.setValue(details.getLovDescSectorCodeName() + "-" + details.getSubSectorDesc());
+				this.subSectorCode.setDescription(details.getSubSectorDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

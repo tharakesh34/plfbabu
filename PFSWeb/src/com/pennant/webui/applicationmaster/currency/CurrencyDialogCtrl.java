@@ -70,6 +70,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -90,7 +91,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -118,8 +118,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		ccySwiftCode; 				// autoWired
    	protected Intbox 		ccyEditField; 				// autoWired
 	protected Decimalbox 	ccyMinorCcyUnits; 			// autoWired
-	protected Textbox 		ccyDrRateBasisCode; 		// autoWired
-	protected Textbox 		ccyCrRateBasisCode; 		// autoWired
+	protected ExtendedCombobox 		ccyDrRateBasisCode; 		// autoWired
+	protected ExtendedCombobox 		ccyCrRateBasisCode; 		// autoWired
 	protected Textbox 		ccyMinorCcyDesc; 			// autoWired
 	protected Textbox 		ccySymbol; 					// autoWired
 	protected Checkbox 		ccyIsIntRounding; 			// autoWired
@@ -182,11 +182,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnHelp; 		// autoWire
 	protected Button btnNotes; 		// autoWire
 	
-	protected Button 			btnSearchCcyDrRateBasisCode; 			// autoWire
-	protected Textbox 			lovDescCcyDrRateBasisCodeName;
 	private transient String 	oldVar_lovDescCcyDrRateBasisCodeName;
-	protected Button 			btnSearchCcyCrRateBasisCode; 			// autoWire
-	protected Textbox 			lovDescCcyCrRateBasisCodeName;
 	private transient String 	oldVar_lovDescCcyCrRateBasisCodeName;
 	
 	// ServiceDAOs / Domain Classes
@@ -293,7 +289,19 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	  	this.ccyUserRateSell.setFormat(PennantConstants.rateFormate9);
 	  	this.ccyUserRateSell.setRoundingMode(BigDecimal.ROUND_DOWN);
 	  	this.ccyUserRateSell.setScale(9);
-		
+	  	
+	  	this.ccyDrRateBasisCode.setModuleName("InterestRateBasisCode");
+	  	this.ccyDrRateBasisCode.setMandatoryStyle(true);
+	  	this.ccyDrRateBasisCode.setValueColumn("IntRateBasisCode");
+	  	this.ccyDrRateBasisCode.setDescColumn("IntRateBasisDesc");
+	  	this.ccyDrRateBasisCode.setValidateColumns(new String[]{"IntRateBasisCode"});
+	  	
+	  	this.ccyCrRateBasisCode.setMandatoryStyle(true);
+	  	this.ccyCrRateBasisCode.setModuleName("InterestRateBasisCode");
+	  	this.ccyCrRateBasisCode.setValueColumn("IntRateBasisCode");
+	  	this.ccyCrRateBasisCode.setDescColumn("IntRateBasisDesc");
+	  	this.ccyCrRateBasisCode.setValidateColumns(new String[]{"IntRateBasisCode"});
+	  	
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -431,20 +439,18 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-   public void onClick$btnSearchCcyDrRateBasisCode(Event event){
+   public void onFulfill$ccyDrRateBasisCode(Event event){
 	   logger.debug("Entering" + event.toString());
 
-	   Object dataObject = ExtendedSearchListBox.show(
-			   this.window_CurrencyDialog,"InterestRateBasisCode");
+	   Object dataObject = ccyDrRateBasisCode.getObject(); 
 	   if (dataObject instanceof String){
 		   this.ccyDrRateBasisCode.setValue(dataObject.toString());
-		   this.lovDescCcyDrRateBasisCodeName.setValue("");
+		   this.ccyDrRateBasisCode.setDescription("");
 	   }else{
 		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
 			if (details != null) {
 				this.ccyDrRateBasisCode.setValue(details.getIntRateBasisCode());
-				this.lovDescCcyDrRateBasisCodeName.setValue(details.getIntRateBasisCode()+"-"+
-						details.getIntRateBasisDesc());
+				this.ccyDrRateBasisCode.setDescription(details.getIntRateBasisDesc());
 			}
 	   }
 	   logger.debug("Leaving" + event.toString());
@@ -453,17 +459,15 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
    public void onClick$btnSearchCcyCrRateBasisCode(Event event){
 	   logger.debug("Entering" + event.toString());
 	   
-	   Object dataObject = ExtendedSearchListBox.show(
-			   this.window_CurrencyDialog,"InterestRateBasisCode");
+	   Object dataObject =ccyCrRateBasisCode.getObject();
 	   if (dataObject instanceof String){
 		   this.ccyCrRateBasisCode.setValue(dataObject.toString());
-		   this.lovDescCcyCrRateBasisCodeName.setValue("");
+		   this.ccyCrRateBasisCode.setDescription("");
 	   }else{
 		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
 			if (details != null) {
 				this.ccyCrRateBasisCode.setValue(details.getIntRateBasisCode());
-				this.lovDescCcyCrRateBasisCodeName.setValue(details.getIntRateBasisCode()+"-"+
-						details.getIntRateBasisDesc());
+				this.ccyCrRateBasisCode.setDescription(details.getIntRateBasisDesc());
 			}
 	   }
 	   logger.debug("Leaving" + event.toString());
@@ -562,13 +566,11 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccyIsActive.setChecked(aCurrency.isCcyIsActive());
 	
 	if (aCurrency.isNewRecord()){
-		   this.lovDescCcyDrRateBasisCodeName.setValue("");
-		   this.lovDescCcyCrRateBasisCodeName.setValue("");
+		   this.ccyDrRateBasisCode.setDescription("");
+		   this.ccyCrRateBasisCode.setDescription("");
 	}else{
-		   this.lovDescCcyDrRateBasisCodeName.setValue(aCurrency.getCcyDrRateBasisCode()+"-"+
-				   aCurrency.getLovDescCcyDrRateBasisCodeName());
-		   this.lovDescCcyCrRateBasisCodeName.setValue(aCurrency.getCcyCrRateBasisCode()+"-"+
-				   aCurrency.getLovDescCcyCrRateBasisCodeName());
+		   this.ccyDrRateBasisCode.setDescription(aCurrency.getLovDescCcyDrRateBasisCodeName());
+		   this.ccyCrRateBasisCode.setDescription(aCurrency.getLovDescCcyCrRateBasisCodeName());
 	}
 		this.recordStatus.setValue(aCurrency.getRecordStatus());
 		
@@ -629,16 +631,14 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-	 		aCurrency.setLovDescCcyDrRateBasisCodeName(
-	 				this.lovDescCcyDrRateBasisCodeName.getValue());
-	 		aCurrency.setCcyDrRateBasisCode(this.ccyDrRateBasisCode.getValue());	
+	 		aCurrency.setLovDescCcyDrRateBasisCodeName(this.ccyDrRateBasisCode.getDescription());
+	 		aCurrency.setCcyDrRateBasisCode(this.ccyDrRateBasisCode.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-	 		aCurrency.setLovDescCcyCrRateBasisCodeName(
-	 				this.lovDescCcyCrRateBasisCodeName.getValue());
-	 		aCurrency.setCcyCrRateBasisCode(this.ccyCrRateBasisCode.getValue());	
+	 		aCurrency.setLovDescCcyCrRateBasisCodeName(this.ccyCrRateBasisCode.getDescription());
+	 		aCurrency.setCcyCrRateBasisCode(this.ccyCrRateBasisCode.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -810,9 +810,9 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_ccyEditField = this.ccyEditField.intValue();	
 		this.oldVar_ccyMinorCcyUnits = this.ccyMinorCcyUnits.getValue();
  		this.oldVar_ccyDrRateBasisCode = this.ccyDrRateBasisCode.getValue();
- 		this.oldVar_lovDescCcyDrRateBasisCodeName = this.lovDescCcyDrRateBasisCodeName.getValue();
+ 		this.oldVar_lovDescCcyDrRateBasisCodeName = this.ccyDrRateBasisCode.getDescription();
  		this.oldVar_ccyCrRateBasisCode = this.ccyCrRateBasisCode.getValue();
- 		this.oldVar_lovDescCcyCrRateBasisCodeName = this.lovDescCcyCrRateBasisCodeName.getValue();
+ 		this.oldVar_lovDescCcyCrRateBasisCodeName = this.ccyCrRateBasisCode.getDescription();
  		this.oldVar_ccySymbol = this.ccySymbol.getValue();
  		this.oldVar_ccyMinorCcyDesc = this.ccyMinorCcyDesc.getValue();
 		this.oldVar_ccyIsIntRounding = this.ccyIsIntRounding.isChecked();
@@ -842,9 +842,9 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccyEditField.setValue(this.oldVar_ccyEditField);
 		this.ccyMinorCcyUnits.setValue(this.oldVar_ccyMinorCcyUnits);
  		this.ccyDrRateBasisCode.setValue(this.oldVar_ccyDrRateBasisCode);
- 		this.lovDescCcyDrRateBasisCodeName.setValue(this.oldVar_lovDescCcyDrRateBasisCodeName);
+ 		this.ccyDrRateBasisCode.setDescription(this.oldVar_lovDescCcyDrRateBasisCodeName);
  		this.ccyCrRateBasisCode.setValue(this.oldVar_ccyCrRateBasisCode);
- 		this.lovDescCcyCrRateBasisCodeName.setValue(this.oldVar_lovDescCcyCrRateBasisCodeName);
+ 		this.ccyCrRateBasisCode.setDescription(this.oldVar_lovDescCcyCrRateBasisCodeName);
  		this.ccySymbol.setValue(this.oldVar_ccySymbol);
  		this.ccyMinorCcyDesc.setValue(this.oldVar_ccyMinorCcyDesc);
 		this.ccyIsIntRounding.setChecked(this.oldVar_ccyIsIntRounding);
@@ -1023,9 +1023,9 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCcyDrRateBasisCodeName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.ccyDrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel(
 						"label_CurrencyDialog_CcyDrRateBasisCode.value"), null, true));
-		this.lovDescCcyCrRateBasisCodeName.setConstraint(new PTStringValidator(Labels.getLabel(
+		this.ccyCrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel(
 						"label_CurrencyDialog_CcyCrRateBasisCode.value"), null, true));
 		logger.debug("Leaving");
 	}
@@ -1035,8 +1035,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCcyDrRateBasisCodeName.setConstraint("");
-		this.lovDescCcyCrRateBasisCodeName.setConstraint("");
+		this.ccyDrRateBasisCode.setConstraint("");
+		this.ccyCrRateBasisCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 	
@@ -1056,8 +1056,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccySpotRate.setErrorMessage("");
 		this.ccyUserRateBuy.setErrorMessage("");
 		this.ccyUserRateSell.setErrorMessage("");
-		this.lovDescCcyDrRateBasisCodeName.setErrorMessage("");
-		this.lovDescCcyCrRateBasisCodeName.setErrorMessage("");
+		this.ccyDrRateBasisCode.setErrorMessage("");
+		this.ccyCrRateBasisCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -1171,8 +1171,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccyDesc.setReadonly(isReadOnly("CurrencyDialog_ccyDesc"));
 		this.ccyEditField.setReadonly(isReadOnly("CurrencyDialog_ccyEditField"));
 		this.ccyMinorCcyUnits.setReadonly(isReadOnly("CurrencyDialog_ccyMinorCcyUnits"));
-	  	this.btnSearchCcyDrRateBasisCode.setDisabled(isReadOnly("CurrencyDialog_ccyDrRateBasisCode"));
-	  	this.btnSearchCcyCrRateBasisCode.setDisabled(isReadOnly("CurrencyDialog_ccyCrRateBasisCode"));
+	  	this.ccyDrRateBasisCode.setReadonly(isReadOnly("CurrencyDialog_ccyDrRateBasisCode"));
+	  	this.ccyCrRateBasisCode.setReadonly(isReadOnly("CurrencyDialog_ccyCrRateBasisCode"));
 	  	this.ccySymbol.setReadonly(isReadOnly("CurrencyDialog_ccySymbol"));
 	  	this.ccyMinorCcyDesc.setReadonly(isReadOnly("CurrencyDialog_ccyMinorCcyDesc"));
 	 	this.ccyIsIntRounding.setDisabled(isReadOnly("CurrencyDialog_ccyIsIntRounding"));
@@ -1216,8 +1216,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccySwiftCode.setReadonly(true);
 		this.ccyEditField.setReadonly(true);
 		this.ccyMinorCcyUnits.setReadonly(true);
-		this.btnSearchCcyDrRateBasisCode.setDisabled(true);
-		this.btnSearchCcyCrRateBasisCode.setDisabled(true);
+		this.ccyDrRateBasisCode.setReadonly(true);
+		this.ccyCrRateBasisCode.setReadonly(true);
 	  	this.ccySymbol.setReadonly(true);
 	  	this.ccyMinorCcyDesc.setReadonly(true);
 		this.ccyIsIntRounding.setDisabled(true);
@@ -1259,9 +1259,9 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccyEditField.setText("");
 		this.ccyMinorCcyUnits.setValue("");
 	  	this.ccyDrRateBasisCode.setValue("");
-		this.lovDescCcyDrRateBasisCodeName.setValue("");
+		this.ccyDrRateBasisCode.setDescription("");
 	  	this.ccyCrRateBasisCode.setValue("");
-		this.lovDescCcyCrRateBasisCodeName.setValue("");
+		this.ccyCrRateBasisCode.setDescription("");
 	  	this.ccySymbol.setValue("");
 	  	this.ccyMinorCcyDesc.setValue("");
 		this.ccyIsIntRounding.setChecked(false);

@@ -155,31 +155,13 @@
 									id="label_CurrencyDialog_CcyDrRateBasisCode"
 									value="${c:l('label_CurrencyDialog_CcyDrRateBasisCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="ccyDrRateBasisCode"
-										width="96px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCcyDrRateBasisCodeName" width="200px"
-										readonly="true" />
-									<button
-										id="btnSearchCcyDrRateBasisCode"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id = "ccyDrRateBasisCode" />
 								</hbox>
 								<label
 									id="label_CurrencyDialog_CcyCrRateBasisCode"
 									value="${c:l('label_CurrencyDialog_CcyCrRateBasisCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="ccyCrRateBasisCode"
-										width="96px" visible="false" readonly="true" />
-									<textbox
-										id="lovDescCcyCrRateBasisCodeName" width="200px"
-										readonly="true" />
-									<button
-										id="btnSearchCcyCrRateBasisCode"
-										image="/images/icons/LOVSearch.png"  />
+								<extendedcombobox id = "ccyCrRateBasisCode" />
 								</hbox>
 							</row>
 							<row visible="true">

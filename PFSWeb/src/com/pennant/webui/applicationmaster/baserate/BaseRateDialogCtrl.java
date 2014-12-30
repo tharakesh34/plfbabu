@@ -68,9 +68,8 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
@@ -86,12 +85,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -113,7 +110,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	protected Window 		window_BaseRateDialog; 	// autoWired
 
-	protected Textbox 		bRType; 				// autoWired
+	protected ExtendedCombobox 		bRType; 				// autoWired
   	protected Datebox 		bREffDate;	 			// autoWired
 	protected Decimalbox 	bRRate; 				// autoWired
 	protected Checkbox 		deleteRate; 			// autoWired	
@@ -149,9 +146,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button btnClose; 		// autoWired
 	protected Button btnHelp; 		// autoWired
 	protected Button btnNotes; 		// autoWired
-	
-	protected Button btnSearchBRType; // autoWired
-	protected Textbox lovDescBRTypeName;
+
 	private transient String 	oldVar_lovDescBRTypeName;
 	
 	// ServiceDAOs / Domain Classes
@@ -241,6 +236,12 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	  	this.bRRate.setFormat(PennantConstants.rateFormate9);
 	  	this.bRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 	  	this.bRRate.setScale(9);
+	  	
+	  	this.bRType.setMandatoryStyle(true);
+	  	this.bRType.setModuleName("BaseRateCode");
+	  	this.bRType.setValueColumn("BRType");
+	  	this.bRType.setDescColumn("BRTypeDesc");
+	  	this.bRType.setValidateColumns(new String[]{"BRType"});
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -449,10 +450,9 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	  	this.deleteRate.setChecked(aBaseRate.isDelExistingRates());
 
 	  	if (aBaseRate.isNewRecord()){
-			   this.lovDescBRTypeName.setValue("");
+			   this.bRType.setDescription("");
 		}else{
-			   this.lovDescBRTypeName.setValue(aBaseRate.getBRType()+"-"+
-					   aBaseRate.getLovDescBRTypeName());
+			   this.bRType.setDescription(aBaseRate.getLovDescBRTypeName());
 		}
 	  	
 		this.recordStatus.setValue(aBaseRate.getRecordStatus());
@@ -471,8 +471,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		
 		try {
-			aBaseRate.setLovDescBRTypeName(this.lovDescBRTypeName.getValue());
-		    aBaseRate.setBRType(this.bRType.getValue().toUpperCase());
+			aBaseRate.setLovDescBRTypeName(this.bRType.getDescription());
+		    aBaseRate.setBRType(this.bRType.getValidatedValue().toUpperCase());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -550,7 +550,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			this.btnSearchBRType.focus();
+			this.bRType.focus();
 		} else {
 			this.bRRate.focus();
 			if (isWorkFlowEnabled()){
@@ -599,7 +599,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_bRType = this.bRType.getValue();
-		this.oldVar_lovDescBRTypeName = this.lovDescBRTypeName.getValue();
+		this.oldVar_lovDescBRTypeName = this.bRType.getDescription();
 		this.oldVar_bREffDate = this.bREffDate.getValue();
 		this.oldVar_bRRate = this.bRRate.getValue();
 		this.oldVar_deleteRate = this.deleteRate.isChecked();
@@ -613,7 +613,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.bRType.setValue(this.oldVar_bRType);
-		this.lovDescBRTypeName.setValue(this.oldVar_lovDescBRTypeName);
+		this.bRType.setDescription(this.oldVar_lovDescBRTypeName);
 		this.bREffDate.setValue(this.oldVar_bREffDate);
 	  	this.bRRate.setValue(this.oldVar_bRRate);
 	  	this.deleteRate.setChecked(this.oldVar_deleteRate);
@@ -696,7 +696,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBRTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"),
+		this.bRType.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"),
 				null, true));
 		logger.debug("Leaving");
 	}
@@ -706,7 +706,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */	
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescBRTypeName.setConstraint("");
+		this.bRType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -717,7 +717,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Enterring");
 		this.bREffDate.setErrorMessage("");
 		this.bRRate.setErrorMessage("");
-		this.lovDescBRTypeName.setErrorMessage("");
+		this.bRType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -835,11 +835,11 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doEdit() {
 		logger.debug("Entering");
 		if (getBaseRate().isNewRecord()){
-			this.btnSearchBRType.setDisabled(false);
+			this.bRType.setReadonly(false);
 			this.bREffDate.setDisabled(false);
 			this.btnCancel.setVisible(false);
 		}else{
-			this.btnSearchBRType.setDisabled(true);
+			this.bRType.setReadonly(true);
 			this.bREffDate.setDisabled(true);
 			this.btnCancel.setVisible(true);
 		}
@@ -870,7 +870,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchBRType.setDisabled(true);
+		this.bRType.setReadonly(true);
 		this.bREffDate.setDisabled(true);
 		this.bRRate.setReadonly(true);
 		this.deleteRate.setDisabled(true);
@@ -893,7 +893,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	public void doClear() {
 		logger.debug("Entering");
 		this.bRType.setValue("");
-		this.lovDescBRTypeName.setValue(""); 
+		this.bRType.setDescription(""); 
 		this.bREffDate.setText("");
 		this.bRRate.setValue("0.00");
 		logger.debug("Leaving");
@@ -1138,18 +1138,17 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	// +++++++++++++ Search Button Component Events++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-   public void onClick$btnSearchBRType(Event event){
+   public void onFulfill$bRType(Event event){
 	   logger.debug("Entering"+event.toString());
-	   Object dataObject = ExtendedSearchListBox.show(this.window_BaseRateDialog,"BaseRateCode");
+	   Object dataObject = bRType.getObject();
 	   if (dataObject instanceof String){
 		   this.bRType.setValue(dataObject.toString());
-		   this.lovDescBRTypeName.setValue("");
+		   this.bRType.setDescription("");
 	   }else{
 		   BaseRateCode details= (BaseRateCode) dataObject;
 			if (details != null) {
 				this.bRType.setValue(details.getBRType());
-				   this.lovDescBRTypeName.setValue(
-						   details.getBRType()+"-"+details.getBRTypeDesc());
+				   this.bRType.setDescription(details.getBRTypeDesc());
 			}
 	   }
 	   logger.debug("Leaving"+event.toString());

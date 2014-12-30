@@ -73,16 +73,7 @@
 									id="label_LovFieldDetailDialog_FieldCode"
 									value="${c:l('label_LovFieldDetailDialog_FieldCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<hbox>
-										<textbox id="fieldCode"
-											width="90px" visible="false" />
-										<textbox
-											id="lovDescFieldCodeName" width="250px" readonly="true" />
-										<button id="btnSearchFieldCode"
-											image="/images/icons/LOVSearch.png"  />
-									</hbox>
+									<extendedcombobox id="fieldCode"/>
 								</hbox>
 							</row>
 							<row>

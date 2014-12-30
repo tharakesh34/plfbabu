@@ -67,6 +67,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -105,7 +106,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window            window_LovFieldDetailDialog;// autoWired
-	protected Textbox           fieldCode;                	// autoWired
+	protected ExtendedCombobox           fieldCode;                	// autoWired
 	protected Textbox           fieldCodeValue;             // autoWired
 	protected Textbox           valueDesc;            		// autoWired
 	protected Checkbox          isActive;                   // autoWired
@@ -120,8 +121,6 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button            btnClose;                   // autoWired
 	protected Button            btnHelp;                    // autoWired
 	protected Button            btnNotes;                   // autoWired
-	protected Button            btnSearchFieldCode;         // autoWired
-	protected Textbox           lovDescFieldCodeName;       // autoWired
 	
 	// not auto wired variables
 	private LovFieldDetail      lovFieldDetail;                     // over handed per parameters
@@ -227,6 +226,12 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.fieldCodeValue.setMaxlength(50);
 		this.valueDesc.setMaxlength(50);
 
+		this.fieldCode.setMandatoryStyle(true);
+		this.fieldCode.setModuleName("LovFieldCode");
+		this.fieldCode.setValueColumn("FieldCode");
+		this.fieldCode.setDescColumn("FieldCodeDesc");
+		this.fieldCode.setValidateColumns(new String[]{"FieldCode"});
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -370,19 +375,17 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * when "btnSearchFieldCode" is clicked 
 	 * @param event
 	 */
-	public void onClick$btnSearchFieldCode(Event event){
+	public void onFulfill$fieldCode(Event event){
 		logger.debug("Entering" + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_LovFieldDetailDialog,
-				"LovFieldCode");
+		Object dataObject = fieldCode.getObject();
 		if (dataObject instanceof String){
 			this.fieldCode.setValue(dataObject.toString());
-			this.lovDescFieldCodeName.setValue("");
+			this.fieldCode.setDescription("");
 		}else{
 			LovFieldCode details= (LovFieldCode) dataObject;
 			if (details != null) {
 				this.fieldCode.setValue(details.getFieldCode());
-				this.lovDescFieldCodeName.setValue(details.getFieldCode()+"-"+
-						details.getFieldCodeDesc());
+				this.fieldCode.setDescription(details.getFieldCodeDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -462,10 +465,9 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.isActive.setChecked(aLovFieldDetail.isIsActive());
 
 		if (aLovFieldDetail.isNewRecord()){
-			this.lovDescFieldCodeName.setValue("");
+			this.fieldCode.setDescription("");
 		}else{
-			this.lovDescFieldCodeName.setValue(aLovFieldDetail.getFieldCode()+"-"+
-					aLovFieldDetail.getLovDescFieldCodeName());
+			this.fieldCode.setDescription(aLovFieldDetail.getLovDescFieldCodeName());
 		}
 		this.recordStatus.setValue(aLovFieldDetail.getRecordStatus());
 		
@@ -488,8 +490,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aLovFieldDetail.setLovDescFieldCodeName(this.lovDescFieldCodeName.getValue());
-			aLovFieldDetail.setFieldCode(this.fieldCode.getValue());	
+			aLovFieldDetail.setLovDescFieldCodeName(this.fieldCode.getDescription());
+			aLovFieldDetail.setFieldCode(this.fieldCode.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -592,7 +594,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_fieldCode = this.fieldCode.getValue();
-		this.oldVar_lovDescFieldCodeName = this.lovDescFieldCodeName.getValue();
+		this.oldVar_lovDescFieldCodeName = this.fieldCode.getDescription();
 		this.oldVar_fieldCodeValue = this.fieldCodeValue.getValue();
 		this.oldVar_valueDesc = this.valueDesc.getValue();
 		this.oldVar_isActive = this.isActive.isChecked();
@@ -606,7 +608,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.fieldCode.setValue(this.oldVar_fieldCode);
-		this.lovDescFieldCodeName.setValue(this.oldVar_lovDescFieldCodeName);
+		this.fieldCode.setDescription(this.oldVar_lovDescFieldCodeName);
 		this.fieldCodeValue.setValue(this.oldVar_fieldCodeValue);
 		this.valueDesc.setValue(this.oldVar_valueDesc);
 		this.isActive.setChecked(this.oldVar_isActive);
@@ -678,7 +680,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescFieldCodeName.setErrorMessage("");
+		this.fieldCode.setErrorMessage("");
 		this.fieldCodeValue.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -687,7 +689,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescFieldCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true));
+		this.fieldCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true));
 		logger.debug("Leaving");
 	}
 	/**
@@ -695,7 +697,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescFieldCodeName.setConstraint("");
+		this.fieldCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 	
@@ -797,7 +799,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.btnCancel.setVisible(true);
 		}
 
-		this.btnSearchFieldCode.setDisabled(isReadOnly("LovFieldDetailDialog_fieldCode"));
+		this.fieldCode.setReadonly(isReadOnly("LovFieldDetailDialog_fieldCode"));
 		this.fieldCodeValue.setReadonly(isReadOnly("LovFieldDetailDialog_fieldCodeValue"));
 		this.valueDesc.setReadonly(isReadOnly("LovFieldDetailDialog_valueDesc"));
 		this.isActive.setDisabled(isReadOnly("LovFieldDetailDialog_isActive"));
@@ -825,7 +827,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchFieldCode.setDisabled(true);
+		this.fieldCode.setReadonly(true);
 		this.fieldCodeValue.setReadonly(true);
 		this.valueDesc.setReadonly(true);
 		this.isActive.setDisabled(true);
@@ -851,7 +853,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		// remove validation, if there are a save before
 		this.fieldCode.setValue("");
-		this.lovDescFieldCodeName.setValue("");
+		this.fieldCode.setDescription("");
 		this.fieldCodeValue.setValue("");
 		this.isActive.setChecked(false);
 		

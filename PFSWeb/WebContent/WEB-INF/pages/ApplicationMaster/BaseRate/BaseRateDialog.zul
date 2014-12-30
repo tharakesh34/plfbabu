@@ -76,16 +76,8 @@
 								<label id="label_BaseRateDialog_BRType"
 									value="${c:l('label_BaseRateDialog_BRType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="bRType" width="96px"
-										visible="false" />
-									<textbox id="lovDescBRTypeName"
-										width="300px" readonly="true" />
-									<button
-										id="btnSearchBRType"
-										image="/images/icons/LOVSearch.png"  />
-								</hbox>
+										<extendedcombobox id ="bRType" />
+								</hbox> 
 							</row>
 							<row visible="true">
 								<label
