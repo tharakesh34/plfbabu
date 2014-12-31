@@ -53,6 +53,7 @@ public interface SubSectorDAO {
 	SubSector getSubSector();
 	SubSector getNewSubSector();
 	SubSector getSubSectorById(String id,String subSectorCode ,String type);
+	SubSector getSubSectorBySubSectorCode(String subSectorCode ,String type);
 	void update(SubSector subSector,String type);
 	void delete(SubSector subSector,String type);
 	void save(SubSector subSector,String type);

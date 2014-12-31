@@ -350,35 +350,44 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 
 		SubSector subSector = (SubSector) auditDetail.getModelData();
 		SubSector tempSubSector = null;
-
+		SubSector tempSubSectorCode = null;
 		if (subSector.isWorkflow()) {
 			tempSubSector = getSubSectorDAO().getSubSectorById(subSector.getId(), subSector.getSubSectorCode(), "_Temp");
+			tempSubSectorCode =  getSubSectorDAO().getSubSectorBySubSectorCode(subSector.getSubSectorCode(), "_Temp");
 		}
 
 		SubSector befSubSector = getSubSectorDAO().getSubSectorById(subSector.getId(), subSector.getSubSectorCode(), "");
+		SubSector befsubSectorCode = getSubSectorDAO().getSubSectorBySubSectorCode(subSector.getSubSectorCode(), "");
 		SubSector oldSubSector = subSector.getBefImage();
-
+		
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
-
+		String[] errparm = new String[1];
+		
 		valueParm[0] = subSector.getSectorCode();
 		valueParm[1] = subSector.getSubSectorCode();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_SectorCode") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubSectorCode") + ":"+ valueParm[1];
+		errparm[0] = PennantJavaUtil.getLabel("label_SubSectorCode") + ":"+ valueParm[1];
 
 		if (subSector.isNew()) { // for New record or new record into work flow
 
 			if (!subSector.isWorkflow()) {// With out Work flow only new records
 				if (befSubSector != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
+				}
+				if (befsubSectorCode != null){
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errparm, null));
 				}
 			} else { // with work flow
 				if (subSector.getRecordType().equals(
 						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befSubSector != null || tempSubSector != null) { // if  records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
+					}
+					if (befsubSectorCode!= null || tempSubSectorCode != null) { // if  records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errparm,null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSubSector == null || tempSubSector != null) {

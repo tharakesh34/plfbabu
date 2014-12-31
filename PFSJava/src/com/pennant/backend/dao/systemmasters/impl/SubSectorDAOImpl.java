@@ -150,6 +150,38 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		return subSector;
 	}
 
+	
+	@Override
+    public SubSector getSubSectorBySubSectorCode(String subSectorCode, String type) {
+		logger.debug("Entering");
+		SubSector subSector = new SubSector();
+		subSector.setSubSectorCode(subSectorCode);
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append("SELECT SectorCode, SubSectorCode, SubSectorDesc, SubSectorIsActive,");
+		if(type.contains("View")){
+			selectSql.append("lovDescSectorCodeName,");
+		}
+		selectSql.append(" Version, LastMntBy , LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" From BMTSubSectors");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where SubSectorCode=:subSectorCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSector);
+		RowMapper<SubSector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSector.class);
+
+		try {
+			subSector = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			subSector = null;
+		}
+		logger.debug("Leaving");
+		return subSector;
+    }
+
 	/**
 	 * This method initialize the Record.
 	 * 
@@ -324,5 +356,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		parms[0][1] = PennantJavaUtil.getLabel("label_SubSectorCode")+ ":" + parms[1][1];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
+
+	
 
 }
