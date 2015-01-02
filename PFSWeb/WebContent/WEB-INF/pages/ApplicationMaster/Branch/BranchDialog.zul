@@ -124,23 +124,17 @@
 								<label
 									id="label_BranchDialog_BranchCountry"
 									value="${c:l('label_BranchDialog_BranchCountry.value')}" />
-								<hbox>
 										<extendedcombobox id="branchCountry" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchProvince"
 									value="${c:l('label_BranchDialog_BranchProvince.value')}" />
-								<hbox>
 										<extendedcombobox id="branchProvince" />
-								</hbox>
 								<label
 									id="label_BranchDialog_BranchCity"
 									value="${c:l('label_BranchDialog_BranchCity.value')}" />
-								<hbox>
 										<extendedcombobox id="branchCity" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label id="label_BranchDialog_BranchFax"
@@ -173,9 +167,7 @@
 								<label
 									id="label_BranchDialog_BranchSwiftCountry"
 									value="${c:l('label_BranchDialog_BranchSwiftCountry.value')}" />
-								<hbox>
 										<extendedcombobox id="branchSwiftCountry" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label

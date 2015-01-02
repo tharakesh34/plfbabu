@@ -76,7 +76,6 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.SplRate;
-import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.PagedListService;
@@ -86,7 +85,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -374,25 +372,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// +++++++++++++ Search Button Component Events++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onFulfill$sRType(Event event){
-		logger.debug("Entering" + event.toString());
-		Object dataObject = sRType.getObject();
-		if (dataObject instanceof String){
-			this.sRType.setValue(dataObject.toString());
-			this.sRType.setDescription("");
-		}else{
-			SplRateCode details= (SplRateCode) dataObject;
-			if (details != null) {
-				this.sRType.setValue(details.getSRType());
-				this.sRType.setDescription(details.getSRTypeDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
@@ -483,7 +462,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(SplRate aSplRate) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -521,7 +499,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		aSplRate.setLastMdfDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -720,23 +697,6 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.sRType.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateDialog_SRType.value"), null, true));
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.sRType.setConstraint("");
-		logger.debug("Leaving");
-	}
 
 	/**
 	 * Remove Error Messages for Fields

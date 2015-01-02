@@ -75,7 +75,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Industry;
-import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.IndustryService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -474,8 +473,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(Industry aIndustry) {
 		logger.debug("Entering");
-
-		doSetLOVValidation();
+		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
@@ -508,7 +506,6 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -693,25 +690,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.subSectorCode.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_IndustryDialog_SubSectorCode.value") }));
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.subSectorCode.setConstraint("");
-		logger.debug("Leaving");
-	}
-
+	
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -1121,27 +1100,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return processCompleted;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// +++++++++++++ Search Button Component Events++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onFulfill$subSectorCode(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Object dataObject =subSectorCode.getObject();
-		if (dataObject instanceof String) {
-			this.subSectorCode.setValue(dataObject.toString());
-			this.subSectorCode.setDescription("");
-		} else {
-			SubSector details = (SubSector) dataObject;
-			if (details != null) {
-				this.subSectorCode.setValue(details.getSubSectorCode());
-				this.subSectorCode.setDescription(details.getSubSectorDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

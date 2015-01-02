@@ -72,8 +72,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.CityService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -381,17 +379,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onFulfill$pCCountry(Event event){
 		logger.debug("Entering" + event.toString());
-		Object dataObject = pCCountry.getObject();
-		if (dataObject instanceof String){
-			this.pCCountry.setValue(dataObject.toString());
-			this.pCCountry.setDescription("");
-		}else{
-			Country details= (Country) dataObject;
-			if (details != null) {
-				this.pCCountry.setValue(details.getCountryCode());
-				this.pCCountry.setDescription(details.getCountryDesc());
-			}
-		}
 		doSetProvProp();
 		logger.debug("Leaving" + event.toString());
 
@@ -408,23 +395,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.pCProvince.setFilters(filtersProvince);
 	}
 	
-
-	public void onFulfill$pCProvince(Event event){
-		logger.debug("Entering" + event.toString());	
-		Object dataObject = pCProvince.getObject();
-		if (dataObject instanceof String){
-			this.pCProvince.setValue(dataObject.toString());
-			this.pCProvince.setDescription("");
-		}else{
-			Province details= (Province) dataObject;
-			if (details != null) {
-				this.pCProvince.setValue(details.getCPProvince());
-				this.pCProvince.setDescription(details.getCPProvinceName());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -519,7 +489,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(City aCity) {
 		logger.debug("Entering ");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -549,7 +518,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -721,29 +689,6 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.pCCity.setConstraint("");
 		this.pCCityName.setConstraint("");
 		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.pCCountry.setConstraint(new PTStringValidator(Labels.getLabel(
-				"label_CityDialog_PCCountry.value"), null, true));
-		this.pCProvince.setConstraint(new PTStringValidator(Labels.getLabel(
-				"label_CityDialog_PCProvince.value"), null, true));
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.pCCountry.setConstraint("");
-		this.pCProvince.setConstraint("");
-		logger.debug("Leaving");
 	}
 
 	/**

@@ -71,7 +71,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
@@ -364,25 +363,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// +++++++++++++ Search Button Component Events++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onFulfill$cPCountry(Event event){
-		logger.debug("Entering");	   
-		Object dataObject =cPCountry.getObject();
-		if (dataObject instanceof String){
-			this.cPCountry.setValue(dataObject.toString());
-			this.cPCountry.setDescription("");
-		}else{
-			Country details= (Country) dataObject;
-			if (details != null) {
-				this.cPCountry.setValue(details.getLovValue());
-				this.cPCountry.setDescription(details.getCountryDesc());
-			}
-		}
-		logger.debug("Leaving");
-	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
@@ -473,7 +453,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(Province aProvince) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -497,7 +476,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -654,24 +632,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.cPProvince.setConstraint("");
 		this.cPProvinceName.setConstraint("");
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.cPCountry.setConstraint(new PTStringValidator(Labels.getLabel(
-						"label_ProvinceDialog_CPCountry.value"), null, true));
-		logger.debug("Leaving");
-	}
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.cPCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 

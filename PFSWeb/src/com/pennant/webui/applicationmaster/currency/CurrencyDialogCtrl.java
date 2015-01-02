@@ -76,7 +76,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -435,43 +434,6 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 	
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events+++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
-   public void onFulfill$ccyDrRateBasisCode(Event event){
-	   logger.debug("Entering" + event.toString());
-
-	   Object dataObject = ccyDrRateBasisCode.getObject(); 
-	   if (dataObject instanceof String){
-		   this.ccyDrRateBasisCode.setValue(dataObject.toString());
-		   this.ccyDrRateBasisCode.setDescription("");
-	   }else{
-		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
-			if (details != null) {
-				this.ccyDrRateBasisCode.setValue(details.getIntRateBasisCode());
-				this.ccyDrRateBasisCode.setDescription(details.getIntRateBasisDesc());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
-   
-   public void onClick$btnSearchCcyCrRateBasisCode(Event event){
-	   logger.debug("Entering" + event.toString());
-	   
-	   Object dataObject =ccyCrRateBasisCode.getObject();
-	   if (dataObject instanceof String){
-		   this.ccyCrRateBasisCode.setValue(dataObject.toString());
-		   this.ccyCrRateBasisCode.setDescription("");
-	   }else{
-		   InterestRateBasisCode details= (InterestRateBasisCode) dataObject;
-			if (details != null) {
-				this.ccyCrRateBasisCode.setValue(details.getIntRateBasisCode());
-				this.ccyCrRateBasisCode.setDescription(details.getIntRateBasisDesc());
-			}
-	   }
-	   logger.debug("Leaving" + event.toString());
-	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
@@ -588,7 +550,6 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(Currency aCurrency) {
 		logger.debug("Entering ");
-		doSetLOVValidation();
 		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		
@@ -721,8 +682,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		
 		doRemoveValidation();
-		doRemoveLOVValidation();
-		
+	
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -1018,27 +978,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving ");
 	}
 	
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.ccyDrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel(
-						"label_CurrencyDialog_CcyDrRateBasisCode.value"), null, true));
-		this.ccyCrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel(
-						"label_CurrencyDialog_CcyCrRateBasisCode.value"), null, true));
-		logger.debug("Leaving");
-	}
 	
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.ccyDrRateBasisCode.setConstraint("");
-		this.ccyCrRateBasisCode.setConstraint("");
-		logger.debug("Leaving");
-	}
 	
 	/**
 	 * Remove Error Messages for Fields

@@ -72,9 +72,7 @@
 							<row>
 								<label id="label_SplRateDialog_SRType"
 									value="${c:l('label_SplRateDialog_SRType.value')}" />
-								<hbox>
 								<extendedcombobox id ="sRType" />
-								</hbox>
 							</row>
 							<row>
 								<label

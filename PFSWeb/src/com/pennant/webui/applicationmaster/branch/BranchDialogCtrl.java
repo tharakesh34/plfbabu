@@ -73,9 +73,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -536,6 +533,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		sBranchCountry = this.branchCountry.getValue();
 		sBranchProvince = this.branchProvince.getValue();
 		doSetProvProp();
+		doSetCityProp();
 		logger.debug("Leaving");
 	}
 
@@ -546,7 +544,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(Branch aBranch) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		
@@ -637,7 +634,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		
 		doRemoveValidation();
-		doRemoveLOVValidation();
 		
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -904,33 +900,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchSortCode.setConstraint("");
 		logger.debug("Leaving");
 	}
-	/**
-	 * Set Validations for LOV Fields
-	 */	
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.branchCity.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value")
-				 , null, true));
-		this.branchProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), 
-				null, true));
-		this.branchCountry.setConstraint(new PTStringValidator(Labels.getLabel(
-						"label_BranchDialog_BranchCountry.value"), null, true));
-		this.branchSwiftCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"),
-				null, true));
-		logger.debug("Leaving");
-	}
 	
-	/**
-	 * Remove Validations for LOV Fields
-	 */	
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.branchCity.setConstraint("");
-		this.branchProvince.setConstraint("");
-		this.branchCountry.setConstraint("");
-		this.branchSwiftCountry.setConstraint("");
-		logger.debug("Leaving");
-	}
 
 	/**
 	 * Remove Error Messages for Fields
@@ -1395,18 +1365,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	
 	 public void onFulfill$branchCountry(Event event){
 		   logger.debug("Entering"+event.toString());
-		   Object dataObject = branchCountry.getObject();
-		   if (dataObject instanceof String){
-			   this.branchCountry.setValue(dataObject.toString());
-			   this.branchCountry.setDescription("");
-			  
-		   }else{
-			   Country details= (Country) dataObject;
-			   if (details != null) {
-				   this.branchCountry.setValue(details.getCountryCode());
-				   this.branchCountry.setDescription(details.getCountryDesc());
-			   }
-		   }
 		   doSetProvProp();
 		   doSetCityProp();
 		   logger.debug("Leaving"+event.toString());
@@ -1414,41 +1372,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 
 	 public void onFulfill$branchProvince(Event event){
 		   logger.debug("Entering"+event.toString());
-		   Object dataObject = branchProvince.getObject();
-		   if (dataObject instanceof String){
-			   this.branchProvince.setValue(dataObject.toString());
-			   this.branchProvince.setDescription("");
-			 
-		   }else{
-			   Province details= (Province) dataObject;
-			   if (details != null) {
-				   this.branchProvince.setValue(details.getCPProvince());
-				   this.branchProvince.setDescription(details.getCPProvinceName());
-				  
-			   }
-		   }
 		   doSetCityProp();
 		   logger.debug("Leaving"+event.toString());
 	   }
 
-	 
-   public void onFulfill$branchCity(Event event){
-	   logger.debug("Entering"+event.toString());
-	   Object dataObject = branchCity.getObject();
-	   if (dataObject instanceof String){
-		   this.branchCity.setValue(dataObject.toString());
-		   this.branchCity.setDescription("");
-	   }else{
-		   City details= (City) dataObject;
-		   if (details != null) {
-			   this.branchCity.setValue(details.getPCCity());
-			   this.branchCity.setDescription(details.getPCCityName());
-			   }
-		   }
-	   logger.debug("Leaving"+event.toString());
-	}
-   
-  
    private void doSetProvProp(){
 	   if (!StringUtils.trimToEmpty(sBranchCountry).equals(this.branchCountry.getValue())){
 		   this.branchProvince.setValue("");
@@ -1477,23 +1404,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		filtersCity[1]= new Filter("PCProvince", this.branchProvince.getValue(), Filter.OP_EQUAL);
 		this.branchCity.setFilters(filtersCity);
 	}
-   public void onFulfill$branchSwiftCountry(Event event){
-	   logger.debug("Entering"+event.toString());
-
-	   Object dataObject = branchSwiftCountry.getObject(); 
-	   if (dataObject instanceof String){
-		   this.branchSwiftCountry.setValue(dataObject.toString());
-		   this.branchSwiftCountry.setDescription("");
-	   }else{
-		   Country details= (Country) dataObject;
-		   if (details != null) {
-			   this.branchSwiftCountry.setValue(details.getCountryCode());
-			   this.branchSwiftCountry.setDescription(details.getCountryDesc());
-		   }
-	   }
-	   logger.debug("Leaving"+event.toString());
-   }
-
+  
    
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//

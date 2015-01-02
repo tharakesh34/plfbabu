@@ -74,9 +74,7 @@
 								<label
 									id="label_SubSectorDialog_SectorCode"
 									value="${c:l('label_SubSectorDialog_SectorCode.value')}" />
-								<hbox>
 										<extendedcombobox id="sectorCode" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label

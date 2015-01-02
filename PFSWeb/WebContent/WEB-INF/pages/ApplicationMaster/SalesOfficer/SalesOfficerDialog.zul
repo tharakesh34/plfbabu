@@ -130,9 +130,7 @@
 								<label
 									id="label_SalesOfficerDialog_SalesOffDept"
 									value="${c:l('label_SalesOfficerDialog_SalesOffDept.value')}" />
-								<hbox>
 										<extendedcombobox id="salesOffDept" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label

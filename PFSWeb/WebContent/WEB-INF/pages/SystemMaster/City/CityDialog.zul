@@ -80,16 +80,12 @@
 							<row visible="true">
 								<label id="label_CityDialog_PCCountry"
 									value="${c:l('label_CityDialog_PCCountry.value')}" />
-								<hbox>
 									<extendedcombobox id="pCCountry" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label id="label_CityDialog_PCProvince"
 									value="${c:l('label_CityDialog_PCProvince.value')}" />
-								<hbox>
 									<extendedcombobox id="pCProvince" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label id="label_CityDialog_PCCity"

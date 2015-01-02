@@ -75,9 +75,7 @@
 							<row visible="true">
 								<label id="label_BaseRateDialog_BRType"
 									value="${c:l('label_BaseRateDialog_BRType.value')}" />
-								<hbox>
 										<extendedcombobox id ="bRType" />
-								</hbox> 
 							</row>
 							<row visible="true">
 								<label

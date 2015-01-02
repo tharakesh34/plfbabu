@@ -75,7 +75,6 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.BaseRate;
-import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.PagedListService;
@@ -84,7 +83,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -466,7 +464,6 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(BaseRate aBaseRate) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		
@@ -504,9 +501,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		aBaseRate.setLastMdfDate((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		
-		
 		doRemoveValidation();
-		doRemoveLOVValidation();
 		
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -691,25 +686,6 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 	
-	/**
-	 * Set Validations for LOV Fields
-	 */	
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.bRType.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"),
-				null, true));
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * Remove Validations for LOV Fields
-	 */	
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.bRType.setConstraint("");
-		logger.debug("Leaving");
-	}
-
 	/**
 	 * Remove Error Messages for Fields
 	 */
@@ -1134,25 +1110,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		return processCompleted;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// +++++++++++++ Search Button Component Events++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-   public void onFulfill$bRType(Event event){
-	   logger.debug("Entering"+event.toString());
-	   Object dataObject = bRType.getObject();
-	   if (dataObject instanceof String){
-		   this.bRType.setValue(dataObject.toString());
-		   this.bRType.setDescription("");
-	   }else{
-		   BaseRateCode details= (BaseRateCode) dataObject;
-			if (details != null) {
-				this.bRType.setValue(details.getBRType());
-				   this.bRType.setDescription(details.getBRTypeDesc());
-			}
-	   }
-	   logger.debug("Leaving"+event.toString());
-	}
+	
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//

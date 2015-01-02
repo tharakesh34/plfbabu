@@ -73,7 +73,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -466,7 +465,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 	 */
 	public void doWriteComponentsToBean(RelationshipOfficer aRelationshipOfficer) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -493,7 +491,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -652,20 +649,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		this.rOfficerCode.setConstraint("");
 		this.rOfficerDesc.setConstraint("");
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		this.rOfficerDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true));
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		this.rOfficerDeptCode.setConstraint("");
 	}
 
 	/**
@@ -1070,26 +1053,6 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		return processCompleted;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events ++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onFullfill$rOfficerDeptCode(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Object dataObject = rOfficerDeptCode.getObject(); 
-		if (dataObject instanceof String) {
-			this.rOfficerDeptCode.setValue(dataObject.toString());
-			this.rOfficerDeptCode.setDescription("");
-		} else {
-			Department details = (Department) dataObject;
-			if (details != null) {
-				this.rOfficerDeptCode.setValue(details.getDeptCode());
-				this.rOfficerDeptCode.setDescription(details.getDeptDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//

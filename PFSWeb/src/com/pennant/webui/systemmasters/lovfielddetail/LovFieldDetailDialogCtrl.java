@@ -72,7 +72,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.staticparms.LovFieldCode;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
@@ -85,7 +84,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -367,29 +365,6 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events+++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
-	/**
-	 * when "btnSearchFieldCode" is clicked 
-	 * @param event
-	 */
-	public void onFulfill$fieldCode(Event event){
-		logger.debug("Entering" + event.toString());
-		Object dataObject = fieldCode.getObject();
-		if (dataObject instanceof String){
-			this.fieldCode.setValue(dataObject.toString());
-			this.fieldCode.setDescription("");
-		}else{
-			LovFieldCode details= (LovFieldCode) dataObject;
-			if (details != null) {
-				this.fieldCode.setValue(details.getFieldCode());
-				this.fieldCode.setDescription(details.getFieldCodeDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
@@ -485,7 +460,6 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void doWriteComponentsToBean(LovFieldDetail aLovFieldDetail) {
 		logger.debug("Entering") ;
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -512,7 +486,6 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size()>0) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -682,22 +655,6 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		this.fieldCode.setErrorMessage("");
 		this.fieldCodeValue.setErrorMessage("");
-		logger.debug("Leaving");
-	}
-	/**
-	 * This method sets validation for LovFileds
-	 */
-	private void doSetLOVValidation() {
-		logger.debug("Entering");
-		this.fieldCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true));
-		logger.debug("Leaving");
-	}
-	/**
-	 * This method removes validation for LovFileds
-	 */
-	private void doRemoveLOVValidation() {
-		logger.debug("Entering");
-		this.fieldCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 	

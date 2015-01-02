@@ -72,7 +72,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.SubSectorService;
@@ -456,7 +455,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	public void doWriteComponentsToBean(SubSector aSubSector) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -483,7 +481,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -649,19 +646,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SectorCode.value"), null, true));
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		this.sectorCode.setConstraint("");
-	}
+	
 
 	/**
 	 * Remove Error Messages for Fields
@@ -1059,26 +1044,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		logger.debug("Leaving");
 		return processCompleted;
-	}
-
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// +++++++++++++ Search Button Component Events++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	public void onFulfill$sectorCode(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Object dataObject = sectorCode.getObject();
-		if (dataObject instanceof String) {
-			this.sectorCode.setValue(dataObject.toString());
-			this.sectorCode.setDescription("");
-		} else {
-			Sector details = (Sector) dataObject;
-			if (details != null) {
-				this.sectorCode.setValue(details.getSectorCode());
-				this.sectorCode.setDescription(details.getSectorDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

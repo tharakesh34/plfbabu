@@ -72,9 +72,7 @@
 								<label
 									id="label_ProvinceDialog_CPCountry"
 									value="${c:l('label_ProvinceDialog_CPCountry.value')}" />
-								<hbox>
 										<extendedcombobox id="cPCountry" />
-								</hbox>
 							</row>
 							<row>
 								<label

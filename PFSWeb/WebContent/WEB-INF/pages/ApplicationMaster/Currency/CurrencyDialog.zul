@@ -154,15 +154,11 @@
 								<label
 									id="label_CurrencyDialog_CcyDrRateBasisCode"
 									value="${c:l('label_CurrencyDialog_CcyDrRateBasisCode.value')}" />
-								<hbox>
 										<extendedcombobox id = "ccyDrRateBasisCode" />
-								</hbox>
 								<label
 									id="label_CurrencyDialog_CcyCrRateBasisCode"
 									value="${c:l('label_CurrencyDialog_CcyCrRateBasisCode.value')}" />
-								<hbox>
 								<extendedcombobox id = "ccyCrRateBasisCode" />
-								</hbox>
 							</row>
 							<row visible="true">
 								<label

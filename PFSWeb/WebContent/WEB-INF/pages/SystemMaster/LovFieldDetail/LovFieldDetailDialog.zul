@@ -72,9 +72,7 @@
 								<label
 									id="label_LovFieldDetailDialog_FieldCode"
 									value="${c:l('label_LovFieldDetailDialog_FieldCode.value')}" />
-								<hbox>
 									<extendedcombobox id="fieldCode"/>
-								</hbox>
 							</row>
 							<row>
 								<label

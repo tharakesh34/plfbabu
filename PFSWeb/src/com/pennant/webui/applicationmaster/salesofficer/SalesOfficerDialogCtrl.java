@@ -73,7 +73,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.SalesOfficerService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -483,7 +482,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 	 */
 	public void doWriteComponentsToBean(SalesOfficer aSalesOfficer) {
 		logger.debug("Entering");
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -526,7 +524,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -715,21 +712,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffLName.setConstraint("");
 		this.salesOffShrtName.setConstraint("");
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-		this.salesOffDept.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), 
-				null, true));
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
-		this.salesOffDept.setConstraint("");
 	}
 
 	/**
@@ -1182,24 +1164,6 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		return processCompleted;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events ++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void onFulfill$salesOffDept(Event event) {
-
-		Object dataObject =salesOffDept.getObject();
-		if (dataObject instanceof String) {
-			this.salesOffDept.setValue(dataObject.toString());
-			this.salesOffDept.setDescription("");
-		} else {
-			Department details = (Department) dataObject;
-			if (details != null) {
-				this.salesOffDept.setValue(details.getDeptCode());
-				this.salesOffDept.setDescription(details.getDeptDesc());
-			}
-		}
-	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Components +++++++++++++++++//
