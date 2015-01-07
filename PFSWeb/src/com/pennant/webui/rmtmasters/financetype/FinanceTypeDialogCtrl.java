@@ -743,7 +743,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.finMAmz.setInputAllowed(false);
 		this.finMAmz.setDisplayStyle(3);
-		this.finMAmz.setMandatoryStyle(true);
 		this.finMAmz.setModuleName("AccountingSet");
 		this.finMAmz.setValueColumn("EventCode");
 		this.finMAmz.setDescColumn("AccountSetCode");
@@ -815,7 +814,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.finInstDate.setInputAllowed(false);
 		this.finInstDate.setDisplayStyle(3);
-		this.finInstDate.setMandatoryStyle(true);
 		this.finInstDate.setModuleName("AccountingSet");
 		this.finInstDate.setValueColumn("EventCode");
 		this.finInstDate.setDescColumn("AccountSetCode");
@@ -887,7 +885,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.finAEWriteOff.setInputAllowed(false);
 		this.finAEWriteOff.setDisplayStyle(3);
-		this.finAEWriteOff.setMandatoryStyle(true);
 		this.finAEWriteOff.setModuleName("AccountingSet");
 		this.finAEWriteOff.setValueColumn("EventCode");
 		this.finAEWriteOff.setDescColumn("AccountSetCode");
@@ -896,7 +893,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.finAEWriteOffBK.setInputAllowed(false);
 		this.finAEWriteOffBK.setDisplayStyle(3);
-		this.finAEWriteOffBK.setMandatoryStyle(true);
 		this.finAEWriteOffBK.setModuleName("AccountingSet");
 		this.finAEWriteOffBK.setValueColumn("EventCode");
 		this.finAEWriteOffBK.setDescColumn("AccountSetCode");
@@ -1800,7 +1796,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			if (this.cbfinProductType.getSelectedItem() != null || !this.cbfinProductType.getSelectedItem().getValue().equals("#")) {
+			if (this.cbfinProductType.getSelectedItem() != null && !this.cbfinProductType.getSelectedItem().getValue().equals("#")) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
 			} else {
 				throw new WrongValueException(this.cbfinProductType, Labels.getLabel("STATIC_INVALID",
@@ -2399,6 +2395,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
+			
+			if(!StringUtils.trimToEmpty(this.finAEAddDsbOD.getValue()).equals("") && 
+					!StringUtils.trimToEmpty(this.finAEAddDsbFD.getValue()).equals("")){
+				if(!this.finAEAddDsbOD.getValue().equals(this.finAEAddDsbFD.getValue())){
+					this.finAEAddDsbFDA.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFDA.value"), null, true));
+				}
+			}
+			
 			aFinanceType.setLovDescFinAEAddDsbFDAName(this.finAEAddDsbFDA.getDescription());
 			aFinanceType.setFinAEAddDsbFDA(this.finAEAddDsbFDA.getValue());
 		} catch (WrongValueException we) {
@@ -2516,6 +2520,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
+			if(this.finIsIntCpz.isChecked() && this.finAECapitalize.getValue().equals("0")){
+				throw new WrongValueException(this.finAECapitalize, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value") }));
+			}
 			aFinanceType.setLovDescFinAECapitalizeName(this.finAECapitalize.getDescription());
 			aFinanceType.setFinAECapitalize(this.finAECapitalize.getValue());
 		} catch (WrongValueException we) {
@@ -2581,15 +2589,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			if (this.applyODPenalty.isChecked() && !getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)){
-				if((PennantConstants.PERCONETIME.equals(getComboboxValue(this.oDChargeType)) || 
-						PennantConstants.PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))) && 
-						this.oDChargeAmtOrPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
-					throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+			if (this.applyODPenalty.isChecked()){ 
+				if(this.oDChargeAmtOrPerc.getValue() == null){
+					throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value") }));
 				}
+				if(!getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)){
+					if((PennantConstants.PERCONETIME.equals(getComboboxValue(this.oDChargeType)) || 
+							PennantConstants.PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))) && 
+							this.oDChargeAmtOrPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
+						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value") }));
+					}
+				}
 			}
-			
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try{
 			if(getComboboxValue(this.oDChargeType).equals(PennantConstants.FLAT)){
 				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
 						getFinanceType().getLovDescFinFormetter()));
@@ -2597,7 +2614,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 					PennantConstants.PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))){
 				aFinanceType.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),2));
 			}
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2607,9 +2624,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			if(this.oDAllowWaiver.isChecked() && this.oDMaxWaiverPerc.getValue().compareTo(new BigDecimal(100)) > 0){
-				throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
+			if(this.oDAllowWaiver.isChecked()){
+				if(this.oDMaxWaiverPerc.getValue() == null){
+					throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
+				}
+				if(this.oDMaxWaiverPerc.getValue().compareTo(new BigDecimal(100)) > 0){
+					throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
+				}
 			}
 			aFinanceType.setODMaxWaiverPerc(this.oDMaxWaiverPerc.getValue() == null ? BigDecimal.ZERO : this.oDMaxWaiverPerc.getValue());
 		} catch (WrongValueException we) {
@@ -3608,7 +3631,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.finMinAmount.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_FinanceTypeDialog_FinMinAmount.value")));
 			}*/
 		}
-
+		if (this.applyODPenalty.isChecked()){ 
+			this.oDChargeAmtOrPerc.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), true));
+			this.oDMaxWaiverPerc.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"), true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -3678,31 +3704,22 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 			this.finAEAddDsbFD.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFD.value"), null, true));
 
-			if(!StringUtils.trimToEmpty(this.finAEAddDsbOD.getValue()).equals("") && 
-					!StringUtils.trimToEmpty(this.finAEAddDsbFD.getValue()).equals("")){
-				if(!this.finAEAddDsbOD.getValue().equals(this.finAEAddDsbFD.getValue())){
-					this.finAEAddDsbFDA.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFDA.value"), null, true));
-				}
-			}
-			
 			this.finAEAmzNorm.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzNorm.value"), null, true));
 
 			this.finAEAmzSusp.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzSusp.value"), null, true));
 
-			/*this.lovDescFinAEToNoAmzName.setConstraint("NO EMPTY:"
-			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEToNoAmz.value") }));
+			this.finAEToNoAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEToNoAmz.value"), null, true));
 
-			this.lovDescFinToAmzName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinToAmz.value") }));
+			this.finToAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinToAmz.value"), null, true));
 			
-				this.lovDescFinMAmzName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
+			/*	this.lovDescFinMAmzName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinMAmz.value") })); */
 
 			this.finAERateChg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEIncPft.value"), null, true));
 
 			this.finAERepay.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAERepay.value"), null, true));
 
-			this.finAEEarlySettle.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEEarlySettle.value") }));
+			this.finAEEarlySettle.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEEarlySettle.value"), null, true));
 			
 			/*this.lovDescFinAEEarlyPayName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEEarlyPay.value") }));*/
@@ -3722,10 +3739,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.lovDescFinDeffreqName.setConstraint("NO EMPTY:"
 				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDeffreq.value") }));
 			}
-
-			this.lovDescFinAECapitalizeName.setConstraint("NO EMPTY:"
-			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value") }));*/
-
+             */
+			
+			if (this.finIsIntCpz.isChecked() && !this.finAECapitalize.isReadonly()) {
+				this.finAECapitalize.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value"), null, true));
+			}
+			
 			if (!this.finAEProgClaim.isReadonly()) {
 				//this.lovDescFinAEProgClaimName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEProgClaim.value"), null, true));
 			}

@@ -592,7 +592,7 @@
 													value="${c:l('label_FinanceTypeDialog_FinIntRate.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory"/>
 													<decimalbox
 														id="finIntRate" width="125px" maxlength="15"
 														style="text-align:right" />
@@ -1420,8 +1420,7 @@
 													id="label_FinanceTypeDialog_GraceDays"
 													value="${c:l('label_FinanceTypeDialog_ODGraceDays.value')}" />
 												<hbox>
-													<space spacing="2px"
-														sclass="mandatory" />
+													<space spacing="2px"/>
 													<intbox
 														id="oDGraceDays" width="45px" maxlength="3" />
 												</hbox>
