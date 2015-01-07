@@ -2594,12 +2594,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 					throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value") }));
 				}
+				if(this.oDChargeAmtOrPerc.getValue().compareTo(BigDecimal.ZERO) < 0){
+					throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"),"0" }));
+				}
 				if(!getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)){
 					if((PennantConstants.PERCONETIME.equals(getComboboxValue(this.oDChargeType)) || 
 							PennantConstants.PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))) && 
 							this.oDChargeAmtOrPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
 						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value") }));
+								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"),"100" }));
 					}
 				}
 			}
@@ -2629,9 +2633,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 					throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
 				}
+				if(this.oDMaxWaiverPerc.getValue().compareTo(BigDecimal.ZERO) < 0){
+					throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"),"0" }));
+				}
 				if(this.oDMaxWaiverPerc.getValue().compareTo(new BigDecimal(100)) > 0){
 					throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"),"100" }));
 				}
 			}
 			aFinanceType.setODMaxWaiverPerc(this.oDMaxWaiverPerc.getValue() == null ? BigDecimal.ZERO : this.oDMaxWaiverPerc.getValue());
@@ -3630,10 +3638,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			if (!this.finMinAmount.isReadonly() && this.finMinAmount.getValue() != null && this.finMinAmount.getValue().intValue() != 0) {
 				this.finMinAmount.setConstraint(new AmountValidator(18, 0, Labels.getLabel("label_FinanceTypeDialog_FinMinAmount.value")));
 			}*/
-		}
-		if (this.applyODPenalty.isChecked()){ 
-			this.oDChargeAmtOrPerc.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), true));
-			this.oDMaxWaiverPerc.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"), true));
 		}
 		logger.debug("Leaving");
 	}

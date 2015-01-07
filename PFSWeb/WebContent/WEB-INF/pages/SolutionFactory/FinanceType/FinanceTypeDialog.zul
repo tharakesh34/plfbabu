@@ -592,7 +592,7 @@
 													value="${c:l('label_FinanceTypeDialog_FinIntRate.value')}" />
 												<hbox>
 													<space
-														spacing="2px" sclass="mandatory"/>
+														spacing="2px" />
 													<decimalbox
 														id="finIntRate" width="125px" maxlength="15"
 														style="text-align:right" />
