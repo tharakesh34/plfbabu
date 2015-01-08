@@ -713,7 +713,12 @@ public final class DateUtility {
 		
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
-		if (includeDate2 && getMonthEndDate(date1).compareTo(date1) == 0) {
+		if (includeDate2 && getMonthEndDate(date1).compareTo(getUtilDate(formatUtilDate(date1,
+				PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
+			
+			if(convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)){
+				years++;
+			}
 			months = convert(addDays(date1, 1)).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
 		}else{
 			months = convert(date1).get(Calendar.MONTH) - convert(date2).get(Calendar.MONTH);
@@ -733,7 +738,7 @@ public final class DateUtility {
 			months++;
 		}
 
-		return months;
+		return Math.abs(months);
 	}
 
 	/**
@@ -1046,6 +1051,25 @@ public final class DateUtility {
 		}
 		return getDBDate(formatDate(new Date(uDate.getTime()),
 		        PennantConstants.DBDateFormat));
+	}
+	
+	/**
+	 * Method for Calculation Number of Deferments allowed using planned Deferment Count
+	 * @param date1
+	 * @param date2
+	 * @param includeDate2
+	 * @return
+	 */
+	public static int getDefermentCount(java.util.Date date1, java.util.Date date2, boolean includeDate2, int defCountPerYear) {
+
+		boolean incExesTerms = true;
+		int totalTenure = getMonthsBetween(date1, date2, includeDate2);
+		int b = totalTenure % 12;
+		int c = (b /(12 / defCountPerYear));
+		if(incExesTerms){
+			c =  c + (( b % (12 / defCountPerYear)) > 0 ? 1 : 0) ;
+		}
+		return (totalTenure/12 * defCountPerYear) + (c);
 	}
 	
 }
