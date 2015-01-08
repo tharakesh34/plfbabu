@@ -18,6 +18,7 @@ public class PTStringValidator implements Constraint{
 	private int minLength;
 	private int maxLength;
 	private boolean mandatory=false;
+	private boolean extendedCombo=false;
 	private boolean minLenValid=false;
 	private boolean maxLenValid=false;
 	
@@ -34,15 +35,27 @@ public class PTStringValidator implements Constraint{
 		setFieldParm(fieldParm);
 		setRegExp(regExp);
 		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
 		setMinLength(0);
 		setMaxLength(0);
 
+	}
+	
+	public PTStringValidator (String fieldParm,String regExp,boolean mandatory,boolean extendedCombo){
+		setFieldParm(fieldParm);
+		setRegExp(regExp);
+		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
+		setMinLength(0);
+		setMaxLength(0);
+		
 	}
 
 	public PTStringValidator (String fieldParm,String regExp,boolean mandatory,int maxLength){
 		setFieldParm(fieldParm);
 		setRegExp(regExp);
 		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
 		setMinLength(0);
 		setMaxLength(maxLength);
 	}
@@ -51,6 +64,7 @@ public class PTStringValidator implements Constraint{
 		setFieldParm(fieldParm);
 		setRegExp(regExp);
 		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
 		setMinLength(0);
 		setMaxLength(maxLength);
 	}
@@ -59,6 +73,7 @@ public class PTStringValidator implements Constraint{
 		setFieldParm(fieldParm);
 		setRegExp(regExp);
 		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
 		setMinLength(minLength);
 		setMaxLength(maxLength);
 	}
@@ -67,6 +82,7 @@ public class PTStringValidator implements Constraint{
 		setFieldParm(fieldParm);
 		setRegExp(regExp);
 		setMandatory(mandatory);
+		setExtendedCombo(extendedCombo);
 		setMinLength(minLength);
 		setMaxLength(maxLength);
 	}
@@ -75,7 +91,12 @@ public class PTStringValidator implements Constraint{
 	public void validate(Component comp, Object value) throws WrongValueException {
 		String errorMessage=getErrorMessage(value);
 		if(!StringUtils.trimToEmpty(errorMessage).equals("")){
-			throw new WrongValueException(comp, errorMessage);
+			if(isExtendedCombo()){
+				Component nextComp = comp.getNextSibling();
+				throw new WrongValueException(nextComp, errorMessage);
+			}else{
+				throw new WrongValueException(comp, errorMessage);
+			}
 		}
 	}
 
@@ -188,5 +209,12 @@ public class PTStringValidator implements Constraint{
 	}
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+
+	public boolean isExtendedCombo() {
+		return extendedCombo;
+	}
+	public void setExtendedCombo(boolean extendedCombo) {
+		this.extendedCombo = extendedCombo;
 	}
 }
