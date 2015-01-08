@@ -308,7 +308,10 @@ public class ExtendedCombobox extends Hbox {
 				if (isIsdisplayError() || showError) {
 					this.textbox.setFocus(true);
 					Events.postEvent("onFulfill", this, null);
-					throw new WrongValueException(this.button, this.textbox.getValue() + " is not valid");
+					
+					String value = StringUtils.trimToEmpty(this.textbox.getValue());
+					this.textbox.setValue("");
+					throw new WrongValueException(this.button, (value.equals("") ? "Empty" : value) + " is not valid");
 					
 				} else {
 					Events.postEvent("onClick", this.button, Events.ON_CLICK);
