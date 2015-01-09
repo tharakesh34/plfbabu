@@ -1816,7 +1816,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()) {
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()) {
 			this.frqDefferments.setDisabled(false);
 		} else {
 			this.frqDefferments.setDisabled(true);
@@ -1825,11 +1825,11 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
-				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()){
+				!getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()){
 			this.defermentsRow.setVisible(false);
 		}
 
-		this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
+		this.frqDefferments.setValue(aFinanceMain.getPlanDeferCount());
 		
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isApplyODPenalty()) {
@@ -2381,15 +2381,15 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		try {
 			if (this.frqDefferments.intValue() != 0 && 
-					(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment() < 
+					(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount() < 
 							this.frqDefferments.intValue())) {
 
 				throw new WrongValueException(this.frqDefferments,Labels.getLabel("FIELD_IS_LESSER",
 						new String[] { Labels.getLabel("label_FinanceMainDialog_FrqDefferments.value"),
-						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment()) }));
+						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount()) }));
 
 			}
-			aFinanceMain.setFrqDefferments(this.frqDefferments.intValue());
+			aFinanceMain.setPlanDeferCount(this.frqDefferments.intValue());
 
 		} catch (WrongValueException we) {
 			wve.add(we);

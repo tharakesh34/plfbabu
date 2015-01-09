@@ -247,7 +247,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	protected Row			row_downPayBank;						// autoWired
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
-	protected Intbox 		frqDefferments; 						// autoWired
+	protected Intbox 		planDeferCount; 						// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_FrqDef;	// autoWired
 	protected Hbox 			hbox_FrqDef; 							// autoWired	
 	protected Textbox 		depreciationFrq; 						// autoWired
@@ -470,7 +470,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	private transient BigDecimal 	oldVar_downPayBank;
 	private transient BigDecimal 	oldVar_downPaySupl;
 	private transient int 			oldVar_defferments;
-	private transient int 			oldVar_frqDefferments;
+	private transient int 			oldVar_planDeferCount;
 	private transient String 		oldVar_depreciationFrq;
 	private transient boolean 		oldVar_finIsActive;
 
@@ -732,7 +732,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.defferments.setMaxlength(3);
-		this.frqDefferments.setMaxlength(3);
+		this.planDeferCount.setMaxlength(3);
 		
 		this.downPayBank.setMandatory(false);
 		this.downPaySupl.setMandatory(false);
@@ -1558,20 +1558,20 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()) {
-			this.frqDefferments.setReadonly(false);
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()) {
+			this.planDeferCount.setReadonly(false);
 		} else {
-			this.frqDefferments.setReadonly(true);
+			this.planDeferCount.setReadonly(true);
 			this.hbox_FrqDef.setVisible(false);
 			this.label_MurabahaFinanceMainDialog_FrqDef.setVisible(false);
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
-				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()){
+				!getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()){
 			this.defermentsRow.setVisible(false);
 		}
 
-		this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
+		this.planDeferCount.setValue(aFinanceMain.getPlanDeferCount());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
 		
 		if(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() > 0 ){
@@ -1927,16 +1927,16 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		try {
-			if (!this.frqDefferments.isReadonly() && this.frqDefferments.intValue() != 0 && 
-					(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment() < 
-							this.frqDefferments.intValue())) {
+			if (!this.planDeferCount.isReadonly() && this.planDeferCount.intValue() != 0 && 
+					(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount() < 
+							this.planDeferCount.intValue())) {
 
-				throw new WrongValueException(this.frqDefferments,Labels.getLabel("FIELD_IS_LESSER",
+				throw new WrongValueException(this.planDeferCount,Labels.getLabel("FIELD_IS_LESSER",
 						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FrqDefferments.value"),
-						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment()) }));
+						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount()) }));
 
 			}
-			aFinanceMain.setFrqDefferments(this.frqDefferments.intValue());
+			aFinanceMain.setPlanDeferCount(this.planDeferCount.intValue());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -3094,7 +3094,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.oldVar_downPayBank = this.downPayBank.getValue();
 		this.oldVar_downPaySupl = this.downPaySupl.getValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.frqDefferments.intValue();
+		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 		
@@ -3217,7 +3217,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.downPaySupl.setValue(this.oldVar_downPaySupl);
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.defferments.setValue(this.oldVar_defferments);
-		this.frqDefferments.setValue(this.oldVar_frqDefferments);
+		this.planDeferCount.setValue(this.oldVar_planDeferCount);
 		this.depreciationFrq.setValue(this.oldVar_depreciationFrq);
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 
@@ -3390,7 +3390,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		if (this.defferments.intValue() != this.oldVar_defferments) {
 			return true;
 		}
-		if (this.frqDefferments.intValue() != this.oldVar_frqDefferments) {
+		if (this.planDeferCount.intValue() != this.oldVar_planDeferCount) {
 			return true;
 		}
 
@@ -3926,8 +3926,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_Defferments.value"), false, false));
 		}
 		
-		if(!this.frqDefferments.isDisabled()){
-			this.frqDefferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FrqDefferments.value"), false, false));
+		if(!this.planDeferCount.isDisabled()){
+			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -3999,7 +3999,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.downPayBank.setConstraint("");
 		this.downPaySupl.setConstraint("");
 		this.defferments.setConstraint("");
-		this.frqDefferments.setConstraint("");
+		this.planDeferCount.setConstraint("");
 		this.depreciationFrq.setConstraint("");
 		this.stepPolicy.setConstraint("");
 		this.noOfSteps.setConstraint("");
@@ -4212,7 +4212,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.downPayBank.setErrorMessage("");
 		this.downPaySupl.setErrorMessage("");
 		this.defferments.setErrorMessage("");
-		this.frqDefferments.setErrorMessage("");
+		this.planDeferCount.setErrorMessage("");
 		this.depreciationFrq.setErrorMessage("");	
 		this.nextGrcPftDate.setErrorMessage("");
 
@@ -4398,7 +4398,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		this.defferments.setReadonly(isReadOnly("WIFFinanceMainDialog_defferments"));
-		this.frqDefferments.setReadonly(isReadOnly("WIFFinanceMainDialog_frqDefferments"));
+		this.planDeferCount.setReadonly(isReadOnly("WIFFinanceMainDialog_frqDefferments"));
 
 		this.cbDepreciationFrqCode.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 		this.cbDepreciationFrqMth.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
@@ -4541,7 +4541,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.downPayBank.setReadonly(true);
 		this.downPaySupl.setReadonly(true);
 		this.defferments.setReadonly(true);
-		this.frqDefferments.setReadonly(true);
+		this.planDeferCount.setReadonly(true);
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -4669,7 +4669,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.downPayBank.setValue("");
 		this.downPaySupl.setValue("");
 		this.defferments.setText("");
-		this.frqDefferments.setText("");
+		this.planDeferCount.setText("");
 		this.depreciationFrq.setValue("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details

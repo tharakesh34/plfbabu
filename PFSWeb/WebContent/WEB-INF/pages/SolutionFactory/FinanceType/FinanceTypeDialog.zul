@@ -869,22 +869,22 @@
 											</row>
 											<row visible="true">
 												<label
-													id="label_FinanceTypeDialog_FinIsAlwFrqDifferment"
-													value="${c:l('label_FinanceTypeDialog_FinIsAlwFrqDifferment.value')}" />
+													id="label_FinanceTypeDialog_AlwPlanDeferment"
+													value="${c:l('label_FinanceTypeDialog_AlwPlanDeferment.value')}" />
 												<hbox>
 													<space
 														spacing="2px" />
 													<checkbox
-														id="finIsAlwFrqDifferment" checked="false" />
+														id="alwPlanDeferment" checked="false" />
 												</hbox>
 												<label
-													id="label_FinanceTypeDialog_FinIsMaxFrqDifferment"
-													value="${c:l('label_FinanceTypeDialog_FinIsMaxFrqDifferment.value')}" />
+													id="label_FinanceTypeDialog_PlanDeferCount"
+													value="${c:l('label_FinanceTypeDialog_PlanDeferCount.value')}" />
 												<hbox>
 													<space
 														spacing="2px" />
 													<intbox
-														id="finMaxFrqDifferment" width="100" maxlength="3"
+														id="planDeferCount" width="100" maxlength="3"
 														style="text-align:right" />
 												</hbox>
 											</row>
@@ -1058,10 +1058,10 @@
 										</row>
 										<row visible="true">
 											<label
-												id="label_FinanceTypeDialog_FinDeffreq"
-												value="${c:l('label_FinanceTypeDialog_FinDeffreq.value')}" />
+												id="label_FinanceTypeDialog_FinAEPlanDef"
+												value="${c:l('label_FinanceTypeDialog_FinAEPlanDef.value')}" />
 											<hbox>
-												<extendedcombobox id="finDeffreq" />
+												<extendedcombobox id="finAEPlanDef" />
 											</hbox>
 											<label
 												id="label_FinanceTypeDialog_FinDefRepay"

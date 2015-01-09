@@ -1205,7 +1205,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.oldVar_downPayAccount = this.downPayAccount.getValue();
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.frqDefferments.intValue();
+		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_lovDescFinBranchName = this.finBranch.getDescription();
 		this.oldVar_disbAcctId = this.disbAcctId.getValue();
@@ -1327,7 +1327,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.custID.setValue(this.oldVar_custID);
 		this.defferments.setValue(this.oldVar_defferments);
-		this.frqDefferments.setValue(this.oldVar_frqDefferments);
+		this.planDeferCount.setValue(this.oldVar_planDeferCount);
 		this.finBranch.setValue(this.oldVar_finBranch);
 		this.finBranch.setDescription(this.oldVar_lovDescFinBranchName);
 		this.disbAcctId.setValue(this.oldVar_disbAcctId);
@@ -1843,7 +1843,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.downPayAccount.setConstraint("");
 		//M_ this.custID.setConstraint("");
 		this.defferments.setConstraint("");
-		this.frqDefferments.setConstraint("");
+		this.planDeferCount.setConstraint("");
 		this.finBranch.setConstraint("");
 		this.disbAcctId.setConstraint("");
 		this.repayAcctId.setConstraint("");

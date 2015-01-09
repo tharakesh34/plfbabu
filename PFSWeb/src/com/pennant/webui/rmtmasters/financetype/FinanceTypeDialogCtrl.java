@@ -252,8 +252,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Intbox 				finODRpyTries; 						// autoWired
 	protected Checkbox 				finIsAlwDifferment; 				// autoWired
 	protected Intbox 				finMaxDifferment; 					// autoWired
-	protected Checkbox 				finIsAlwFrqDifferment; 				// autoWired
-	protected Intbox 				finMaxFrqDifferment; 				// autoWired	
+	protected Checkbox 				alwPlanDeferment;	 				// autoWired
+	protected Intbox 				planDeferCount; 					// autoWired	
 	protected Combobox 				cbFinScheduleOn; 					// autoWired
 	protected Checkbox 				finPftUnChanged; 					// autoWired
 	
@@ -291,7 +291,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected ExtendedCombobox 		finProvision; 						// autoWired
 	protected ExtendedCombobox 		finSchdChange; 						// autoWired
 	protected ExtendedCombobox 		finDepreciationRule; 				// autoWired
-	protected ExtendedCombobox 		finDeffreq; 						// autoWired
+	protected ExtendedCombobox 		finAEPlanDef; 						// autoWired
 	protected ExtendedCombobox 		finDefRepay; 						// autoWired
 	protected ExtendedCombobox 		finAECapitalize; 					// autoWired
 	protected ExtendedCombobox 		finAEProgClaim; 					// autoWired
@@ -856,14 +856,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finDepreciationRule.setValidateColumns(new String[] { "EventCode" });
 		this.finDepreciationRule.setFilters(getFiltersByCheckingRIA("EventCode", "DPRCIATE", Filter.OP_LIKE));
 		
-		this.finDeffreq.setInputAllowed(false);
-		this.finDeffreq.setDisplayStyle(3);
-		this.finDeffreq.setMandatoryStyle(true);
-		this.finDeffreq.setModuleName("AccountingSet");
-		this.finDeffreq.setValueColumn("EventCode");
-		this.finDeffreq.setDescColumn("AccountSetCode");
-		this.finDeffreq.setValidateColumns(new String[] { "EventCode" });
-		this.finDeffreq.setFilters(getFiltersByCheckingRIA("EventCode", "DEFFRQ", Filter.OP_LIKE));
+		this.finAEPlanDef.setInputAllowed(false);
+		this.finAEPlanDef.setDisplayStyle(3);
+		this.finAEPlanDef.setMandatoryStyle(true);
+		this.finAEPlanDef.setModuleName("AccountingSet");
+		this.finAEPlanDef.setValueColumn("EventCode");
+		this.finAEPlanDef.setDescColumn("AccountSetCode");
+		this.finAEPlanDef.setValidateColumns(new String[] { "EventCode" });
+		this.finAEPlanDef.setFilters(getFiltersByCheckingRIA("EventCode", "DEFFRQ", Filter.OP_LIKE));
 		
 		this.finDefRepay.setInputAllowed(false);
 		this.finDefRepay.setDisplayStyle(3);
@@ -1315,9 +1315,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsAlwDifferment.setChecked(aFinanceType.isFinIsAlwDifferment());
 		this.finMaxDifferment.setValue(aFinanceType.getFinMaxDifferment());
 		doDisableOrEnableDifferments(aFinanceType.isFinIsAlwDifferment(), this.finMaxDifferment, isReadOnly("FinanceTypeDialog_finMaxDifferment"));
-		this.finIsAlwFrqDifferment.setChecked(aFinanceType.isFinIsAlwFrqDifferment());
-		this.finMaxFrqDifferment.setValue(aFinanceType.getFinMaxFrqDifferment());
-		doDisableOrEnableDifferments(aFinanceType.isFinIsAlwFrqDifferment(), this.finMaxFrqDifferment, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+		this.alwPlanDeferment.setChecked(aFinanceType.isAlwPlanDeferment());
+		this.planDeferCount.setValue(aFinanceType.getPlanDeferCount());
+		doDisableOrEnableDifferments(aFinanceType.isAlwPlanDeferment(), this.planDeferCount, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
 		fillComboBox(this.cbFinScheduleOn, aFinanceType.getFinScheduleOn(), PennantStaticListUtil.getScheduleOn(), "");
 		this.finPftUnChanged.setChecked(aFinanceType.isFinPftUnChanged());
 		doCheckPftCpzFrq();
@@ -1564,16 +1564,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.finDepreciationRule.setDescription("");
 			}
 		}
-		this.finDeffreq.setValue(aFinanceType.getFinDeffreq());
-		if (aFinanceType.getLovDescFinDeffreqName() != null) {
-			this.finDeffreq.setDescription(aFinanceType.getLovDescFinDeffreqName() + "-" + aFinanceType.getLovDescEVFinDeffreqName());
+		this.finAEPlanDef.setValue(aFinanceType.getFinAEPlanDef());
+		if (aFinanceType.getLovDescFinAEPlanDefName() != null) {
+			this.finAEPlanDef.setDescription(aFinanceType.getLovDescFinAEPlanDefName() + "-" + aFinanceType.getLovDescEVFinAEPlanDefName());
 		} else {
 			if (aFinanceType.getLovDescAERule().containsKey("DEFFRQ")) {
 				accSet = aFinanceType.getLovDescAERule().get("DEFFRQ");
-				this.finDeffreq.setValue(accSet.getStringaERuleId());
-				this.finDeffreq.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+				this.finAEPlanDef.setValue(accSet.getStringaERuleId());
+				this.finAEPlanDef.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
 			}else{
-				this.finDeffreq.setDescription("");
+				this.finAEPlanDef.setDescription("");
 			}
 		}
 		this.finDefRepay.setValue(aFinanceType.getFinDefRepay());
@@ -2304,16 +2304,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setFinIsAlwFrqDifferment(this.finIsAlwFrqDifferment.isChecked());
+			aFinanceType.setAlwPlanDeferment(this.alwPlanDeferment.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			if (this.finIsAlwFrqDifferment.isChecked() && (this.finMaxFrqDifferment.getValue() == null || this.finMaxFrqDifferment.getValue() <= 0)) {
-				throw new WrongValueException(this.finMaxFrqDifferment, Labels.getLabel("FIELD_IS_GREATER",
-				        new String[] { Labels.getLabel("label_FinanceTypeDialog_FinIsMaxFrqDifferment.value"), "0" }));
+			if (this.alwPlanDeferment.isChecked() && (this.planDeferCount.getValue() == null || this.planDeferCount.getValue() <= 0)) {
+				throw new WrongValueException(this.planDeferCount, Labels.getLabel("FIELD_IS_GREATER",
+				        new String[] { Labels.getLabel("label_FinanceTypeDialog_PlanDeferCount.value"), "0" }));
 			}
-			aFinanceType.setFinMaxFrqDifferment(this.finMaxFrqDifferment.getValue());
+			aFinanceType.setPlanDeferCount(this.planDeferCount.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2508,8 +2508,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setLovDescFinDeffreqName(this.finDeffreq.getDescription());
-			aFinanceType.setFinDeffreq(this.finDeffreq.getValue());
+			aFinanceType.setLovDescFinAEPlanDefName(this.finAEPlanDef.getDescription());
+			aFinanceType.setFinAEPlanDef(this.finAEPlanDef.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2955,7 +2955,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_finIsIntCpzAtGrcEnd = this.finIsIntCpzAtGrcEnd.isChecked();
 		this.oldVar_finIsDwPayRequired = this.finIsDwPayRequired.isChecked();
 		this.oldVar_finMinDownPayAmount = this.finMinDownPayAmount.getValue();
-		this.oldVar_finDeffreq = this.finDeffreq.getValue();
+		this.oldVar_finDeffreq = this.finAEPlanDef.getValue();
 		this.oldVar_finDefRepay = this.finDefRepay.getValue();
 		this.oldVar_finIntRate = this.finIntRate.getValue();
 		this.oldVar_fInMinRate = this.fInMinRate.getValue();
@@ -2983,9 +2983,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_finIsAlwPartialRpy = this.finIsAlwPartialRpy.isChecked();
 		this.oldVar_finIsAlwDifferment = this.finIsAlwDifferment.isChecked();
 		this.oldVar_finMaxDifferment = this.finMaxDifferment.getValue();
-		this.oldVar_finIsAlwFrqDifferment = this.finIsAlwFrqDifferment.isChecked();
+		this.oldVar_finIsAlwFrqDifferment = this.alwPlanDeferment.isChecked();
 		this.oldVar_finPftUnChanged = this.finPftUnChanged.isChecked();
-		this.oldVar_finMaxFrqDifferment = this.finMaxFrqDifferment.getValue();
+		this.oldVar_finMaxFrqDifferment = this.planDeferCount.getValue();
 		this.oldVar_finIsAlwEarlyRpy = this.finIsAlwEarlyRpy.isChecked();
 		this.oldVar_finIsAlwEarlySettle = this.finIsAlwEarlySettle.isChecked();
 		this.oldVar_finODRpyTries = this.finODRpyTries.intValue();
@@ -3114,9 +3114,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsAlwPartialRpy.setChecked(this.oldVar_finIsAlwPartialRpy);
 		this.finIsAlwDifferment.setChecked(this.oldVar_finIsAlwDifferment);
 		this.finMaxDifferment.setValue(this.oldVar_finMaxDifferment);
-		this.finIsAlwFrqDifferment.setChecked(this.oldVar_finIsAlwFrqDifferment);
+		this.alwPlanDeferment.setChecked(this.oldVar_finIsAlwFrqDifferment);
 		this.finPftUnChanged.setChecked(this.oldVar_finPftUnChanged);
-		this.finMaxFrqDifferment.setValue(this.oldVar_finMaxFrqDifferment);
+		this.planDeferCount.setValue(this.oldVar_finMaxFrqDifferment);
 		this.finIsAlwEarlyRpy.setChecked(this.oldVar_finIsAlwEarlyRpy);
 		this.finIsAlwEarlySettle.setChecked(this.oldVar_finIsAlwEarlySettle);
 		this.finODRpyTries.setValue(this.oldVar_finODRpyTries);
@@ -3151,7 +3151,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finCommitmentOvrride.setChecked(this.oldVar_finCommitmentOvrride);
 		this.limitRequired.setChecked(this.oldVar_limitRequired);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
-		this.finDeffreq.setValue(this.oldVar_finDeffreq);
+		this.finAEPlanDef.setValue(this.oldVar_finDeffreq);
 		this.finDefRepay.setValue(this.oldVar_finDefRepay);
 		this.finGrcSchdMthd.setSelectedIndex(this.oldVar_finGrcSchdMthd);
 		this.finIsAlwGrcRepay.setChecked(this.oldVar_finIsAlwGrcRepay);
@@ -3355,13 +3355,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.oldVar_finMaxDifferment != (this.finMaxDifferment.getValue() == null ? 0 : this.finMaxDifferment.getValue())) {
 			return true;
 		}
-		if (this.oldVar_finIsAlwFrqDifferment != this.finIsAlwFrqDifferment.isChecked()) {
+		if (this.oldVar_finIsAlwFrqDifferment != this.alwPlanDeferment.isChecked()) {
 			return true;
 		}
 		if (this.oldVar_finPftUnChanged != this.finPftUnChanged.isChecked()) {
 			return true;
 		}
-		if (this.oldVar_finMaxFrqDifferment != (this.finMaxFrqDifferment.getValue() == null ? 0 : this.finMaxFrqDifferment.getValue())) {
+		if (this.oldVar_finMaxFrqDifferment != (this.planDeferCount.getValue() == null ? 0 : this.planDeferCount.getValue())) {
 			return true;
 		}
 		if (this.oldVar_finIsAlwEarlyRpy != this.finIsAlwEarlyRpy.isChecked()) {
@@ -3436,7 +3436,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (!this.oldVar_FinAEMaturity.equals(this.finAEMaturity.getValue())) {
 			return true;
 		}
-		if (!this.oldVar_finDeffreq.equals(this.finDeffreq.getValue())) {
+		if (!this.oldVar_finDeffreq.equals(this.finAEPlanDef.getValue())) {
 			return true;
 		}
 		if (!this.oldVar_finDefRepay.equals(this.finDefRepay.getValue())) {
@@ -3812,7 +3812,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finDepreciationRule.setErrorMessage("");
 
 		this.finDefRepay.setConstraint("");
-		this.finDeffreq.setConstraint("");
+		this.finAEPlanDef.setConstraint("");
 		this.finLatePayRule.setConstraint("");
 		this.finSchdChange.setConstraint("");
 		this.finProvision.setConstraint("");
@@ -4020,8 +4020,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsAlwPartialRpy.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwPartialRpy"));
 		this.finIsAlwDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwDifferment"));
 		this.finMaxDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finMaxDifferment"));
-		this.finIsAlwFrqDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwFrqDifferment"));
-		this.finMaxFrqDifferment.setDisabled(isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+		this.alwPlanDeferment.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwFrqDifferment"));
+		this.planDeferCount.setDisabled(isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
 		this.finIsAlwEarlyRpy.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwEarlyRpy"));
 		this.finIsAlwEarlySettle.setDisabled(isReadOnly("FinanceTypeDialog_finIsAlwEarlySettle"));
 		this.finODRpyTries.setReadonly(isReadOnly("FinanceTypeDialog_finODRpyTries"));
@@ -4071,7 +4071,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cbfinAssetType.setDisabled(isReadOnly("FinanceTypeDialog_finAssetType"));
 		this.cbfinProductType.setDisabled(isReadOnly("FinanceTypeDialog_finAssetType"));
 
-		this.finDeffreq.setReadonly(isReadOnly("FinanceTypeDialog_FinDeffreq"));
+		this.finAEPlanDef.setReadonly(isReadOnly("FinanceTypeDialog_FinDeffreq"));
 		this.finDefRepay.setReadonly(isReadOnly("FinanceTypeDialog_FinDefRepay"));
 		this.finLatePayRule.setReadonly(isReadOnly("FinanceTypeDialog_finLatePayRule"));
 		this.finDepreciationRule.setReadonly(isReadOnly("FinanceTypeDialog_finDepreciation"));
@@ -4185,8 +4185,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsAlwPartialRpy.setDisabled(true);
 		this.finIsAlwDifferment.setDisabled(true);
 		this.finMaxDifferment.setDisabled(true);
-		this.finIsAlwFrqDifferment.setDisabled(true);
-		this.finMaxFrqDifferment.setDisabled(true);
+		this.alwPlanDeferment.setDisabled(true);
+		this.planDeferCount.setDisabled(true);
 		this.finPftUnChanged.setDisabled(true);
 		this.finIsAlwEarlyRpy.setDisabled(true);
 		this.finIsAlwEarlySettle.setDisabled(true);
@@ -4342,9 +4342,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cbfinRepayMethod.setSelectedIndex(0);
 		this.finIsAlwDifferment.setChecked(false);
 		this.finMaxDifferment.setValue(0);
-		this.finIsAlwFrqDifferment.setChecked(false);
+		this.alwPlanDeferment.setChecked(false);
 		this.finPftUnChanged.setChecked(false);
-		this.finMaxFrqDifferment.setValue(0);
+		this.planDeferCount.setValue(0);
 		this.finIsAlwEarlyRpy.setChecked(false);
 		this.finIsAlwEarlySettle.setChecked(false);
 		this.finODRpyTries.setText("");
@@ -5460,21 +5460,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	public void onFulfill$finDeffreq(Event event) {
 		logger.debug("Entering" + event.toString());
-		Object dataObject = finDeffreq.getObject();
+		Object dataObject = finAEPlanDef.getObject();
 		if (dataObject instanceof String) {
 			if (getFinanceType().getLovDescAERule().containsKey("DEFFRQ")) {
 				accSet = getFinanceType().getLovDescAERule().get("DEFFRQ");
-				this.finDeffreq.setValue(accSet.getStringaERuleId());
-				this.finDeffreq.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+				this.finAEPlanDef.setValue(accSet.getStringaERuleId());
+				this.finAEPlanDef.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
 			} else {
-				this.finDeffreq.setValue(null);
-				this.finDeffreq.setDescription("");
+				this.finAEPlanDef.setValue(null);
+				this.finAEPlanDef.setDescription("");
 			}
 		} else {
 			AccountingSet details = (AccountingSet) dataObject;
 			if (details != null) {
-				this.finDeffreq.setValue(String.valueOf(details.getAccountSetid()));
-				this.finDeffreq.setDescription(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
+				this.finAEPlanDef.setValue(String.valueOf(details.getAccountSetid()));
+				this.finAEPlanDef.setDescription(details.getAccountSetCode() + "-" + details.getAccountSetCodeName());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -6463,29 +6463,29 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	}
 
-	public void onCheck$finIsAlwFrqDifferment(Event event) {
-		logger.debug("Entering onCheck$finIsAlwDifferment()");
-		doDisableOrEnableDifferments(this.finIsAlwFrqDifferment.isChecked(), this.finMaxFrqDifferment, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
+	public void onCheck$alwPlanDeferment(Event event) {
+		logger.debug("Entering onCheck$alwPlanDeferment()");
+		doDisableOrEnableDifferments(this.alwPlanDeferment.isChecked(), this.planDeferCount, isReadOnly("FinanceTypeDialog_finMaxFrqDifferment"));
 
 		if (getFinanceType().getLovDescAERule().containsKey("DEFFRQ")) {
 			accSet = getFinanceType().getLovDescAERule().get("DEFFRQ");
-			this.finDeffreq.setValue(accSet.getStringaERuleId());
-			this.finDeffreq.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
+			this.finAEPlanDef.setValue(accSet.getStringaERuleId());
+			this.finAEPlanDef.setDescription(accSet.getAccountSetCode() + "-" + accSet.getAccountSetCodeName());
 		} else {
-			this.finDeffreq.setValue("");
-			this.finDeffreq.setDescription("");
+			this.finAEPlanDef.setValue("");
+			this.finAEPlanDef.setDescription("");
 		}
 		doCheckFrqDefferment();
-		logger.debug("Leaving onCheck$finIsAlwDifferment()");
+		logger.debug("Leaving onCheck$alwPlanDeferment()");
 	}
 
 	private void doCheckFrqDefferment() {
-		if (this.finIsAlwFrqDifferment.isChecked()) {
-			this.finDeffreq.setMandatoryStyle(false);
-			this.finDeffreq.setReadonly(isReadOnly("FinanceTypeDialog_FinDeffreq"));
+		if (this.alwPlanDeferment.isChecked()) {
+			this.finAEPlanDef.setMandatoryStyle(false);
+			this.finAEPlanDef.setReadonly(isReadOnly("FinanceTypeDialog_FinDeffreq"));
 		} else {
-			this.finDeffreq.setMandatoryStyle(false);
-			this.finDeffreq.setReadonly(true);
+			this.finAEPlanDef.setMandatoryStyle(false);
+			this.finAEPlanDef.setReadonly(true);
 		}
 	}
 
@@ -6602,7 +6602,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAEWriteOffBK.clearErrorMessage();
 		this.finAEGraceEnd.clearErrorMessage();
 		this.finDepreciationRule.clearErrorMessage();
-		this.finDeffreq.clearErrorMessage();
+		this.finAEPlanDef.clearErrorMessage();
 		this.finDefRepay.clearErrorMessage();
 		this.finMinDownPayAmount.clearErrorMessage();
 		

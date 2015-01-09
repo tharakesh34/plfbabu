@@ -114,8 +114,8 @@ public class FinanceType implements java.io.Serializable {
 	private boolean finIsAlwPartialRpy;
 	private boolean finIsAlwDifferment;
 	private int finMaxDifferment;
-	private boolean finIsAlwFrqDifferment;
-	private int finMaxFrqDifferment;
+	private boolean alwPlanDeferment;
+	private int planDeferCount;
 	private boolean finIsAlwEarlyRpy;
 	private boolean finIsAlwEarlySettle;
 	private int finODRpyTries;
@@ -142,7 +142,7 @@ public class FinanceType implements java.io.Serializable {
 	private String finAEBuyOrInception;
 	private String finAESellOrMaturity;
 	private boolean finIsActive;
-	private String finDeffreq;
+	private String finAEPlanDef;
 	private String finDefRepay;
 	private String finScheduleOn;
 	private String finGrcScheduleOn;
@@ -248,8 +248,8 @@ public class FinanceType implements java.io.Serializable {
 	private String lovDescEVFinAEEarlyPayName;
 	private String lovDescFinAEEarlySettleName;
 	private String lovDescEVFinAEEarlySettleName;
-	private String lovDescEVFinDeffreqName;
-	private String lovDescFinDeffreqName;
+	private String lovDescEVFinAEPlanDefName;
+	private String lovDescFinAEPlanDefName;
 	private String lovDescEVFinDefRepayName;
 	private String lovDescFinDefRepayName;
 	private String lovDescFinAEWriteOffName;
@@ -1551,20 +1551,20 @@ public class FinanceType implements java.io.Serializable {
 		return finMaxDifferment;
 	}
 
-	public void setFinIsAlwFrqDifferment(boolean finIsAlwFrqDifferment) {
-		this.finIsAlwFrqDifferment = finIsAlwFrqDifferment;
+	public boolean isAlwPlanDeferment() {
+		return alwPlanDeferment;
 	}
 
-	public boolean isFinIsAlwFrqDifferment() {
-		return finIsAlwFrqDifferment;
+	public void setAlwPlanDeferment(boolean alwPlanDeferment) {
+		this.alwPlanDeferment = alwPlanDeferment;
 	}
 
-	public void setFinMaxFrqDifferment(int finMaxFrqDifferment) {
-		this.finMaxFrqDifferment = finMaxFrqDifferment;
+	public int getPlanDeferCount() {
+		return planDeferCount;
 	}
 
-	public int getFinMaxFrqDifferment() {
-		return finMaxFrqDifferment;
+	public void setPlanDeferCount(int planDeferCount) {
+		this.planDeferCount = planDeferCount;
 	}
 
 	public void setFinAssetType(long finAssetType) {
@@ -1724,28 +1724,28 @@ public class FinanceType implements java.io.Serializable {
 
 	}
 
-	public String getFinDeffreq() {
-		return finDeffreq;
+	public String getFinAEPlanDef() {
+		return finAEPlanDef;
 	}
 
-	public void setFinDeffreq(String finDeffreq) {
-		this.finDeffreq = finDeffreq;
+	public void setFinAEPlanDef(String finAEPlanDef) {
+		this.finAEPlanDef = finAEPlanDef;
 	}
 
-	public String getLovDescEVFinDeffreqName() {
-		return lovDescEVFinDeffreqName;
+	public String getLovDescEVFinAEPlanDefName() {
+		return lovDescEVFinAEPlanDefName;
 	}
 
-	public void setLovDescEVFinDeffreqName(String lovDescEVFinDeffreqName) {
-		this.lovDescEVFinDeffreqName = lovDescEVFinDeffreqName;
+	public void setLovDescEVFinAEPlanDefName(String lovDescEVFinAEPlanDefName) {
+		this.lovDescEVFinAEPlanDefName = lovDescEVFinAEPlanDefName;
 	}
 
-	public String getLovDescFinDeffreqName() {
-		return lovDescFinDeffreqName;
+	public String getLovDescFinAEPlanDefName() {
+		return lovDescFinAEPlanDefName;
 	}
 
-	public void setLovDescFinDeffreqName(String lovDescFinDeffreqName) {
-		this.lovDescFinDeffreqName = lovDescFinDeffreqName;
+	public void setLovDescFinAEPlanDefName(String lovDescFinAEPlanDefName) {
+		this.lovDescFinAEPlanDefName = lovDescFinAEPlanDefName;
 	}
 
 	public String getFinDefRepay() {

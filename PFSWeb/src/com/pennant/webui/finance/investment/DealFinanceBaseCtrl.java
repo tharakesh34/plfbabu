@@ -754,7 +754,7 @@ public class DealFinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		aFinanceMain.setCpzAtGraceEnd(false);
 		aFinanceMain.setCalTerms(0);
 		aFinanceMain.setDefferments(0);
-		aFinanceMain.setFrqDefferments(0);
+		aFinanceMain.setPlanDeferCount(0);
 		aFinanceMain.setAllowedDefRpyChange(0);
 		aFinanceMain.setAvailedDefRpyChange(0);
 		aFinanceMain.setAllowedDefFrqChange(0);

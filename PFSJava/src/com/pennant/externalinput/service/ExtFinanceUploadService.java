@@ -777,7 +777,7 @@ public class ExtFinanceUploadService {
 		}
 
 		// Frequency Deferments
-		extFinData.setFrqDefferments(finType.getFinMaxFrqDifferment());
+		extFinData.setFrqDefferments(finType.getPlanDeferCount());
 
 		// Collateral Reference
 		extFinData.setFinCommitmentRef("");
@@ -1494,19 +1494,19 @@ public class ExtFinanceUploadService {
 		}
 
 		// FREQUENCY DEFERMENT
-		if (finType.isFinIsAlwFrqDifferment()) {
+		if (finType.isAlwPlanDeferment()) {
 
 			if (extFinData.getFrqDefferments() < 0) {
-				financeMain.setFrqDefferments(finType.getFinMaxFrqDifferment());
+				financeMain.setPlanDeferCount(finType.getPlanDeferCount());
 			} else if (extFinData.getFrqDefferments() >= 0
-			        && extFinData.getFrqDefferments() <= finType.getFinMaxFrqDifferment()) {
-				financeMain.setFrqDefferments(extFinData.getFrqDefferments());
+			        && extFinData.getFrqDefferments() <= finType.getPlanDeferCount()) {
+				financeMain.setPlanDeferCount(extFinData.getFrqDefferments());
 			} else {
 				extFinData.setRecordStatus("E");
 				extFinData.setErrDesc(ErrorUtil.getErrorDetail(
 				        new ErrorDetails("E0032", "", new String[] {
 				                String.valueOf(extFinData.getFrqDefferments()),
-				                String.valueOf(finType.getFinMaxFrqDifferment()) }), userLangauge)
+				                String.valueOf(finType.getPlanDeferCount()) }), userLangauge)
 				        .getError());
 				return extFinData;
 			}

@@ -1369,7 +1369,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		} else if (eventCode.equals("DEFRPY")) {
 			accountingSetId = financeType.getFinDefRepay();
 		} else if (eventCode.equals("DEFFRQ")) {
-			accountingSetId = financeType.getFinDeffreq();
+			accountingSetId = financeType.getFinAEPlanDef();
 		} else if (eventCode.equals("EARLYPAY")) {
 			accountingSetId = financeType.getFinAEEarlyPay();
 		} else if (eventCode.equals("EARLYSTL")) {

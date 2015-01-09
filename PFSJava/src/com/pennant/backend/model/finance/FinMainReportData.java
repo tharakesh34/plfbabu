@@ -36,7 +36,7 @@ public class FinMainReportData implements Serializable{
 	private String downPayAccount;
 	private String downPaySupl;
 	private String defferments;
-	private String frqDefferments;
+	private String planDeferCount;
 	private String finPurpose;
 	private String finCommitRef;
 	private String depreciationFrq;
@@ -286,12 +286,12 @@ public class FinMainReportData implements Serializable{
     	this.defferments = defferments;
     }
 	
-	public String getFrqDefferments() {
-    	return frqDefferments;
-    }
-	public void setFrqDefferments(String frqDefferments) {
-    	this.frqDefferments = frqDefferments;
-    }
+	public String getPlanDeferCount() {
+		return planDeferCount;
+	}
+	public void setPlanDeferCount(String planDeferCount) {
+		this.planDeferCount = planDeferCount;
+	}
 	
 	public String getFinPurpose() {
     	return finPurpose;
@@ -905,7 +905,7 @@ public class FinMainReportData implements Serializable{
 		if(financeMain.getDefferments() != 0){
 			reportData.setApplyDifferment("TRUE");
 		}
-		reportData.setFrqDefferments(String.valueOf(financeMain.getFrqDefferments()));
+		reportData.setPlanDeferCount(String.valueOf(financeMain.getPlanDeferCount()));
 		reportData.setFinPurpose(financeMain.getFinPurpose()+"-"+StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
 		reportData.setFinCommitRef(StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()));
 		reportData.setDepreciationFrq(FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());

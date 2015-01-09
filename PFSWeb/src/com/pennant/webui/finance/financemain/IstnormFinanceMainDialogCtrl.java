@@ -1123,7 +1123,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.oldVar_downPayAccount = this.downPayAccount.getValue();
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.frqDefferments.intValue();
+		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_lovDescFinBranchName = this.finBranch.getDescription();
 		this.oldVar_disbAcctId = this.disbAcctId.getValue();
@@ -1244,7 +1244,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.custID.setValue(this.oldVar_custID);
 		this.defferments.setValue(this.oldVar_defferments);
-		this.frqDefferments.setValue(this.oldVar_frqDefferments);
+		this.planDeferCount.setValue(this.oldVar_planDeferCount);
 		this.finBranch.setValue(this.oldVar_finBranch);
 		this.finBranch.setDescription(this.oldVar_lovDescFinBranchName);
 		this.downPayAccount.setValue(this.oldVar_downPayAccount);
@@ -1647,8 +1647,8 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstnormFinanceMainDialog_Defferments.value"), false, false));
 		}
 
-		if(!this.frqDefferments.isReadonly()){
-			this.frqDefferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstnormFinanceMainDialog_FrqDefferments.value"), false, false));
+		if(!this.planDeferCount.isReadonly()){
+			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstnormFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
@@ -1761,7 +1761,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.downPayAccount.setConstraint("");
 		//M_ this.custID.setConstraint("");
 		this.defferments.setConstraint("");
-		this.frqDefferments.setConstraint("");
+		this.planDeferCount.setConstraint("");
 		this.finBranch.setConstraint("");
 		this.disbAcctId.setConstraint("");
 		this.repayAcctId.setConstraint("");

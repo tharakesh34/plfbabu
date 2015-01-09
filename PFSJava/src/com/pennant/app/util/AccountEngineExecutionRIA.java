@@ -326,7 +326,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 	        	accountingSetId = financeType.getFinDefRepay();
 	        	break;
 	        case DEFFRQ:
-	        	accountingSetId = financeType.getFinDeffreq();
+	        	accountingSetId = financeType.getFinAEPlanDef();
 	        	break;
 	        case EARLYPAY:
 	        	accountingSetId = financeType.getFinAEEarlyPay();

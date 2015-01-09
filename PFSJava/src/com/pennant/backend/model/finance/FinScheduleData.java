@@ -303,7 +303,7 @@ public class FinScheduleData {
 		this.financeMain.setLovDescAssetCodeName(financeType.getLovDescAssetCodeName());
 		this.financeMain.setLovDescIsSchdGenerated(false);
 		this.financeMain.setDefferments(financeType.getFinMaxDifferment());
-		this.financeMain.setFrqDefferments(financeType.getFinMaxFrqDifferment());
+		this.financeMain.setPlanDeferCount(financeType.getPlanDeferCount());
 		this.financeMain.setGrcAlwIndRate(financeType.isFinGrcAlwIndRate());
 		this.financeMain.setAlwIndRate(financeType.isFinAlwIndRate());
 		this.financeMain.setGrcIndBaseRate(financeType.getFinGrcIndBaseRate());

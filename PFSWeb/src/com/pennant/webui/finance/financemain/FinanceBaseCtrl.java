@@ -192,7 +192,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
-	protected Intbox 		frqDefferments; 						// autoWired
+	protected Intbox 		planDeferCount; 						// autoWired
 	protected Hbox 			hbox_FrqDef; 							// autoWired	
 	protected AccountSelectionBox 		disbAcctId; 				// autoWired
 	protected AccountSelectionBox 		repayAcctId; 				// autoWired
@@ -417,7 +417,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected transient String 			oldVar_disbAcctId;
 	protected transient String 			oldVar_repayAcctId;
 	protected transient int 			oldVar_defferments;
-	protected transient int 			oldVar_frqDefferments;
+	protected transient int 			oldVar_planDeferCount;
 	protected transient String 			oldVar_depreciationFrq;
 	protected transient String 			oldVar_commitmentRef;
 	protected transient String 			oldVar_finRemarks;
@@ -638,7 +638,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAmount.setMaxlength(18);
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.defferments.setMaxlength(3);
-		this.frqDefferments.setMaxlength(3);
+		this.planDeferCount.setMaxlength(3);
 		this.finPurpose.setMaxlength(8);
 		this.finPurpose.setMandatoryStyle(true);
 		this.finPurpose.setModuleName("SubSector");
@@ -2328,20 +2328,20 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (financeType.isFinIsAlwFrqDifferment()) {
-			this.frqDefferments.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
+		if (financeType.isAlwPlanDeferment()) {
+			this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
 		} else {
-			this.frqDefferments.setReadonly(true);
+			this.planDeferCount.setReadonly(true);
 			this.hbox_FrqDef.setVisible(false);
 			this.label_FinanceMainDialog_FrqDef.setVisible(false);
 		}
 		
 		if(!financeType.isFinIsAlwDifferment() && 
-				!financeType.isFinIsAlwFrqDifferment()){
+				!financeType.isAlwPlanDeferment()){
 			this.defermentsRow.setVisible(false);
 		}
 
-		this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
+		this.planDeferCount.setValue(aFinanceMain.getPlanDeferCount());
 		
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isApplyODPenalty()) {
@@ -4121,16 +4121,16 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		try {
-			if (!this.frqDefferments.isReadonly() && this.frqDefferments.intValue() != 0 && 
-					(financeType.getFinMaxFrqDifferment() < 
-							this.frqDefferments.intValue())) {
+			if (!this.planDeferCount.isReadonly() && this.planDeferCount.intValue() != 0 && 
+					(financeType.getPlanDeferCount() < 
+							this.planDeferCount.intValue())) {
 
-				throw new WrongValueException(this.frqDefferments,Labels.getLabel("FIELD_IS_LESSER",
+				throw new WrongValueException(this.planDeferCount,Labels.getLabel("FIELD_IS_LESSER",
 						new String[] { Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_FrqDefferments.value"),
-						String.valueOf(financeType.getFinMaxFrqDifferment()) }));
+						String.valueOf(financeType.getPlanDeferCount()) }));
 
 			}
-			aFinanceMain.setFrqDefferments(this.frqDefferments.intValue());
+			aFinanceMain.setPlanDeferCount(this.planDeferCount.intValue());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -5260,7 +5260,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.defferments.intValue() != this.oldVar_defferments) {
 			return true;
 		}
-		if (this.frqDefferments.intValue() != this.oldVar_frqDefferments) {
+		if (this.planDeferCount.intValue() != this.oldVar_planDeferCount) {
 			return true;
 		}
 
@@ -6146,7 +6146,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
-		this.frqDefferments.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
+		this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
 		this.disbAcctId.setReadonly(isReadOnly("FinanceMainDialog_disbAcctId"));
 		this.repayAcctId.setReadonly(isReadOnly("FinanceMainDialog_repayAcctId"));
 		this.commitmentRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
@@ -6272,7 +6272,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.downPayAccount.setErrorMessage("");
 		//M_ this.custID.setErrorMessage("");
 		this.defferments.setErrorMessage("");
-		this.frqDefferments.setErrorMessage("");
+		this.planDeferCount.setErrorMessage("");
 		this.finBranch.setErrorMessage("");
 		this.disbAcctId.setErrorMessage("");
 		this.repayAcctId.setErrorMessage("");
@@ -6357,7 +6357,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.downPayBank.setReadonly(true);
 		this.downPayAccount.setReadonly(true);
 		this.defferments.setReadonly(true);
-		this.frqDefferments.setReadonly(true);
+		this.planDeferCount.setReadonly(true);
 		this.finBranch.setReadonly(true);
 		this.finBranch.setMandatoryStyle(false);
 		this.disbAcctId.setReadonly(true);
@@ -6489,7 +6489,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.downPayBank.setValue("");
 		this.downPayAccount.setValue("");
 		this.defferments.setText("");
-		this.frqDefferments.setText("");
+		this.planDeferCount.setText("");
 		this.finBranch.setValue("");
 		this.finBranch.setDescription("");
 		this.disbAcctId.setValue("");

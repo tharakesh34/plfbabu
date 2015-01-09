@@ -510,7 +510,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		this.oldVar_downPayAccount = this.downPayAccount.getValue();
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.frqDefferments.intValue();
+		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_finBranch = this.finBranch.getValue();
 		this.oldVar_lovDescFinBranchName = this.finBranch.getDescription();
 		this.oldVar_disbAcctId = this.disbAcctId.getValue();

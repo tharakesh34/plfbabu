@@ -1060,10 +1060,13 @@ public final class DateUtility {
 	 * @param includeDate2
 	 * @return
 	 */
-	public static int getDefermentCount(java.util.Date date1, java.util.Date date2, boolean includeDate2, int defCountPerYear) {
+	public static int getDefermentCount(int numberOfTerms, int defCountPerYear) {
 
+		if(defCountPerYear == 0){
+			return 0;
+		}
 		boolean incExesTerms = true;
-		int totalTenure = getMonthsBetween(date1, date2, includeDate2);
+		int totalTenure = numberOfTerms;
 		int b = totalTenure % 12;
 		int c = (b /(12 / defCountPerYear));
 		if(incExesTerms){

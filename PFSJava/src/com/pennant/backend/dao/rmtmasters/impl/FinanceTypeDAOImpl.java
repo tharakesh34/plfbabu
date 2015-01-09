@@ -155,14 +155,14 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" FinGrcIsIntCpz, FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
 		selectSql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  FInRepayMethod, FinIsAlwPartialRpy,");
 		selectSql.append(" FinIsAlwDifferment,FinMaxDifferment, FinIsAlwEarlyRpy, FinIsAlwEarlySettle,");
-		selectSql.append(" FinODRpyTries, FinLatePayRule, FinIsAlwFrqDifferment,FinMaxFrqDifferment ,FinAEAddDsbOD,");
+		selectSql.append(" FinODRpyTries, FinLatePayRule, AlwPlanDeferment,PlanDeferCount ,FinAEAddDsbOD,");
 		selectSql.append(" FinAEAddDsbFD, FinAEAddDsbFDA, FinAEAmzNorm, FinAEAmzSusp, FinAEToNoAmz,");
 		selectSql.append(" FinToAmz, FinAEMAmz, FinAERateChg, FinAERepay, FinAEEarlyPay, FinAEEarlySettle,");
 		selectSql.append(" FinIsDwPayRequired, FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinGrcRvwRateApplFor,");
 		selectSql.append(" FinIsIntCpzAtGrcEnd, FinGrcAlwRateChgAnyDate, FinMinDownPayAmount,");
 		selectSql.append(" FinAEWriteOff, FinAEWriteOffBK, FinAEGraceEnd,FinSchCalCodeOnRvw, FinAssetType ,");
 		selectSql.append("	FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity,");
-		selectSql.append("	FinIsActive,PftPayAcType,FinIsOpenPftPayAcc,FinDeffreq,FinDefRepay,FinGrcSchdMthd,FinIsAlwGrcRepay,");
+		selectSql.append("	FinIsActive,PftPayAcType,FinIsOpenPftPayAcc,FinAEPlanDef,FinDefRepay,FinGrcSchdMthd,FinIsAlwGrcRepay,");
 		selectSql.append("	FinMargin,FinGrcMargin,FinProvision,FinSchdChange,FinScheduleOn,FinGrcScheduleOn,");
 		selectSql.append("	FinCommitmentReq,FinCollateralReq,FinDepreciationReq,FinDepreciationFrq,FinDepreciationRule,");
 		selectSql.append("  FinGrcAlwIndRate, FinGrcIndBaseRate, FinAlwIndRate, FInIndBaseRate,FinAECapitalize,");
@@ -185,7 +185,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 			selectSql.append(" lovDescEVFinAERateChgName, lovDescEVFinAERepayName, lovDescEVFinAEEarlyPayName,");
 			selectSql.append(" lovDescEVFinAEEarlySettleName, lovDescEVFinAEWriteOffName,lovDescEVFinAEWriteOffBKName,lovDescEVFinAEGraceEndName,lovDescFinFormetter,");
 			selectSql.append(" lovDescProductCodeName,lovDescProductCodeDesc,lovDescAssetCodeName,lovDescPftPayAcTypeName,lovDescFinLatePayRuleName,lovDescEVFinLatePayRuleName,");
-			selectSql.append(" lovDescFinDeffreqName,lovDescEVFinDeffreqName,lovDescFinDefRepayName,lovDescEVFinDefRepayName,");
+			selectSql.append(" lovDescFinAEPlanDefName,lovDescEVFinAEPlanDefName,lovDescFinDefRepayName,lovDescEVFinDefRepayName,");
 			selectSql.append(" lovDescEVFinProvisionName,lovDescFinProvisionName,lovDescFinSchdChangeName,lovDescEVFinSchdChangeName, " );
 			selectSql.append(" lovDescFinAEProgClaimName,lovDescEVFinAEProgClaimName, lovDescFinAEMaturityName,lovDescEVFinAEMaturityName, ");
 			selectSql.append(" lovDescFInIndBaseRateName, lovDescFinGrcIndBaseRateName, lovDescFinDepreciationRuleName,lovDescEVFinDepreciationRuleName ," );
@@ -229,7 +229,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinAcType, FinCategory,FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , FinAEAddDsbFD, " );
-		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinDeffreq, " );
+		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinAEPlanDef, " );
 		selectSql.append(" FinAEEarlyPay, FinAEEarlySettle, FinLatePayRule, FinToAmz, FinAEToNoAmz, FinAERateChg, " );
 		selectSql.append(" FinAERepay, FinAEWriteOff, FinSchdChange, FinAECapitalize, FinProvision, " );
 		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd" );
@@ -259,7 +259,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , FinAEAddDsbFD, " );
-		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinDeffreq, " );
+		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinAEPlanDef, " );
 		selectSql.append(" FinAEEarlyPay, FinAEEarlySettle, FinLatePayRule, FinToAmz, FinAEToNoAmz, FinAERateChg, " );
 		selectSql.append(" FinAERepay, FinAEWriteOff, FinSchdChange, FinAECapitalize, FinProvision, " );
 		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd," );
@@ -376,13 +376,13 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, FinGrcSplRate, FinGrcIntRate, FInGrcMinRate,");
 		insertSql.append(" FinGrcMaxRate,FinGrcDftIntFrq,  FinGrcIsIntCpz, FinGrcCpzFrq,  FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
 		insertSql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  FInRepayMethod,FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment,");
-		insertSql.append(" FinIsAlwFrqDifferment, FinMaxFrqDifferment,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, FinLatePayRule, ");
+		insertSql.append(" AlwPlanDeferment, PlanDeferCount,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, FinLatePayRule, ");
 		insertSql.append(" FinAEAddDsbOD, FinAEAddDsbFD,FinAEAddDsbFDA, FinAEAmzNorm, ");
 		insertSql.append(" FinAEAmzSusp, FinAEToNoAmz, FinToAmz, FinAEMAmz, FinAERateChg, FinAERepay, FinAEEarlyPay, ");
 		insertSql.append(" FinAEEarlySettle, FinAEWriteOff,FinAEWriteOffBK, FinAEGraceEnd, FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, ");
 		insertSql.append(" FinAlwRateChangeAnyDate, FinGrcRvwRateApplFor,FinGrcAlwRateChgAnyDate , FinMinDownPayAmount , ");
 		insertSql.append(" FinSchCalCodeOnRvw,FinAssetType ,FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity, ");
-		insertSql.append(" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,FinDeffreq,FinDefRepay,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		insertSql.append(" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,FinAEPlanDef,FinDefRepay,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
 		insertSql.append("	FinCommitmentReq,FinCollateralReq,FinDepreciationReq,FinDepreciationFrq,FinDepreciationRule,");
 		insertSql.append(" FinMargin,FinGrcMargin,FinProvision,FinSchdChange,FinScheduleOn,FinGrcScheduleOn, ");
@@ -399,14 +399,14 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" :FinIsIntCpz, :FinCpzFrq,  :FinIsRvwAlw, :FinRvwFrq,  :FinGrcRateType, :FinGrcBaseRate, ");
 		insertSql.append(" :FinGrcSplRate, :FinGrcIntRate, :FInGrcMinRate, :FinGrcMaxRate, :FinGrcDftIntFrq, :FinGrcIsIntCpz, ");
 		insertSql.append(" :FinGrcCpzFrq,  :FinGrcIsRvwAlw, :FinGrcRvwFrq, :FinMinTerm, :FinMaxTerm, :FinDftTerms, :FinRpyFrq,");
-		insertSql.append(" :FInRepayMethod, :FinIsAlwPartialRpy, :FinIsAlwDifferment, :FinMaxDifferment,:FinIsAlwFrqDifferment ,:FinMaxFrqDifferment ,:FinIsAlwEarlyRpy, ");
+		insertSql.append(" :FInRepayMethod, :FinIsAlwPartialRpy, :FinIsAlwDifferment, :FinMaxDifferment,:AlwPlanDeferment ,:PlanDeferCount ,:FinIsAlwEarlyRpy, ");
 		insertSql.append(" :FinIsAlwEarlySettle, :FinODRpyTries, :FinLatePayRule, ");
 		insertSql.append(" :FinAEAddDsbOD, :FinAEAddDsbFD, :FinAEAddDsbFDA, :FinAEAmzNorm, :FinAEAmzSusp, :FinAEToNoAmz, :FinToAmz, :FinAEMAmz, ");
 		insertSql.append(" :FinAERateChg, :FinAERepay, :FinAEEarlyPay, :FinAEEarlySettle, :FinAEWriteOff,:FinAEWriteOffBK, :FinAEGraceEnd, ");
 		insertSql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor, :FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate,");
 		insertSql.append(" :FinGrcRvwRateApplFor, :FinGrcAlwRateChgAnyDate , :FinMinDownPayAmount, ");
 		insertSql.append(" :FinSchCalCodeOnRvw,:FinAssetType,:FinDepositRestrictedTo,:FinAEBuyOrInception,:FinAESellOrMaturity,  ");
-		insertSql.append(" :FinIsActive,:PftPayAcType,:FinIsOpenPftPayAcc,:FinDeffreq,:FinDefRepay,");
+		insertSql.append(" :FinIsActive,:PftPayAcType,:FinIsOpenPftPayAcc,:FinAEPlanDef,:FinDefRepay,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
 		insertSql.append(" :FinCommitmentReq,:FinCollateralReq,:FinDepreciationReq,:FinDepreciationFrq,:FinDepreciationRule,");
@@ -461,8 +461,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" FinGrcIsRvwAlw = :FinGrcIsRvwAlw, FinGrcRvwFrq = :FinGrcRvwFrq,FinMinTerm = :FinMinTerm,");
 		updateSql.append(" FinMaxTerm = :FinMaxTerm, FinDftTerms = :FinDftTerms, FinRpyFrq = :FinRpyFrq,");
 		updateSql.append(" FInRepayMethod = :FInRepayMethod, FinIsAlwPartialRpy = :FinIsAlwPartialRpy,");
-		updateSql.append(" FinIsAlwDifferment = :FinIsAlwDifferment, FinMaxDifferment= :FinMaxDifferment, FinIsAlwFrqDifferment=:FinIsAlwFrqDifferment,");
-		updateSql.append(" FinMaxFrqDifferment=:FinMaxFrqDifferment, FinIsAlwEarlyRpy = :FinIsAlwEarlyRpy, FinIsAlwEarlySettle = :FinIsAlwEarlySettle,");
+		updateSql.append(" FinIsAlwDifferment = :FinIsAlwDifferment, FinMaxDifferment= :FinMaxDifferment, AlwPlanDeferment=:AlwPlanDeferment,");
+		updateSql.append(" PlanDeferCount=:PlanDeferCount, FinIsAlwEarlyRpy = :FinIsAlwEarlyRpy, FinIsAlwEarlySettle = :FinIsAlwEarlySettle,");
 		updateSql.append(" FinODRpyTries = :FinODRpyTries, FinLatePayRule = :FinLatePayRule,FinAEAddDsbOD = :FinAEAddDsbOD,");
 		updateSql.append(" FinAEAddDsbFD = :FinAEAddDsbFD, FinAEAddDsbFDA = :FinAEAddDsbFDA, FinAEAmzNorm = :FinAEAmzNorm,");
 		updateSql.append(" FinAEAmzSusp = :FinAEAmzSusp, FinAEToNoAmz = :FinAEToNoAmz, FinToAmz = :FinToAmz, FinAEMAmz = :FinAEMAmz,");
@@ -473,7 +473,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,FinDepositRestrictedTo=:FinDepositRestrictedTo,");
 		updateSql.append(" FinAEBuyOrInception=:FinAEBuyOrInception,FinAESellOrMaturity=:FinAESellOrMaturity,FinIsActive = :FinIsActive,");
 		updateSql.append(" PftPayAcType=:PftPayAcType,FinIsOpenPftPayAcc=:FinIsOpenPftPayAcc,Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus,FinDeffreq=:FinDeffreq,FinDefRepay=:FinDefRepay, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" RecordStatus= :RecordStatus,FinAEPlanDef=:FinAEPlanDef,FinDefRepay=:FinDefRepay, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,FinGrcSchdMthd=:FinGrcSchdMthd, ");
 		updateSql.append(" FinIsAlwGrcRepay=:FinIsAlwGrcRepay,FinScheduleOn=:FinScheduleOn,FinGrcScheduleOn=:FinGrcScheduleOn,");
 		updateSql.append(" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,");

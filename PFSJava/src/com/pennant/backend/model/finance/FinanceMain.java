@@ -77,7 +77,7 @@ public class FinanceMain implements java.io.Serializable {
 	private BigDecimal 	downPaySupl = BigDecimal.ZERO;
 	private String 		downPayAccount;
 	private int 		defferments;
-	private int 		frqDefferments;
+	private int 		planDeferCount;
 	private String 		finPurpose;
 	private String  	lovDescFinPurposeName;
 	private boolean 	allowGrcPeriod = false;
@@ -1207,13 +1207,14 @@ public class FinanceMain implements java.io.Serializable {
 		this.lastRepayCpzDate = lastRepayCpzDate;
 	}
 
-	public int getFrqDefferments() {
-		return frqDefferments;
+	public int getPlanDeferCount() {
+		return planDeferCount;
 	}
-	public void setFrqDefferments(int frqDefferments) {
-		this.frqDefferments = frqDefferments;
+
+	public void setPlanDeferCount(int planDeferCount) {
+		this.planDeferCount = planDeferCount;
 	}
-	
+
 	public String getDisbAccountId() {
 		return disbAccountId;
 	}

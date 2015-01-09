@@ -93,8 +93,8 @@
 											<rows>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinType"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinType.value')}" />
+														id="label_WIFFinanceMainDialog_FinType"
+														value="${c:l('label_WIFFinanceMainDialog_FinType.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -108,8 +108,8 @@
 															visible="false" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinReference"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinReference.value')}" />
+														id="label_WIFFinanceMainDialog_FinReference"
+														value="${c:l('label_WIFFinanceMainDialog_FinReference.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -119,12 +119,12 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinCcy"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinCcy.value')}" />
+														id="label_WIFFinanceMainDialog_FinCcy"
+														value="${c:l('label_WIFFinanceMainDialog_FinCcy.value')}" />
 													<extendedcombobox id="finCcy"/>
 													<label
-														id="label_MurabahaFinanceMainDialog_ProfitDaysBasis"
-														value="${c:l('label_MurabahaFinanceMainDialog_ProfitDaysBasis.value')}" />
+														id="label_WIFFinanceMainDialog_ProfitDaysBasis"
+														value="${c:l('label_WIFFinanceMainDialog_ProfitDaysBasis.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -135,8 +135,8 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinStartDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinStartDate.value')}" />
+														id="label_WIFFinanceMainDialog_FinStartDate"
+														value="${c:l('label_WIFFinanceMainDialog_FinStartDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -146,13 +146,13 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinAmount"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinAmount.value')}" />
+														id="label_WIFFinanceMainDialog_FinAmount"
+														value="${c:l('label_WIFFinanceMainDialog_FinAmount.value')}" />
 													<currencyBox
 														id="finAmount" />
 													<label
-														id="label_MurabahaFinanceMainDialog_AlwGrace"
-														value="${c:l('label_MurabahaFinanceMainDialog_AlwGrace.value')}" />
+														id="label_WIFFinanceMainDialog_AlwGrace"
+														value="${c:l('label_WIFFinanceMainDialog_AlwGrace.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -163,21 +163,21 @@
 												<row
 													id="row_downPayBank" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_DownPayBank"
-														value="${c:l('label_MurabahaFinanceMainDialog_DownPayBank.value')}" />
+														id="label_WIFFinanceMainDialog_DownPayBank"
+														value="${c:l('label_WIFFinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox
 														id="downPayBank" />
 													<label
-														id="label_MurabahaFinanceMainDialog_DownPaySupl"
-														value="${c:l('label_MurabahaFinanceMainDialog_DownPaySupl.value')}" />
+														id="label_WIFFinanceMainDialog_DownPaySupl"
+														value="${c:l('label_WIFFinanceMainDialog_DownPaySupl.value')}" />
 													<currencyBox
 														id="downPaySupl" />
 												</row>
 												<row
-													id="defermentsRow" visible="false">
+													id="defermentsRow" visible="true">
 													<label
-														id="label_MurabahaFinanceMainDialog_Defferments"
-														value="${c:l('label_MurabahaFinanceMainDialog_Defferments.value')}" />
+														id="label_WIFFinanceMainDialog_Defferments"
+														value="${c:l('label_WIFFinanceMainDialog_Defferments.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -186,20 +186,20 @@
 															 />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_FrqDef"
-														value="${c:l('label_MurabahaFinanceMainDialog_FrqDefferments.value')}" />
+														id="label_WIFFinanceMainDialog_PlanDeferCount"
+														value="${c:l('label_WIFFinanceMainDialog_PlanDeferCount.value')}" />
 													<hbox
 														id="hbox_FrqDef">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
-															id="frqDefferments" width="90px" maxlength="14" />
+															id="planDeferCount" width="90px" maxlength="14" />
 													</hbox>
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_DepriFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_DepriFrq.value')}"
+														id="label_WIFFinanceMainDialog_DepriFrq"
+														value="${c:l('label_WIFFinanceMainDialog_DepriFrq.value')}"
 														visible="false" />
 													<hbox
 														id="hbox_depFrq" visible="false">
@@ -217,8 +217,8 @@
 												</row>
 												<row visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_FinIsActive"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinIsActive.value')}"
+														id="label_WIFFinanceMainDialog_FinIsActive"
+														value="${c:l('label_WIFFinanceMainDialog_FinIsActive.value')}"
 														visible="false" />
 													<hbox
 														visible="false">
@@ -231,8 +231,8 @@
 												<row
 													id="row_stepFinance" visible="true">
 													<label
-														id="label_MurabahaFinanceMainDialog_StepFinance"
-														value="${c:l('label_MurabahaFinanceMainDialog_StepFinance.value')}" />
+														id="label_WIFFinanceMainDialog_StepFinance"
+														value="${c:l('label_WIFFinanceMainDialog_StepFinance.value')}" />
 													<hbox>
 														<space id="space_StepFinance"
 															spacing="2px" />
@@ -240,15 +240,15 @@
 															id="stepFinance" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_StepPolicy"
-														value="${c:l('label_MurabahaFinanceMainDialog_StepPolicy.value')}" />
+														id="label_WIFFinanceMainDialog_StepPolicy"
+														value="${c:l('label_WIFFinanceMainDialog_StepPolicy.value')}" />
 													<extendedcombobox id="stepPolicy"/>
 												</row>
 												<row
 													id="row_manualSteps" visible="true">
 													<label
-														id="label_MurabahaFinanceMainDialog_ManualSteps"
-														value="${c:l('label_MurabahaFinanceMainDialog_ManualSteps.value')}" />
+														id="label_WIFFinanceMainDialog_ManualSteps"
+														value="${c:l('label_WIFFinanceMainDialog_ManualSteps.value')}" />
 													<hbox>
 														<space id="space_alwManualSteps"
 															spacing="2px" />
@@ -256,8 +256,8 @@
 															id="alwManualSteps" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_numberOfSteps"
-														value="${c:l('label_MurabahaFinanceMainDialog_NumberOfSteps.value')}" />
+														id="label_WIFFinanceMainDialog_numberOfSteps"
+														value="${c:l('label_WIFFinanceMainDialog_NumberOfSteps.value')}" />
 													<hbox
 														id="hbox_numberOfSteps">
 														<space id="space_noOfSteps"
@@ -299,8 +299,8 @@
 														maxlength="3" tabindex="-1" />
 												</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_GracePeriodEndDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_GracePeriodEndDate.value')}" />
+														id="label_WIFFinanceMainDialog_GracePeriodEndDate"
+														value="${c:l('label_WIFFinanceMainDialog_GracePeriodEndDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -315,8 +315,8 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_GrcRateBasis"
-														value="${c:l('label_MurabahaFinanceMainDialog_GrcRateBasis.value')}" />
+														id="label_WIFFinanceMainDialog_GrcRateBasis"
+														value="${c:l('label_WIFFinanceMainDialog_GrcRateBasis.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -325,8 +325,8 @@
 															disabled="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_GracePftRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_GracePftRate.value')}" />
+														id="label_WIFFinanceMainDialog_GracePftRate"
+														value="${c:l('label_WIFFinanceMainDialog_GracePftRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -342,8 +342,8 @@
 												<row id="grcBaseRateRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_GraceBaseRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_GraceBaseRate.value')}" />
+														id="label_WIFFinanceMainDialog_GraceBaseRate"
+														value="${c:l('label_WIFFinanceMainDialog_GraceBaseRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -357,8 +357,8 @@
 															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_GraceSpecialRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_GraceSpecialRate.value')}" />
+														id="label_WIFFinanceMainDialog_GraceSpecialRate"
+														value="${c:l('label_WIFFinanceMainDialog_GraceSpecialRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -374,8 +374,8 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_GraceMargin"
-														value="${c:l('label_MurabahaFinanceMainDialog_GraceMargin.value')}" />
+														id="label_WIFFinanceMainDialog_GraceMargin"
+														value="${c:l('label_WIFFinanceMainDialog_GraceMargin.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -383,8 +383,8 @@
 															id="grcMargin" width="120px" maxlength="15" readonly="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_GraceProfitDaysBasis"
-														value="${c:l('label_MurabahaFinanceMainDialog_GraceProfitDaysBasis.value')}" />
+														id="label_WIFFinanceMainDialog_GraceProfitDaysBasis"
+														value="${c:l('label_WIFFinanceMainDialog_GraceProfitDaysBasis.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -396,8 +396,8 @@
 												<row id="alwGrcIndRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_AllowGrcInd"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinGrcAlwIndRate.value')}" />
+														id="label_WIFFinanceMainDialog_AllowGrcInd"
+														value="${c:l('label_WIFFinanceMainDialog_FinGrcAlwIndRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -406,8 +406,8 @@
 													</hbox>
 
 													<label
-														id="label_MurabahaFinanceMainDialog_FinGrcIndBaseRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinGrcIndBaseRate.value')}" />
+														id="label_WIFFinanceMainDialog_FinGrcIndBaseRate"
+														value="${c:l('label_WIFFinanceMainDialog_FinGrcIndBaseRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -424,8 +424,8 @@
 												<row id="grcPftFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_GracePftFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_GracePftFrq.value')}" />
+														id="label_WIFFinanceMainDialog_GracePftFrq"
+														value="${c:l('label_WIFFinanceMainDialog_GracePftFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -439,8 +439,8 @@
 															id="cbGracePftFrqDay" width="60px" readonly="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextGrcPftDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextGrcPftDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextGrcPftDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextGrcPftDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -456,8 +456,8 @@
 												<row
 													id="grcPftRvwFrqRow" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_GracePftRvwFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_GracePftRvwFrq.value')}" />
+														id="label_WIFFinanceMainDialog_GracePftRvwFrq"
+														value="${c:l('label_WIFFinanceMainDialog_GracePftRvwFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -471,8 +471,8 @@
 															id="cbGracePftRvwFrqDay" width="60px" readonly="true"/>
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextGrcPftRvwDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextGrcPftRvwDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextGrcPftRvwDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextGrcPftRvwDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -488,8 +488,8 @@
 												<row id="grcCpzFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_GraceCpzFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_GraceCpzFrq.value')}" />
+														id="label_WIFFinanceMainDialog_GraceCpzFrq"
+														value="${c:l('label_WIFFinanceMainDialog_GraceCpzFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -503,8 +503,8 @@
 															id="cbGraceCpzFrqDay" width="60px" readonly="true"/>
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextGrcCpzDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextGrcCpzDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextGrcCpzDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextGrcCpzDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -520,8 +520,8 @@
 												<row id="grcRepayRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_AlwGrcRepay"
-														value="${c:l('label_MurabahaFinanceMainDialog_AlwGrcRepay.value')}" />
+														id="label_WIFFinanceMainDialog_AlwGrcRepay"
+														value="${c:l('label_WIFFinanceMainDialog_AlwGrcRepay.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -529,8 +529,8 @@
 															id="allowGrcRepay" checked="false" disabled="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_GrcSchdMthd"
-														value="${c:l('label_MurabahaFinanceMainDialog_GrcSchdMthd.value')}" />
+														id="label_WIFFinanceMainDialog_GrcSchdMthd"
+														value="${c:l('label_WIFFinanceMainDialog_GrcSchdMthd.value')}" />
 													<hbox>
 														<space
 															spacing="2px" id="space_GrcSchdMthd" />
@@ -559,8 +559,8 @@
 												<row
 													id="noOfTermsRow">
 													<label
-														id="label_MurabahaFinanceMainDialog_NumberOfTerms"
-														value="${c:l('label_MurabahaFinanceMainDialog_NumberOfTerms.value')}" />
+														id="label_WIFFinanceMainDialog_NumberOfTerms"
+														value="${c:l('label_WIFFinanceMainDialog_NumberOfTerms.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -573,8 +573,8 @@
 															maxlength="3" tabindex="-1" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinRepaymentAmount"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinRepaymentAmount.value')}" />
+														id="label_WIFFinanceMainDialog_FinRepaymentAmount"
+														value="${c:l('label_WIFFinanceMainDialog_FinRepaymentAmount.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -585,7 +585,7 @@
 												<row>
 													<label
 														id="label_WIFMurabahaFinanceMainDialog_RepayRateBasis"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayRateBasis.value')}" />
+														value="${c:l('label_WIFFinanceMainDialog_RepayRateBasis.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -593,8 +593,8 @@
 															id="repayRateBasis" width="275px" readonly="true" disabled="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_ProfitRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_ProfitRate.value')}" />
+														id="label_WIFFinanceMainDialog_ProfitRate"
+														value="${c:l('label_WIFFinanceMainDialog_ProfitRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -610,8 +610,8 @@
 												<row
 													id="repayBaseRateRow" visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayBaseRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayBaseRate.value')}" />
+														id="label_WIFFinanceMainDialog_RepayBaseRate"
+														value="${c:l('label_WIFFinanceMainDialog_RepayBaseRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -625,8 +625,8 @@
 															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_RepaySpecialRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepaySpecialRate.value')}" />
+														id="label_WIFFinanceMainDialog_RepaySpecialRate"
+														value="${c:l('label_WIFFinanceMainDialog_RepaySpecialRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -643,8 +643,8 @@
 												<row
 													id="SchdlMthdRow">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayMargin"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayMargin.value')}" />
+														id="label_WIFFinanceMainDialog_RepayMargin"
+														value="${c:l('label_WIFFinanceMainDialog_RepayMargin.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -652,8 +652,8 @@
 															id="repayMargin" width="120px" maxlength="15" readonly="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_ScheduleMethod"
-														value="${c:l('label_MurabahaFinanceMainDialog_ScheduleMethod.value')}" />
+														id="label_WIFFinanceMainDialog_ScheduleMethod"
+														value="${c:l('label_WIFFinanceMainDialog_ScheduleMethod.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -665,8 +665,8 @@
 												<row id="alwIndRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_AllowRpyInd"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinRpyAlwIndRate.value')}" />
+														id="label_WIFFinanceMainDialog_AllowRpyInd"
+														value="${c:l('label_WIFFinanceMainDialog_FinRpyAlwIndRate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
@@ -675,15 +675,15 @@
 													</hbox>
 
 													<label
-														id="label_MurabahaFinanceMainDialog_FinRpyIndBaseRate"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinRpyIndBaseRate.value')}" />
+														id="label_WIFFinanceMainDialog_FinRpyIndBaseRate"
+														value="${c:l('label_WIFFinanceMainDialog_FinRpyIndBaseRate.value')}" />
 													<extendedcombobox id="rpyIndBaseRate"/>
 												</row>
 												<row id="rpyPftFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayPftFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayPftFrq.value')}" />
+														id="label_WIFFinanceMainDialog_RepayPftFrq"
+														value="${c:l('label_WIFFinanceMainDialog_RepayPftFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -697,8 +697,8 @@
 															id="cbRepayPftFrqDay" width="60px" readonly="true"/>
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextRepayPftDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextRepayPftDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextRepayPftDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextRepayPftDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -714,8 +714,8 @@
 												<row id="rpyRvwFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayRvwFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayRvwFrq.value')}" />
+														id="label_WIFFinanceMainDialog_RepayRvwFrq"
+														value="${c:l('label_WIFFinanceMainDialog_RepayRvwFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -729,8 +729,8 @@
 															id="cbRepayRvwFrqDay" width="60px" readonly="true"/>
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextRepayRvwDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextRepayRvwDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextRepayRvwDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextRepayRvwDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -746,8 +746,8 @@
 												<row id="rpyCpzFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayCpzFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayCpzFrq.value')}" />
+														id="label_WIFFinanceMainDialog_RepayCpzFrq"
+														value="${c:l('label_WIFFinanceMainDialog_RepayCpzFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -761,8 +761,8 @@
 															id="cbRepayCpzFrqDay" width="60px" readonly="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextRepayCpzDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextRepayCpzDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextRepayCpzDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextRepayCpzDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -778,8 +778,8 @@
 												<row id="rpyFrqRow"
 													visible="false">
 													<label
-														id="label_MurabahaFinanceMainDialog_RepayFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_RepayFrq.value')}" />
+														id="label_WIFFinanceMainDialog_RepayFrq"
+														value="${c:l('label_WIFFinanceMainDialog_RepayFrq.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory"
@@ -794,8 +794,8 @@
 															id="cbRepayFrqDay" width="60px" readonly="true" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_NextRepayDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_NextRepayDate.value')}" />
+														id="label_WIFFinanceMainDialog_NextRepayDate"
+														value="${c:l('label_WIFFinanceMainDialog_NextRepayDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -810,8 +810,8 @@
 												</row>
 												<row>
 													<label
-														id="label_MurabahaFinanceMainDialog_MaturityDate"
-														value="${c:l('label_MurabahaFinanceMainDialog_MaturityDate.value')}" />
+														id="label_WIFFinanceMainDialog_MaturityDate"
+														value="${c:l('label_WIFFinanceMainDialog_MaturityDate.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
@@ -824,8 +824,8 @@
 															buttonVisible="false" width="100px" tabindex="-1" />
 													</hbox>
 													<label
-														id="label_MurabahaFinanceMainDialog_FinRepayPftOnFrq"
-														value="${c:l('label_MurabahaFinanceMainDialog_FinRepayPftOnFrq.value')}" />
+														id="label_WIFFinanceMainDialog_FinRepayPftOnFrq"
+														value="${c:l('label_WIFFinanceMainDialog_FinRepayPftOnFrq.value')}" />
 													<hbox
 														id="hbox_finRepayPftOnFrq">
 														<space
@@ -848,8 +848,8 @@
 						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
 							<label
-								id="label_MurabahaFinanceMainDialog_RecordStatus"
-								value="${c:l('label_MurabahaFinanceMainDialog_RecordStatus.value')} :"
+								id="label_WIFFinanceMainDialog_RecordStatus"
+								value="${c:l('label_WIFFinanceMainDialog_RecordStatus.value')} :"
 								sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>

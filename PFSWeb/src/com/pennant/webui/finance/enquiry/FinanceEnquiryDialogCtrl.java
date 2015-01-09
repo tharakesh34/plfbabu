@@ -866,17 +866,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 			this.defferments.setValue(aFinanceMain.getDefferments());
 			this.utilisedDef.setValue(aFinanceMain.getDefferments());
 			this.frqDefferments.setDisabled(true);
-			this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
-			this.utilisedFrqDef.setValue(aFinanceMain.getFrqDefferments());
+			this.frqDefferments.setValue(aFinanceMain.getPlanDeferCount());
+			this.utilisedFrqDef.setValue(aFinanceMain.getPlanDeferCount());
 			this.finOverDueStatus.setValue(aFinanceMain.getFinStatus());
 			
 			
-			if (aFinanceMain.getDefferments()!=0 || aFinanceMain.getFrqDefferments()!=0) {
+			if (aFinanceMain.getDefferments()!=0 || aFinanceMain.getPlanDeferCount()!=0) {
 				if (aFinanceMain.getDefferments()==0) {
 					this.label_FinanceMainDialog_Defferments.setVisible(false);
 					this.hbox_Defferments.setVisible(false);
 				}
-				if (aFinanceMain.getFrqDefferments()==0) {
+				if (aFinanceMain.getPlanDeferCount()==0) {
 					this.label_FinanceMainDialog_FrqDefferments.setVisible(false);
 					this.hbox_FrqDefferments.setVisible(false);
 				}

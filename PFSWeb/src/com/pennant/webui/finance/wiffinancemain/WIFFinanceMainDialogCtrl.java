@@ -186,14 +186,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Row			row_downPayBank;						// autoWired
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
-	protected Intbox 		frqDefferments; 						// autoWired
-	protected Label 		label_MurabahaFinanceMainDialog_FrqDef;	// autoWired
+	protected Intbox 		planDeferCount; 						// autoWired
+	protected Label 		label_WIFFinanceMainDialog_FrqDef;	// autoWired
 	protected Hbox 			hbox_FrqDef; 							// autoWired	
 	protected Textbox 		depreciationFrq; 						// autoWired
 	protected Combobox 		cbDepreciationFrqCode; 					// autoWired
 	protected Combobox 		cbDepreciationFrqMth; 					// autoWired
 	protected Combobox 		cbDepreciationFrqDay; 					// autoWired
-	protected Label 		label_MurabahaFinanceMainDialog_DepriFrq; 	// autoWired
+	protected Label 		label_WIFFinanceMainDialog_DepriFrq; 	// autoWired
 	protected Space 		space_DepriFrq; 						// autoWired
 	protected Hbox 			hbox_depFrq; 							// autoWired	
 	protected Checkbox 		finIsActive; 							// autoWired
@@ -201,8 +201,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	// Step Finance Details
 	protected Checkbox      stepFinance;                            // autoWired
 	protected ExtendedCombobox      stepPolicy;         		    // autoWired
-	protected Label      	label_MurabahaFinanceMainDialog_StepPolicy;// autoWired
-	protected Label      	label_MurabahaFinanceMainDialog_numberOfSteps;// autoWired
+	protected Label      	label_WIFFinanceMainDialog_StepPolicy;// autoWired
+	protected Label      	label_WIFFinanceMainDialog_numberOfSteps;// autoWired
 	protected Checkbox      alwManualSteps;							// autoWired
 	protected Intbox        noOfSteps;							    // autoWired
 	protected Row           row_stepFinance;					    // autoWired
@@ -308,7 +308,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Datebox 		maturityDate; 							// autoWired
 	protected Datebox 		maturityDate_two; 						// autoWired
 	
-	protected Label 		label_MurabahaFinanceMainDialog_FinRepayPftOnFrq;
+	protected Label 		label_WIFFinanceMainDialog_FinRepayPftOnFrq;
 	protected Hbox			hbox_finRepayPftOnFrq;
 	protected Row 			SchdlMthdRow;
 	protected Row 			noOfTermsRow;
@@ -586,7 +586,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
 		this.defferments.setMaxlength(3);
-		this.frqDefferments.setMaxlength(3);
+		this.planDeferCount.setMaxlength(3);
 		this.downPayBank.setMaxlength(18);
 		this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(getFinanceDetail().getFinScheduleData()
 				.getFinanceMain().getLovDescFinFormatter()));
@@ -903,7 +903,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinDepreciationReq()) {
 			this.hbox_depFrq.setVisible(true);
-			this.label_MurabahaFinanceMainDialog_DepriFrq.setVisible(true);
+			this.label_WIFFinanceMainDialog_DepriFrq.setVisible(true);
 			// Fill Depreciation Frequency Code, Month, Day codes
 			clearField(this.cbDepreciationFrqCode);
 			fillFrqCode(this.cbDepreciationFrqCode, aFinanceMain.getDepreciationFrq(), isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
@@ -913,7 +913,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			fillFrqDay(this.cbDepreciationFrqDay, aFinanceMain.getDepreciationFrq(), isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 			this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
 		} else {
-			this.label_MurabahaFinanceMainDialog_DepriFrq.setVisible(false);
+			this.label_WIFFinanceMainDialog_DepriFrq.setVisible(false);
 			this.space_DepriFrq.setSclass("");
 			this.cbDepreciationFrqCode.setDisabled(true);
 			this.cbDepreciationFrqMth.setDisabled(true);
@@ -1331,20 +1331,21 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()) {
-			this.frqDefferments.setReadonly(false);
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()) {
+			this.planDeferCount.setReadonly(false);
+			this.defferments.setReadonly(true);
 		} else {
-			this.frqDefferments.setReadonly(true);
+			this.planDeferCount.setReadonly(true);
 			this.hbox_FrqDef.setVisible(false);
-			this.label_MurabahaFinanceMainDialog_FrqDef.setVisible(false);
+			this.label_WIFFinanceMainDialog_FrqDef.setVisible(false);
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
-				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()){
+				!getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()){
 			this.defermentsRow.setVisible(false);
 		}
 
-		this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
+		this.planDeferCount.setValue(aFinanceMain.getPlanDeferCount());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
 		
 		if(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() > 0 ){
@@ -1435,7 +1436,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			aFinanceMain.setLovDescFinCcyName(this.finCcy.getDescription());
 			if(this.finCcy.getValue().equals("")) {
-				wve.add(new WrongValueException(this.finCcy, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") })));
+				wve.add(new WrongValueException(this.finCcy, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinCcy.value") })));
 			} else {
 				aFinanceMain.setFinCcy(this.finCcy.getValue());
 			}
@@ -1446,7 +1447,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			if (getComboboxValue(this.cbScheduleMethod).equals("#")) {
 				throw new WrongValueException(this.cbScheduleMethod, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_ScheduleMethod.value") }));
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_ScheduleMethod.value") }));
 			}
 			aFinanceMain.setScheduleMethod(getComboboxValue(this.cbScheduleMethod));
 			aFinanceMain.setLovDescScheduleMethodName(getComboboxValue(this.cbScheduleMethod)
@@ -1459,7 +1460,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			if (getComboboxValue(this.cbProfitDaysBasis).equals("#")) {
 				throw new WrongValueException(this.cbProfitDaysBasis, Labels.getLabel("STATIC_INVALID",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_ProfitDaysBasis.value") }));
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_ProfitDaysBasis.value") }));
 			}
 
 			aFinanceMain.setProfitDaysBasis(getComboboxValue(this.cbProfitDaysBasis));
@@ -1518,7 +1519,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 							this.defferments.intValue())) {
 
 				throw new WrongValueException(this.defferments, Labels.getLabel("FIELD_IS_LESSER",
-						new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_Defferments.value"),
+						new String[] {Labels.getLabel("label_WIFFinanceMainDialog_Defferments.value"),
 						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxDifferment()) }));
 
 			}
@@ -1529,16 +1530,16 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		try {
-			if (!this.frqDefferments.isReadonly() && this.frqDefferments.intValue() != 0 && 
-					(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment() < 
-							this.frqDefferments.intValue())) {
+			if (!this.planDeferCount.isReadonly() && this.planDeferCount.intValue() != 0 && 
+					(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount() < 
+							this.planDeferCount.intValue())) {
 
-				throw new WrongValueException(this.frqDefferments,Labels.getLabel("FIELD_IS_LESSER",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FrqDefferments.value"),
-						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment()) }));
+				throw new WrongValueException(this.planDeferCount,Labels.getLabel("FIELD_IS_LESSER",
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FrqDefferments.value"),
+						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount()) }));
 
 			}
-			aFinanceMain.setFrqDefferments(this.frqDefferments.intValue());
+			aFinanceMain.setPlanDeferCount(this.planDeferCount.intValue());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1599,7 +1600,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if(getComboboxValue(this.grcRateBasis).equals("#")) {
 					throw new WrongValueException(this.grcRateBasis, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GrcRateBasis.value") }));
+							new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GrcRateBasis.value") }));
 				}
 				aFinanceMain.setGrcRateBasis(getComboboxValue(this.grcRateBasis));
 			}catch (WrongValueException we ) {
@@ -1638,8 +1639,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 							(!this.lovDescGraceBaseRateName.getValue().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
-								new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_GraceBaseRate.value"),
-								Labels.getLabel("label_MurabahaFinanceMainDialog_GracePftRate.value") }));
+								new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),
+								Labels.getLabel("label_WIFFinanceMainDialog_GracePftRate.value") }));
 					}
 					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				} else {
@@ -1659,7 +1660,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if (getComboboxValue(this.grcPftDaysBasis).equals("#")) {
 					throw new WrongValueException(this.grcPftDaysBasis, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GraceProfitDaysBasis.value") }));
+							new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GraceProfitDaysBasis.value") }));
 				}
 
 				aFinanceMain.setGrcProfitDaysBasis(getComboboxValue(this.grcPftDaysBasis));
@@ -1774,7 +1775,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if (this.allowGrcRepay.isChecked() && getComboboxValue(this.cbGrcSchdMthd).equals("#")) {
 					throw new WrongValueException(this.cbGrcSchdMthd, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GrcSchdMthd.value") }));
+							new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GrcSchdMthd.value") }));
 				}
 				if(this.grcRepayRow.isVisible()){
 				aFinanceMain.setGrcSchdMthd(getComboboxValue(this.cbGrcSchdMthd));
@@ -1811,22 +1812,22 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(this.allowGrace.isChecked()){
 				if (!recSave && this.graceTerms_Two.intValue() == 0 && this.gracePeriodEndDate_two.getValue() == null) {
 					throw new WrongValueException(this.graceTerms, Labels.getLabel("EITHER_OR",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_GracePeriodEndDate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_GraceTerms.value") }));
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GracePeriodEndDate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value") }));
 
 				} else if (!recSave && this.graceTerms.intValue() > 0 && 
 						this.gracePeriodEndDate.getValue() != null && this.gracePeriodEndDate_two.getValue() != null) {
 
 					throw new WrongValueException(this.graceTerms, Labels.getLabel("EITHER_OR",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_GracePeriodEndDate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_GraceTerms.value") }));
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GracePeriodEndDate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value") }));
 
 				} else if(this.gracePeriodEndDate.getValue() != null){
 					if(this.finStartDate.getValue().compareTo(this.gracePeriodEndDate.getValue()) > 0){
 
 						throw new WrongValueException(this.gracePeriodEndDate, Labels.getLabel("NUMBER_MINVALUE_EQ",
-								new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_GracePeriodEndDate.value"), 
-								Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value")}));
+								new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GracePeriodEndDate.value"), 
+								Labels.getLabel("label_WIFFinanceMainDialog_FinStartDate.value")}));
 					}
 				}
 			}
@@ -1919,8 +1920,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if ((this.repayProfitRate.getValue().intValue() > 0)
 						&& (!this.lovDescRepayBaseRateName.getValue().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_RepayBaseRate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_ProfitRate.value") }));
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_ProfitRate.value") }));
 				}
 				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			} else {
@@ -2058,15 +2059,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (this.numberOfTerms.intValue() != 0 && this.maturityDate_two.getValue() == null) {
 				if (this.numberOfTerms.intValue() < 0) {
 					this.numberOfTerms.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-							new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfTerms.value") }));
+							new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NumberOfTerms.value") }));
 				}
 				this.numberOfTerms_two.setValue(this.numberOfTerms.intValue());
 			}
 
 			if (!recSave && this.numberOfTerms_two.intValue() == 0 && this.maturityDate_two.getValue() == null) {
 				throw new WrongValueException(this.numberOfTerms, Labels.getLabel("EITHER_OR",
-						new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value"),
-						Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfTerms.value") }));
+						new String[] {Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value"),
+						Labels.getLabel("label_WIFFinanceMainDialog_NumberOfTerms.value") }));
 
 			} else if (!recSave && this.numberOfTerms.intValue() > 0 && 
 					this.maturityDate.getValue() != null && this.maturityDate_two.getValue() != null) {
@@ -2076,8 +2077,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					//Do Nothing
 				}else{
 					throw new WrongValueException(this.numberOfTerms, Labels.getLabel("EITHER_OR",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfTerms.value") }));
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_NumberOfTerms.value") }));
 				}
 			}
 			aFinanceMain.setNumberOfTerms(this.numberOfTerms_two.intValue());
@@ -2121,14 +2122,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 				if (downPayment.compareTo(this.finAmount.getValue()) > 0) {
 					throw new WrongValueException(this.downPayBank, Labels.getLabel("MAND_FIELD_MIN",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_DownPayment.value"),
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_DownPayment.value"),
 							reqDwnPay.toString(),PennantAppUtil.formatAmount(this.finAmount.getValue(),
 									formatter,false).toString() }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank, Labels.getLabel("PERC_MIN",
-							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_DownPayBS.value"),
+							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_DownPayBS.value"),
 							PennantAppUtil.formatAmount(reqDwnPay, formatter, false).toString()}));
 				}
 			}
@@ -2304,11 +2305,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 && 
 					getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 				if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinRepayPftOnFrq()){
-					this.label_MurabahaFinanceMainDialog_FinRepayPftOnFrq.setVisible(false);
+					this.label_WIFFinanceMainDialog_FinRepayPftOnFrq.setVisible(false);
 					this.rpyPftFrqRow.setVisible(false);
 					this.hbox_finRepayPftOnFrq.setVisible(false);
 				}else{
-					this.label_MurabahaFinanceMainDialog_FinRepayPftOnFrq.setVisible(true);
+					this.label_WIFFinanceMainDialog_FinRepayPftOnFrq.setVisible(true);
 					this.rpyPftFrqRow.setVisible(true);
 					this.hbox_finRepayPftOnFrq.setVisible(true);
 				}
@@ -2571,7 +2572,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_downPayBank = this.downPayBank.getValue();
 		this.oldVar_downPaySupl = this.downPaySupl.getValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.frqDefferments.intValue();
+		this.oldVar_frqDefferments = this.planDeferCount.intValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 
@@ -2669,7 +2670,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPaySupl.setValue(this.oldVar_downPaySupl);
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.defferments.setValue(this.oldVar_defferments);
-		this.frqDefferments.setValue(this.oldVar_frqDefferments);
+		this.planDeferCount.setValue(this.oldVar_frqDefferments);
 		this.depreciationFrq.setValue(this.oldVar_depreciationFrq);
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		
@@ -2790,7 +2791,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.defferments.intValue() != this.oldVar_defferments) {
 			return true;
 		}
-		if (this.frqDefferments.intValue() != this.oldVar_frqDefferments) {
+		if (this.planDeferCount.intValue() != this.oldVar_frqDefferments) {
 			return true;
 		}
 
@@ -3271,20 +3272,20 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsGenRef()) {
 
 			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinReference.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinReference.value") }));
 		}
 
 		if (!this.finAmount.isDisabled()) {
 			this.finAmount.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_MurabahaFinanceMainDialog_FinAmount.value"), false));
+					Labels.getLabel("label_WIFFinanceMainDialog_FinAmount.value"), false));
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_WIFFinanceMainDialog_StepPolicy.value"), null, true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
-			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfSteps.value"), true, false));
+			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_NumberOfSteps.value"), true, false));
 		}
 		
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -3293,40 +3294,40 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 			if (!this.graceTerms.isReadonly()) {
 				this.graceTerms.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GraceTerms.value") }));
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value") }));
 			}	
 			
 			if (!this.grcMargin.isDisabled()) {
 				this.grcMargin.setConstraint(new RateValidator(13, 9, 
-						Labels.getLabel("label_MurabahaFinanceMainDialog_GraceMargin.value"), true));
+						Labels.getLabel("label_WIFFinanceMainDialog_GraceMargin.value"), true));
 			}
 
 			if(this.allowGrace.isChecked()){
 				this.grcEffectiveRate.setConstraint(new RateValidator(13, 9,
-						Labels.getLabel("label_MurabahaFinanceMainDialog_GracePftRate.value"), true));
+						Labels.getLabel("label_WIFFinanceMainDialog_GracePftRate.value"), true));
 			}
 
 			if (!this.nextGrcPftDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 
 				this.nextGrcPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextGrcPftDate.value") }));
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftDate.value") }));
 			}
 
 			if (!this.nextGrcPftRvwDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
 				this.nextGrcPftRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextGrcPftRvwDate.value") }));
+						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftRvwDate.value") }));
 			}
 		}
 		
 		if(!this.defferments.isDisabled()){
-			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_Defferments.value"), false, false));
+			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_Defferments.value"), false, false));
 		}
 		
-		if(!this.frqDefferments.isDisabled()){
-			this.frqDefferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FrqDefferments.value"), false, false));
+		if(!this.planDeferCount.isDisabled()){
+			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -3335,43 +3336,43 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
 			this.nextRepayDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayDate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayDate.value") }));
 		}
 
 		if (!this.nextRepayPftDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
 			this.nextRepayPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayPftDate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayPftDate.value") }));
 		}
 
 		if (!this.nextRepayRvwDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
 			this.nextRepayRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayRvwDate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayRvwDate.value") }));
 		}
 
 		if (!this.nextRepayCpzDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
 			this.nextRepayCpzDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayCpzDate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayCpzDate.value") }));
 		}
 
 		this.repayEffectiveRate.setConstraint(new RateValidator(13, 9,
-				Labels.getLabel("label_MurabahaFinanceMainDialog_ProfitRate.value"), true));
+				Labels.getLabel("label_WIFFinanceMainDialog_ProfitRate.value"), true));
 
 		if (!this.repayMargin.isDisabled()) {
 			this.repayMargin.setConstraint(new RateValidator(13, 9, 
-					Labels.getLabel("label_MurabahaFinanceMainDialog_RepayMargin.value"), true));
+					Labels.getLabel("label_WIFFinanceMainDialog_RepayMargin.value"), true));
 		}
 		
 		if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 			
 			this.maturityDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value") }));
 		}
 
 		logger.debug("Leaving");
@@ -3393,7 +3394,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPayBank.setConstraint("");
 		this.downPaySupl.setConstraint("");
 		this.defferments.setConstraint("");
-		this.frqDefferments.setConstraint("");
+		this.planDeferCount.setConstraint("");
 		this.depreciationFrq.setConstraint("");
 		
 		this.stepPolicy.setConstraint("");
@@ -3469,33 +3470,33 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinType.value") }));
+				new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinType.value") }));
 
 		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") }));
+				new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinCcy.value") }));
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if(!this.btnSearchGraceBaseRate.isDisabled()) {
 			this.lovDescGraceBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GraceBaseRate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value") }));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
 			this.lovDescGrcIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_MurabahaFinanceMainDialog_FinGrcIndBaseRate.value")}));			
+					new String[]{Labels.getLabel("label_WIFFinanceMainDialog_FinGrcIndBaseRate.value")}));			
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if(!this.btnSearchRepayBaseRate.isDisabled()) {
 			this.lovDescRepayBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_RepayBaseRate.value") }));
+					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value") }));
 		}
 
 		if(this.allowRpyInd.isChecked() && this.rpyIndBaseRate.isButtonVisible()){
 			this.rpyIndBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_MurabahaFinanceMainDialog_FinRpyIndBaseRate.value")}));			
+					new String[]{Labels.getLabel("label_WIFFinanceMainDialog_FinRpyIndBaseRate.value")}));			
 		}
 		logger.debug("Leaving ");
 	}
@@ -3543,7 +3544,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPayBank.setErrorMessage("");
 		this.downPaySupl.setErrorMessage("");
 		this.defferments.setErrorMessage("");
-		this.frqDefferments.setErrorMessage("");
+		this.planDeferCount.setErrorMessage("");
 		this.depreciationFrq.setErrorMessage("");	
 		
 		this.stepPolicy.setErrorMessage("");
@@ -3704,7 +3705,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		this.defferments.setReadonly(isReadOnly("WIFFinanceMainDialog_defferments"));
-		this.frqDefferments.setReadonly(isReadOnly("WIFFinanceMainDialog_frqDefferments"));
+		this.planDeferCount.setReadonly(isReadOnly("WIFFinanceMainDialog_frqDefferments"));
 
 		this.cbDepreciationFrqCode.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 		this.cbDepreciationFrqMth.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
@@ -3820,7 +3821,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPayBank.setReadonly(true);
 		this.downPaySupl.setReadonly(true);
 		this.defferments.setReadonly(true);
-		this.frqDefferments.setReadonly(true);
+		this.planDeferCount.setReadonly(true);
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -3929,7 +3930,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPayBank.setValue("");
 		this.downPaySupl.setValue("");
 		this.defferments.setText("");
-		this.frqDefferments.setText("");
+		this.planDeferCount.setText("");
 		this.depreciationFrq.setValue("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -4526,8 +4527,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.row_manualSteps.setVisible(false);
 		
 		this.stepPolicy.setVisible(false);
-		this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(false);
-		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+		this.label_WIFFinanceMainDialog_StepPolicy.setVisible(false);
+		this.label_WIFFinanceMainDialog_numberOfSteps.setVisible(false);
 		this.hbox_numberOfSteps.setVisible(false);
 		
 		if(this.tabsIndexCenter.getFellowIfAny("stepDetailsTab") != null){
@@ -4551,7 +4552,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(type.isSteppingMandatory()){
 				this.stepFinance.setDisabled(true);
 			}
-			this.label_MurabahaFinanceMainDialog_StepPolicy.setVisible(true);
+			this.label_WIFFinanceMainDialog_StepPolicy.setVisible(true);
 			this.stepPolicy.setVisible(true);
 			if(!StringUtils.trimToEmpty(type.getDftStepPolicy()).equals(PennantConstants.List_Select)){
 				this.stepPolicy.setValue(type.getDftStepPolicy(),type.getLovDescDftStepPolicyName());
@@ -4591,11 +4592,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		if(this.alwManualSteps.isChecked()){
      		this.stepPolicy.setMandatoryStyle(false); 
-    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(true);
+    		this.label_WIFFinanceMainDialog_numberOfSteps.setVisible(true);
     		this.hbox_numberOfSteps.setVisible(true);
 		} else {
     		this.stepPolicy.setMandatoryStyle(true); 
-    		this.label_MurabahaFinanceMainDialog_numberOfSteps.setVisible(false);
+    		this.label_WIFFinanceMainDialog_numberOfSteps.setVisible(false);
     		this.hbox_numberOfSteps.setVisible(false);
 		}
 		
@@ -6207,6 +6208,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.nextRepayCpzDate_two.setValue(this.maturityDate_two.getValue());
 			}
 		}
+		
+		int count = DateUtility.getDefermentCount(this.numberOfTerms_two.intValue(), this.planDeferCount.intValue());
+		if(count > 0){
+			this.defferments.setValue(count);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -6266,7 +6272,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (getFinanceDetailService().isFinReferenceExits(this.finReference.getValue(), "_View", false)) {
 
 					errorList.add(new ErrorDetails("finReference","E0006",new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_FinReference.value"),this.finReference.getValue().toString() },new String[] {}));
+							Labels.getLabel("label_WIFFinanceMainDialog_FinReference.value"),this.finReference.getValue().toString() },new String[] {}));
 				}
 			}
 
@@ -6332,7 +6338,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				if (!validateFrquency(this.cbGracePftFrqCode, this.gracePftFrq, this.nextGrcPftDate_two)) {
 
 					errorList.add(new ErrorDetails("nextGrcPftDate_two", "W0004", new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NextGrcPftDate.value"), Labels.getLabel("label_MurabahaFinanceMainDialog_GracePftFrq.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftDate.value"), Labels.getLabel("label_WIFFinanceMainDialog_GracePftFrq.value"),
 							Labels.getLabel("finGracePeriodDetails") }, new String[] {this.nextGrcPftDate_two.getValue().toString(),
 							this.gracePftFrq.getValue() }));
 				}
@@ -6368,8 +6374,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				// frequency or not
 				if (!validateFrquency(this.cbGracePftRvwFrqCode, this.gracePftRvwFrq, this.nextGrcPftRvwDate_two)) {
 					errorList.add(new ErrorDetails("nextGrcPftRvwDate_two", "W0004", new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NextGrcPftRvwDate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_GracePftRvwFrq.value"), Labels.getLabel("finGracePeriodDetails") }, 
+							Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftRvwDate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_GracePftRvwFrq.value"), Labels.getLabel("finGracePeriodDetails") }, 
 							new String[] { this.nextGrcPftRvwDate_two.getValue().toString(), this.gracePftRvwFrq.getValue() }));
 				}
 
@@ -6392,8 +6398,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				// frequency or not
 				if (!validateFrquency(this.cbGraceCpzFrqCode, this.graceCpzFrq, this.nextGrcCpzDate_two)) {
 					errorList.add(new ErrorDetails("nextGrcCpzDate_two","W0004", new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NextGrcCpzDate.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_GraceCpzFrq.value"), Labels.getLabel("finGracePeriodDetails") },
+							Labels.getLabel("label_WIFFinanceMainDialog_NextGrcCpzDate.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_GraceCpzFrq.value"), Labels.getLabel("finGracePeriodDetails") },
 							new String[] {this.nextGrcCpzDate_two.getValue().toString(), this.graceCpzFrq.getValue() }));
 				}
 
@@ -6430,8 +6436,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// frequency or not
 			if (!validateFrquency(this.cbRepayFrqCode, this.repayFrq, this.nextRepayDate_two)) {
 				errorList.add(new ErrorDetails("nextRepayDate_two", "W0004", new String[] {
-						Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayDate.value"),
-						Labels.getLabel("label_MurabahaFinanceMainDialog_RepayFrq.value"), Labels.getLabel("finRepaymentDetails") },
+						Labels.getLabel("label_WIFFinanceMainDialog_NextRepayDate.value"),
+						Labels.getLabel("label_WIFFinanceMainDialog_RepayFrq.value"), Labels.getLabel("finRepaymentDetails") },
 						new String[] {this.nextRepayDate_two.getValue().toString(),this.repayFrq.getValue() }));
 			}
 
@@ -6452,8 +6458,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// profit frequency or not
 			if (!validateFrquency(this.cbRepayPftFrqCode, this.repayPftFrq, this.nextRepayPftDate_two)) {
 				errorList.add(new ErrorDetails("nextRepayPftDate_two","W0004", new String[] {
-						Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayPftDate.value"), 
-						Labels.getLabel("label_MurabahaFinanceMainDialog_RepayPftFrq.value"), Labels.getLabel("WIFinRepaymentDetails") },
+						Labels.getLabel("label_WIFFinanceMainDialog_NextRepayPftDate.value"), 
+						Labels.getLabel("label_WIFFinanceMainDialog_RepayPftFrq.value"), Labels.getLabel("WIFinRepaymentDetails") },
 						new String[] {this.nextRepayPftDate_two.getValue().toString(), this.repayPftFrq.getValue() }));
 			}
 
@@ -6469,8 +6475,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// review frequency or not
 			if (!validateFrquency(this.cbRepayRvwFrqCode, this.repayRvwFrq, this.nextRepayRvwDate_two)) {
 				errorList.add(new ErrorDetails("nextRepayRvwDate_two", "W0004", new String[] {
-						Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayRvwDate.value"),
-						Labels.getLabel("label_MurabahaFinanceMainDialog_RepayRvwFrq.value"), Labels.getLabel("finRepaymentDetails") },
+						Labels.getLabel("label_WIFFinanceMainDialog_NextRepayRvwDate.value"),
+						Labels.getLabel("label_WIFFinanceMainDialog_RepayRvwFrq.value"), Labels.getLabel("finRepaymentDetails") },
 						new String[] { this.nextRepayRvwDate_two.getValue().toString(), this.repayRvwFrq.getValue() }));
 			}
 
@@ -6486,8 +6492,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			// capital frequency or not
 			if (!validateFrquency(this.cbRepayCpzFrqCode, this.repayCpzFrq, this.nextRepayCpzDate_two)) {
 				errorList.add(new ErrorDetails("nextRepayCpzDate_two", "W0004", new String[] {
-						Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayCpzDate.value"),
-						Labels.getLabel("label_MurabahaFinanceMainDialog_RepayCpzFrq.value"), Labels.getLabel("finRepaymentDetails") },
+						Labels.getLabel("label_WIFFinanceMainDialog_NextRepayCpzDate.value"),
+						Labels.getLabel("label_WIFFinanceMainDialog_RepayCpzFrq.value"), Labels.getLabel("finRepaymentDetails") },
 						new String[] {this.nextRepayCpzDate_two.getValue().toString(), this.repayCpzFrq.getValue() }));
 			}
 
@@ -6517,16 +6523,16 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (!this.numberOfTerms.isReadonly() && this.numberOfTerms.intValue() != 0 && !singleTermFinance) {
 				if (this.numberOfTerms.intValue() >= 1 && this.maturityDate.getValue() != null) {
 					errorList.add(new ErrorDetails("numberOfTerms","E0011", new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfTerms.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value") }, new String[] {}));
+							Labels.getLabel("label_WIFFinanceMainDialog_NumberOfTerms.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value") }, new String[] {}));
 				}
 			}
 
 			if (!this.maturityDate.isDisabled()) {
 				if (this.maturityDate.getValue() != null && (this.numberOfTerms.intValue() >= 1) && !singleTermFinance) {
 					errorList.add(new ErrorDetails("maturityDate","E0011", new String[] {
-							Labels.getLabel("label_MurabahaFinanceMainDialog_NumberOfTerms.value"),
-							Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value") }, new String[] {}));
+							Labels.getLabel("label_WIFFinanceMainDialog_NumberOfTerms.value"),
+							Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value") }, new String[] {}));
 				}
 			}
 
@@ -6535,7 +6541,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					if (this.maturityDate_two.getValue().before(this.nextRepayDate_two.getValue())) {
 						errorList.add(new ErrorDetails("maturityDate","E0028", new String[] {
 								PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
-								Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayDate.value"),
+								Labels.getLabel("label_WIFFinanceMainDialog_NextRepayDate.value"),
 								PennantAppUtil.formateDate(this.nextRepayDate_two.getValue(), "") },new String[] {}));
 					}
 				}
@@ -6544,7 +6550,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					if (this.maturityDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
 						errorList.add(new ErrorDetails("maturityDate","E0028",new String[] {
 								PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
-								Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayPftDate.value"),
+								Labels.getLabel("label_WIFFinanceMainDialog_NextRepayPftDate.value"),
 								PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(),"") }, new String[] {}));
 					}
 				}
@@ -6553,7 +6559,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					if (this.maturityDate_two.getValue().before(this.nextRepayCpzDate_two.getValue())) {
 						errorList.add(new ErrorDetails("maturityDate", "E0028", new String[] {
 								PennantAppUtil.formateDate(this.maturityDate_two.getValue(), ""),
-								Labels.getLabel("label_MurabahaFinanceMainDialog_NextRepayCpzDate.value"),
+								Labels.getLabel("label_WIFFinanceMainDialog_NextRepayCpzDate.value"),
 								PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), "") }, new String[] {}));
 					}
 				}
@@ -6782,6 +6788,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			lovFieldTextBox.setValue("");
 		}
 		logger.debug("Leaving");
+	}
+	
+	public void onChange$planDeferCount(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		if(this.planDeferCount.intValue() == 0){
+			this.defferments.setReadonly(false);
+		}else{
+			this.defferments.setReadonly(true);
+		}
+		
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

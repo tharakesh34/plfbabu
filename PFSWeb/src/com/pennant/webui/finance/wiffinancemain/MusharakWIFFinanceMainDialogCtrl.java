@@ -1218,7 +1218,7 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()) {
+		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()) {
 			this.frqDefferments.setReadonly(false);
 		} else {
 			this.frqDefferments.setReadonly(true);
@@ -1227,11 +1227,11 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
-				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwFrqDifferment()){
+				!getFinanceDetail().getFinScheduleData().getFinanceType().isAlwPlanDeferment()){
 			this.defermentsRow.setVisible(false);
 		}
 
-		this.frqDefferments.setValue(aFinanceMain.getFrqDefferments());
+		this.frqDefferments.setValue(aFinanceMain.getPlanDeferCount());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
 		
 		if(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() > 0 ){
@@ -1409,15 +1409,15 @@ public class MusharakWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Ser
 
 		try {
 			if (!this.frqDefferments.isReadonly() && this.frqDefferments.intValue() != 0 && 
-					(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment() < 
+					(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount() < 
 							this.frqDefferments.intValue())) {
 
 				throw new WrongValueException(this.frqDefferments,Labels.getLabel("FIELD_IS_LESSER",
 						new String[] { Labels.getLabel("label_MusharakFinanceMainDialog_FrqDefferments.value"),
-						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxFrqDifferment()) }));
+						String.valueOf(getFinanceDetail().getFinScheduleData().getFinanceType().getPlanDeferCount()) }));
 
 			}
-			aFinanceMain.setFrqDefferments(this.frqDefferments.intValue());
+			aFinanceMain.setPlanDeferCount(this.frqDefferments.intValue());
 
 		} catch (WrongValueException we) {
 			wve.add(we);
