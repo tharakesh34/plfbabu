@@ -386,7 +386,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private transient BigDecimal 	oldVar_downPayBank;
 	private transient BigDecimal 	oldVar_downPaySupl;
 	private transient int 			oldVar_defferments;
-	private transient int 			oldVar_frqDefferments;
+	private transient int 			oldVar_planDeferCount;
 	private transient String 		oldVar_depreciationFrq;
 	private transient boolean 		oldVar_finIsActive;
 
@@ -2572,7 +2572,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_downPayBank = this.downPayBank.getValue();
 		this.oldVar_downPaySupl = this.downPaySupl.getValue();
 		this.oldVar_defferments = this.defferments.intValue();
-		this.oldVar_frqDefferments = this.planDeferCount.intValue();
+		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 
@@ -2670,7 +2670,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.downPaySupl.setValue(this.oldVar_downPaySupl);
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.defferments.setValue(this.oldVar_defferments);
-		this.planDeferCount.setValue(this.oldVar_frqDefferments);
+		this.planDeferCount.setValue(this.oldVar_planDeferCount);
 		this.depreciationFrq.setValue(this.oldVar_depreciationFrq);
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		
@@ -2791,7 +2791,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.defferments.intValue() != this.oldVar_defferments) {
 			return true;
 		}
-		if (this.planDeferCount.intValue() != this.oldVar_frqDefferments) {
+		if (this.planDeferCount.intValue() != this.oldVar_planDeferCount) {
 			return true;
 		}
 
@@ -3065,6 +3065,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			return true;
 		}
 		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
+			return true;
+		}
+		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
 			return true;
 		}
 
@@ -5570,6 +5573,44 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
  				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
  				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
+ 			
+ 			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
+ 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData planDeferSchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Terms Recalculation
+				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Maturity Date Recalculation using Number of Terms
+				List<Calendar> scheduleDateList = null;				
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+							planFinMain.getNumberOfTerms(), nextPftDate, "A", true).getScheduleList();
+				}else{
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+							planFinMain.getNumberOfTerms(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+				}
+
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					planFinMain.setMaturityDate(calendar.getTime());
+				}			
+				
+				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				
+ 			}
 
 			//Prepare Finance Schedule Generator Details List
 			getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
@@ -5580,7 +5621,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData()));
+						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				
@@ -6794,7 +6835,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering" + event.toString());
 		
 		if(this.planDeferCount.intValue() == 0){
-			this.defferments.setReadonly(false);
+			if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment()){
+				this.defferments.setReadonly(false);
+			}else{
+				this.defferments.setReadonly(true);
+				this.defferments.setValue(0);
+			}
 		}else{
 			this.defferments.setReadonly(true);
 		}

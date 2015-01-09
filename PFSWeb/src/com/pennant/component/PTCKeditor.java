@@ -53,7 +53,7 @@ public class PTCKeditor extends CKeditor {
 	public static final String SIMPLE_LIST = "/ptjs/ckEditorConfigSimpleList.js";
 	
 	/**
-	 * ExtendedCombobox
+	 * PTCKeditor
 	 * Constructor
 	 * Defining the components and events
 	 */

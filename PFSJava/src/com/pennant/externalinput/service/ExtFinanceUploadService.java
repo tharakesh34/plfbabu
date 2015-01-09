@@ -200,7 +200,7 @@ public class ExtFinanceUploadService {
 		finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 		if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData);
+			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 			finScheduleData.setSchduleGenerated(true);
 		}
 		//Reset Data

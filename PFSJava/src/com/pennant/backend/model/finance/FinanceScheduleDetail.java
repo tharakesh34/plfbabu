@@ -103,6 +103,7 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private BigDecimal orgPft = BigDecimal.ZERO;
 	private BigDecimal orgPri = BigDecimal.ZERO;
 	private BigDecimal orgEndBal = BigDecimal.ZERO;
+	private BigDecimal orgPlanPft = BigDecimal.ZERO;
 	
 	private int version;
 	private long lastMntBy;
@@ -849,6 +850,12 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	public void setOrgEndBal(BigDecimal orgEndBal) {
 		this.orgEndBal = orgEndBal;
 	}
-	
+
+	public BigDecimal getOrgPlanPft() {
+		return orgPlanPft;
+	}
+	public void setOrgPlanPft(BigDecimal orgPlanPft) {
+		this.orgPlanPft = orgPlanPft;
+	}
 
 }

@@ -110,8 +110,12 @@ public class ScheduleCalculator {
 	 * ################################################################################################################
 	 */
 
-	public static FinScheduleData getCalSchd(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procGetCalSchd", finScheduleData).getFinScheduleData();
+	public static FinScheduleData getCalSchd(FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
+		return new ScheduleCalculator("procGetCalSchd", finScheduleData, desiredPftAmount).getFinScheduleData();
+	}
+	
+	public static FinScheduleData getPlanDeferPft(FinScheduleData finScheduleData) {
+		return new ScheduleCalculator("procPlanDeferPft", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData changeRate(FinScheduleData finScheduleData, String baseRate,
@@ -139,7 +143,7 @@ public class ScheduleCalculator {
 	}
 	
 	public static FinScheduleData addDatedSchedule(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procAddDatedSchedule", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procAddDatedSchedule", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData addRepayment(FinScheduleData finScheduleData, BigDecimal amount,
@@ -149,7 +153,7 @@ public class ScheduleCalculator {
 	}
 
 	public static FinScheduleData reCalSchd(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procReCalSchd", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procReCalSchd", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData addTerm(FinScheduleData finScheduleData, int noOfTerms,
@@ -159,19 +163,19 @@ public class ScheduleCalculator {
 	}
 
 	public static FinScheduleData deleteTerm(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procDeleteTerm", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procDeleteTerm", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData addDeferment(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procAddDeferment", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procAddDeferment", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData rmvDeferment(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procRmvDeferment", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procRmvDeferment", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData refreshRates(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator("procRefreshRates", finScheduleData).getFinScheduleData();
+		return new ScheduleCalculator("procRefreshRates", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
 	public static FinScheduleData recalEarlyPaySchedule(FinScheduleData finScheduleData,
@@ -191,7 +195,7 @@ public class ScheduleCalculator {
 	}
 
 	// Constructors
-	private ScheduleCalculator(String method, FinScheduleData finScheduleData) {
+	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		logger.debug("Entering");
 		
 		finScheduleData.getFinanceMain().setCpzAtGraceEnd(false);
@@ -213,6 +217,9 @@ public class ScheduleCalculator {
 			}
 			
 			finScheduleData = procGetCalSchd(finScheduleData, isCalFlat);
+			
+			//Set Total Amounts After Calculations
+			finScheduleData = setFinanceTotals(finScheduleData);
 
 			if (isCalFlat) {
 				
@@ -232,8 +239,23 @@ public class ScheduleCalculator {
 					pftComparisionFor = CalculationConstants.REPAY;
 				}				
 				
-				//Set Total Amounts After Calculations
-				finScheduleData = setFinanceTotals(finScheduleData);
+				//To GET Desired Profit Using Planned Deferment Case 
+				if(finScheduleData.getFinanceMain().getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+					
+					finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
+					finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
+
+					finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor,totalDesiredProfit, 
+							finScheduleData.getFinanceMain().getFinStartDate(), finScheduleData.getFinanceMain().getCalMaturity(), false);
+					
+					int size = finScheduleData.getFinanceScheduleDetails().size();
+					for (int i = 0; i < size; i++) {
+						FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+						curSchd.setOrgPlanPft(curSchd.getProfitSchd());
+					}
+					
+					totalDesiredProfit = desiredPftAmount;
+				}
 
 				if (financeMain.isEqualRepay()) {
 					
@@ -304,7 +326,30 @@ public class ScheduleCalculator {
                 		curSchd.setOrgPri(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()).subtract(curSchd.getOrgPri()).subtract(orgPft));
                     }
 				}
+				
+			}else{
+				
+				if(finScheduleData.getFinanceMain().getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+					
+					int size = finScheduleData.getFinanceScheduleDetails().size();
+					for (int i = 0; i < size; i++) {
+						FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+						curSchd.setOrgPlanPft(curSchd.getProfitSchd());
+					}
+
+					//Recalculation for Getting Desired Profit which was calculated Using Planned Deferment Case
+					finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+					finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
+					finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
+
+					finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.TOTAL, desiredPftAmount, 
+							finScheduleData.getFinanceMain().getFinStartDate(), finScheduleData.getFinanceMain().getCalMaturity(), false);
+
+				}
 			}
+			
+			//Set Total Amounts After Calculations
+			finScheduleData = setFinanceTotals(finScheduleData);
 
 			//Effective Rate Of Return Calculations
 			if (finScheduleData.getFinanceMain().getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
@@ -366,7 +411,76 @@ public class ScheduleCalculator {
 		if (method.equals("procRefreshRates")) {
 			setFinScheduleData(procRefreshRates(finScheduleData));
 		}
+		
+		if (method.equals("procPlanDeferPft")) {
+			setFinScheduleData(procPlanDeferPft(finScheduleData));
+		}
+		
+		if (method.equals("procChangeProfit")) {
+			setFinScheduleData(procChangeProfit(finScheduleData, desiredPftAmount));
+		}
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Processing Schedule calculation to get the Total Desired Profit by including Planned Deferment Terms
+	 * @param finScheduleData
+	 * @return
+	 */
+	private FinScheduleData procPlanDeferPft(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+
+		finScheduleData.getFinanceMain().setCpzAtGraceEnd(false);
+
+		BigDecimal totalDesiredProfit =   BigDecimal.ZERO;
+		String pftComparisionFor = null;
+
+		//IF Repayments is Convert from Flat to Reducing and first time calculation.
+		Boolean isCalFlat = false;
+		if (finScheduleData.getFinanceMain().getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
+			isCalFlat = true;
+		}
+
+		if (finScheduleData.getFinanceMain().getGrcProfitDaysBasis() == null) {
+			finScheduleData.getFinanceMain().setGrcProfitDaysBasis(finScheduleData.getFinanceMain().getProfitDaysBasis());
+		}
+
+		finScheduleData = procGetCalSchd(finScheduleData, isCalFlat);
+
+		//If Schedule Method is "Flat Converting to Reduce" Case
+		if (isCalFlat) {
+
+			Date calStart = new Date();
+			finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+			FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+			totalDesiredProfit = financeMain.getTotalGrossPft();
+			if (financeMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(financeMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+					&& financeMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
+
+				calStart = financeMain.getFinStartDate();
+				pftComparisionFor = CalculationConstants.TOTAL;
+
+			} else {
+				calStart = financeMain.getGrcPeriodEndDate();
+				pftComparisionFor = CalculationConstants.REPAY;
+			}				
+
+			finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
+			finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
+
+			finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor, totalDesiredProfit, calStart, 
+					finScheduleData.getFinanceMain().getCalMaturity(), false);
+
+		}
+		
+		//Set Total Amounts After Calculations
+		finScheduleData = setFinanceTotals(finScheduleData);
+
+		setFinScheduleData(finScheduleData);
+
+		logger.debug("Leaving");
+		return finScheduleData;
 	}
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, String baseRate,
@@ -431,17 +545,6 @@ public class ScheduleCalculator {
 		if (method.equals("procAddTerm")) {
 			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, schdMethod, true));
 		}
-		logger.debug("Leaving");
-	}
-
-	
-	private ScheduleCalculator(String method, FinScheduleData finScheduleData,
-	        BigDecimal desiredPftAmount) {
-		logger.debug("Entering");
-		if (method.equals("procChangeProfit")) {
-			setFinScheduleData(procChangeProfit(finScheduleData, desiredPftAmount));
-		}
-		
 		logger.debug("Leaving");
 	}
 
@@ -4602,6 +4705,7 @@ public class ScheduleCalculator {
 
 			if (totalDesiredProfit.compareTo(returnCalProfit) == 0) {
 				isExactMatch = true;
+				
 				logger.debug("Leaving");
 				return finScheduleData;
 			}

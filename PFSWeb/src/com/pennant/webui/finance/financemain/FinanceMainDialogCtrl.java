@@ -7561,7 +7561,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData()));
+						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				
 				//Current Finance Monthly Installment Calculation

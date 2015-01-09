@@ -969,7 +969,7 @@ public class DealFinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		// Build Finance Schedule Details List
 		if (scheduleData.getFinanceScheduleDetails() != null && !scheduleData.getFinanceScheduleDetails().isEmpty()) {
-			financeDetail.setFinScheduleData(ScheduleCalculator.getCalSchd(scheduleData));
+			financeDetail.setFinScheduleData(ScheduleCalculator.getCalSchd(scheduleData, BigDecimal.ZERO));
 			financeMain.setLovDescIsSchdGenerated(true);
 		}
 		logger.debug("Leaving");

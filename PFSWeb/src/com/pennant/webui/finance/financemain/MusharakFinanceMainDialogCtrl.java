@@ -3371,7 +3371,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData()));
+						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				
