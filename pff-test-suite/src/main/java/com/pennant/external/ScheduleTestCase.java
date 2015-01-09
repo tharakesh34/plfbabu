@@ -124,7 +124,7 @@ public class ScheduleTestCase extends TestingUtil {
 			sh1.setFinanceType(financeType);
 			
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 
 			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("29/02/2012"));
 			sh2.getFinanceMain().setEventToDate(DateUtility.getDate("29/02/2012"));

@@ -100,7 +100,7 @@ public class SN22_RR_EQUAL_REQ extends TestingUtil {
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 
 		
 			sh2.getFinanceMain().setEventFromDate(

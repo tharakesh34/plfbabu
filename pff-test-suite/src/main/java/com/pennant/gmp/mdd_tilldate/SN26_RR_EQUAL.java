@@ -98,7 +98,7 @@ public class SN26_RR_EQUAL extends TestingUtil {
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 			
 			BigDecimal Amount = new BigDecimal(0.0);
 			sh2.getFinanceMain().setEventFromDate(DateUtility.getDate("30/04/2011"));

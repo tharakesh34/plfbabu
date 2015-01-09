@@ -73,7 +73,7 @@ public class GraceAdjTermAddTerms2Test extends ScheduleData {
 
 		// Generate the schedule.
 		schedule = ScheduleGenerator.getNewSchd(schedule);
-		schedule = ScheduleCalculator.getCalSchd(schedule);
+		schedule = ScheduleCalculator.getCalSchd(schedule, BigDecimal.ZERO);
 
 		// Add Disbursement with Adjust Terms Recalculation Method
 		schedule.getFinanceMain().setEventFromDate(

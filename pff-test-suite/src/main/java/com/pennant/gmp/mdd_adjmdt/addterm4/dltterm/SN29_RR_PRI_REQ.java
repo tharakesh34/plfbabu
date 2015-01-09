@@ -98,7 +98,7 @@ public class SN29_RR_PRI_REQ extends TestingUtil {
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 
 			// Add Disbursement with recalculation till maturity date
 			BigDecimal Amount = new BigDecimal(10000000);

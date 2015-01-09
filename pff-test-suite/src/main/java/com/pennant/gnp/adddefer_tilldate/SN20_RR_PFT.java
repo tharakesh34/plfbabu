@@ -105,7 +105,7 @@ public class SN20_RR_PFT extends TestingUtil {
 			FinScheduleData sh1 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 
 			sh2.getFinanceMain().setEventFromDate(
 					DateUtility.getDate("29/02/2012"));

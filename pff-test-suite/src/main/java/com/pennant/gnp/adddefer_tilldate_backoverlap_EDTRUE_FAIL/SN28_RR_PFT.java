@@ -105,7 +105,7 @@ public class SN28_RR_PFT extends TestingUtil {
 					.getFinScheduleData());
 
 			// calculate schedule
-			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1);
+			FinScheduleData sh2 = ScheduleCalculator.getCalSchd(sh1, BigDecimal.ZERO);
 
 			// Add Deferment on February till May
 			sh2.getFinanceMain().setEventFromDate(

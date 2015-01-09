@@ -110,7 +110,7 @@ public class CreateScheduleTest {
 		}
 
 		schedule = ScheduleGenerator.getNewSchd(schedule);
-		schedule = ScheduleCalculator.getCalSchd(schedule);
+		schedule = ScheduleCalculator.getCalSchd(schedule, BigDecimal.ZERO);
 
 		return schedule;
 	}

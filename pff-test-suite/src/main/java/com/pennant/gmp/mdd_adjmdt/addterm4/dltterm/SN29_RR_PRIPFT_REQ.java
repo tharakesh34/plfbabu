@@ -98,7 +98,7 @@ public class SN29_RR_PRIPFT_REQ extends TestingUtil {
 			FinScheduleData sh2 = ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData());
 
 			// calculate schedule
-			sh2 = ScheduleCalculator.getCalSchd(sh2);
+			sh2 = ScheduleCalculator.getCalSchd(sh2, BigDecimal.ZERO);
 
 			// Add Disbursement with recalculation till maturity date
 			BigDecimal Amount = new BigDecimal(10000000);
