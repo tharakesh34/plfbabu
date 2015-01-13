@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.bmtmasters.product.ProductDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -665,8 +666,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		}
 		
 		if (!this.assetCode.isReadonly()){
-			this.assetCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ProductAssetDialog_AssetCode.value")}));
+			this.assetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductAssetDialog_AssetCode.value"),null,true,true));
 		}	
 		logger.debug("Leaving");
 	}

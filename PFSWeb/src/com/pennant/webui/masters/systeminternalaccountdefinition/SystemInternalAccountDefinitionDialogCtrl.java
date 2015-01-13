@@ -502,10 +502,15 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 			wve.add(we);
 		}
 		try {
+			if(this.sIASeqNumber.getValue().equals("")){
+				this.sIAheadCode.setValue("");
+			}else{
+				this.sIAheadCode.setValue("00");
+			}
 			this.sIANumber.setValue(this.sIAheadCode.getValue().trim() + this.sIASeqNumber.getValue());
 
 			if (!this.sIANumber.isReadonly()) {
-				if (this.sIANumber.getValue().equals("")) {
+				if (this.sIANumber.getValue().equals("") || this.sIANumber.getValue().equals("00")) {
 					throw new WrongValueException(this.sIASeqNumber, Labels.getLabel("FIELD_NO_EMPTY",
 					        new String[] { Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIANumber.value") }));
 				} else if (this.sIANumber.getValue().length() < 8) {
@@ -1178,7 +1183,7 @@ public class SystemInternalAccountDefinitionDialogCtrl extends GFCBaseCtrl imple
 	}
 
 	private void doSetLOVValidation() {
-		this.sIAAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value"), null, true));
+		this.sIAAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_SystemInternalAccountDefinitionDialog_SIAAcType.value"), null, true,true));
 	}
 
 	private void doRemoveLOVValidation() {

@@ -1343,16 +1343,13 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 		if(isTranTypeSyndication){
 			if (!this.totalFacilityCCY.isReadonly()) {
-				this.totalFacilityCCY.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_IndTermDetailDialog_totalFacilityCCY.value") }));
+				this.totalFacilityCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_totalFacilityCCY.value"),null,true,true));
 			}
 			if (!this.underWritingCCY.isReadonly()) {
-				this.underWritingCCY.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_IndTermDetailDialog_underWritingCCY.value") }));
+				this.underWritingCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_underWritingCCY.value"),null,true,true));
 			}
 			if (!this.propFinalTakeCCY.isReadonly()) {
-				this.propFinalTakeCCY.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_IndTermDetailDialog_propFinalTakeCCY.value") }));
+				this.propFinalTakeCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_propFinalTakeCCY.value"),null,true,true));
 			}
 			if (!this.totalFacility.isReadonly()) {
 				this.totalFacility.setConstraint(new PTDecimalValidator(Labels.getLabel("label_IndTermDetailDialog_totalFacility.value"),
@@ -1399,10 +1396,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.rpsnDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_IndTermDetailDialog_RpsnDesg.value") }));
-		this.facilityType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_IndTermDetailDialog_FacilityType.value") }));
+		this.rpsnDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_RpsnDesg.value"),null,true,true));
+		this.facilityType.setConstraint(new PTStringValidator(Labels.getLabel("label_IndTermDetailDialog_FacilityType.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 

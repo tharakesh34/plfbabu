@@ -1150,14 +1150,10 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl implements Seri
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescBrokerCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCustCIF.value")}));
-		this.brokerAddrCountry.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value")}));
-		this.brokerAddrProvince.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value")}));
-		this.brokerAddrCity.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value")}));
+		this.lovDescBrokerCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCustCIF.value"),null,true));
+		this.brokerAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"),null,true,true));
+		this.brokerAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"),null,true,true));
+		this.brokerAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value"),null,true,true));
 		logger.debug("Leaving ");
 	}
 	/**

@@ -1153,8 +1153,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if(this.director.isChecked()){
 			if(!this.designation.isReadonly()){
-				this.designation.setConstraint("NO EMPTY,NO ZERO:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[]{Labels.getLabel("label_DirectorDetailDialog_Designation.value")}));
+				this.designation.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_Designation.value"),null,true,true));
 			}
 		}
 		if (!this.custAddrHNbr.isReadonly()){
@@ -1222,8 +1221,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custAddrCountry.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value")}));
+		this.custAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustAddrCountry.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 	

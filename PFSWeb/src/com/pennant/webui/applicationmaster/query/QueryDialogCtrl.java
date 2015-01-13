@@ -503,6 +503,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (getQuery().isNewRecord()){
 			setComponentAccessType("QueryDialog_QueryCode", false, this.queryCode, this.space_QueryCode, this.label_QueryCode, this.hlayout_QueryCode,null);
+			this.active.setDisabled(false);
 		}
 
 

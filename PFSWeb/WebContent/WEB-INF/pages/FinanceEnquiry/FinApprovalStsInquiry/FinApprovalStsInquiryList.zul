@@ -4,9 +4,6 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_FinApprovalStsInquiryList" apply="${finApprovalStsInquiryListCtrl}" border="none" width="100%">
-			
-			<borderlayout id="borderLayout_FinApprovalStsInquiryList">
-				<north border="none">
 					<div sclass="z-toolbar" style="padding:0" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="40%,20%,40%">
 					<!-- COMMON BUTTONS -->
@@ -24,7 +21,7 @@
 				</hbox>
 					<textbox id="moduleType" value="ENQ" visible="false" />
 			</div>
-				</north>
+				<borderlayout id="borderLayout_FinApprovalStsInquiryList">
 				<center border="none">
 					<div>
 						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
@@ -79,7 +76,7 @@
 							emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 							vflex="min" span="true"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="100%" multiple="false" sizedByContent="true" >
+							height="100%" multiple="false" >
 							<listhead sizable="true">
 								<listheader
 									id="listheader_FinApprovalStsInquiryList_CustCIF"

@@ -187,7 +187,7 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 		// Column for the Host Details 
 		String hostStatusReq = com.pennant.app.util.SystemParameterDetails
 				.getSystemParameterValue("HOSTSTATUS_REQUIRED").toString();
-		
+
 		if (hostStatusReq.equals("Y")) {
 			Column hostEnq = new Column();
 			Image hostStatus =  new Image("/images/Pennant/HostUp.png");
@@ -196,6 +196,8 @@ public class MessageBarCtrl extends   GFCBaseCtrl implements Serializable {
 			hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
 			hostStatus.setParent(hostEnq);
 			hostEnq.setParent(columns);
+		}else{
+			statusBarVersionIndicator.setWidth("23%");
 		}
 	    
 		Div div = new Div();

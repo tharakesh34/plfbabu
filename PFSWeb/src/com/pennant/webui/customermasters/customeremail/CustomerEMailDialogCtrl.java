@@ -87,6 +87,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -729,8 +730,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custEMailTypeCode.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value") }));
+		this.custEMailTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 

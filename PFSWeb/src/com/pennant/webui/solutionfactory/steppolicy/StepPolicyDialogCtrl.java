@@ -227,7 +227,7 @@ public class StepPolicyDialogCtrl extends GFCBaseListCtrl<StepPolicyDetail> impl
 		}
 
 		getBorderLayoutHeight();
-		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 170; 
+		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 100; 
 		int listboxHeight = borderLayoutHeight-dialogHeight;
 		listBoxStepPolicyDetail.setHeight(listboxHeight+"px");
 		listRows = Math.round(listboxHeight/ 24)-1;

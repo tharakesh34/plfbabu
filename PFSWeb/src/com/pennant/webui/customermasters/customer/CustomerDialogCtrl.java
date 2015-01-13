@@ -1842,7 +1842,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		}
 		if(isCustRelated && (!this.custGroupID.isButtonDisabled() && this.custGroupID.isButtonVisible())){
-			this.custGroupID.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustGroupID.value") }));
+			this.custGroupID.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustGroupID.value"),null,true,true));
 		}
 		
 		if (!this.custAddlVar81.isReadonly()) {
@@ -1861,7 +1861,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.custAddlVar4.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustAddlVar4.value"),PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		
-		this.custParentCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustParentCountry.value"), null, true));
+		this.custParentCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustParentCountry.value"), null, true,true));
 		
 	}
 
@@ -1902,24 +1902,24 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		if(this.custCtgCode.isButtonVisible()){
-		this.custCtgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCtgCode.value"), null, true));
+		this.custCtgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCtgCode.value"), null, true,true));
 		}
-		this.custDftBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustDftBranch.value"), null, true));
-		this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustTypeCode.value"), null, true));
-		this.custBaseCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustBaseCcy.value"), null, true));
-		this.custRO1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustRO1.value"), null, true));
-		this.custSector.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null, true));
+		this.custDftBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustDftBranch.value"), null, true,true));
+		this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustTypeCode.value"), null, true,true));
+		this.custBaseCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustBaseCcy.value"), null, true,true));
+		this.custRO1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustRO1.value"), null, true,true));
+		this.custSector.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null, true,true));
 		if(this.custSubSector.getSpace().getSclass() != null && this.custSubSector.getSpace().getSclass().equals("mandatory")){
-		this.custSubSector.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSubSector.value"), null, true));
+		this.custSubSector.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSubSector.value"), null, true,true));
 		}
-		this.custNationality.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustNationality.value"), null, true));
-		this.custRiskCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustRiskCountry.value"), null, true));
+		this.custNationality.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustNationality.value"), null, true,true));
+		this.custRiskCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustRiskCountry.value"), null, true,true));
 		
 		if (!corpCustomer) {
 			if(!this.custSalutationCode.isReadonly()){
 				this.custSalutationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSalutationCode.value"), null, true));
 			}
-			this.custEmpSts.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustEmpSts.value"), null, true));
+			this.custEmpSts.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustEmpSts.value"), null, true,true));
 			this.custGenderCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustGenderCode.value"), null, true));
 			this.custMaritalSts.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMaritalSts.value"), null, true));
 		}

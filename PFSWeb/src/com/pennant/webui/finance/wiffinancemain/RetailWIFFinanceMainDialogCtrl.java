@@ -3881,7 +3881,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true,true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
@@ -4074,10 +4074,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			//Customer Basic Details Tab
 
 			this.custCtgCode.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustCtgCode.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustCtgCode.value"), null, true,true));
 
 			this.custTypeCode.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustTypeCode.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustTypeCode.value"), null, true,true));
 
 			this.lovDescCustBaseCcyName.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_MurabahaFinanceMainDialog_CustBaseCcy.value"), null, true));
@@ -4086,26 +4086,26 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				Labels.getLabel("label_MurabahaFinanceMainDialog_CustSector.value"), null, true));*/
 
 			this.custSubSector.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustSubSector.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustSubSector.value"), null, true,true));
 
 			this.custNationality.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustNationality.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustNationality.value"), null, true,true));
 
 			this.custEmpSts.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustEmpSts.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustEmpSts.value"), null, true,true));
 			
 			if(StringUtils.trimToEmpty(this.custEmpSts.getValue()).equals(PennantConstants.CUSTEMPCODE)){
 				this.custEmpAloc.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_MurabahaFinanceMainDialog_CustEmpAloc.value"), null, true));
+						Labels.getLabel("label_MurabahaFinanceMainDialog_CustEmpAloc.value"), null, true,true));
 			}else{
 				this.custEmpAloc.setConstraint("");
 			}
 
 			this.custGenderCode.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustGenderCode.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustGenderCode.value"), null, true,true));
 
 			this.custMaritalSts.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MurabahaFinanceMainDialog_CustMaritalSts.value"), null, true));
+					Labels.getLabel("label_MurabahaFinanceMainDialog_CustMaritalSts.value"), null, true,true));
 		}
 
 		//FinanceMain Details Tab ---> 1. Basic Details
@@ -4113,8 +4113,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinType.value") }));
 
-		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") }));
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value"),null,true,true ));
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 

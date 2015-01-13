@@ -93,6 +93,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -820,8 +821,7 @@ public class ProvisionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (this.finReference.isButtonVisible()){
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ProvisionDialog_FinReference.value")}));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvisionDialog_FinReference.value"),null,true,true));
 		}	
 		logger.debug("Leaving");
 	}

@@ -3284,7 +3284,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_WIFFinanceMainDialog_StepPolicy.value"), null, true));
+		 this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true,true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
@@ -3475,8 +3475,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinType.value") }));
 
-		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinCcy.value") }));
+
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value"),null,true,true));
+
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -3498,8 +3499,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		if(this.allowRpyInd.isChecked() && this.rpyIndBaseRate.isButtonVisible()){
-			this.rpyIndBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_WIFFinanceMainDialog_FinRpyIndBaseRate.value")}));			
+			this.rpyIndBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinRpyIndBaseRate.value"),null,true,true));			
 		}
 		logger.debug("Leaving ");
 	}

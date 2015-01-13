@@ -83,6 +83,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1107,7 +1108,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	private void doSetLOVValidation() {
 		if(this.currency.isButtonVisible()){
-			this.currency.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CollateralDialog_Currency.value") }));
+			this.currency.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_Currency.value"),null,true,true));
 		}
 	}
 	private void doRemoveLOVValidation() {

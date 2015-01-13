@@ -955,6 +955,12 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.ccyUserRateSell.setConstraint(new RateValidator(15,9,
 					Labels.getLabel("label_CurrencyDialog_CcyUserRateSell.value"),false));
 		}
+		if (!this.ccyCrRateBasisCode.isReadonly()) {
+			this.ccyCrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyCrRateBasisCode.value"), null, true,true));
+		}
+		if (!this.ccyDrRateBasisCode.isReadonly()) {
+			this.ccyDrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyDrRateBasisCode.value"), null, true,true));
+		}
 		logger.debug("Leaving ");
 	}
 
@@ -975,6 +981,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.ccySpotRate.setConstraint("");
 		this.ccyUserRateBuy.setConstraint("");
 		this.ccyUserRateSell.setConstraint("");
+		this.ccyCrRateBasisCode.setConstraint("");
+		this.ccyDrRateBasisCode.setConstraint("");
 		logger.debug("Leaving ");
 	}
 	

@@ -199,10 +199,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Label recordStatus;
 	protected Label recordType;
 	protected Radiogroup userAction;
-	protected Groupbox gb_statusDetails;
 	protected Groupbox groupboxWf;
 	protected South south;
-	protected North parentPageNorth;
 	private boolean enqModule = false;
 	private boolean rePostingModule = false;
 
@@ -892,8 +890,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 						getJVPosting().getCurrencyEditField()));
 		this.batchPurpose.setMaxlength(35);
 
-		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
-		// Check
 		logger.debug("Leaving");
 	}
 
@@ -1205,11 +1201,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doSetLOVValidation() {
 		// Cmt Branch
 		if (baseCCy.isButtonVisible()) {
-			this.baseCCy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JVPostingDialog_BatchCcy.value") }));
+			this.baseCCy.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_BatchCcy.value"),null,true,true));
 		}
 		// Cmt Ccy
 		if (postingBranch.isButtonVisible()) {
-			this.postingBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JVPostingDialog_PostingBranch.value") }));
+			this.postingBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_PostingBranch.value"),null,true,true));
 		}
 	}
 

@@ -1176,7 +1176,7 @@ public class VehicleVersionDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	private void doSetLOVValidation() {
 		this.vehicleModelId.setConstraint(new PTStringValidator(Labels.getLabel(
-						"label_VehicleVersionDialog_VehicleModelId.value"), null, true));
+						"label_VehicleVersionDialog_VehicleModelId.value"), null, true,true));
 	}
 	private void doRemoveLOVValidation() {
 		this.vehicleModelId.setConstraint("");

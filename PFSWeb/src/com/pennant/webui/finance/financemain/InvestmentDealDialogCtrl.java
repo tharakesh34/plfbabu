@@ -88,6 +88,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.finance.investment.DealFinanceBaseCtrl;
 import com.pennant.webui.finance.treasuaryfinance.TreasuaryFinHeaderDialogCtrl;
@@ -806,12 +807,10 @@ public class InvestmentDealDialogCtrl extends DealFinanceBaseCtrl implements Ser
 					new String[]{Labels.getLabel("label_InvestmentDealDialog_CounterParty.value")}));
 		}
 		if (this.finBranch.isButtonVisible()){
-			this.finBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_InvestmentDealDialog_FinBranch.value")}));
+			this.finBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_InvestmentDealDialog_FinBranch.value"),null,true,true));
 		}
 		if (this.finType.isButtonVisible()){
-			this.finType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_InvestmentDealDialog_FinType.value")}));
+			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_InvestmentDealDialog_FinType.value"),null,true,true));
 		}
 		logger.debug("Leaving");
 	}

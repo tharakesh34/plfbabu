@@ -274,7 +274,7 @@
 													</hbox>
 													<space />
 													<listbox
-														id="templateData1" height="480px" style="text-align:left;"
+														id="templateData1" height="150px" style="text-align:left;"
 														mold="default"
 														w:onDoubleClick="addStringSubject(this.getSelectedItem().getLabel())" >
 														<listhead>

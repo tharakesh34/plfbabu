@@ -682,8 +682,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * Set Validations for LOV Fields
 	 */	
 	private void doSetLOVValidation() {
-		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value"), null, true));
-		this.workFlowType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value"), null, true));
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value"), null, true,true));
+		this.workFlowType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceWorkFlowDialog_WorkFlowType.value"), null, true,true));
 	}
 	
 	/**

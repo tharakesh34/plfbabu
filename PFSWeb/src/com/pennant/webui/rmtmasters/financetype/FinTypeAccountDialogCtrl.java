@@ -95,6 +95,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -647,7 +648,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.finCcy.isReadonly()) {
-			this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value") }));
+			this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),null,true,true));
 		}
 		if (!this.finEvent.isReadonly()) {
 			this.finEvent.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinTypeAccountDialog_Event.value") }));

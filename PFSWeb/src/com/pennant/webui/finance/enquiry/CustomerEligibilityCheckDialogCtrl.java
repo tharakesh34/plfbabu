@@ -64,6 +64,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
@@ -198,7 +199,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		this.finType.setMandatoryStyle(true);
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
-		//this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
 		logger.debug("Leaving");
 	}
@@ -270,6 +271,8 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		if("FINANCE".equals(this.elgModule.getValue())){
 			if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
 				throw new WrongValueException(this.finType, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_EligibilityCheck_FinType.value") }));
+			}else{
+				Clients.clearWrongValue(finType);
 			}
 		}else if("CUSTOMER".equals(this.elgModule.getValue())){
 			if(this.custID  == 0){
@@ -636,6 +639,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		logger.debug("Entering" + event.toString());
 		Events.postEvent("onCreate", this.window_EligibilityCheck, event);
 		this.window_EligibilityCheck.invalidate();
+		this.finType.setDescription("");
 		logger.debug("Leaving" + event.toString());
 	}
 

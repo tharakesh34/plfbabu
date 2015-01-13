@@ -1128,9 +1128,9 @@ public class EducationalLoanDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.eduCourse.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourse.value"), null, true));
-		this.eduCourseType.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourseType.value"), null, true));
-	//	this.eduLoanFromBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduLoanFromBranch.value"), null, true));
+		this.eduCourse.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourse.value"), null, true,true));
+		this.eduCourseType.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduCourseType.value"), null, true,true));
+	//	this.eduLoanFromBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalLoanDialog_EduLoanFromBranch.value"), null, true,true));
 		logger.debug("Leaving ");
 	}
 	

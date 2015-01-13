@@ -634,7 +634,9 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.valueDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_ValueDesc.value"), 
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+		if (!this.fieldCode.isReadonly()) {
+			this.fieldCode.setConstraint(new PTStringValidator(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -646,6 +648,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(false);
 		this.fieldCodeValue.setConstraint("");
 		this.valueDesc.setConstraint("");
+		this.fieldCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 	/**

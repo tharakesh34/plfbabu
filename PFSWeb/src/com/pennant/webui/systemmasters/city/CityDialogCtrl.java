@@ -672,8 +672,13 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.pCCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCity.value"), PennantRegularExpressions.REGEX_ALPHA, true));
 		}	
 		if (!this.pCCityName.isReadonly()){
-			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+			this.pCCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCityName.value"),PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.pCCountry.isReadonly()) {
+			this.pCCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCCountry.value"), null, true,true));
+		}
+		if (!this.pCProvince.isReadonly()) {
+			this.pCProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CityDialog_PCProvince.value"), null, true,true));
 		}
 		logger.debug("Leaving ");
 	}

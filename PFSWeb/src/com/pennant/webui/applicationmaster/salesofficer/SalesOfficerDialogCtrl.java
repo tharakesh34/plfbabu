@@ -650,7 +650,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering");
 		// To clear the Error Messages
 		doClearMessage();
-		
+		if(this.oldVar_salesOffCode != this.salesOffCode.getValue()){
+			return true;
+		}
 		if (this.oldVar_salesOffFName != this.salesOffFName.getValue()) {
 			return true;
 		}
@@ -697,6 +699,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.salesOffShrtName.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffShrtName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 		
+		if (!this.salesOffDept.isReadonly()) {
+			this.salesOffDept.setConstraint(new PTStringValidator(Labels.getLabel("label_SalesOfficerDialog_SalesOffDept.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -711,6 +716,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl implements Serializable 
 		this.salesOffMName.setConstraint("");
 		this.salesOffLName.setConstraint("");
 		this.salesOffShrtName.setConstraint("");
+		this.salesOffDept.setConstraint("");
 		logger.debug("Leaving");
 	}
 

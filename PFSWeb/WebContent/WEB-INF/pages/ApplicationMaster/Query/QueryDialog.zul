@@ -128,7 +128,7 @@
 										<space id="space_Active"
 											spacing="2px" />
 										<checkbox id="active"
-											checked="false" />
+											checked="true" />
 									</hlayout>
 								</row>
  

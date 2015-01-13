@@ -236,7 +236,7 @@
 															 label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes
-																		,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" />
+																		,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" sclass="z-toolbar" />
 													</toolbar>
 													<space width="2px" />
 												</hbox>
@@ -303,7 +303,7 @@
 															 label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes
-																,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" />
+																,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" sclass="z-toolbar" />
 													</toolbar>
 													<space width="2px" />
 												</hbox>
@@ -365,7 +365,7 @@
 															label="${c:l('label_New')}"
 															tooltiptext="${c:l('btnNewScoringMetrics.tooltiptext')}"
 															autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes
-																,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" />
+																,btnHelp,btnClose,btnNewRetailScoringMetrics,btnCopyTo" sclass="z-toolbar" />
 													</toolbar>
 													<space width="2px" />
 												</hbox>

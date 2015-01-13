@@ -610,7 +610,9 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Entering");
 		// To clear the Error Messages
 		doClearMessage();
-
+		if(this.oldVar_rOfficerCode != this.rOfficerCode.getValue()){
+			return true;
+		}
 		if (this.oldVar_rOfficerDesc != this.rOfficerDesc.getValue()) {
 			return true;
 		}
@@ -636,7 +638,9 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 			this.rOfficerDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-
+		if (!this.rOfficerDeptCode.isReadonly()) {
+			this.rOfficerDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_RelationshipOfficerDialog_ROfficerDeptCode.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -648,6 +652,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(false);
 		this.rOfficerCode.setConstraint("");
 		this.rOfficerDesc.setConstraint("");
+		this.rOfficerDeptCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 

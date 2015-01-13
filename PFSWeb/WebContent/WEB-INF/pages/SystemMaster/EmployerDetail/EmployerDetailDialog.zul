@@ -78,17 +78,7 @@
 									<label id="label_EmpIndustry"
 										value="${c:l('label_EmployerDetailDialog_EmpIndustry.value')}" />
 									<hlayout id="hlayout_EmpIndustry">
-										<space id="space_EmpIndustry"
-											spacing="2px" />
-										<hlayout spacing="0px">
-											<textbox id="empIndustry"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescIndustryDesc" width="200px" readonly="true" />
-											<button
-												id="btnSearchEmpIndustry"
-												image="/images/icons/LOVSearch.png"  />
-										</hlayout>
+										<extendedcombobox id ="empIndustry" /> 
 									</hlayout>
 									<label id="label_EmpName"
 										value="${c:l('label_EmployerDetailDialog_EmpName.value')}" />
@@ -169,49 +159,19 @@
 									<label id="label_EmpCountry"
 										value="${c:l('label_EmployerDetailDialog_EmpCountry.value')}" />
 									<hlayout id="hlayout_EmpCountry">
-										<space id="space_EmpCountry"
-											spacing="2px" />
-										<hlayout spacing="0px">
-											<textbox id="empCountry"
-												width="18px" visible="false" />
-											<textbox
-												id="lovDescCountryDesc" width="200px" readonly="true" />
-											<button
-												id="btnSearchEmpCountry"
-												image="/images/icons/LOVSearch.png"  />
-										</hlayout>
+										<extendedcombobox id ="empCountry" />
 									</hlayout>
 								</row>
 								<row id="row5">
 									<label id="label_EmpProvince"
 										value="${c:l('label_EmployerDetailDialog_EmpProvince.value')}" />
 									<hlayout id="hlayout_EmpProvince">
-										<space id="space_EmpProvince"
-											spacing="2px" />
-										<hlayout spacing="0px">
-											<textbox id="empProvince"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescProvinceName" width="200px" readonly="true" />
-											<button
-												id="btnSearchEmpProvince"
-												image="/images/icons/LOVSearch.png"  />
-										</hlayout>
+										<extendedcombobox id="empProvince" />
 									</hlayout>
 									<label id="label_EmpCity"
 										value="${c:l('label_EmployerDetailDialog_EmpCity.value')}" />
 									<hlayout id="hlayout_EmpCity">
-										<space id="space_EmpCity"
-											spacing="2px" />
-										<hlayout spacing="0px">
-											<textbox id="empCity"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescCityName" width="200px" readonly="true" />
-											<button
-												id="btnSearchEmpCity"
-												image="/images/icons/LOVSearch.png"  />
-										</hlayout>
+										<extendedcombobox id="empCity" />
 									</hlayout>
 								</row>
 								<row id="row6">

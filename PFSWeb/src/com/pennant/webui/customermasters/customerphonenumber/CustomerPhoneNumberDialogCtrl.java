@@ -86,6 +86,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -769,11 +770,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.phoneTypeCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value")}));
+		this.phoneTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value"),null,true,true));
 
-		this.phoneCountryCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCountryCode.value")}));
+		this.phoneCountryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCountryCode.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 

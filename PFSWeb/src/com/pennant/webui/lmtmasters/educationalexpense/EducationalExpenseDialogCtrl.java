@@ -88,6 +88,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.lmtmasters.educationalloan.EducationalLoanDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -1030,8 +1031,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 	 * This method sets validation for LovFields
 	 */
 	private void doSetLOVValidation() {
-		this.eduExpDetail.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_EducationalExpenseDialog_EduExpDetail.value")}));
+		this.eduExpDetail.setConstraint(new PTStringValidator(Labels.getLabel("label_EducationalExpenseDialog_EduExpDetail.value"),null,true,true));
 	}
 	/**
 	 *  This method removes validation for LovFields

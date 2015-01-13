@@ -224,6 +224,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.TemplateEngine;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
@@ -4540,8 +4541,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		if (!this.lovDescCustCIF.isButtonDisabled()) {
-			this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_FinanceMainDialog_CustID.value") }));
+			this.lovDescCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_CustID.value"),null,true,true));
 		}
 
 		if (!this.btnSearchDisbAcctId.isDisabled()) {

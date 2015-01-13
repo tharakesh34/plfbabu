@@ -877,6 +877,18 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (!this.branchSortCode.isReadonly()){
 			this.branchSortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSortCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, true));
 		}	
+		if (!this.branchCountry.isReadonly()) {
+			this.branchCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCountry.value"), null, true,true));
+		}
+		if (!this.branchProvince.isReadonly()) {
+			this.branchProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), null, true,true));
+		}
+		if (!this.branchCity.isReadonly()) {
+			this.branchCity.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value"), null, true,true));
+		}
+		if (!this.branchSwiftCountry.isReadonly()) {
+			this.branchSwiftCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -898,6 +910,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.branchSwiftLocCode.setConstraint("");
 		this.branchSwiftBrnCde.setConstraint("");
 		this.branchSortCode.setConstraint("");
+		this.branchCountry.setConstraint("");
+		this.branchCity.setConstraint("");
+		this.branchProvince.setConstraint("");
+		this.branchSwiftCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 	

@@ -122,7 +122,6 @@ import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
@@ -293,13 +292,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Label	                     cmtUtilizedTotAmount;
 	protected Label	                     cmtUnUtilizedAmount;
 
-	protected Hlayout	                 hlayout_CmtUnUtilizedAmount;
-	protected Space	                     space_CmtUnUtilizedAmount;
-
 	protected Label	                     recordStatus;
-	protected Label	                     recordType;
 	protected Radiogroup	             userAction;
-	protected Groupbox	                 gb_statusDetails;
+	
 	protected Groupbox	                 groupboxWf;
 	protected South	                     south;
 	private boolean	                     enqModule	             = false;
@@ -1013,8 +1008,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cmtChargesAccount.setFinanceDetails(PennantConstants.COMMITMENT_FIN_TYPE, PennantConstants.COMMITMENT_FIN_EVENT, PennantConstants.COMMITMENT_FIN_CCY);
 		this.cmtChargesAccount.setFormatter(PennantConstants.COMMITMENT_FIN_FORMATTER);
 		
-
-		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
+	
 		logger.debug("Leaving");}
 
 	/**
@@ -1159,7 +1153,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cmtStartDate.setValue(aCommitment.getCmtStartDate());
 		this.cmtExpDate.setValue(aCommitment.getCmtExpDate());
 
-		this.cmtActiveStatus.setChecked(aCommitment.isActiveStatus());
+		this.cmtActiveStatus.setChecked(aCommitment.isCmtActive());
 		this.cmtNonperformingStatus.setChecked(aCommitment.isNonperformingStatus());
 		this.cmtTitle.setValue(aCommitment.getCmtTitle());
 		this.cmtNotes.setValue(aCommitment.getCmtNotes());
@@ -1199,8 +1193,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.recordStatus.setValue(aCommitment.getRecordStatus());
-		this.recordType.setValue(PennantJavaUtil.getLabel(aCommitment
-				.getRecordType()));
 		logger.debug("Leaving");
 	}
 	
@@ -1832,11 +1824,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		// Cmt Branch
 		if (cmtBranch.isButtonVisible()) {
-			this.cmtBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommitmentDialog_CmtBranch.value") }));
+			this.cmtBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtBranch.value"),null,true,true));
 		}
 		// Cmt Ccy
 		if (cmtCcy.isButtonVisible()) {
-			this.cmtCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommitmentDialog_CmtCcy.value") }));
+			this.cmtCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtCcy.value"),null,true,true));
 		}
 		// Cmt Account
 		if (openAccount.isChecked() == false) {
@@ -1886,6 +1878,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//this.cmtChargesAccountName.setErrorMessage("");
 		this.cmtExpDate.setErrorMessage("");
 		this.facilityRef.setErrorMessage("");
+		this.cmtPftRateMin.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 

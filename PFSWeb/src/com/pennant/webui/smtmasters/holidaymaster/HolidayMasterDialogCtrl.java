@@ -242,7 +242,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 		
 		getBorderLayoutHeight();
 		grid_Basicdetails.getRows().getVisibleItemCount();
-		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 140 ; 
+		int dialogHeight =  grid_Basicdetails.getRows().getVisibleItemCount()* 20 + 20 + 25 ; 
 		int listboxHeight = borderLayoutHeight-dialogHeight;
 		listBoxHolidayDet.setHeight(listboxHeight+"px");
 		listRows = Math.round(listboxHeight/ 22);
@@ -880,7 +880,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseListCtrl<HolidayMaster> impl
 
 		if (!this.holidayCodeDesc.isReadonly()) {
 			this.holidayCode.setConstraint(new PTStringValidator(Labels.getLabel(
-									"label_HolidayMasterDialog_HolidayCode.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+									"label_HolidayMasterDialog_HolidayCode.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true,true));
 			this.holidayCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel(
 									"label_HolidayMasterDialog_HolidayCodeDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}

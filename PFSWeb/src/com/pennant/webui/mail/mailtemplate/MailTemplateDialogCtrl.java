@@ -299,7 +299,6 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.htmlArtifact.setHeight(borderLayoutHeight-270+"px");
 			//this.emailSubject.setHeight(borderLayoutHeight-270+"px");
 			this.templateData.setHeight(borderLayoutHeight-230+"px");
-			this.templateData1.setHeight(borderLayoutHeight-230+"px");
 			
 			
 			// set Field Properties

@@ -92,6 +92,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -753,8 +754,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custIncomeType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value") }));
+		this.custIncomeType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value"),null,true,true));
 
 		logger.debug("Leaving");
 	}

@@ -1472,7 +1472,7 @@ Serializable {
 		if (!this.txnCode.isReadonly()) {
 			this.txnCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_JVPostingEntryDialog_TxnCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true,true));
 		}
 		// Txn Amount
 		if (!this.txnAmount.isReadonly()) {
@@ -1523,12 +1523,7 @@ Serializable {
 	private void doSetLOVValidation() {
 		// Txn C Cy
 		if (txnCCy.isButtonVisible()) {
-			this.txnCCy
-			.setConstraint("NO EMPTY:"
-					+ Labels.getLabel(
-							"FIELD_NO_EMPTY",
-							new String[] { Labels
-									.getLabel("label_JVPostingEntryDialog_TxnCCy.value") }));
+			this.txnCCy.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingEntryDialog_TxnCCy.value"),null,true,true));
 		}
 	}
 

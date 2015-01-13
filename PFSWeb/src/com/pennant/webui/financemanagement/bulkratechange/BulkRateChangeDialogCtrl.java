@@ -105,6 +105,7 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkChangeDialoglItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -1724,8 +1725,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		}
 				
 		if(this.ruleType.isVisible() && !this.ruleType.isReadonly()){
-			this.ruleType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_BulkRateChangeDialog_RuleType.value")}));
+			this.ruleType.setConstraint(new PTStringValidator(Labels.getLabel("label_BulkRateChangeDialog_RuleType.value"),null,true,true));
 		}
 		
 		if(this.toDate.getValue() != null){

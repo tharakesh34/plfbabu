@@ -518,7 +518,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl implements Serializa
 			// during user action.
 			doStoreInitValues();
 			this.window_StepPolicyDetailDialog.setWidth("90%");
-			this.window_StepPolicyDetailDialog.setHeight("50%");
+			this.window_StepPolicyDetailDialog.setHeight("25%");
 			this.window_StepPolicyDetailDialog.doModal();
 		} catch (final Exception e) {
 			logger.error(e);

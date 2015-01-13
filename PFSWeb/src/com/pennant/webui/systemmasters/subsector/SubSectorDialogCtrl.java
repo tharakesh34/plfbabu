@@ -623,6 +623,10 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 
+		if (!this.sectorCode.isReadonly()) {
+			this.sectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SectorCode.value"), null, true,true));
+		}
+		
 		if (!this.subSectorCode.isReadonly()){
 			this.subSectorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SubSectorDialog_SubSectorCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}	
@@ -643,6 +647,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.subSectorCode.setConstraint("");
 		this.subSectorDesc.setConstraint("");
+		this.sectorCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 

@@ -677,7 +677,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (!this.weekendCode.isReadonly()) {
 			this.weekendCode
 					.setConstraint(new PTStringValidator(Labels
-											.getLabel("label_WeekendMasterDialog_WeekendCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+											.getLabel("label_WeekendMasterDialog_WeekendCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		if (!this.weekendDesc.isReadonly()) {
 			this.weekendDesc

@@ -67,7 +67,7 @@ public class VehicleModelListModelItemRenderer implements ListitemRenderer<Vehic
 
 		//final VehicleModel vehicleModel = (VehicleModel) data;
 		Listcell lc;
-		lc = new Listcell(vehicleModel.getVehicleManufacturerId()+"-"+vehicleModel.getLovDescVehicleManufacturerName());
+		lc = new Listcell(vehicleModel.getLovDescVehicleManufacturerName());
 		lc.setParent(item);
 	  	lc = new Listcell(vehicleModel.getVehicleModelDesc());
 		lc.setParent(item);

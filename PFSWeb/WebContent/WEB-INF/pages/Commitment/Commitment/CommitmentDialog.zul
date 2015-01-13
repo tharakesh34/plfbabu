@@ -362,7 +362,7 @@
 														<space
 															id="space_CmtNotes" spacing="2px" />
 														<textbox
-															id="cmtNotes" maxlength="500" multiline="true" rows="8"
+															id="cmtNotes" maxlength="500" multiline="true" rows="3"
 															width="300px" />
 													</hlayout>
 													<cell colspan="2"
@@ -569,40 +569,17 @@
 						</tabbox>
 					</div>
 				</center>
-				
-				<south id="south" height="105px" border="none">
-					<groupbox id="gb_statusDetails" mold="3d"
-						width="100%">
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px; padding:0px;">
-							<columns>
-								<column width="150px" />
-								<column />
-								<column width="150px" />
-								<column />
-							</columns>
-							<rows>
-								<row id="statusRow">
-									<label id="label_RecordStatus"
-										value="${c:l('label_RecordStatus')}" sclass="status" />
-									<label id="recordStatus" />
-									<label id="label_RecordType"
-										value="${c:l('label_RecordType')}" sclass="status" />
-									<label id="recordType" />
-								</row>
-								<row spans="4">
-									<groupbox id="groupboxWf"
-										width="97%">
-										<caption
-											label="${c:l('Action')}" style="font-weight:bold" />
-										<hlayout spacing="0px">
-											<radiogroup id="userAction"
-												name="action" />
-										</hlayout>
-									</groupbox>
-								</row>
-							</rows>
-						</grid>
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_CommitmentDialog_RecordStatus"
+								value="${c:l('label_CommitmentDialog_RecordStatus.value')} :"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
 					</groupbox>
 				</south>
 			</borderlayout>

@@ -119,6 +119,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 
 	// List headers
 	protected Listheader listheader_ExpenceTypeName; // autowired
+	protected Listheader listheader_ExpenceRelated;
 	protected Listheader listheader_RecordStatus; // autowired
 	protected Listheader listheader_RecordType;
 
@@ -194,6 +195,9 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		this.listheader_ExpenceTypeName.setSortAscending(new FieldComparator("expenceTypeName", true));
 		this.listheader_ExpenceTypeName.setSortDescending(new FieldComparator("expenceTypeName", false));
 		
+		this.listheader_ExpenceRelated.setSortAscending(new FieldComparator("expenseFor", true));
+		this.listheader_ExpenceRelated.setSortDescending(new FieldComparator("expenseFor", false));
+		
 		if (isWorkFlowEnabled()){
 			this.listheader_RecordStatus.setSortAscending(new FieldComparator("recordStatus", true));
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
@@ -209,6 +213,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> implements
 		this.searchObj.addSort("ExpenceTypeId", false);
 		this.searchObj.addField("expenceTypeId");
 		this.searchObj.addField("expenceTypeName");
+		this.searchObj.addField("expenseFor");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
 

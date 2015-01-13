@@ -48,10 +48,10 @@
 								<row>
 									<label id="label_FacilityList_StartDate" value="${c:l('label_FacilityList_StartDate.value')}" />
 									<listbox id="sortOperator_StartDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="startDate" width="200px" />
+									<datebox id="startDate" width="100px" format = "dd/MM/yyyy"  />
 									<label id="label_FacilityList_NextReviewDate" value="${c:l('label_FacilityList_NextReviewDate.value')}" />
 									<listbox id="sortOperator_NextReviewDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="nextReviewDate" width="200px" />
+									<datebox id="nextReviewDate" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryOfDomicile" value="${c:l('label_FacilityList_CountryOfDomicile.value')}" />
@@ -59,7 +59,7 @@
 									<textbox id="countryOfDomicile" width="18px" maxlength="2" />
 									<label id="label_FacilityList_DeadLine" value="${c:l('label_FacilityList_DeadLine.value')}" />
 									<listbox id="sortOperator_DeadLine" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="deadLine" width="200px" />
+									<datebox id="deadLine" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryOfRisk" value="${c:l('label_FacilityList_CountryOfRisk.value')}" />
@@ -67,7 +67,7 @@
 									<textbox id="countryOfRisk" width="18px" maxlength="2" />
 									<label id="label_FacilityList_EstablishedDate" value="${c:l('label_FacilityList_EstablishedDate.value')}" />
 									<listbox id="sortOperator_EstablishedDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="establishedDate" width="200px" />
+									<datebox id="establishedDate" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_NatureOfBusiness" value="${c:l('label_FacilityList_NatureOfBusiness.value')}" />
@@ -75,7 +75,7 @@
 									<textbox id="natureOfBusiness" width="72px" maxlength="8" />
 									<label id="label_FacilityList_SICCode" value="${c:l('label_FacilityList_SICCode.value')}" />
 									<listbox id="sortOperator_SICCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="sICCode" width="200px" maxlength="50" />
+									<textbox id="sICCode" width="180px" maxlength="50" />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryManager" value="${c:l('label_FacilityList_CountryManager.value')}" />

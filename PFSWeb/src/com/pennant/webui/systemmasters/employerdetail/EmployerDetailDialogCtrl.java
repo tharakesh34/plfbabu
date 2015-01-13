@@ -48,7 +48,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import com.pennant.backend.service.PagedListService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -71,16 +71,14 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
-import com.pennant.backend.model.systemmasters.Industry;
-import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -99,7 +97,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -125,7 +122,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Hlayout 		hlayout_EmpIndustry;
 	protected Space 		space_EmpIndustry; 
 
-	protected Textbox 		empIndustry; 
+	protected ExtendedCombobox 		empIndustry; 
 	protected Label 		label_EmpName;
 	protected Hlayout 		hlayout_EmpName;
 	protected Space 		space_EmpName; 
@@ -174,18 +171,18 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Hlayout 		hlayout_EmpCountry;
 	protected Space 		space_EmpCountry; 
 
-	protected Textbox 		empCountry; 
+	protected ExtendedCombobox 		empCountry; 
 	protected Row 			row5; 
 	protected Label 		label_EmpProvince;
 	protected Hlayout 		hlayout_EmpProvince;
 	protected Space 		space_EmpProvince; 
 
-	protected Textbox 		empProvince; 
+	protected ExtendedCombobox 		empProvince; 
 	protected Label 		label_EmpCity;
 	protected Hlayout 		hlayout_EmpCity;
 	protected Space 		space_EmpCity; 
 
-	protected Textbox 		empCity; 
+	protected ExtendedCombobox 		empCity; 
 	protected Row 			row6; 
 	protected Label 		label_EmpPhone;
 	protected Hlayout 		hlayout_EmpPhone;
@@ -277,22 +274,15 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button btnClose; 
 	protected Button btnHelp; 
 	protected Button btnNotes; 
-
-	protected Button btnSearchEmpIndustry; 
-	protected Textbox lovDescIndustryDesc;
 	private transient String 		oldVar_LovDescIndustryDesc;
-	protected Button btnSearchEmpCountry; 
-	protected Textbox lovDescCountryDesc;
 	private transient String 		oldVar_LovDescCountryDesc;
-	protected Button btnSearchEmpProvince; 
-	protected Textbox lovDescProvinceName;
 	private transient String 		oldVar_LovDescProvinceName;
-	protected Button btnSearchEmpCity; 
-	protected Textbox lovDescCityName;
 	private transient String 		oldVar_LovDescCityName;
 
 	private transient PagedListService pagedListService;
 	
+	private transient String   sEmpCountry;
+	private transient String sEmpProvince;
 	// ServiceDAOs / Domain Classes
 	private transient EmployerDetailService employerDetailService;
 
@@ -485,103 +475,46 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	}
 
-	public void onClick$btnSearchEmpIndustry(Event event){
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_EmployerDetailDialog,"Industry");
-		if (dataObject instanceof String){
-			this.empIndustry.setValue(dataObject.toString());
-			this.lovDescIndustryDesc.setValue("");
-		}else{
-			Industry details= (Industry) dataObject;
-			if (details != null) {
-				this.empIndustry.setValue(details.getIndustryCode());
-				this.lovDescIndustryDesc.setValue(details.getIndustryDesc());
-			}
-		}
-	}
-	public void onClick$btnSearchEmpCountry(Event event){
+	public void onFulfill$empCountry(Event event){
 		logger.debug("Entering" + event.toString());
-		String sEmpCountry= this.empCountry.getValue();
-		Object dataObject = ExtendedSearchListBox.show(this.window_EmployerDetailDialog,"Country");
-		if (dataObject instanceof String){
-			this.empCountry.setValue(dataObject.toString());
-			this.lovDescCountryDesc.setValue("");
-		}else{
-			Country details= (Country) dataObject;
-			if (details != null) {
-				this.empCountry.setValue(details.getCountryCode());
-				this.lovDescCountryDesc.setValue(details.getCountryDesc());
-			}
-		}
+		doSetProvProp();
+		doSetCityProp();
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onFulfill$empProvince(Event event){
+		logger.debug("Entering" + event.toString());
+		doSetCityProp();
+		logger.debug("Leaving" + event.toString());
+	}
+	private void doSetProvProp(){
 		if (!StringUtils.trimToEmpty(sEmpCountry).equals(this.empCountry.getValue())){
+			this.empProvince.setObject("");
 			this.empProvince.setValue("");
-			this.lovDescProvinceName.setValue("");
+			this.empProvince.setDescription("");
+			this.empCity.setObject("");
 			this.empCity.setValue("");
-			this.lovDescCityName.setValue("");
-			this.btnSearchEmpCity.setVisible(false);
+			this.empCity.setDescription("");
 		}
-
-		if(!this.lovDescCountryDesc.getValue().equals("")){
-			this.btnSearchEmpProvince.setVisible(true);
-		}else{
-			this.btnSearchEmpProvince.setVisible(false);
-			this.lovDescProvinceName.setValue("");
-			this.btnSearchEmpCity.setVisible(false);
-			this.lovDescCityName.setValue("");
-		}
-		logger.debug("Leaving" + event.toString());
+		sEmpCountry = this.empCountry.getValue();
+		Filter[] filtersProvince = new Filter[1] ;
+		filtersProvince[0]= new Filter("CPCountry", this.empCountry.getValue(), Filter.OP_EQUAL);
+		this.empProvince.setFilters(filtersProvince);
 	}
-	public void onClick$btnSearchEmpProvince(Event event){
-		logger.debug("Entering" + event.toString());
-
-		String sEmpProvince= this.empProvince.getValue();
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("CPCountry", this.empProvince.getValue(), Filter.OP_EQUAL); 
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_EmployerDetailDialog,"Province");
-		if (dataObject instanceof String){
-			this.empProvince.setValue(dataObject.toString());
-			this.lovDescProvinceName.setValue("");
-		}else{
-			Province details= (Province) dataObject;
-			if (details != null) {
-				this.empProvince.setValue(details.getCPProvince());
-				this.lovDescProvinceName.setValue(details.getCPProvinceName());
-			}
-		}
+	
+	private void doSetCityProp(){
 		if (!StringUtils.trimToEmpty(sEmpProvince).equals(this.empProvince.getValue())){
+			this.empCity.setObject("");
 			this.empCity.setValue("");
-			this.lovDescCityName.setValue("");
+			this.empCity.setDescription("");   
 		}
-
-		if(!this.lovDescProvinceName.getValue().equals("")){
-			this.btnSearchEmpCity.setVisible(true);   
-		}
-		else{
-			this.btnSearchEmpCity.setVisible(false);
-			this.lovDescCityName.setValue("");
-		}
-		logger.debug("Leaving" + event.toString());
+		sEmpProvince= this.empProvince.getValue();
+		Filter[] filtersCity = new Filter[2] ;
+		filtersCity[0] = new Filter("PCCountry", this.empCountry.getValue(),Filter.OP_EQUAL);
+		filtersCity[1]= new Filter("PCProvince", this.empProvince.getValue(), Filter.OP_EQUAL);
+		this.empCity.setFilters(filtersCity);
 	}
-	public void onClick$btnSearchEmpCity(Event event){
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1] ;
-		filters[0]= new Filter("PCProvince", this.empProvince.getValue(), Filter.OP_EQUAL); 
-		Object dataObject = ExtendedSearchListBox.show(this.window_EmployerDetailDialog,"City");
-		if (dataObject instanceof String){
-			this.empCity.setValue(dataObject.toString());
-			this.lovDescCityName.setValue("");
-		}else{
-			City details= (City) dataObject;
-			if (details != null) {
-				this.empCity.setValue(details.getPCCity());
-				this.lovDescCityName.setValue(details.getPCCityName());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -620,7 +553,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aEmployerDetail.isNewRecord()));
 
 			doStoreInitValues();
-			checkProvCityButtonVisiblity();
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			setDialog(this.window_EmployerDetailDialog);
@@ -662,8 +594,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if(readOnly || (!readOnly && (PennantConstants.RECORD_TYPE_DEL.equals(employerDetail.getRecordType())))) {
 			tempReadOnly=true;
 		}
-
-		setLovAccess("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.btnSearchEmpIndustry, this.space_EmpIndustry, this.label_EmpIndustry, this.hlayout_EmpIndustry,null);
+		setComponentAccessType("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.empIndustry, this.space_EmpIndustry, this.label_EmpIndustry, this.hlayout_EmpIndustry,null);
 		setComponentAccessType("EmployerDetailDialog_EmpName", tempReadOnly, this.empName, this.space_EmpName, this.label_EmpName, this.hlayout_EmpName,null);
 		setRowInvisible(this.row0, this.hlayout_EmpIndustry,this.hlayout_EmpName);
 		setComponentAccessType("EmployerDetailDialog_EstablishDate", tempReadOnly, this.establishDate, this.space_EstablishDate, this.label_EstablishDate, this.hlayout_EstablishDate,null);
@@ -676,10 +607,10 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setComponentAccessType("EmployerDetailDialog_EmpAddrLine2", tempReadOnly, this.empAddrLine2, this.space_EmpAddrLine2, this.label_EmpAddrLine2, this.hlayout_EmpAddrLine2,null);
 		setRowInvisible(this.row3, this.hlayout_EmpAddrLine1,this.hlayout_EmpAddrLine2);
 		setComponentAccessType("EmployerDetailDialog_EmpPOBox", tempReadOnly, this.empPOBox, this.space_EmpPOBox, this.label_EmpPOBox, this.hlayout_EmpPOBox,null);
-		setLovAccess("EmployerDetailDialog_EmpCountry", tempReadOnly, this.btnSearchEmpCountry, this.space_EmpCountry, this.label_EmpCountry, this.hlayout_EmpCountry,null);
+		setComponentAccessType("EmployerDetailDialog_EmpCountry", tempReadOnly, this.empCountry, this.space_EmpCountry, this.label_EmpCountry, this.hlayout_EmpCountry,null);
 		setRowInvisible(this.row4, this.hlayout_EmpPOBox,this.hlayout_EmpCountry);
-		setLovAccess("EmployerDetailDialog_EmpProvince", tempReadOnly, this.btnSearchEmpProvince, this.space_EmpProvince, this.label_EmpProvince, this.hlayout_EmpProvince,null);
-		setLovAccess("EmployerDetailDialog_EmpCity", tempReadOnly, this.btnSearchEmpCity, this.space_EmpCity, this.label_EmpCity, this.hlayout_EmpCity,null);
+		setComponentAccessType("EmployerDetailDialog_EmpProvince", tempReadOnly, this.empProvince, this.space_EmpProvince, this.label_EmpProvince, this.hlayout_EmpProvince,null);
+		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.empCity, this.space_EmpCity, this.label_EmpCity, this.hlayout_EmpCity,null);
 		setRowInvisible(this.row5, this.hlayout_EmpProvince,this.hlayout_EmpCity);
 		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.empPhone, this.space_EmpPhone, this.label_EmpPhone, this.hlayout_EmpPhone,null);
 		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFax, this.space_EmpFax, this.label_EmpFax, this.hlayout_EmpFax,null);
@@ -725,18 +656,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		logger.debug("Leaving") ;
 	}
-	private void checkProvCityButtonVisiblity() {
-		if(this.empCountry.getValue() != ""){
-			this.btnSearchEmpProvince.setVisible(true);
-			if(this.empProvince.getValue() == ""){
-			    this.btnSearchEmpCity.setVisible(false);
-			   }else{
-				this.btnSearchEmpCity.setVisible(true);
-		}}else{
-			    this.btnSearchEmpProvince.setVisible(false);
-			    this.btnSearchEmpCity.setVisible(false);
-			}
-	}
+	
 	
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -763,9 +683,31 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.empWebSite.setMaxlength(100);
 		this.contactPersonName.setMaxlength(20);
 		this.contactPersonNo.setMaxlength(13);
-		this.btnSearchEmpProvince.setVisible(false);
-		this.btnSearchEmpCity.setVisible(false);
-
+		
+		this.empIndustry.setMandatoryStyle(true);
+		this.empIndustry.setModuleName("Industry");
+		this.empIndustry.setValueColumn("IndustryCode");
+		this.empIndustry.setDescColumn("IndustryDesc");
+		this.empIndustry.setValidateColumns(new String[]{"IndustryCode"});
+		
+		this.empCountry.setMandatoryStyle(true);
+		this.empCountry.setModuleName("Country");
+		this.empCountry.setValueColumn("CountryCode");
+		this.empCountry.setDescColumn("CountryDesc");
+		this.empCountry.setValidateColumns(new String[]{"CountryCode"});
+		
+		this.empProvince.setMandatoryStyle(true);
+		this.empProvince.setModuleName("Province");
+		this.empProvince.setValueColumn("CPProvince");
+		this.empProvince.setDescColumn("CPProvinceName");
+		this.empProvince.setValidateColumns(new String[] { "CPProvince" });
+		
+		this.empCity.setMandatoryStyle(true);
+		this.empCity.setModuleName("City");
+		this.empCity.setValueColumn("PCCity");
+		this.empCity.setDescColumn("PCCityName");
+		this.empCity.setValidateColumns(new String[] { "PCCity" });
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -781,7 +723,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doStoreInitValues() {
 		logger.debug("Entering");
 		this.oldVar_EmpIndustry = this.empIndustry.getValue();
-		this.oldVar_LovDescIndustryDesc = this.lovDescIndustryDesc.getValue();
+		this.oldVar_LovDescIndustryDesc = this.empIndustry.getDescription();
 		this.oldVar_EmpName = this.empName.getValue();
 		this.oldVar_EstablishDate = this.establishDate.getValue();
 		this.oldVar_EmpAddrHNbr = this.empAddrHNbr.getValue();
@@ -791,11 +733,11 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_EmpAddrLine2 = this.empAddrLine2.getValue();
 		this.oldVar_EmpPOBox = this.empPOBox.getValue();
 		this.oldVar_EmpCountry = this.empCountry.getValue();
-		this.oldVar_LovDescCountryDesc = this.lovDescCountryDesc.getValue();
+		this.oldVar_LovDescCountryDesc = this.empCountry.getDescription();
 		this.oldVar_EmpProvince = this.empProvince.getValue();
-		this.oldVar_LovDescProvinceName = this.lovDescProvinceName.getValue();
+		this.oldVar_LovDescProvinceName = this.empProvince.getDescription();
 		this.oldVar_EmpCity = this.empCity.getValue();
-		this.oldVar_LovDescCityName = this.lovDescCityName.getValue();
+		this.oldVar_LovDescCityName = this.empCity.getDescription();
 		this.oldVar_EmpPhone = this.empPhone.getValue();
 		this.oldVar_EmpFax = this.empFax.getValue();
 		this.oldVar_EmpTelexNo = this.empTelexNo.getValue();
@@ -817,7 +759,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doResetInitValues() {
 		logger.debug("Entering");
 		this.empIndustry.setValue(this.oldVar_EmpIndustry);
-		this.lovDescIndustryDesc.setValue(this.oldVar_LovDescIndustryDesc);
+		this.empIndustry.setDescription(this.oldVar_LovDescIndustryDesc);
 		this.empName.setValue(this.oldVar_EmpName);
 		this.establishDate.setValue(this.oldVar_EstablishDate);
 		this.empAddrHNbr.setValue(this.oldVar_EmpAddrHNbr);
@@ -827,11 +769,11 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.empAddrLine2.setValue(this.oldVar_EmpAddrLine2);
 		this.empPOBox.setValue(this.oldVar_EmpPOBox);
 		this.empCountry.setValue(this.oldVar_EmpCountry);
-		this.lovDescCountryDesc.setValue(this.oldVar_LovDescCountryDesc);
+		this.empCountry.setDescription(this.oldVar_LovDescCountryDesc);
 		this.empProvince.setValue(this.oldVar_EmpProvince);
-		this.lovDescProvinceName.setValue(this.oldVar_LovDescProvinceName);
+		this.empProvince.setDescription(this.oldVar_LovDescProvinceName);
 		this.empCity.setValue(this.oldVar_EmpCity);
-		this.lovDescCityName.setValue(this.oldVar_LovDescCityName);
+		this.empCity.setDescription(this.oldVar_LovDescCityName);
 		this.empPhone.setValue(this.oldVar_EmpPhone);
 		this.empFax.setValue(this.oldVar_EmpFax);
 		this.empTelexNo.setValue(this.oldVar_EmpTelexNo);
@@ -878,17 +820,21 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(), PennantStaticListUtil.getEmpAlocList(),"");
 
 		if (aEmployerDetail.isNewRecord()){
-			this.lovDescIndustryDesc.setValue("");
-			this.lovDescCountryDesc.setValue("");
-			this.lovDescProvinceName.setValue("");
-			this.lovDescCityName.setValue("");
+			this.empIndustry.setDescription("");
+			this.empCountry.setDescription("");
+			this.empProvince.setDescription("");
+			this.empCity.setDescription("");
 		}else{
-			this.lovDescIndustryDesc.setValue(aEmployerDetail.getEmpIndustry()+"-"+aEmployerDetail.getLovDescIndustryDesc());
-			this.lovDescCountryDesc.setValue(aEmployerDetail.getEmpCountry()+"-"+aEmployerDetail.getLovDescCountryDesc());
-			this.lovDescProvinceName.setValue(aEmployerDetail.getEmpProvince()+"-"+aEmployerDetail.getLovDescProvinceName());
-			this.lovDescCityName.setValue(aEmployerDetail.getEmpCity()+"-"+aEmployerDetail.getLovDescCityName());
+			this.empIndustry.setDescription(aEmployerDetail.getLovDescIndustryDesc());
+			this.empCountry.setDescription(aEmployerDetail.getLovDescCountryDesc());
+			this.empProvince.setDescription(aEmployerDetail.getLovDescProvinceName());
+			this.empCity.setDescription(aEmployerDetail.getLovDescCityName());
 		}
 		this.recordStatus.setValue(aEmployerDetail.getRecordStatus());
+		sEmpCountry = this.empCountry.getValue();
+		sEmpProvince = this.empProvince.getValue();
+		doSetCityProp();
+		doSetProvProp();
 		logger.debug("Leaving");
 	}
 
@@ -905,8 +851,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		//Emp Industry
 		try {
-			aEmployerDetail.setLovDescIndustryDesc(this.lovDescIndustryDesc.getValue());
-			aEmployerDetail.setEmpIndustry(this.empIndustry.getValue());	
+			aEmployerDetail.setLovDescIndustryDesc(this.empIndustry.getDescription());
+			aEmployerDetail.setEmpIndustry(this.empIndustry.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -966,22 +912,22 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		//Emp Country
 		try {
-			aEmployerDetail.setLovDescCountryDesc(this.lovDescCountryDesc.getValue());
-			aEmployerDetail.setEmpCountry(this.empCountry.getValue());	
+			aEmployerDetail.setLovDescCountryDesc(this.empCountry.getDescription());
+			aEmployerDetail.setEmpCountry(this.empCountry.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Emp Province
 		try {
-			aEmployerDetail.setLovDescProvinceName(this.lovDescProvinceName.getValue());
-			aEmployerDetail.setEmpProvince(this.empProvince.getValue());	
+			aEmployerDetail.setLovDescProvinceName(this.empProvince.getDescription());
+			aEmployerDetail.setEmpProvince(this.empProvince.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Emp City
 		try {
-			aEmployerDetail.setLovDescCityName(this.lovDescCityName.getValue());
-			aEmployerDetail.setEmpCity(this.empCity.getValue());	
+			aEmployerDetail.setLovDescCityName(this.empCity.getDescription());
+			aEmployerDetail.setEmpCity(this.empCity.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -1277,21 +1223,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	private void doSetLOVValidation() {
 		//Emp Industry
-		if(btnSearchEmpIndustry.isVisible()){
-			this.lovDescIndustryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpIndustry.value"), null, true));
-		}
+			this.empIndustry.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpIndustry.value"), null, true,true));
 		//Emp Country
-		if(btnSearchEmpCountry.isVisible()){
-			this.lovDescCountryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpCountry.value"), null, true));
-		}
+			this.empCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpCountry.value"), null, true,true));
 		//Emp Province
-		if(btnSearchEmpProvince.isVisible()){
-			this.lovDescProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpProvince.value"), null, true));
-		}
+			this.empProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpProvince.value"), null, true,true));
 		//Emp City
-		if(btnSearchEmpCity.isVisible()){
-			this.lovDescCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpCity.value"), null, true));
-		}
+			this.empCity.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpCity.value"), null, true,true));
 	}
 
 	/**
@@ -1299,10 +1237,10 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 
 	private void doRemoveLOVValidation() {
-		this.lovDescIndustryDesc.setConstraint("");
-		this.lovDescCountryDesc.setConstraint("");
-		this.lovDescProvinceName.setConstraint("");
-		this.lovDescCityName.setConstraint("");
+		this.empIndustry.setConstraint("");
+		this.empCountry.setConstraint("");
+		this.empProvince.setConstraint("");
+		this.empCity.setConstraint("");
 	}
 
 	/**
@@ -1311,7 +1249,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 	private void doClearMessage() {
 		logger.debug("Entering");
-		this.lovDescIndustryDesc.setErrorMessage("");
+		this.empIndustry.setErrorMessage("");
 		this.empName.setErrorMessage("");
 		this.establishDate.setErrorMessage("");
 		this.empAddrHNbr.setErrorMessage("");
@@ -1320,9 +1258,9 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.empAddrLine1.setErrorMessage("");
 		this.empAddrLine2.setErrorMessage("");
 		this.empPOBox.setErrorMessage("");
-		this.lovDescCountryDesc.setErrorMessage("");
-		this.lovDescProvinceName.setErrorMessage("");
-		this.lovDescCityName.setErrorMessage("");
+		this.empCountry.setErrorMessage("");
+		this.empProvince.setErrorMessage("");
+		this.empCity.setErrorMessage("");
 		this.empPhone.setErrorMessage("");
 		this.empFax.setErrorMessage("");
 		this.empTelexNo.setErrorMessage("");
@@ -1451,7 +1389,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		// remove validation, if there are a save before
 
 		this.empIndustry.setValue("");
-		this.lovDescIndustryDesc.setValue("");
+		this.empIndustry.setDescription("");
 		this.empName.setValue("");
 		this.establishDate.setText("");
 		this.empAddrHNbr.setValue("");
@@ -1461,11 +1399,11 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.empAddrLine2.setValue("");
 		this.empPOBox.setValue("");
 		this.empCountry.setValue("");
-		this.lovDescCountryDesc.setValue("");
+		this.empCountry.setDescription("");
 		this.empProvince.setValue("");
-		this.lovDescProvinceName.setValue("");
+		this.empProvince.setDescription("");
 		this.empCity.setValue("");
-		this.lovDescCityName.setValue("");
+		this.empCity.setDescription("");
 		this.empPhone.setValue("");
 		this.empFax.setValue("");
 		this.empTelexNo.setValue("");

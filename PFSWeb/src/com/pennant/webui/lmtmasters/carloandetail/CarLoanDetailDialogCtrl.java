@@ -98,6 +98,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1145,13 +1146,11 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.carLoanFor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarLoanFor.value") }));
-	//	this.lovDescCarUsageName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarUsage.value") }));
-		this.carManufacturer.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarManufacturer.value") }));
-		this.carModel.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarModel.value") }));
-	//	this.carVersion.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarVersion.value") }));
-		this.carDealer.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarDealer.value") }));
-		this.cbCarColor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarColor.value") }));
+		this.carLoanFor.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarLoanFor.value"),null,true,true));
+		this.carManufacturer.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarManufacturer.value"),null,true,true));
+		this.carModel.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarModel.value"),null,true,true));
+		this.carDealer.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarDealer.value"),null,true,true));
+		this.cbCarColor.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarColor.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 

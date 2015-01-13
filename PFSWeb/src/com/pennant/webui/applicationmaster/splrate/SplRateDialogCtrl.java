@@ -85,6 +85,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -683,6 +684,9 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.sRRate.setConstraint(new RateValidator(
 					13,9,Labels.getLabel("label_SplRateDialog_SRRate.value"), true));
 		}	
+		if (!this.sRType.isReadonly()) {
+			this.sRType.setConstraint(new PTStringValidator(Labels.getLabel("label_SplRateDialog_SRType.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -694,6 +698,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.sREffDate.setConstraint("");
 		this.sRRate.setConstraint("");
+		this.sRType.setConstraint("");
 		logger.debug("Leaving");
 	}
 

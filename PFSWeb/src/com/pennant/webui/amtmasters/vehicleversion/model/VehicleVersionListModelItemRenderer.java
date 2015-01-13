@@ -67,7 +67,7 @@ public class VehicleVersionListModelItemRenderer implements ListitemRenderer<Veh
 
 		//final VehicleVersion vehicleVersion = (VehicleVersion) data;
 		Listcell lc;
-	  	lc = new Listcell(vehicleVersion.getVehicleModelId() +"-"+ vehicleVersion.getLovDescVehicleModelDesc());
+	  	lc = new Listcell(vehicleVersion.getLovDescVehicleModelDesc());
 		lc.setParent(item);
 	  	lc = new Listcell(vehicleVersion.getVehicleVersionCode());
 		lc.setParent(item);

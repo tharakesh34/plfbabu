@@ -1294,17 +1294,17 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.mortgProperty.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgProperty.value"), null, true));
+		this.mortgProperty.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgProperty.value"), null, true,true));
 		
-		this.mortgPropertyRelation.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgPropertyRelation.value"), null, true));
+		this.mortgPropertyRelation.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgPropertyRelation.value"), null, true,true));
 		
-		this.mortgOwnership.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgOwnership.value"), null, true));
+		this.mortgOwnership.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgOwnership.value"), null, true,true));
 		
-		this.mortgAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCountry.value"), null, true));
+		this.mortgAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCountry.value"), null, true,true));
 		
-		this.mortgAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrProvince.value"), null, true));
+		this.mortgAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrProvince.value"), null, true,true));
 		
-		this.mortgAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCity.value"), null, true));
+		this.mortgAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_MortgageLoanDetailDialog_MortgAddrCity.value"), null, true,true));
 		logger.debug("Leaving");
 	}
 	/**
@@ -1464,14 +1464,14 @@ public class MortgageLoanDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.mortgAddrZIP.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrZIP"));
 		this.mortgAddrPhone.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));
 		
-		this.mortDeedNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortRegistrationNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortAreaSF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortAreaSM.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortPricePF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortAge.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortFinRatio.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
-		this.mortStatus.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortgAddrPhone"));//TODO ADD RIGHT
+		this.mortDeedNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortDeedNo"));//TODO ADD RIGHT
+		this.mortRegistrationNo.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortRegistrationNo"));//TODO ADD RIGHT
+		this.mortAreaSF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortAreaSF"));//TODO ADD RIGHT
+		this.mortAreaSM.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortAreaSM"));//TODO ADD RIGHT
+		this.mortPricePF.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortPricePF"));//TODO ADD RIGHT
+		this.mortAge.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortAge"));//TODO ADD RIGHT
+		this.mortFinRatio.setReadonly(isReadOnly("MortgageLoanDetailDialog_mortFinRatio"));//TODO ADD RIGHT
+		this.mortStatus.setDisabled(isReadOnly("MortgageLoanDetailDialog_mortStatus"));//TODO ADD RIGHT
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {

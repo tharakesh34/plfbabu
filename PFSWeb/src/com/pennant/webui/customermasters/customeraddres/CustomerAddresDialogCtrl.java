@@ -961,17 +961,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		
-		this.custAddrType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value") }));
+		this.custAddrType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value"),null,true,true));
 		
-		this.custAddrCountry.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value") }));
+		this.custAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"),null,true,true));
 		
-		this.custAddrProvince.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value") }));
+		this.custAddrProvince.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"),null,true,true));
 		
-		this.custAddrCity.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value") }));
+		this.custAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"),null,true,true));
 		
 		logger.debug("Leaving");
 	}

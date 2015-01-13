@@ -1157,14 +1157,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.usrBranchCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrBranchCode.value")}));
-		this.usrDeptCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDeptCode.value")}));
-		this.usrLanguage.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrLanguage.value")}));
-		this.usrDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SecurityUserDialog_UsrDesg.value")}));
+		this.usrBranchCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrBranchCode.value"),null,true,true));
+		this.usrDeptCode.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrDeptCode.value"),null,true,true));
+		this.usrLanguage.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrLanguage.value"),null,true,true));
+		this.usrDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrDesg.value"),null,true,true));
 		logger.debug("Leaving ");
 	}
 
@@ -1343,7 +1339,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		this.usrDeptCode.setReadonly(isReadOnly("SecurityUserDialog_usrDeptCode"));
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
 		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
-		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrLanguage"));
+		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrDesg"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {

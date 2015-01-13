@@ -18,45 +18,44 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
-						style="border-style: none;">
+						sclass="toolbar-center">
 						<button
 							id="button_ReportConfigurationList_NewReportConfiguration"
 							 label = "${c:l('label_New')}"
 							autodisable="button_ReportConfigurationList_ReportConfigurationSearch,button_ReportConfigurationList_PrintList,
 										 button_ReportConfigurationList_NewReportConfiguration, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_ReportConfigurationList_NewReportConfiguration.tooltiptext')}" />
+							tooltiptext="${c:l('button_ReportConfigurationList_NewReportConfiguration.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_ReportConfigurationList_ReportConfigurationSearch"
 							 label = "${c:l('label_Filter')}"
 							autodisable="button_ReportConfigurationList_ReportConfigurationSearch,button_ReportConfigurationList_PrintList,
 										 button_ReportConfigurationList_NewReportConfiguration, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_ReportConfigurationList_ReportConfigurationSearch.tooltiptext')}" />
+							tooltiptext="${c:l('button_ReportConfigurationList_ReportConfigurationSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_ReportConfigurationList_PrintList" 
 							label = "${c:l('label_Print')}"
 							autodisable="button_ReportConfigurationList_ReportConfigurationSearch,button_ReportConfigurationList_PrintList,
 										 button_ReportConfigurationList_NewReportConfiguration, btnRefresh, btnHelp"
-							tooltiptext="${c:l('button_ReportConfigurationList_PrintList.tooltiptext')}" />
+							tooltiptext="${c:l('button_ReportConfigurationList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
-					<toolbar align="end" style="border-style: none;">
+					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" 
 							label = "${c:l('label_Refresh')}"
 							autodisable="button_EmirateDetailList_EmirateDetailSearch,button_EmirateDetailList_PrintList,
 								button_EmirateDetailList_NewEmirateDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" 
 							label = "${c:l('label_Help')}"
 							autodisable="button_ReportConfigurationList_ReportConfigurationSearch,button_ReportConfigurationList_PrintList,
 										 button_ReportConfigurationList_NewReportConfiguration, btnRefresh, btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
 
 			<borderlayout id="borderLayout_ReportConfigurationList">
-				<north border="none" />
 				<center border="none">
 					<div>
 						<grid id="searchGrid"
@@ -153,36 +152,36 @@
 							<listhead sizable="true">
 								<listheader id="listheader_ReportName"
 									label="${c:l('listheader_ReportName.label')}" sort="auto"
-									width="20%" />
+									hflex="min" />
 								<listheader
 									id="listheader_ReportHeading"
 									label="${c:l('listheader_ReportHeading.label')}" sort="auto"
-									width="20%" />
+									hflex="min" />
 								<listheader
 									id="listheader_ReportJasperName"
 									label="${c:l('listheader_ReportJasperName.label')}" sort="auto"
-									width="15%" />
+									hflex="min" />
 								<listheader
 									id="listheader_menuItemCode"
 									label="${c:l('listheader_MenuItemCode.label')}" sort="auto"
-									width="30%" />
+									hflex="min" />
 								<listheader
 									id="listheader_PromptRequired"
 									label="${c:l('listheader_PromptRequired.label')}" sort="auto"
-									width="15%" />
+									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
-									width="15%" />
+									hflex="min" />
 								<listheader id="listheader_RecordType"
 									label="${c:l('listheader_RecordType.label')}" sort="auto"
-									width="15%" />
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingReportConfigurationList"
-						  />
+					<paging id="pagingReportConfigurationList" />
+						 
 				</south>
 			</borderlayout>
 		</window>

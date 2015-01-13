@@ -87,6 +87,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -895,8 +896,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 					new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustID.value")}));
 		}
 		if (this.custEmpName.isButtonVisible()) {
-			this.custEmpName.setConstraint(	"NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value")}));
+			this.custEmpName.setConstraint(	new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value"),null,true,true));
 		}
 		/*if (this.custEmpName.isButtonVisible()){
 			this.custEmpName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value"),
@@ -926,14 +926,11 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		
-		this.custEmpDesg.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDesg.value")}));
+		this.custEmpDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDesg.value"),null,true,true));
 		
-		this.custEmpDept.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDept.value")}));
+		this.custEmpDept.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpDept.value"),null,true,true));
 		
-		this.custEmpType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value")}));
+		this.custEmpType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpType.value"),null,true,true));
 		
 		
 		logger.debug("Leaving");

@@ -92,7 +92,7 @@
 					</grid>
 					<listbox id="listBoxStepPolicy"
 						emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-						vflex="true" span="true"
+						vflex="min" span="true" sizedByContent="false"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 						height="100%" multiple="false">
 						<listhead sizable="true">

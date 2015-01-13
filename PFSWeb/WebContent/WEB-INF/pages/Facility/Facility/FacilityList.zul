@@ -40,18 +40,18 @@
 								<row>
 									<label id="label_FacilityList_CAFReference" value="${c:l('label_FacilityList_CAFReference.value')}" />
 									<listbox id="sortOperator_CAFReference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="cAFReference" width="200px" maxlength="50" />
+									<textbox id="cAFReference" width="180px" maxlength="50" />
 									<label id="label_FacilityList_CustID" value="${c:l('label_FacilityList_CustID.value')}" />
 									<listbox id="sortOperator_CustID" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="custID" width="171px" maxlength="19" />
+									<textbox id="custID" width="150px" maxlength="19" />
 								</row>
 								<row>
 									<label id="label_FacilityList_StartDate" value="${c:l('label_FacilityList_StartDate.value')}" />
 									<listbox id="sortOperator_StartDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="startDate" width="200px" />
+									<datebox id="startDate" width="100px" format = "dd/MM/yyyy" />
 									<label id="label_FacilityList_NextReviewDate" value="${c:l('label_FacilityList_NextReviewDate.value')}" />
 									<listbox id="sortOperator_NextReviewDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="nextReviewDate" width="200px" />
+									<datebox id="nextReviewDate" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryOfDomicile" value="${c:l('label_FacilityList_CountryOfDomicile.value')}" />
@@ -59,7 +59,7 @@
 									<textbox id="countryOfDomicile" width="18px" maxlength="2" />
 									<label id="label_FacilityList_DeadLine" value="${c:l('label_FacilityList_DeadLine.value')}" />
 									<listbox id="sortOperator_DeadLine" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="deadLine" width="200px" />
+									<datebox id="deadLine" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryOfRisk" value="${c:l('label_FacilityList_CountryOfRisk.value')}" />
@@ -67,7 +67,7 @@
 									<textbox id="countryOfRisk" width="18px" maxlength="2" />
 									<label id="label_FacilityList_EstablishedDate" value="${c:l('label_FacilityList_EstablishedDate.value')}" />
 									<listbox id="sortOperator_EstablishedDate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="establishedDate" width="200px" />
+									<datebox id="establishedDate" width="100px" format = "dd/MM/yyyy"  />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_NatureOfBusiness" value="${c:l('label_FacilityList_NatureOfBusiness.value')}" />
@@ -75,15 +75,15 @@
 									<textbox id="natureOfBusiness" width="72px" maxlength="8" />
 									<label id="label_FacilityList_SICCode" value="${c:l('label_FacilityList_SICCode.value')}" />
 									<listbox id="sortOperator_SICCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="sICCode" width="200px" maxlength="50" />
+									<textbox id="sICCode" width="150px" maxlength="50" />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_CountryManager" value="${c:l('label_FacilityList_CountryManager.value')}" />
 									<listbox id="sortOperator_CountryManager" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="countryManager" width="200px" maxlength="50" />
+									<textbox id="countryManager" width="180px" maxlength="50" />
 									<label id="label_FacilityList_CustomerRiskType" value="${c:l('label_FacilityList_CustomerRiskType.value')}" />
 									<listbox id="sortOperator_CustomerRiskType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="customerRiskType" width="200px" maxlength="50" />
+									<textbox id="customerRiskType" width="180px" maxlength="50" />
 								</row>
 								<row visible="false">
 									<label id="label_FacilityList_RelationshipManager" value="${c:l('label_FacilityList_RelationshipManager.value')}" />
@@ -96,7 +96,7 @@
 								<row visible="false">
 									<label id="label_FacilityList_PresentingUnit" value="${c:l('label_FacilityList_PresentingUnit.value')}" />
 									<listbox id="sortOperator_PresentingUnit" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="presentingUnit" width="200px" maxlength="50" />
+									<textbox id="presentingUnit" width="140px" maxlength="50" />
 								</row>
 								<row id="row_AlwWorkflow">
 									<label id="label_FacilityList_RecordStatus" value="${c:l('label_FacilityList_RecordStatus.value')}" />

@@ -1490,7 +1490,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		// Country of Domicile
 		if (!this.countryOfDomicile.isReadonly()) {
-			this.countryOfDomicile.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfDomicile.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.countryOfDomicile.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfDomicile.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// Dead Line
 		if (!this.deadLine.isReadonly()) {
@@ -1498,7 +1498,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		// Country of Risk
 		if (!this.countryOfRisk.isReadonly()) {
-			this.countryOfRisk.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfRisk.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.countryOfRisk.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryOfRisk.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// Established Date
 		if (!this.establishedDate.isReadonly()) {
@@ -1506,19 +1506,19 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		// Nature of Business
 		if (!this.natureOfBusiness.isReadonly()) {
-			this.natureOfBusiness.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_NatureOfBusiness.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.natureOfBusiness.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_NatureOfBusiness.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// SIC Code
 		if (!this.sICCode.isReadonly()) {
-			this.sICCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_SICCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.sICCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_SICCode.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// Country Manager
 		if (!this.countryManager.isReadonly()) {
-			this.countryManager.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryManager.value"), PennantRegularExpressions.REGEX_NAME, true));
+			this.countryManager.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CountryManager.value"), PennantRegularExpressions.REGEX_NAME, true,true));
 		}
 		// Customer Risk Type
 		if (!this.customerRiskType.isReadonly()) {
-			this.customerRiskType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerRiskType.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.customerRiskType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerRiskType.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// Relationship Manager
 		if (!this.relationshipManager.isReadonly()) {
@@ -1526,7 +1526,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		// Customer Group
 		if (!this.customerGroup.isReadonly() && this.customerConnected.isChecked()) {
-			this.customerGroup.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerGroup.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.customerGroup.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustomerGroup.value"), PennantRegularExpressions.REGEX_ALPHANUM_CODE, true,true));
 		}
 		// Next Review Date
 		if (!this.nextReviewDate.isReadonly()) {

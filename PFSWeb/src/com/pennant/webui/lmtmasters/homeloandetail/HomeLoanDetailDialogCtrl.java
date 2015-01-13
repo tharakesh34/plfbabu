@@ -1255,23 +1255,17 @@ public class HomeLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.homeDetails.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeDetails.value") }));
+		this.homeDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeDetails.value"),null,true,true));
 
-		this.homePropertyType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomePropertyType.value") }));
+		this.homePropertyType.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomePropertyType.value"),null,true,true));
 
-		/*this.homeOwnerShipType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeOwnerShipType.value") }));*/
+		/*this.homeOwnerShipType.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeOwnerShipType.value"),null,true,true));*/
 
-		/*this.homeAddrCountry.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCountry.value") }));
+		/*this.homeAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCountry.value"),null,true,true));
 
-		this.homeAddrProvince.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrProvince.value") }));
+		this.homeAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrProvince.value"),null,true,true));
 
-		this.homeAddrCity.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCity.value") }));*/
+		this.homeAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_HomeLoanDetailDialog_HomeAddrCity.value"),null,true,true));*/
 
 		logger.debug("Leaving");
 	}

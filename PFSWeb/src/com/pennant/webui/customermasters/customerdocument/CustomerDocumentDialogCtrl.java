@@ -1093,10 +1093,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.custDocType.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value") }));
-		this.custDocIssuedCountry.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerDocumentDialog_CustDocIssuedCountry.value") }));
+		this.custDocType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value"),null,true,true));
+		this.custDocIssuedCountry.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerDocumentDialog_CustDocIssuedCountry.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 

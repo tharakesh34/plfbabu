@@ -1084,14 +1084,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		logger.debug("Entering");
 		this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CreditApplicationReviewDialog_CustCIF.value"), null, true));
 		if(currencyType.isButtonVisible()) {
-			this.currencyType.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_finCcy.value"));
+			this.currencyType.setConstraint(new PTStringValidator(Labels.getLabel("labelCreditApplicationReviewDialog_FinCcy.value"),null,true,true));
 		}
 		logger.debug("Leaving");
 	}
 
-	private String setNotEmpty(String label) {
-		return  "NO EMPTY:" + Labels.getLabel( "FIELD_NO_EMPTY", new String[] { Labels.getLabel(label) });
-	}
 	
 	/**
 	 * Disables the Validation by setting empty constraints to the LOVFields.

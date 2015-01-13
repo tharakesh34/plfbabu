@@ -621,6 +621,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.cPProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvinceName.value"), 
 					PennantRegularExpressions.REGEX_NAME, true));
 		}	
+		if (!this.cPCountry.isReadonly()) {
+			this.cPCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPCountry.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -632,6 +635,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.cPProvince.setConstraint("");
 		this.cPProvinceName.setConstraint("");
+		this.cPCountry.setConstraint("");
 		logger.debug("Leaving");
 	}
 

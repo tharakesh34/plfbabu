@@ -96,6 +96,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1155,10 +1156,10 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.facilityFor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_FacilityFor.value") }));
 		}
 		if (!this.facilityType.isReadonly()) {
-			this.facilityType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_FacilityType.value") }));
+			this.facilityType.setConstraint(new PTStringValidator ( Labels.getLabel("label_FacilityDetailDialog_FacilityType.value"),null,true,true));
 		}
 		if (!this.facilityCCY.isReadonly()) {
-			this.facilityCCY.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_FacilityCCY.value") }));
+			this.facilityCCY.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_FacilityCCY.value"),null,true,true));
 		}
 		if (!this.exposure.isReadonly()) {
 			// FIXIT
@@ -1242,13 +1243,11 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 						new String[] { Labels.getLabel("label_FacilityDetailDialog_totalFacilityCcy.value") }));
 			}*/
 			if(!this.underWritingCcy.isReadonly()){ 
-				this.underWritingCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_FacilityDetailDialog_underWritingCcy.value") }));
+				this.underWritingCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_underWritingCcy.value"),null,true,true));
 			}
 
 			if(!this.propFinalTakeCcy.isReadonly()){ 
-				this.propFinalTakeCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_FacilityDetailDialog_propFinalTakeCcy.value") }));
+				this.propFinalTakeCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_propFinalTakeCcy.value"),null,true,true));
 			}
 		}
 		logger.debug("Leaving");

@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -753,11 +754,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.custRatingType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{ Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value")}));
+		this.custRatingType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value"),null,true,true));
 
-//		this.custRatingCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-//				new String[]{ Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value")}));
+//		this.custRatingCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value"),null,true,true));
 
 		logger.debug("Leaving");
 	}

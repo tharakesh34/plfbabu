@@ -38,7 +38,7 @@
 					</toolbar>
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
-						<label value="${c:l('window_ScoringMetricsDialog.title')}" sclass="label-heading" sclass="z-toolbarbutton" />
+						<label value="${c:l('window_ScoringMetricsDialog.title')}" sclass="label-heading" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->

@@ -83,6 +83,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -668,6 +669,9 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 					"label_BaseRateDialog_BREffDate.value"), true));
      		
 			}
+		if (!this.bRType.isReadonly()) {
+			this.bRType.setConstraint(new PTStringValidator(Labels.getLabel("label_BaseRateDialog_BRType.value"), null, true,true));
+		}
 		/*if (!this.bRRate.isReadonly()){
 			this.bRRate.setConstraint(new RateValidator(13,9,
 					Labels.getLabel("label_BaseRateDialog_BRRate.value"),true));
@@ -683,6 +687,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(false);
 		this.bREffDate.setConstraint("");
 		this.bRRate.setConstraint("");
+		this.bRType.setConstraint("");
 		logger.debug("Leaving");
 	}
 	

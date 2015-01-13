@@ -52,6 +52,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 
 /**
@@ -68,6 +69,8 @@ public class ExpenseTypeListModelItemRenderer implements ListitemRenderer<Expens
 		//final ExpenseType expenseType = (ExpenseType) data;
 		Listcell lc;
 	  	lc = new Listcell(expenseType.getExpenceTypeName());
+		lc.setParent(item);
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(expenseType.getExpenseFor(), PennantStaticListUtil.getExpenseForList()));
 		lc.setParent(item);
 	  	lc = new Listcell(expenseType.getRecordStatus());
 		lc.setParent(item);

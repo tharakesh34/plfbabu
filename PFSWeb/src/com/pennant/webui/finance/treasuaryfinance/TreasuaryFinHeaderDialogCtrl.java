@@ -108,6 +108,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.TreasuryFinHeaderListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -1095,7 +1096,7 @@ Serializable {
 
 	private void doSetLOVValidation() {		
 		if(finCcy.isButtonVisible()) {
-			this.finCcy.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_finCcy.value"));
+			this.finCcy.setConstraint(new PTStringValidator (Labels.getLabel("label_TreasuaryFinHeaderDialog_finCcy.value"),null,true,true));
 		}
 	}
 

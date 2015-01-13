@@ -662,7 +662,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		if (!this.subSectorCode.isReadonly()) {
 			this.subSectorCode.setConstraint(new PTStringValidator(Labels.getLabel(
-					"label_IndustryDialog_SubSectorCode.value"), null, true));
+					"label_IndustryDialog_SubSectorCode.value"), null, true,true));
 		}
 
 		if (!this.industryDesc.isReadonly()){
