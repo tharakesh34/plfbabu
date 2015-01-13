@@ -2321,20 +2321,21 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 		this.finReference.setValue(aFinanceMain.getFinReference());
-		if (financeType.isFinIsAlwDifferment()) {
+		if (financeType.isFinIsAlwDifferment() && aFinanceMain.getPlanDeferCount() == 0) {
 			this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
 		} else {
 			this.defferments.setReadonly(true);
 		}
 
 		this.defferments.setValue(aFinanceMain.getDefferments());
-		if (financeType.isAlwPlanDeferment()) {
-			this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
+		if (financeType.isAlwPlanDeferment() && moduleDefiner.equals("")) {
+			this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_planDeferCount"));
 		} else {
 			this.planDeferCount.setReadonly(true);
 			this.hbox_PlanDeferCount.setVisible(false);
 			this.label_FinanceMainDialog_PlanDeferCount.setVisible(false);
 		}
+		
 		
 		if(!financeType.isFinIsAlwDifferment() && 
 				!financeType.isAlwPlanDeferment()){
@@ -2776,7 +2777,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		
 		if(this.planDeferCount.intValue() == 0){
 			if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment()){
-				this.defferments.setReadonly(false);
+				this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
 			}else{
 				this.defferments.setReadonly(true);
 				this.defferments.setValue(0);

@@ -4961,7 +4961,7 @@ public class IjarahWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData()));
+						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				
 				//Fill Finance Schedule details List data into ListBox

@@ -224,14 +224,14 @@
 															id="defferments" width="90px" maxlength="13" />
 													</hbox>
 													<label
-														id="label_FinanceMaintenanceDialog_FrqDef"
-														value="${c:l('label_FinanceMaintenanceDialog_FrqDefferments.value')}" />
+														id="label_FinanceMaintenanceDialog_PlanDeferCount"
+														value="${c:l('label_FinanceMaintenanceDialog_PlanDeferCount.value')}" />
 													<hbox
-														id="hbox_FrqDef">
+														id="hbox_PlanDeferCount">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
-															id="frqDefferments" width="90px" maxlength="14" />
+															id="planDeferCount" width="90px" maxlength="14" />
 													</hbox>
 												</row>
 												<row>
