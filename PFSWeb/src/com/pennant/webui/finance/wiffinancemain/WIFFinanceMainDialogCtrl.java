@@ -187,8 +187,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
 	protected Intbox 		planDeferCount; 						// autoWired
-	protected Label 		label_WIFFinanceMainDialog_FrqDef;	// autoWired
-	protected Hbox 			hbox_FrqDef; 							// autoWired	
+	protected Label 		label_WIFFinanceMainDialog_PlanDeferCount;	// autoWired
+	protected Hbox 			hbox_PlanDeferCount; 					// autoWired	
 	protected Textbox 		depreciationFrq; 						// autoWired
 	protected Combobox 		cbDepreciationFrqCode; 					// autoWired
 	protected Combobox 		cbDepreciationFrqMth; 					// autoWired
@@ -1336,8 +1336,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.defferments.setReadonly(true);
 		} else {
 			this.planDeferCount.setReadonly(true);
-			this.hbox_FrqDef.setVisible(false);
-			this.label_WIFFinanceMainDialog_FrqDef.setVisible(false);
+			this.hbox_PlanDeferCount.setVisible(false);
+			this.label_WIFFinanceMainDialog_PlanDeferCount.setVisible(false);
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
@@ -3325,11 +3325,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 		}
 		
-		if(!this.defferments.isDisabled()){
+		if(!this.defferments.isReadonly()){
 			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_Defferments.value"), false, false));
 		}
 		
-		if(!this.planDeferCount.isDisabled()){
+		if(!this.planDeferCount.isReadonly()){
 			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 

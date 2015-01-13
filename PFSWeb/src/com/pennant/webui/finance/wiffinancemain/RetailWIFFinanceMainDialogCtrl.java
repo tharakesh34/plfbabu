@@ -248,8 +248,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
 	protected Intbox 		planDeferCount; 						// autoWired
-	protected Label 		label_MurabahaFinanceMainDialog_FrqDef;	// autoWired
-	protected Hbox 			hbox_FrqDef; 							// autoWired	
+	protected Label 		label_MurabahaFinanceMainDialog_PlanDeferCount;	// autoWired
+	protected Hbox 			hbox_PlanDeferCount; 							// autoWired	
 	protected Textbox 		depreciationFrq; 						// autoWired
 	protected Combobox 		cbDepreciationFrqCode; 					// autoWired
 	protected Combobox 		cbDepreciationFrqMth; 					// autoWired
@@ -1562,8 +1562,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			this.planDeferCount.setReadonly(false);
 		} else {
 			this.planDeferCount.setReadonly(true);
-			this.hbox_FrqDef.setVisible(false);
-			this.label_MurabahaFinanceMainDialog_FrqDef.setVisible(false);
+			this.hbox_PlanDeferCount.setVisible(false);
+			this.label_MurabahaFinanceMainDialog_PlanDeferCount.setVisible(false);
 		}
 		
 		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment() && 
@@ -3646,17 +3646,21 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 		// Step Finance Details
 		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
-				return true;
-		    }
+			return true;
+		}
 		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
-				return true;
-		    }
+			return true;
+		}
 		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
-				return true;
-		    }
+			return true;
+		}
 		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
-				return true;
-			}		
+			return true;
+		}	
+		
+		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
+			return true;
+		}	
 		
 		// Step Finance Details List Validation
 		if(getStepDetailDialogCtrl() != null && 
@@ -3922,11 +3926,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			}
 		}
 		
-		if(!this.defferments.isDisabled()){
+		if(!this.defferments.isReadonly()){
 			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_Defferments.value"), false, false));
 		}
 		
-		if(!this.planDeferCount.isDisabled()){
+		if(!this.planDeferCount.isReadonly()){
 			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
@@ -5838,6 +5842,23 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Leaving" + event.toString());
 	}
 	
+	public void onChange$planDeferCount(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		if(this.planDeferCount.intValue() == 0){
+			if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment()){
+				this.defferments.setReadonly(false);
+			}else{
+				this.defferments.setReadonly(true);
+				this.defferments.setValue(0);
+			}
+		}else{
+			this.defferments.setReadonly(true);
+		}
+		
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	public void onChange$graceTerms(Event event){
 		logger.debug("Entering" + event.toString());
 		if(this.graceTerms.getValue() != null){
@@ -6301,6 +6322,44 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
  				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
  			
+ 			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
+ 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData planDeferSchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Terms Recalculation
+				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Maturity Date Recalculation using Number of Terms
+				List<Calendar> scheduleDateList = null;				
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+							planFinMain.getNumberOfTerms(), nextPftDate, "A", true).getScheduleList();
+				}else{
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+							planFinMain.getNumberOfTerms(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+				}
+
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					planFinMain.setMaturityDate(calendar.getTime());
+				}			
+				
+				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				
+ 			}
+ 			
 			//Prepare Finance Schedule Generator Details List
 			getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleMaintained(false);
@@ -6310,7 +6369,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
+						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				
 				
@@ -6983,6 +7042,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			}else{
 				this.repayRvwFrq.setValue("");
 			}
+		}
+		
+		int count = DateUtility.getDefermentCount(this.numberOfTerms_two.intValue(), this.planDeferCount.intValue());
+		if(count > 0){
+			this.defferments.setValue(count);
 		}
 		
 		logger.debug("Leaving");

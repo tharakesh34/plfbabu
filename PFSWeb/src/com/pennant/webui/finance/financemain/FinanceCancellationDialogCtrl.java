@@ -71,7 +71,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_FinanceCancellationDialog_FinRepayPftOnFrq;
 	protected Label 		label_FinanceCancellationDialog_CommitRef; 	// autoWired
 	protected Label 		label_FinanceCancellationDialog_DepriFrq; 	// autoWired
-	protected Label 		label_FinanceCancellationDialog_FrqDef;	// autoWired
+	protected Label 		label_FinanceCancellationDialog_PlanDeferCount;	// autoWired
 	protected Label 		label_FinanceCancellationDialog_CbbApproved;
 	protected Label 		label_FinanceCancellationDialog_AlwGrace;
 	protected Label         label_FinanceCancellationDialog_StepPolicy;
@@ -168,7 +168,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_CommitRef(label_FinanceCancellationDialog_CommitRef);
 		setLabel_FinanceMainDialog_DepriFrq(label_FinanceCancellationDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_FinanceCancellationDialog_FinRepayPftOnFrq);
-		setLabel_FinanceMainDialog_FrqDef(label_FinanceCancellationDialog_FrqDef);
+		setLabel_FinanceMainDialog_PlanDeferCount(label_FinanceCancellationDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceCancellationDialog_AlwGrace);
 		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceCancellationDialog_numberOfSteps);
 		setLabel_FinanceMainDialog_StepPolicy(label_FinanceCancellationDialog_StepPolicy);

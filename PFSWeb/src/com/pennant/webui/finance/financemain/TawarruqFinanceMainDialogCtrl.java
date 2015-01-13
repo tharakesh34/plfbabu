@@ -50,6 +50,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -153,7 +154,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected Label 		label_TawarruqFinanceMainDialog_ScheduleMethod;	// autoWired
 	protected Label 		label_TawarruqFinanceMainDialog_CommitRef;	// autoWired
 	protected Label 		label_TawarruqFinanceMainDialog_DepriFrq;	// autoWired
-	protected Label 		label_TawarruqFinanceMainDialog_FrqDef;		// autoWired
+	protected Label 		label_TawarruqFinanceMainDialog_PlanDeferCount;		// autoWired
 	protected Label 		label_TawarruqFinanceMainDialog_FinRepayPftOnFrq;// autoWired
 	protected Label 		label_TawarruqFinanceMainDialog_CbbApproved;// autoWired
 	protected Label 		label_TawarruqFinanceMainDialog_AlwGrace;           // autoWired
@@ -251,7 +252,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_CommitRef(label_TawarruqFinanceMainDialog_CommitRef);
 		setLabel_FinanceMainDialog_DepriFrq(label_TawarruqFinanceMainDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_TawarruqFinanceMainDialog_FinRepayPftOnFrq);
-		setLabel_FinanceMainDialog_FrqDef(label_TawarruqFinanceMainDialog_FrqDef);
+		setLabel_FinanceMainDialog_PlanDeferCount(label_TawarruqFinanceMainDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_AlwGrace(label_TawarruqFinanceMainDialog_AlwGrace);
 		setLabel_FinanceMainDialog_GraceMargin(label_TawarruqFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_TawarruqFinanceMainDialog_StepPolicy);
@@ -1387,6 +1388,9 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
 			return true;
 		}
+		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
+			return true;
+		}
 
 		// Step Finance Details List Validation
 		if(getStepDetailDialogCtrl() != null && 
@@ -1599,11 +1603,11 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					Labels.getLabel("label_TawarruqFinanceMainDialog_FinAmount.value"), false));
 		}
 		
-		if(!this.defferments.isDisabled()){
+		if(!this.defferments.isReadonly()){
 			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_Defferments.value"), false, false));
 		}
 		
-		if(!this.planDeferCount.isDisabled()){
+		if(!this.planDeferCount.isReadonly()){
 			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
@@ -3469,6 +3473,44 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
  				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
  				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
+ 			
+ 			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
+ 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData planDeferSchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Terms Recalculation
+				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Maturity Date Recalculation using Number of Terms
+				List<Calendar> scheduleDateList = null;				
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+							planFinMain.getNumberOfTerms(), nextPftDate, "A", true).getScheduleList();
+				}else{
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+							planFinMain.getNumberOfTerms(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+				}
+
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					planFinMain.setMaturityDate(calendar.getTime());
+				}			
+				
+				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				
+ 			}
 
 			//Prepare Finance Schedule Generator Details List
  			getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
@@ -3482,7 +3524,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
+						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				

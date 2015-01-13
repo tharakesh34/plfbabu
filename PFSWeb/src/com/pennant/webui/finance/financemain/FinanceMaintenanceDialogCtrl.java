@@ -140,7 +140,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_FinanceMaintenanceDialog_FinRepayPftOnFrq;
 	protected Label 		label_FinanceMaintenanceDialog_CommitRef; 	// autoWired
 	protected Label 		label_FinanceMaintenanceDialog_DepriFrq; 	// autoWired
-	protected Label 		label_FinanceMaintenanceDialog_FrqDef;	// autoWired
+	protected Label 		label_FinanceMaintenanceDialog_PlanDeferCount;	// autoWired
 	protected Label 		label_FinanceMaintenanceDialog_CbbApproved;
 	protected Label 		label_FinanceMaintenanceDialog_AlwGrace;
 	protected Label         label_FinanceMaintenanceDialog_StepPolicy;
@@ -230,7 +230,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_CommitRef(label_FinanceMaintenanceDialog_CommitRef);
 		setLabel_FinanceMainDialog_DepriFrq(label_FinanceMaintenanceDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_FinanceMaintenanceDialog_FinRepayPftOnFrq);
-		setLabel_FinanceMainDialog_FrqDef(label_FinanceMaintenanceDialog_FrqDef);
+		setLabel_FinanceMainDialog_PlanDeferCount(label_FinanceMaintenanceDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_numberOfSteps(label_FinanceMaintenanceDialog_numberOfSteps);
 		setLabel_FinanceMainDialog_StepPolicy(label_FinanceMaintenanceDialog_StepPolicy);
 		setLabel_FinanceMainDialog_AlwGrace(label_FinanceMaintenanceDialog_AlwGrace);

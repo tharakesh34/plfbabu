@@ -193,7 +193,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Row			defermentsRow;							// autoWired
 	protected Intbox 		defferments; 							// autoWired
 	protected Intbox 		planDeferCount; 						// autoWired
-	protected Hbox 			hbox_FrqDef; 							// autoWired	
+	protected Hbox 			hbox_PlanDeferCount; 					// autoWired	
 	protected AccountSelectionBox 		disbAcctId; 				// autoWired
 	protected AccountSelectionBox 		repayAcctId; 				// autoWired
 	protected Textbox 		depreciationFrq; 						// autoWired
@@ -370,7 +370,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private Label 		label_FinanceMainDialog_FinRepayPftOnFrq;   
 	private Label 		label_FinanceMainDialog_CommitRef; 			// autoWired
 	private Label 		label_FinanceMainDialog_DepriFrq; 			// autoWired
-	private Label 		label_FinanceMainDialog_FrqDef;				// autoWired
+	private Label 		label_FinanceMainDialog_PlanDeferCount;		// autoWired
 	private Label 		label_FinanceMainDialog_CbbApproved;	
 	private Label 		label_FinanceMainDialog_AlwGrace;	
 	//private Label 		label_FinanceMainDialog_CcyConversionRate;	
@@ -2332,8 +2332,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
 		} else {
 			this.planDeferCount.setReadonly(true);
-			this.hbox_FrqDef.setVisible(false);
-			this.label_FinanceMainDialog_FrqDef.setVisible(false);
+			this.hbox_PlanDeferCount.setVisible(false);
+			this.label_FinanceMainDialog_PlanDeferCount.setVisible(false);
 		}
 		
 		if(!financeType.isFinIsAlwDifferment() && 
@@ -2768,6 +2768,23 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			changeFrequencies();
 			this.finReference.setFocus(true);
 		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onChange$planDeferCount(Event event){
+		logger.debug("Entering" + event.toString());
+		
+		if(this.planDeferCount.intValue() == 0){
+			if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment()){
+				this.defferments.setReadonly(false);
+			}else{
+				this.defferments.setReadonly(true);
+				this.defferments.setValue(0);
+			}
+		}else{
+			this.defferments.setReadonly(true);
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -6107,6 +6124,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.nextRepayCpzDate_two.setValue(this.maturityDate_two.getValue());
 			}
 		}
+		
+		int count = DateUtility.getDefermentCount(this.numberOfTerms_two.intValue(), this.planDeferCount.intValue());
+		if(count > 0){
+			this.defferments.setValue(count);
+		}
 		logger.debug("Leaving");
 	}
 	
@@ -7244,12 +7266,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.label_FinanceMainDialog_DepriFrq = labelFinanceMainDialogDepriFrq;
 	}
 
-	public Label getLabel_FinanceMainDialog_FrqDef() {
-		return label_FinanceMainDialog_FrqDef;
+	public Label getLabel_FinanceMainDialog_PlanDeferCount() {
+		return label_FinanceMainDialog_PlanDeferCount;
 	}
-	public void setLabel_FinanceMainDialog_FrqDef(
-			Label labelFinanceMainDialogFrqDef) {
-		this.label_FinanceMainDialog_FrqDef = labelFinanceMainDialogFrqDef;
+	public void setLabel_FinanceMainDialog_PlanDeferCount(
+			Label labelFinanceMainDialogPlanDeferCount) {
+		this.label_FinanceMainDialog_PlanDeferCount = labelFinanceMainDialogPlanDeferCount;
 	}
 
 	public Label getLabel_FinanceMainDialog_CbbApproved() {

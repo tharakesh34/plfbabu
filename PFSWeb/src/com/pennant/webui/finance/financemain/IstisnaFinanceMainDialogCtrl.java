@@ -51,6 +51,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -158,7 +159,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_IstisnaFinanceMainDialog_CbbApproved;		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_DownPayment;		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_DepriFrq;		// autoWired
-	protected Label 		label_IstisnaFinanceMainDialog_FrqDef;			// autoWired
+	protected Label 		label_IstisnaFinanceMainDialog_PlanDeferCount;			// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_AlwGrace;		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_GraceMargin; 		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_StepPolicy; 		// autoWired
@@ -261,7 +262,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		setLabel_FinanceMainDialog_CommitRef(label_IstisnaFinanceMainDialog_CommitRef);
 		setLabel_FinanceMainDialog_DepriFrq(label_IstisnaFinanceMainDialog_DepriFrq);
 		//setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_IstisnaFinanceMainDialog_FinRepayPftOnFrq);
-		setLabel_FinanceMainDialog_FrqDef(label_IstisnaFinanceMainDialog_FrqDef);
+		setLabel_FinanceMainDialog_PlanDeferCount(label_IstisnaFinanceMainDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_AlwGrace(label_IstisnaFinanceMainDialog_AlwGrace);
 		setLabel_FinanceMainDialog_GraceMargin(label_IstisnaFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_IstisnaFinanceMainDialog_StepPolicy);
@@ -1553,6 +1554,9 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
 			return true;
 		}
+		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
+			return true;
+		}
 
 		// Step Finance Details List Validation
 		if(getStepDetailDialogCtrl() != null && 
@@ -1769,6 +1773,14 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
 			this.noOfSteps.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NumberOfSteps.value"), true, false));
+		}
+
+		if(!this.defferments.isReadonly()){
+			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_Defferments.value"), false, false));
+		}
+
+		if(!this.planDeferCount.isReadonly()){
+			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_PlanDeferCount.value"), false, false));
 		}
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -3564,6 +3576,44 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
  				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
  			
+ 			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
+ 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData planDeferSchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Terms Recalculation
+				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Maturity Date Recalculation using Number of Terms
+				List<Calendar> scheduleDateList = null;				
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+							planFinMain.getNumberOfTerms(), nextPftDate, "A", true).getScheduleList();
+				}else{
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+							planFinMain.getNumberOfTerms(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+				}
+
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					planFinMain.setMaturityDate(calendar.getTime());
+				}			
+				
+				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				
+ 			}
+ 			
 			//Prepare Finance Schedule Generator Details List
  			getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
 			getFinanceDetail().getFinScheduleData().setDefermentHeaders(new ArrayList<DefermentHeader>());
@@ -3576,7 +3626,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
+						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				

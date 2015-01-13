@@ -50,6 +50,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -146,7 +147,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	//Finance Main Details Tab---> 1. Key Details
 
 	protected Label 		label_MusharakFinanceMainDialog_ScheduleMethod;	// autoWired
-	protected Label 		label_MusharakFinanceMainDialog_FrqDef;	// autoWired
+	protected Label 		label_MusharakFinanceMainDialog_PlanDeferCount;	// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_DepriFrq; 	// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_CommitRef; 	// autoWired
 	protected Label 		label_MusharakFinanceMainDialog_CbbApproved;	// autoWired
@@ -243,7 +244,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		setLabel_FinanceMainDialog_CommitRef(label_MusharakFinanceMainDialog_CommitRef);
 		setLabel_FinanceMainDialog_DepriFrq(label_MusharakFinanceMainDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_MusharakFinanceMainDialog_FinRepayPftOnFrq);
-		setLabel_FinanceMainDialog_FrqDef(label_MusharakFinanceMainDialog_FrqDef);
+		setLabel_FinanceMainDialog_PlanDeferCount(label_MusharakFinanceMainDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_AlwGrace(label_MusharakFinanceMainDialog_AlwGrace);
 		setLabel_FinanceMainDialog_GraceMargin(label_MusharakFinanceMainDialog_GraceMargin);
 		setLabel_FinanceMainDialog_StepPolicy(label_MusharakFinanceMainDialog_StepPolicy);
@@ -1358,6 +1359,9 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
 			return true;
 		}
+		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
+			return true;
+		}
 
 		// Step Finance Details List Validation
 		if(getStepDetailDialogCtrl() != null && 
@@ -1569,6 +1573,14 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					Labels.getLabel("label_MusharakFinanceMainDialog_DownPayment.value"), false));
 		 
 		}*/
+		
+		if(!this.defferments.isReadonly()){
+			this.defferments.setConstraint(new PTNumberValidator(Labels.getLabel("label_MusharakFinanceMainDialog_Defferments.value"), false, false));
+		}
+
+		if(!this.planDeferCount.isReadonly()){
+			this.planDeferCount.setConstraint(new PTNumberValidator(Labels.getLabel("label_MusharakFinanceMainDialog_PlanDeferCount.value"), false, false));
+		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
 			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MusharakFinanceMainDialog_StepPolicy.value"), null, true));
@@ -3358,6 +3370,44 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
  				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
  				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
  			}
+ 			
+ 			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
+ 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData planDeferSchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Terms Recalculation
+				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Maturity Date Recalculation using Number of Terms
+				List<Calendar> scheduleDateList = null;				
+				if(this.finRepayPftOnFrq.isChecked()){
+					
+					Date nextPftDate = this.nextRepayPftDate.getValue();
+					if(nextPftDate == null){
+						nextPftDate = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
+								this.gracePeriodEndDate_two.getValue(), "A", false).getNextFrequencyDate();
+					}
+					
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayPftFrq.getValue(),
+							planFinMain.getNumberOfTerms(), nextPftDate, "A", true).getScheduleList();
+				}else{
+					scheduleDateList = FrequencyUtil.getNextDate(this.repayFrq.getValue(),
+							planFinMain.getNumberOfTerms(), this.nextRepayDate_two.getValue(), "A", true).getScheduleList();
+				}
+
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					planFinMain.setMaturityDate(calendar.getTime());
+				}			
+				
+				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				
+ 			}
 
 			//Prepare Finance Schedule Generator Details List
  			getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
@@ -3371,7 +3421,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
+						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 				

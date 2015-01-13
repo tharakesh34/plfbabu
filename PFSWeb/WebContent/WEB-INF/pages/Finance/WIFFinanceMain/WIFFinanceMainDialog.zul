@@ -189,7 +189,7 @@
 														id="label_WIFFinanceMainDialog_PlanDeferCount"
 														value="${c:l('label_WIFFinanceMainDialog_PlanDeferCount.value')}" />
 													<hbox
-														id="hbox_FrqDef">
+														id="hbox_PlanDeferCount">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
@@ -584,7 +584,7 @@
 												</row>
 												<row>
 													<label
-														id="label_WIFMurabahaFinanceMainDialog_RepayRateBasis"
+														id="label_WIFinanceMainDialog_RepayRateBasis"
 														value="${c:l('label_WIFFinanceMainDialog_RepayRateBasis.value')}" />
 													<hbox>
 														<space
