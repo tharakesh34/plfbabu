@@ -251,8 +251,6 @@
 														<combobox
 															id="finRepayMethod" width="200px" />
 													</hbox>
-												</row>
-												<row>
 													<label
 														id="label_IstisnaFinanceMainDialog_DepriFrq"
 														value="${c:l('label_IstisnaFinanceMainDialog_DepriFrq.value')}"

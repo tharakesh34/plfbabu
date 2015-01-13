@@ -260,25 +260,6 @@
 														<combobox
 															id="finRepayMethod" width="200px" />
 													</hbox>
-												</row>
-												<row>
-													<label
-														id="label_MudarabaFinanceMainDialog_CommitRef"
-														value="${c:l('label_MudarabaFinanceMainDialog_CommitRef.value')}" />
-													<hbox
-														id="hbox_commitmentRef">
-														<space
-															id="space_commitmentRef" spacing="2px"
-															sclass="mandatory" />
-														<textbox
-															id="commitmentRef" width="170px" visible="false" />
-														<textbox
-															id="lovDescCommitmentRefName" width="250px"
-															readonly="true" tabindex="-1" />
-														<button
-															id="btnSearchCommitmentRef"
-															image="/images/icons/LOVSearch.png"  />
-													</hbox>
 													<label
 														id="label_MudarabaFinanceMainDialog_DepriFrq"
 														value="${c:l('label_MudarabaFinanceMainDialog_DepriFrq.value')}"
@@ -298,6 +279,25 @@
 														<combobox
 															id="cbDepreciationFrqDay" width="60px" readonly="true"
 															tabindex="-1" />
+													</hbox>
+												</row>
+												<row>
+													<label
+														id="label_MudarabaFinanceMainDialog_CommitRef"
+														value="${c:l('label_MudarabaFinanceMainDialog_CommitRef.value')}" />
+													<hbox
+														id="hbox_commitmentRef">
+														<space
+															id="space_commitmentRef" spacing="2px"
+															sclass="mandatory" />
+														<textbox
+															id="commitmentRef" width="170px" visible="false" />
+														<textbox
+															id="lovDescCommitmentRefName" width="250px"
+															readonly="true" tabindex="-1" />
+														<button
+															id="btnSearchCommitmentRef"
+															image="/images/icons/LOVSearch.png"  />
 													</hbox>
 												</row>
 												<row visible="false">

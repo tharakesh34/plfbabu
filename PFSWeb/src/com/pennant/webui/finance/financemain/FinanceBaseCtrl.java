@@ -6168,7 +6168,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
-		this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_frqDefferments"));
+		this.planDeferCount.setReadonly(isReadOnly("FinanceMainDialog_planDeferCount"));
 		this.disbAcctId.setReadonly(isReadOnly("FinanceMainDialog_disbAcctId"));
 		this.repayAcctId.setReadonly(isReadOnly("FinanceMainDialog_repayAcctId"));
 		this.commitmentRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
