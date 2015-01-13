@@ -1693,21 +1693,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		logger.debug("Leaving");
 	}
 
-	public void doSetListHeaders(){
-		if(getFinScheduleData().getFinanceMain().isStepFinance()){
-			//if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
-				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
-				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
-				this.listHeader_cashFlowEffect.setVisible(true);
-				this.listHeader_vSProfit.setVisible(true);
-			//}
-		} else {
-			this.listHeader_cashFlowEffect.setVisible(false);
-			this.listHeader_vSProfit.setVisible(false);
-			this.listHeader_orgPrincipalDue.setVisible(false);
-		}  
-	}
-	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
