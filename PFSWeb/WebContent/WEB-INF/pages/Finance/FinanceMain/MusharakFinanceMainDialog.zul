@@ -217,14 +217,14 @@
 															id="defferments" width="90px" maxlength="13" />
 													</hbox>
 													<label
-														id="label_MusharakFinanceMainDialog_FrqDef"
-														value="${c:l('label_MusharakFinanceMainDialog_FrqDefferments.value')}" />
+														id="label_MusharakFinanceMainDialog_PlanDeferCount"
+														value="${c:l('label_MusharakFinanceMainDialog_PlanDeferCount.value')}" />
 													<hbox
 														id="hbox_FrqDef">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
-															id="frqDefferments" width="90px" maxlength="14" />
+															id="planDeferCount" width="90px" maxlength="14" />
 													</hbox>
 												</row>
 												<row>
