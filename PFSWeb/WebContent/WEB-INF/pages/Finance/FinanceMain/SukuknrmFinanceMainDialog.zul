@@ -219,7 +219,7 @@
 														id="label_SukuknrmFinanceMainDialog_PlanDeferCount"
 														value="${c:l('label_SukuknrmFinanceMainDialog_PlanDeferCount.value')}" />
 													<hbox
-														id="hbox_FrqDef">
+														id="hbox_PlanDeferCount">
 														<space
 															spacing="2px" sclass="mandatory" />
 														<intbox
