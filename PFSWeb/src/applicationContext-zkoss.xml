@@ -3927,6 +3927,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
+		<property name="mailUtil" ref="mailUtil" />
 	</bean>
 
 	<!--============ Customer Summary Details ============== -->

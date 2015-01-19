@@ -232,7 +232,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
 		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(",lovDescCustCIF,lovDescCustCtgCode,lovDescCustShrtName,lovDescCcyEditField");
@@ -268,7 +268,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
 		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(",lovDescCustCIF,lovDescCustCtgCode,lovDescCustShrtName,lovDescCcyEditField");
@@ -388,10 +388,10 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DetailId,CreditRevCode,CustomerId,AuditYear,BankName,Auditors,Consolidated,Location,");
 		insertSql.append("  ConversionRate,AuditedDate,NoOfShares,MarketPrice,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,");
-		insertSql.append(" TaskId,NextTaskId,RecordType,WorkflowId, AuditPeriod, AuditType, Qualified, Currency)");
+		insertSql.append(" TaskId,NextTaskId,RecordType,WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division)");
 		insertSql.append(" Values ( :DetailId, :CreditRevCode, :CustomerId, :AuditYear, :BankName, :Auditors, :Consolidated, ");
 		insertSql.append(" :Location, :ConversionRate, :AuditedDate, :NoOfShares, :MarketPrice, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AuditPeriod, :AuditType, :Qualified, :Currency)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AuditPeriod, :AuditType, :Qualified, :Currency, :Division)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

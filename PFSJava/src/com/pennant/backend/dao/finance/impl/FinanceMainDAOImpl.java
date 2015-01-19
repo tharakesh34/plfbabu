@@ -235,7 +235,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, CustId, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, FinIsActive, " );
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, CustId, FinAmount, DownPayment, FeeChargeAmt, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, FinIsActive, " );
 		selectSql.append(" ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate,LastRepayRvwDate,FinCurrAssetValue, MaturityDate, FinStatus, FinStsReason, ");
 		selectSql.append(" ClosingStatus, LastRepayDate, NextRepayDate ");
 		selectSql.append(" From FinanceMain");

@@ -115,7 +115,10 @@ CreditApplicationReviewService {
 			details = processCustomerDocuments(details, creditReviewDetails.getDetailId(), "");
 			auditDetails.addAll(details);
 		}
-		saveNotes(creditReviewDetails.getNotesList(), creditReviewDetails);
+		
+		if(creditReviewDetails.getNotesList() != null){
+		  saveNotes(creditReviewDetails.getNotesList(), creditReviewDetails);
+		}
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(), creditReviewDetails));
 		
 		auditHeader.setAuditDetails(auditDetails);

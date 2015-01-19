@@ -68,6 +68,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -143,6 +144,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	protected Row	                       workFlowFrom;
 	protected Row 						   row_AlwWorkflow;
 	private transient boolean 			   approvedList=false;
+	private Tabbox	tabbox;
 
 	// List headers
 	protected Listheader	listheader_DetailId;	         // autowired
@@ -170,9 +172,11 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	private transient WorkFlowDetails	      workFlowDetails	= null;
 	private boolean isMaintinence = false;
-
+	private String workFlowType = "";
+	private String creditDivision="";
 	int dateAppCurrentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 	int dateAppPrevYear = dateAppCurrentYear-1;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -194,17 +198,39 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 */
 	public void onCreate$window_CreditApplicationReviewList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-
-		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("FinCreditReviewDetails");
+		
+		String menuItemName=null;
 		boolean wfAvailable = true;
 		if(this.moduleName.getValue().equals("CreditReviewMaintinence")){
 			isMaintinence = true;
+			setWorkFlowEnabled(true);
 		} else {
+			if (event.getTarget() != null && event.getTarget().getParent() != null
+					&& event.getTarget().getParent().getParent()!=null && 
+					event.getTarget().getParent().getParent().getParent() != null && 
+					event.getTarget().getParent().getParent().getParent().getParent() != null) {
+				
+				tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
+				menuItemName = tabbox.getSelectedTab().getId();
+				menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
+				
+				
+				if(menuItemName.equals("menu_Item_CommCreditAppReview")){
+					creditDivision = PennantConstants.CREDIT_DIVISION_COMMERCIAL;
+				} else if(menuItemName.equals("menu_Item_CorpCreditAppReview")){
+					creditDivision = PennantConstants.CREDIT_DIVISION_CORPORATE;
+				}
+			}
+			
+			if(menuItemName != null){
+				workFlowType = menuItemName.replace("menu_Item_", "");
+			}
 			isMaintinence = false;
 		}
-		if (moduleMapping.getWorkflowType() != null) {
-			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinCreditReviewDetails");
-
+		
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(workFlowType);
+		if (moduleMapping != null && moduleMapping.getWorkflowType() != null) {
+			workFlowDetails = WorkFlowUtil.getWorkFlowDetails(workFlowType);
 			if (workFlowDetails == null) {
 				setWorkFlowEnabled(false);
 			} else {
@@ -304,6 +330,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 			this.searchObjCreditReviewDetails = new JdbcSearchObject<FinCreditReviewDetails>(FinCreditReviewDetails.class, getListRows());
 			this.searchObjCreditReviewDetails.addSort("DetailId", false);
 			this.searchObjCreditReviewDetails.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+			if(!isMaintinence){
+				this.searchObjCreditReviewDetails.addFilterEqual("Division", creditDivision);
+			}
 
 		// WorkFlow
 			if (isWorkFlowEnabled()) {
@@ -386,8 +415,8 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 				if (isWorkFlowEnabled()) {
 					String whereCond = " AND Detailid=" + creditReviewDetails.getDetailId() + 
 					" AND version=" + creditReviewDetails.getVersion() + " ";
-
-					boolean userAcces = validateUserAccess(workFlowDetails.getId(), 
+					
+					boolean userAcces = validateUserAccess(creditReviewDetails.getWorkflowId(), 
 							getUserWorkspace().getLoginUserDetails().getLoginUsrID(), "FinCreditReviewDetails", 
 							whereCond, creditReviewDetails.getTaskId(), creditReviewDetails.getNextTaskId());
 					if (userAcces) {
@@ -415,7 +444,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		// create a new WIFFinanceMain object, We GET it from the backend.
 		final FinCreditReviewDetails aCreditReviewDetails = getCreditApplicationReviewService().getNewCreditReviewDetails();
 		aCreditReviewDetails.setNewRecord(true);
-
+		aCreditReviewDetails.setWorkflowId(getWorkFlowId());
+		aCreditReviewDetails.setDivision(creditDivision);
+		
 		/*
 		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
 		 * call them with a object of the selected FinanceMain. For handed over
@@ -593,7 +624,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 					}} ,true);
 		}
 		
-		
+		if(!isMaintinence){
+			this.searchObjCreditReviewDetails.addFilterEqual("Division", creditDivision);
+		}
 		
 		// Work flow
 		if (isWorkFlowEnabled()) {

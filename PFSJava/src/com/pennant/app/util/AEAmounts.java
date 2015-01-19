@@ -251,6 +251,27 @@ public class AEAmounts implements Serializable {
 					        .subtract(curSchd.getDefSchdPftPaid()));
  			}
 		}
+				
+		// Depreciation Calculation depends on Total Finance Amount with Days basis
+		if (isAccrualProcess) {
+
+			BigDecimal daysBetweenStartMaturityDate  = new BigDecimal(DateUtility.getDaysBetween(
+					financeMain.getMaturityDate(),financeMain.getFinStartDate()));
+			BigDecimal daysBetweenStartValueDate     = new BigDecimal(DateUtility.getDaysBetween(
+					valueDate, financeMain.getFinStartDate()));
+			BigDecimal daysBetweenStartYearValueDate = new BigDecimal(DateUtility.getDaysBetween(
+					valueDate, DateUtility.getYearStartDate(valueDate)));
+			BigDecimal finAmount = financeMain.getFinAmount().subtract(financeMain.getDownPayment()).
+					add(financeMain.getFeeChargeAmt());
+			
+			
+			accumulatedPriTillDate = (finAmount.multiply(daysBetweenStartValueDate))
+					.divide(daysBetweenStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+
+			depreciatePri = (finAmount.multiply(daysBetweenStartYearValueDate)).
+					divide(daysBetweenStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+
+		}
 		
 		//Last Repay Amount Value
 		Date lastSchDate = null;
@@ -670,7 +691,7 @@ public class AEAmounts implements Serializable {
 
 		}
 		
-		// Principal Accumulated till previous scheduled date
+		/*// Principal Accumulated till previous scheduled date
 		if (isAccrualProcess && dateCurRecord.compareTo(valueDate) < 0) {
 			accumulatedPriTillDate = accumulatedPriTillDate.add(curSchd.getPrincipalSchd()).add(curSchd.getDefPrincipalSchd());
 			
@@ -686,7 +707,7 @@ public class AEAmounts implements Serializable {
 			}else{
 				depreciatePri = depreciatePri.add(curSchd.getPrincipalSchd()).add(curSchd.getDefPrincipalSchd());
 			}
-		}
+		}*/
 
 		/*// Transfered Accrued Amount till PAST month End Date
 		if (dateCurRecord.compareTo(dateAccrueTsfdValue) <= 0) {
@@ -714,10 +735,10 @@ public class AEAmounts implements Serializable {
 				aeAmountCodes = calPartAccrual(curSchd, datePrvRecord,
 				        prvSchd.getCalculatedRate(), profitDayBasis);
 				
-				//Principal Accrual Calculation
+				/*//Principal Accrual Calculation
 				if(isAccrualProcess){
 					calPartPriAccrual(curSchd, datePrvRecord,valueDate);
-				}
+				}*/
 			}
 
 			//###NEW Suspense From DATE IS LAST DATE OF PREVIOUS SCHDULE RECORD
@@ -734,12 +755,12 @@ public class AEAmounts implements Serializable {
 					        profitDayBasis);
 				}    
 				
-				//Principal Accrual Calculation
+				/*//Principal Accrual Calculation
 				if(isAccrualProcess){
 					if(datePrvRecord.compareTo(valueDate) < 0 && dateCurRecord.compareTo(valueDate) > 0){
 						calPartPriAccrual(curSchd, datePrvRecord,valueDate);
 					}
-				}
+				}*/
             }
 			
 
@@ -823,7 +844,7 @@ public class AEAmounts implements Serializable {
 	 * @param dateFrom
 	 * @param valueDate
 	 */
-	private void calPartPriAccrual(FinanceScheduleDetail curSchd, Date dateFrom, Date valueDate) {
+	/*private void calPartPriAccrual(FinanceScheduleDetail curSchd, Date dateFrom, Date valueDate) {
 
 		BigDecimal priCalAsOfNow = zeroValue;
 
@@ -844,7 +865,7 @@ public class AEAmounts implements Serializable {
 		accumulatedPriTillDate = accumulatedPriTillDate.add(priCalAsOfNow);
 		depreciatePri = depreciatePri.add(priCalAsOfNow);
 
-	}
+	}*/
 
 	/*private void calPartAccrualTsfd(FinanceScheduleDetail curSchd, Date dateFrom,
 	        BigDecimal pftRate, String profitDayBasis) {

@@ -98,10 +98,9 @@ public class DepreciationPostings implements Tasklet {
 			
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
-			sqlStatement.setString(2, "IJARAH");
-			sqlStatement.setDate(3, DateUtility.getDBDate(DateUtility.getMonthStartDate(dateValueDate).toString()));
-			sqlStatement.setDate(4, DateUtility.getDBDate(dateValueDate.toString()));
+			sqlStatement.setString(1, "IJARAH");
+			sqlStatement.setDate(2, DateUtility.getDBDate(DateUtility.getYearStartDate(dateValueDate).toString()));
+			sqlStatement.setDate(3, DateUtility.getDBDate(dateValueDate.toString()));
 			
 			resultSet = sqlStatement.executeQuery();
 			resultSet.next();			
@@ -109,10 +108,9 @@ public class DepreciationPostings implements Tasklet {
 			
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
 			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
-			sqlStatement.setDate(2, DateUtility.getDBDate(dateValueDate.toString()));
-			sqlStatement.setString(3, "IJARAH");
-			sqlStatement.setDate(4, DateUtility.getDBDate(DateUtility.getMonthStartDate(dateValueDate).toString()));
-			sqlStatement.setDate(5, DateUtility.getDBDate(dateValueDate.toString()));
+			sqlStatement.setString(2, "IJARAH");
+			sqlStatement.setDate(3, DateUtility.getDBDate(DateUtility.getYearStartDate(dateValueDate).toString()));
+			sqlStatement.setDate(4, DateUtility.getDBDate(dateValueDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 		
 			long linkedTranId = Long.MIN_VALUE;
@@ -208,8 +206,9 @@ public class DepreciationPostings implements Tasklet {
 		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)");
 		selQuery.append(" FROM FinanceMain AS T1 INNER JOIN RMTFinanceTypes AS T3 ON T1.FinType=T3.FinType " );
 		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference  " );
-		selQuery.append(" WHERE T1.NextDepDate = ? AND ISNULL(T1.DepreciationFrq,'') <> '' AND T3.FinCategory = ? ");
-		selQuery.append(" AND (T1.FinIsActive = 1 OR  (T1.FinIsActive = 0 AND T4.LatestRpyDate >= ? AND T4.LatestRpyDate <= ?)) ");
+		selQuery.append(" WHERE ISNULL(T1.DepreciationFrq,'') <> '' AND T3.FinCategory = ? ");
+		selQuery.append(" AND (T1.FinIsActive = 1 OR  (T1.FinIsActive = 0 AND T4.LatestRpyDate >= ? AND T4.LatestRpyDate <= ?)) " );
+		selQuery.append(" AND ISNULL(T1.ClosingStatus , '') <> 'C'");
 		return selQuery.toString();
 	}
 	/**
@@ -231,8 +230,9 @@ public class DepreciationPostings implements Tasklet {
 		selQuery.append(" T3.AllowRIAInvestment , T4.AccumulatedDepPri , T4.DepreciatePri, T4.TotalPriPaid " );
 		selQuery.append(" FROM FinanceMain AS T1 INNER JOIN RMTFinanceTypes AS T3 ON T1.FinType=T3.FinType " );
 		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference  " );
-		selQuery.append(" WHERE T1.NextDepDate = ? AND ISNULL(T1.DepreciationFrq,'') <> '' AND T3.FinCategory = ? ");
+		selQuery.append(" WHERE ISNULL(T1.DepreciationFrq,'') <> '' AND T3.FinCategory = ? ");
 		selQuery.append(" AND (T1.FinIsActive = 1 OR  (T1.FinIsActive = 0 AND T4.LatestRpyDate >= ? AND T4.LatestRpyDate <= ?)) ");
+		selQuery.append(" AND ISNULL(T1.ClosingStatus , '') <> 'C'");
 		return selQuery.toString();
 	}
 	

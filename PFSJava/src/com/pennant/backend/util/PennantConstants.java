@@ -612,4 +612,7 @@ public class PennantConstants {
 	public static final String HOLDTYPE_FUTURE 		=	"F";
 
 	public static final String FINANCE_PRODUCT_CONVENTIONAL = "CONV"; 
+	// Credit Review Division
+	public static final String CREDIT_DIVISION_COMMERCIAL = "COMM";
+	public static final String CREDIT_DIVISION_CORPORATE = "CORP";
 }

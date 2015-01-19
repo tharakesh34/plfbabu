@@ -184,6 +184,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 	Date appDftStrtDate = (Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	String maxAuditYear=null;
 	boolean showCurrentYear;
+	int notesEnteredCount;
+	int noOfRecords;
 	/**
 	 * default constructor.<br>
 	 */
@@ -414,6 +416,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		boolean isNew = false;
 		String tranType = "";
         int approvedRecordsCount = 0;
+        notesEnteredCount = 0;
 		Map<String ,List<FinCreditReviewSummary>> creditReviewSummaryMap;
 		creditReviewSummaryMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(this.custID.getValue(), noOfYears,year, "_View");
 		if(creditReviewDetailsMap == null){
@@ -454,7 +457,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		String ltstYrRcdStatus = finCreditReviewDetails.getRecordStatus();
 		FinCreditReviewDetails ltstFinCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(this.finCreditReviewDetails, ltstFinCreditReviewDetails);
-
+		noOfRecords = listOfFinCreditReviewDetails.size();
+		int proRecordCount = 0;
 		for(FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails){
 			
 			if(!aCreditReviewDetails.getRecordStatus().equals("Approved")){
@@ -505,11 +509,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 				// save it to database
 				try {
 					if (doProcess(aCreditReviewDetails, tranType)) {
-						//Mail Alert Notification for User
-						if(!StringUtils.trimToEmpty(aCreditReviewDetails.getNextTaskId()).equals("") && 
-								!StringUtils.trimToEmpty(aCreditReviewDetails.getNextRoleCode()).equals(aCreditReviewDetails.getRoleCode())){
-							//getMailUtil().sendMail(PennantConstants.MAIL_MODULE_CREDIT, aCreditReviewDetails,this);
-						}
+						proRecordCount++;
 						// do Close the Dialog window
 						closeDialog(this.window_CreditApplicationReviewDialog, "CreditApplicationReviewDialog");
 						creditApplicationReviewListCtrl.refresh();
@@ -521,6 +521,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 			} else {
 				approvedRecordsCount++;
 			}
+		}
+		
+		if(proRecordCount ==3 && listOfFinCreditReviewDetails != null 
+				&& listOfFinCreditReviewDetails.size() > 0){
+			//Mail Alert Notification for User
+			getMailUtil().sendMail(PennantConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0),this);
 		}
 		if(approvedRecordsCount == 3){
 			closeDialog(this.window_CreditApplicationReviewDialog, "CreditApplicationReviewDialog");
@@ -566,11 +572,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 
 				if (PennantConstants.WF_Audit_Notes.equals(getWorkFlow().getAuditingReq(taskId, 
 						aCreditReviewDetails))) {
+					notesEnteredCount++;
 					try {
-						if (!isNotes_Entered()) {
-							PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+						if (!isNotes_Entered() && notesEnteredCount != noOfRecords) {
 							return false;
+						} 
+					if(notesEnteredCount == noOfRecords){
+						if(!isNotes_Entered()){
+						 PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+						 return false;
 						}
+					}
 					} catch (InterruptedException e) {
 						logger.error(e);
 						e.printStackTrace();

@@ -185,11 +185,29 @@ public class AmortizationServiceImpl implements AmortizationService {
 			
 			if(isMonthEndTsfd && ("N".equals(isDummy))){
 				
-				//Setting Accrue Transfered Amount Values reset to ZERO
-				getFinanceProfitDetailDAO().resetAcrTsfdInSusp();
-				
 				java.sql.Date monthStartDate = DateUtility.getDBDate(DateUtility.getMonthStartDate(valueDate).toString());
 				java.sql.Date monthLastDate = DateUtility.getDBDate(DateUtility.getMonthEndDate(valueDate).toString());
+				java.sql.Date lastmonthEndDate = DateUtility.addDays(monthStartDate, -1);
+				
+				// Set Profit Accrual Transfered to Previous Transfered amount for all matured Finances before Last month
+				try{
+					statement = connection.prepareStatement(resetAccrueTsfd(type));
+					statement.setDate(1, lastmonthEndDate);
+					resultSet = statement.executeQuery();
+				}catch(Exception e){
+					logger.error(e.getMessage());
+				}
+				
+				//Update Suspense status for all matured finances , even any of the customer finance is in Suspense
+				try{
+					statement = connection.prepareStatement(updateSuspSts(type));
+					resultSet = statement.executeQuery();
+				}catch(Exception e){
+					logger.error(e.getMessage());
+				}
+				
+				//Setting Accrue Transfered Amount Values reset to ZERO
+				getFinanceProfitDetailDAO().resetAcrTsfdInSusp();
 				
 				//Executing Query to prepare Accrual Transfered of this month
 				statement = connection.prepareStatement(getSuspAcrTsfdRefDetail());
@@ -526,6 +544,35 @@ public class AmortizationServiceImpl implements AmortizationService {
 		sqlQuery.append(" PftAccrueTsfd = CASE WHEN PftInSusp ='1' THEN (AcrTsfdInSusp +PftAccrueTsfd) ELSE (TotalPftPaid + TdPftAccrued) END ");
 		sqlQuery.append(" where FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= ? AND LatestRpyDate <= ? )  ");
 		//sqlQuery.append(" WHERE FinIsActive = 0 AND ISNULL(ClosingStatus,'') = 'M' AND PftAccrueTsfd != TotalPftPaid " );
+		return sqlQuery.toString();
+	}
+	
+	/**
+	 * Method for Update Accrual Transfered Amount for Inactive Fiannces
+	 * 
+	 * @return<String> sqlQuery
+	 */
+	private String resetAccrueTsfd(String type) {
+		
+		StringBuilder sqlQuery = new StringBuilder();
+		sqlQuery.append(" Update FinPftDetails" );
+		sqlQuery.append(StringUtils.trimToEmpty(type));
+		sqlQuery.append(" SET PrvPftAccrueTsfd = PftAccrueTsfd ,  SuspPftAccrueTsfd = 0  ");
+		sqlQuery.append(" where FinIsActive = 0 AND LatestRpyDate <= ?  AND PrvPftAccrueTsfd != PftAccrueTsfd  ");
+		return sqlQuery.toString();
+	}
+	
+	/**
+	 * Method for Update Suspense Status for Inactive Finance
+	 * 
+	 * @return<String> sqlQuery
+	 */
+	private String updateSuspSts(String type) {
+		
+		StringBuilder sqlQuery = new StringBuilder();
+		sqlQuery.append(" Update FinPftDetails" );
+		sqlQuery.append(StringUtils.trimToEmpty(type));
+		sqlQuery.append(" SET PftInSusp = 0 WHERE FinIsActive = 0 AND PftInSusp = 1  ");
 		return sqlQuery.toString();
 	}
 	

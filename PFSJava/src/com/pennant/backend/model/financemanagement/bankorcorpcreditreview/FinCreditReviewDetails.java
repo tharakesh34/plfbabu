@@ -58,7 +58,7 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
 	private String currency;
 	private String lovDescMaxAuditYear;
 	private String lovDescMinAuditYear;
-	
+	private String division;
 	
 	private List<Notes> notesList;
 	
@@ -400,6 +400,14 @@ public class FinCreditReviewDetails implements java.io.Serializable,Entity {
     }
 	public void setLovDescMinAuditYear(String lovDescMinAuditYear) {
     	this.lovDescMinAuditYear = lovDescMinAuditYear;
+    }
+
+	public String getDivision() {
+	    return division;
+    }
+
+	public void setDivision(String division) {
+	    this.division = division;
     }
 
 }

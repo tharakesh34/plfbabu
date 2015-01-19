@@ -81,7 +81,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.Unearned", indices, pftDetails.getUnearned()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.PftInSusp", indices, pftDetails.getPftInSusp() == true ? 1 : 0); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.SuspPft", indices, pftDetails.getSuspPft()); 			
-				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.PftAccrueTsfd", indices, pftDetails.getPftAccrueTsfd()); 			
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.PftAccrueTsfd", indices, pftDetails.getPftAccrueTsfd() == null ? BigDecimal.ZERO : pftDetails.getPftAccrueTsfd()); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinStatus", indices, StringUtils.trimToEmpty(pftDetails.getFinStatus())); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinStsReason", indices, StringUtils.trimToEmpty(pftDetails.getFinStsReason())); 			
 				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.FinWorstStatus", indices, StringUtils.trimToEmpty(pftDetails.getFinWorstStatus())); 

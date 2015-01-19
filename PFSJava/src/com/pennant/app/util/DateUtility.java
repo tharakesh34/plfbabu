@@ -937,6 +937,13 @@ public final class DateUtility {
 	 * @param date
 	 * @return Date
 	 */
+	public static java.util.Date getYearStartDate(java.util.Date date) {
+		int month = 0;
+		int year = getYear(date);
+		int day = 1;
+		return convert(new GregorianCalendar(year, month, day));
+	}
+	
 	public static java.util.Date getYearEndDate(java.util.Date date) {
 		int month = 11;
 		int year = getYear(date);

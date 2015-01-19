@@ -90,6 +90,8 @@ public class DateRollOver implements Tasklet {
 
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 		
+		Date valueDate = DateUtility.addDays(dateValueDate,-1);
+		
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
@@ -98,7 +100,7 @@ public class DateRollOver implements Tasklet {
 		try {
 			
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(prepareSelectQuery());
+			sqlStatement = connection.prepareStatement(prepareSelectQuery(valueDate));
 			resultSet = sqlStatement.executeQuery();
 
 			String finReference = null;
@@ -137,10 +139,10 @@ public class DateRollOver implements Tasklet {
 				StringBuilder updateSql = new StringBuilder( "UPDATE FinanceMain SET");
 				
 				// If grace is allowed
-				if (resultSet.getBoolean("AllowGrcPeriod") &&  DateUtility.compare(graceEndDate, dateValueDate) >0) {
+				if (resultSet.getBoolean("AllowGrcPeriod") &&  DateUtility.compare(graceEndDate, valueDate) >0) {
 					
 					if (resultSet.getString("NextGrcPftDate") != null && (DateUtility.compare(
-							DateUtility.getDBDate(resultSet.getString("NextGrcPftDate")),dateValueDate) == 0)) {
+							DateUtility.getDBDate(resultSet.getString("NextGrcPftDate")),valueDate) == 0)) {
 
 						dateNextGrcPft = DateUtility.getDBDate(resultSet.getString("NextGrcPftDate"));
 						dateLastRepayPft = dateNextGrcPft;
@@ -155,7 +157,7 @@ public class DateRollOver implements Tasklet {
 						dateNextGrcPftRvw = DateUtility.getDBDate(resultSet.getString("NextGrcPftRvwDate"));
 						
 						if (resultSet.getString("NextGrcPftRvwDate") != null && 
-								(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextGrcPftRvwDate")),dateValueDate) == 0)) {
+								(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextGrcPftRvwDate")),valueDate) == 0)) {
 
 							dateLastRepayRvw = dateNextGrcPftRvw;
 							dateNextGrcPftRvw = getNextSchDate(connection, finReference, dateLastRepayPft, "RvwOnSchDate");
@@ -169,7 +171,7 @@ public class DateRollOver implements Tasklet {
 					if (resultSet.getBoolean("AllowGrcCpz")) {
 						dateNextGrcCpz = DateUtility.getDBDate(resultSet.getString("NextGrcCpzDate"));
 						if (resultSet.getString("NextGrcCpzDate") != null && (DateUtility.compare(DateUtility
-								.getDBDate(resultSet .getString("NextGrcCpzDate")), dateValueDate) == 0)) {
+								.getDBDate(resultSet .getString("NextGrcCpzDate")), valueDate) == 0)) {
 
 							dateLastRepayCpz = dateNextGrcCpz;
 							dateNextGrcCpz = getNextSchDate(connection, finReference, dateLastRepayCpz, "CpzOnSchDate");
@@ -182,10 +184,10 @@ public class DateRollOver implements Tasklet {
 				}
 
 				// REPAYMENT PERIOD
-				if (DateUtility.compare(maturityDate, dateValueDate) > 0) {
+				if (DateUtility.compare(maturityDate, valueDate) > 0) {
 					
 					if (resultSet.getString("NextGrcPftDate") != null && 
-							(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextGrcPftDate")),dateValueDate) == 0)) {
+							(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextGrcPftDate")),valueDate) == 0)) {
 						
 						dateLastRepay = dateLastRepayPft;
 						dateNextRepay = getNextSchDate(connection, finReference, dateLastRepay, "RepayOnSchDate");
@@ -195,7 +197,7 @@ public class DateRollOver implements Tasklet {
 						updateSql.append(" NextRepayDate = '" + dateNextRepay + "',");
 						
 					}else if (resultSet.getString("NextRepayDate") != null && 
-							(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextRepayDate")),dateValueDate) == 0)) {
+							(DateUtility.compare(DateUtility.getDBDate(resultSet.getString("NextRepayDate")),valueDate) == 0)) {
 						
 						dateLastRepay = dateNextRepay;
 						if(resultSet.getBoolean("FinRepayPftOnFrq")){
@@ -210,7 +212,7 @@ public class DateRollOver implements Tasklet {
 					}
 
 					if (resultSet.getString("NextRepayPftDate") != null && (DateUtility.compare(
-							DateUtility.getDBDate(resultSet.getString("NextRepayPftDate")),dateValueDate) == 0)) {
+							DateUtility.getDBDate(resultSet.getString("NextRepayPftDate")),valueDate) == 0)) {
 
 						dateLastRepayPft = dateNextRepayPft;
 						dateNextRepayPft = getNextSchDate(connection, finReference, dateLastRepayPft, "PftOnSchDate");
@@ -221,7 +223,7 @@ public class DateRollOver implements Tasklet {
 					}
 
 					if (resultSet.getString("NextRepayRvwDate") != null && (DateUtility.compare(
-							DateUtility.getDBDate(resultSet.getString("NextRepayRvwDate")), dateValueDate) == 0)) {
+							DateUtility.getDBDate(resultSet.getString("NextRepayRvwDate")), valueDate) == 0)) {
 
 						dateLastRepayRvw = dateNextRepayRvw;
 						dateNextRepayRvw = getNextSchDate(connection,finReference, dateLastRepayRvw, "RvwOnSchDate");
@@ -232,7 +234,7 @@ public class DateRollOver implements Tasklet {
 					}
 
 					if (resultSet.getString("NextRepayCpzDate") != null && (DateUtility.compare(
-							DateUtility.getDBDate(resultSet.getString("NextRepayCpzDate")),dateValueDate) == 0)) {
+							DateUtility.getDBDate(resultSet.getString("NextRepayCpzDate")),valueDate) == 0)) {
 
 						dateLastRepayCpz = dateNextRepayCpz;
 						dateNextRepayCpz = getNextSchDate(connection, finReference, dateLastRepayCpz, "CpzOnSchDate");
@@ -245,10 +247,10 @@ public class DateRollOver implements Tasklet {
 				
 				//Depreciation Date
 				if(!StringUtils.trimToEmpty(resultSet.getString("DepreciationFrq")).equals("") && (DateUtility.compare(
-						DateUtility.getDBDate(resultSet.getString("NextDepDate")),dateValueDate) < 0)) {
+						DateUtility.getDBDate(resultSet.getString("NextDepDate")),valueDate) == 0)) {
 					
 					dateNextDepDate = FrequencyUtil.getNextDate(resultSet.getString("DepreciationFrq"),
-							1, dateValueDate, "A", false).getNextFrequencyDate();
+							1, valueDate, "A", false).getNextFrequencyDate();
 					
 					dateNextDepDate = DateUtility.getDBDate(DateUtility.formatUtilDate(dateNextDepDate, PennantConstants.DBDateFormat));
 					updateSql.append(" NextDepDate = '" + dateNextDepDate + "',");
@@ -297,7 +299,7 @@ public class DateRollOver implements Tasklet {
 	 * @param selQuery
 	 * @return
 	 */
-	private String prepareSelectQuery() {
+	private String prepareSelectQuery(Date valueDate) {
 		
 		StringBuilder selQuery = new StringBuilder(" SELECT FinReference, CustID, FinBranch, GrcPftFrq, NextGrcPftDate, AllowGrcPeriod, ");
 		selQuery.append(" FinRepayPftOnFrq, DepreciationFrq, NextDepDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate, ");
@@ -306,15 +308,16 @@ public class DateRollOver implements Tasklet {
 		selQuery.append(" AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, RepayCpzFrq, NextRepayCpzDate, ");
 		selQuery.append(" FinType, FinCcy, GrcPeriodEndDate, LastRepayDate," );
 		selQuery.append(" MaturityDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate ");
-		selQuery.append(" FROM FinanceMain WHERE (NextGrcPftDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextGrcPftRvwDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextGrcCpzDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextRepayDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextRepayPftDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextRepayRvwDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextDepDate = '" + dateValueDate + "'");
-		selQuery.append(" OR NextRepayCpzDate = '" + dateValueDate + "')");
-		selQuery.append(" AND MaturityDate >= '" + dateValueDate + "'");
+		selQuery.append(" FROM FinanceMain WHERE (NextGrcPftDate = '" + valueDate + "'");
+		selQuery.append(" OR NextGrcPftRvwDate = '" + valueDate + "'");
+		selQuery.append(" OR NextGrcCpzDate = '" + valueDate + "'");
+		selQuery.append(" OR NextRepayDate = '" + valueDate + "'");
+		selQuery.append(" OR NextRepayPftDate = '" + valueDate + "'");
+		selQuery.append(" OR NextRepayRvwDate = '" + valueDate + "'");
+		selQuery.append(" OR NextDepDate = '" + valueDate + "'");
+		selQuery.append(" OR NextRepayCpzDate = '" + valueDate + "')");
+		selQuery.append(" AND MaturityDate >= '" + valueDate + "'");
+		selQuery.append(" AND (FinIsActive = 1 AND ISNULL(ClosingStatus , '') <> 'C') ");
 		return selQuery.toString();
 		
 	}

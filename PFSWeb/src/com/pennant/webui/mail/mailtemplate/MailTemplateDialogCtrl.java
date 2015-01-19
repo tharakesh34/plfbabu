@@ -1535,14 +1535,12 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl implements Serializable 
 		logger.debug("Entering "+event);
 		
 		if(this.templateModule.getSelectedItem().getValue() != null && 
-				this.templateModule.getSelectedItem().getValue().toString().equals(PennantConstants.MAIL_MODULE_CAF)){
+			(this.templateModule.getSelectedItem().getValue().toString().equals(PennantConstants.MAIL_MODULE_CAF)
+			 || this.templateModule.getSelectedItem().getValue().toString().equals(PennantConstants.MAIL_MODULE_FIN) 
+			 || this.templateModule.getSelectedItem().getValue().toString().equals(PennantConstants.MAIL_MODULE_CREDIT))){
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData); 
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1); 
-		} else if(this.templateModule.getSelectedItem().getValue() != null && 
-				this.templateModule.getSelectedItem().getValue().toString().equals(PennantConstants.MAIL_MODULE_FIN)){
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData); 
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1); 
-		}
+		} 
         
 		this.emailSubject.setValue("");
 		this.htmlArtifact.setValue("");

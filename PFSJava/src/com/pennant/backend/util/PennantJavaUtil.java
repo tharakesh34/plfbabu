@@ -997,11 +997,15 @@ public class PennantJavaUtil {
 			put("ReportFilterFields",new ModuleMapping(ReportFilterFields.class, "ReportFilterFields", new String[] {"fieldName","fieldType"} , null,null,350));	
 			put("ReportConfiguration",new ModuleMapping(ReportConfiguration.class, "ReportConfiguration", new String[] {"reportName","reportName"} , null,null,350));
 
-
 			
+			put("CommCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, "CREDIT_REVIEW_COMMERCIAL", 600));
 			
 			put("FinCreditReviewDetails", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
-					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, "CREDIT_APP_REVIEW", 600));
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, null, 600));
+			
+			put("CorpCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, "CREDIT_REVIEW_CORPORATE", 600));
 			
 			
 			put("FinCreditReviewSummary", new ModuleMapping(new FinCreditReviewSummary(), new String[] { "FinCreditReviewSummary" },
@@ -1010,7 +1014,7 @@ public class PennantJavaUtil {
 			put("FinCreditRevSubCategory", new ModuleMapping(new FinCreditRevSubCategory(), new String[] { "FinCreditRevSubCategory" },
 					new String[] { "SubCategoryCode" , "SubCategoryDesc", "ItemRule" }, null, "MSTGRP1", 600));
 			
-			put("Commitment",new ModuleMapping(new Commitment(""), new String[]{"Commitments", "Commitments_AView"}, new String[] {"CmtReference","CmtTitle","CmtExpDate"} , null, "FACILITY_COMMITMENT",600));
+			put("Commitment",new ModuleMapping(new Commitment(""), new String[]{"Commitments", "Commitments_AView"}, new String[] {"CmtReference","custID","CustShrtName","CmtTitle","CmtExpDate"} , null, "FACILITY_COMMITMENT",800));
 			put("CommitmentMovement",new ModuleMapping(new CommitmentMovement(""), new String[]{"CommitmentMovements", ""}, new String[] {"CmtReference","FinReference"} , null, "MSTGRP1",300));
 			 
 			put("JVPosting",new ModuleMapping(new JVPosting(""), new String[]{"JVPostings", "JVPostings_AView"}, new String[] {"BatchReference","Batch"} , null, "FIN_RATECHANGE",300));

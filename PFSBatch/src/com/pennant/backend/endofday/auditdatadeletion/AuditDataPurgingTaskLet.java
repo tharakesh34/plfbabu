@@ -32,7 +32,7 @@ public class AuditDataPurgingTaskLet implements Tasklet{
 			context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("AUDITPURGING_STATUS", auditPurgingStatus);
 		} catch (Exception e) {
 			logger.error("Audit Data Purging Failed "+e);
-			throw e;
+			context.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("AUDITPURGING_STATUS",e);
 		}
 		logger.debug("COMPLETE: Audit Data Purging for Value Date: "+ dateValueDate);
 		return RepeatStatus.FINISHED;

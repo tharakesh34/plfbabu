@@ -212,7 +212,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl implements Serializable {
 			MailTemplateData data = new MailTemplateData();
 			
 			Map<String, Object> model = new HashMap<String, Object>();
-			if(module.equals("FIN")) {
+			if(module.equals("FIN") || module.equals("CRD")) {
 				model.put("vo", data);
 			}
 			
