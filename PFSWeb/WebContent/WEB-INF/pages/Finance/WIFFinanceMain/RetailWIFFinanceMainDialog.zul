@@ -189,8 +189,7 @@
 													<currencyBox
 														id="downPaySupl" />
 												</row>
-												<row id="defermentsRow"
-													visible="false">
+												<row id="defermentsRow" >
 													<label
 														id="label_MurabahaFinanceMainDialog_Defferments"
 														value="${c:l('label_MurabahaFinanceMainDialog_Defferments.value')}" />
