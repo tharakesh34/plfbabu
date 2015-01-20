@@ -183,7 +183,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("_AAView") || StringUtils.trimToEmpty(type).contains("_TAView")) {
-			selectSql.append(",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage");
+			selectSql.append(",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage, lovDescAggRuleName");
 		} else if (StringUtils.trimToEmpty(type).equals("_AEView") || StringUtils.trimToEmpty(type).equals("_TEView")) {
 			selectSql.append(",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov");
 		} else if (StringUtils.trimToEmpty(type).equals("_ASGView") || StringUtils.trimToEmpty(type).equals("_TSGView")) {

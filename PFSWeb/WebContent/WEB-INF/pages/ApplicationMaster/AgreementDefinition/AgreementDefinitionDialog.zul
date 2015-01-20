@@ -81,8 +81,6 @@
 									<uppercasebox id="aggCode"
 										maxlength="50" width="120px" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_AgreementDefinitionDialog_AggName"
 									value="${c:l('label_AgreementDefinitionDialog_AggName.value')}" />
@@ -102,8 +100,6 @@
 									<textbox id="aggDesc" maxlength="50"
 										width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_AgreementDefinitionDialog_AggReportName"
 									value="${c:l('label_AgreementDefinitionDialog_AggReportName.value')}" />
@@ -114,7 +110,12 @@
 										maxlength="100" width="250px" />
 								</hbox>
 							</row>
-
+							<row>
+								<label
+									id="label_AgreementDefinitionDialog_AgrRule"
+									value="${c:l('label_AgreementDefinitionDialog_AgrRule.value')}" />
+								<extendedcombobox id="agrRule" />
+							</row>
 							<row>
 								<label
 									id="label_AgreementDefinitionDialog_AggReqDetails"

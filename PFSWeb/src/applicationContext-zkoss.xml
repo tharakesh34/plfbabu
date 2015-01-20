@@ -828,7 +828,6 @@
 	<bean id="agreementDefinitionDialogCtrl"
 		class="com.pennant.webui.applicationmaster.agreementdefinition.AgreementDefinitionDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
 	</bean>
 
@@ -2387,6 +2386,9 @@
 		class="com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl"
 		parent="basisCtrl" >
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="pagedListService" ref="pagedListService" />
+		<property name="ruleService" ref="ruleService" />
 		<property name="notesService" ref="notesService" />
 		
 	</bean>	

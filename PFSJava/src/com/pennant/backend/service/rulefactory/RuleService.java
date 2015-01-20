@@ -72,4 +72,5 @@ public interface RuleService {
 	
 	List<Rule> getRulesByGroupId(long groupId, String ruleModule, String ruleEvent);
 	List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId);
+	String getAmountRule(String id, String module, String event);
 }

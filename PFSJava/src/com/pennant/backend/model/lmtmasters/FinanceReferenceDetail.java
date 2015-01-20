@@ -83,6 +83,7 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 	private String lovDescElgRuleValue;
 	private String lovDescAggReportName;
 	private String lovDescAggReportPath;
+	private String lovDescAggRuleName;
 	private int lovDescminScore;
 	private boolean lovDescisoverride;
 	private int lovDescoverrideScore;
@@ -543,5 +544,13 @@ public class FinanceReferenceDetail implements java.io.Serializable, Entity {
 
 	public String getLovDescFinTypeDescName() {
 	    return lovDescFinTypeDescName;
+    }
+
+	public String getLovDescAggRuleName() {
+	    return lovDescAggRuleName;
+    }
+
+	public void setLovDescAggRuleName(String lovDescAggRuleName) {
+	    this.lovDescAggRuleName = lovDescAggRuleName;
     }
 }

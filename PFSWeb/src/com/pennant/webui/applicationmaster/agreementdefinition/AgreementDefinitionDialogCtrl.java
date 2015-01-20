@@ -73,18 +73,19 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -116,6 +117,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	protected Textbox 	aggName; 							// autoWired
 	protected Textbox 	aggDesc; 							// autoWired
 	protected Textbox 	aggReportName; 						// autoWired
+	protected ExtendedCombobox agrRule; 					// autowired
 //	protected Textbox 	aggReportPath; 						// autoWired
 	protected Checkbox 	aggIsActive; 						// autoWired
 	protected Checkbox 	AggCheck_SelectAll; 						// autoWired
@@ -147,6 +149,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	private transient String  		oldVar_aggName;
 	private transient String  		oldVar_aggDesc;
 	private transient String  		oldVar_aggReportName;
+	private transient String  		oldVar_agrRule;
 //	private transient String  		oldVar_aggReportPath;
 	private transient boolean  		oldVar_aggIsActive;
 	private transient String oldVar_recordStatus;
@@ -169,7 +172,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 
 	// ServiceDAOs / Domain Classes
 	private transient AgreementDefinitionService agreementDefinitionService;
-	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 	static final List<ValueLabel> agreementDetailsList = PennantStaticListUtil.getAggDetails();
 
@@ -193,7 +195,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws Exception
 	 */
 	public void onCreate$window_AgreementDefinitionDialog(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -240,7 +242,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getAgreementDefinition());
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -253,6 +255,19 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setMaxlength(100);
 		this.aggDesc.setMaxlength(50);
 		this.aggReportName.setMaxlength(100);
+		
+		this.agrRule.setMaxlength(8);
+		this.agrRule.setMandatoryStyle(false);
+		this.agrRule.setModuleName("Rule");
+		this.agrRule.setValueColumn("RuleCode");
+		this.agrRule.setDescColumn("RuleCodeDesc");
+		this.agrRule.setValidateColumns(new String[] { "RuleCode" });
+		
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("RuleModule", "AGRRULE", Filter.OP_EQUAL);
+		filters[1] = new Filter("RuleEvent", "", Filter.OP_EQUAL);
+		this.agrRule.setFilters(filters);
+		
 //		this.aggReportPath.setMaxlength(100);
 
 		if (isWorkFlowEnabled()){
@@ -295,9 +310,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws Exception
 	 */
 	public void onClose$window_AgreementDefinitionDialog(Event event) throws Exception {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doClose();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -307,9 +322,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doSave();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	/**
@@ -319,7 +334,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws InterruptedException
 	 */
 	public void onCheck$AggCheck_SelectAll(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		
 			for(int i=0;i<agreementDetailsList.size();i++){
 			 Checkbox checkBox=(Checkbox)AgreementDetails.getChildren().get(i);
@@ -329,7 +344,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 				checkBox.setChecked(false);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -338,9 +353,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doEdit();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -350,9 +365,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		PTMessageUtils.showHelpWindow(event, window_AgreementDefinitionDialog);
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -361,9 +376,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @param event
 	 */
 	public void onClick$btnNew(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doNew();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -373,9 +388,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doDelete();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -384,9 +399,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -396,14 +411,14 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		try {
 			doClose();
 		} catch (final WrongValuesException e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -478,6 +493,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setValue(aAgreementDefinition.getAggName());
 		this.aggDesc.setValue(aAgreementDefinition.getAggDesc());
 		this.aggReportName.setValue(aAgreementDefinition.getAggReportName());
+		this.agrRule.setValue(aAgreementDefinition.getAgrRule());
+		this.agrRule.setDescription(aAgreementDefinition.getLovDescAgrRuleDesc());
 //		this.aggReportPath.setValue(aAgreementDefinition.getAggReportPath());
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
@@ -562,6 +579,12 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			wve.add(we);
 		}
 		try {
+			aAgreementDefinition.setAgrRule(this.agrRule.getValue());
+			aAgreementDefinition.setLovDescAgrRuleDesc(this.agrRule.getDescription());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
 			aAgreementDefinition.setAggReportName(this.aggReportName.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -623,8 +646,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Leaving");
 	}
 	
-	private void doSaveAggDetailsList(AgreementDefinition aAgreementDefinition)
-	{
+	private void doSaveAggDetailsList(AgreementDefinition aAgreementDefinition)	{
 		String aggImageTemp="";
 		List<Component> components = AgreementDetails.getChildren();
 		for (Component component : components) {
@@ -694,7 +716,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			e.printStackTrace();
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -709,6 +731,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.oldVar_aggCode = this.aggCode.getValue();
 		this.oldVar_aggName = this.aggName.getValue();
 		this.oldVar_aggDesc = this.aggDesc.getValue();
+		this.oldVar_agrRule = this.agrRule.getValue();
 		this.oldVar_aggReportName = this.aggReportName.getValue();
 //		this.oldVar_aggReportPath = this.aggReportPath.getValue();
 		this.oldVar_aggIsActive = this.aggIsActive.isChecked();
@@ -724,6 +747,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggCode.setValue(this.oldVar_aggCode);
 		this.aggName.setValue(this.oldVar_aggName);
 		this.aggDesc.setValue(this.oldVar_aggDesc);
+		this.agrRule.setValue(this.oldVar_agrRule);
 		this.aggReportName.setValue(this.oldVar_aggReportName);
 //		this.aggReportPath.setValue(this.oldVar_aggReportPath);
 		this.aggIsActive.setChecked(this.oldVar_aggIsActive);
@@ -753,6 +777,9 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			return true;
 		}
 		if (this.oldVar_aggDesc != this.aggDesc.getValue()) {
+			return true;
+		}
+		if (this.oldVar_agrRule != this.agrRule.getValue()) {
 			return true;
 		}
 		if (this.oldVar_aggReportName != this.aggReportName.getValue()) {
@@ -803,6 +830,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggCode.setConstraint("");
 		this.aggName.setConstraint("");
 		this.aggDesc.setConstraint("");
+		this.agrRule.setConstraint("");
 		this.aggReportName.setConstraint("");
 //		this.aggReportPath.setConstraint("");
 		logger.debug("Leaving");
@@ -828,6 +856,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggCode.setErrorMessage("");
 		this.aggName.setErrorMessage("");
 		this.aggDesc.setErrorMessage("");
+		this.agrRule.setErrorMessage("");
 		this.aggReportName.setErrorMessage("");
 //		this.aggReportPath.setErrorMessage("");
 		logger.debug("Leaving");
@@ -923,6 +952,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggName"));
 		this.aggDesc.setReadonly(isReadOnly("AgreementDefinitionDialog_aggDesc"));
 		this.aggReportName.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportName"));
+		this.agrRule.setReadonly(isReadOnly("AgreementDefinitionDialog_agrRule"));
 //		this.aggReportPath.setReadonly(isReadOnly("AgreementDefinitionDialog_aggReportPath"));
 		this.aggIsActive.setDisabled(isReadOnly("AgreementDefinitionDialog_aggIsActive"));
 		this.AggCheck_SelectAll.setDisabled(isReadOnly("AgreementDefinitionDialog_aggDesc"));
@@ -956,6 +986,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setReadonly(true);
 		this.aggDesc.setReadonly(true);
 		this.aggReportName.setReadonly(true);
+		this.agrRule.setReadonly(true);
 //		this.aggReportPath.setReadonly(true);
 		this.aggIsActive.setDisabled(true);
 
@@ -983,6 +1014,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		this.aggName.setValue("");
 		this.aggDesc.setValue("");
 		this.aggReportName.setValue("");
+		this.agrRule.setValue("");
 //		this.aggReportPath.setValue("");
 		this.aggIsActive.setChecked(false);
 		logger.debug("Leaving");
@@ -1269,8 +1301,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering");
-		// logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -1283,7 +1314,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// Check notes Entered or not
@@ -1316,11 +1347,11 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 	} 
 	
 	/*public void onUpload$brwAgreementDoc(UploadEvent event) {
-		logger.debug(event.toString());
+		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 		
 		browseDoc(media, getAgreementDefinition());
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}*/
 
 	
@@ -1386,7 +1417,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}*/
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1423,14 +1454,6 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl implements Serial
 
 	public AgreementDefinitionListCtrl getAgreementDefinitionListCtrl() {
 		return this.agreementDefinitionListCtrl;
-	}
-
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
 	}
 
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {

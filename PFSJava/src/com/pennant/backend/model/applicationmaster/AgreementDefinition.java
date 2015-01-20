@@ -62,6 +62,8 @@ public class AgreementDefinition implements java.io.Serializable,Entity {
 	private String aggDesc;
 	private String aggReportName;
 	private String aggReportPath;
+	private String agrRule;
+	private String lovDescAgrRuleDesc;
 	private boolean aggIsActive;
 	private String aggtype;
 	private String aggImage;
@@ -146,6 +148,20 @@ public class AgreementDefinition implements java.io.Serializable,Entity {
 	}
 	public void setAggReportPath(String aggReportPath) {
 		this.aggReportPath = aggReportPath;
+	}
+	
+	public String getAgrRule() {
+		return agrRule;
+	}
+	public void setAgrRule(String agrRule) {
+		this.agrRule = agrRule;
+	}
+
+	public String getLovDescAgrRuleDesc() {
+		return lovDescAgrRuleDesc;
+	}
+	public void setLovDescAgrRuleDesc(String lovDescAgrRuleDesc) {
+		this.lovDescAgrRuleDesc = lovDescAgrRuleDesc;
 	}
 
 	public boolean isAggIsActive() {

@@ -120,6 +120,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -6970,6 +6971,31 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 			}
 		}
+	}
+	
+	public CustomerEligibilityCheck prepareCustElgDetail(){
+		
+		//Current Finance Monthly Installment Calculation
+		BigDecimal totalRepayAmount = getFinanceDetail().getFinScheduleData().getFinanceMain().getTotalRepayAmt();
+		int installmentMnts = DateUtility.getMonthsBetween(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate(),
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), false);
+
+		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
+		int months = DateUtility.getMonthsBetween(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate(), 
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate());
+
+		//Customer Data Fetching
+		if(customer == null){
+			customer = getCustomerService().getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+		}
+
+		// Set Customer Data to check the eligibility
+		getFinanceDetail().setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
+				getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
+				months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null));
+		
+		return getFinanceDetail().getCustomerEligibilityCheck();
 	}
  
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

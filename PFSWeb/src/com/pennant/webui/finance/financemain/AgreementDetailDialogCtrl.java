@@ -70,12 +70,14 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -112,9 +114,11 @@ import com.pennant.backend.model.lmtmasters.GenGoodsLoanDetail;
 import com.pennant.backend.model.lmtmasters.GoodsLoanDetail;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -164,6 +168,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 	private FinanceDetail financeDetail = null;
 	private PagedListService pagedListService;
 	private CreditApplicationReviewService creditApplicationReviewService;
+	private RuleService ruleService;
+	private RuleExecutionUtil ruleExecutionUtil;
 	private NotesService notesService;
 	long custid = 0;
 	String jointcustCif = "";
@@ -238,9 +244,36 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 			this.labe_agr_grcEndDate.setVisible(false);
 		}
 		
+		// Prepare Data for Rule Executions
+		if (getFinanceDetail().getCustomerEligibilityCheck() == null) {
+			try {
+				Object object = getFinanceMainDialogCtrl().getClass().getMethod("prepareCustElgDetail").invoke(getFinanceMainDialogCtrl());
+				if (object != null) {
+					CustomerEligibilityCheck eligibilityCheck = (CustomerEligibilityCheck) object;
+					getFinanceDetail().setCustomerEligibilityCheck(eligibilityCheck);
+				}
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
+		
 		List<FinanceReferenceDetail> agreementsList = financeDetail.getAggrementList();
 		for (FinanceReferenceDetail financeReferenceDetail : agreementsList) {
-			doFillAgreementsList(this.listBox_Agreements, financeReferenceDetail, getRole());
+			
+			boolean isAgrRender = true;
+			//Check Each Agreement is attached with Rule or Not, If Rule Exists based on Rule Result Agreement will display
+			if(!StringUtils.trimToEmpty(financeReferenceDetail.getLovDescAggRuleName()).equals("")){
+				Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(), "AGRRULE", "");
+				Object obj = getRuleExecutionUtil().executeRule(rule.getSQLRule(), getFinanceDetail().getCustomerEligibilityCheck(), 
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+				
+				if(rule.getReturnType().equals("B")){
+					isAgrRender = new Boolean(obj.toString());
+				}
+			}
+			if(isAgrRender){
+				doFillAgreementsList(this.listBox_Agreements, financeReferenceDetail);
+			}
 		}
 		try {
 			Class[] paramType = { this.getClass() };
@@ -324,9 +357,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 	 * 
 	 * @param listbox
 	 * @param financeReferenceDetail
-	 * @param userRole
 	 */
-	private void doFillAgreementsList(Listbox listbox, FinanceReferenceDetail financeReferenceDetail, String userRole) {
+	private void doFillAgreementsList(Listbox listbox, FinanceReferenceDetail financeReferenceDetail) {
 		logger.debug("Entering ");
 		Listitem item = new Listitem(); // To Create List item
 		Listcell listCell;
@@ -471,6 +503,20 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 
 	public NotesService getNotesService() {
 		return notesService;
+	}
+	
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	// =============== Agreement Generation============

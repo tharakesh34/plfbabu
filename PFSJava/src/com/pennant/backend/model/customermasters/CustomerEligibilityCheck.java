@@ -29,6 +29,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String reqProduct = "";
 	private String custWorstSts = "";
 	private String custTypeCode = "";
+	private String custCtgCode;
 	
 	private BigDecimal tenure = BigDecimal.ZERO;
 	private int blackListExpPeriod = 0;
@@ -44,7 +45,6 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal DSCR = BigDecimal.ZERO;
 	
 	/*private String custCIF;	
-	private String custCtgCode;
 	private String custDftBranch;
 	private long custGroupID = 0;
 	private String custGroupSts;
@@ -297,6 +297,13 @@ public class CustomerEligibilityCheck implements Serializable {
     }
 	public String getCustTypeCode() {
 	    return custTypeCode;
+    }
+	
+	public String getCustCtgCode() {
+	    return custCtgCode;
+    }
+	public void setCustCtgCode(String custCtgCode) {
+	    this.custCtgCode = custCtgCode;
     }
 	
 	public HashMap<String, Object> getDeclaredFieldValues() {

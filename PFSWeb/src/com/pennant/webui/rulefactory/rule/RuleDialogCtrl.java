@@ -857,6 +857,7 @@ public class RuleDialogCtrl extends GFCBaseListCtrl<Rule> implements Serializabl
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
+			this.label_RuleTitle.setValue(Labels.getLabel("window_RuleDialog_"+ruleModuleName+".title"));
 			setDialog(this.window_RuleDialog);
 		} catch (final Exception e) {
 			logger.error(e);

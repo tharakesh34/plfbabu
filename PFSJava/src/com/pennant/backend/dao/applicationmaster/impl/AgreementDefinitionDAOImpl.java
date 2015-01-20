@@ -123,9 +123,12 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		agreementDefinition.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, " );
-		selectSql.append(" AggDesc, AggReportName, AggReportPath, AggIsActive , Aggtype, AggImage, ");
+		selectSql.append(" AggDesc, AggReportName, AggReportPath, AggIsActive , Aggtype, AggImage, AgrRule, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if(type.contains("View")){
+			selectSql.append(" , lovDescAgrRuleDesc");
+		}
 		selectSql.append(" From BMTAggrementDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AggId =:AggId");
@@ -161,9 +164,12 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		agreementDefinition.setAggCode(aggCode);
 		
 		StringBuilder selectSql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc, " );
-		selectSql.append(" AggReportName, AggReportPath, AggIsActive, Aggtype, AggImage, ");
+		selectSql.append(" AggReportName, AggReportPath, AggIsActive, Aggtype, AggImage, AgrRule, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if(type.contains("View")){
+			selectSql.append(" , lovDescAgrRuleDesc");
+		}
 		selectSql.append(" From BMTAggrementDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AggCode =:AggCode");
@@ -272,11 +278,11 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		StringBuilder insertSql =new StringBuilder("Insert Into BMTAggrementDef");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AggId, AggCode, AggName, AggDesc, AggReportName, AggReportPath, " );
-		insertSql.append(" AggIsActive , Aggtype, AggImage, ");
+		insertSql.append(" AggIsActive , Aggtype, AggImage, AgrRule, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:AggId, :AggCode, :AggName, :AggDesc, :AggReportName, ");
-		insertSql.append(" :AggReportPath, :AggIsActive, :Aggtype, :AggImage, ");
+		insertSql.append(" :AggReportPath, :AggIsActive, :Aggtype, :AggImage, :AgrRule, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -309,7 +315,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set AggCode = :AggCode, AggName = :AggName, AggDesc = :AggDesc, " );
 		updateSql.append(" AggReportName = :AggReportName, AggReportPath = :AggReportPath, " );
-		updateSql.append(" AggIsActive = :AggIsActive , Aggtype = :Aggtype, AggImage = :AggImage,  ");
+		updateSql.append(" AggIsActive = :AggIsActive , Aggtype = :Aggtype, AggImage = :AggImage, AgrRule=:AgrRule, ");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );

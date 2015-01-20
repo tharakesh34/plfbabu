@@ -197,6 +197,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> implements Serializable 
 			this.ruleModuleName="RefundRule";
 		}else if(ruleModule.getValue().equals("CLRULE")){
 			this.ruleModuleName="CheckRule";
+		}else if(ruleModule.getValue().equals("AGRRULE")){
+			this.ruleModuleName="AgreementRule";
 		}
 
 		if (moduleMapping.getWorkflowType()!=null){

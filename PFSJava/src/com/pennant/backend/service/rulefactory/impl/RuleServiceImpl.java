@@ -186,6 +186,14 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public Rule getRuleById(String id,String module,String event) {
 		return getRuleDAO().getRuleByID(id,module,event, "_View");
 	}
+	
+	/**
+	 * Method for Fetch SQL Rule based on Parameters
+	 */
+	@Override
+	public String getAmountRule(String id,String module,String event) {
+		return getRuleDAO().getAmountRule(id,module,event);
+	}
 
 	/**
 	 * getApprovedRuleById fetch the details by using RuleDAO's getRuleById method .
