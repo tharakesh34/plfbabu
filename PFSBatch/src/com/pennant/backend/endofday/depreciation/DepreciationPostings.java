@@ -129,7 +129,8 @@ public class DepreciationPostings implements Tasklet {
 				amountCodes.setAccumulatedDepPri(resultSet.getBigDecimal("AccumulatedDepPri"));
 				amountCodes.setDepreciatePri(resultSet.getBigDecimal("DepreciatePri"));
 				amountCodes.setPriAP(resultSet.getBigDecimal("TotalPriPaid"));
-
+				amountCodes.setFinisActive(resultSet.getBoolean("FinIsActive"));
+				
 				//DataSet Object preparation for AccountingSet Execution
 				DataSet dataSet = new DataSet();
 				dataSet.setFinReference(resultSet.getString("FinReference"));
@@ -223,7 +224,7 @@ public class DepreciationPostings implements Tasklet {
 		selQuery.append(" T1.FinCcy ,T1.NextRepayDate ,T1.CustID , T1.DisbAccountId ,T1.RepayAccountId ," );
 		selQuery.append(" T1.FinAmount AS DisburseAmount , (T1.FinAmount - T1.FinRepaymentAmount) AS FinAmount ," );
 		selQuery.append(" T1.DownPayment , T1.NumberOfTerms, T1.GraceTerms, " );
-		selQuery.append(" T1.FinStartDate , T1.MaturityDate ,T1.FinAccount, T1.FinCustPftAccount , " );
+		selQuery.append(" T1.FinStartDate , T1.MaturityDate ,T1.FinAccount, T1.FinCustPftAccount , T1.FinIsActive, " );
 		selQuery.append(" (SELECT COUNT(T2.FinReference) FROM FinScheduleDetails AS T2 WHERE " );
 		selQuery.append(" T1.Finreference =T2.finreference " );
 		selQuery.append(" AND (T2.RepayonSchdate='1' OR T2.DeferedPay= '1' OR (T2.PftOnSchDate = '1' AND T2.RepayAmount > 0)) and T2.DefSchdDate <= ?)  AS ElapsedTerms, " );

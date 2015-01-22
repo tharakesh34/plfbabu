@@ -1,6 +1,11 @@
 package com.pennant.Interface.service;
 
-import com.pennant.coreinterface.model.FinIncomeAccount;
+import java.util.Date;
+import java.util.List;
+
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
 
 public interface DailyDownloadInterfaceService {
 
@@ -10,11 +15,21 @@ public interface DailyDownloadInterfaceService {
 	boolean processDepartmentDetails();
 	boolean processCustomerGroupDetails();
 	boolean processAccountTypeDetails();
-	boolean processCustomerRatingDetails();
-	
+	boolean processCustomerRatingDetails(Date valuedate);
+	boolean processAbuserDetails();
+	boolean processCustomerDetails(Date valuedate);
+	boolean processCountryDetails();
+	boolean processCustStatusCodeDetails();
+	boolean processIndustryDetails();
+	boolean processBranchDetails();
+	boolean processInternalAccDetails(Date valuedate);
+	boolean processTransactionCodeDetails();
+	boolean processIdentityTypeDetails();
+
 	// ++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
-	
-	void processIncomeAccountDetails(FinIncomeAccount finIncomeAccount);
-	boolean processIncomeAccTransactions(FinIncomeAccount finIncomeAcc);
+	List<FinanceType> fetchFinanceTypeDetails();
+	List<TransactionEntry> fetchTransactionEntryDetails(long accountSetID);
+	boolean processIncomeAccTransactions(Date prvMnthStartDate);
+	void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts);
 	
 }

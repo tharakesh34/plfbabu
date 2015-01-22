@@ -44,4 +44,5 @@ public interface CreditApplicationReviewService {
 	Map<String, FinCreditReviewDetails> getListCreditReviewDetailsByCustId(long id,
 			int noOfYears,int year);
 	String getMaxAuditYearByCustomerId(long customerId, String type);
+	List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type);
 }

@@ -18,6 +18,7 @@ import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -42,6 +43,7 @@ public class FinanceCancellationServiceImpl  extends GenericService<FinanceMain>
 	private FinanceMainDAO 				financeMainDAO;
 	private FinanceTypeDAO 				financeTypeDAO;
 	private CommitmentDAO 				commitmentDAO;
+	private PostingsDAO					postingsDAO;
 	private CommitmentMovementDAO 		commitmentMovementDAO;
 	private PostingsPreparationUtil 	postingsPreparationUtil;
 	
@@ -121,7 +123,11 @@ public class FinanceCancellationServiceImpl  extends GenericService<FinanceMain>
 		
 		//Repayments Postings Details Process Execution
 		if(!financeMain.isWorkflow()){
-			List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference, "");
+			
+			//Fetch Linked Transaction ID for Finance Disbursement to include Commitment Postings on Reversal
+			long linkedTranId = getPostingsDAO().getLinkTranIdByRef(finReference);
+			
+			List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings("", String.valueOf(linkedTranId));
 			if(!(Boolean) returnList.get(0)){
 				throw new AccountNotFoundException(returnList.get(1).toString());
 			}
@@ -232,7 +238,11 @@ public class FinanceCancellationServiceImpl  extends GenericService<FinanceMain>
 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
-		List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference, "");
+		
+		//Fetch Linked Transaction ID for Finance Disbursement to include Commitment Postings on Reversal
+		long linkedTranId = getPostingsDAO().getLinkTranIdByRef(finReference);
+		
+		List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings("", String.valueOf(linkedTranId));
 		if(!(Boolean) returnList.get(0)){
 			throw new AccountNotFoundException(returnList.get(1).toString());
 		}
@@ -494,5 +504,11 @@ public class FinanceCancellationServiceImpl  extends GenericService<FinanceMain>
 	    this.commitmentMovementDAO = commitmentMovementDAO;
     }
 
+	public PostingsDAO getPostingsDAO() {
+		return postingsDAO;
+	}
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
 	
 }

@@ -255,9 +255,9 @@ public class AEAmounts implements Serializable {
 		// Depreciation Calculation depends on Total Finance Amount with Days basis
 		if (isAccrualProcess) {
 
-			BigDecimal daysBetweenStartMaturityDate  = new BigDecimal(DateUtility.getDaysBetween(
+			BigDecimal daysBetweenFinStartMaturityDate  = new BigDecimal(DateUtility.getDaysBetween(
 					financeMain.getMaturityDate(),financeMain.getFinStartDate()));
-			BigDecimal daysBetweenStartValueDate     = new BigDecimal(DateUtility.getDaysBetween(
+			BigDecimal daysBetweenFinStartValueDate     = new BigDecimal(DateUtility.getDaysBetween(
 					valueDate, financeMain.getFinStartDate()));
 			BigDecimal daysBetweenStartYearValueDate = new BigDecimal(DateUtility.getDaysBetween(
 					valueDate, DateUtility.getYearStartDate(valueDate)));
@@ -265,11 +265,16 @@ public class AEAmounts implements Serializable {
 					add(financeMain.getFeeChargeAmt());
 			
 			
-			accumulatedPriTillDate = (finAmount.multiply(daysBetweenStartValueDate))
-					.divide(daysBetweenStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+			accumulatedPriTillDate = (finAmount.multiply(daysBetweenFinStartValueDate))
+					.divide(daysBetweenFinStartMaturityDate, 0, RoundingMode.HALF_DOWN);
 
-			depreciatePri = (finAmount.multiply(daysBetweenStartYearValueDate)).
-					divide(daysBetweenStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+			if(daysBetweenStartYearValueDate.compareTo(daysBetweenFinStartValueDate) < 0){
+				depreciatePri = (finAmount.multiply(daysBetweenStartYearValueDate)).
+						divide(daysBetweenFinStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+			}else{
+				depreciatePri = (finAmount.multiply(daysBetweenFinStartValueDate)).
+						divide(daysBetweenFinStartMaturityDate, 0, RoundingMode.HALF_DOWN);
+			}
 
 		}
 		

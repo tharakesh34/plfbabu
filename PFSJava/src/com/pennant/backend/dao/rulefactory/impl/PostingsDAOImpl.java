@@ -441,4 +441,34 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return totalPostAmount;
     }
+	
+	/**
+	 * Method for Fetching Posted Amount On Particular Finance Event
+	 */
+	@Override
+    public long getLinkTranIdByRef(String finReference) {
+		logger.debug("Entering");
+		
+		ReturnDataSet set = new ReturnDataSet();
+		set.setFinReference(finReference);
+		set.setFinEvent("ADDDBS%");
+
+		StringBuilder selectSql = new StringBuilder(" SELECT DISTINCT LinkedTranId " );
+		selectSql.append(" FROM Postings");
+		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent LIKE :FinEvent " );
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(set);
+		
+		long linkedTranId = 0;
+		try {
+			linkedTranId = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+		} catch (Exception e) {
+			logger.error(e);
+			linkedTranId = 0;
+		}
+		
+		logger.debug("Leaving");
+		return linkedTranId;
+    }
 }

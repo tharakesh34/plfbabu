@@ -61,6 +61,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -136,13 +137,14 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	protected Listbox sortOperator_recordStatus; 		// autoWired
 	protected Listbox sortOperator_recordType; 			// autoWired
     protected Textbox moduleName;
+	protected Label label_CreditApplicationReviewSearch_RecordStatus; 	// autoWired
+	protected Label label_CreditApplicationReviewSearch_RecordType; 	// autoWired
 
 	protected Grid	                       searchGrid;	                                                  // autowired
 	protected Textbox	                   moduleType;	                                                  // autowired
 	protected Radio	                       fromApproved;
 	protected Radio	                       fromWorkFlow;
 	protected Row	                       workFlowFrom;
-	protected Row 						   row_AlwWorkflow;
 	private transient boolean 			   approvedList=false;
 	private Tabbox	tabbox;
 
@@ -174,9 +176,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	private boolean isMaintinence = false;
 	private String workFlowType = "";
 	private String creditDivision="";
-	int dateAppCurrentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
+	int dateAppCurrentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue("APP_DATE"));
 	int dateAppPrevYear = dateAppCurrentYear-1;
-
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -262,7 +264,12 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 			this.sortOperator_recordType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 			this.recordType=PennantAppUtil.setRecordType(this.recordType);	
 		}else{
-			this.row_AlwWorkflow.setVisible(false);
+			this.recordStatus.setVisible(false);
+			this.recordType.setVisible(false);
+			this.sortOperator_recordStatus.setVisible(false);
+			this.sortOperator_recordType.setVisible(false);
+			this.label_CreditApplicationReviewSearch_RecordStatus.setVisible(false);
+			this.label_CreditApplicationReviewSearch_RecordType.setVisible(false);
 		}
 
 		/* set components visible dependent on the users rights */
@@ -396,9 +403,15 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinCreditReviewDetails aCreditReviewDetails = (FinCreditReviewDetails) item.getAttribute("data");
+			aCreditReviewDetails.setWorkflowId(getWorkFlowId());
 			final FinCreditReviewDetails creditReviewDetails = getCreditApplicationReviewService().getCreditReviewDetailsById(
 					aCreditReviewDetails.getDetailId());
-
+			if(aCreditReviewDetails.getDivision() != null && aCreditReviewDetails.getDivision().equals(PennantConstants.CREDIT_DIVISION_COMMERCIAL)){
+				workFlowType = "CommCreditAppReview" ;
+			} else if(aCreditReviewDetails.getDivision().equals(PennantConstants.CREDIT_DIVISION_CORPORATE)){
+				workFlowType = "CorpCreditAppReview";
+			}
+			
 			if (creditReviewDetails == null) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
@@ -412,6 +425,22 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 			} else {
 				List<FinCreditReviewSummary> listOfFinCreditReviewSummary = getCreditApplicationReviewService().getListCreditReviewSummaryById(aCreditReviewDetails.getDetailId(), "_View", false);
 				creditReviewDetails.setCreditReviewSummaryEntries(listOfFinCreditReviewSummary);
+
+				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(workFlowType);
+				if (moduleMapping != null && moduleMapping.getWorkflowType() != null) {
+					workFlowDetails = WorkFlowUtil.getWorkFlowDetails(workFlowType);
+				
+				if (workFlowDetails == null) {
+					setWorkFlowEnabled(false);
+				} else {
+					setWorkFlowEnabled(true);
+					setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
+					setWorkFlowId(workFlowDetails.getId());
+				}
+				}
+				
+				creditReviewDetails.setDivision(aCreditReviewDetails.getDivision());
+				creditReviewDetails.setWorkflowId(getWorkFlowId());
 				if (isWorkFlowEnabled()) {
 					String whereCond = " AND Detailid=" + creditReviewDetails.getDetailId() + 
 					" AND version=" + creditReviewDetails.getVersion() + " ";
@@ -603,7 +632,6 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		logger.debug("Leaving" + event.toString());
 	}
 
-	@SuppressWarnings("serial")
 	public void doSearch() {
 		logger.debug("Entering ");
 		// ++ create the searchObject and initialize sorting ++//
@@ -616,12 +644,17 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		}  else {
 			this.searchObjCreditReviewDetails.addSort("lovDescCustCIF", false);
 			this.searchObjCreditReviewDetails.addTabelName("FinCreditReviewDetails_View");
-			this.searchObjCreditReviewDetails.addFilterIn("AuditYear", 
+			/*this.searchObjCreditReviewDetails.addFilterIn("AuditYear", 
 					new ArrayList<String>() {{
 						add(String.valueOf(dateAppCurrentYear));
 						add(String.valueOf(dateAppPrevYear));
 						add(String.valueOf(dateAppPrevYear-1));
-					}} ,true);
+					}} ,true);*/
+			
+			String auditYears="'"+dateAppCurrentYear+"','"+dateAppPrevYear+"','"+(dateAppPrevYear-1)+"'";
+			String whereCondition="AuditYear IN("+auditYears+")"+" OR "+
+					" (AuditYear < "+(dateAppPrevYear-1)+" AND RecordStatus <> 'Approved')";
+			this.searchObjCreditReviewDetails.addWhereClause(whereCondition);
 		}
 		
 		if(!isMaintinence){

@@ -91,6 +91,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 	protected static  Window  window;
 	private Map<Date,ArrayList<FinanceRepayments>> repayDetailsMap;
 	private List<FinanceRepayments> financeRepayments;
+	private List<OverdueChargeRecovery> penalties;
 	
 	private Map<Date,ArrayList<OverdueChargeRecovery>> penaltyDetailsMap;
 	private BigDecimal accrueValue;
@@ -450,7 +451,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 			}
 			
-			//To show repayment details 
+			//To show Penalty details 
 			if(isRepayEnquiry && penaltyDetailsMap != null && penaltyDetailsMap.containsKey(getFinanceScheduleDetail().getSchDate())) {
 				List<OverdueChargeRecovery> recoverys = penaltyDetailsMap.get(getFinanceScheduleDetail().getSchDate());
 				for (int i = 0; i < recoverys.size(); i++) {
@@ -913,7 +914,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 	 * @param FinanceDetail (aFinanceDetail)
 	 * */
 	public List<FinanceScheduleReportData> getScheduleData(FinScheduleData aFinScheduleData, 
-			Map<Date,ArrayList<FinanceRepayments>> paymentDetailsMap, Map<Date,ArrayList<FeeRule>> feeRuleDetails, boolean includeSummary) {
+			Map<Date,ArrayList<FinanceRepayments>> paymentDetailsMap,  Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap, 
+			Map<Date,ArrayList<FeeRule>> feeRuleDetails, boolean includeSummary) {
 		logger.debug("Entering");
 		setFinScheduleData(aFinScheduleData);
 		FinanceScheduleDetail prvSchDetail = null; 
@@ -1163,6 +1165,33 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setSchdPri(formatAmt(getFinanceRepayments().get(j).getFinSchdPriPaid(),false,false));
 					data.setTotalAmount(formatAmt(getFinanceRepayments().get(j).
 							getFinSchdPftPaid().add(getFinanceRepayments().get(j).getFinSchdPriPaid()),false,false));
+					reportList.add(data);
+					count = 2;
+				}
+			}
+			
+			//To show Penalty details 
+			if(penaltyDetailsMap != null && penaltyDetailsMap.containsKey(aScheduleDetail.getSchDate())) {
+				setPenalties(penaltyDetailsMap.get(aScheduleDetail.getSchDate()));
+				for (int j = 0; j < getPenalties().size(); j++) {
+					
+					OverdueChargeRecovery recovery = getPenalties().get(j);
+					data = new FinanceScheduleReportData();	
+					data.setLabel(Labels.getLabel("listcell_PenaltyPaid.label", 
+							new String[]{PennantAppUtil.formateDate(recovery.getMovementDate(), PennantConstants.dateFormate)}));
+					if (count == 1){
+						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+						data.setSchDate(DateUtility.formatUtilDate(aScheduleDetail.getDefSchdDate(),
+								PennantConstants.dateFormate));
+					}else {
+						data.setSchDate("");
+					}
+					
+					data.setEndBal("");
+					data.setPftAmount("");				
+					data.setSchdPft("");				
+					data.setSchdPri("");
+					data.setTotalAmount(formatAmt(recovery.getPenaltyPaid(),false,false));
 					reportList.add(data);
 					count = 2;
 				}
@@ -1615,6 +1644,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 	}
 	public void setFinanceRepayments(List<FinanceRepayments> financeRepayments) {
 		this.financeRepayments = financeRepayments;
+	}
+	
+	public List<OverdueChargeRecovery> getPenalties() {
+		return penalties;
+	}
+	public void setPenalties(List<OverdueChargeRecovery> penalties) {
+		this.penalties = penalties;
 	}
 
 }

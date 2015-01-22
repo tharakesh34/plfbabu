@@ -572,8 +572,6 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 			} else if (!this.doubleParamValue.isDisabled()
 					&& this.doubleParamValue.getValue() != null) {
 				
-				this.doubleParamValue.setValue(PennantAppUtil.unFormateAmount(
-						this.doubleParamValue.getValue(), 0));
 				this.sysParmValue.setValue(this.doubleParamValue.getValue().toString());
 				
 				if (this.sysParmCode.getValue().equals("CID_RETAIN_PRD")
@@ -956,12 +954,16 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 			this.doubleParamValue.setMaxlength(this.sysParmLength);
 			if (this.sysParmDec == 0) {
 				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(0));
+				this.doubleParamValue.setScale(0);
 			} else if (this.sysParmDec == 1) {
 				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(1));
+				this.doubleParamValue.setScale(1);
 			} else if (this.sysParmDec == 2) {
 				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(2));
+				this.doubleParamValue.setScale(2);
 			} else if (this.sysParmDec == 3) {
 				this.doubleParamValue.setFormat(PennantApplicationUtil.getAmountFormate(3));
+				this.doubleParamValue.setScale(3);
 			}
 			this.doubleParamValue.setValue(this.sysParmValue.getValue());
 			this.comboParmValue.setDisabled(true);

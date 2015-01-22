@@ -1155,7 +1155,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				finRepayQueue.setSchdIsPriPaid(false);
 
 				try {
-					getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay, false);
+					getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay, false, false);
 				} catch (IllegalAccessException e) {
 					logger.error(e.getMessage());
 				} catch (InvocationTargetException e) {

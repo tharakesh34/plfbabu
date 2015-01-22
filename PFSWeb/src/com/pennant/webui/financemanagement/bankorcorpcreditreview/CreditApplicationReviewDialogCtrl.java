@@ -215,7 +215,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	
 	protected Button button_addDetails;
 	protected Button btnSearchAccountSetCode; // autowire
-
 	// ServiceDAOs / Domain Classes
 	protected List<ValueLabel> listMainSubCategoryCodes = new ArrayList<ValueLabel>();
 	private transient CreditApplicationReviewService creditApplicationReviewService;
@@ -1865,6 +1864,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 			CreditReviewSubCtgDetails creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 			creditReviewSubCtgDetails.setMainGroup("T");
 			creditReviewSubCtgDetails.setMainGroupDesc(finCreditRevCategory.getCategoryDesc());
+			creditReviewSubCtgDetails.setTabDesc(finCreditRevCategory.getCategoryDesc());
 			creditReviewSubCtgDetailsList.add(creditReviewSubCtgDetails);
 			
 			if(finCreditRevCategory.getRemarks().equals(PennantConstants.CREDITREVIEW_REMARKS)){
@@ -2575,7 +2575,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 				if(!isRatio){
 					finCreditRevSubCategory.setMainSubCategoryCode(fcrc.getCategoryDesc());
 				}
-				fillRenderer(finCreditRevSubCategory, listbox, item, false);
+				fillRenderer(finCreditRevSubCategory, listbox, item, false,fcrc.getCategoryDesc());
 			}
 		}
 		getTotalLiabAndAssetsDifference();
@@ -2802,11 +2802,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 				BigDecimal curAmt = db_Amount.getValue() != null ? db_Amount.getValue() : BigDecimal.ZERO;
 				BigDecimal convrsnPrice = BigDecimal.ZERO;
 				if(creditReviewDetails.getConversionRate() != null && creditReviewDetails.getConversionRate() != BigDecimal.ZERO){
-					convrsnPrice = curAmt.divide(creditReviewDetails.getConversionRate(), RoundingMode.HALF_DOWN);
+					convrsnPrice = curAmt.divide(creditReviewDetails.getConversionRate(), PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
 				} else if(conversionRate.getValue() != null && conversionRate.getValue() != BigDecimal.ZERO){
 					convrsnPrice = curAmt.divide(conversionRate.getValue());
 				}
-				label_convrsnUSD.setValue(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
+				label_convrsnUSD.setValue(PennantAppUtil.formatAmount(convrsnPrice, PennantConstants.CREDIT_REVIEW_USD_SCALE,false));
 
 
 				/*************************** Break Down ************************/
@@ -3039,7 +3039,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	
 
 		if(aFinCreditRevSubCategory != null && aFinCreditRevSubCategory.getRemarks().equals(PennantConstants.CREDITREVIEW_REMARKS)){
-			fillRenderer(aFinCreditRevSubCategory, listBox, listitem, true);
+			fillRenderer(aFinCreditRevSubCategory, listBox, listitem, true,"");
 			getListItemsDisabled(listBox, false);
 		} else {
 			if(aFinCreditRevSubCategory.getMainSubCategoryCode().equals("#")){
@@ -3057,7 +3057,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 						cb_MathOperation.getSelectedItem().getValue().toString().trim()+"YN."+tb_subCategoryCode.getValue().trim());
 			}
 			finCreditRevMainCategory.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			fillRenderer(aFinCreditRevSubCategory, listBox, listitem, true);
+			fillRenderer(aFinCreditRevSubCategory, listBox, listitem, true,"");
 			getListItemsDisabled(listBox, false);
 			modifiedFinCreditRevSubCategoryList.add(aFinCreditRevSubCategory);
 			
@@ -3080,10 +3080,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	 * @param listbox
 	 * @param oldListItem
 	 */
-	public void fillRenderer(FinCreditRevSubCategory finCreditRevSubCategory, Listbox listbox, Listitem oldListItem, boolean isNewRecord){
+	public void fillRenderer(FinCreditRevSubCategory finCreditRevSubCategory, Listbox listbox, Listitem oldListItem, boolean isNewRecord,String categoryDesc){
 		logger.debug("Entering");
 		CreditReviewSubCtgDetails  creditReviewSubCtgDetails = new CreditReviewSubCtgDetails();
 		creditReviewSubCtgDetails.setMainGroupDesc(finCreditRevSubCategory.getMainSubCategoryCode());
+		creditReviewSubCtgDetails.setTabDesc(categoryDesc);
 		Listitem item = null;
 		Listgroup lg= null;
 		Listcell lc = null;
@@ -3092,6 +3093,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		String mainCategory = "";
 		String amtFormat=PennantApplicationUtil.getAmountFormate(currFormatter);
 		BigDecimal prvAmt, curAmt, convrsnPrice;
+		String uSDConvstnVal="";
 		boolean isRatio = false;
 		if(finCreditRevSubCategory.getRemarks().equals(PennantConstants.CREDITREVIEW_REMARKS)){
 			isRatio = true;
@@ -3185,12 +3187,15 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		Label label_currenYrUSConvrsn = new Label(); 
 		label_currenYrUSConvrsn.setId("uSD1_"+finCreditRevSubCategory.getSubCategoryCode());
 		if(creditReviewDetails.getConversionRate().compareTo(BigDecimal.ZERO) != 0){
-			convrsnPrice = curAmt.divide(creditReviewDetails.getConversionRate(), RoundingMode.HALF_DOWN);
-			creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
-			label_currenYrUSConvrsn.setValue(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
+			convrsnPrice = curAmt.divide(creditReviewDetails.getConversionRate(), PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+			uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
+			creditReviewSubCtgDetails.setCurYearUSDConvstn(uSDConvstnVal);
+			label_currenYrUSConvrsn.setValue(uSDConvstnVal);
 		} else {
-			label_currenYrUSConvrsn.setValue(PennantAppUtil.formatAmount(BigDecimal.ZERO, 2,false));
-			creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(BigDecimal.ZERO, 2,false));
+			convrsnPrice = BigDecimal.ZERO;
+			uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
+			label_currenYrUSConvrsn.setValue(uSDConvstnVal);
+			creditReviewSubCtgDetails.setCurYearUSDConvstn(uSDConvstnVal);
 		}
 		label_currenYrUSConvrsn.setStyle("font-size: 12px;");
 		label_currenYrUSConvrsn.setParent(lc);
@@ -3257,12 +3262,15 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		lc = new Listcell();
 		Label label_prevYrUSConvrsn = new Label(); 
 		if(creditReviewDetails.getConversionRate().compareTo(BigDecimal.ZERO) != 0){
-		convrsnPrice = prvAmt.divide(creditReviewDetails.getConversionRate(), RoundingMode.HALF_DOWN);
-		label_prevYrUSConvrsn.setValue(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
-		creditReviewSubCtgDetails.setPreYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice, 2,false));
+		   convrsnPrice = prvAmt.divide(creditReviewDetails.getConversionRate(), PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+		   uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
+		   label_prevYrUSConvrsn.setValue(uSDConvstnVal);
+		   creditReviewSubCtgDetails.setPreYearUSDConvstn(uSDConvstnVal);
 		} else {
-			label_prevYrUSConvrsn.setValue(PennantAppUtil.formatAmount(BigDecimal.ZERO, 2,false));
-			creditReviewSubCtgDetails.setPreYearUSDConvstn(PennantAppUtil.formatAmount(BigDecimal.ZERO, 2,false));
+			convrsnPrice = prvAmt.divide(BigDecimal.ZERO, PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+			uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
+			label_prevYrUSConvrsn.setValue(uSDConvstnVal);
+			creditReviewSubCtgDetails.setPreYearUSDConvstn(uSDConvstnVal);
 		}
 		label_prevYrUSConvrsn.setStyle("font-size: 12px;");
 		label_prevYrUSConvrsn.setParent(lc);
@@ -3946,5 +3954,23 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 /*		this.gb_basicDetails.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) -300+ "px");
 		this.gb_CreditReviwDetails.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))+ "px");
 */	}
+	
+	
+/*
+ * Method for USD Conversion	
+ */
+public String getUsdConVersionValue(FinCreditRevSubCategory finCreditRevSubCategory, BigDecimal convrsnPrice){
+		if(finCreditRevSubCategory.getRemarks().equals(PennantConstants.CREDITREVIEW_REMARKS)){
+			  if(finCreditRevSubCategory.getSubCategoryCode().equals(PennantConstants.CORP_CRDTRVW_RATIOS_WRKCAP) ||
+			     finCreditRevSubCategory.getSubCategoryCode().equals(PennantConstants.CORP_CRDTRVW_RATIOS_EBITDA4) ||
+			     finCreditRevSubCategory.getSubCategoryCode().equals(PennantConstants.CORP_CRDTRVW_RATIOS_FCF)){
+				   return PennantAppUtil.formatAmount(convrsnPrice, PennantConstants.CREDIT_REVIEW_USD_SCALE,false);
+			  } else {
+				return "";
+			 }
+		} else {
+			return PennantAppUtil.formatAmount(convrsnPrice, PennantConstants.CREDIT_REVIEW_USD_SCALE,false);
+		}
+	}
 
 }

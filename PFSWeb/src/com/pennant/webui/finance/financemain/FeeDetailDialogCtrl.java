@@ -526,12 +526,20 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 				this.listBoxFinFeeCharges.appendChild(item);
 			}
 			
+			
 			if(isSchdCal){
-				if(renderSchdl){
+				
+				FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				if(renderSchdl && ((PennantConstants.RECORD_TYPE_NEW.equals(main.getRecordType()) || main.isNewRecord()) || isWIF)){
 					getFinanceDetail().getFinScheduleData().getFinanceMain().setFeeChargeAmt(feeAmt);
 				}else{
-					finScheduleData.getFinanceMain().setFeeChargeAmt(finScheduleData.getFinanceMain().getFeeChargeAmt().subtract(
-							oldVar_FeeChargeAmount).add(feeAmt));
+					
+					BigDecimal execFeeAmt = finScheduleData.getFinanceMain().getFeeChargeAmt();
+					execFeeAmt = (execFeeAmt == null ? BigDecimal.ZERO : execFeeAmt);
+					if(!renderSchdl){
+						execFeeAmt = execFeeAmt.subtract(oldVar_FeeChargeAmount).add(feeAmt);
+					}
+					finScheduleData.getFinanceMain().setFeeChargeAmt(execFeeAmt);
 					if(!isReBuild){
 						oldVar_FeeChargeAmount = feeAmt;
 					}

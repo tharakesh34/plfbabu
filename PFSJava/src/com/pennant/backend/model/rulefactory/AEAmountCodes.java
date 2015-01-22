@@ -118,6 +118,7 @@ public class AEAmountCodes {
 	//Depreciation Principal Amount
 	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
+	private boolean finisActive ;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -823,5 +824,11 @@ public class AEAmountCodes {
 		CRBPftOD = cRBPftOD;
 	}
 	
-	
+	public boolean isFinisActive() {
+		return finisActive;
+	}
+	public void setFinisActive(boolean finisActive) {
+		this.finisActive = finisActive;
+	}
+
 }

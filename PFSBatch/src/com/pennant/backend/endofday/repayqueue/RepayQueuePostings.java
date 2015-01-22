@@ -196,7 +196,7 @@ public class RepayQueuePostings implements Tasklet {
 				//Overdue Recovery Calculations & Recovery Posting
 				if(finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0){
 					List<Object> odObjDetails = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, 
-							dateValueDate, allowRIAInvestment, doProcessPostings, false, linkedTranId, financeType.getFinDivision());
+							dateValueDate, allowRIAInvestment, doProcessPostings, false, linkedTranId, financeType.getFinDivision(), false);
 
 					if(odObjDetails!=null && !odObjDetails.isEmpty()) {
 						if(!doProcessPostings || (Boolean)odObjDetails.get(0)) {
@@ -263,7 +263,9 @@ public class RepayQueuePostings implements Tasklet {
 					if (finRepayQueue.getRpyDate().compareTo(dateValueDate) <= 0) {
 						
 						//Overdue Details preparation 
-						getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true);
+						//getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true , false);
+						getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, dateValueDate,
+								allowRIAInvestment, false, true, linkedTranId, financeType.getFinDivision(), false);
 						
 						// Finance Suspense
 						List<Object> returnList = getSuspensePostingUtil().suspensePreparation(financeMain, finRepayQueue, dateValueDate, allowRIAInvestment, false);

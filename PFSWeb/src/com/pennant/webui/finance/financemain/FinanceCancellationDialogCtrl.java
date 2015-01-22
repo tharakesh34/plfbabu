@@ -44,6 +44,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -335,7 +336,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 					aFinanceMain.getLovDescFinFormatter()));
 		}
 		//Posting Details
-		doFillPostingdetails(aFinanceMain.getFinReference());
+		doFillPostingdetails(aFinanceMain.getFinReference(), aFinanceMain.getFinCommitmentRef());
 		logger.debug("Leaving");
 	}
 
@@ -1138,7 +1139,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 	}
 
-	private void doFillPostingdetails(String finReference) {
+	private void doFillPostingdetails(String finReference, String commitmentRef) {
 		logger.debug("Entering");
 		
 		JdbcSearchObject<ReturnDataSet> jdbcSearchObject = new JdbcSearchObject<ReturnDataSet>(ReturnDataSet.class);
@@ -1150,6 +1151,16 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 		List<ReturnDataSet> postingList = pagedListService.getBySearchObject(jdbcSearchObject);
 		
 		if(postingList != null && !postingList.isEmpty()){
+			
+			//Fetch Commitment Posting Details
+			if(!StringUtils.trimToEmpty(commitmentRef).equals("")){
+				jdbcSearchObject.clearFilters();
+				jdbcSearchObject.addFilterEqual("LinkedTranId",postingList.get(0).getLinkedTranId());
+				jdbcSearchObject.addFilter(new Filter("FinEvent", "CMTDISB", Filter.OP_EQUAL));
+				List<ReturnDataSet> cmtpostingList = pagedListService.getBySearchObject(jdbcSearchObject);
+				postingList.addAll(cmtpostingList);
+			}
+			
 			Listitem item;
 			for (ReturnDataSet returnDataSet : postingList) {
 				item = new Listitem();

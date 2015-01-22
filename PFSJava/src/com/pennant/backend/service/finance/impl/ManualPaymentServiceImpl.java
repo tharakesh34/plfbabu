@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
@@ -87,6 +88,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 	private FinLogEntryDetailDAO	 finLogEntryDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	
 	
 	private String excludeFields = "calculateRepay,equalRepay,eventFromDate,eventToDate,increaseTerms,"
@@ -694,6 +696,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 			Map<String,BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
 			FinRepayQueue finRepayQueue = null;
+			Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 
 			for(int i = 0; i < repaySchdList.size(); i++) {
 
@@ -704,6 +707,10 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 				finRepayQueue.setRcdNotExist(true);
 				finRepayQueue = doWriteDataToBean(finRepayQueue,financeMain,repaySchdList.get(i));
 
+				//Overdue Details preparation
+				getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, curBDay, 
+						isRIAFinance, false, false, Long.MIN_VALUE, null, false);
+				
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 				finRepayQueue.setPenaltyAmount(repaySchdList.get(i).getPenaltyAmt());
 				finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
@@ -1367,5 +1374,13 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
     	this.financeReferenceDetailDAO = financeReferenceDetailDAO;
     }
+	
+	public OverDueRecoveryPostingsUtil getRecoveryPostingsUtil() {
+	    return recoveryPostingsUtil;
+    }
+	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
+	    this.recoveryPostingsUtil = recoveryPostingsUtil;
+    }
+
 
 }

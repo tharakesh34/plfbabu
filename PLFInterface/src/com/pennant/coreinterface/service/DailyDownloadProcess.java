@@ -44,32 +44,42 @@ package com.pennant.coreinterface.service;
 
 import java.util.List;
 
-import com.pennant.coreinterface.exception.EquationInterfaceException;
+import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.model.EquationAbuser;
 import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationBranch;
+import com.pennant.coreinterface.model.EquationCountry;
 import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustStatusCode;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
 import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationIdentityType;
+import com.pennant.coreinterface.model.EquationIndustry;
+import com.pennant.coreinterface.model.EquationInternalAccount;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
-import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 
 public interface DailyDownloadProcess {
 	
-	List<EquationCurrency>  importCurrencyDetails() throws EquationInterfaceException;
-	
-	List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws EquationInterfaceException;
-	
-	List<EquationCustomerType>   importCustomerTypeDetails() throws EquationInterfaceException;
-	
-	List<EquationDepartment>  importDepartmentDetails() throws EquationInterfaceException;
-	
-	List<EquationCustomerGroup>  importCustomerGroupDetails() throws EquationInterfaceException;
-	
-	List<EquationAccountType>  importAccountTypeDetails() throws EquationInterfaceException;
-	
-	List<EquationCustomerRating> importCustomerRatingDetails() throws EquationInterfaceException;
-
-	List<IncomeAccountTransaction>  importIncomeAccTransactions(List<FinIncomeAccount> finIncomeAccounts) throws Exception;
+	 List<EquationCurrency>  importCurrencyDetails() throws Exception;
+	 List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws Exception;
+	 List<EquationCustomerType>   importCustomerTypeDetails() throws Exception;
+	 List<EquationDepartment>  importDepartmentDetails() throws Exception;
+	 List<EquationCustomerGroup>  importCustomerGroupDetails() throws Exception;
+	 List<EquationAccountType>  importAccountTypeDetails() throws Exception;
+	 List<EquationCustomerRating> importCustomerRatingDetails() throws Exception;
+	 List<EquationCountry> importCountryDetails() throws Exception;
+	 List<EquationCustStatusCode> importCustStausCodeDetails() throws Exception;
+	 List<EquationIndustry> importIndustryDetails() throws Exception;
+	 List<EquationBranch> importBranchDetails() throws Exception;
+	 List<EquationInternalAccount> importInternalAccDetails() throws Exception;
+	 List<EquationAbuser> importAbuserDetails() throws Exception; 
+	 List<CustomerInterfaceData> importCustomerDetails() throws Exception;
+	 List<EquationTransactionCode> importTransactionCodeDetails() throws Exception;
+	 List<EquationIdentityType> importIdentityTypeDetails() throws Exception;
+	 List<IncomeAccountTransaction> importIncomeAccTransactions(
+			List<IncomeAccountTransaction> finIncomeAccounts) throws Exception;
 }

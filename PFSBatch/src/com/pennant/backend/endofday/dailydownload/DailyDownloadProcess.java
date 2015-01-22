@@ -51,11 +51,29 @@ public class DailyDownloadProcess implements Tasklet {
 					getDailyDownloadInterfaceService().processDepartmentDetails();
 				} else if(tableName.getValue().equalsIgnoreCase("CustomerGroup")){
 					getDailyDownloadInterfaceService().processCustomerGroupDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("AccountType")){
+				} else if(tableName.getValue().equalsIgnoreCase("RMTAccountTypes")){
 					getDailyDownloadInterfaceService().processAccountTypeDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("CustomerRating")){
-					getDailyDownloadInterfaceService().processCustomerRatingDetails();
-				}
+				} else if(tableName.getValue().equalsIgnoreCase("CustomerRatings")){
+					getDailyDownloadInterfaceService().processCustomerRatingDetails(dateValueDate);
+				}else if(tableName.getValue().equalsIgnoreCase("EQNAbuserList")){
+					getDailyDownloadInterfaceService().processAbuserDetails();
+				} else if(tableName.getValue().equalsIgnoreCase("Customers")){
+					getDailyDownloadInterfaceService().processCustomerDetails(dateValueDate);
+				}else if(tableName.getValue().equalsIgnoreCase("BMTCountries")){
+					getDailyDownloadInterfaceService().processCountryDetails();
+				}else if(tableName.getValue().equalsIgnoreCase("BMTCustStatusCodes")){
+					getDailyDownloadInterfaceService().processCustStatusCodeDetails();
+				}else if(tableName.getValue().equalsIgnoreCase("BMTIndustries")){
+					getDailyDownloadInterfaceService().processIndustryDetails();
+				}else if(tableName.getValue().equalsIgnoreCase("RMTBranches")){
+					getDailyDownloadInterfaceService().processBranchDetails();
+				}else if(tableName.getValue().equalsIgnoreCase("SystemInternalAccountDef")){
+					getDailyDownloadInterfaceService().processInternalAccDetails(dateValueDate);
+				} else if(tableName.getValue().equalsIgnoreCase("BMTTransactionCode")){
+					getDailyDownloadInterfaceService().processTransactionCodeDetails();
+				} else if(tableName.getValue().equalsIgnoreCase("BMTIdentityType")){
+					getDailyDownloadInterfaceService().processIdentityTypeDetails();
+				} 
 			}
 		
 		}catch (Exception e) {

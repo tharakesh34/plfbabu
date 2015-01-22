@@ -2,6 +2,7 @@ package com.pennant.webui.importdata;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -49,7 +52,7 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl implements Serializabl
 	 */
 	public void onClick$btnImportData(Event event){
 		logger.debug("Entering "+event);
-		
+		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
 		Label status;
 		boolean isExecuted = false;
 		try{
@@ -77,11 +80,29 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl implements Serializabl
 					isExecuted = getDailyDownloadInterfaceService().processDepartmentDetails();
 				} else if(tableName.equalsIgnoreCase("CustomerGroup")){
 					isExecuted = getDailyDownloadInterfaceService().processCustomerGroupDetails();
-				} else if(tableName.equalsIgnoreCase("AccountType")){
+				} else if(tableName.equalsIgnoreCase("RMTAccountTypes")){
 					isExecuted = getDailyDownloadInterfaceService().processAccountTypeDetails();
-				} else if(tableName.equalsIgnoreCase("CustomerRating")){
-					isExecuted = getDailyDownloadInterfaceService().processCustomerRatingDetails();
-				}
+				} else if(tableName.equalsIgnoreCase("CustomerRatings")){
+					isExecuted = getDailyDownloadInterfaceService().processCustomerRatingDetails(dateValueDate);
+				} else if(tableName.equalsIgnoreCase("EQNAbuserList")){
+					isExecuted = getDailyDownloadInterfaceService().processAbuserDetails();
+				} else if(tableName.equalsIgnoreCase("Customers")){
+					isExecuted = getDailyDownloadInterfaceService().processCustomerDetails(dateValueDate);
+				}else if(tableName.equalsIgnoreCase("BMTCountries")){
+					isExecuted = getDailyDownloadInterfaceService().processCountryDetails();
+				}else if(tableName.equalsIgnoreCase("BMTCustStatusCodes")){
+					isExecuted = getDailyDownloadInterfaceService().processCustStatusCodeDetails();
+				}else if(tableName.equalsIgnoreCase("BMTIndustries")){
+					isExecuted = getDailyDownloadInterfaceService().processIndustryDetails();
+				}else if(tableName.equalsIgnoreCase("RMTBranches")){
+					isExecuted = getDailyDownloadInterfaceService().processBranchDetails();
+				}else if(tableName.equalsIgnoreCase("SystemInternalAccountDef")){
+					isExecuted = getDailyDownloadInterfaceService().processInternalAccDetails(dateValueDate);
+				} else if(tableName.equalsIgnoreCase("BMTTransactionCode")){
+				    isExecuted = getDailyDownloadInterfaceService().processTransactionCodeDetails();
+			    } else if(tableName.equalsIgnoreCase("BMTIdentityType")){
+				    isExecuted = getDailyDownloadInterfaceService().processIdentityTypeDetails();
+			    }
 				setStatus(isExecuted,status);
 			}
 		}catch(Exception e){

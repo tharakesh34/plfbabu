@@ -647,8 +647,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 			this.custCIF.setValue(aFinanceMain.getLovDescCustCIF());
 			this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
 			this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), aFinanceMain.getLovDescFinFormatter()));
-			this.curFinAmountValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount().subtract(
-					aFinanceMain.getFinRepaymentAmount() != null ? aFinanceMain.getFinRepaymentAmount() :  BigDecimal.ZERO), aFinanceMain.getLovDescFinFormatter()));
+			this.curFinAmountValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount()
+					.add(aFinanceMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : aFinanceMain.getFeeChargeAmt())
+					.subtract(aFinanceMain.getDownPayment() == null ? BigDecimal.ZERO : aFinanceMain.getDownPayment())
+					.subtract(aFinanceMain.getFinRepaymentAmount() != null ? aFinanceMain.getFinRepaymentAmount() :  BigDecimal.ZERO), aFinanceMain.getLovDescFinFormatter()));
 			this.finType.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 			this.finCcy.setValue(aFinanceMain.getFinCcy() + "-" + aFinanceMain.getLovDescFinCcyName());
 			this.profitDaysBasis.setValue(aFinanceMain.getProfitDaysBasis() + "-" + aFinanceMain.getLovDescProfitDaysBasisName());

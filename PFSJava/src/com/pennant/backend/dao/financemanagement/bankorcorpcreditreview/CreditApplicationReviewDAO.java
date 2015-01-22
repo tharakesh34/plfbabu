@@ -29,4 +29,5 @@ public interface CreditApplicationReviewDAO {
 	List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByMainCategory(String category);
 	FinCreditReviewDetails getCreditReviewDetailsByCustIdAndYear(final long customerId, String auditYear, String type);
 	String getMaxAuditYearByCustomerId(long customerId, String type);
+	List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type);
 }

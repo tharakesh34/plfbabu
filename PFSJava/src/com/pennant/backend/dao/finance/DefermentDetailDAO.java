@@ -63,6 +63,6 @@ public interface DefermentDetailDAO {
 	void saveList(List<DefermentDetail> defermentDetail, String type,boolean isWIF);
 	int getFinReferenceCount(String finReference, Date defSchdDate, Date defRpyDate);
 	void updateList(List<DefermentDetail> defermentDetail, String type, boolean isWIF);
-	void updateBatch(DefermentDetail defermentDetail);
-	DefermentDetail getDefermentDetailForBatch(String id, Date schdDate);
+	void updateBatch(List<DefermentDetail> defermentDetailList);
+	List<DefermentDetail> getDefermentDetailForBatch(String id, Date schdDate);
 }

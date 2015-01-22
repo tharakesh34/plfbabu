@@ -84,7 +84,8 @@
 	<menu id="menu_Category_Customer"  rightName="menuCat_CustomerMasters"> 
 		<menuItem id="menu_Item_NewCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul"  rightName="menuItem_CustomerMasters_Customer"/>
 		<menuItem id="menu_Item_Commitment" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentList.zul"  rightName="menuItem_Commitment_Commitment"/>
-		<menuItem id="menu_Item_CreditApplicationReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul"  rightName="menuItem_CreditApplicationReview" />								
+		<menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul"  rightName="menuItem_CommCreditApplicationReview" />								
+		<menuItem id="menu_Item_CorpCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul"  rightName="menuItem_CorpCreditApplicationReview" />								
 		<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" rightName="menuItem_CreditApplicationReviewMaintinence"/>
 		<menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul"  rightName="menuItem_CustomerMasters_ProspectCustomer" />								
 		<menuItem id="menu_Item_CustomerGroup" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupList.zul"  rightName="menuItem_CustomerMasters_CustomerGroup"/>
@@ -112,6 +113,7 @@
 	<!-- Rules   Factory -->
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >
 	    <menuItem id="menu_Item_AccountingSet" zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"  rightName="menuItem_RMTMasters_AccountingSet"/>
+		<menuItem id="menu_Item_AgrRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"   rightName="menuItem_RulesFactory_AgreementRules"/>
 	    <menuItem id="menu_Item_CheckList" zulNavigation="/WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul"  rightName="menuItem_RulesFactory_CheckList"/>
 		<menuItem id="menu_Item_CheckRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"   rightName="menuItem_RulesFactory_CheckRules"/>
 	    <menuItem id="menu_Item_DedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"  rightName="menuItem_SolutionFactory_CustDedupParm"/>
@@ -148,9 +150,10 @@
 		<menuItem id="menu_Item_FacilityReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailList.zul"	 rightName="menuItem_SolutionFactory_FacilityReferenceDetail"/>
 		<menuItem id="menu_Item_Product" zulNavigation="/WEB-INF/pages/SolutionFactory/Product/ProductList.zul"  rightName="menuItem_SolutionFactory_Product"/>
 		<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/>
+		<!-- <menuItem id="menu_Item_FinanceRepayPriority" zulNavigation="/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityList.zul"  rightName="menuItem_Finance_FinanceRepayPriority"/> -->
+		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
 		<menuItem id="menu_Item_WeekendMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterList.zul"  rightName="menuItem_SolutionFactory_WeekendMaster" />
 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  rightName="menuItem_SolutionFactory_WorkFlowDetail"/>
-		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
 	</menu>
 	
 	<!--Finance Menu Tree -->
@@ -163,27 +166,9 @@
 			<menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul"  rightName="menuItem_Commodity_CommodityBrokerDetail"/>
 			<menuItem id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul"  rightName="menuItem_Commodity_CommodityDetail"/>
 		</menu> -->
-	
-        <!-- <menuItem id="menu_Item_FinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/> -->
-		<!-- <menuItem id="menu_Item_IjarahFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/IjarahFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_IstisnaFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/IstisnaFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_MudarabahFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/MudarabahFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_MurabahaFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/MurabahaFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_TawarruqFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/TawarruqFinanceMainList.zul" rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_MusharakahFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/MusharakahFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_SalamFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/SalamFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_SukukFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/SukukFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_WakalaFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/WakalaFinanceMainList.zul"  rightName="menuItem_Finance_FinanceMain"/>
-		<menuItem id="menu_Item_WIFFinanceDisbursement" zulNavigation="/WEB-INF/pages/Finance/WIFFinanceDisbursement/WIFFinanceDisbursementList.zul"  rightName="menuItem_Finance_WIFFinanceDisbursement"/>
-		<menuItem id="menu_Item_WIFFinanceScheduleDetail" zulNavigation="/WEB-INF/pages/Finance/WIFFinanceScheduleDetail/WIFFinanceScheduleDetailList.zul"  rightName="menuItem_Finance_WIFFinanceScheduleDetail"/>
-		<menuItem id="menu_Item_FinanceDisbursement" zulNavigation="/WEB-INF/pages/Finance/FinanceDisbursement/FinanceDisbursementList.zul"  rightName="menuItem_Finance_FinanceDisbursement"/>
-		<menuItem id="menu_Item_FinanceRepayPriority" zulNavigation="/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityList.zul"  rightName="menuItem_Finance_FinanceRepayPriority"/>
-		<menu id="menu_Category_Commodity" rightName="menuCat_Commodity" >
-			<menuItem id="menu_Item_CommodityBrokerDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailList.zul"  rightName="menuItem_Commodity_CommodityBrokerDetail"/>
-			<menuItem id="menu_Item_CommodityDetail" zulNavigation="/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailList.zul"  rightName="menuItem_Commodity_CommodityDetail"/>
-		</menu>
-		<menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul"  /> -->
+		<!-- <menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul"  /> --> -->
 	</menu>
+	
 	<menu id="menu_Category_Facility"  rightName="menuCat_Facility" >
 		<menuItem id="menu_Item_Facility" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityList.zul" rightName="menuItem_Facility_Facility"/>
 		<menuItem id="menu_Item_Facility_CORP" zulNavigation="/WEB-INF/pages/Facility/Facility/FacilityCorpList.zul"  rightName="menuItem_Facility_Corp"/>

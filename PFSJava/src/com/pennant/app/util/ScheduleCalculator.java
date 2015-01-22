@@ -3115,8 +3115,8 @@ public class ScheduleCalculator {
 		dd.setDefRpySchdPriBal(BigDecimal.ZERO);
 		dd.setDefPaidPftTillDate(BigDecimal.ZERO);
 		dd.setDefPaidPriTillDate(BigDecimal.ZERO);
-		dd.setDefPftBalance(BigDecimal.ZERO);
-		dd.setDefPriBalance(BigDecimal.ZERO);
+		dd.setDefPftBalance(schdDefProfit);
+		dd.setDefPriBalance(schdDefPrincipal);
 
 		finScheduleData.getDefermentDetails().add(dd);
 		finScheduleData.setDefermentDetails(sortDefDetailsBySchdDate(finScheduleData.getDefermentDetails()));

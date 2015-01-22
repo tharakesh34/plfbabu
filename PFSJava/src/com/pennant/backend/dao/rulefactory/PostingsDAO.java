@@ -71,4 +71,5 @@ public interface PostingsDAO {
 	void deleteAll(String type);
 	FeeRule getTakafulFee(String finReference, String type);
 	BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId);
+	long getLinkTranIdByRef(String finReference);
 }

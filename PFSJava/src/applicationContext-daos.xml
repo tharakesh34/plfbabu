@@ -5393,6 +5393,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -5565,6 +5566,7 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -6024,6 +6026,14 @@
 	<bean name="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil">
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
+		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
+	</bean>
+
+	<!--============ Account Number Util ============== -->
+
+	<bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 	</bean>
 

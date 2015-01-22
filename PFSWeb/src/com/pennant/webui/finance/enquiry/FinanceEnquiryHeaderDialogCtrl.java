@@ -90,6 +90,7 @@ import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
 import com.pennant.backend.model.lmtmasters.EducationalLoan;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -598,11 +599,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 					}
 				}
 				
-				// Find Out Finance Repayment Details on Schedule
+				// Find Out Finance Repayment Details & Penalty Details on Schedule
 				Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
+				Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = null;
 				if(finScheduleData.getRepayDetails() != null && finScheduleData.getRepayDetails().size() > 0){
 					rpyDetailsMap = new HashMap<Date, ArrayList<FinanceRepayments>>();
+					penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
 
+					//Repayment Details
 					for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
 						if(rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())){
 							ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
@@ -614,12 +618,25 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseListCtrl<FinanceMain>
 							rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
 						}
 					}
+					
+					// Penalty Details
+					for (OverdueChargeRecovery penaltyDetail : finScheduleData.getPenaltyDetails()) {
+						if(penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())){
+							ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap.get(penaltyDetail.getFinODSchdDate());
+							penaltyDetailList.add(penaltyDetail);
+							penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+						}else{
+							ArrayList<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
+							penaltyDetailList.add(penaltyDetail);
+							penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+						}
+					}
 				}
 				
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				List<FinanceScheduleReportData> subList = finRender.getScheduleData(finScheduleData,rpyDetailsMap, feeChargesMap,true);
+				List<FinanceScheduleReportData> subList = finRender.getScheduleData(finScheduleData,rpyDetailsMap, penaltyDetailsMap, feeChargesMap,true);
 				list.add(subList);
 				
 				SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();

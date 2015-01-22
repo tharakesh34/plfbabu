@@ -121,6 +121,7 @@ public class DataSetFiller implements Serializable {
 	//DEPRECIATION Details
 	private BigDecimal ACCDPRPRI = BigDecimal.ZERO;
 	private BigDecimal DPRPRI = BigDecimal.ZERO;
+	private boolean FINISACTIVE ;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -821,6 +822,12 @@ public class DataSetFiller implements Serializable {
 	public void setDPRPRI(BigDecimal dPRPRI) {
 	    DPRPRI = dPRPRI;
     }
+	public boolean isFINISACTIVE() {
+		return FINISACTIVE;
+	}
+	public void setFINISACTIVE(boolean fINISACTIVE) {
+		FINISACTIVE = fINISACTIVE;
+	}
 	
 	//Set values into Map
 	public HashMap<String, Object> getDeclaredFieldValues() {

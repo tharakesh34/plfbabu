@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.bankorcorpcreditreview;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,8 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Auxhead;
 import org.zkoss.zul.Auxheader;
 import org.zkoss.zul.Borderlayout;
@@ -63,6 +66,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -73,6 +77,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.model.reports.CreditReviewMainCtgDetails;
 import com.pennant.backend.model.reports.CreditReviewSubCtgDetails;
+import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditReviewSummaryData;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -241,7 +246,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 					creditApplicationReviewListCtrl = (CreditApplicationReviewListCtrl) args.get("creditApplicationReviewListCtrl");
 				}
 				finCreditReviewDetails = (FinCreditReviewDetails) args.get("creditReviewDetails");
-				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("FinCreditReviewDetails");
+				
+				String moduleMapCode = null;
+				if(finCreditReviewDetails != null && 
+						PennantConstants.CREDIT_DIVISION_COMMERCIAL.equals(finCreditReviewDetails.getDivision())){
+					moduleMapCode = "CommCreditAppReview";
+				} else if(finCreditReviewDetails != null && 
+						PennantConstants.CREDIT_DIVISION_CORPORATE.equals(finCreditReviewDetails.getDivision())){
+					moduleMapCode = "CorpCreditAppReview";
+				}
+				
+				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleMapCode);
 				maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(finCreditReviewDetails.getCustomerId(), "_VIEW");
 				isEnquiry = false;
 				
@@ -273,18 +288,19 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 				this.custCIF.setReadonly(true);
 				this.toYear.setReadonly(true);
 				if (moduleMapping.getWorkflowType() != null) {
-					workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinCreditReviewDetails");
+					workFlowDetails = WorkFlowUtil.getWorkFlowDetails(moduleMapCode);
 					if (workFlowDetails == null) {
 						setWorkFlowEnabled(false);
 					} else {
 						setWorkFlowEnabled(true);
 						setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 						setWorkFlowId(workFlowDetails.getId());
+						this.finCreditReviewDetails.setWorkflowId(workFlowDetails.getId());
 					}
 				} 
 				doCheckRights();
 				doLoadWorkFlow(this.finCreditReviewDetails.isWorkflow(), 
-						this.finCreditReviewDetails.getWorkflowId(), this.finCreditReviewDetails.getNextTaskId());
+						this.finCreditReviewDetails.getWorkflowId(), finCreditReviewDetails.getNextTaskId());
 				if (isWorkFlowEnabled()) {
 					this.userAction = setListRecordStatus(this.userAction);
 					getUserWorkspace().alocateRoleAuthorities(getRole(), "CreditApplicationReviewDialog");
@@ -336,7 +352,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		this.auditedYear.setValue(aCreditReviewDetails.getAuditYear());
 		this.currencyType.setValue((aCreditReviewDetails.getCurrency()));
 		this.currFormatter = aCreditReviewDetails.getLovDescCcyEditField();
-		
+		this.conversionRate.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
 		if(aCreditReviewDetails.getConversionRate() == null){
 			BigDecimal converstnRate = PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(this.currencyType.getValue(), PennantConstants.CURRENCY_USD,
 					                     new BigDecimal(1000)), currFormatter);
@@ -415,7 +431,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		logger.debug("Entering ");
 		boolean isNew = false;
 		String tranType = "";
-        int approvedRecordsCount = 0;
+        //int approvedRecordsCount = 0;
         notesEnteredCount = 0;
 		Map<String ,List<FinCreditReviewSummary>> creditReviewSummaryMap;
 		creditReviewSummaryMap = this.creditApplicationReviewService.getListCreditReviewSummaryByCustId(this.custID.getValue(), noOfYears,year, "_View");
@@ -425,7 +441,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
          
 		List<FinCreditReviewDetails> listOfFinCreditReviewDetails = new  ArrayList<FinCreditReviewDetails>();
 		for(int i=0;i<noOfYears;i++){
-			if(!userAction.getSelectedItem().getValue().toString().equalsIgnoreCase("Save")){
+			if(!userAction.getSelectedItem().getValue().toString().equalsIgnoreCase("Saved")){
 				int yearCount = i;
 				switch(yearCount){
 				case 2 : if(totAsstValue0.compareTo(totLibNetWorthValue0) != 0){
@@ -454,26 +470,32 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 			}
 		}
 
-		String ltstYrRcdStatus = finCreditReviewDetails.getRecordStatus();
+		//String ltstYrRcdStatus = finCreditReviewDetails.getRecordStatus();
 		FinCreditReviewDetails ltstFinCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(this.finCreditReviewDetails, ltstFinCreditReviewDetails);
-		noOfRecords = listOfFinCreditReviewDetails.size();
+		//noOfRecords = listOfFinCreditReviewDetails.size();
+		for(FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails){
+			if(!aCreditReviewDetails.getRecordStatus().equalsIgnoreCase("Approved")){
+				noOfRecords++;
+			}
+		}
+		
 		int proRecordCount = 0;
 		for(FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails){
 			
-			if(!aCreditReviewDetails.getRecordStatus().equals("Approved")){
+			if(!aCreditReviewDetails.getRecordStatus().equalsIgnoreCase("Approved")){
 				// for cancellation we are processing latest credit review details only
 				if(userAction.getSelectedItem().getValue().toString().equalsIgnoreCase("Cancelled")){
 					if(!aCreditReviewDetails.getAuditYear().equals(ltstFinCreditReviewDetails.getAuditYear())){
 						continue;
 					}
 				}
-				if(!StringUtils.trimToEmpty(aCreditReviewDetails.getRecordStatus()).equals("") 
+				/*if(!StringUtils.trimToEmpty(aCreditReviewDetails.getRecordStatus()).equals("") 
 						&& !aCreditReviewDetails.getRecordStatus().equals(ltstYrRcdStatus)){
 					PTMessageUtils.showErrorMessage(aCreditReviewDetails.getAuditYear()+" Record  in "+aCreditReviewDetails.getRecordStatus()
 							+" State Please Process It To "+ltstYrRcdStatus+" State");
 					return;
-				}
+				}*/
 				isNew = aCreditReviewDetails.isNew();
 				if (isWorkFlowEnabled()) {
 					tranType = PennantConstants.TRAN_WF;
@@ -513,23 +535,27 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 						// do Close the Dialog window
 						closeDialog(this.window_CreditApplicationReviewDialog, "CreditApplicationReviewDialog");
 						creditApplicationReviewListCtrl.refresh();
-					}
+					} 
 				} catch (final DataAccessException e) {
 					logger.error(e);
 					showMessage(e);
 				}
-			} else {
-				approvedRecordsCount++;
-			}
+			} 
 		}
 		
-		if(proRecordCount ==3 && listOfFinCreditReviewDetails != null 
-				&& listOfFinCreditReviewDetails.size() > 0){
+		if(listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
+				&& noOfRecords == proRecordCount){
 			//Mail Alert Notification for User
 			getMailUtil().sendMail(PennantConstants.MAIL_MODULE_CREDIT, listOfFinCreditReviewDetails.get(0),this);
+			
+			FinCreditReviewDetails creditReviewDetails = listOfFinCreditReviewDetails.get(0);
+			String msg = getSavingStatus(creditReviewDetails.getRoleCode(), creditReviewDetails.getNextRoleCode(), creditReviewDetails.getCustomerId(),
+					"Credit Review", creditReviewDetails.getRecordStatus());
+			Clients.showNotification(msg,  "info", null, null, -1);
 		}
-		if(approvedRecordsCount == 3){
-			closeDialog(this.window_CreditApplicationReviewDialog, "CreditApplicationReviewDialog");
+		
+		if(proRecordCount != 0){	
+		    closeDialog(this.window_CreditApplicationReviewDialog, "CreditApplicationReviewDialog");
 			creditApplicationReviewListCtrl.refresh();
 		}
 		logger.debug("Leaving");
@@ -574,15 +600,19 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 						aCreditReviewDetails))) {
 					notesEnteredCount++;
 					try {
-						if (!isNotes_Entered() && notesEnteredCount != noOfRecords) {
-							return false;
-						} 
-					if(notesEnteredCount == noOfRecords){
-						if(!isNotes_Entered()){
-						 PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						 return false;
-						}
-					}
+						//if(notesEnteredCount == noOfRecords){
+							/*if (!isNotes_Entered() && notesEnteredCount != noOfRecords) {
+								//PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+								return false;
+							} */
+							
+							if(!isNotes_Entered()){
+								if(notesEnteredCount == noOfRecords){
+							      PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+								}
+							 return false;
+							}
+					//}
 					} catch (InterruptedException e) {
 						logger.error(e);
 						e.printStackTrace();
@@ -804,7 +834,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 			Tabpanel tabPanel = new Tabpanel();	
 			tabPanel.setId("tabPanel_"+fcrc.getCategoryId());
 			tabPanel.setParent(this.tabpanelsBoxIndexCenter);
-			render(fcrc.getCategoryId(),setListToTab("tabPanel_"+fcrc.getCategoryId(), tabPanel, fcrc));
+			render(fcrc,setListToTab("tabPanel_"+fcrc.getCategoryId(), tabPanel, fcrc));
 		}
 		logger.debug("Leaving");
 	}
@@ -815,8 +845,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 	 * @param listbox
 	 * @throws Exception
 	 */
-	public void render(long categoryId,Listbox listbox) throws Exception {
+	public void render(FinCreditRevCategory finCreditRevCategory,Listbox listbox) throws Exception {
 		logger.debug("Entering");
+		long categoryId = finCreditRevCategory.getCategoryId();
 		Listitem item = null;
 		Listcell lc = null;
 		Listgroup lg = null;
@@ -861,7 +892,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 					//TODO COLOR
 				}
 			}
-
+			creditReviewSubCtgDetails.setTabDesc(finCreditRevCategory.getCategoryDesc());
 			creditReviewSubCtgDetails.setMainGroupDesc(mainCategory);
 			lc = new Listcell();
 			lc.setStyle("border: 1px inset snow; font-size: 12px;");
@@ -874,6 +905,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 
 			label1.setValue(String.valueOf(finCreditRevSubCategory.getSubCategoryDesc()));
 			creditReviewSubCtgDetails.setSubCategoryDesc(String.valueOf(finCreditRevSubCategory.getSubCategoryDesc()));
+			if(categoryId == 4 || categoryId == 7){
+				creditReviewSubCtgDetails.setRemarks("R");
+				finCreditRevSubCategory.setRemarks("R");
+			}
 			label1.setParent(lc);
 			lc.setParent(item);
 			for(int j=noOfYears;j>=1;j--){				
@@ -913,8 +948,31 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 					break;
 					}
 				}
-				String value =this.dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode());
-              try{
+				String value = this.dataMap.get("Y"+(noOfYears-j)+"_"+finCreditRevSubCategory.getSubCategoryCode());
+				
+				BigDecimal convrsnPrice = BigDecimal.ZERO;
+				BigDecimal tempValue = new BigDecimal(value);
+				if(tempValue.compareTo(BigDecimal.ZERO) != 0){
+					if(this.conversionRate.getValue() != null){
+						convrsnPrice = PennantAppUtil.formateAmount(tempValue,this.currFormatter)
+								.divide(this.conversionRate.getValue(), PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+					}else if(isEnquiry){
+						if(creditReviewDetailsMap != null && creditReviewDetailsMap.get(String.valueOf(year)) != null){
+							FinCreditReviewDetails finCreditReviewDetails = creditReviewDetailsMap.get(String.valueOf(year));
+								convrsnPrice = PennantAppUtil.formateAmount(tempValue,this.currFormatter)
+										.divide(finCreditReviewDetails.getConversionRate(), PennantConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+						}
+					}
+				}
+				if(j==3){
+					creditReviewSubCtgDetails.setYear1USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
+				}else if(j==2) {
+					creditReviewSubCtgDetails.setYear2USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
+				}else if(j==1){
+					creditReviewSubCtgDetails.setYear3USDConvstn(getUsdConVersionValue(finCreditRevSubCategory,convrsnPrice));
+				}
+			try{
+            	
 				if("--".equals(value) || value == null 
 						//|| !StringUtils.isNumeric(value)
 						) {
@@ -1029,6 +1087,27 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		logger.debug("Leaving");
 	}
 
+	/** Method for USD Conversion	
+	 * @param finCreditRevSubCategory
+	 * @param convrsnPrice
+	 * @return
+	 */
+	public String getUsdConVersionValue(FinCreditRevSubCategory finCreditRevSubCategory, BigDecimal convrsnPrice){
+		if(StringUtils.trimToEmpty(finCreditRevSubCategory.getRemarks()).equals(PennantConstants.CREDITREVIEW_REMARKS)){
+			String subCategoryCode = StringUtils.trimToEmpty(finCreditRevSubCategory.getSubCategoryCode());
+			if(subCategoryCode.equals(PennantConstants.CORP_CRDTRVW_RATIOS_WRKCAP) ||
+					subCategoryCode.equals(PennantConstants.CORP_CRDTRVW_RATIOS_EBITDA4) ||
+					subCategoryCode.equals(PennantConstants.CORP_CRDTRVW_RATIOS_FCF)){
+				return PennantAppUtil.formatAmount(convrsnPrice, PennantConstants.CREDIT_REVIEW_USD_SCALE,false);
+			} else {
+				return "";
+			}
+		} else {
+			return PennantAppUtil.formatAmount(convrsnPrice, PennantConstants.CREDIT_REVIEW_USD_SCALE,false);
+		}
+	}
+	
+	
 	/**
 	 * when the "help" button is clicked. <br>
 	 * 
@@ -1158,6 +1237,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		auxHead.setParent(listbox);
 		listHead.setParent(listbox);
 		for (CreditReviewSubCtgDetails creditReviewSubCtgDetails : creditReviewSubtgDetailsList) {
+			creditReviewSubCtgDetails.setCurrencyConvertion(PennantConstants.CURRENCY_USD);
 			if(creditReviewSubCtgDetails.getMainGroup().equals("T")){
 				
 				creditReviewSubCtgDetails.setYera1AuditValueHeader(creditReviewSubCtgDetailsHeader.getYera1AuditValueHeader());
@@ -1189,6 +1269,16 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		logger.debug("Entering");
 
 		FinCreditReviewDetails finCreditReviewDetails = this.creditApplicationReviewService.getCreditReviewDetailsByCustIdAndYear(this.custID.getValue(), auditYear, isEnquiry ? "_AVIEW" : "_VIEW");
+		
+		if(isEnquiry && finCreditReviewDetails!= null){
+			if(creditReviewDetailsMap == null){
+				creditReviewDetailsMap = new HashMap<String,FinCreditReviewDetails>();
+			}
+			if(creditReviewDetailsMap.get(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear())) == null){
+				creditReviewDetailsMap.put(StringUtils.trimToEmpty(finCreditReviewDetails.getAuditYear()),finCreditReviewDetails);
+			}
+		}
+		
 		String auditTypeLabel = "";
 		if(isForReport){
 			auditTypeLabel = "AUD/Qual "+auditYear+"-0 Months";
@@ -1462,14 +1552,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 			throw new WrongValuesException(wvea);
 		   } else {
 			CreditReviewMainCtgDetails creditReviewMainCtgDetails = new CreditReviewMainCtgDetails();
-			creditReviewMainCtgDetails.setCustCIF(this.custCIF.getValue());
+			creditReviewMainCtgDetails.setCustCIF(this.custCIF.getValue()+" - "+StringUtils.trimToEmpty(custShrtName.getValue()));
 			creditReviewMainCtgDetails.setToYear(String.valueOf(this.toYear.getValue()));
 
 			List<Object> list = new ArrayList<Object>();
 			list.add(creditReviewSubtgDetailsList);
-
+   
 			ReportGenerationUtil.generateReport("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list, true, 1,
-					getUserWorkspace().getUserDetails().getUsername(),  this.window_CreditApplicationReviewDialog);	
+					getUserWorkspace().getUserDetails().getUsername(),  this.window_CreditApplicationReviewDialog,true);	
 
 		}
 		
@@ -1489,6 +1579,33 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseListCtrl<FinanceM
 		filterList.add(new Filter("lovDescCustCtgType", new String[]{"C", "B"}, Filter.OP_IN));
 		return filterList;
 	}
+	
+	public  String getSavingStatus(String roleCode,String nextRoleCode, long custId, String moduleCode, String recordStatus){
+		String roleCodeDesc = "";
+		if(StringUtils.trimToEmpty(nextRoleCode).equals("") || roleCode.equals(nextRoleCode) || StringUtils.trimToEmpty(recordStatus).equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)){
+			return moduleCode + " with Customer ID: " + custId +" "+ recordStatus + " Successfully.";
+		}else{
+			JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
+			if (nextRoleCode.contains(",")) {
+	            String roleCodes[]=nextRoleCode.split(",");
+	        	searchObject.addFilterIn("RoleCd", (Object)roleCodes);
+            }else{
+            	searchObject.addFilterEqual("RoleCd", nextRoleCode);
+            }
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
+			if (rolesList!=null && !rolesList.isEmpty()) {
+				for (SecurityRole securityRole : rolesList) {
+					if ("".equals(roleCodeDesc)) {
+						roleCodeDesc = securityRole.getRoleDesc();
+                    }else{
+                    	roleCodeDesc=roleCodeDesc+" And "+securityRole.getRoleDesc();
+                    }
+                }
+            }
+			return moduleCode + " with Customer ID: " + custId + " Moved to " +  (StringUtils.trimToEmpty(roleCodeDesc).equals("") ? "" : roleCodeDesc) + " Successfully.";
+		}
+ 	}
 	
 	public boolean isNotes_Entered() {
 		return notes_Entered;

@@ -8959,7 +8959,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			finRender = new FinScheduleListItemRenderer();
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinanceDetail().getFinScheduleData());
 			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinanceDetail().getFinScheduleData(),null, feeChargesMap,true);
+			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinanceDetail().getFinScheduleData(),null,null , feeChargesMap,true);
 			list.add(subList);
 			ReportGenerationUtil.generateReport("FINENQ_ScheduleDetail", getFinanceDetail().getFinScheduleData().getFinanceMain(), list, true, 1, getUserWorkspace().getUserDetails().getUsername(),
 			        window_FinanceMainDialog);

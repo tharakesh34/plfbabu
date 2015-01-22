@@ -239,8 +239,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseListCtrl<ReturnDataSet> i
 			} 
 
 			getBorderLayoutHeight();
-			this.listBoxFinAccountings.setHeight(this.borderLayoutHeight- 220 +"px");
-			this.window_AccountingDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
+			this.listBoxFinAccountings.setHeight((this.borderLayoutHeight- 220) +"px");
+			this.window_AccountingDetailDialog.setHeight((this.borderLayoutHeight-80)+"px");
 
 			if(wvea != null){
 				if(wvea.getCause().getClass().equals(WrongValuesException.class)){

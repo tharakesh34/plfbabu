@@ -59,7 +59,6 @@ import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.reports.ReportConfiguration;
-import com.pennant.coreinterface.model.FinIncomeAccount;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -94,14 +93,10 @@ public class DealWiseIncomeReportCtrl extends  GFCBaseListCtrl<ReportConfigurati
 
 			dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_DATE").toString());
 
-			//Date mnthStartDate = DateUtility.getMonthStartDate(dateValueDate);
-			Date mnthStartDate = DateUtility.getMonthStartDate(DateUtility.addDays(DateUtility.getMonthStartDate(dateValueDate), -1));
-
-			FinIncomeAccount finIncomeAccount = new FinIncomeAccount();
-			finIncomeAccount.setLastMntOn(mnthStartDate);
+			Date prvMnthStartDate = DateUtility.getMonthStartDate(DateUtility.addDays(DateUtility.getMonthStartDate(dateValueDate), -1));
 
 			//Saving new Income Account Transaction Details From Core System
-			getDailyDownloadInterfaceService().processIncomeAccTransactions(finIncomeAccount);
+			getDailyDownloadInterfaceService().processIncomeAccTransactions(prvMnthStartDate);
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("MonthEndReportEvent", event);

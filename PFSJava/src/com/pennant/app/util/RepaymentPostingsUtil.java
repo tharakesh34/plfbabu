@@ -277,7 +277,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			actreturnList.add(true);
 			
 			//Overdue Details preparation
-			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true);
+			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true, false);
 		
 			logger.debug("Leaving");
 			return actreturnList;
@@ -581,6 +581,27 @@ public class RepaymentPostingsUtil implements Serializable {
 	}
 	
 	/**
+	 * Method for Sorting List of Deferment Details
+	 * @param defermentDetails
+	 * @return
+	 */
+	public List<DefermentDetail> sortDeferDetails(List<DefermentDetail> defermentDetails) {
+		
+		if (defermentDetails != null && defermentDetails.size() > 0) {
+			Collections.sort(defermentDetails, new Comparator<DefermentDetail>() {
+				@Override
+				public int compare(DefermentDetail detail1, DefermentDetail detail2) {
+					if (detail1.getDeferedSchdDate().after(detail2.getDeferedSchdDate())) {
+						return 1;
+					}
+					return 0;
+				}
+			});
+		}
+		return defermentDetails;
+	}
+	
+	/**
 	 * Method for Posting Process execution in Single Entry Event for Total Repayment Amount
 	 * @param valueDate
 	 * @param dateValueDate
@@ -667,12 +688,15 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// Finance Deferment Details Update
-		DefermentDetail defermentDetail = null;
+		List<DefermentDetail> defermentDetailList = null;
 		if (finRepayQueue.getFinRpyFor().equals(PennantConstants.DEFERED)) {
-			defermentDetail = getDefermentDetailDAO().getDefermentDetailForBatch(
+			defermentDetailList = getDefermentDetailDAO().getDefermentDetailForBatch(
 					finRepayQueue.getFinReference(), finRepayQueue.getRpyDate());
-			defermentDetail = updateDefermentDetailsData(defermentDetail, finRepayQueue);
-			getDefermentDetailDAO().updateBatch(defermentDetail);
+			
+			if(!defermentDetailList.isEmpty() && defermentDetailList.size() > 1){
+				defermentDetailList = sortDeferDetails(defermentDetailList);
+			}
+			updateDefermentDetailsData(defermentDetailList, finRepayQueue);
 		}
 
 		// Finance Repayments Details
@@ -706,7 +730,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (isLatePay) {
 
 			//Overdue Details preparation
-			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, isEODProcess);
+			getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, dateValueDate, isRIAFinance, false, isEODProcess, linkedTranId, null, false);
 		
 			//SUSPENSE
 			if (isEODProcess) {
@@ -823,14 +847,43 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @param finRepayQueue
 	 * @return
 	 */
-	private DefermentDetail updateDefermentDetailsData(DefermentDetail detail,FinRepayQueue finRepayQueue) {
+	private void updateDefermentDetailsData(List<DefermentDetail> detailList,FinRepayQueue finRepayQueue) {
 		logger.debug("Entering");
-		detail.setDefPaidPftTillDate(detail.getDefPaidPftTillDate().add(finRepayQueue.getSchdPftPayNow()));
-		detail.setDefPaidPriTillDate(detail.getDefPaidPriTillDate().add(finRepayQueue.getSchdPriPayNow()));
-		detail.setDefPftBalance(detail.getDefPftBalance().subtract(finRepayQueue.getSchdPftPayNow()));
-		detail.setDefPriBalance(detail.getDefPriBalance().subtract(finRepayQueue.getSchdPriPayNow()));
+		
+		BigDecimal pftPayNow = BigDecimal.ZERO;
+		BigDecimal priPayNow = BigDecimal.ZERO;
+		
+		for (int i = 0; i < detailList.size(); i++) {
+			DefermentDetail detail = detailList.get(i);
+			
+			BigDecimal rpyQueuePftbal = finRepayQueue.getSchdPftPayNow().subtract(pftPayNow);
+			BigDecimal rpyQueuePribal = finRepayQueue.getSchdPriPayNow().subtract(priPayNow);
+			
+			BigDecimal actPftBal = detail.getDefSchdProfit().subtract(detail.getDefPaidPftTillDate());
+			BigDecimal actPriBal = detail.getDefSchdPrincipal().subtract(detail.getDefPaidPriTillDate());
+			
+			//Profit Calculations
+			if(actPftBal.compareTo(rpyQueuePftbal) > 0){
+				detail.setDefPaidPftTillDate(detail.getDefPaidPftTillDate().add(rpyQueuePftbal));
+				pftPayNow = pftPayNow.add(rpyQueuePftbal);
+			}else{
+				detail.setDefPaidPftTillDate(detail.getDefPaidPftTillDate().add(actPftBal));
+				pftPayNow = pftPayNow.add(actPftBal);
+			}
+			detail.setDefPftBalance(detail.getDefSchdProfit().subtract(detail.getDefPaidPftTillDate()));
+			
+			//Principal Calculations
+			if(actPriBal.compareTo(rpyQueuePribal) > 0){
+				detail.setDefPaidPriTillDate(detail.getDefPaidPriTillDate().add(rpyQueuePribal));
+				priPayNow = priPayNow.add(rpyQueuePribal);
+			}else{
+				detail.setDefPaidPriTillDate(detail.getDefPaidPriTillDate().add(actPriBal));
+				priPayNow = priPayNow.add(actPriBal);
+			}
+			detail.setDefPriBalance(detail.getDefSchdPrincipal().subtract(detail.getDefPaidPriTillDate()));
+        }
+		getDefermentDetailDAO().updateBatch(detailList);
 		logger.debug("Leaving");
-		return detail;
 	}
 
 	/**

@@ -552,4 +552,26 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("Leaving");
 		return String.valueOf(maxAuditYear);
 	}
+	
+	@Override
+	public List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type) {
+		logger.debug("Entering");
+		FinCreditReviewDetails finCreditReviewDetails= new FinCreditReviewDetails();
+		finCreditReviewDetails.setCustomerId(customerId);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT DetailId,CreditRevCode,CustomerId,AuditYear,BankName,");
+		selectSql.append(" Auditors,Consolidated,Location,ConversionRate,AuditedDate,NoOfShares,MarketPrice,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AuditPeriod, AuditType, Qualified, Currency, Division");
+		selectSql.append(" FROM FinCreditReviewDetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustomerId= :customerId "); 
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditReviewDetails);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCreditReviewDetails.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
 }

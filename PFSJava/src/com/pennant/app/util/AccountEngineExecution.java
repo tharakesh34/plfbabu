@@ -1569,6 +1569,7 @@ public class AccountEngineExecution implements Serializable {
 		
 		dataSetFiller.setACCDPRPRI(aeAmountCodes.getAccumulatedDepPri());
 		dataSetFiller.setDPRPRI(aeAmountCodes.getDepreciatePri());
+		dataSetFiller.setFINISACTIVE(aeAmountCodes.isFinisActive());
 		
 		logger.debug("Leaving");
 	}

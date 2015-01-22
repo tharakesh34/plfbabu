@@ -14,6 +14,7 @@ public class CreditReviewSubCtgDetails {
 	private String header ="F";
 	private String mainGroup ="F";
 	private String mainGroupDesc ="";
+	private String tabDesc ="";
 	private String subGroup ="F";
 
 	private String curYearAuditValueHeader="";
@@ -49,6 +50,9 @@ public class CreditReviewSubCtgDetails {
 	private String yera3BreakDown="";
 	private String yera12PerChange="";
 	private String yera23PerChange="";
+	private String year1USDConvstn="";
+	private String year2USDConvstn="";
+	private String year3USDConvstn="";
 
 	
 	public String getSubCategoryDesc() {
@@ -350,4 +354,32 @@ public class CreditReviewSubCtgDetails {
 	    this.groupCode = groupCode;
     }
 
+	public String getYear1USDConvstn() {
+		return year1USDConvstn;
+	}
+	public void setYear1USDConvstn(String year1usdConvstn) {
+		year1USDConvstn = year1usdConvstn;
+	}
+
+	public String getYear2USDConvstn() {
+		return year2USDConvstn;
+	}
+	public void setYear2USDConvstn(String year2usdConvstn) {
+		year2USDConvstn = year2usdConvstn;
+	}
+
+	public String getYear3USDConvstn() {
+		return year3USDConvstn;
+	}
+	public void setYear3USDConvstn(String year3usdConvstn) {
+		year3USDConvstn = year3usdConvstn;
+	}
+
+	public String getTabDesc() {
+		return tabDesc;
+	}
+	public void setTabDesc(String tabDesc) {
+		this.tabDesc = tabDesc;
+	}
+	
 }

@@ -444,7 +444,7 @@ public class RepayCalculator implements Serializable {
 				//Overdue Penalty Recovery Calculation
 				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finRepayQueue.getFinReference(), "", false);
 				List<Object> odObjDetailList = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue,
-						curBussniessDate, false, false, false, Long.MIN_VALUE, repayData.getFinanceType().getFinDivision());
+						curBussniessDate, false, false, false, Long.MIN_VALUE, repayData.getFinanceType().getFinDivision(), true);
 				
 				FinODDetails odDetails = (FinODDetails) odObjDetailList.get(0);
 				OverdueChargeRecovery recovery = (OverdueChargeRecovery) odObjDetailList.get(1);

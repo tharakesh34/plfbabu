@@ -133,7 +133,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 	private    FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private    WIFCustomer wifcustomer = new WIFCustomer();
 	int currentYear = DateUtility.getYear((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
-
+	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;	
 	protected JdbcSearchObject<Customer> newSearchObject ;
 
@@ -328,7 +328,37 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 	public void onClick$btnProceed(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doWriteComponentsToBean();
-		getCreditApplicationRevDialog();
+		if (this.finCreditReviewDetailsList.size() >= 3) {
+			return;
+		} else {
+			StringBuffer errorMsg = new StringBuffer("Credit Review for the Customer with CIF Number : "
+							+ customer.getCustCIF());
+			int validationCount = 0;
+			for (int i = 0; i < finCreditReviewDetailsList.size(); i++) {
+				FinCreditReviewDetails finCreditReviewDetails = finCreditReviewDetailsList.get(i);
+				if (!finCreditReviewDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+					if (errorMsg.toString().contains("is")) {
+						errorMsg.append(" AND ");
+					}
+					errorMsg.append(finCreditReviewDetails.getAuditYear()+ " is in "
+							+ finCreditReviewDetails.getRecordStatus()+ " stage ");
+					validationCount++;
+				}
+			}
+
+			if (validationCount > 0) {
+				errorMsg.append(" please process it");
+				try {
+					PTMessageUtils.showErrorMessage(errorMsg.toString());
+					return;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				getCreditApplicationRevDialog();
+			}
+		}
 		this.window_CreditRevSelectCategory.onClose();
 		logger.debug("Leaving" + event.toString());
 	}    
@@ -369,6 +399,17 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 		    	this.lovDescCustCIF.clearErrorMessage();
 		    	customer = (Customer)PennantAppUtil.getCustomerObject(this.lovDescCustCIF.getValue(), getFilterList());
 		    	if(customer != null){
+		    		finCreditReviewDetailsList = getCreditApplicationReviewService().getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_Temp");
+		    		if(finCreditReviewDetailsList.size() >= 3){
+		    			try {
+		    				String errorMsg = "3 Years Credit Review For The Customer with CIF Number: "+ customer.getCustCIF() + " is already in process please process it";
+							PTMessageUtils.showErrorMessage(errorMsg);
+							return;
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		    		} 
 		    		creditReviewDetail.setLovDescCustCIF((this.lovDescCustCIF.getValue()));
 		    	} else {
 		    		try {

@@ -2,14 +2,31 @@ package com.pennant.equation.dao;
 
 import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.systemmasters.SubSector;
+import com.pennant.coreinterface.model.EquationAbuser;
 import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationBranch;
+import com.pennant.coreinterface.model.EquationCountry;
 import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustStatusCode;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
 import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationIdentityType;
+import com.pennant.coreinterface.model.EquationIndustry;
+import com.pennant.coreinterface.model.EquationInternalAccount;
+import com.pennant.coreinterface.model.EquationMasterMissedDetail;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
-import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 
 public interface CoreInterfaceDAO {
@@ -21,6 +38,26 @@ public interface CoreInterfaceDAO {
 	List<EquationCustomerGroup> fetchCustomerGroupDetails();
 	List<EquationAccountType> fetchAccountTypeDetails();
 	List<EquationCustomerRating> fetchCustomerRatingDetails();
+	List<EquationCountry> fetchCountryDetails();
+	List<EquationCustStatusCode> fetchCustStatusCodeDetails();
+	List<EquationIndustry> fetchIndustryDetails();
+	List<EquationBranch> fetchBranchDetails();
+	List<EquationInternalAccount> fetchInternalAccDetails();
+	List<EquationTransactionCode> fetchTransactionCodeDetails();
+	List<EquationIdentityType> fetchIdentityTypeDetails();
+	List<String> fetchBranchCodes();
+	List<Long> fetchCustomerGroupCodes();
+	List<String> fetchCountryCodes();
+	List<String> fetchSalutationCodes();
+	List<String> fetchRelationshipOfficerCodes();
+	List<SubSector> fetchSubSectorCodes();
+	List<String> fetchMaritalStatusCodes();
+	List<String> fetchEmpStsCodes();
+	List<String> fetchCurrencyCodes();
+	List<String> fetchAddressTypes();
+	List<String> fetchEMailTypes();
+	List<Long> fetchCustomerIdDetails();
+	List<String> fetchAccountTypes();
 	void saveCurrecnyDetails(List<EquationCurrency> currencyList);
 	void saveRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
 	void saveCustomerTypeDetails(List<EquationCustomerType> customerTypes);
@@ -29,6 +66,15 @@ public interface CoreInterfaceDAO {
 	void saveAccountTypeDetails(List<EquationAccountType> accountTypes);
 	void saveAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
 	void saveCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
+	void saveCountryDetails(List<EquationCountry> countryList);
+	void saveCustStatusCodeDetails(List<EquationCustStatusCode> custList);
+	void saveIndustryDetails(List<EquationIndustry> industryList);
+	void saveBranchDetails(List<EquationBranch> branchList);
+	void saveInternalAccDetails(List<EquationInternalAccount> intAccList);
+	void saveAbuserDetails(List<EquationAbuser> abuserList);
+	void saveMasterValueMissedDetails(List<EquationMasterMissedDetail> masterMissedDetails);
+	void saveTransactionCodeDetails(List<EquationTransactionCode> transactionCodes);
+	void saveIdentityTypeDetails(List<EquationIdentityType> identityTypes);
 	void updateCurrecnyDetails(List<EquationCurrency> currencyList);
 	void updateRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList);
 	void updateCustomerTypeDetails(List<EquationCustomerType> customerTypes);
@@ -37,9 +83,24 @@ public interface CoreInterfaceDAO {
 	void updateAccountTypeDetails(List<EquationAccountType> accountTypes);
 	void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypeNatures);
 	void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings);
-   ////++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
-	public void saveIncomeAccounts(FinIncomeAccount finIncomeAccount);
-	public List<FinIncomeAccount> fetchIncomeAccountDetails(FinIncomeAccount finIncomeAccount) ;
-	public boolean checkIncomeTransactionsExist(IncomeAccountTransaction incomeAccountTransaction);
-	public void saveIncomeAccTransactions(List<IncomeAccountTransaction> incomeAccountTransactions);
+	void updateCountryDetails(List<EquationCountry> countryList);
+	void updateCustStatusCodeDetails(List<EquationCustStatusCode> custStsList);
+	void updateIndustryDetails(List<EquationIndustry> industryList);
+	void updateBranchDetails(List<EquationBranch> branchList);
+	void updateInternalAccDetails(List<EquationInternalAccount> intAccList);
+	void updateCustomerDetails(List<Customer> customerList);
+	void updateAddressDetails(List<CustomerAddres> addressList);
+	void updatePhoneNumberDetails(List<CustomerPhoneNumber> phNumList);
+	void updateEMailDetails(List<CustomerEMail> emailList);
+	void updateEmploymentDetails(List<CustomerEmploymentDetail> empList);
+	void updateTransactionCodes(List<EquationTransactionCode> transactionCodes);
+	void updateIdentityTypes(List<EquationIdentityType> identityTypes);
+	void deleteAbuserDetails();
+	////++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
+	List<FinanceType> fetchFinanceTypeDetails();
+	List<TransactionEntry> fetchTransactionEntryDetails(long accountSetID);
+	void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts);
+	List<IncomeAccountTransaction> fetchIncomeAccountDetails() ;
+	boolean checkIncomeTransactionsExist(IncomeAccountTransaction incomeAccountTransaction);
+	void saveIncomeAccTransactions(List<IncomeAccountTransaction> incomeAccountTransactions);
 }

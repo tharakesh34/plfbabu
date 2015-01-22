@@ -846,7 +846,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			finRender = new FinScheduleListItemRenderer();
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinScheduleData(),null, feeChargesMap,true);
+			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinScheduleData(),null,null, feeChargesMap,true);
 			list.add(subList);
 			//To get Parent Window i.e Finance main based on product
 			//TODO Give better solution

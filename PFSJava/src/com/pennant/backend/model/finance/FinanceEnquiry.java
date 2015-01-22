@@ -76,6 +76,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private String lovDescCustShrtName;
 	private BigDecimal finAmount =BigDecimal.ZERO;
 	private BigDecimal feeChargeAmt =BigDecimal.ZERO;
+	private BigDecimal downPayment =BigDecimal.ZERO;
 	private BigDecimal finRepaymentAmount =BigDecimal.ZERO;
 	private Date grcPeriodEndDate;
 	private Date maturityDate;
@@ -318,6 +319,12 @@ public class FinanceEnquiry implements java.io.Serializable {
     }
 	public String getAssetCode() {
 	    return assetCode;
+    }
+	public BigDecimal getDownPayment() {
+	    return downPayment;
+    }
+	public void setDownPayment(BigDecimal downPayment) {
+	    this.downPayment = downPayment;
     }
 	
 	

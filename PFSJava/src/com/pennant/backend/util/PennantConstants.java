@@ -615,4 +615,10 @@ public class PennantConstants {
 	// Credit Review Division
 	public static final String CREDIT_DIVISION_COMMERCIAL = "COMM";
 	public static final String CREDIT_DIVISION_CORPORATE = "CORP";
+
+	public static final int CREDIT_REVIEW_USD_SCALE = 2;
+	public static final String CORP_CRDTRVW_RATIOS_WRKCAP = "WRKCAP";
+	public static final String CORP_CRDTRVW_RATIOS_EBITDA4 = "EBITDA4";
+	public static final String CORP_CRDTRVW_RATIOS_FCF = "FCF";
+
 }

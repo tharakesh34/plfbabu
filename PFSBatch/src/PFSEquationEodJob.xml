@@ -494,6 +494,14 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
+
+    <bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
+	</bean>
+
+
 	<!-- _____________________________________________ TASKLET BEANS _________________________________________ -->
 	
 	<!-- Backup Data base Before Eod -->
@@ -562,6 +570,26 @@
 	<bean id="calendarUpdationTarget" class="com.pennant.backend.endofday.calendar.CalendarUpdation">
 		<property name="calendarInterfaceService" ref="calendarInterfaceService" />
 		<property name="accountsDAO" ref="accountsDAO" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Next Business Date Updation -->
+	<bean id="nextBussDateUpdationTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="nextBussDateUpdationTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="nextBussDateUpdationTarget" class="com.pennant.backend.endofday.limitdecider.NextBussinessDateUpdation">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -1131,6 +1159,7 @@
 	
 	<bean id="monthEndDownloadProcessTarget" class="com.pennant.backend.endofday.monthenddownload.MonthEndDownloadProcess">
 		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
 	
 	
@@ -1220,6 +1249,13 @@
 		<!-- Calendar Updation From Equation Core System -->
 		<step id="calendarUpdation">
 			<tasklet ref="calendarUpdationTaskLet" />
+			<next on="*" to="nextBussDateUpdation" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Next Business Date Updation -->
+		<step id="nextBussDateUpdation">
+			<tasklet ref="nextBussDateUpdationTaskLet" />
 			<next on="*" to="removeMaintenance" />
 			<fail on="FAILED"/>
 		</step>

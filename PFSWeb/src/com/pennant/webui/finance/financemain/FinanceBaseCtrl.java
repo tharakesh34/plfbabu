@@ -4998,10 +4998,13 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 
 			if(!isIstisnaProd){
+				
+				Date curBDay = (Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 				aFinanceSchData.getDisbursementDetails().clear();	
 				disbursementDetails = new FinanceDisbursement();
 				disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
 				disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
+				disbursementDetails.setDisbReqDate(curBDay);
 				disbursementDetails.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
 				disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);

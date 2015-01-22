@@ -1,22 +1,42 @@
 package com.pennant.Interface.service.impl;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.model.EquationAbuser;
 import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationBranch;
+import com.pennant.coreinterface.model.EquationCountry;
 import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustStatusCode;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
 import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationIdentityType;
+import com.pennant.coreinterface.model.EquationIndustry;
+import com.pennant.coreinterface.model.EquationInternalAccount;
+import com.pennant.coreinterface.model.EquationMasterMissedDetail;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
-import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.service.DailyDownloadProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
@@ -28,6 +48,14 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	private DailyDownloadProcess dailyDownloadProcess;
 	private CoreInterfaceDAO coreInterfaceDAO;
 	
+	private static final String DEFAULT_CCY 		 = "BHD";
+	private static final String DEFAULT_COUNTRY 	 = "BH";
+	private static final String PHONE_TYEP_MOBILE 	 = "MOBILE";
+	private static final String PHONE_TYEP_OFFICE 	 = "OFFICE";
+	private static final String PHONE_TYEP_RESIDENCE = "WORK";
+	private static final String PHONE_TYEP_OTHER 	 = "GENERAL";
+
+
 	/**
 	 * Method for Processing Currency Details
 	 */
@@ -456,41 +484,55 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Customer Rating  Details
 	 */
 	@Override
-	public boolean processCustomerRatingDetails(){
+	public boolean processCustomerRatingDetails(Date valuedate){
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
 		List<EquationCustomerRating> existingcuCustomerRatings;
-		List<EquationCustomerRating> customerRatingsList;		
+		List<EquationCustomerRating> customerRatingsList;
+		List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+		EquationMasterMissedDetail masterMissedDetail;
 		try{
 			existingcuCustomerRatings = getCoreInterfaceDAO().fetchCustomerRatingDetails();
 			customerRatingsList = getDailyDownloadProcess().importCustomerRatingDetails();
-			
+
+			List<Long> customerIdList = getCoreInterfaceDAO().fetchCustomerIdDetails();
+
 			List<EquationCustomerRating> saveCustomerRatingsList = new ArrayList<EquationCustomerRating>();
 			List<EquationCustomerRating> updateCustomerRatingsList = new ArrayList<EquationCustomerRating>();
-			
+
 			if (existingcuCustomerRatings != null && !existingcuCustomerRatings.isEmpty()) {
 				for (EquationCustomerRating customerRating : customerRatingsList) {
-					if (checkCustomerRatingExist(customerRating, existingcuCustomerRatings)) {
-						updateCustomerRatingsList.add(customerRating);
-					} else {
-						
-						customerRating.setVersion(1);
-						customerRating.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-						customerRating.setRecordType("");
-						customerRating.setLastMntBy(1000);
-						customerRating.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						customerRating.setRoleCode("");
-						customerRating.setNextRoleCode("");
-						customerRating.setTaskId("");
-						customerRating.setNextTaskId("");
-						customerRating.setWorkflowId(0);
-						
-						saveCustomerRatingsList.add(customerRating);
+
+					if(!valueExistInMaster(customerRating.getCustID(),customerIdList)){
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("CustomerRatings");
+						masterMissedDetail.setLastMntOn(valuedate);
+						masterMissedDetail.setFieldName("CustID");
+						masterMissedDetail.setDescription("CustID : '"+customerRating.getCustID()+"',CustRatingType : '"+customerRating.getCustRatingType()+"'.CustID Does Not Exist In Customers Table");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}else{
+						if (checkCustomerRatingExist(customerRating, existingcuCustomerRatings)) {
+							updateCustomerRatingsList.add(customerRating);
+						} else {
+
+							customerRating.setVersion(1);
+							customerRating.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+							customerRating.setRecordType("");
+							customerRating.setLastMntBy(1000);
+							customerRating.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							customerRating.setRoleCode("");
+							customerRating.setNextRoleCode("");
+							customerRating.setTaskId("");
+							customerRating.setNextTaskId("");
+							customerRating.setWorkflowId(0);
+
+							saveCustomerRatingsList.add(customerRating);
+						}
 					}
 				}
 			} else {
-				
+
 				for (EquationCustomerRating customerRating : customerRatingsList) {
 					customerRating.setVersion(1);
 					customerRating.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -505,13 +547,17 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				}
 				saveCustomerRatingsList.addAll(customerRatingsList);
 			}
-			
+
 			if(updateCustomerRatingsList != null && !updateCustomerRatingsList.isEmpty()){
 				getCoreInterfaceDAO().updateCustomerRatingDetails(updateCustomerRatingsList);
 				isExecuted = true;
 			}
 			if(saveCustomerRatingsList != null && !saveCustomerRatingsList.isEmpty()){
 				getCoreInterfaceDAO().saveCustomerRatingDetails(saveCustomerRatingsList);
+				isExecuted = true;
+			}
+			if(masterValueMissedDetails != null && !masterValueMissedDetails.isEmpty()){
+				getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
 				isExecuted = true;
 			}
 		}catch(Exception e){
@@ -522,6 +568,1052 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return isExecuted;
 	}
 
+	
+	/**
+	 * Method for Processing Country Details
+	 */
+	@Override
+	public boolean processCountryDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			
+			//Fetch Existing Currency Details
+			List<EquationCountry> existingCountries = getCoreInterfaceDAO().fetchCountryDetails();
+			
+			//Import Currency Details
+			List<EquationCountry> countryList = getDailyDownloadProcess().importCountryDetails();
+
+			List<EquationCountry> saveCountryList = new ArrayList<EquationCountry>();
+			List<EquationCountry> updatecountryList = new ArrayList<EquationCountry>();
+			
+			if (existingCountries != null && !existingCountries.isEmpty()) {
+				for (EquationCountry eqtnCountry : countryList) {
+					if (checkCountryExist(eqtnCountry, existingCountries)) {
+						updatecountryList.add(eqtnCountry);
+					} else {
+						eqtnCountry.setCountryParentLimit(new BigDecimal(9999));
+						eqtnCountry.setCountryResidenceLimit(new BigDecimal(9999));
+						eqtnCountry.setCountryRiskLimit(new BigDecimal(9999));
+						eqtnCountry.setCountryIsActive(true);
+						
+						eqtnCountry.setVersion(1);
+						eqtnCountry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnCountry.setRecordType("");
+						eqtnCountry.setLastMntBy(1000);
+						eqtnCountry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnCountry.setRoleCode("");
+						eqtnCountry.setNextRoleCode("");
+						eqtnCountry.setTaskId("");
+						eqtnCountry.setNextTaskId("");
+						eqtnCountry.setWorkflowId(0);
+						
+						saveCountryList.add(eqtnCountry);
+					}
+				}
+			} else {
+				
+				for (EquationCountry eqtnCountry : countryList) {
+					eqtnCountry.setCountryParentLimit(new BigDecimal(9999));
+					eqtnCountry.setCountryResidenceLimit(new BigDecimal(9999));
+					eqtnCountry.setCountryRiskLimit(new BigDecimal(9999));
+					eqtnCountry.setCountryIsActive(true);
+					
+					eqtnCountry.setVersion(1);
+					eqtnCountry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnCountry.setRecordType("");
+					eqtnCountry.setLastMntBy(1000);
+					eqtnCountry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnCountry.setRoleCode("");
+					eqtnCountry.setNextRoleCode("");
+					eqtnCountry.setTaskId("");
+					eqtnCountry.setNextTaskId("");
+					eqtnCountry.setWorkflowId(0);
+					
+                }
+				saveCountryList.addAll(countryList);
+			}
+
+			if(updatecountryList != null && !updatecountryList.isEmpty()){
+				getCoreInterfaceDAO().updateCountryDetails(updatecountryList);
+				isExecuted = true;
+			}
+			if(saveCountryList != null && !saveCountryList.isEmpty()){
+				getCoreInterfaceDAO().saveCountryDetails(saveCountryList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+
+	
+	/**
+	 * Method for Processing Customer Status Code Details
+	 */
+	@Override
+	public boolean processCustStatusCodeDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			
+			//Fetch Existing Customer Status Code Details
+			List<EquationCustStatusCode> existingCustStatsuCodes = getCoreInterfaceDAO().fetchCustStatusCodeDetails();
+			
+			//Import Customer Status Code Details
+			List<EquationCustStatusCode> custStsCodeList = getDailyDownloadProcess().importCustStausCodeDetails();
+
+			List<EquationCustStatusCode> saveCustStsList = new ArrayList<EquationCustStatusCode>();
+			List<EquationCustStatusCode> updateCustStsList = new ArrayList<EquationCustStatusCode>();
+			
+			if (existingCustStatsuCodes != null && !existingCustStatsuCodes.isEmpty()) {
+				for (EquationCustStatusCode eqtnCustSts : custStsCodeList) {
+					if (checkCustStsExist(eqtnCustSts, existingCustStatsuCodes)) {
+						updateCustStsList.add(eqtnCustSts);
+					} else {
+						eqtnCustSts.setSuspendProfit(eqtnCustSts.getDueDays() >= 90 ? true : false);
+						eqtnCustSts.setCustStsIsActive(true);
+						
+						eqtnCustSts.setVersion(1);
+						eqtnCustSts.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnCustSts.setRecordType("");
+						eqtnCustSts.setLastMntBy(1000);
+						eqtnCustSts.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnCustSts.setRoleCode("");
+						eqtnCustSts.setNextRoleCode("");
+						eqtnCustSts.setTaskId("");
+						eqtnCustSts.setNextTaskId("");
+						eqtnCustSts.setWorkflowId(0);
+						
+						saveCustStsList.add(eqtnCustSts);
+					}
+				}
+			} else {
+				
+				for (EquationCustStatusCode eqtnCustSts : custStsCodeList) {
+					eqtnCustSts.setSuspendProfit(eqtnCustSts.getDueDays() >= 90 ? true : false);
+					eqtnCustSts.setCustStsIsActive(true);
+					
+					eqtnCustSts.setVersion(1);
+					eqtnCustSts.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnCustSts.setRecordType("");
+					eqtnCustSts.setLastMntBy(1000);
+					eqtnCustSts.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnCustSts.setRoleCode("");
+					eqtnCustSts.setNextRoleCode("");
+					eqtnCustSts.setTaskId("");
+					eqtnCustSts.setNextTaskId("");
+					eqtnCustSts.setWorkflowId(0);
+					
+                }
+				saveCustStsList.addAll(custStsCodeList);
+			}
+
+			if(updateCustStsList != null && !updateCustStsList.isEmpty()){
+				getCoreInterfaceDAO().updateCustStatusCodeDetails(updateCustStsList);
+				isExecuted = true;
+			}
+			if(saveCustStsList != null && !saveCustStsList.isEmpty()){
+				getCoreInterfaceDAO().saveCustStatusCodeDetails(saveCustStsList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+
+	/**
+	 * Method for Processing Industry Details
+	 */
+	@Override
+	public boolean processIndustryDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			
+			//Fetch Existing Industry Details
+			List<EquationIndustry> existingCustStatsuCodes = getCoreInterfaceDAO().fetchIndustryDetails();
+			
+			//Import Industry Details
+			List<EquationIndustry> industryList = getDailyDownloadProcess().importIndustryDetails();
+
+			List<EquationIndustry> saveIndustryList = new ArrayList<EquationIndustry>();
+			List<EquationIndustry> updateIndustryList = new ArrayList<EquationIndustry>();
+			
+			if (existingCustStatsuCodes != null && !existingCustStatsuCodes.isEmpty()) {
+				for (EquationIndustry eqtnIndustry : industryList) {
+					if (checkIndustryExist(eqtnIndustry, existingCustStatsuCodes)) {
+						updateIndustryList.add(eqtnIndustry);
+					} else {
+					    eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
+						eqtnIndustry.setIndustryLimit(new BigDecimal(-1));
+						eqtnIndustry.setIndustryIsActive(true);
+						
+						eqtnIndustry.setVersion(1);
+						eqtnIndustry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnIndustry.setRecordType("");
+						eqtnIndustry.setLastMntBy(1000);
+						eqtnIndustry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnIndustry.setRoleCode("");
+						eqtnIndustry.setNextRoleCode("");
+						eqtnIndustry.setTaskId("");
+						eqtnIndustry.setNextTaskId("");
+						eqtnIndustry.setWorkflowId(0);
+						
+						saveIndustryList.add(eqtnIndustry);
+					}
+				}
+			} else {
+				
+				for (EquationIndustry eqtnIndustry : industryList) {
+					eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
+					eqtnIndustry.setIndustryLimit(new BigDecimal(-1));
+					eqtnIndustry.setIndustryIsActive(true);
+					
+					eqtnIndustry.setVersion(1);
+					eqtnIndustry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnIndustry.setRecordType("");
+					eqtnIndustry.setLastMntBy(1000);
+					eqtnIndustry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnIndustry.setRoleCode("");
+					eqtnIndustry.setNextRoleCode("");
+					eqtnIndustry.setTaskId("");
+					eqtnIndustry.setNextTaskId("");
+					eqtnIndustry.setWorkflowId(0);
+					
+                }
+				saveIndustryList.addAll(industryList);
+			}
+
+			if(updateIndustryList != null && !updateIndustryList.isEmpty()){
+				getCoreInterfaceDAO().updateIndustryDetails(updateIndustryList);
+				isExecuted = true;
+			}
+			if(saveIndustryList != null && !saveIndustryList.isEmpty()){
+				getCoreInterfaceDAO().saveIndustryDetails(saveIndustryList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	/**
+	 * Method for Processing Branch  Details
+	 */
+	@Override
+	public boolean processBranchDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			
+			//Fetch Existing Branch Details
+			List<EquationBranch> existingBranchs = getCoreInterfaceDAO().fetchBranchDetails();
+			
+			//Import Branch Details
+			List<EquationBranch> branchList = getDailyDownloadProcess().importBranchDetails();
+
+			List<EquationBranch> saveBranchList = new ArrayList<EquationBranch>();
+			List<EquationBranch> updateBranchList = new ArrayList<EquationBranch>();
+			
+			if (existingBranchs != null && !existingBranchs.isEmpty()) {
+				for (EquationBranch eqtnBranch : branchList) {
+					if (checkBranchExist(eqtnBranch, existingBranchs)) {
+						updateBranchList.add(eqtnBranch);
+					} else {
+						eqtnBranch.setBranchCity("MIGR");
+						eqtnBranch.setBranchProvince("MIGR");
+						eqtnBranch.setBranchCountry("BH");
+						eqtnBranch.setBranchIsActive(true);
+						
+						eqtnBranch.setVersion(1);
+						eqtnBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnBranch.setRecordType("");
+						eqtnBranch.setLastMntBy(1000);
+						eqtnBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnBranch.setRoleCode("");
+						eqtnBranch.setNextRoleCode("");
+						eqtnBranch.setTaskId("");
+						eqtnBranch.setNextTaskId("");
+						eqtnBranch.setWorkflowId(0);
+						
+						saveBranchList.add(eqtnBranch);
+					}
+				}
+			} else {
+				
+				for (EquationBranch eqtnBranch : branchList) {
+					eqtnBranch.setBranchCity("MIGR");
+					eqtnBranch.setBranchProvince("MIGR");
+					eqtnBranch.setBranchCountry("BH");
+					eqtnBranch.setBranchIsActive(true);
+					
+					eqtnBranch.setVersion(1);
+					eqtnBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnBranch.setRecordType("");
+					eqtnBranch.setLastMntBy(1000);
+					eqtnBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnBranch.setRoleCode("");
+					eqtnBranch.setNextRoleCode("");
+					eqtnBranch.setTaskId("");
+					eqtnBranch.setNextTaskId("");
+					eqtnBranch.setWorkflowId(0);
+					
+                }
+				saveBranchList.addAll(branchList);
+			}
+
+			if(updateBranchList != null && !updateBranchList.isEmpty()){
+				getCoreInterfaceDAO().updateBranchDetails(updateBranchList);
+				isExecuted = true;
+			}
+			if(saveBranchList != null && !saveBranchList.isEmpty()){
+				getCoreInterfaceDAO().saveBranchDetails(saveBranchList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	
+	/**
+	 * Method for Processing Internal Account  Details
+	 */
+	@Override
+	public boolean processInternalAccDetails(Date valuedate){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+		EquationMasterMissedDetail masterMissedDetail;
+		
+		try{
+			//Fetch Account Type Master Details 
+			List<String>	masterAccountTypesList = getCoreInterfaceDAO().fetchAccountTypes();
+			
+			//Fetch Existing Internal Account Details
+			List<EquationInternalAccount> existingInternalAccs = getCoreInterfaceDAO().fetchInternalAccDetails();
+			
+			//Import Internal Account Details
+			List<EquationInternalAccount> internalAccList = getDailyDownloadProcess().importInternalAccDetails();
+
+			List<EquationInternalAccount> saveInternalAccList = new ArrayList<EquationInternalAccount>();
+			List<EquationInternalAccount> updateInternalAccList = new ArrayList<EquationInternalAccount>();
+			
+			if (existingInternalAccs != null && !existingInternalAccs.isEmpty()) {
+				for (EquationInternalAccount eqtnIntAcc : internalAccList) {
+					if(valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)){
+						if (checkAccIntExist(eqtnIntAcc, existingInternalAccs)) {
+							updateInternalAccList.add(eqtnIntAcc);
+						} else {
+
+							eqtnIntAcc.setVersion(1);
+							eqtnIntAcc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+							eqtnIntAcc.setRecordType("");
+							eqtnIntAcc.setLastMntBy(1000);
+							eqtnIntAcc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							eqtnIntAcc.setRoleCode("");
+							eqtnIntAcc.setNextRoleCode("");
+							eqtnIntAcc.setTaskId("");
+							eqtnIntAcc.setNextTaskId("");
+							eqtnIntAcc.setWorkflowId(0);
+
+							saveInternalAccList.add(eqtnIntAcc);
+						}
+					}else{
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("System Internal Accounts");
+						masterMissedDetail.setLastMntOn(valuedate);
+						masterMissedDetail.setFieldName("sIAAcType");
+						masterMissedDetail.setDescription("SIACode : "+eqtnIntAcc.getsIACode()+" , '"+eqtnIntAcc.getsIAAcType()+"' Value Does Not Exist In Master RMTAccountTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}
+				}
+			} else {
+				
+				for (EquationInternalAccount eqtnIntAcc : internalAccList) {
+	                
+					eqtnIntAcc.setVersion(1);
+					eqtnIntAcc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					eqtnIntAcc.setRecordType("");
+					eqtnIntAcc.setLastMntBy(1000);
+					eqtnIntAcc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					eqtnIntAcc.setRoleCode("");
+					eqtnIntAcc.setNextRoleCode("");
+					eqtnIntAcc.setTaskId("");
+					eqtnIntAcc.setNextTaskId("");
+					eqtnIntAcc.setWorkflowId(0);
+					
+                }
+				saveInternalAccList.addAll(internalAccList);
+			}
+
+			if(updateInternalAccList != null && !updateInternalAccList.isEmpty()){
+				getCoreInterfaceDAO().updateInternalAccDetails(updateInternalAccList);
+				isExecuted = true;
+			}
+			if(saveInternalAccList != null && !saveInternalAccList.isEmpty()){
+				getCoreInterfaceDAO().saveInternalAccDetails(saveInternalAccList);
+				isExecuted = true;
+			}
+			if(!masterValueMissedDetails.isEmpty()){
+				getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	
+	/**
+	 * Method for Processing Abuser Details
+	 */
+	@Override
+	public boolean processAbuserDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			//Import Abuser Details From Core System
+			List<EquationAbuser> abuserList = getDailyDownloadProcess().importAbuserDetails();
+
+			if (abuserList != null && !abuserList.isEmpty()) {
+				for (EquationAbuser eqtnAbuser : abuserList) {
+						eqtnAbuser.setVersion(1);
+						eqtnAbuser.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnAbuser.setRecordType("");
+						eqtnAbuser.setLastMntBy(1000);
+						eqtnAbuser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnAbuser.setRoleCode("");
+						eqtnAbuser.setNextRoleCode("");
+						eqtnAbuser.setTaskId("");
+						eqtnAbuser.setNextTaskId("");
+						eqtnAbuser.setWorkflowId(0);
+				}
+			} 
+			
+			if(abuserList != null && !abuserList.isEmpty()){
+				
+				//Deleting the existing Abusers
+				getCoreInterfaceDAO().deleteAbuserDetails();
+				
+				//Saving the new Abusers list
+				getCoreInterfaceDAO().saveAbuserDetails(abuserList);
+				
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+
+	/**
+	 * Method for Processing Customer Details
+	 */
+	@Override
+	public boolean processCustomerDetails(Date valuedate){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		
+		try{
+			
+			//Import Currency Details
+			List<CustomerInterfaceData> cutomersList = getDailyDownloadProcess().importCustomerDetails();
+			
+			if (cutomersList != null && !cutomersList.isEmpty()) {
+				List<Customer> customerList = new ArrayList<Customer>();
+				List<CustomerAddres> addressList = new ArrayList<CustomerAddres>();
+				List<CustomerPhoneNumber> phoneNumeberList = new ArrayList<CustomerPhoneNumber>();
+				List<CustomerEMail> emailList = new ArrayList<CustomerEMail>();
+				List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+				CustomerEMail customerEMail = null; 
+				CustomerPhoneNumber customerPhoneNumber = null;
+				EquationMasterMissedDetail masterMissedDetail;
+				
+				List<String> addressTypeMasterList = getCoreInterfaceDAO().fetchAddressTypes();
+				List<String> emailTypeMasterList = getCoreInterfaceDAO().fetchEMailTypes();
+				
+				for (CustomerInterfaceData customerInterfaceData : cutomersList) {
+
+					//+++++++++++++++ Customer ++++++++++++++++
+					String custCIF = customerInterfaceData.getCustCIF();
+					Long custid=Long.parseLong(custCIF);
+					Customer customer = new Customer();
+					customer.setNewRecord(true);
+					customer.setCustID(custid);
+					customer.setCustCIF(custCIF);
+					customer.setCustFName(customerInterfaceData.getCustFName());
+					customer.setCustIsBlocked(getBoolean(customerInterfaceData.getCustIsBlocked()));
+					customer.setCustIsActive(getBoolean(customerInterfaceData.getCustIsActive())); 
+					customer.setCustDftBranch(customerInterfaceData.getCustDftBranch());
+					customer.setCustGroupID(StringUtils.trimToEmpty(customerInterfaceData.getGroupName()).equals("") ? 0 : Long.parseLong(customerInterfaceData.getGroupName()));
+					customer.setCustParentCountry(customerInterfaceData.getCustParentCountry());
+					customer.setCustRiskCountry(customerInterfaceData.getCustRiskCountry());
+					customer.setCustSalutationCode(customerInterfaceData.getCustSalutationCode()); 
+					customer.setLovDescCustSalutationCodeName(customerInterfaceData.getCustSalutationCode()); 
+					customer.setCustPassportNo(customerInterfaceData.getCustPassportNo());
+					customer.setCustPassportExpiry(formatCYMDDate(customerInterfaceData.getCustPassportExpiry()));
+					
+					customer.setCustShrtName(customerInterfaceData.getCustShrtName());
+					customer.setCustFNameLclLng(customerInterfaceData.getCustFNameLclLng());
+					customer.setCustShrtNameLclLng(customerInterfaceData.getCustShrtNameLclLng());
+					customer.setCustCOB(customerInterfaceData.getCustCOB());
+					customer.setCustRO1(customerInterfaceData.getCustRO1()); 
+					customer.setCustIsClosed(getBoolean(customerInterfaceData.getCustIsClosed()));
+					customer.setCustIsDecease(getBoolean(customerInterfaceData.getCustIsDecease()));
+					customer.setCustIsTradeFinCust(getBoolean(customerInterfaceData.getCustIsTradeFinCust()));
+					customer.setCustSector(customerInterfaceData.getCustSector()); 
+					customer.setCustSubSector(customerInterfaceData.getCustSubSector()); 
+					customer.setCustMaritalSts(customerInterfaceData.getCustMaritalSts());
+					customer.setCustEmpSts(customerInterfaceData.getCustEmpSts());
+					customer.setCustBaseCcy(StringUtils.trimToEmpty(customerInterfaceData.getCustBaseCcy()).equals("") ? DEFAULT_CCY : customerInterfaceData.getCustBaseCcy());
+					customer.setLovDescCustBaseCcyName(customer.getCustBaseCcy());//lov
+					customer.setCustResdCountry(customerInterfaceData.getCustResdCountry());
+					customer.setCustNationality(customerInterfaceData.getCustResdCountry());
+					customer.setCustClosedOn(formatCYMDDate(customerInterfaceData.getCustClosedOn().toString())); 
+					customer.setCustFirstBusinessDate(new Timestamp(formatCYMDDate(customerInterfaceData.getCustFirstBusinessDate().toString()).getTime()));
+					customer.setCustRelation(customerInterfaceData.getCustRelation());
+					customerList.add(customer);
+
+					//<!-- Address Details--> 
+					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustAddrType()).equals("")) {
+						if(valueExistInMaster(customerInterfaceData.getCustAddrType(),addressTypeMasterList)){
+							CustomerAddres customerAddres = new CustomerAddres();
+							customerAddres.setRecordType(PennantConstants.RCD_ADD);
+							customerAddres.setCustID(custid);
+							customerAddres.setLovDescCustCIF(custCIF);
+							customerAddres.setCustAddrType(customerInterfaceData.getCustAddrType());
+							customerAddres.setLovDescCustAddrTypeName(customerInterfaceData.getCustAddrType());
+							customerAddres.setCustAddrHNbr(customerInterfaceData.getCustAddrHNbr());
+							customerAddres.setCustFlatNbr(customerInterfaceData.getCustFlatNbr());
+							customerAddres.setCustAddrStreet(customerInterfaceData.getCustAddrStreet());
+							customerAddres.setCustAddrLine1(customerInterfaceData.getCustAddrLine1());
+							customerAddres.setCustAddrLine2(customerInterfaceData.getCustAddrLine2());
+							customerAddres.setCustAddrZIP(customerInterfaceData.getCustAddrZIP());
+							customerAddres.setCustAddrPhone(customerInterfaceData.getCustAddrPhone());
+							addressList.add(customerAddres);
+						}else{
+							masterMissedDetail = new EquationMasterMissedDetail();
+							masterMissedDetail.setModule("Address Details");
+							masterMissedDetail.setLastMntOn(valuedate);
+							masterMissedDetail.setFieldName("CustAddrType");
+							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustAddrType()+"' Value Does Not Exist In Master BMTAddressTypes Table ");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+					}
+
+					//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					//<!-- customer phone numbers  1,2,3,4-->	
+					String custOfficePhone=StringUtils.trimToEmpty(customerInterfaceData.getCustOfficePhone());
+					//Length Mismatch from Equation
+					if (!custOfficePhone.equals("") && custOfficePhone.length()<12) {
+						customerPhoneNumber = new CustomerPhoneNumber();
+						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+						customerPhoneNumber.setPhoneCustID(custid);
+						customerPhoneNumber.setLovDescCustCIF(custCIF);
+						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_OFFICE);
+						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneNumber(custOfficePhone);
+						phoneNumeberList.add(customerPhoneNumber);
+					}
+					String custMobile=StringUtils.trimToEmpty(customerInterfaceData.getCustMobile());
+					//Length Mismatch from Equation
+					if (!custMobile.equals("") && custMobile.length()<12) {
+						customerPhoneNumber = new CustomerPhoneNumber();
+						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+						customerPhoneNumber.setPhoneCustID(custid);
+						customerPhoneNumber.setLovDescCustCIF(custCIF);
+						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_MOBILE);
+						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneNumber(custMobile);
+						phoneNumeberList.add(customerPhoneNumber);
+					}
+					String custResPhone=StringUtils.trimToEmpty(customerInterfaceData.getCustResPhone());
+					//Length Mismatch from Equation
+					if (!custResPhone.equals("") && custResPhone.length()<12) {
+						customerPhoneNumber = new CustomerPhoneNumber();
+						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+						customerPhoneNumber.setPhoneCustID(custid);
+						customerPhoneNumber.setLovDescCustCIF(custCIF);
+						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_RESIDENCE);
+						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneNumber(custResPhone);
+						phoneNumeberList.add(customerPhoneNumber);
+					}
+					String custOtherPhone=StringUtils.trimToEmpty(customerInterfaceData.getCustOtherPhone());
+					//Length Mismatch from Equation
+					if (!custOtherPhone.equals("") && custOtherPhone.length()<12) {
+						customerPhoneNumber = new CustomerPhoneNumber();
+						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+						customerPhoneNumber.setPhoneCustID(custid);
+						customerPhoneNumber.setLovDescCustCIF(custCIF);
+						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_OTHER);
+						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
+						customerPhoneNumber.setPhoneNumber(custOtherPhone);
+						phoneNumeberList.add(customerPhoneNumber);
+					}
+					//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					//<!-- Email Details 1 and 2-->
+					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail1()).equals("") && 
+							!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode1()).equals("")) {
+						if(valueExistInMaster(customerInterfaceData.getCustEMailTypeCode1(),emailTypeMasterList)){
+							customerEMail = new CustomerEMail();
+							customerEMail.setRecordType(PennantConstants.RCD_ADD);
+							customerEMail.setCustID(custid);
+							customerEMail.setLovDescCustCIF(custCIF);
+							customerEMail.setLovDescCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode1());
+							customerEMail.setCustEMailPriority(1);
+							customerEMail.setCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode1());
+							customerEMail.setCustEMail(customerInterfaceData.getCustEMail1());
+							emailList.add(customerEMail);
+						}else{
+							masterMissedDetail = new EquationMasterMissedDetail();
+							masterMissedDetail.setModule("Email Details");
+							masterMissedDetail.setLastMntOn(valuedate);
+							masterMissedDetail.setFieldName("CustEMailTypeCode");
+							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustEMailTypeCode1()+"' Value Does Not Exist In Master BMTEMailTypes Table ");
+							masterValueMissedDetails.add(masterMissedDetail);
+						}
+					}
+					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail2()).equals("") && 
+							!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode2()).equals("")) {
+						if(valueExistInMaster(customerInterfaceData.getCustEMailTypeCode2(),emailTypeMasterList)){
+							customerEMail = new CustomerEMail();
+							customerEMail.setRecordType(PennantConstants.RCD_ADD);
+							customerEMail.setCustID(custid);
+							customerEMail.setLovDescCustCIF(custCIF);
+							customerEMail.setLovDescCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode2());
+							customerEMail.setCustEMailPriority(2);
+							customerEMail.setCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode2());
+							customerEMail.setCustEMail(customerInterfaceData.getCustEMail2());
+							emailList.add(customerEMail);
+						}else{
+							masterMissedDetail = new EquationMasterMissedDetail();
+							masterMissedDetail.setModule("Email Details");
+							masterMissedDetail.setLastMntOn(valuedate);
+							masterMissedDetail.setFieldName("CustEMailTypeCode");
+							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustEMailTypeCode2()+"' Value Does Not Exist In Master BMTEMailTypes Table ");
+							masterValueMissedDetails.add(masterMissedDetail);
+						}
+					}
+
+					//<!-- Employee Details-->
+                  /* if(!StringUtils.trimToEmpty(customerInterfaceData.getCustEmpName()).equals("")){
+					customerEmploymentDetail = new CustomerEmploymentDetail();
+					customerEmploymentDetail.setCustID(custid);
+					customerEmploymentDetail.setCustEmpName(Long.valueOf(customerInterfaceData.getCustEmpName()));
+					customerEmploymentDetail.setCustEmpFrom(formatCYMDDate(customerInterfaceData.getCustEmpFrom().toString()));
+					customerEmploymentDetail.setCustEmpDesg(customerInterfaceData.getCustEmpDesg());
+					emplomentList.add(customerEmploymentDetail);
+                   }*/
+					//+++++++++++++++++++++++++++++++++++++++++++++++++
+				}
+				
+				if(customerList != null && !customerList.isEmpty()){
+				
+					//Fetching customer related Master details
+					List<String> branchCodeMasterList = getCoreInterfaceDAO().fetchBranchCodes();
+					List<Long> custGrpCodeMasterList = getCoreInterfaceDAO().fetchCustomerGroupCodes();
+					List<String> countryCodeMasterList = getCoreInterfaceDAO().fetchCountryCodes();
+					List<String> salutationCodeMasterList = getCoreInterfaceDAO().fetchSalutationCodes();
+					List<String> rShipOfficerCodeMasterList = getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
+					List<SubSector> subSectorCodeMasterList = getCoreInterfaceDAO().fetchSubSectorCodes();
+					List<String> maritalStatusCodeMasterList = getCoreInterfaceDAO().fetchMaritalStatusCodes();
+					List<String> custEmpStsCodeMasterList = getCoreInterfaceDAO().fetchEmpStsCodes();
+					List<String> currencyCodeMasterList = getCoreInterfaceDAO().fetchCurrencyCodes();
+					
+					for (Customer customer : customerList) {
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("Customers");
+						masterMissedDetail.setLastMntOn(valuedate);
+						if(!StringUtils.trimToEmpty(customer.getCustDftBranch()).equals("") && 
+								!valueExistInMaster(customer.getCustDftBranch(),branchCodeMasterList)){
+							masterMissedDetail.setFieldName("CustDftBranch");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustDftBranch()+"' Value Does Not Exist In Master RMTBranches Table ");
+							customer.setCustDftBranch(""); //Making it empty to ignore the empty field updates in query while updating the record 
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(customer.getCustGroupID() != 0 && !valueExistInMaster(customer.getCustGroupID(),custGrpCodeMasterList)){
+							masterMissedDetail.setFieldName("CustGroupID");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustGroupID()+"' Value Does Not Exist In Master CustomerGroups Table ");
+							customer.setCustGroupID(0);
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustParentCountry()).equals("") && 
+								!valueExistInMaster(customer.getCustParentCountry(),countryCodeMasterList)){
+							masterMissedDetail.setFieldName("CustParentCountry");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustParentCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+							customer.setCustParentCountry("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustRiskCountry()).equals("") && 
+								!valueExistInMaster(customer.getCustRiskCountry(),countryCodeMasterList)){
+							masterMissedDetail.setFieldName("CustRiskCountry");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRiskCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+							customer.setCustRiskCountry("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustResdCountry()).equals("") &&
+								!valueExistInMaster(customer.getCustResdCountry(),countryCodeMasterList)){
+							masterMissedDetail.setFieldName("CustResdCountry");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustResdCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+							customer.setCustResdCountry("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustSalutationCode()).equals("") &&
+								!valueExistInMaster(customer.getCustSalutationCode(),salutationCodeMasterList)){
+							masterMissedDetail.setFieldName("CustSalutationCode");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustSalutationCode()+"' Value Does Not Exist In Master BMTSalutations Table ");
+							customer.setCustSalutationCode("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustRO1()).equals("") &&
+								!valueExistInMaster(customer.getCustRO1(),rShipOfficerCodeMasterList)){
+							masterMissedDetail.setFieldName("CustRO1");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRO1()+"' Value Does Not Exist In Master RelationshipOfficers Table ");
+							customer.setCustRO1("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustSector()).equals("")  && 
+								!StringUtils.trimToEmpty(customer.getCustSubSector()).equals("")  &&
+								!valueExistInMaster(customer,subSectorCodeMasterList)){
+							masterMissedDetail.setFieldName("CustSector/CustSubSector");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , CustSector:'"+customer.getCustSector()+
+									"' and CustSubSector:'"+customer.getCustSubSector()+"' Values Does Not Exist In Master BMTSubSectors Table ");
+							customer.setCustSector("");
+							masterValueMissedDetails.add(masterMissedDetail);
+						}
+						
+						if(!StringUtils.trimToEmpty(customer.getCustMaritalSts()).equals("") &&
+								!valueExistInMaster(customer.getCustMaritalSts(),maritalStatusCodeMasterList)){
+							masterMissedDetail.setFieldName("CustMaritalSts");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustMaritalSts()+"' Value Does Not Exist In Master BMTMaritalStatusCodes Table ");
+							customer.setCustMaritalSts("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustEmpSts()).equals("") &&
+								!valueExistInMaster(customer.getCustEmpSts(),custEmpStsCodeMasterList)){
+							masterMissedDetail.setFieldName("CustEmpSts");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustEmpSts()+"' Value Does Not Exist In Master BMTEmpStsCodes Table ");
+							customer.setCustEmpSts("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						if(!StringUtils.trimToEmpty(customer.getCustBaseCcy()).equals("") &&
+								!valueExistInMaster(customer.getCustBaseCcy(),currencyCodeMasterList)){
+							masterMissedDetail.setFieldName("CustBaseCcy");
+							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustBaseCcy()+"' Value Does Not Exist In Master RMTCurrencies Table ");
+							customer.setCustBaseCcy("");
+							masterValueMissedDetails.add(masterMissedDetail);	
+						}
+						
+                    }
+					getCoreInterfaceDAO().updateCustomerDetails(customerList);
+					getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
+					isExecuted = true;
+				}
+				if(addressList != null && !addressList.isEmpty()){
+					isExecuted = false;
+					getCoreInterfaceDAO().updateAddressDetails(addressList);
+					isExecuted = true;
+				}
+				if(phoneNumeberList != null && !phoneNumeberList.isEmpty()){
+					isExecuted = false;
+					getCoreInterfaceDAO().updatePhoneNumberDetails(phoneNumeberList);
+					isExecuted = true;
+				}
+				if(emailList != null && !emailList.isEmpty()){
+					isExecuted = false;
+					getCoreInterfaceDAO().updateEMailDetails(emailList);
+					isExecuted = true;
+				}
+				/*if(emplomentList != null && !emplomentList.isEmpty()){
+					getCoreInterfaceDAO().updateEmploymentDetails(emplomentList);
+					isExecuted = true;
+				}*/
+			}
+			
+		}catch(Exception e){
+			logger.error(e);
+			e.printStackTrace();
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	
+	
+	/**
+	 * Method for Processing Transaction Code Details
+	 */
+	@Override
+	public boolean processTransactionCodeDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		List<EquationTransactionCode> existingcuTransactionCodes;
+		List<EquationTransactionCode> transactionCodesList;		
+		try{
+			existingcuTransactionCodes = getCoreInterfaceDAO().fetchTransactionCodeDetails();
+			transactionCodesList = getDailyDownloadProcess().importTransactionCodeDetails();
+			
+			List<EquationTransactionCode> saveTransactionCodesList = new ArrayList<EquationTransactionCode>();
+			List<EquationTransactionCode> updateTransactionCodesList = new ArrayList<EquationTransactionCode>();
+			
+			if (existingcuTransactionCodes != null && !existingcuTransactionCodes.isEmpty()) {
+				for (EquationTransactionCode transactionCode : transactionCodesList) {
+					if (checkTransactionCodeExist(transactionCode, existingcuTransactionCodes)) {
+						updateTransactionCodesList.add(transactionCode);
+					} else {
+						transactionCode.setTranIsActive(true);
+						transactionCode.setVersion(1);
+						transactionCode.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						transactionCode.setRecordType("");
+						transactionCode.setLastMntBy(1000);
+						transactionCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						transactionCode.setRoleCode("");
+						transactionCode.setNextRoleCode("");
+						transactionCode.setTaskId("");
+						transactionCode.setNextTaskId("");
+						transactionCode.setWorkflowId(0);
+						
+						saveTransactionCodesList.add(transactionCode);
+					}
+				}
+			} else {
+				
+				for (EquationTransactionCode transactionCode : transactionCodesList) {
+					transactionCode.setTranIsActive(true);
+					transactionCode.setVersion(1);
+					transactionCode.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					transactionCode.setRecordType("");
+					transactionCode.setLastMntBy(1000);
+					transactionCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					transactionCode.setRoleCode("");
+					transactionCode.setNextRoleCode("");
+					transactionCode.setTaskId("");
+					transactionCode.setNextTaskId("");
+					transactionCode.setWorkflowId(0);
+				}
+				saveTransactionCodesList.addAll(transactionCodesList);
+			}
+			
+			if(updateTransactionCodesList != null && !updateTransactionCodesList.isEmpty()){
+				getCoreInterfaceDAO().updateTransactionCodes(updateTransactionCodesList);
+				isExecuted = true;
+			}
+			if(saveTransactionCodesList != null && !saveTransactionCodesList.isEmpty()){
+				getCoreInterfaceDAO().saveTransactionCodeDetails(saveTransactionCodesList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+	
+	/**
+	 * Method for Processing Transaction Code Details
+	 */
+	@Override
+	public boolean processIdentityTypeDetails(){
+		logger.debug("Entering");
+		
+		boolean isExecuted = false;
+		List<EquationIdentityType> existingIdentityTypes;
+		List<EquationIdentityType> identityTypesList;		
+		try{
+			existingIdentityTypes = getCoreInterfaceDAO().fetchIdentityTypeDetails();
+			identityTypesList = getDailyDownloadProcess().importIdentityTypeDetails();
+			
+			List<EquationIdentityType> saveIdentityTypesList = new ArrayList<EquationIdentityType>();
+			List<EquationIdentityType> updateIdentityTypesList = new ArrayList<EquationIdentityType>();
+			
+			if (existingIdentityTypes != null && !existingIdentityTypes.isEmpty()) {
+				for (EquationIdentityType identityType : identityTypesList) {
+					if (checkIdentityTypeExist(identityType, existingIdentityTypes)) {
+						updateIdentityTypesList.add(identityType);
+					} else {
+						identityType.setVersion(1);
+						identityType.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						identityType.setRecordType("");
+						identityType.setLastMntBy(1000);
+						identityType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						identityType.setRoleCode("");
+						identityType.setNextRoleCode("");
+						identityType.setTaskId("");
+						identityType.setNextTaskId("");
+						identityType.setWorkflowId(0);
+						
+						saveIdentityTypesList.add(identityType);
+					}
+				}
+			} else {
+				for (EquationIdentityType identityType : identityTypesList) {
+					identityType.setVersion(1);
+					identityType.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					identityType.setRecordType("");
+					identityType.setLastMntBy(1000);
+					identityType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					identityType.setRoleCode("");
+					identityType.setNextRoleCode("");
+					identityType.setTaskId("");
+					identityType.setNextTaskId("");
+					identityType.setWorkflowId(0);
+				}
+				saveIdentityTypesList.addAll(identityTypesList);
+			}
+			
+			if(updateIdentityTypesList != null && !updateIdentityTypesList.isEmpty()){
+				getCoreInterfaceDAO().updateIdentityTypes(updateIdentityTypesList);
+				isExecuted = true;
+			}
+			if(saveIdentityTypesList != null && !saveIdentityTypesList.isEmpty()){
+				getCoreInterfaceDAO().saveIdentityTypeDetails(saveIdentityTypesList);
+				isExecuted = true;
+			}
+		}catch(Exception e){
+			logger.error(e);
+			isExecuted = false;
+		}
+		logger.debug("Leaving");
+		return isExecuted;
+	}
+
+
+	private boolean valueExistInMaster(String field,List<String> list){
+		for (String value : list) {
+	        if(StringUtils.trimToEmpty(field).equalsIgnoreCase(value.toString())){
+	        	return true;
+	        }
+        }
+		return false;
+	}
+	
+	private boolean valueExistInMaster(long field,List<Long> list){
+		for (Long value : list) {
+	        if(field == value){
+	        	return true;
+	        }
+        }
+		return false;
+	}
+	
+	private boolean valueExistInMaster(Customer customer ,List<SubSector> list){
+		for (SubSector subSector : list) {
+	        if(StringUtils.trimToEmpty(customer.getCustSector()).equalsIgnoreCase(subSector.getSectorCode()) && 
+	        		StringUtils.trimToEmpty(customer.getCustSubSector()).equalsIgnoreCase(subSector.getSubSectorCode())){
+	        	return true;
+	        }
+        }
+		return false;
+	}
+	
+	
+	private boolean getBoolean(String string) {
+		if (StringUtils.trimToEmpty(string).equals("Y") || StringUtils.trimToEmpty(string).equals("1")) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+	
+
+	private Date formatCYMDDate(String date) {
+		try {
+			return 	DateUtility.convertDateFromAS400(new BigDecimal(date));
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+	
+	private boolean checkAccIntExist(EquationInternalAccount eqtnIntAcc,List<EquationInternalAccount> existingIntAccs){
+		for (EquationInternalAccount intAcc : existingIntAccs) {
+			if (StringUtils.trimToEmpty(eqtnIntAcc.getsIACode()).equals(intAcc.getsIACode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkBranchExist(EquationBranch eqtnBranch,List<EquationBranch> existingBranchs){
+		for (EquationBranch branch : existingBranchs) {
+			if (StringUtils.trimToEmpty(eqtnBranch.getBranchCode()).equals(branch.getBranchCode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkIndustryExist(EquationIndustry eqtnIndustry,List<EquationIndustry> existingIndustries){
+		for (EquationIndustry industry : existingIndustries) {
+			if (StringUtils.trimToEmpty(eqtnIndustry.getIndustryCode()).equals(industry.getIndustryCode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkCustStsExist(EquationCustStatusCode eqtncuCode,List<EquationCustStatusCode> existingCustStatusCodes){
+		for (EquationCustStatusCode statusCode : existingCustStatusCodes) {
+			if (StringUtils.trimToEmpty(eqtncuCode.getCustStsCode()).equals(statusCode.getCustStsCode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	private boolean checkCountryExist(EquationCountry eqtnCountry,List<EquationCountry> existingCurrencies){
+		for (EquationCountry country : existingCurrencies) {
+			if (StringUtils.trimToEmpty(eqtnCountry.getCountryCode()).equals(country.getCountryCode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	private boolean checkCurrecnyExist(EquationCurrency eqtnCurrency,List<EquationCurrency> existingCurrencies){
 		for (EquationCurrency currency : existingCurrencies) {
 			if (StringUtils.trimToEmpty(eqtnCurrency.getCcyCode()).equals(currency.getCcyCode())) {
@@ -585,42 +1677,72 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}
 		return false;
 	}
+	
+	
+	private boolean checkTransactionCodeExist(EquationTransactionCode eqnTransactionCode,List<EquationTransactionCode> existingTransactionCode){
+		for (EquationTransactionCode transactionCode : existingTransactionCode) {
+			if (eqnTransactionCode.getTranCode().equals(transactionCode.getTranCode())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkIdentityTypeExist(EquationIdentityType eqnEquationIdentityType,List<EquationIdentityType> existingEquationIdentityType){
+		for (EquationIdentityType identityType : existingEquationIdentityType) {
+			String idType = StringUtils.trimToEmpty(eqnEquationIdentityType.getIdentityType());
+			if (idType.trim().equals(identityType.getIdentityType().trim())) {
+				return true;
+			}
+			idType = idType.startsWith("0") ? idType.substring(1, idType.length()) : idType;
+			if (idType.trim().equals(identityType.getIdentityType().trim())) {
+				eqnEquationIdentityType.setIdentityType(idType);
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	
 	// ++++++++++++++++++ Month End Downloads  +++++++++++++++++++//
 
+	
 	@Override
-    public void processIncomeAccountDetails(FinIncomeAccount finIncomeAccount) {
-		logger.debug("Entering");
-		getCoreInterfaceDAO().saveIncomeAccounts(finIncomeAccount);
-		logger.debug("Leaving");
+    public List<FinanceType> fetchFinanceTypeDetails() {
+		return getCoreInterfaceDAO().fetchFinanceTypeDetails();
     }
 	
 	@Override
-	public boolean processIncomeAccTransactions(FinIncomeAccount finIncomeAcc) {
+	public List<TransactionEntry> fetchTransactionEntryDetails(long accountSetID) {
+		return getCoreInterfaceDAO().fetchTransactionEntryDetails(accountSetID);
+	}
+	
+	@Override
+	public boolean processIncomeAccTransactions(Date prvMnthStartDate) {
 		logger.debug("Entering");
 		boolean isExecuted = true;
 		try{
 
-			IncomeAccountTransaction incomeAccountTransaction = new IncomeAccountTransaction();
-			incomeAccountTransaction.setLastMntOn(finIncomeAcc.getLastMntOn());
+			List<IncomeAccountTransaction> tempIncomeAccounts = new ArrayList<IncomeAccountTransaction>();
+			List<IncomeAccountTransaction> saveIncomeAccTransactions = new ArrayList<IncomeAccountTransaction>();
 
+			IncomeAccountTransaction incomeAccountTransaction = new IncomeAccountTransaction();
+			incomeAccountTransaction.setLastMntOn(prvMnthStartDate);
+			
 			//Check Whether This Month Income Account Transactions Already Exist
 			boolean monthIncomeTxnsExist = getCoreInterfaceDAO().checkIncomeTransactionsExist(incomeAccountTransaction);
 
 			if(!monthIncomeTxnsExist){
 
-				List<FinIncomeAccount> tempIncomeAccounts = new ArrayList<FinIncomeAccount>();
-				List<IncomeAccountTransaction> saveIncomeAccTransactions = new ArrayList<IncomeAccountTransaction>();
-
 				//Fetch Existing Income Account Details
-				List<FinIncomeAccount> incomeAccounts = getCoreInterfaceDAO().fetchIncomeAccountDetails(finIncomeAcc);
+				List<IncomeAccountTransaction> incomeAccounts = getCoreInterfaceDAO().fetchIncomeAccountDetails();
 
 				if(incomeAccounts!= null ) {
-
 					//Import Income Account Transactions From Core System
-					for (FinIncomeAccount finIncomeAccount : incomeAccounts) {
-						tempIncomeAccounts.add(finIncomeAccount);
+					for (IncomeAccountTransaction incomeAccount : incomeAccounts) {
+						incomeAccount.setLastMntOn(prvMnthStartDate);
+						tempIncomeAccounts.add(incomeAccount);
 						if(tempIncomeAccounts.size()==498){
 							saveIncomeAccTransactions.addAll(getDailyDownloadProcess().importIncomeAccTransactions(tempIncomeAccounts));
 							tempIncomeAccounts.clear();
@@ -644,8 +1766,10 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return isExecuted;
 	}
 	
-	
-	
+	public void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts){
+		getCoreInterfaceDAO().updateFinProfitIncomeAccounts(accounts);
+	}
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -663,5 +1787,5 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	public void setCoreInterfaceDAO(CoreInterfaceDAO coreInterfaceDAO) {
     	this.coreInterfaceDAO = coreInterfaceDAO;
     }
-	
+
 }

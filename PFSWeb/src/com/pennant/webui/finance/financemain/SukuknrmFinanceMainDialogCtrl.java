@@ -838,7 +838,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			// during user action.
 			doStoreInitValues();
 			if (moduleDefiner.equals("")){
-			setDiscrepancy(getFinanceDetail());
+				setDiscrepancy(getFinanceDetail());
 			}
 			setDialog(this.window_SukuknrmFinanceMainDialog);
 
@@ -946,7 +946,12 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					if(disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
 
 						if(eventCode.equals("")){
-							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
+							if(!moduleDefiner.equals("")){
+								if(disbursement.getDisbReqDate().compareTo(curBDay) != 0){
+									continue;
+								}
+							}
+							if (disbursement.getDisbDate().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DATE"))) {
 								dataSet.setFinEvent("ADDDBSF");
 							} else {
 								dataSet.setFinEvent("ADDDBSP");
@@ -2052,8 +2057,9 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		recSave = false;
 		if (this.userAction.getSelectedItem() != null){
 			if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") ||
-					this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel") ||
-					this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+				this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel") ||
+				this.userAction.getSelectedItem().getLabel().contains("Reject") ||
+				this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
@@ -2093,7 +2099,7 @@ public class SukuknrmFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			}
 
 			//Commitment Available Amount Checking During Finance Approval
-			if(!doValidateCommitment(aFinanceDetail)){
+			if(!recSave && !doValidateCommitment(aFinanceDetail)){
 				return;
 			}
 		}

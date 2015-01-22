@@ -48,14 +48,22 @@ import org.apache.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.exception.EquationInterfaceException;
+import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.model.EquationAbuser;
 import com.pennant.coreinterface.model.EquationAccountType;
+import com.pennant.coreinterface.model.EquationBranch;
+import com.pennant.coreinterface.model.EquationCountry;
 import com.pennant.coreinterface.model.EquationCurrency;
+import com.pennant.coreinterface.model.EquationCustStatusCode;
 import com.pennant.coreinterface.model.EquationCustomerGroup;
 import com.pennant.coreinterface.model.EquationCustomerRating;
 import com.pennant.coreinterface.model.EquationCustomerType;
 import com.pennant.coreinterface.model.EquationDepartment;
+import com.pennant.coreinterface.model.EquationIdentityType;
+import com.pennant.coreinterface.model.EquationIndustry;
+import com.pennant.coreinterface.model.EquationInternalAccount;
 import com.pennant.coreinterface.model.EquationRelationshipOfficer;
-import com.pennant.coreinterface.model.FinIncomeAccount;
+import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.service.DailyDownloadProcess;
 
@@ -143,13 +151,88 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return null;
 	}
 	
-	/**
-	 * Method for importing Income Details for checking Core banking balances with PFF Application
-	 */
+	@Override
+	public List<EquationCountry> importCountryDetails() throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationCustStatusCode> importCustStausCodeDetails()
+			throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationIndustry> importIndustryDetails() throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationBranch> importBranchDetails() throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationInternalAccount> importInternalAccDetails()
+			throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationAbuser> importAbuserDetails() throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<CustomerInterfaceData> importCustomerDetails() throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationTransactionCode> importTransactionCodeDetails()
+			throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<EquationIdentityType> importIdentityTypeDetails()
+			throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
+		return null;
+	}
+
 	@Override
 	public List<IncomeAccountTransaction> importIncomeAccTransactions(
-			List<FinIncomeAccount> finIncomeAccounts) throws Exception {
-		// TODO Auto-generated method stub
+			List<IncomeAccountTransaction> finIncomeAccounts) throws Exception {
+		logger.debug("Entering");
+		
+		logger.debug("Leaving");
 		return null;
 	}
 	

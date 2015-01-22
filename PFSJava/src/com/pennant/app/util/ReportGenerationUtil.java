@@ -42,6 +42,7 @@
  */
 package com.pennant.app.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,14 +51,20 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -74,10 +81,16 @@ public class ReportGenerationUtil implements Serializable {
 	public ReportGenerationUtil() {
 	    super();
     }
+	
+	@SuppressWarnings("rawtypes")
+	public static boolean generateReport(String reportName, Object object,List listData, boolean isRegenerate, 
+			int reportType,String userName, Window window) throws InterruptedException{
+		return generateReport(reportName, object, listData, isRegenerate, reportType, userName, window, false);
+	}
 
 	@SuppressWarnings("rawtypes")
 	public static boolean generateReport(String reportName, Object object,List listData, boolean isRegenerate, 
-			int reportType,String userName, Window window) throws InterruptedException {
+			int reportType,String userName, Window window,boolean createExcel) throws InterruptedException {
 
 		logger.debug("Entering");
 
@@ -91,7 +104,7 @@ public class ReportGenerationUtil implements Serializable {
 
         if (isRegenerate) {
         	try {
-        		createReport(reportName, object,listData, reportSrc,userName,window);
+        		createReport(reportName, object,listData, reportSrc,userName,window,createExcel);
         	} catch (JRException e) {
         		Messagebox.show("Template does not exist.", Labels.getLabel("message.Information"),Messagebox.OK, Messagebox.INFORMATION);
         		ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
@@ -102,7 +115,7 @@ public class ReportGenerationUtil implements Serializable {
 		return false;
 	}
 
-	/** 
+	/**
 	 * Method For generating Report based upon passing Data Structure
 	 * @param reportName
 	 * @param object
@@ -114,7 +127,7 @@ public class ReportGenerationUtil implements Serializable {
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	private static void createReport(String reportName, Object object,List listData, String reportSrc,String userName,Window dialogWindow)
+	private static void createReport(String reportName, Object object,List listData, String reportSrc,String userName,Window dialogWindow,boolean createExcel)
 			throws JRException, InterruptedException {
 		logger.debug("Entering");
 
@@ -159,25 +172,45 @@ public class ReportGenerationUtil implements Serializable {
 				}
 			}
 			
-			byte[] buf = null;
-			logger.debug("Entering JasperRunManager");
-			buf =JasperRunManager.runReportToPdf(reportSrc, parameters,	mainDS);
-			
-			logger.debug("Leaving JasperRunManager");
-			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-			auditMap.put("reportBuffer", buf);
-			String genReportName = Labels.getLabel(reportName);
-			auditMap.put("reportName", StringUtils.trimToEmpty(genReportName).equals("") ? reportName : genReportName);
-			if (dialogWindow != null){
-				auditMap.put("dialogWindow", dialogWindow);
-			}
-			
-			logger.debug("Adding to zul");
-			
-			// call the ZUL-file with the parameters packed in a map
-			Executions.createComponents("/WEB-INF/pages/Reports/reports.zul", null, auditMap);
-			logger.debug("Completed adding to zul");
+			if(createExcel){
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				String printfileName = JasperFillManager.fillReportToFile(reportSrc, parameters, mainDS);
+				JRXlsExporter excelExporter = new JRXlsExporter();
 
+				excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
+				//excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);  
+				excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);  
+				excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);  
+				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE); 
+				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE); 
+				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS,Boolean.FALSE);  
+				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER,Boolean.FALSE);       
+				excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN,Boolean.TRUE);
+				excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
+				excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+				excelExporter.exportReport();
+				Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+			}else{
+
+				byte[] buf = null;
+				logger.debug("Entering JasperRunManager");
+				buf =JasperRunManager.runReportToPdf(reportSrc, parameters,	mainDS);
+
+				logger.debug("Leaving JasperRunManager");
+				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				auditMap.put("reportBuffer", buf);
+				String genReportName = Labels.getLabel(reportName);
+				auditMap.put("reportName", StringUtils.trimToEmpty(genReportName).equals("") ? reportName : genReportName);
+				if (dialogWindow != null){
+					auditMap.put("dialogWindow", dialogWindow);
+				}
+
+				logger.debug("Adding to zul");
+
+				// call the ZUL-file with the parameters packed in a map
+				Executions.createComponents("/WEB-INF/pages/Reports/reports.zul", null, auditMap);
+				logger.debug("Completed adding to zul");
+			}
 		} catch (JRException jex) {
 			logger.error(jex);
 			Messagebox.show("Template does not exist.", Labels.getLabel("message.Information"),Messagebox.OK, Messagebox.INFORMATION);

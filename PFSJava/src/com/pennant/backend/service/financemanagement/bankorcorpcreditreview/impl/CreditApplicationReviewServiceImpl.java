@@ -1318,6 +1318,10 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 		return getCreditApplicationReviewDAO().getCreditReviewAuditPeriodByAuditYear(customerId, auditYear, auditPeriod, isEnquiry, type);
 	}
 
+	@Override
+	public List<FinCreditReviewDetails> getFinCreditRevDetailsByCustomerId(final long customerId, String type) {
+		return getCreditApplicationReviewDAO().getFinCreditRevDetailsByCustomerId(customerId, type);
+	}
 	
 	public List<CustomerDocument> getCustomerDocumentsById(long id, String type){
 		docsList = new ArrayList<CustomerDocument>();

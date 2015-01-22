@@ -173,7 +173,7 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 	 * @return DeferementDetail
 	 */
 	@Override
-	public DefermentDetail getDefermentDetailForBatch(final String id, final Date schdDate) {
+	public List<DefermentDetail> getDefermentDetailForBatch(final String id, final Date schdDate) {
 		logger.debug("Entering");
 		
 		DefermentDetail defermentDetail = new DefermentDetail();
@@ -181,7 +181,7 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		defermentDetail.setDeferedRpyDate(schdDate);
 		
 		StringBuilder selectSql = new StringBuilder("Select FinReference, DeferedSchdDate," );
-		selectSql.append(" DefPaidPftTillDate, DefPaidPriTillDate, DefPftBalance, DefPriBalance ");
+		selectSql.append(" DefPaidPftTillDate, DefPaidPriTillDate, DefSchdProfit, DefSchdPrincipal ");
 		selectSql.append(" From FinDefermentDetail");	
 		selectSql.append(" Where FinReference =:FinReference AND DeferedRpyDate =:DeferedRpyDate ");
 		
@@ -189,13 +189,9 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
 		RowMapper<DefermentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DefermentDetail.class);
 		
-		try{
-			defermentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
-			defermentDetail = null;
-		}
+		List<DefermentDetail> defermentDetailList =  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 		logger.debug("Leaving");
-		return defermentDetail;
+		return defermentDetailList;
 	}
 	
 	/**
@@ -460,10 +456,8 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		logger.debug("Leaving");
 	}
 	
-	@SuppressWarnings("serial")
 	@Override
-	public void updateBatch(DefermentDetail defermentDetail) {
-		int recordCount = 0;
+	public void updateBatch(List<DefermentDetail> defermentDetail) {
 		
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinDefermentDetail");	
@@ -473,14 +467,8 @@ public class DefermentDetailDAOImpl extends BasisCodeDAO<DefermentDetail> implem
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(defermentDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",defermentDetail.getId() ,defermentDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
-		}
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(defermentDetail.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	
