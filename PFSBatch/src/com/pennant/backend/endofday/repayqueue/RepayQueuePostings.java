@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.endofday.repayqueue;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -80,6 +81,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -87,9 +89,11 @@ import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayHierarchyConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.eod.util.EODProperties;
 
@@ -110,6 +114,7 @@ public class RepayQueuePostings implements Tasklet {
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private FinLogEntryDetailDAO finLogEntryDetailDAO; 
 	private FinRepayQueueDAO finRepayQueueDAO;
+	private OverdueChargeRecoveryDAO recoveryDAO;
 	
 	private DataSource dataSource;
 	
@@ -159,6 +164,7 @@ public class RepayQueuePostings implements Tasklet {
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
 			sqlStatement.setDate(1, DateUtility.getDBDate(dateValueDate.toString()));
 			resultSet = sqlStatement.executeQuery();
+			String oldFinRef = "";
 			
 			while (resultSet.next()) {
 				
@@ -189,29 +195,51 @@ public class RepayQueuePostings implements Tasklet {
 				
 				//Repayments Only for "AUTO" Payment Finances
 				boolean doProcessPostings = false;
-				if(StringUtils.trimToEmpty(financeMain.getFinRepayMethod()).equals(PennantConstants.REPAYMTH_AUTO)){
+				if(StringUtils.trimToEmpty(financeMain.getFinRepayMethod()).equals(PennantConstants.REPAYMTH_AUTO) &&
+						!StringUtils.trimToEmpty(financeMain.getRepayAccountId()).equals("")){
 					doProcessPostings = true;
 				}
+				
+				//Try process for Recover Past Schedule Penalty 
+				boolean recoverPastPenlaty = false;
+				if(!oldFinRef.equals(finReference)){
+					recoverPastPenlaty = true;
+					oldFinRef = finReference;
+				}
+				
+				// Checking Penalty Recoveries for Fully Paid Installment Schedules
+				if(doProcessPostings && recoverPastPenlaty && 
+						(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
+						PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))){
+					
+					//Fetch Max Overdue Charge Recovery for Past Schedule before Processed Schedule Date with Reference 
+					OverdueChargeRecovery pastRec = getRecoveryDAO().getPastSchedulePenalty(finReference, finRepayQueue.getRpyDate(), true);
 
-				//Overdue Recovery Calculations & Recovery Posting
-				if(finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0){
-					List<Object> odObjDetails = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, 
-							dateValueDate, allowRIAInvestment, doProcessPostings, false, linkedTranId, financeType.getFinDivision(), false);
+					getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, pastRec.getFinODSchdDate(), pastRec.getFinODFor(), 
+							pastRec.getMovementDate(), pastRec.getPenaltyBal(), pastRec.getPenaltyPaid(), pastRec.getWaivedAmt(), pastRec.getPenaltyType(),
+							allowRIAInvestment, linkedTranId ,financeType.getFinDivision(), null, true);
 
-					if(odObjDetails!=null && !odObjDetails.isEmpty()) {
-						if(!doProcessPostings || (Boolean)odObjDetails.get(0)) {
-							overDues++;
-						}else{
-							//THROW ERROR FOR POSTINGS NOT SUCCESS
-							logger.error("Postings Failed for OverDue Payment Process");
-							//throw new Exception("Postings Failed for OverDue Payment Process");
-						}
-						
-						if(doProcessPostings){
-							linkedTranId = (Long) odObjDetails.get(1);
-						}
-					}
-					odObjDetails = null;
+					//FIXME : Collect all charges before Schedule Date of Sequence Installment in this loop
+					//Filter Case :  FinReference , Before this Schedule Date, Penalty Balance > 0, RcdCanDel = FALSE using "AMView"  
+					//Same Procedure need to use on "IPCS or PICS"
+					//Check same for InActive Deals(Profit & Principal Fully Paid Condition for whole finance), 
+					//after Repayment Process without considering other finances on Customer basis or Before Repayment (Client Decision)
+					//Add Same in  Repay Calculator for Recover while on manual payment
+				}
+				
+				boolean doOverDuePostings = false;
+				if(doProcessPostings && (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI) || 
+						PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))){
+					doOverDuePostings = true;
+				}
+				
+				// Overdue/ Penalty Postings
+				List<Object> odObjDetails = processODRecovery(finRepayQueue, allowRIAInvestment, doOverDuePostings, financeMain, financeType, linkedTranId);
+				OverdueChargeRecovery rec = null;
+				if(doOverDuePostings){
+					linkedTranId = (Long) odObjDetails.get(1);
+				}else if(doProcessPostings){
+					rec = (OverdueChargeRecovery) odObjDetails.get(1);
 				}
 				
 				//Repayments postings By Available Balance Check
@@ -244,6 +272,26 @@ public class RepayQueuePostings implements Tasklet {
 					}
 					
 					if (!isRepayFailed) {
+						
+						//Remove Below line for Single Transaction Posting Entry
+						linkedTranId = Long.MIN_VALUE;
+						
+						// Overdue/ Penalty Postings
+						if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
+								PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)){
+							
+							//Actual Required Balance for Profit & Principal
+							BigDecimal actualReqBal = resultSet.getBigDecimal("RepayQueueBal");
+							
+							//Available Balance on Account check against Required Balance
+							if(repayAmountBal.compareTo(actualReqBal) == 0){
+								
+								getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, rec.getFinODSchdDate(), rec.getFinODFor(), 
+										rec.getMovementDate(), rec.getPenaltyBal(), rec.getPenaltyPaid(), rec.getWaivedAmt(), rec.getPenaltyType(),
+										allowRIAInvestment, linkedTranId ,financeType.getFinDivision(), null, true);
+							}
+						}
+						
 						// Create log entry for Action for Schedule Repayments
 						// Modification
 						FinLogEntryDetail entryDetail = new FinLogEntryDetail();
@@ -422,6 +470,47 @@ public class RepayQueuePostings implements Tasklet {
 		logger.debug("END: Repayments Due Today Queue Postings for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
 
+	}
+	
+	/**
+	 * Method for Processing Overdue Recovery Postings
+	 * @param finRepayQueue
+	 * @param allowRIAInvestment
+	 * @param doODPostings
+	 * @param financeMain
+	 * @param financeType
+	 * @param linkedTranId
+	 * @return
+	 * @throws AccountNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private List<Object> processODRecovery(FinRepayQueue finRepayQueue,
+			boolean allowRIAInvestment, boolean doODPostings,
+			FinanceMain financeMain, FinanceType financeType, long linkedTranId)
+			throws AccountNotFoundException, IllegalAccessException,
+			InvocationTargetException {
+		logger.debug("Entering");
+		
+		//Overdue Recovery Calculations & Recovery Posting
+		List<Object> odObjDetails = null;
+		if(finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0){
+			
+			odObjDetails = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, 
+					dateValueDate, allowRIAInvestment, doODPostings, false, linkedTranId, financeType.getFinDivision(), false);
+
+			if(odObjDetails!=null && !odObjDetails.isEmpty()) {
+				if(!doODPostings || (Boolean)odObjDetails.get(0)) {
+					overDues++;
+				}else{
+					//THROW ERROR FOR POSTINGS NOT SUCCESS
+					logger.error("Postings Failed for OverDue Payment Process");
+					//throw new Exception("Postings Failed for OverDue Payment Process");
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return odObjDetails;
 	}
 	
 
@@ -731,5 +820,11 @@ public class RepayQueuePostings implements Tasklet {
 		return dataSource;
 	}
 
+	public OverdueChargeRecoveryDAO getRecoveryDAO() {
+		return recoveryDAO;
+	}
 
+	public void setRecoveryDAO(OverdueChargeRecoveryDAO recoveryDAO) {
+		this.recoveryDAO = recoveryDAO;
+	}
 }

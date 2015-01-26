@@ -712,8 +712,9 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 						isRIAFinance, false, false, Long.MIN_VALUE, null, false);
 				
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
-				finRepayQueue.setPenaltyAmount(repaySchdList.get(i).getPenaltyAmt());
+				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 				finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
+				finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 				
 				//Total Repayments Calculation for Principal, Profit & Refunds

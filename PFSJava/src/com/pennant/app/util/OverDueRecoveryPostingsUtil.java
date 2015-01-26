@@ -95,7 +95,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date schdDate,
 	        String finODFor, Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid,
-	        BigDecimal waiverAmt, String chargeType, boolean isRIAFinance, long linkedTranId, String finDivision)
+	        BigDecimal waiverAmt, String chargeType, boolean isRIAFinance, long linkedTranId, String finDivision, OverdueChargeRecovery rec , boolean fullyPaidSchd)
 	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
@@ -196,7 +196,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
 					doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType,
-							penaltyPaidNow, waiverAmt, isPaidClear);
+							penaltyPaidNow, waiverAmt, isPaidClear, rec, fullyPaidSchd);
 
 					//Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
@@ -209,6 +209,16 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					detail.setTotWaived(waiverAmt);
 					getFinODDetailsDAO().updateTotals(detail);
 
+				}
+			}
+		}else{
+			if(rec != null){
+				if(StringUtils.trimToEmpty(rec.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
+					if(rec.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0){
+						getRecoveryDAO().save(rec, "");
+					}
+				}else if(StringUtils.trimToEmpty(rec.getRecordType()).equals(PennantConstants.RECORD_TYPE_UPD)){
+					getRecoveryDAO().update(rec, "");
 				}
 			}
 		}
@@ -234,23 +244,43 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	private OverdueChargeRecovery doUpdateRecoveryData(String finReference, Date schdDate,
 	        String finODFor, Date movementDate, String chargeType, BigDecimal penaltyPaid,
-	        BigDecimal waiverPaid, boolean isPaidClear) {
+	        BigDecimal waiverPaid, boolean isPaidClear, OverdueChargeRecovery recovery, boolean fullyPaidSchd) {
 		logger.debug("Entering");
 
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-		recovery.setFinReference(finReference);
-		recovery.setFinODSchdDate(schdDate);
-		recovery.setFinODFor(finODFor);
-		recovery.setMovementDate(movementDate);
-		recovery.setPenaltyPaid(penaltyPaid);
-		recovery.setPenaltyBal(penaltyPaid);
-		recovery.setWaivedAmt(waiverPaid);
-		if (PennantConstants.PERCONDUEDAYS.equals(chargeType)) {
-			recovery.setRcdCanDel(false);
-		} else {
-			recovery.setRcdCanDel(!isPaidClear);
+		if(recovery != null){
+			recovery.setWaivedAmt(waiverPaid);
+			recovery.setPenaltyPaid(recovery.getPenaltyPaid().add(penaltyPaid));
+			recovery.setPenaltyBal(recovery.getPenaltyBal().subtract(penaltyPaid));
+			if (PennantConstants.PERCONDUEDAYS.equals(chargeType)) {
+				recovery.setRcdCanDel(false);
+			} else {
+				recovery.setRcdCanDel(!isPaidClear);
+			}
+			
+			if(StringUtils.trimToEmpty(recovery.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)){
+				if(recovery.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0){
+					getRecoveryDAO().save(recovery, "");
+				}
+			}else if(StringUtils.trimToEmpty(recovery.getRecordType()).equals(PennantConstants.RECORD_TYPE_UPD)){
+				getRecoveryDAO().update(recovery, "");
+			}
+			
+		}else{
+			recovery = new OverdueChargeRecovery();
+			recovery.setFinReference(finReference);
+			recovery.setFinODSchdDate(schdDate);
+			recovery.setFinODFor(finODFor);
+			recovery.setMovementDate(movementDate);
+			recovery.setPenaltyPaid(penaltyPaid);
+			recovery.setPenaltyBal(penaltyPaid);
+			recovery.setWaivedAmt(waiverPaid);
+			if (PennantConstants.PERCONDUEDAYS.equals(chargeType)) {
+				recovery.setRcdCanDel(false);
+			} else {
+				recovery.setRcdCanDel(!isPaidClear);
+			}
+			getRecoveryDAO().updatePenaltyPaid(recovery, fullyPaidSchd, "");
 		}
-		getRecoveryDAO().updatePenaltyPaid(recovery, "");
 
 		logger.debug("Leaving");
 		return recovery;
@@ -319,14 +349,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		FinODDetails odDetails = overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, isAfterRecovery, isEnqPurpose);
 
 		//Preparation for Overdue Penalty Recovery Details
-		OverdueChargeRecovery rec = overdueRecoverCalculation(odDetails, dateValueDate, financeMain.getProfitDaysBasis(),isAfterRecovery, isEnqPurpose);
+		OverdueChargeRecovery rec = overdueRecoverCalculation(odDetails, dateValueDate, financeMain.getProfitDaysBasis(),isAfterRecovery, isEnqPurpose, doPostings);
 
 		//Overdue Recovery Postings
 		boolean isPostingSuccess = false;
 		if (!isEnqPurpose && doPostings && rec != null) {
 			List<Object> returnList = oDRPostingProcess(financeMain, dateValueDate, rec.getFinODSchdDate(), rec.getFinODFor(), 
 					rec.getMovementDate(), rec.getPenaltyBal(), rec.getPenaltyPaid(), rec.getWaivedAmt(), rec.getPenaltyType(),
-					isRIAFinance, linkedTranId ,finDivision);
+					isRIAFinance, linkedTranId ,finDivision, rec, false);
 			
 			isPostingSuccess = (Boolean) returnList.get(0);
 			linkedTranId = (Long) returnList.get(1);
@@ -353,7 +383,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @param profitDayBasis
 	 */
 	private OverdueChargeRecovery overdueRecoverCalculation(FinODDetails odDetails, Date dateValueDate, String profitDayBasis, 
-			boolean isAfterRecovery, boolean isEnqPurpose) {
+			boolean isAfterRecovery, boolean isEnqPurpose, boolean doPostings) {
 		logger.debug("Entering");
 
 		Date newPenaltyDate = DateUtility.addDays(odDetails.getFinODSchdDate(), odDetails.getODGraceDays());
@@ -572,9 +602,21 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				if(!isEnqPurpose && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0){
 					//Recovery Record Saving -- FIXME : Check to Add the Record/Not with "ZERO" penalty balance Amount while Recovery calculation
 					if (isRecordSave) {
-						getRecoveryDAO().save(recovery, "");
+						if(recovery.getPenaltyBal().compareTo(BigDecimal.ZERO) > 0){
+							if(!doPostings){
+								if(recovery.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0){
+									getRecoveryDAO().save(recovery, "");
+								}
+							}else{
+								recovery.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							}
+						}
 					} else {
-						getRecoveryDAO().update(recovery, "");
+						if(!doPostings){
+							getRecoveryDAO().update(recovery, "");
+						}else{
+							recovery.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						}
 					}
 
 					//Overdue Details Updation for Totals

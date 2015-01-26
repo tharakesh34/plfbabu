@@ -6064,6 +6064,7 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeProfitDetailFiller" ref="financeProfitDetailFiller" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->
@@ -6122,6 +6123,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
 	<!--============ Profit Details Filler Util ============== -->

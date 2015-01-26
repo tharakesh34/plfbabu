@@ -95,6 +95,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 	
 	private Map<Date,ArrayList<OverdueChargeRecovery>> penaltyDetailsMap;
 	private BigDecimal accrueValue;
+	private boolean showStepDetail;
 	
 	private transient BigDecimal 	closingBal = null;
 	protected boolean 	lastRec;
@@ -113,7 +114,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord,
 			boolean allowRvwRateEdit,boolean isRepayEnquiry ,
-			Map<Date, ArrayList<FeeRule>> feeRuleDetailsMap, boolean showRate) {
+			Map<Date, ArrayList<FeeRule>> feeRuleDetailsMap, boolean showRate, boolean displayStepInfo) {
 		logger.debug("Entering");
 		lastRec = lastRecord;
 
@@ -156,6 +157,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 		if((Button) window.getFellowIfAny("btnAddDisbursement") != null) {
 			this.btnAddDisbursement =(Button) window.getFellowIfAny("btnAddDisbursement");
 		}
+		
+		showStepDetail = displayStepInfo;
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
 		int count = 1;
 		closingBal = getFinanceScheduleDetail().getClosingBalance();
@@ -861,7 +864,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 			
 			// for Cash Flow Effect value
-			if (getFinScheduleData().getFinanceMain().isStepFinance()) {
+			if (getFinScheduleData().getFinanceMain().isStepFinance() && showStepDetail) {
 				if (!isRate && !lastRec) {
 					lc = new Listcell(PennantAppUtil.amountFormate(data.getOrgPft(), 
 							getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));

@@ -65,6 +65,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.DefermentDetail;
@@ -76,6 +77,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayHierarchyConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 
 public class RepaymentPostingsUtil implements Serializable {
@@ -97,6 +99,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private static FinanceProfitDetailDAO profitDetailsDAO;
 	private static FinanceSuspHeadDAO financeSuspHeadDAO;
 	private static CustomerDAO customerDAO;
+	private static OverdueChargeRecoveryDAO recoveryDAO;
 
 	private List<Object> actreturnList = null;
 	private FinanceScheduleDetail financeScheduleDetail = null;
@@ -123,7 +126,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	        		throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 		
 		return new RepaymentPostingsUtil(financeMain,scheduleDetails, financeProfitDetail,
-		        dateValueDate, finRepayQueue, repayAmountBal, isRIAFinance, linkedTranId).getActreturnList();
+		        dateValueDate, finRepayQueue, repayAmountBal, isRIAFinance, linkedTranId).getActReturnList();
 	}
 	
 	/**
@@ -144,7 +147,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 		
 		return new RepaymentPostingsUtil(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList, 
-				totalsMap, isRIAFinance, eventCode, feeRuleDetailMap, finDivision).getActreturnList();
+				totalsMap, isRIAFinance, eventCode, feeRuleDetailMap, finDivision).getActReturnList();
 	}
 	
 	/**
@@ -167,7 +170,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
 		
 		return new RepaymentPostingsUtil(financeMain, scheduleDetails,financeProfitDetail,finRepayQueueList, 
-				linkedTranId , isPartialRepay, isRIAFinance, aeAmountCodes).getActreturnList();
+				linkedTranId , isPartialRepay, isRIAFinance, aeAmountCodes).getActReturnList();
 	}
 	
 	/**
@@ -188,7 +191,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	        Date dateValueDate, FinRepayQueue finRepayQueue, BigDecimal repayAmountBal, boolean isRIAFinance, long linkedTranId)
 	        		throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
 		
-		setActreturnList(endOfDayRepayProcess(financeMain, scheduleDetails, financeProfitDetail, dateValueDate, finRepayQueue,
+		setActReturnList(endOfDayRepayProcess(financeMain, scheduleDetails, financeProfitDetail, dateValueDate, finRepayQueue,
 				repayAmountBal, isRIAFinance, linkedTranId));
 	}
 	
@@ -197,7 +200,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			Map<String,BigDecimal> totalsMap, boolean isRIAFinance, String eventCode, Map<String, FeeRule> feeRuleDetailMap, String finDivision)
 					throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
 		
-		setActreturnList(screenRepayProcess(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList,
+		setActReturnList(screenRepayProcess(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList,
 				totalsMap, isRIAFinance, eventCode, feeRuleDetailMap, finDivision));
 	}
 	
@@ -206,7 +209,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			long linkedTranId , boolean isPartialRepay, boolean isRIAFinance, AEAmountCodes aeAmountCodes) 
 					throws AccountNotFoundException, IllegalAccessException, InvocationTargetException{
 		
-		setActreturnList(screenPaymentsUpdation(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList, linkedTranId, 
+		setActReturnList(screenPaymentsUpdation(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList, linkedTranId, 
 				isPartialRepay, isRIAFinance, aeAmountCodes));
 	}
 	
@@ -238,21 +241,44 @@ public class RepaymentPostingsUtil implements Serializable {
 		//Repayments Amount calculation
 		BigDecimal totRpyPri = BigDecimal.ZERO;
 		BigDecimal totRpyPft = BigDecimal.ZERO;
-		if (repayAmountBal.compareTo(finRepayQueue.getSchdPftBal()) >= 0) {
-			totRpyPft = finRepayQueue.getSchdPftBal();
-			totRpyPri = repayAmountBal.subtract(totRpyPft);
-			finRepayQueue.setSchdPftPayNow(totRpyPft);
-			finRepayQueue.setSchdPriPayNow(totRpyPri);
-		} else {
-			totRpyPft = repayAmountBal;
-			finRepayQueue.setSchdPftPayNow(totRpyPft);
-			finRepayQueue.setSchdPriPayNow(BigDecimal.ZERO);
-		}
-
 		boolean isPartialRepay = false;
-		//Partial Repay Check
-		if(totRpyPft.compareTo(BigDecimal.ZERO) > 0){
-			isPartialRepay = true;
+		
+		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))){
+
+			if (repayAmountBal.compareTo(finRepayQueue.getSchdPftBal()) >= 0) {
+				totRpyPft = finRepayQueue.getSchdPftBal();
+				totRpyPri = repayAmountBal.subtract(totRpyPft);
+				finRepayQueue.setSchdPftPayNow(totRpyPft);
+				finRepayQueue.setSchdPriPayNow(totRpyPri);
+			} else {
+				totRpyPft = repayAmountBal;
+				finRepayQueue.setSchdPftPayNow(totRpyPft);
+				finRepayQueue.setSchdPriPayNow(BigDecimal.ZERO);
+			}
+			
+			//Partial Repay Check
+			if(totRpyPft.compareTo(BigDecimal.ZERO) > 0){
+				isPartialRepay = true;
+			}
+		}else if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
+
+			if (repayAmountBal.compareTo(finRepayQueue.getSchdPriBal()) >= 0) {
+				totRpyPri = finRepayQueue.getSchdPriBal();
+				totRpyPft = repayAmountBal.subtract(totRpyPri);
+				finRepayQueue.setSchdPftPayNow(totRpyPft);
+				finRepayQueue.setSchdPriPayNow(totRpyPri);
+			} else {
+				totRpyPri = repayAmountBal;
+				finRepayQueue.setSchdPriPayNow(totRpyPri);
+				finRepayQueue.setSchdPftPayNow(BigDecimal.ZERO);
+			}
+
+			//Partial Repay Check
+			if(totRpyPri.compareTo(BigDecimal.ZERO) > 0){
+				isPartialRepay = true;
+			}
 		}
 
 		Map<String,BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
@@ -276,8 +302,8 @@ public class RepaymentPostingsUtil implements Serializable {
 			actreturnList.add(resultList.get(3));
 			actreturnList.add(true);
 			
-			//Overdue Details preparation
-			getRecoveryPostingsUtil().overDueDetailPreparation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true, false);
+			//If payment Failed - Overdue Details preparation recalculated for including next day
+			getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, dateValueDate, isRIAFinance, false, true, linkedTranId, null, false);
 		
 			logger.debug("Leaving");
 			return actreturnList;
@@ -365,52 +391,122 @@ public class RepaymentPostingsUtil implements Serializable {
 					throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
-		List<Object> actReturnList = new ArrayList<Object>();
-
+		List<Object> actReturnList = null;
+		
 		Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		Date valueDate = dateValueDate;
 
-		//Overdue Recovery Postings
-		long linkedTranId = Long.MIN_VALUE;
-		for (FinRepayQueue repayQueue : finRepayQueueList) {
-			if(repayQueue.getRpyDate().compareTo(dateValueDate) < 0 &&
-					(repayQueue.getPenaltyAmount().compareTo(BigDecimal.ZERO) > 0 || 
-							repayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) ){
-				List<Object> returnList = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, repayQueue.getRpyDate(),
-						repayQueue.getFinRpyFor(), dateValueDate, repayQueue.getPenaltyAmount(),  BigDecimal.ZERO, 
-						repayQueue.getWaivedAmount(), repayQueue.getChargeType(),isRIAFinance, linkedTranId, finDivison);
-
-				if(!(Boolean) returnList.get(0)){
-					actReturnList.add(returnList.get(0));
-					actReturnList.add(returnList.get(2));
-
-					logger.debug("Leaving");
-					returnList = null;
-					return actReturnList;
-				}
-
-				linkedTranId = Long.MIN_VALUE;
-				//linkedTranId = (Long) returnList.get(1);
+		// Based on repayments method then do charges postings first then profit or principal
+		// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
+		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))) {
+			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, isRIAFinance, finDivison);
+			if(actReturnList != null){
+				return actReturnList;
 			}
 		}
 
+		// Schedule Principal and Profit payments
+		BigDecimal totRpyAmt = totalsMap.get("totRpyTot");
+		if(totRpyAmt.compareTo(BigDecimal.ZERO) > 0){
+			actReturnList = doProfitPrincipalPostings(totalsMap, valueDate, dateValueDate, financeMain,
+					scheduleDetails, financeProfitDetail, isRIAFinance, eventCode, feeRuleDetailMap);
+		}else{
+			if(actReturnList == null){
+				actReturnList = new ArrayList<Object>();
+			}
+			actReturnList.clear();
+			actReturnList.add(true);// Postings Success
+			actReturnList.add(Long.MIN_VALUE);// Linked Transaction ID
+			actReturnList.add(false); // Partial Repay
+			actReturnList.add(null);// AE Amounts Object
+			actReturnList.add(null);// Finance Account
+		}
+		
+		if ((Boolean) actReturnList.get(0)) {
+			if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)) || 
+					(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))) {
+				List<Object> returnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, isRIAFinance, finDivison);
+				if(returnList != null){
+					return returnList;
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return actReturnList;
+	}
+	
+	private List<Object> doOverduePostings(long linkedTranId,
+	        List<FinRepayQueue> finRepayQueueList, Date dateValueDate, FinanceMain financeMain,
+	        boolean isRIAFinance, String finDivison) throws AccountNotFoundException,
+	        IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+		for (FinRepayQueue repayQueue : finRepayQueueList) {
+			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0
+			        && (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || repayQueue
+			                .getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
+				
+				//Check Repayment Amount is Fully Paid or not
+				boolean fullyPaidSchd = false;
+				if((repayQueue.getSchdPftBal().add(repayQueue.getSchdPriBal())).compareTo(BigDecimal.ZERO) == 0){
+					fullyPaidSchd = true;
+				}
+
+				List<Object> returnList = getRecoveryPostingsUtil().oDRPostingProcess(financeMain,
+				        dateValueDate, repayQueue.getRpyDate(), repayQueue.getFinRpyFor(),
+				        dateValueDate, repayQueue.getPenaltyPayNow(), BigDecimal.ZERO,
+				        repayQueue.getWaivedAmount(), repayQueue.getChargeType(), isRIAFinance,
+				        linkedTranId, finDivison, null, fullyPaidSchd );
+
+				if (!(Boolean) returnList.get(0)) {
+					List<Object> actReturnList = new ArrayList<Object>();
+					actReturnList.add(returnList.get(0));
+					actReturnList.add(returnList.get(2));
+					returnList = null;
+					return actReturnList;
+				}
+			}else{
+				//Only in case of Profit & Principal Amount greater than ZERO , Penalty Pay Now is ZERO
+				//Update RcdCanDel = 0 flag on Overdue Recovery details for IPC or PIC
+				if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
+						PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))) {
+					if(repayQueue.getRpyDate().compareTo(dateValueDate) < 0 &&
+							(repayQueue.getSchdPftPayNow().add(repayQueue.getSchdPriPayNow())).compareTo(BigDecimal.ZERO) > 0 &&
+							repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) == 0){
+						getRecoveryDAO().updateRcdCanDel(repayQueue.getFinReference(), repayQueue.getRpyDate());
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
+	private List<Object> doProfitPrincipalPostings(Map<String, BigDecimal> totalsMap,
+	        Date valueDate, Date dateValueDate, FinanceMain financeMain,
+	        List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail financeProfitDetail,
+	        boolean isRIAFinance, String eventCode, Map<String, FeeRule> feeRuleDetailMap)
+	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+		List<Object> actReturnList = new ArrayList<Object>();
 		boolean isPartialRepay = false;
 		//Partial Repay Check
-		if(totalsMap.get("totRpyPft").compareTo(BigDecimal.ZERO) > 0){
+		if (totalsMap.get("totRpyPft").compareTo(BigDecimal.ZERO) > 0) {
 			isPartialRepay = true;
 		}
 
 		//Remove Below line for Single Transaction Posting Entry
-		linkedTranId = Long.MIN_VALUE;
+		long linkedTranId = Long.MIN_VALUE;
 
 		//Method for Postings Process
-		List<Object> resultList = postingEntryProcess(valueDate, dateValueDate, valueDate, false,financeMain, scheduleDetails, financeProfitDetail, 
-				totalsMap, isRIAFinance, linkedTranId, eventCode, feeRuleDetailMap);
+		List<Object> resultList = postingEntryProcess(valueDate, dateValueDate, valueDate, false,
+		        financeMain, scheduleDetails, financeProfitDetail, totalsMap, isRIAFinance,
+		        linkedTranId, eventCode, feeRuleDetailMap);
 
 		boolean isPostingSuccess = (Boolean) resultList.get(0);
 		linkedTranId = (Long) resultList.get(1);
 
-		if(!isPostingSuccess){
+		if (!isPostingSuccess) {
 			actReturnList.add(resultList.get(0));
 			actReturnList.add(resultList.get(3));
 
@@ -424,7 +520,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		actReturnList.add(isPartialRepay);
 		actReturnList.add(resultList.get(5)); // Amount Codes
 		actReturnList.add(resultList.get(4)); // Finance Account if Exists
-		
+
 		logger.debug("Leaving");
 		return actReturnList;
 	}
@@ -456,27 +552,46 @@ public class RepaymentPostingsUtil implements Serializable {
             scheduleMap.put(detail.getSchDate().toString(), detail);
         }
 		
+		// AE Amounts Object Check
+		BigDecimal rpyTotal = BigDecimal.ZERO;
+		BigDecimal rpyPri = BigDecimal.ZERO;
+		BigDecimal rpyPft = BigDecimal.ZERO;
+		if(aeAmountCodes != null){
+			rpyTotal = aeAmountCodes.getRpTot();
+			rpyPri = aeAmountCodes.getRpPri();
+			rpyPft = aeAmountCodes.getRpPft();
+		}
+		
 		//Database Updations for Finance RepayQueue Details List
+		boolean isPenaltyAvail = false;
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
 			
-			FinanceScheduleDetail scheduleDetail = null;
-			if(scheduleMap.containsKey(DateUtility.formatDate(repayQueue.getRpyDate(),PennantConstants.DBDateFormat))){
-				scheduleDetail = scheduleMap.get(DateUtility.formatDate(repayQueue.getRpyDate(),PennantConstants.DBDateFormat));
+			if(rpyTotal.compareTo(BigDecimal.ZERO) > 0){
+				
+				FinanceScheduleDetail scheduleDetail = null;
+				if(scheduleMap.containsKey(DateUtility.formatDate(repayQueue.getRpyDate(),PennantConstants.DBDateFormat))){
+					scheduleDetail = scheduleMap.get(DateUtility.formatDate(repayQueue.getRpyDate(),PennantConstants.DBDateFormat));
+				}
+
+				List<Object> resultList = paymentProcessExecution(financeMain, scheduleDetail, repayQueue, dateValueDate, 
+						linkedTranId, false, isPartialRepay, financeProfitDetail, isRIAFinance, rpyTotal);
+
+				if (!(Boolean) resultList.get(0)) {
+					actReturnList.add(resultList.get(0));
+					actReturnList.add(resultList.get(2));
+
+					logger.debug("Leaving");
+					return actReturnList;
+				}
+
+				scheduleMap.remove(scheduleDetail.getSchDate().toString());
+				scheduleMap.put(scheduleDetail.getSchDate().toString(), (FinanceScheduleDetail)resultList.get(3));
 			}
 			
-			List<Object> resultList = paymentProcessExecution(financeMain, scheduleDetail, repayQueue, dateValueDate, 
-					linkedTranId, false, isPartialRepay, financeProfitDetail, isRIAFinance, aeAmountCodes.getRpTot());
-
-			if (!(Boolean) resultList.get(0)) {
-				actReturnList.add(resultList.get(0));
-				actReturnList.add(resultList.get(2));
-
-				logger.debug("Leaving");
-				return actReturnList;
+			if(!isPenaltyAvail && 
+					(repayQueue.getPenaltyBal().compareTo(BigDecimal.ZERO)>0)){
+				isPenaltyAvail = true;
 			}
-			
-			scheduleMap.remove(scheduleDetail.getSchDate().toString());
-			scheduleMap.put(scheduleDetail.getSchDate().toString(), (FinanceScheduleDetail)resultList.get(3));
 		}
 
 		String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(),true);
@@ -501,15 +616,22 @@ public class RepaymentPostingsUtil implements Serializable {
 		scheduleDetails = sortSchdDetails(scheduleDetails);
 		
 		// Finance Main Details Update
-		BigDecimal totalRpyPri = aeAmountCodes.getRpPri();
-		BigDecimal totalRpyPft = aeAmountCodes.getRpPft();
-		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(totalRpyPri));
+		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(rpyPri));
 		financeMain.setFinStatus(curFinStatus);
 		financeMain.setFinStsReason(PennantConstants.FINSTSRSN_MANUAL);
 		BigDecimal totalFinAmt = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment());
-		if(totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
-			financeMain.setFinIsActive(false);
-			financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))) {
+			if(totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
+				financeMain.setFinIsActive(false);
+				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+			}
+		}else if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) { 
+			if(!isPenaltyAvail && totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
+				financeMain.setFinIsActive(false);
+				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+			}
 		}
 
 		//Finance Profit Details Updation
@@ -520,8 +642,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeProfitDetail.setFinIsActive(financeMain.isFinIsActive());
 		financeProfitDetail.setClosingStatus(financeMain.getClosingStatus());
 		financeProfitDetail.setLatestRpyDate(dateValueDate);
-		financeProfitDetail.setLatestRpyPri(totalRpyPri);
-		financeProfitDetail.setLatestRpyPft(totalRpyPft);
+		financeProfitDetail.setLatestRpyPri(rpyPri);
+		financeProfitDetail.setLatestRpyPft(rpyPft);
 		
 		String curFinWorstStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(),false);
 		financeProfitDetail.setFinWorstStatus(curFinWorstStatus);
@@ -801,17 +923,38 @@ public class RepaymentPostingsUtil implements Serializable {
 			schedule.setDefSchdPriPaid(schedule.getDefSchdPriPaid().add(finRepayQueue.getSchdPriPayNow()));
 
 			// Finance Deffered Schedule Profit Balance Check
-			if ((schedule.getDefProfitSchd().subtract(schedule.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
-				schedule.setDefSchPftPaid(true);
+			// Based on repayments method then do charges postings first then profit or principal
+			// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
+			if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))
+					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) {
+				if ((schedule.getDefProfitSchd().subtract(schedule.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
+					schedule.setDefSchPftPaid(true);
 
-				// Finance Deffered Schedule Principal Balance Check
+					// Finance Deffered Schedule Principal Balance Check
+					if ((schedule.getDefPrincipalSchd().subtract(schedule.getDefSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
+						schedule.setDefSchPriPaid(true);
+					}else{
+						schedule.setDefSchPriPaid(false);
+					}
+				}else{
+					schedule.setDefSchPftPaid(false);
+				}
+			}else if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
+					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
+
 				if ((schedule.getDefPrincipalSchd().subtract(schedule.getDefSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setDefSchPriPaid(true);
+
+					// Finance Deffered Schedule Principal Balance Check
+					if ((schedule.getDefProfitSchd().subtract(schedule.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
+						schedule.setDefSchPftPaid(true);
+					}else{
+						schedule.setDefSchPftPaid(false);
+					}
 				}else{
 					schedule.setDefSchPriPaid(false);
 				}
-			}else{
-				schedule.setDefSchPftPaid(false);
+			
 			}
 
 		} else if (finRepayQueue.getFinRpyFor().equals(PennantConstants.SCHEDULE)) {
@@ -823,17 +966,36 @@ public class RepaymentPostingsUtil implements Serializable {
 			schedule.setSchdPriPaid(schedule.getSchdPriPaid().add(finRepayQueue.getSchdPriPayNow()));
 
 			// Finance Schedule Profit Balance Check
-			if ((schedule.getProfitSchd().subtract(schedule.getSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
-				schedule.setSchPftPaid(true);
+			// Based on repayments method then do charges postings first then profit or principal
+			// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
+			if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))
+					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) {
+				if ((schedule.getProfitSchd().subtract(schedule.getSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
+					schedule.setSchPftPaid(true);
 
-				// Finance Schedule Principal Balance Check
+					// Finance Schedule Principal Balance Check
+					if ((schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
+						schedule.setSchPriPaid(true);
+					}else{
+						schedule.setSchPriPaid(false);
+					}
+				}else{
+					schedule.setSchPftPaid(false);
+				}
+			}else if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
+					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
 				if ((schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setSchPriPaid(true);
+
+					// Finance Schedule Principal Balance Check
+					if ((schedule.getProfitSchd().subtract(schedule.getSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
+						schedule.setSchPftPaid(true);
+					}else{
+						schedule.setSchPftPaid(false);
+					}
 				}else{
 					schedule.setSchPriPaid(false);
 				}
-			}else{
-				schedule.setSchPftPaid(false);
 			}
 		}
 		logger.debug("Leaving");
@@ -1053,10 +1215,10 @@ public class RepaymentPostingsUtil implements Serializable {
 		RepaymentPostingsUtil.financeSuspHeadDAO = financeSuspHeadDAO;
     }
 	
-	public List<Object> getActreturnList() {
+	public List<Object> getActReturnList() {
     	return actreturnList;
     }
-	public void setActreturnList(List<Object> actreturnList) {
+	public void setActReturnList(List<Object> actreturnList) {
     	this.actreturnList = actreturnList;
     }
 
@@ -1067,4 +1229,11 @@ public class RepaymentPostingsUtil implements Serializable {
 	    this.financeScheduleDetail = financeScheduleDetail;
     }
 
+	public static OverdueChargeRecoveryDAO getRecoveryDAO() {
+		return recoveryDAO;
+	}
+
+	public void setRecoveryDAO(OverdueChargeRecoveryDAO recoveryDAO) {
+		RepaymentPostingsUtil.recoveryDAO = recoveryDAO;
+	}
 }

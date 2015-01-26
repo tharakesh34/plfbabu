@@ -28,7 +28,8 @@ public class FinRepayQueue {
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private boolean rcdNotExist = false;
 	
-	private BigDecimal penaltyAmount = BigDecimal.ZERO;
+	private BigDecimal penaltyPayNow = BigDecimal.ZERO;
+	private BigDecimal penaltyBal = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private String chargeType = "";
 
@@ -170,12 +171,13 @@ public class FinRepayQueue {
     	this.rcdNotExist = rcdNotExist;
     }
 
-	public BigDecimal getPenaltyAmount() {
-    	return penaltyAmount;
-    }
-	public void setPenaltyAmount(BigDecimal penaltyAmount) {
-    	this.penaltyAmount = penaltyAmount;
-    }
+	public BigDecimal getPenaltyPayNow() {
+		return penaltyPayNow;
+	}
+
+	public void setPenaltyPayNow(BigDecimal penaltyPayNow) {
+		this.penaltyPayNow = penaltyPayNow;
+	}
 
 	public BigDecimal getWaivedAmount() {
     	return waivedAmount;
@@ -206,7 +208,12 @@ public class FinRepayQueue {
 	public void setSchdPriPayNow(BigDecimal schdPriPayNow) {
     	this.schdPriPayNow = schdPriPayNow;
     }
-	
-	
 
+	public BigDecimal getPenaltyBal() {
+		return penaltyBal;
+	}
+
+	public void setPenaltyBal(BigDecimal penaltyBal) {
+		this.penaltyBal = penaltyBal;
+	}
 }

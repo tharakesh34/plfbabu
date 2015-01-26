@@ -63,9 +63,11 @@ public interface OverdueChargeRecoveryDAO {
 	List<String> getOverDueFinanceList();
 	OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date schdDate, String finODFor, String type);
 	void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
-	void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
+	void updatePenaltyPaid(OverdueChargeRecovery recovery, boolean fullyPaidSchd, String type);
 	List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);
 	BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates);
 	void saveODDeferHistory(String finReference, List<Date> pastSchDates);
 	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+	OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date rpyDate, boolean isEODProcess);
+	void updateRcdCanDel(String finReference, Date rpyDate);
 }

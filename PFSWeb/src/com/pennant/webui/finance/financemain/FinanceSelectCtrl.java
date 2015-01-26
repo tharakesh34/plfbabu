@@ -727,21 +727,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	 */
 	public void doSearch() {
 		logger.debug("Entering");
-
-		this.searchObject = new JdbcSearchObject<FinanceMain>(FinanceMain.class); 
-		this.searchObject.addTabelName("FinanceMaintenance_View");
-		if(isDashboard){
-			this.searchObject.addFilterEqual("RcdMaintainSts", moduleDefiner);
-		}
-		if(!workflowCode.equals("")){
-			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		}
-		this.searchObject.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
-		if(filterList != null && !filterList.isEmpty()){
-			for (Filter filter : filterList) {
-				this.searchObject.addFilter(filter);
-			}
-		}
+		
+		getSearchObj();
 		
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
@@ -1734,16 +1721,26 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	public JdbcSearchObject<FinanceMain> getSearchObj() {
+		
 		if(searchObject==null){
-			searchObject=new JdbcSearchObject<FinanceMain>(FinanceMain.class);
+			this.searchObject = new JdbcSearchObject<FinanceMain>(FinanceMain.class); 
+		}else {
+			searchObject.getFilters().clear();
 		}
-		
-		
-		if (filterList != null && filterList.size() > 0) {
-			for (int k = 0; k < filterList.size(); k++) {
-				searchObject.addFilter(filterList.get(k));
+		this.searchObject.addTabelName("FinanceMaintenance_View");
+		if(isDashboard){
+			this.searchObject.addFilterEqual("RcdMaintainSts", moduleDefiner);
+		}
+		if(!workflowCode.equals("")){
+			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		}
+		this.searchObject.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL));
+		if(filterList != null && !filterList.isEmpty()){
+			for (Filter filter : filterList) {
+				this.searchObject.addFilter(filter);
 			}
 		}
+		
 		return this.searchObject;
 	}
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {		

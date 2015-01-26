@@ -48,7 +48,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.pennant.backend.model.LoginUserDetails;
-import com.pennant.backend.util.WorkFlowUtil;
 
 /**
  * Model class for the <b>OverdueChargeRecovery table</b>.<br>
@@ -114,7 +113,6 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	}
 
 	public OverdueChargeRecovery() {
-		this.workflowId = WorkFlowUtil.getWorkFlowID("OverdueChargeRecovery");
 	}
 
 	public OverdueChargeRecovery(String id) {

@@ -53,6 +53,7 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	
 	private boolean allowWaiver = false;
 	private BigDecimal penaltyAmt = BigDecimal.ZERO;
+	private BigDecimal penaltyPayNow = BigDecimal.ZERO;
 	private BigDecimal maxWaiver = BigDecimal.ZERO;
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
 	private String chargeType = "";
@@ -258,4 +259,11 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	    this.linkedTranId = linkedTranId;
     }
 
+	public BigDecimal getPenaltyPayNow() {
+		return penaltyPayNow;
+	}
+
+	public void setPenaltyPayNow(BigDecimal penaltyPayNow) {
+		this.penaltyPayNow = penaltyPayNow;
+	}
 }

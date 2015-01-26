@@ -725,10 +725,10 @@ public class FinanceWriteoffDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_FinWriteoffDialog);
-				finRender.render(map, prvSchDetail, false, true, true, feeChargesMap, showRate);
+				finRender.render(map, prvSchDetail, false, true, true, feeChargesMap, showRate, false);
 
 				if(i == sdSize - 1){						
-					finRender.render(map, prvSchDetail, true, true, true, feeChargesMap, showRate);					
+					finRender.render(map, prvSchDetail, true, true, true, feeChargesMap, showRate, false);					
 					break;
 				}
 			}

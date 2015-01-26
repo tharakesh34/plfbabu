@@ -754,6 +754,7 @@
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	

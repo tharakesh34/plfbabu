@@ -577,7 +577,7 @@
 										label="${c:l('listheader_PriPayNow.label')}" sort="false"
 										hflex="min" />
 									<listheader
-										label="${c:l('listheader_OverDue.label')}" sort="false" visible="false"
+										label="${c:l('listheader_PenaltyPayNow.label')}" sort="false" visible="true"
 										hflex="min" />
 									<listheader
 										label="${c:l('listheader_MaxAlwRefund.label')}" sort="false" visible="false"

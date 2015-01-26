@@ -335,6 +335,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		listHeader_vSProfit.setLabel(Labels.getLabel("listheader_" + productType +"_VsProfit"));
 		listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_" + productType +"_OrgPrincipalDue"));
 		
+		if(!moduleDefiner.equals("")){
+			listHeader_cashFlowEffect.setVisible(false);
+			listHeader_vSProfit.setVisible(false);
+			listHeader_orgPrincipalDue.setVisible(false);
+		}
+		
 		if (product.equals(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
 			this.row_Musharak.setVisible(true);
 			this.label_ScheduleDetailDialog_BankShare.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_BankShare.value"));
@@ -759,10 +765,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				}
 				map.put("window", this.window_ScheduleDetailDialog);
 
-				finRender.render( map, prvSchDetail, false, allowRvwRate, true, tempFeeChargesMap, showRate);
+				finRender.render( map, prvSchDetail, false, allowRvwRate, true, tempFeeChargesMap, showRate, moduleDefiner.equals(""));
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate);
+					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate, moduleDefiner.equals(""));
 					break;
 				}
 			}

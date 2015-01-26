@@ -159,16 +159,16 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 
 		doShowDialog();
 
-		if(getFinScheduleData().getFinanceMain().isStepFinance()){
+		/*if(getFinScheduleData().getFinanceMain().isStepFinance()){
 			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
 				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
 				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
 			}
-		} else {
+		} else {*/
 			this.listHeader_cashFlowEffect.setVisible(false);
 			this.listHeader_vSProfit.setVisible(false);
 			this.listHeader_orgPrincipalDue.setVisible(false);
-		}  
+		//}  
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -310,10 +310,10 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("accrueValue", finScheduleData.getAccrueValue());
 				map.put("window", this.window_ScheduleEnquiryDialog);
-				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate);
+				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate, false);
 
 				if(i == sdSize-1){						
-					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate);				
+					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate, false);				
 					break;
 				}
 			}

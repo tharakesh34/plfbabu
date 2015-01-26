@@ -536,10 +536,10 @@ public class ChequePrintingDialogCtrl  extends GFCBaseListCtrl<FinanceScheduleDe
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("window", this.window_ChequePrintingDialog);
-				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate);
+				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate, false);
 
 				if(i == sdSize-1){						
-					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate);				
+					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate, false);				
 					break;
 				}
 			}

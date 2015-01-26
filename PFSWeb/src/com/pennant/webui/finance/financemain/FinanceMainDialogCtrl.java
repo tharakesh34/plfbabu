@@ -8560,7 +8560,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				}
 
 
-				finRender.render( map, prvSchDetail, false, allowRvwRate, false, feeChargesMap, showRate);
+				finRender.render( map, prvSchDetail, false, allowRvwRate, false, feeChargesMap, showRate, false);
 
 				/*//Billing Details Information Filling
 				if(billingDetailMap != null && billingDateList != null){
@@ -8582,7 +8582,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				}*/
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, allowRvwRate, false, feeChargesMap, showRate);
+					finRender.render(map, prvSchDetail, true, allowRvwRate, false, feeChargesMap, showRate, false);
 					break;
 				}
 			}

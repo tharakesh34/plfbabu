@@ -406,7 +406,7 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		StringBuilder selectSql = new StringBuilder(" Select FinReference , SchDate , SchdFor , ProfitSchdBal , PrincipalSchdBal , " );
 		selectSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , " );
 		selectSql.append(" ProfitSchdPayNow , PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
-		selectSql.append(" RefundReq , WaivedAmt , RepayBalance");
+		selectSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow");
 		selectSql.append(" From FinRepayScheduleDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where FinReference=:FinReference ");
@@ -428,11 +428,11 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		insertSql.append(" (FinReference , SchDate , SchdFor , LinkedTranId, ProfitSchdBal , PrincipalSchdBal , " );
 		insertSql.append(" ProfitSchdPayNow , PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
 		insertSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , " );
-		insertSql.append(" RefundReq , WaivedAmt , RepayBalance )");
+		insertSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow  )");
 		insertSql.append(" Values(:FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , " );
 		insertSql.append(" :ProfitSchdPayNow , :PrincipalSchdPayNow , :PenaltyAmt , :DaysLate , :MaxWaiver , :AllowRefund , :AllowWaiver , " );
 		insertSql.append(" :ProfitSchd , :ProfitSchdPaid , :PrincipalSchd , :PrincipalSchdPaid  , " );
-		insertSql.append(" :RefundReq , :WaivedAmt , :RepayBalance )");
+		insertSql.append(" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());

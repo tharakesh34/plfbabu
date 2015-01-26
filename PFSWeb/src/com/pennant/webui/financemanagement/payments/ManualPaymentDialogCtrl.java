@@ -107,9 +107,7 @@ import com.pennant.app.util.AccountEngineExecutionRIA;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
-import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RepayCalculator;
-import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -316,13 +314,11 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private transient AccountsService accountsService;
 	private transient AccountInterfaceService accountInterfaceService;
-	private transient RepaymentPostingsUtil postingsUtil;
 	private transient RuleService ruleService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient FinanceTypeService financeTypeService;
 	private transient ManualPaymentService manualPaymentService;
 	private transient ProvisionService provisionService;
-	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private transient FinanceDetailService financeDetailService;
 	private transient RuleExecutionUtil ruleExecutionUtil;
 	private transient AccountEngineExecution engineExecution;
@@ -1460,10 +1456,10 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ManualPaymentDialog);
-				finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate);
+				finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate, false);
 
 				if(i == sdSize - 1){						
-					finRender.render(map, prvSchDetail, true, true, false, feeChargesMap, showRate);					
+					finRender.render(map, prvSchDetail, true, true, false, feeChargesMap, showRate, false);					
 					break;
 				}
 			}
@@ -1684,13 +1680,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 						if(!accountTypeFound){
 
-							BigDecimal penalty = BigDecimal.ZERO;
-							if(this.totPenaltyAmt.getValue() != null){
-								penalty = this.totPenaltyAmt.getValue();
-							}
-
 							if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).
-															subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()).add(penalty),
+															subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()),
 									getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(iAccount.getAcAvailableBal()) > 0){
 								PTMessageUtils.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
 								this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnChangeRepay"));
@@ -1931,7 +1922,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		amountCodes = AEAmounts.procAEAmounts(finMain,schdlDetail, profitDetail , curBDay);
 
 		//Set Repay Amount Codes
-		amountCodes.setRpTot(PennantApplicationUtil.unFormateAmount(this.rpyAmount.getValue(), finMain.getLovDescFinFormatter()));
+		amountCodes.setRpTot(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue().add(this.priPayment.getValue()), finMain.getLovDescFinFormatter()));
 		amountCodes.setRpPft(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(), finMain.getLovDescFinFormatter()));
 		amountCodes.setRpPri(PennantApplicationUtil.unFormateAmount(this.priPayment.getValue(), finMain.getLovDescFinFormatter()));
 		amountCodes.setRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), finMain.getLovDescFinFormatter()));
@@ -2343,8 +2334,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 				totalPri = totalPri.add(repaySchd.getPrincipalSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPenaltyAmt(),finFormatter));
-				totalCharge = totalCharge.add(repaySchd.getPenaltyAmt());
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPenaltyPayNow(),finFormatter));
+				totalCharge = totalCharge.add(repaySchd.getPenaltyPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -2639,13 +2630,8 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 					if(!accountTypeFound){
 						
-						BigDecimal penalty = BigDecimal.ZERO;
-						if(this.totPenaltyAmt.getValue() != null){
-							penalty = this.totPenaltyAmt.getValue();
-						}
-
 						if(PennantAppUtil.unFormateAmount(this.rpyAmount.getValue().subtract(this.totRefundAmt.getValue()).
-								subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()).add(penalty),
+								subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO :insRefundAmt.getValue()),
 								getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(iAccount.getAcAvailableBal()) > 0){
 							PTMessageUtils.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
 							return false;
@@ -3104,13 +3090,6 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 		return accountsService;
 	}
 
-	public RepaymentPostingsUtil getPostingsUtil() {
-		return postingsUtil;
-	}
-	public void setPostingsUtil(RepaymentPostingsUtil postingsUtil) {
-		this.postingsUtil = postingsUtil;
-	}
-
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
@@ -3153,13 +3132,6 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 	public void setProvisionService(ProvisionService provisionService) {
 		this.provisionService = provisionService;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
 	}
 
 	public FinanceDetailService getFinanceDetailService() {
