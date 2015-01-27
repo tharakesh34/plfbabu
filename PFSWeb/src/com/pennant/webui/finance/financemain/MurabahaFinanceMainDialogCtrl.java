@@ -1690,7 +1690,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_MurabahaFinanceMainDialog_StepPolicy.value"), null, true,true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
@@ -1902,17 +1902,14 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinType.value") }));
 
-		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value") }));
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value"),null,true,true));
 
 		if (!this.finBranch.isReadonly()) {
-			this.finBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinBranch.value") }));
+			this.finBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinBranch.value"),null,true,true));
 		}
 
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_CustID.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_CustID.value"),null,true,true));
 		}
 
 		if (!recSave && StringUtils.trimToEmpty(this.disbAcctId.getSclass()).equals("mandatory")) {
@@ -1937,8 +1934,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinPurpose.value") }));
+			this.finPurpose.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinPurpose.value"),null,true,true));
 		}
 		
 		/*if(this.diffDisbCcy.isChecked()){
@@ -1951,8 +1947,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if(!this.graceBaseRate.isReadonly()) {
-			this.graceBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_GraceBaseRate.value") }));
+			this.graceBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_GraceBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
@@ -1963,8 +1958,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		//FinanceMain Details Tab ---> 3. Repayments Period Details
 
 		if(!this.repayBaseRate.isReadonly()) {
-			this.repayBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_RepayBaseRate.value") }));
+			this.repayBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_RepayBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){

@@ -1773,7 +1773,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}*/
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IstisnaFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IstisnaFinanceMainDialog_StepPolicy.value"), null, true,true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
@@ -1975,17 +1975,14 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinType.value") }));
 
-		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinCcy.value") }));
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinCcy.value"),null,true,true));
 
 		if (!this.finBranch.isReadonly()) {
-			this.finBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinBranch.value") }));
+			this.finBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinBranch.value"),null,true,true));
 		}
 
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_CustID.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_CustID.value"),null,true,true));
 		}
 
 		if (!recSave && this.repayAcctId.getSclass().equals("mandatory")) {
@@ -2005,15 +2002,13 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 		
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_FinPurpose.value") }));
+			this.finPurpose.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinPurpose.value"),null,true,true));
 		}
 		
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if(!this.graceBaseRate.isReadonly()) {
-			this.graceBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_GraceBaseRate.value") }));
+			this.graceBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_GraceBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
@@ -2024,8 +2019,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if(!this.repayBaseRate.isReadonly()) {
-			this.repayBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_RepayBaseRate.value") }));
+			this.repayBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_RepayBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){

@@ -1731,7 +1731,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		}
 		
 		if(!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()){
-			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IjarahFinanceMainDialog_StepPolicy.value"), null, true));
+			this.stepPolicy.setConstraint(new PTStringValidator( Labels.getLabel("label_IjarahFinanceMainDialog_StepPolicy.value"), null, true,true));
 		}
         
 		if(!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()){
@@ -1951,17 +1951,14 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
 				new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinType.value") }));
 
-		this.finCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinCcy.value") }));
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_FinCcy.value"),null,true,true));
 
 		if (!this.finBranch.isReadonly()) {
-			this.finBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinBranch.value") }));
+			this.finBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_FinBranch.value"),null,true,true));
 		}
 
 		if (!this.custCIF.isReadonly()) {
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_CustID.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_CustID.value"),null,true,true));
 		}
 
 		if (!recSave && StringUtils.trimToEmpty(this.disbAcctId.getSclass()).equals("mandatory")) {
@@ -1986,15 +1983,13 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		}
 
 		if (!this.finPurpose.isReadonly()) {
-			this.finPurpose.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_FinPurpose.value") }));
+			this.finPurpose.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_FinPurpose.value"),null,true,true));
 		}
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if(!this.graceBaseRate.isReadonly()) {
-			this.graceBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_GraceBaseRate.value") }));
+			this.graceBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_GraceBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
@@ -2005,8 +2000,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if(!this.repayBaseRate.isReadonly()) {
-			this.repayBaseRate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IjarahFinanceMainDialog_RepayBaseRate.value") }));
+			this.repayBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_IjarahFinanceMainDialog_RepayBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){
