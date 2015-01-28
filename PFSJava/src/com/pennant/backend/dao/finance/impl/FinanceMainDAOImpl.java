@@ -61,6 +61,7 @@ import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RepayHierarchyConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 
 /**
@@ -962,7 +963,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	@SuppressWarnings("serial")
     @Override
     public void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, 
-    		String finStatus, String finStsReason, boolean isCancelProc) {
+    		String finStatus, String finStsReason, boolean isCancelProc, boolean pftFullyPaid) {
 		logger.debug("Entering");
 		
 		int recordCount = 0;
@@ -975,9 +976,15 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
 		updateSql.append(" Set FinRepaymentAmount =:FinRepaymentAmount ");
 		if(finAmount.subtract(repaymentAmount).compareTo(BigDecimal.ZERO) <= 0){
-			financeMain.setFinIsActive(false);
-			financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
-			updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
+			if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP)) {
+				financeMain.setFinIsActive(false);
+				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+				updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
+			}else if(pftFullyPaid && PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)) {
+				financeMain.setFinIsActive(false);
+				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+				updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
+			}
 		}else if(isCancelProc){
 			financeMain.setFinIsActive(true);
 			financeMain.setClosingStatus("");
@@ -1409,6 +1416,23 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			ErrorDetails errorDetails = getError("41004", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) { };
 		}
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public void updateActiveStatus(List<String> finRefList) {
+		logger.debug("Entering");
+		
+		Map<String, List<String>> finRefMap = new HashMap<String, List<String>>();
+		finRefMap.put("FinReference", finRefList);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set FinIsActive = 0, ClosingStatus = '");
+		updateSql.append(PennantConstants.CLOSE_STATUS_MATURED);
+		updateSql.append("' Where FinReference IN (:FinReference)");
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), finRefMap);
 		logger.debug("Leaving");
 	}
 

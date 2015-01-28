@@ -71,7 +71,7 @@ public interface FinanceMainDAO {
 	List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 	 List<BigDecimal> getActualPftBal(String finReference,String type);
 	void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, 
-			String finStatus, String finStsReason, boolean isCancelProc);
+			String finStatus, String finStsReason, boolean isCancelProc, boolean pftFullyPaid);
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 	void updateCustCIF(long custID, String finReference);
 	void updateFinBlackListStatus(String finReference);
@@ -91,4 +91,5 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainForPftCalc(String finReference);
 	FinanceMain getFinanceMainForRpyCancel(String id);
 	void updateFinAccounts(String finReference, String finAccount);
+	void updateActiveStatus(List<String> finRefList);
 }

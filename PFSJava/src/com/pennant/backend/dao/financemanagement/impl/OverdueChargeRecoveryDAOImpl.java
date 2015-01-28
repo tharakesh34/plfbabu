@@ -560,13 +560,15 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		overdueChargeRecovery.setId(finReference);
 		overdueChargeRecovery.setFinODSchdDate(schDate);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, MovementDate, PenaltyBal,  PenaltyPaid, WaivedAmt, PenaltyType");
-		selectSql.append(" From FinODCRecovery_AMView");	
-		selectSql.append(" Where FinReference =:FinReference ");
+		StringBuilder selectSql = new StringBuilder("Select R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate, ");
+		selectSql.append(" R.PenaltyBal,  R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived ");
+		selectSql.append(" From FinODCRecovery_AMView R INNER JOIN FInODDetails D ON R.FinReference = D.FinReference ");
+		selectSql.append(" AND R.FinODSchdDate = D.FinODSchdDate AND R.FinODFor = D.FinODFor ");	
+		selectSql.append(" Where R.FinReference =:FinReference ");
 		if(isEODProcess){
-			selectSql.append(" AND FinODSchdDate < :FinODSchdDate AND PenaltyBal > 0 and RcdCanDel=0");
+			selectSql.append(" AND R.FinODSchdDate < :FinODSchdDate AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
 		}else{
-			selectSql.append(" AND FinODSchdDate = :FinODSchdDate AND PenaltyBal > 0 and RcdCanDel=0");
+			selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
 		}
 		
 		logger.debug("selectSql: " + selectSql.toString());
@@ -581,6 +583,33 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		}
 		logger.debug("Leaving");
 		return overdueChargeRecovery;
+    }
+	
+	/**
+	 * Method for Fetching List of Past Penalties (For Fully Paid Schedules)
+	 */
+	@Override
+    public List<OverdueChargeRecovery> getPastSchedulePenalties(String finReference) {
+		logger.debug("Entering");
+		
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		overdueChargeRecovery.setId(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("Select R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate, ");
+		selectSql.append(" R.PenaltyBal,  R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived ");
+		selectSql.append(" From FinODCRecovery_AMView R INNER JOIN FInODDetails D ON R.FinReference = D.FinReference ");
+		selectSql.append(" AND R.FinODSchdDate = D.FinODSchdDate AND R.FinODFor = D.FinODFor ");	
+		selectSql.append(" Where R.FinReference =:FinReference ");
+		selectSql.append(" AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
+				OverdueChargeRecovery.class);
+
+		List<OverdueChargeRecovery> recList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return recList;
     }
 
 	@Override

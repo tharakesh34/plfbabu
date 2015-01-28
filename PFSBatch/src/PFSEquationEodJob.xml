@@ -758,6 +758,60 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<!-- Penalty Postings for IPC or PIC -->
+	<bean id="penaltyRecoveryPostingsTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="penaltyRecoveryPostingsTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="penaltyRecoveryPostingsTarget"
+		class="com.pennant.backend.endofday.overduepayments.PenaltyRecoveryPostings">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Penalty Postings for IPCS or PICS -->
+	<bean id="overdueRecoveryPostingsTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="overdueRecoveryPostingsTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="overdueRecoveryPostingsTarget"
+		class="com.pennant.backend.endofday.overduepayments.OverDueRecoveryPostings">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 	<!-- Future Account Holds -->
 	<bean id="futureInstallmentHoldsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

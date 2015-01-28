@@ -243,8 +243,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		BigDecimal totRpyPft = BigDecimal.ZERO;
 		boolean isPartialRepay = false;
 		
-		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)) || 
-				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))){
+		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
+				PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)){
 
 			if (repayAmountBal.compareTo(finRepayQueue.getSchdPftBal()) >= 0) {
 				totRpyPft = finRepayQueue.getSchdPftBal();
@@ -261,8 +262,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			if(totRpyPft.compareTo(BigDecimal.ZERO) > 0){
 				isPartialRepay = true;
 			}
-		}else if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) || 
-				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
+		}else if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC) || 
+				PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)){
 
 			if (repayAmountBal.compareTo(finRepayQueue.getSchdPriBal()) >= 0) {
 				totRpyPri = finRepayQueue.getSchdPriBal();
@@ -340,12 +342,31 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Finance Main Details Update
 		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(amountCodes.getRpPri()));
-
+		
 		if (amountCodes.getRpPri().compareTo(BigDecimal.ZERO) > 0 || isStsChanged || isStsRsnChanged) {
-			getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), financeMain.getFinAmount().add(
-					financeMain.getFeeChargeAmt() == null? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-					.subtract(financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain.getDownPayment()), 
-					financeMain.getFinRepaymentAmount(), curFinStatus, finStsReason ,false);
+			
+			BigDecimal totalFinAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt() == null? 
+					BigDecimal.ZERO : financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment() == null ? 
+							BigDecimal.ZERO : financeMain.getDownPayment());
+			
+			boolean pftFullyPaid = true;
+			if((totalFinAmount.subtract(financeMain.getFinRepaymentAmount())).compareTo(BigDecimal.ZERO) <= 0){
+				if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)) {
+					
+					//Check Total Finance profit Amount
+					for (int i = 1; i < scheduleDetails.size(); i++) {
+						FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+						if((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0 
+								|| (curSchd.getDefProfitSchd().subtract(curSchd.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0){
+							pftFullyPaid = false;
+							break;
+						}
+	                }
+				}
+			}
+			
+			getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), totalFinAmount, 
+					financeMain.getFinRepaymentAmount(), curFinStatus, finStsReason ,false, pftFullyPaid);
 		}
 		
 		//Updating Latest Repayment Details
@@ -425,7 +446,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		
 		if ((Boolean) actReturnList.get(0)) {
 			if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)) || 
-					(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))) {
+					(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
+					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) || 
+					(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS))) {
 				List<Object> returnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, isRIAFinance, finDivison);
 				if(returnList != null){
 					return returnList;
@@ -469,7 +492,9 @@ public class RepaymentPostingsUtil implements Serializable {
 				//Only in case of Profit & Principal Amount greater than ZERO , Penalty Pay Now is ZERO
 				//Update RcdCanDel = 0 flag on Overdue Recovery details for IPC or PIC
 				if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
-						PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))) {
+						PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
+						|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) || 
+						(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS))) {
 					if(repayQueue.getRpyDate().compareTo(dateValueDate) < 0 &&
 							(repayQueue.getSchdPftPayNow().add(repayQueue.getSchdPriPayNow())).compareTo(BigDecimal.ZERO) > 0 &&
 							repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) == 0){
@@ -620,17 +645,39 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinStatus(curFinStatus);
 		financeMain.setFinStsReason(PennantConstants.FINSTSRSN_MANUAL);
 		BigDecimal totalFinAmt = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment());
-		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)) || 
-				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))) {
+		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP)) {
 			if(totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
 				financeMain.setFinIsActive(false);
 				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
 			}
-		}else if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) || 
-				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) { 
+		}else if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) { 
 			if(!isPenaltyAvail && totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
 				financeMain.setFinIsActive(false);
 				financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+			}
+		}else if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) { 
+			
+			//Check Penalty Amount & Repayment's Principal Amount
+			if(!isPenaltyAvail && totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){
+				
+				//Check Total Finance profit Amount
+				boolean pftFullyPaid = true;
+				for (int i = 1; i < scheduleDetails.size(); i++) {
+					FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+					if((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0 
+							|| (curSchd.getDefProfitSchd().subtract(curSchd.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0){
+						pftFullyPaid = false;
+						break;
+					}
+                }
+				
+				if(pftFullyPaid){
+					financeMain.setFinIsActive(false);
+					financeMain.setClosingStatus(PennantConstants.CLOSE_STATUS_MATURED);
+				}
 			}
 		}
 
@@ -925,8 +972,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			// Finance Deffered Schedule Profit Balance Check
 			// Based on repayments method then do charges postings first then profit or principal
 			// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
-			if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))
-					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) {
+			if (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) {
 				if ((schedule.getDefProfitSchd().subtract(schedule.getDefSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setDefSchPftPaid(true);
 
@@ -939,8 +987,9 @@ public class RepaymentPostingsUtil implements Serializable {
 				}else{
 					schedule.setDefSchPftPaid(false);
 				}
-			}else if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
-					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
+			}else if (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)){
 
 				if ((schedule.getDefPrincipalSchd().subtract(schedule.getDefSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setDefSchPriPaid(true);
@@ -968,8 +1017,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			// Finance Schedule Profit Balance Check
 			// Based on repayments method then do charges postings first then profit or principal
 			// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
-			if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP))
-					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC))) {
+			if (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CIP)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) {
 				if ((schedule.getProfitSchd().subtract(schedule.getSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setSchPftPaid(true);
 
@@ -982,8 +1032,9 @@ public class RepaymentPostingsUtil implements Serializable {
 				}else{
 					schedule.setSchPftPaid(false);
 				}
-			}else if ((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
-					|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI))){
+			}else if (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_CPI)
+					|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)){
 				if ((schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
 					schedule.setSchPriPaid(true);
 

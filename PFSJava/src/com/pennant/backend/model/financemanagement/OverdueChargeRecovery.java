@@ -107,6 +107,7 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	private BigDecimal lovDescTotOvrDueChrgPaid = BigDecimal.ZERO;
 	private BigDecimal lovDescTotOvrDueChrgBal = BigDecimal.ZERO;
 	private BigDecimal pendingODC = BigDecimal.ZERO;
+	private BigDecimal totWaived = BigDecimal.ZERO;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -458,6 +459,21 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 	public void setLovDescTotOvrDueChrgBal(BigDecimal lovDescTotOvrDueChrgBal) {
 		this.lovDescTotOvrDueChrgBal = lovDescTotOvrDueChrgBal;
 	}
+	
+	public BigDecimal getPendingODC() {
+		return pendingODC;
+	}
+	public void setPendingODC(BigDecimal pendingODC) {
+		this.pendingODC = pendingODC;
+	}
+
+	public BigDecimal getTotWaived() {
+	    return totWaived;
+    }
+	public void setTotWaived(BigDecimal totWaived) {
+	    this.totWaived = totWaived;
+    }
+	
 
 	// Overridden Equals method to handle the comparison
 	public boolean equals(OverdueChargeRecovery overdueChargeRecovery) {
@@ -477,11 +493,5 @@ public class OverdueChargeRecovery implements java.io.Serializable {
 		return false;
 	}
 
-	public BigDecimal getPendingODC() {
-		return pendingODC;
-	}
-	public void setPendingODC(BigDecimal pendingODC) {
-		this.pendingODC = pendingODC;
-	}
-	
+
 }

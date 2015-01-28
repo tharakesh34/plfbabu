@@ -95,11 +95,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date schdDate,
 	        String finODFor, Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid,
-	        BigDecimal waiverAmt, String chargeType, boolean isRIAFinance, long linkedTranId, String finDivision, OverdueChargeRecovery rec , boolean fullyPaidSchd)
+	        BigDecimal waiverAmt, String chargeType, boolean isRIAFinance, long linkedTranId, String finDivision, 
+	        OverdueChargeRecovery rec , boolean fullyPaidSchd)
 	        throws AccountNotFoundException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 		boolean isPostingSuccess = true;
+		boolean isPaidClear = false;
 		String errorCode = null;
 		
 		String finReference = financeMain.getFinReference();
@@ -116,7 +118,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			IAccounts iAccount = getAccountInterfaceService().fetchAccountAvailableBal(financeMain.getRepayAccountId());
 			
 			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
-			boolean isPaidClear = false;
 			boolean accFound = false;
 			
 			//Account Type Check
@@ -223,10 +224,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			}
 		}
 		
-		List<Object> returnList = new ArrayList<Object>(2);
+		List<Object> returnList = new ArrayList<Object>(3);
 		returnList.add(isPostingSuccess);
 		returnList.add(linkedTranId);
 		returnList.add(errorCode);
+		returnList.add(isPaidClear);
 		
 		logger.debug("Leaving");
 		return returnList;

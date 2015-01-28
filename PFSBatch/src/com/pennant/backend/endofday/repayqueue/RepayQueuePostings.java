@@ -343,7 +343,7 @@ public class RepayQueuePostings implements Tasklet {
 							BigDecimal downpayAmt = financeMain.getDownPayment() == null? BigDecimal.ZERO : financeMain.getDownPayment();
 							getFinanceMainDAO().updateRepaymentAmount(financeMain.getFinReference(), 
 									financeMain.getFinAmount().add(feeChargeAmt).subtract(downpayAmt), 
-									financeMain.getFinRepaymentAmount(), curFinStatus, PennantConstants.FINSTSRSN_SYSTEM,false);
+									financeMain.getFinRepaymentAmount(), curFinStatus, PennantConstants.FINSTSRSN_SYSTEM,false, false);
 						}
 						
 						//Finance Status Details insertion, if status modified then change to High Risk Level

@@ -70,4 +70,5 @@ public interface OverdueChargeRecoveryDAO {
 	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
 	OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date rpyDate, boolean isEODProcess);
 	void updateRcdCanDel(String finReference, Date rpyDate);
+	List<OverdueChargeRecovery> getPastSchedulePenalties(String finReference);
 }

@@ -49,7 +49,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -70,17 +72,16 @@ import com.pennant.backend.util.RepayHierarchyConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 
 /**
- * Process for Recover Penalty charges with Repayment's Hierarchy "IPCS" or "PICS"
+ * Penalties Recovery Step Process for "IPC" or "PIC" Repayment's Hierarchy Procedure
  */
-public class OverDueRecoveryPostings implements Tasklet {
+public class PenaltyRecoveryPostings implements Tasklet {
 	
-	private Logger logger = Logger.getLogger(OverDueRecoveryPostings.class);
+	private Logger logger = Logger.getLogger(PenaltyRecoveryPostings.class);
 	
 	private FinanceMainDAO financeMainDAO;
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	private DataSource dataSource;
 	
-		
 	private Date dateValueDate = null;
 
 	@SuppressWarnings("serial")
@@ -89,14 +90,14 @@ public class OverDueRecoveryPostings implements Tasklet {
 		
 		dateValueDate= DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 		
-		logger.debug("START: OverDue Recovery Postings for Value Date: "+ dateValueDate);
+		logger.debug("START: Fully Paid(PRI+PFT) Finance Penalty Recovery for Value Date: "+ dateValueDate);
 		
 		context.getStepContext().getStepExecution().getExecutionContext().put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 		
-		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)
-				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)){
-
-			// READ REPAYMENTS DUE TILL TODAY
+		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)
+				|| PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)){
+			
+			// READ REPAYMENTS DUE TODAY
 			Connection connection = null;
 			ResultSet resultSet = null;
 			PreparedStatement sqlStatement = null;
@@ -111,6 +112,8 @@ public class OverDueRecoveryPostings implements Tasklet {
 				sqlStatement = connection.prepareStatement(selQuery.toString());
 				resultSet = sqlStatement.executeQuery();
 
+				List<String> finRefList = new ArrayList<String>();
+
 				while (resultSet.next()) {
 
 					// Finance Main Object Fetching
@@ -118,12 +121,23 @@ public class OverDueRecoveryPostings implements Tasklet {
 					financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 
 					//Recovery Record Postings Details				
-					getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, 
+					List<Object> returnList = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, 
 							resultSet.getDate("FinODSchdDate"), resultSet.getString("FinODFor"), resultSet.getDate("MovementDate"),
 							resultSet.getBigDecimal("PenaltyBal"), resultSet.getBigDecimal("PenaltyPaid"), 
-							BigDecimal.ZERO, resultSet.getString("PenaltyType"), resultSet.getBoolean("AllowRIAInvestment"), 
-							Long.MIN_VALUE, resultSet.getString("FinDivision"), null, true);
+							BigDecimal.ZERO, resultSet.getString("PenaltyType"),
+							resultSet.getBoolean("AllowRIAInvestment"), Long.MIN_VALUE, resultSet.getString("FinDivision"), null, true);
 
+					//If Postings Success & Penalty Amount is Fully Paid, Add Finance Reference to InActive State List
+					if((Boolean) returnList.get(0) && (Boolean) returnList.get(3)){
+
+						//Update finance to InActive State
+						finRefList.add(finReference);
+					}
+				}
+
+				//Update All InActive Finance's
+				if(!finRefList.isEmpty()){
+					getFinanceMainDAO().updateActiveStatus(finRefList);
 				}
 
 				//Method for Processing Finances Set to Inactive State , 
@@ -147,10 +161,9 @@ public class OverDueRecoveryPostings implements Tasklet {
 				resultSet.close();
 				sqlStatement.close();
 			}
-
 		}
 		
-		logger.debug("COMPLETED: OverDue Recovery Postings for Value Date: "+ dateValueDate);
+		logger.debug("COMPLETED: Fully Paid(PRI+PFT) Finance Penalty Recovery for Value Date: "+ dateValueDate);
 		return RepeatStatus.FINISHED;
 	}
 	
@@ -165,7 +178,7 @@ public class OverDueRecoveryPostings implements Tasklet {
 		selectSql.append(" T1.PenaltyBal, T1.PenaltyPaid, T1.PenaltyType, T3.AllowRIAInvestment, T3.FinDivision ");
 		selectSql.append(" FROM FinODCRecovery_AMView AS T1 INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference ");
 		selectSql.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType ");
-		selectSql.append(" WHERE T1.FinReference not in (Select Distinct FinReference from FInODDetails WHERE FinCurODAmt!=0)  ");
+		selectSql.append(" where (T2.FinAmount + T2.FeeChargeAmt - T2.DownPayment = T2.FinRepaymentAmount) ");
 		selectSql.append(" AND T1.PenaltyBal > 0 AND T1.RcdCanDel = 0 AND ISNULL(T2.ClosingStatus,'') != 'C' AND ");
 		selectSql.append(" T2.FinRepayMethod = 'AUTO' AND T2.RepayAccountId !='' ORDER BY T1.FinODSchdDate, T1.FinODFor, T1.SeqNo ");
 		return selectSql;
@@ -196,11 +209,11 @@ public class OverDueRecoveryPostings implements Tasklet {
 		}
 		return selectSql;
 	}
-
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
+	
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
