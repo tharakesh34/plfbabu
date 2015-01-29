@@ -553,7 +553,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	}
 
 	@Override
-    public OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date schDate, boolean isEODProcess) {
+    public OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date schDate, boolean isCurSchedule, boolean befPriPftPay) {
 		logger.debug("Entering");
 		
 		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
@@ -565,10 +565,15 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		selectSql.append(" From FinODCRecovery_AMView R INNER JOIN FInODDetails D ON R.FinReference = D.FinReference ");
 		selectSql.append(" AND R.FinODSchdDate = D.FinODSchdDate AND R.FinODFor = D.FinODFor ");	
 		selectSql.append(" Where R.FinReference =:FinReference ");
-		if(isEODProcess){
-			selectSql.append(" AND R.FinODSchdDate < :FinODSchdDate AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
+		
+		if(befPriPftPay){
+			selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate ");
 		}else{
-			selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
+			if(isCurSchedule){
+				selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate AND R.PenaltyBal > 0 AND R.RcdCanDel = 0 ");
+			}else{
+				selectSql.append(" AND R.FinODSchdDate < :FinODSchdDate AND R.PenaltyBal > 0 AND R.RcdCanDel = 0 ");
+			}
 		}
 		
 		logger.debug("selectSql: " + selectSql.toString());
@@ -612,16 +617,19 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		return recList;
     }
 
+	/**
+	 * Method for Updating Record Deletion Status to avoid deletion on Recalculation
+	 */
 	@Override
     public void updateRcdCanDel(String finReference, Date schDate) {
 		logger.debug("Entering");
+		
 		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
 		overdueChargeRecovery.setId(finReference);
 		overdueChargeRecovery.setFinODSchdDate(schDate);
 		StringBuilder	updateSql =new StringBuilder("Update FinODCRecovery");
 		updateSql.append(" Set RcdCanDel= 0");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate" );
-		
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);

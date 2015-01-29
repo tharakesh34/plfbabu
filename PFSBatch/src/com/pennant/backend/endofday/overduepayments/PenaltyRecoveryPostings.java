@@ -121,11 +121,11 @@ public class PenaltyRecoveryPostings implements Tasklet {
 					financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 
 					//Recovery Record Postings Details				
-					List<Object> returnList = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, 
+					List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, 
 							resultSet.getDate("FinODSchdDate"), resultSet.getString("FinODFor"), resultSet.getDate("MovementDate"),
 							resultSet.getBigDecimal("PenaltyBal"), resultSet.getBigDecimal("PenaltyPaid"), 
 							BigDecimal.ZERO, resultSet.getString("PenaltyType"),
-							resultSet.getBoolean("AllowRIAInvestment"), Long.MIN_VALUE, resultSet.getString("FinDivision"), null, true);
+							resultSet.getBoolean("AllowRIAInvestment"), Long.MIN_VALUE, resultSet.getString("FinDivision"), true);
 
 					//If Postings Success & Penalty Amount is Fully Paid, Add Finance Reference to InActive State List
 					if((Boolean) returnList.get(0) && (Boolean) returnList.get(3)){

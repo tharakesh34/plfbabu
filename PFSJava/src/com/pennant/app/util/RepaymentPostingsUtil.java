@@ -305,10 +305,20 @@ public class RepaymentPostingsUtil implements Serializable {
 			actreturnList.add(true);
 			
 			//If payment Failed - Overdue Details preparation recalculated for including next day
-			getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, dateValueDate, isRIAFinance, false, true, linkedTranId, null, false);
+			getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, true, false);
 		
 			logger.debug("Leaving");
 			return actreturnList;
+		}
+		
+		if((PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC) || 
+				PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC))
+				|| (PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) || 
+				(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS))) {
+			if(finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0 &&
+					(finRepayQueue.getSchdPftPayNow().add(finRepayQueue.getSchdPriPayNow())).compareTo(BigDecimal.ZERO) > 0){
+				getRecoveryDAO().updateRcdCanDel(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate());
+			}
 		}
 
 		//Database Updations for Finance Related Tables using Repay Details
@@ -475,11 +485,11 @@ public class RepaymentPostingsUtil implements Serializable {
 					fullyPaidSchd = true;
 				}
 
-				List<Object> returnList = getRecoveryPostingsUtil().oDRPostingProcess(financeMain,
+				List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain,
 				        dateValueDate, repayQueue.getRpyDate(), repayQueue.getFinRpyFor(),
 				        dateValueDate, repayQueue.getPenaltyPayNow(), BigDecimal.ZERO,
 				        repayQueue.getWaivedAmount(), repayQueue.getChargeType(), isRIAFinance,
-				        linkedTranId, finDivison, null, fullyPaidSchd );
+				        linkedTranId, finDivison, fullyPaidSchd );
 
 				if (!(Boolean) returnList.get(0)) {
 					List<Object> actReturnList = new ArrayList<Object>();
@@ -899,7 +909,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (isLatePay) {
 
 			//Overdue Details preparation
-			getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, dateValueDate, isRIAFinance, false, isEODProcess, linkedTranId, null, false);
+			getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), dateValueDate, isEODProcess, false);
 		
 			//SUSPENSE
 			if (isEODProcess) {

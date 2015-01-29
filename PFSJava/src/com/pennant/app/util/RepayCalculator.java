@@ -539,7 +539,7 @@ public class RepayCalculator implements Serializable {
 					
 				}else if(recoverPastPenlaty){
 					//Fetch Max Overdue Charge Recovery for Past Schedule before Processed Schedule Date with Reference 
-					recovery = getRecoveryDAO().getPastSchedulePenalty(finRepayQueue.getFinReference(), curSchd.getSchDate(), false);
+					recovery = getRecoveryDAO().getPastSchedulePenalty(finRepayQueue.getFinReference(), curSchd.getSchDate(), true, false);
 					
 					if(recovery == null || recovery.getPenaltyBal().compareTo(BigDecimal.ZERO) <= 0){
 						logger.debug("Leaving");
@@ -550,8 +550,8 @@ public class RepayCalculator implements Serializable {
 					totWaived = recovery.getTotWaived();
 				}else{
 
-					List<Object> odObjDetailList = getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue,
-							curBussniessDate, false, false, false, Long.MIN_VALUE, repayData.getFinanceType().getFinDivision(), true);
+					List<Object> odObjDetailList = getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, 
+							financeMain.getProfitDaysBasis(), curBussniessDate, false, true);
 
 					totWaived = ((FinODDetails) odObjDetailList.get(0)).getTotWaived();
 					recovery = (OverdueChargeRecovery) odObjDetailList.get(1);

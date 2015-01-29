@@ -708,8 +708,7 @@ public class ManualPaymentServiceImpl  extends GenericService<FinanceMain>  impl
 				finRepayQueue = doWriteDataToBean(finRepayQueue,financeMain,repaySchdList.get(i));
 
 				//Overdue Details preparation
-				getRecoveryPostingsUtil().recoveryProcess(financeMain, finRepayQueue, curBDay, 
-						isRIAFinance, false, false, Long.MIN_VALUE, null, false);
+				getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay, false, false);
 				
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());

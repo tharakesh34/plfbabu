@@ -718,6 +718,32 @@
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- Penalty Rcovery Calculation -->
+	<bean id="overdueCalculationTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="overdueCalculationTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="overdueCalculationTarget"
+		class="com.pennant.backend.endofday.overduepayments.OverDueRecoveryCalculation">
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<!-- Repayment Postings -->
 	<bean id="repayQueuePostingsTasklet"
@@ -759,13 +785,13 @@
 	</bean>
 	
 	<!-- Penalty Postings for IPC or PIC -->
-	<bean id="penaltyRecoveryPostingsTasklet"
+	<bean id="penaltyPostingsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="penaltyRecoveryPostingsTarget" />
+			<ref bean="penaltyPostingsTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -778,7 +804,7 @@
 		</property>
 	</bean>
 
-	<bean id="penaltyRecoveryPostingsTarget"
+	<bean id="penaltyPostingsTarget"
 		class="com.pennant.backend.endofday.overduepayments.PenaltyRecoveryPostings">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
@@ -786,13 +812,13 @@
 	</bean>
 	
 	<!-- Penalty Postings for IPCS or PICS -->
-	<bean id="overdueRecoveryPostingsTasklet"
+	<bean id="overduePostingsTasklet"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="overdueRecoveryPostingsTarget" />
+			<ref bean="overduePostingsTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -805,7 +831,7 @@
 		</property>
 	</bean>
 
-	<bean id="overdueRecoveryPostingsTarget"
+	<bean id="overduePostingsTarget"
 		class="com.pennant.backend.endofday.overduepayments.OverDueRecoveryPostings">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
@@ -1360,6 +1386,13 @@
 		<!-- Schedule Repayments Queuing -->
 		<step id="repayQueueCalculation">
 			<tasklet ref="repayQueueTasklet" />
+			<next on="*" to="overdueCalculation" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Schedule Overdue Calculation -->
+		<step id="overdueCalculation">
+			<tasklet ref="overdueCalculationTasklet" />
 			<next on="*" to="repayQueuePostings" />
 			<fail on="FAILED"/>
 		</step>
@@ -1367,6 +1400,20 @@
 		<!-- Schedule Repayment Postings -->
 		<step id="repayQueuePostings">
 			<tasklet ref="repayQueuePostingsTasklet" />
+			<next on="*" to="penaltyPostings" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Overdue Postings -->
+		<step id="penaltyPostings">
+			<tasklet ref="penaltyPostingsTasklet" />
+			<next on="*" to="overduePostings" />
+			<fail on="FAILED"/>
+		</step>
+		
+		<!-- Overdue Postings -->
+		<step id="overduePostings">
+			<tasklet ref="overduePostingsTasklet" />
 			<next on="*" to="amortizationCalculation" />
 			<fail on="FAILED"/>
 		</step>
@@ -1440,7 +1487,6 @@
 			<next on="*" to="valueDateUpdation" />
 			<fail on="FAILED"/>
 		</step>
-		
 		
 		<!-- Value Date Updation -->
 		<step id="valueDateUpdation">

@@ -118,11 +118,11 @@ public class OverDueRecoveryPostings implements Tasklet {
 					financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 
 					//Recovery Record Postings Details				
-					getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, 
+					getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, 
 							resultSet.getDate("FinODSchdDate"), resultSet.getString("FinODFor"), resultSet.getDate("MovementDate"),
 							resultSet.getBigDecimal("PenaltyBal"), resultSet.getBigDecimal("PenaltyPaid"), 
 							BigDecimal.ZERO, resultSet.getString("PenaltyType"), resultSet.getBoolean("AllowRIAInvestment"), 
-							Long.MIN_VALUE, resultSet.getString("FinDivision"), null, true);
+							Long.MIN_VALUE, resultSet.getString("FinDivision"), true);
 
 				}
 
@@ -179,13 +179,13 @@ public class OverDueRecoveryPostings implements Tasklet {
 	private StringBuffer prepareupdateQuery(StringBuffer selectSql){
 		
 		selectSql = new StringBuffer(" Update FinanceMain Set FinIsActive = 0 , ClosingStatus = 'M' ");
-		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPC)) {
+		if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_IPCS)) {
 		
 			selectSql.append(" WHERE (FinAmount + FeeChargeAmt - DownPayment = FinRepaymentAmount) ");
 			selectSql.append(" AND FinIsActive = 1 AND ISNULL(ClosingStatus,'') != 'C' ");
 			selectSql.append(" AND FinReference NOT IN(SELECT Distinct FinReference FROM FinODDetails WHERE TotPenaltyBal != 0) ");
 	
-		}else if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PIC)) {
+		}else if(PennantConstants.REPAY_HIERARCHY_METHOD.equals(RepayHierarchyConstants.REPAY_HIERARCHY_PICS)) {
 			
 			selectSql.append(" FROM  (Select FinReference,SUM((ProfitSchd-SchdPftPaid)+(DefProfitSchd-DefSchdPftPaid)) SumPft ");
 			selectSql.append(" FROM FinScheduleDetails Group by FinReference) AS T2 WHERE FinanceMain.FinReference =T2.FinReference ");

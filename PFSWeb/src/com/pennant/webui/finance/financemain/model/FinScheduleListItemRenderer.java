@@ -736,7 +736,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		}
 		
 		if(fillType == 2){
-		  if (getFinScheduleData().getFinanceMain().isStepFinance()) {
+		  if (getFinScheduleData().getFinanceMain().isStepFinance() && showStepDetail) {
 				lc.setSpan(9);
 		   } else {
 				lc.setSpan(6);
@@ -751,7 +751,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			lc.setStyle("text-align:right;");
 			listitem.appendChild(lc);
 			lc = new Listcell("");
-			if(getFinScheduleData().getFinanceMain().isStepFinance()) {
+			if(getFinScheduleData().getFinanceMain().isStepFinance() && showStepDetail) {
 				lc.setSpan(7);
 			}  else {
 				lc.setSpan(4);
