@@ -90,8 +90,11 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl;
@@ -100,6 +103,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -198,7 +202,8 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 	
 	private AccountInterfaceService accountInterfaceService;
 	private AccountsService accountsService;
-
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -828,19 +833,15 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl implements Seria
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
-			this.contributorCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_FinContributorDetailDialog_CustID.value")}));
+			this.contributorCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_FinContributorDetailDialog_CustID.value"),null,true));
 		}
 		
 		if (!this.btnSearchInvestmentAcc.isDisabled()){
-			this.investmentAcc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_FinContributorDetailDialog_InvestmentAcc.value")}));
+			this.investmentAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinContributorDetailDialog_InvestmentAcc.value"),null,true));
 		}
 		
 		if (!this.investmentDate.isReadonly()){
-			this.investmentDate.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
-					"DATE_EMPTY_FUTURE_TODAY",new String[] { Labels.getLabel(
-							"label_FinContributorDetailDialog_InvestmentDate.value") }));
+			this.investmentDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinContributorDetailDialog_InvestmentDate.value"),true,startDate,appStartDate,false));
 		}
 		
 		if (!this.mudaribPerc.isDisabled()){

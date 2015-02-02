@@ -88,6 +88,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -661,7 +662,7 @@ public class FinanceMarginSlabDialogCtrl extends GFCBaseCtrl implements Serializ
 		setValidationOn(true);
 		
 		if (!this.finType.isReadonly()){
-			this.finType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinanceMarginSlabDialog_FinType.value")}));
+			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMarginSlabDialog_FinType.value"),null,true));
 		}	
 		if (!this.slabAmount.isReadonly()){
 			this.slabAmount.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceMarginSlabDialog_SlabAmount.value")));

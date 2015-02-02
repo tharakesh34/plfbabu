@@ -78,6 +78,7 @@ import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -581,12 +582,10 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.aScoringSlab.isReadonly()){
-			this.aScoringSlab.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value")}));
+			this.aScoringSlab.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value"),null,true));
 		}	
 		if (!this.creditWorthness.isReadonly()){
-			this.creditWorthness.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ScoringSlabDialog_CreditWorthness.value")}));
+			this.creditWorthness.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringSlabDialog_CreditWorthness.value"),null,true));
 		}	
 		logger.debug("Leaving");
 	}

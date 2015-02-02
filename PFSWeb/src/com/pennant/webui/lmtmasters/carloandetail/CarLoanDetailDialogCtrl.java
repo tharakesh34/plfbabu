@@ -97,6 +97,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -1076,13 +1077,13 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 					DateUtility.getYear((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE")), DateUtility.getYear(new Date())+1));
 		}
 		if (!this.carCapacity.isReadonly()) {
-			this.carCapacity.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarCapacity.value") }));
+			this.carCapacity.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarCapacity.value"),null,true));
 		}
 		if (!this.carCc.isReadonly()) {
-			this.carCc.setConstraint("NO NEGATIVE:" + Labels.getLabel("FIELD_NO_NEGATIVE", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarCc.value") }));
+			this.carCc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarCc.value"),null,true));
 		}
 		/*if (!this.engineNumber.isReadonly()) {
-			this.engineNumber.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_engineNumber.value") }));
+			this.engineNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_engineNumber.value"),null,true));
 		}*/
 		if (!this.insuranceType.isDisabled()) {
 			this.insuranceType.setConstraint(new PTListValidator(Labels.getLabel("label_CarLoanDetailDialog_insuranceType.value"), insurenceType));
@@ -1098,16 +1099,16 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 		
 		if (!this.carChasisNo.isReadonly()) {
-			this.carChasisNo.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_CarChasisNo.value") }));
+			this.carChasisNo.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarChasisNo.value"),null,true));
 		}
 /*		if (!this.purchageOdrNumber.isReadonly()) {
-			this.purchageOdrNumber.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_purchageOdrNumber.value") }));
+			this.purchageOdrNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_purchageOdrNumber.value"),null,true));
 		}*/
 		if (!this.quoationNbr.isReadonly()) {
-			this.quoationNbr.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_quoationNbr.value") }));
+			this.quoationNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_quoationNbr.value"),null,true));
 		}
 		if (!this.quoationDate.isReadonly()) {
-			this.quoationDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_quoationDate.value") }));
+			this.quoationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CarLoanDetailDialog_quoationDate.value"),true));
 		}
 		// if (!this.dealerPhone.isReadonly()){
 		// this.dealerPhone.setConstraint("NO EMPTY:"+
@@ -1115,7 +1116,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		// Labels.getLabel("label_CarLoanDetailDialog_dealerPhone.value") }));
 		// }
 		/*if (!this.purchaseDate.isReadonly()) {
-			this.purchaseDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CarLoanDetailDialog_purchaseDate.value") }));
+			this.purchaseDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CarLoanDetailDialog_purchaseDate.value"),true));
 		}*/
 		logger.debug("Leaving");
 	}

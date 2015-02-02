@@ -1122,8 +1122,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 		clearShareDirector();
 		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_DirectorDetailDialog_CustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustID.value"),null,true));
 		}
 		if (!this.firstName.isReadonly()){
 			this.firstName.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_FirstName.value"),
@@ -1147,8 +1146,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		if(this.shareholder.isChecked()){
 			if(!this.sharePerc.isReadonly() && !this.sharePerc.isDisabled()){
-				this.sharePerc.setConstraint("NO EMPTY,NO ZERO:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[]{Labels.getLabel("label_DirectorDetailDialog_SharePerc.value")}));
+				this.sharePerc.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_SharePerc.value"),null,true));
 			}
 		}
 		if(this.director.isChecked()){

@@ -122,6 +122,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
@@ -1758,8 +1759,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if (!this.finReference.isReadonly() && 
 				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsGenRef()) {
 
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinReference.value") }));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinReference.value"),null,true));
 		}
 
 		if (!this.finAmount.isDisabled()) {
@@ -1793,8 +1793,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if (this.gb_gracePeriodDetails.isVisible()) {
 
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms_Two.setConstraint("NO NEGATIVE,NO ZERO:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-						new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_GraceTerms.value") }));
+				this.graceTerms_Two.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_GraceTerms.value"),null,true));
 			}	
 			
 			if (!this.grcMargin.isDisabled()) {
@@ -1810,15 +1809,13 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			if (!this.nextGrcPftDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 
-				this.nextGrcPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextGrcPftDate.value") }));
+				this.nextGrcPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextGrcPftDate.value"),true));
 			}
 
 			if (!this.nextGrcPftRvwDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
-				this.nextGrcPftRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextGrcPftRvwDate.value") }));
+				this.nextGrcPftRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextGrcPftRvwDate.value"),true));
 			}
 		}
 
@@ -1827,29 +1824,25 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if (!this.nextRepayDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
-			this.nextRepayDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayDate.value") }));
+			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayDate.value"),true));
 		}
 
 		if (!this.nextRepayPftDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
-			this.nextRepayPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayPftDate.value") }));
+			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayPftDate.value"),true));
 		}
 
 		if (!this.nextRepayRvwDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
-			this.nextRepayRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayRvwDate.value") }));
+			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayRvwDate.value"),true));
 		}
 
 		if (!this.nextRepayCpzDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
-			this.nextRepayCpzDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayCpzDate.value") }));
+			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_NextRepayCpzDate.value"),true));
 		}
 
 		this.repayEffectiveRate.setConstraint(new RateValidator(13, 9,
@@ -1863,8 +1856,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 			
-			this.maturityDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_MaturityDate.value") }));
+			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_MaturityDate.value"),true));
 		}
 
 		logger.debug("Leaving");
@@ -1972,8 +1964,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_FinType.value") }));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinType.value"),null,true));
 
 		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinCcy.value"),null,true,true));
 
@@ -1986,19 +1977,16 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		if (!recSave && this.repayAcctId.getSclass().equals("mandatory")) {
-			this.repayAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_RepayAcctId.value") }));
+			this.repayAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_RepayAcctId.value"),null,true));
 		}
 
 		if (!recSave && this.downPayAccount.getSclass().equals("mandatory")) {
-			this.downPayAccount.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_DownPayAccount.value") }));
+			this.downPayAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_DownPayAccount.value"),null,true));
 		}
 		
 		if (!this.btnSearchCommitmentRef.isDisabled() && 
 				StringUtils.trimToEmpty(space_commitmentRef.getSclass()).equals("mandatory")) {
-			this.lovDescCommitmentRefName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_IstisnaFinanceMainDialog_CommitRef.value") }));
+			this.lovDescCommitmentRefName.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_CommitRef.value"),null,true));
 		}
 		
 		if (!this.finPurpose.isReadonly()) {
@@ -2012,8 +2000,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
-			this.lovDescGrcIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_IstisnaFinanceMainDialog_FinGrcIndBaseRate.value")}));			
+			this.lovDescGrcIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinGrcIndBaseRate.value"),null,true));			
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -2023,8 +2010,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){
-			this.lovDescRpyIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_IstisnaFinanceMainDialog_FinRpyIndBaseRate.value")}));			
+			this.lovDescRpyIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_IstisnaFinanceMainDialog_FinRpyIndBaseRate.value"),null,true));			
 		}
 		logger.debug("Leaving ");
 	}

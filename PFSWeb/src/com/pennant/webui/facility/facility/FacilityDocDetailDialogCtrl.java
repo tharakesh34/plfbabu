@@ -94,6 +94,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -725,7 +726,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl implements Serializ
 		setValidationOn(true);
 
 		if (!this.documnetName.isReadonly()) {
-			this.documnetName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_DocumentDetailsDialog_CustID.value") }));
+			this.documnetName.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentDetailsDialog_CustID.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

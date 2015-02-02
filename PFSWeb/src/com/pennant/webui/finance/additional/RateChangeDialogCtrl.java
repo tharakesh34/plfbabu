@@ -81,6 +81,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -675,25 +677,17 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.rateChange.isVisible()) {
-			this.rateChange.setConstraint(" NO NEGATIVE:" + 
-					Labels.getLabel("RATE_NO_LESS_ZERO",new String[]{Labels
-							.getLabel("label_RateChangeDialog_Rate.value")}));
+			this.rateChange.setConstraint(new PTStringValidator(Labels.getLabel("label_RateChangeDialog_Rate.value"),null,true));
 		}
 		if (this.marginRateRow.isVisible()) {
 			this.marginRate.setConstraint(new RateValidator(13, 9, 
 							Labels.getLabel("label_RateChangeDialog_MarginRate.value")));
 		}
 		if(this.baseRateRow.isVisible()) {
-			this.baseRate.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_RateChangeDialog_BaseRate.value") }));
+			this.baseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_RateChangeDialog_BaseRate.value"),null,true));
 		}
 		if (this.tillDate.isVisible()) {
-			this.tillDate
-			.setConstraint("NO EMPTY:"
-					+ Labels.getLabel(
-							"FIELD_NO_EMPTY",
-							new String[]{Labels
-									.getLabel("label_RateChangeDialog_TillDate.value")}));
+			this.tillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_RateChangeDialog_TillDate.value"),true));
 		}
 		logger.debug("Leaving");
 	}

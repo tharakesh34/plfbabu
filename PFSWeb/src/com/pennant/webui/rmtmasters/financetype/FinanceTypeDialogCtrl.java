@@ -3678,86 +3678,77 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 		// +++++++ Basic Details Tab +++++++++++++//
 
-		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true));
+		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true,true));
 		
 		if (validate) {
 
-			this.finAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAcType.value"), null, true));
+			this.finAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAcType.value"), null, true,true));
 
-			this.pftPayAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_PftPayAcType.value"), null, true));
+			this.pftPayAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_PftPayAcType.value"), null, true,true));
 					
-			this.finSuspAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinSuspAcType.value"), null, true));
+			this.finSuspAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinSuspAcType.value"), null, true,true));
 					
-			this.finProvisionAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinProvisionAcType.value"), null, true));
+			this.finProvisionAcType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinProvisionAcType.value"), null, true,true));
 			
-			this.finDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true));
+			this.finDivision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDivision.value"), null, true,true));
 			
 			/*
-			this.lovDescFinContingentAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinContingentAcType.value") }));
+			this.lovDescFinContingentAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinContingentAcType.value"),null,true));
 					
-			this.lovDescFinBankContingentAcTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinBankContingentAcType.value") }));	
+			this.lovDescFinBankContingentAcTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinBankContingentAcType.value"),null,true));	
 
-			this.lovDescFinInstDateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinInstDate.value") }));*/
+			this.lovDescFinInstDateName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinInstDate.value"),null,true));*/
 
 			// ++++++++++ Accounting Event tab ++++++++++++++//
 
-			this.finAEAddDsbOD.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbOD.value"), null, true));
+			this.finAEAddDsbOD.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbOD.value"), null, true,true));
 
-			this.finAEAddDsbFD.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFD.value"), null, true));
+			this.finAEAddDsbFD.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAddDsbFD.value"), null, true,true));
 
-			this.finAEAmzNorm.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzNorm.value"), null, true));
+			this.finAEAmzNorm.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzNorm.value"), null, true,true));
 
-			this.finAEAmzSusp.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzSusp.value"), null, true));
+			this.finAEAmzSusp.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEAmzSusp.value"), null, true,true));
 
-			this.finAEToNoAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEToNoAmz.value"), null, true));
+			this.finAEToNoAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEToNoAmz.value"), null, true,true));
 
-			this.finToAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinToAmz.value"), null, true));
+			this.finToAmz.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinToAmz.value"), null, true,true));
 			
-			/*	this.lovDescFinMAmzName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinMAmz.value") })); */
+			/*	this.lovDescFinMAmzName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinMAmz.value"),null,true)); */
 
-			this.finAERateChg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEIncPft.value"), null, true));
+			this.finAERateChg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEIncPft.value"), null, true,true));
 
-			this.finAERepay.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAERepay.value"), null, true));
+			this.finAERepay.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAERepay.value"), null, true,true));
 
-			this.finAEEarlySettle.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEEarlySettle.value"), null, true));
+			this.finAEEarlySettle.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEEarlySettle.value"), null, true,true));
 			
-			/*this.lovDescFinAEEarlyPayName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEEarlyPay.value") }));*/
+			/*this.lovDescFinAEEarlyPayName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEEarlyPay.value"),null,true));*/
 
-			/*this.lovDescFinAEWriteOffName.setConstraint("NO EMPTY:"
-			        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEWriteOff.value") }));
+			/*this.lovDescFinAEWriteOffName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEWriteOff.value"),null,true));
 			
-			this.lovDescFinAEWriteOffBKName.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEWriteOffBK.value") }));
+			this.lovDescFinAEWriteOffBKName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEWriteOffBK.value"),null,true));
 			
-			this.lovDescFinAEGraceEndName.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinAEGraceEnd.value") }));*/
+			this.lovDescFinAEGraceEndName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEGraceEnd.value"),null,true));*/
 
-			this.finLatePayRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeSearch_FinLatePayRule.value"), null, true));
+			this.finLatePayRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeSearch_FinLatePayRule.value"), null, true,true));
 
 			/*if (!this.btnSearchFinDeffreq.isDisabled()) {
-				this.lovDescFinDeffreqName.setConstraint("NO EMPTY:"
-				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDeffreq.value") }));
+				this.lovDescFinDeffreqName.setConstraint(new PTStringValidator( Labels.getLabel("label_FinanceTypeDialog_FinDeffreq.value"),null,true));
 			}
              */
 			
 			if (this.finIsIntCpz.isChecked() && !this.finAECapitalize.isReadonly()) {
-				this.finAECapitalize.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value"), null, true));
+				this.finAECapitalize.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeSearch_FinCapitalize.value"), null, true,true));
 			}
 			
 			if (!this.finAEProgClaim.isReadonly()) {
 				//this.lovDescFinAEProgClaimName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinAEProgClaim.value"), null, true));
 			}
-			this.finSchdChange.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinSchdChange.value"), null, true));
+			this.finSchdChange.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinSchdChange.value"), null, true,true));
 
-			this.finProvision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinProvision.value"), null, true));
+			this.finProvision.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinProvision.value"), null, true,true));
 
 			if (!this.finDepreciationRule.isReadonly()) {
-				this.finDepreciationRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDepreciationRule.value"), null, true));
+				this.finDepreciationRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinDepreciationRule.value"), null, true,true));
 			}
 
 			/*if (!this.btnSearchFinDefRepay.isDisabled()) {
@@ -3770,7 +3761,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.lovDescFinGrcIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinGrcIndBaseRate.value"), null, true));
 			}
 			if (this.finAlwIndRate.isChecked() && !this.finIndBaseRate.isReadonly()) {
-				this.finIndBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinIndBaseRate.value"), null, true));
+				this.finIndBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinIndBaseRate.value"), null, true,true));
 			}
 		}
 		logger.debug("Leaving");

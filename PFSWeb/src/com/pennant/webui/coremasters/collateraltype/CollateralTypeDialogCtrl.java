@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -620,10 +621,10 @@ public class CollateralTypeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (!this.hWCLP.isReadonly()){
-			this.hWCLP.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralTypeDialog_HWCLP.value")}));
+			this.hWCLP.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralTypeDialog_HWCLP.value"),null,true));
 		}	
 		if (!this.hWCPD.isReadonly()){
-			this.hWCPD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralTypeDialog_HWCPD.value")}));
+			this.hWCPD.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralTypeDialog_HWCPD.value"),null,true));
 		}	
 		if (!this.hWBVM.isReadonly()){
 			this.hWBVM.setConstraint(new AmountValidator(5,3,Labels.getLabel("label_CollateralTypeDialog_HWBVM.value")));

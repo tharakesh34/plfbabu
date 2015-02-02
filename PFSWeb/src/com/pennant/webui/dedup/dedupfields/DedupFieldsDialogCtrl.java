@@ -86,6 +86,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -592,7 +593,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 		
 		if (!this.fieldName.isReadonly()){
-			this.fieldName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DedupFieldsDialog_FieldName.value")}));
+			this.fieldName.setConstraint(new PTStringValidator(Labels.getLabel("label_DedupFieldsDialog_FieldName.value"),null,true));
 		}	
 		if (!this.fieldControl.isDisabled()){
 			this.fieldControl.setConstraint(new StaticListValidator(listFieldControl,Labels.getLabel("label_DedupFieldsDialog_FieldControl.value")));

@@ -123,6 +123,7 @@ import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -398,6 +399,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private boolean isCountryBehrain = false;
 	private transient DirectorDetailService directorDetailService;
 	private boolean isCustRelated = false;
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1156,15 +1159,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try {
-			if (this.custDOB.getValue() != null) {
-				if (!this.custDOB.getValue().after((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE"))) {
-					throw new WrongValueException(this.custDOB, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
-				}else if (this.custDOB.getValue().after((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) {
-					throw new WrongValueException(this.custDOB, Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value"), 
-							SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString() }));
-				}
 				aCustomer.setCustDOB(new Timestamp(this.custDOB.getValue().getTime()));
-			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1798,9 +1793,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (!this.custDOB.isReadonly() && !this.custDOB.isDisabled()) {
 			if (corpCustomer) {
-				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value") }));
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"),true,startDate,appStartDate,false));
 			}else{
-				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value") }));
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDOB.value"),true,startDate,appStartDate,false));
 			}
 		}
 		if(this.rowCustCRCPR.isVisible()){
@@ -1818,17 +1813,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}else{
 				if (!this.custCPR.isReadonly() && !this.custCPR.isDisabled()) {
 				if(corpCustomer){
-					this.custCPR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustCR.value") }));
+					this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCR.value"),null,true));
 				}else{
-					this.custCPR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustCPR.value") }));
+					this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCPR.value"),null,true));
 				}
 				}
 			}
 		}
 		
 		if(this.custIsJointCust.isChecked() && !this.custIsJointCust.isDisabled()) {
-			this.custJointCustName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustJointCustomerName") }));
-			this.custJointCustDob.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerDialog_CustJointCustDob.value") }));
+			this.custJointCustName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustJointCustomerName"),null,true));
+			this.custJointCustDob.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustJointCustDob.value"),true,startDate,appStartDate,false));
 		}
 		if(corpCustomer){	
 		if (!this.contactPersonName.isReadonly()) {
@@ -1882,14 +1877,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		if (!this.custDOB.isReadonly() && !this.custDOB.isDisabled()) {
 			if (corpCustomer) {
-				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value") }));
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"),true,startDate,appStartDate,false));
 			}else{
-				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY", new String[] { Labels.getLabel("label_CustomerDialog_CustDOB.value") }));
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDOB.value"),true,startDate,appStartDate,false));
 			}
 		}
 		if (this.rowCustCRCPR.isVisible() && isCountryBehrain) {
 			if(!corpCustomer && (!this.custCPR.isDisabled() && !this.custCPR.isReadonly())){
-				this.custCPR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustCRCPR.value") }));
+				this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCRCPR.value"),null,true));
 			}
 		}
 		

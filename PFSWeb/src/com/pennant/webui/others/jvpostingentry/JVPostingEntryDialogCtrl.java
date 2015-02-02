@@ -45,6 +45,7 @@ package com.pennant.webui.others.jvpostingentry;
 
 import java.io.Serializable;
 
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 /**
@@ -1158,7 +1159,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private void doSetLOVValidation() {
 		//Txn C Cy
 		if (txnCCy.isButtonVisible()) {
-			this.txnCCy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JVPostingEntryDialog_TxnCCy.value") }));
+			this.txnCCy.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingEntryDialog_TxnCCy.value"),null,true));
 		}
 	}
 

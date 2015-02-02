@@ -85,6 +85,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -762,8 +763,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescScoringCode.setConstraint("NO EMPTY:" 
-				+ Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_ScoringMetricsDialog_ScoringCode.value")}));
+		this.lovDescScoringCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringMetricsDialog_ScoringCode.value"),null,true));
 		logger.debug("Leaving ");
 
 	}

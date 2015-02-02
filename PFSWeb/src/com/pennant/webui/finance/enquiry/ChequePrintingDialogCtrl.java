@@ -40,6 +40,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -373,8 +374,7 @@ public class ChequePrintingDialogCtrl  extends GFCBaseListCtrl<FinanceScheduleDe
 							Labels.getLabel("label_FinanceEnquiryDialog_CPPDCPeriod.value")));
 		}
 		if (!this.noOfCheques.isReadonly()){
-			this.noOfCheques.setConstraint("NO EMPTY, NO NEGATIVE:" + Labels.getLabel("PERC_NO_LESS_ZERO"
-					,new String[] { Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value")}));
+			this.noOfCheques.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceEnquiryDialog_CPNoOfCheques.value"),null,true));
 
 		}	
 		

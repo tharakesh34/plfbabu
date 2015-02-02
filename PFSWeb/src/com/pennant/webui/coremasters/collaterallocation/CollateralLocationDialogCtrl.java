@@ -77,6 +77,7 @@ import com.pennant.backend.service.coremasters.CollateralLocationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -584,10 +585,10 @@ public class CollateralLocationDialogCtrl extends GFCBaseCtrl implements Seriali
 		setValidationOn(true);
 		
 		if (!this.hZCLO.isReadonly()){
-			this.hZCLO.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralLocationDialog_HZCLO.value")}));
+			this.hZCLO.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralLocationDialog_HZCLO.value"),null,true));
 		}	
 		if (!this.hZCLC.isReadonly()){
-			this.hZCLC.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralLocationDialog_HZCLC.value")}));
+			this.hZCLC.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralLocationDialog_HZCLC.value"),null,true));
 		}	
 	logger.debug("Leaving");
 	}

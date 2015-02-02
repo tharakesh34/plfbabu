@@ -106,6 +106,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -926,7 +927,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			this.transOrder.setConstraint(new IntValidator(10, Labels.getLabel("label_TransactionEntryDialog_TransOrder.value")));
 		}
 		if (!this.transDesc.isReadonly()) {
-			this.transDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_TransDesc.value") }));
+			this.transDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_TransDesc.value"),null,true));
 		}
 		if (!this.debitcredit.isDisabled()) {
 			this.debitcredit.setConstraint(new StaticListValidator(listDebitcredit, Labels.getLabel("label_TransactionEntryDialog_Debitcredit.value")));
@@ -962,24 +963,20 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.CUSTSYS)
 					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
 
-				this.lovDescAccountTypeName.setConstraint("NO EMPTY:"
-				        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountType.value") }));
+				this.lovDescAccountTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountType.value"),null,true));
 
 				if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)
 						|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
-					this.lovDescAccountSubHeadRuleName.setConstraint("NO EMPTY:"
-					        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value") }));
+					this.lovDescAccountSubHeadRuleName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value"),null,true));
 
 				}
 
 			}
 		}
 		
-		this.lovDescTranscationCodeName.setConstraint("NO EMPTY:"
-		        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value") }));
+		this.lovDescTranscationCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value"),null,true));
 		
-		this.lovDescRvsTransactionCodeName.setConstraint("NO EMPTY:"
-		        + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value") }));
+		this.lovDescRvsTransactionCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value"),null,true));
 		logger.debug("Leaving");
 	}
 

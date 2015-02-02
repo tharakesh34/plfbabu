@@ -137,6 +137,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
@@ -3274,8 +3275,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (!this.finReference.isReadonly() && 
 				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsGenRef()) {
 
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinReference.value") }));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_FinReference.value"),null,true));
 		}
 
 		if (!this.finAmount.isDisabled()) {
@@ -3296,8 +3296,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.gb_gracePeriodDetails.isVisible()) {
 
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value") }));
+				this.graceTerms.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value"),null,true));
 			}	
 			
 			if (!this.grcMargin.isDisabled()) {
@@ -3313,15 +3312,13 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (!this.nextGrcPftDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 
-				this.nextGrcPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftDate.value") }));
+				this.nextGrcPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftDate.value"),true));
 			}
 
 			if (!this.nextGrcPftRvwDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
-				this.nextGrcPftRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftRvwDate.value") }));
+				this.nextGrcPftRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextGrcPftRvwDate.value"),true));
 			}
 		}
 		
@@ -3338,29 +3335,25 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (!this.nextRepayDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
-			this.nextRepayDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayDate.value") }));
+			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextRepayDate.value"),true));
 		}
 
 		if (!this.nextRepayPftDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
-			this.nextRepayPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayPftDate.value") }));
+			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextRepayPftDate.value"),true));
 		}
 
 		if (!this.nextRepayRvwDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
-			this.nextRepayRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayRvwDate.value") }));
+			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextRepayRvwDate.value"),true));
 		}
 
 		if (!this.nextRepayCpzDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
-			this.nextRepayCpzDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_NextRepayCpzDate.value") }));
+			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_NextRepayCpzDate.value"),true));
 		}
 
 		this.repayEffectiveRate.setConstraint(new RateValidator(13, 9,
@@ -3374,8 +3367,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 			
-			this.maturityDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value") }));
+			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value"),true));
 		}
 
 		logger.debug("Leaving");
@@ -3472,8 +3464,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_WIFFinanceMainDialog_FinType.value") }));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_FinType.value"),null,true));
 
 
 		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinCcy.value"),null,true,true));
@@ -3482,20 +3473,17 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if(!this.btnSearchGraceBaseRate.isDisabled()) {
-			this.lovDescGraceBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value") }));
+			this.lovDescGraceBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),null,true));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
-			this.lovDescGrcIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_WIFFinanceMainDialog_FinGrcIndBaseRate.value")}));			
+			this.lovDescGrcIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_FinGrcIndBaseRate.value"),null,true));			
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if(!this.btnSearchRepayBaseRate.isDisabled()) {
-			this.lovDescRepayBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value") }));
+			this.lovDescRepayBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),null,true));
 		}
 
 		if(this.allowRpyInd.isChecked() && this.rpyIndBaseRate.isButtonVisible()){

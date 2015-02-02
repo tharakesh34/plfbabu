@@ -82,6 +82,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -448,16 +450,10 @@ public class AddDisbursementDialogCtrl  extends GFCBaseCtrl implements Serializa
 					Labels.getLabel("label_AddDisbursementDialog_Amount.value"),false));
 		}
 		if (this.fromDate.isVisible()) {
-			this.fromDate
-			.setConstraint("NO EMPTY:"
-					+ Labels.getLabel(
-							"FIELD_NO_EMPTY",
-							new String[]{Labels
-									.getLabel("label_AddDisbursementDialog_FromDate.value")}));
+			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),true));
 		}
 		if (this.disbursementAccount.isVisible()) {
-			this.disbAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_AddDisbursementDialog_DisbAcctId.value") }));
+			this.disbAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_AddDisbursementDialog_DisbAcctId.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

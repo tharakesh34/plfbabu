@@ -207,7 +207,8 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	private Row excDefDateRow;     // autoWire
 	private Row addTermRow;        // autoWire
 	private Row rateChangeRow;     // autoWire
-	
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1685,41 +1686,35 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		logger.debug("Entering");
 		
 		if (isValidationrequired()) {
-			this.fromDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel(
-					"DATE_EMPTY_PAST",new String[] { Labels.getLabel("label_IjaraBulkRateChange_FromDate.value") }));
+			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"),true,appStartDate,endDate,true));
 		} else {
 			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"), true));
 		}
 
 		if(isValidationrequired()){
-			this.toDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel("DATE_EMPTY_PAST",
-					new String[]{Labels.getLabel("label_IjaraBulkRateChange_ToDate.value")}));
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"),true,appStartDate,endDate,true));
 		} else {
 			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"), true));
 		}
 
 		if(!this.rateChange.isDisabled()){
-			this.rateChange.setConstraint("NO ZERO, NO NEGATIVE:" + Labels.getLabel("RATE_NO_LESS_ZERO",
-					new String[]{Labels.getLabel("label_IjaraBulkRateChange_Rate.value")}));
+			this.rateChange.setConstraint(new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"),null,true));
 		}
 
 		if(this.hbox_TillDate.isVisible()){
 			if(!this.tillDate.isDisabled()){
-				this.tillDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel("DATE_EMPTY_PAST",
-						new String[]{Labels.getLabel("label_IjaraBulkRateChange_TillDate.value")}));
+				this.tillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),true,appStartDate,endDate,true));
 			}
 		}
 		
 		if(this.recalFromDateRow.isVisible()) {
 
 			if(!this.calFromDate.isDisabled()){
-				this.calFromDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel("DATE_EMPTY_PAST",
-						new String[]{Labels.getLabel("label_BulkDefferment_CalFromDate.value")}));
+				this.calFromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalFromDate.value"),true,appStartDate,endDate,true));
 			}
 
 			if(!this.calToDate.isDisabled()){
-				this.calToDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel("DATE_EMPTY_PAST",
-						new String[]{Labels.getLabel("label_BulkDefferment_CalToDate.value")}));
+				this.calToDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalToDate.value"),true,appStartDate,endDate,true));
 			}
 
 		}

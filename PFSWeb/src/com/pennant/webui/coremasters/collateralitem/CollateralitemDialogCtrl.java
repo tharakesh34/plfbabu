@@ -96,6 +96,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1274,51 +1275,51 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 			
 			
 			if (!this.hYCLR.isReadonly()){
-				this.hYCLR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCLR.value")}));
+				this.hYCLR.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCLR.value"),null,true));
 			}
 			if (!this.hYDLP.isReadonly()){
-				this.hYDLP.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYDLP.value")}));
+				this.hYDLP.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYDLP.value"),null,true));
 			}	
 			if (!this.hYDLR.isReadonly()){
-				this.hYDLR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYDLR.value")}));
+				this.hYDLR.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYDLR.value"),null,true));
 			}	
 			if (!this.hYDBNM.isReadonly()){
-				this.hYDBNM.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYDBNM.value")}));
+				this.hYDBNM.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYDBNM.value"),null,true));
 			}	
 			if (!this.hYAB.isReadonly()){
-				this.hYAB.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYAB.value")}));
+				this.hYAB.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYAB.value"),null,true));
 			}	
 			if (!this.hYAN.isReadonly()){
-				this.hYAN.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYAN.value")}));
+				this.hYAN.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYAN.value"),null,true));
 			}	
 			if (!this.hYAS.isReadonly()){
-				this.hYAS.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYAS.value")}));
+				this.hYAS.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYAS.value"),null,true));
 			}	
 		}*/
 
 		if (!this.hYCUS.isReadonly()){
-			this.hYCUS.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCUS.value")}));
+			this.hYCUS.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCUS.value"),null,true));
 		}	
 //		if (!this.hYCLC.isReadonly()){
-//			this.hYCLC.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCLC.value")}));
+//			this.hYCLC.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCLC.value"),null,true));
 //		}	
 //		if (!this.hYCNA.isReadonly()){
-//			this.hYCNA.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCNA.value")}));
+//			this.hYCNA.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCNA.value"),null,true));
 //		}	
 //		if (!this.hYCLO.isDisabled()){
-//			this.hYCLO.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCLO.value")}));
+//			this.hYCLO.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCLO.value"),null,true));
 //		}	
 //		if (!this.hYDPC.isDisabled()){
-//			this.hYDPC.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYDPC.value")}));
+//			this.hYDPC.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYDPC.value"),null,true));
 //		}	
 //		if (!this.hYCXD.isDisabled()){
-//			this.hYCXD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCXD.value")}));
+//      	this.hYCXD.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralitemDialog_HYCXD.value"),true));
 //		}
 //		if (!this.hYLRD.isDisabled()){
-//			this.hYLRD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYLRD.value")}));
+//			this.hYLRD.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYLRD.value"),null,true));
 //		}
 //		if (!this.hYNRD.isDisabled()){
-//			this.hYNRD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYNRD.value")}));
+//			this.hYNRD.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYNRD.value"),null,true));
 //		}
 		if (!this.hYNOU.isReadonly()){
 			this.hYNOU.setConstraint(new IntValidator(9,Labels.getLabel("label_CollateralitemDialog_HYNOU.value")));
@@ -1345,22 +1346,22 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.hYISV.setConstraint(new AmountValidator(15,0,Labels.getLabel("label_CollateralitemDialog_HYISV.value")));
 		}	
 		if (!this.hYIXD.isDisabled()){
-			this.hYIXD.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYIXD.value")}));
+			this.hYIXD.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYIXD.value"),null,true));
 		}
 		if (!this.hYNR1.isReadonly()){
-			this.hYNR1.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYNR1.value")}));
+			this.hYNR1.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYNR1.value"),null,true));
 		}	
 		/*if (!this.hYNR2.isReadonly()){
-			this.hYNR2.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYNR2.value")}));
+			this.hYNR2.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYNR2.value"),null,true));
 		}	
 		if (!this.hYNR3.isReadonly()){
-			this.hYNR3.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYNR3.value")}));
+			this.hYNR3.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYNR3.value"),null,true));
 		}	
 		if (!this.hYNR4.isReadonly()){
-			this.hYNR4.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYNR4.value")}));
+			this.hYNR4.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYNR4.value"),null,true));
 		}*/	
 		/*if (!this.hYDLM.isDisabled()){
-			this.hYDLM.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYDLM.value")}));
+			this.hYDLM.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYDLM.value"),null,true));
 		}*/
 		logger.debug("Leaving");
 	}
@@ -2002,7 +2003,7 @@ public class CollateralitemDialogCtrl extends GFCBaseCtrl implements Serializabl
 	}	
 
 	private void doSetLOVValidation() {
-		this.lovDescHYCCYName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CollateralitemDialog_HYCCY.value")}));
+		this.lovDescHYCCYName.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralitemDialog_HYCCY.value"),null,true));
 	}
 	private void doRemoveLOVValidation() {
 		this.lovDescHYCCYName.setConstraint("");

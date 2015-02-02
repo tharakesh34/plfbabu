@@ -89,6 +89,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -644,20 +645,10 @@ implements Serializable {
 		setValidationOn(true);
 
 		if (!this.productCode.isReadonly()) {
-			this.productCode
-			.setConstraint("NO EMPTY:"
-					+ Labels.getLabel(
-							"FIELD_NO_EMPTY",
-							new String[] { Labels
-									.getLabel("label_ProductFinanceTypeDialog_ProductCode.value") }));
+			this.productCode.setConstraint(new PTStringValidator( Labels.getLabel("label_ProductFinanceTypeDialog_ProductCode.value"),null,true));
 		}
 		if (!this.finType.isReadonly()) {
-			this.finType
-			.setConstraint("NO EMPTY:"
-					+ Labels.getLabel(
-							"FIELD_NO_EMPTY",
-							new String[] { Labels
-									.getLabel("label_ProductFinanceTypeDialog_FinType.value") }));
+			this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductFinanceTypeDialog_FinType.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

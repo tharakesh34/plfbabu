@@ -708,8 +708,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));	
 		}
 		if (!this.ansCond.isReadonly()){
-			this.ansCond.setConstraint(new SimpleConstraint(("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[] { Labels.getLabel("label_CheckListDetailDialog_AnsRemarks.value") }))));
+			this.ansCond.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDetailDialog_AnsRemarks.value"),null,true));
 		}
 		
 		if(!this.docType.isDisabled()){

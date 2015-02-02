@@ -962,8 +962,7 @@ public class GoodsLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescSellerID.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_GoodsLoanDetailDialog_SellerID.value")}));
+		this.lovDescSellerID.setConstraint(new PTStringValidator(Labels.getLabel("label_GoodsLoanDetailDialog_SellerID.value"),null,true));
 	}
 
 	/**

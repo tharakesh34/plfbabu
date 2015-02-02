@@ -72,6 +72,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -86,6 +87,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -218,7 +220,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 	protected JdbcSearchObject<Customer> newSearchObject ;
-
+    Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1196,8 +1198,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 		setValidationOn(true);
 
 		if (!this.custId.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CorporateCustomerDetailDialog_CustId.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_CustId.value"),null,true));
 		}
 		if (!this.name.isReadonly()){
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_Name.value"),
@@ -1215,17 +1216,14 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 			this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value"),true));
 		}	
 		if (!this.bussCommenceDate.isDisabled()){
-			this.bussCommenceDate.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
-					new String[] { Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value") }));
+			this.bussCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value"),true,startDate,DateUtility.getSystemDate(),false));
 		}
 		if (!this.servCommenceDate.isDisabled()){
-			this.servCommenceDate.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
-					new String[]{Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value")}));
+			this.servCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value"),true, startDate,DateUtility.getSystemDate(),false));
 		}
 		if (!this.bankRelationshipDate.isDisabled()){
 			if(this.bankRelationshipDate.getValue() != null){
-				this.bankRelationshipDate.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
-						new String[]{Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value")}));
+				this.bankRelationshipDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value"),true,startDate,DateUtility.getSystemDate(),false));
 			}
 		}
 		/*if (!this.paidUpCapital.isReadonly()){

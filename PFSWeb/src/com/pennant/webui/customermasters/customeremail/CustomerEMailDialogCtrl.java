@@ -700,8 +700,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		setValidationOn(true);
 
 		if (this.btnSearchPRCustid.isVisible()) {
-			this.custCIF.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerEMailDialog_CustID.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEMailDialog_CustID.value"),null,true));
 		}
 		/*if (!this.custEMailPriority.isReadonly()) {
 			this.custEMailPriority.setConstraint(new IntValidator(10,

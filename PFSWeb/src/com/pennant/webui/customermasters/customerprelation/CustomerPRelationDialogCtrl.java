@@ -93,6 +93,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -235,7 +236,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient String CUSTCIF_REGEX;
 	String parms[] = new String[4];
 	private String moduleType="";
-	
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1092,8 +1094,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 		setValidationOn(true);
 
 		if (!this.pRCustID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRCustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRCustID.value"),null,true));
 		}	
 		if (!this.pRFName.isReadonly()){
 			this.pRFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRFName.value"), 
@@ -1119,8 +1120,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 					PennantRegularExpressions.REGEX_NAME, true));
 		}	
 		if(!this.pRDOB.isReadonly()){
-			this.pRDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE_TODAY",
-					new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRDOB.value")}));
+			this.pRDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerPRelationDialog_PRDOB.value"),true,startDate,appStartDate,false));
 		}
 		boolean addressConstraint = false;
 		if (StringUtils.trimToEmpty(this.pRAddrHNbr.getValue()).equals("")
@@ -1204,17 +1204,13 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl implements Serializ
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 
-		this.lovDescPRRelationCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRRelationCode.value")}));
+		this.lovDescPRRelationCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRRelationCode.value"),null,true));
 
-		this.lovDescPRAddrCityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrCity.value")}));
+		this.lovDescPRAddrCityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrCity.value"),null,true));
 
-		this.lovDescPRAddrProvinceName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrProvince.value")}));
+		this.lovDescPRAddrProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrProvince.value"),null,true));
 
-		this.lovDescPRAddrCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_CustomerPRelationDialog_PRAddrCountry.value")}));
+		this.lovDescPRAddrCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPRelationDialog_PRAddrCountry.value"),null,true));
 
 		logger.debug("Leaving");
 	}

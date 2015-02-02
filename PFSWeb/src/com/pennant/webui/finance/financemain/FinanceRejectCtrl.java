@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 import com.rits.cloning.Cloner;
@@ -220,8 +221,7 @@ public class FinanceRejectCtrl extends GFCBaseCtrl implements Serializable {
 	private void doSetValidation() {
 		logger.debug("Entering ");
 		if (this.remarks.isVisible()){
-			this.remarks.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_FinanceRejectStatusDialog_FinanceRemarks.value")}));
+			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceRejectStatusDialog_FinanceRemarks.value"),null,true));
 		}
 		logger.debug("Leaving ");
 	}

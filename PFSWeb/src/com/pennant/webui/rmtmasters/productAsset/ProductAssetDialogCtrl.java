@@ -661,8 +661,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl implements Serializable{
 		setValidationOn(true);
 
 		if (!this.productCode.isReadonly()){
-			this.productCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ProductAssetDialog_ProductCode.value")}));
+			this.productCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductAssetDialog_ProductCode.value"),null,true));
 		}
 		
 		if (!this.assetCode.isReadonly()){

@@ -77,6 +77,7 @@ import com.pennant.backend.service.amtmasters.PropertyRelationTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -565,7 +566,7 @@ public class PropertyRelationTypeDialogCtrl extends GFCBaseCtrl implements Seria
 		setValidationOn(true);
 		
 		if (!this.propertyRelationTypeName.isReadonly()){
-			this.propertyRelationTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_PropertyRelationTypeDialog_PropertyRelationTypeName.value")}));
+			this.propertyRelationTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_PropertyRelationTypeDialog_PropertyRelationTypeName.value"),null,true));
 		}	
 	logger.debug("Leaving");
 	}

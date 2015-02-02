@@ -727,8 +727,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (this.btnSearchPRCustid.isVisible()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerIncomeDialog_CustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIncomeDialog_CustID.value"),null,true));
 		}
 
 		if (!this.custIncome.isReadonly()) {

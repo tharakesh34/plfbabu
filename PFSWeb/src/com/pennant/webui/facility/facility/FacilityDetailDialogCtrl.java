@@ -1150,10 +1150,10 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 		boolean isTranTypeSyndication = this.transactionType.getSelectedItem().getValue().equals(PennantConstants.FACILITY_TRAN_SYNDIACTION);
 //		if (!this.cAFReference.isReadonly()) {
-//			this.cAFReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_CAFReference.value") }));
+//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_CAFReference.value"),null,true));
 //		}
 		if (!this.facilityFor.isReadonly()) {
-			this.facilityFor.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_FacilityFor.value") }));
+			this.facilityFor.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_FacilityFor.value"),null,true));
 		}
 		if (!this.facilityType.isReadonly()) {
 			this.facilityType.setConstraint(new PTStringValidator ( Labels.getLabel("label_FacilityDetailDialog_FacilityType.value"),null,true,true));
@@ -1178,7 +1178,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.tenorMonth.setConstraint(new PTNumberValidator(Labels.getLabel("label_FacilityDetailDialog_TenorMonth.value"),  false, false,0,11));
 		}
 //		if (!this.tenorDesc.isReadonly()) {
-//			this.tenorDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_TenorDesc.value") }));
+//			this.tenorDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_TenorDesc.value"),null,true));
 //		}
 		
 		if (!this.startDate.isReadonly() && !this.startDate.isDisabled()) {
@@ -1188,39 +1188,39 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FacilityDetailDialog_MaturityDate.value"), false, appldate,null, true));
 		}
 //		if (!this.pricing.isReadonly()) {
-//			this.pricing.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_Pricing.value") }));
+//			this.pricing.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Pricing.value"),null,true));
 //		}
 //		if (!this.repayments.isReadonly()) {
-//			this.repayments.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_Repayments.value") }));
+//			this.repayments.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Repayments.value"),null,true));
 //		}
 //		if (!this.rateType.isReadonly()) {
-//			this.rateType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_RateType.value") }));
+//			this.rateType.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_RateType.value"),null,true));
 //		}
 //		if (!this.lCPeriod.isReadonly()) {
-//			this.lCPeriod.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_LCPeriod.value") }));
+//			this.lCPeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_LCPeriod.value"),null,true));
 //		}
 //		if (!this.usancePeriod.isReadonly()) {
-//			this.usancePeriod.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_UsancePeriod.value") }));
+//			this.usancePeriod.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_UsancePeriod.value"),null,true));
 //		}
 //		if (!this.securityDesc.isReadonly()) {
-//			this.securityDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_SecurityDesc.value") }));
+//			this.securityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_SecurityDesc.value"),null,true));
 //		}
 //		if (!this.utilization.isReadonly()) {
-//			this.utilization.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_Utilization.value") }));
+//			this.utilization.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Utilization.value"),null,true));
 //		}
 //		if (!this.commission.isReadonly()) {
-//			this.commission.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_Commission.value") }));
+//			this.commission.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_Commission.value"),null,true));
 //		}
 //		if (!this.purpose.isReadonly()) {
-//			this.purpose.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_Purpose.value") }));
+//			this.purpose.setConstraint(new PTStringValidator( Labels.getLabel("label_FacilityDetailDialog_Purpose.value"),null,true));
 //		}
 		
 //			if (!this.agentBank.isReadonly()) {
-//				this.agentBank.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_agentBank.value") }));
+//				this.agentBank.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_agentBank.value"),null,true));
 //			}
 //
 //			if (!this.otherDetails.isReadonly()) {
-//				this.otherDetails.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FacilityDetailDialog_otherDetails.value") }));
+//				this.otherDetails.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_otherDetails.value"),null,true));
 //			}
 		if(isTranTypeSyndication){
 			/*if (!this.totalFacility.isReadonly()) {
@@ -1239,8 +1239,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 
 			if(!this.totalFacilityCcy.isReadonly()){ 
-				this.totalFacilityCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-						new String[] { Labels.getLabel("label_FacilityDetailDialog_totalFacilityCcy.value") }));
+				this.totalFacilityCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_totalFacilityCcy.value"),null,true));
 			}*/
 			if(!this.underWritingCcy.isReadonly()){ 
 				this.underWritingCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDetailDialog_underWritingCcy.value"),null,true,true));

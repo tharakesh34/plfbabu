@@ -651,7 +651,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),null,true,true));
 		}
 		if (!this.finEvent.isReadonly()) {
-			this.finEvent.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinTypeAccountDialog_Event.value") }));
+			this.finEvent.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeAccountDialog_Event.value"),null,true));
 		}
 	
 		logger.debug("Leaving");

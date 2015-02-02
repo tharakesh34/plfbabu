@@ -737,16 +737,13 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.phoneCustID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneCustID.value"),null,true));
 		}	
 		if (!this.phoneAreaCode.isReadonly()){
-			this.phoneAreaCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneAreaCode.value")}));
+			this.phoneAreaCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneAreaCode.value"),null,true));
 		}	
 		if (!this.phoneNumber.isReadonly()){
-			/*this.phoneNumber.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value")}));*/
+			/*this.phoneNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),null,true));*/
 			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true));
 		}	
 		logger.debug("Leaving");

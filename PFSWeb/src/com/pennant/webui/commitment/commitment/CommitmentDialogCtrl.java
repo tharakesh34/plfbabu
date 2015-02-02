@@ -1820,7 +1820,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private void doSetLOVValidation() {
 		// cust ID
 		if (btnSearchcustID.isVisible()) {
-			this.custIDName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommitmentDialog_custID.value") }));
+			this.custIDName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_custID.value"),null,true));
 		}
 		// Cmt Branch
 		if (cmtBranch.isButtonVisible()) {
@@ -1833,7 +1833,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		// Cmt Account
 		if (openAccount.isChecked() == false) {
 			if (btnSearchCmtAccount.isVisible()) {
-				this.cmtAccountName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CommitmentDialog_CmtAccount.value") }));
+				this.cmtAccountName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtAccount.value"),null,true));
 			}
 		}
 		//Cmt Branch 

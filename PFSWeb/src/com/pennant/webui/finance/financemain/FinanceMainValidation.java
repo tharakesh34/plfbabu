@@ -14,6 +14,8 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RangeAmountValidator;
 
 public class FinanceMainValidation {
@@ -62,8 +64,7 @@ public class FinanceMainValidation {
 		}
 		if (!((Datebox)window.getFellowIfAny("finStartDate")).isDisabled()){
 			Datebox finStartDate =  ((Datebox)window.getFellowIfAny("finStartDate"));
-			finStartDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_FinanceMainQDEDialog_FinStartDate.value")}));
+			finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceMainQDEDialog_FinStartDate.value"),true));
 		}
 		if (!((Intbox)window.getFellowIfAny("numberOfTerms")).isReadonly()){
 			Intbox numberOfTerms = ((Intbox)window.getFellowIfAny("numberOfTerms"));
@@ -76,8 +77,7 @@ public class FinanceMainValidation {
 		}
 		if(!((Textbox)window.getFellowIfAny("finReference")).isReadonly() && !getFinanceType().isFinIsGenRef()) {
 			Textbox finReference = ((Textbox)window.getFellowIfAny("finReference"));
-			finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_FinanceMainQDEDialog_FinReference.value") }));
+			finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainQDEDialog_FinReference.value"),null,true));
 		}
 	}
 	
@@ -88,13 +88,11 @@ public class FinanceMainValidation {
 		
 		if (!((Longbox)window.getFellowIfAny("custID")).isReadonly()){
 			Textbox lovDescCustCIF = (Textbox)window.getFellowIfAny("lovDescCustCIF");
-		lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_FinanceMainQDEDialog_CustCIF.value")}));
+		lovDescCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainQDEDialog_CustCIF.value"),null,true));
 		}
 		if (!((Textbox)window.getFellowIfAny("finCcy")).isReadonly()){
 			Textbox lovDescFinCcyName = (Textbox)window.getFellowIfAny("lovDescFinCcyName");
-			lovDescFinCcyName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_FinanceMainQDEDialog_FinCcy.value")}));
+			lovDescFinCcyName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainQDEDialog_FinCcy.value"),null,true));
 		}
 	}
 	

@@ -108,6 +108,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.TreasuryFinHeaderListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -1060,22 +1061,18 @@ Serializable {
 		}
 
 		if (!this.profitDaysBasis.isDisabled()) {			
-			this.profitDaysBasis .setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_ProfitDaysBasis.value"));
+			this.profitDaysBasis .setConstraint(new PTStringValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_ProfitDaysBasis.value"),null,true));
 		}
 
 		if (!this.startDate.isDisabled()) {			
-			this.startDate.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_StartDate.value"));
+			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value"),true));
 		}
 
 		if (!this.maturityDate.isDisabled()) {
-			this.maturityDate.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_MaturityDate.value"));
+			this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),true));
 		}
 
 		logger.debug("Leaving");
-	}
-
-	private String setNotEmpty(String label) {
-		return  "NO EMPTY:" + Labels.getLabel( "FIELD_NO_EMPTY", new String[] { Labels.getLabel(label) });
 	}
 
 	/**

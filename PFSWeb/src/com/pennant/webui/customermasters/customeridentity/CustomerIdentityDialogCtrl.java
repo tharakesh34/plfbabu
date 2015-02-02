@@ -85,6 +85,8 @@ import com.pennant.backend.service.customermasters.CustomerIdentityService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -177,7 +179,9 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 	private boolean newRecord=false;
 	private boolean newCustomer=false;
 	protected JdbcSearchObject<Customer> newSearchObject ;
-
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date endDate=(Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -529,28 +533,12 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 			wve.add(we);
 		}
 		try {
-			if (this.idIssuedOn.getValue() != null) {
-				if (!(this.idIssuedOn.getValue().after((Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DFT_START_DATE")))) {
-					throw new WrongValueException(this.idIssuedOn,Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] {Labels.getLabel("label_CustomerIdentityDialog_IdIssuedOn.value"),
-							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
-				}
 				aCustomerIdentity.setIdIssuedOn(this.idIssuedOn.getValue());
-			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			if (this.idExpiresOn.getValue() != null) {
-				if (!(this.idExpiresOn.getValue().before((Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DFT_END_DATE")))) {
-					throw new WrongValueException(this.idExpiresOn,Labels.getLabel("DATE_ALLOWED_BEFORE",
-							new String[] {Labels.getLabel("label_CustomerIdentityDialog_IdExpiresOn.value"),
-							SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE").toString() }));
-				}
 				aCustomerIdentity.setIdExpiresOn(this.idExpiresOn.getValue());
-			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -741,23 +729,22 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 		setValidationOn(true);
 
 		if (!this.idCustID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdCustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdCustID.value"),null,true));
 		}
 		if (!this.idIssuedBy.isReadonly()){
-			this.idIssuedBy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdIssuedBy.value")}));
+			this.idIssuedBy.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdIssuedBy.value"),null,true));
 		}	
 		if (!this.idRef.isReadonly()){
-			this.idRef.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdRef.value")}));
+			this.idRef.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdRef.value"),null,true));
 		}	
 		if (!this.idIssuedOn.isDisabled()){
-			this.idIssuedOn.setConstraint("NO EMPTY,NO FUTURE:" + Labels.getLabel("DATE_EMPTY_FUTURE",new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdIssuedOn.value")}));
+			this.idIssuedOn.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerIdentityDialog_IdIssuedOn.value"),true,startDate,appStartDate,true));
 		}
 		if (!this.idExpiresOn.isDisabled()){
-			this.idExpiresOn.setConstraint("NO EMPTY,NO PAST:" + Labels.getLabel("DATE_EMPTY_PAST",new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdExpiresOn.value")}));
+			this.idExpiresOn.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerIdentityDialog_IdExpiresOn.value"),true,appStartDate,endDate,true));
 		}
 		if (!this.idLocation.isReadonly()){
-			this.idLocation.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CustomerIdentityDialog_IdLocation.value")}));
+			this.idLocation.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdLocation.value"),null,true));
 		}	
 		logger.debug("Leaving");
 	}
@@ -782,11 +769,8 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl implements Serializa
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescIdTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerIdentityDialog_IdType.value") }));
-		this.lovDescIdIssueCountryName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-				"label_CustomerIdentityDialog_IdIssueCountry.value") }));
+		this.lovDescIdTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdType.value"),null,true));
+		this.lovDescIdIssueCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerIdentityDialog_IdIssueCountry.value"),null,true));
 		logger.debug("Leaving");
 	}
 

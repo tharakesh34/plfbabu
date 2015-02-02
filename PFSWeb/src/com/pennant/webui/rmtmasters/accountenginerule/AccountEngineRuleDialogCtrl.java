@@ -661,9 +661,7 @@ public class AccountEngineRuleDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescAEEventName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-						"label_AccountEngineRuleDialog_AEEvent.value") }));
+		this.lovDescAEEventName.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountEngineRuleDialog_AEEvent.value"),null,true));
 		logger.debug("Leaving");
 	}
 

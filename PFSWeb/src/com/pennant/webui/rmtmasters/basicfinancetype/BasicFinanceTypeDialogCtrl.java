@@ -77,6 +77,7 @@ import com.pennant.backend.service.rmtmasters.BasicFinanceTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -593,14 +594,10 @@ public class BasicFinanceTypeDialogCtrl extends GFCBaseCtrl implements
 
 		setValidationOn(true);
 		if (!this.finBasicType.isReadonly()) {
-			this.finBasicType.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-							"label_BasicFinanceTypeDialog_FinBasicType.value") }));
+			this.finBasicType.setConstraint(new PTStringValidator(Labels.getLabel("label_BasicFinanceTypeDialog_FinBasicType.value"),null,true));
 		}
 		if (!this.finBasicDesc.isReadonly()) {
-			this.finBasicDesc.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-							"label_BasicFinanceTypeDialog_FinBasicDesc.value") }));
+			this.finBasicDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_BasicFinanceTypeDialog_FinBasicDesc.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

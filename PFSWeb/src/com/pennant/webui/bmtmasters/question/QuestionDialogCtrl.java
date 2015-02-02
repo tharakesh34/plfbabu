@@ -83,6 +83,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -671,16 +672,13 @@ public class QuestionDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.questionDesc.isReadonly()) {
-			this.questionDesc.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_QuestionDialog_QuestionDesc.value") }));
+			this.questionDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_QuestionDesc.value"),null,true));
 		}
 		if (!this.answerA.isReadonly()) {
-			this.answerA.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_QuestionDialog_AnswerA.value") }));
+			this.answerA.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerA.value"),null,true));
 		}
 		if (!this.answerB.isReadonly()) {
-			this.answerB.setConstraint("NO EMPTY:"+ Labels.getLabel(
-					"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_QuestionDialog_AnswerB.value") }));
+			this.answerB.setConstraint(new PTStringValidator(Labels.getLabel("label_QuestionDialog_AnswerB.value"),null,true));
 		}
 		/*
 		 * if (!this.answerC.isReadonly()){

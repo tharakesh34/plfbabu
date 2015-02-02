@@ -88,6 +88,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.finance.investment.DealFinanceBaseCtrl;
@@ -777,11 +778,11 @@ public class InvestmentDealDialogCtrl extends DealFinanceBaseCtrl implements Ser
 		setValidationOn(true);
 
 		if (!this.startDate.isReadonly()) {			
-			this.startDate.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_StartDate.value"));
+			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_StartDate.value"),true));
 		}
 
 		if (!this.maturityDate.isReadonly()) {
-			this.maturityDate.setConstraint(setNotEmpty("label_TreasuaryFinHeaderDialog_MaturityDate.value"));
+			this.maturityDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TreasuaryFinHeaderDialog_MaturityDate.value"),true));
 		}
 
 		if (!this.finAmount.isReadonly()){
@@ -803,8 +804,7 @@ public class InvestmentDealDialogCtrl extends DealFinanceBaseCtrl implements Ser
 		logger.debug("Entering");
 
 		if (!this.lovDescCustCIF.isReadonly()){
-			this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_InvestmentDealDialog_CounterParty.value")}));
+			this.lovDescCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_InvestmentDealDialog_CounterParty.value"),null,true));
 		}
 		if (this.finBranch.isButtonVisible()){
 			this.finBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_InvestmentDealDialog_FinBranch.value"),null,true,true));

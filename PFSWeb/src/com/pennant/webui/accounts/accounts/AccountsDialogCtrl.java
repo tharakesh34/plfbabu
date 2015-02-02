@@ -92,6 +92,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -920,28 +921,23 @@ public class AccountsDialogCtrl extends GFCBaseCtrl implements Serializable {
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 		if (!this.acCcy.isReadonly()){
-			this.acCcy.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcCcy.value")}));
+			this.acCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcCcy.value"),null,true));
 		}	
 		if (!this.acType.isReadonly()){
-			this.acType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcType.value")}));
+			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcType.value"),null,true));
 		}	
 		if (!this.acBranch.isReadonly()){
-			this.acBranch.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcBranch.value")}));
+			this.acBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcBranch.value"),null,true));
 		}	
 		if(!this.accounts.isInternalAc()){
 			if (!this.acCustId.isReadonly()){
 				this.acCustId.setConstraint(new LongValidator(19,Labels.getLabel("label_AcountsDialog_AcCustId.value")));
 			}
 			if (!this.acFullName.isReadonly()){
-				this.acFullName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-						,new String[]{Labels.getLabel("label_AcountsDialog_AcFullName.value")}));
+				this.acFullName.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcFullName.value"),null,true));
 			}	
 			if (!this.acShortName.isReadonly()){
-				this.acShortName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-						,new String[]{Labels.getLabel("label_AcountsDialog_AcShortName.value")}));
+				this.acShortName.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AcShortName.value"),null,true));
 			}	
 		}
 		if (!this.acPrvDayBal.isReadonly()){
@@ -969,16 +965,13 @@ public class AccountsDialogCtrl extends GFCBaseCtrl implements Serializable {
 					new AmountValidator(18,0,Labels.getLabel("label_AcountsDialog_AcTodayBal.value")));
 		}	
 		if (!this.acOpenDate.isDisabled()){
-			this.acOpenDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcOpenDate.value")}));
+			this.acOpenDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcOpenDate.value"),true));
 		}
 		if (!this.acLastCustTrnDate.isDisabled()){
-			this.acLastCustTrnDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcLastCustTrnDate.value")}));
+			this.acLastCustTrnDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastCustTrnDate.value"),true));
 		}
 		if (!this.acLastSysTrnDate.isDisabled()){
-			this.acLastSysTrnDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_AcountsDialog_AcLastSysTrnDate.value")}));
+			this.acLastSysTrnDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AcountsDialog_AcLastSysTrnDate.value"),true));
 		}
 		if (!this.hostAcNumber.isReadonly()){
 			this.hostAcNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_HostAcNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, false));

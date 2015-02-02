@@ -1925,8 +1925,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		if (!this.finReference.isReadonly() && 
 				!financeType.isFinIsGenRef()) {
 
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_FinReference.value") }));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinReference.value"),null,true));
 		}
 
 		if (!this.finAmount.isReadonly()) {
@@ -1954,8 +1953,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		if (this.gb_gracePeriodDetails.isVisible()) {
 			
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-						new String[] { Labels.getLabel("label_SukukFinanceMainDialog_GraceTerms.value") }));
+				this.graceTerms.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_GraceTerms.value"),null,true));
 			}
 			
 			if (!this.grcMargin.isReadonly()) {
@@ -1971,15 +1969,13 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			if (!this.nextGrcPftDate.isReadonly() && 
 					FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 
-				this.nextGrcPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextGrcPftDate.value") }));
+				this.nextGrcPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextGrcPftDate.value"),true));
 			}
 
 			if (!this.nextGrcPftRvwDate.isReadonly() && 
 					FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
-				this.nextGrcPftRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextGrcPftRvwDate.value") }));
+				this.nextGrcPftRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextGrcPftRvwDate.value"),true));
 			}
 		}
 
@@ -1988,29 +1984,25 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		if (!this.nextRepayDate.isReadonly() && 
 				FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
-			this.nextRepayDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextRepayDate.value") }));
+			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextRepayDate.value"),true));
 		}
 
 		if (!this.nextRepayPftDate.isReadonly() && 
 				FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
-			this.nextRepayPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextRepayPftDate.value") }));
+			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextRepayPftDate.value"),true));
 		}
 
 		if (!this.nextRepayRvwDate.isReadonly() && 
 				FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
-			this.nextRepayRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextRepayRvwDate.value") }));
+			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextRepayRvwDate.value"),true));
 		}
 
 		if (!this.nextRepayCpzDate.isReadonly() && 
 				FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
-			this.nextRepayCpzDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_NextRepayCpzDate.value") }));
+			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_NextRepayCpzDate.value"),true));
 		}
 
 		this.repayEffectiveRate.setConstraint(new RateValidator(13, 9,
@@ -2024,15 +2016,14 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		if(financeType.getFinMinTerm() == 1 &&
 				financeType.getFinMaxTerm() == 1){
 
-			this.maturityDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_MaturityDate.value") }));
+			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_MaturityDate.value"),true));
 		}
 		
 		//Finance Premium or Discount Details
 		int ccyformatter = getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
 		
 		if (!this.issueNumber.isReadonly()) {
-			this.issueNumber.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SukukFinanceMainDialog_IssueNumber.value") }));
+			this.issueNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_IssueNumber.value"),null,true));
 		}
 		if (!this.noOfUnits.isReadonly()) {
 			this.noOfUnits.setConstraint(new PTNumberValidator( Labels.getLabel("label_SukukFinanceMainDialog_IssueNumber.value"), true));
@@ -2190,8 +2181,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_SukukFinanceMainDialog_FinType.value") }));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinType.value"),null,true));
 
 		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinCcy.value"),null,true,true));
 
@@ -2204,24 +2194,20 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		}
 
 		if (!recSave && StringUtils.trimToEmpty(this.disbAcctId.getSclass()).equals("mandatory")) {
-			this.disbAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_DisbAcctId.value") }));
+			this.disbAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_DisbAcctId.value"),null,true));
 		}
 
 		if (!recSave && this.repayAcctId.getSclass().equals("mandatory")) {
-			this.repayAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_RepayAcctId.value") }));
+			this.repayAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_RepayAcctId.value"),null,true));
 		}
 
 		if (!recSave && this.downPayAccount.getSclass().equals("mandatory")) {
-			this.downPayAccount.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_DownPayAccount.value") }));
+			this.downPayAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_DownPayAccount.value"),null,true));
 		}
 
 		if (!this.btnSearchCommitmentRef.isDisabled() && 
 				space_commitmentRef.getSclass().equals("mandatory")) {
-			this.lovDescCommitmentRefName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SukukFinanceMainDialog_CommitRef.value") }));
+			this.lovDescCommitmentRefName.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_CommitRef.value"),null,true));
 		}
 
 		if (!this.finPurpose.isReadonly()) {
@@ -2235,8 +2221,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
-			this.lovDescGrcIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_SukukFinanceMainDialog_FinGrcIndBaseRate.value")}));			
+			this.lovDescGrcIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinGrcIndBaseRate.value"),null,true));			
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -2246,8 +2231,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){
-			this.lovDescRpyIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_SukukFinanceMainDialog_FinRpyIndBaseRate.value")}));			
+			this.lovDescRpyIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinRpyIndBaseRate.value"),null,true));			
 		}
 		logger.debug("Leaving ");
 	}

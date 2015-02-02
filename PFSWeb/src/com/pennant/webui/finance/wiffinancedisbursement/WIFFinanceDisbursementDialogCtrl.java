@@ -87,6 +87,8 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -662,25 +664,25 @@ public class WIFFinanceDisbursementDialogCtrl extends GFCBaseCtrl implements Ser
 		setValidationOn(true);
 		
 		if (!this.finReference.isReadonly()){
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceDisbursementDialog_FinReference.value")}));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceDisbursementDialog_FinReference.value"),null,true));
 		}	
 		if (!this.disbDate.isDisabled()){
-			this.disbDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbDate.value")}));
+			this.disbDate.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbDate.value"),true));
 		}
 		if (!this.disbSeq.isReadonly()){
 			this.disbSeq.setConstraint(new IntValidator(10,Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbSeq.value")));
 		}	
 		if (!this.disbDesc.isReadonly()){
-			this.disbDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbDesc.value")}));
+			this.disbDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbDesc.value"),null,true));
 		}	
 		if (!this.disbAmount.isReadonly()){
 			this.disbAmount.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbAmount.value")));
 		}	
 		if (!this.disbActDate.isDisabled()){
-			this.disbActDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbActDate.value")}));
+			this.disbActDate.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbActDate.value"),true));
 		}
 		if (!this.disbRemarks.isReadonly()){
-			this.disbRemarks.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbRemarks.value")}));
+			this.disbRemarks.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceDisbursementDialog_DisbRemarks.value"),null,true));
 		}	
 	logger.debug("Leaving");
 	}

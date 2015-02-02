@@ -889,8 +889,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerAddresDialog_CustAddrCIF.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrCIF.value"),null,true));
 		}
 		
 		if (!this.custAddrHNbr.isReadonly()){

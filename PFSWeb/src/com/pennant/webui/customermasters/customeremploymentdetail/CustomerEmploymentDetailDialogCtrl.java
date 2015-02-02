@@ -892,8 +892,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl implements S
 		setValidationOn(true);
 		
 		if(!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerEmploymentDetailDialog_CustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustID.value"),null,true));
 		}
 		if (this.custEmpName.isButtonVisible()) {
 			this.custEmpName.setConstraint(	new PTStringValidator(Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value"),null,true,true));

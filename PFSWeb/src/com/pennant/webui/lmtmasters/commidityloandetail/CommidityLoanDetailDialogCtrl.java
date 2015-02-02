@@ -736,8 +736,7 @@ public class CommidityLoanDetailDialogCtrl extends GFCBaseCtrl implements Serial
 	 */
 
 	private void doSetLOVValidation() {
-		this.lovDescItemType.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CommidityLoanDetailDialog_ItemType.value")}));
+		this.lovDescItemType.setConstraint(new PTStringValidator(Labels.getLabel("label_CommidityLoanDetailDialog_ItemType.value"),null,true));
 	}
 
 	/**

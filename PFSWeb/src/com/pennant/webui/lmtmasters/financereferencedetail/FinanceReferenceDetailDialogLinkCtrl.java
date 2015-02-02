@@ -91,6 +91,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.IntValidator;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -811,7 +812,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceReferenceDetailDialog_FinType.value") }));
+			this.finType.setConstraint(new PTStringValidator( Labels.getLabel("label_FinanceReferenceDetailDialog_FinType.value"),null,true));
 		}
 		if (!this.finRefType.isReadonly()) {
 			this.finRefType.setConstraint(new IntValidator(10, Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefType.value")));
@@ -820,16 +821,13 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			this.finRefId.setConstraint(new LongValidator(19, Labels.getLabel("label_FinanceReferenceDetailDialog_FinRefId.value")));
 		}
 		if (!this.showInStage.isReadonly()) {
-			this.showInStage.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceReferenceDetailDialog_ShowInStage.value") }));
+			this.showInStage.setConstraint(new PTStringValidator( Labels.getLabel("label_FinanceReferenceDetailDialog_ShowInStage.value"),null,true));
 		}
 		if (!this.mandInputInStage.isReadonly()) {
-			this.mandInputInStage.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceReferenceDetailDialog_MandInputInStage.value") }));
+			this.mandInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_MandInputInStage.value"),null,true));
 		}
 		if (!this.allowInputInStage.isReadonly()) {
-			this.allowInputInStage.setConstraint("NO EMPTY:"
-					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_FinanceReferenceDetailDialog_AllowInputInStage.value") }));
+			this.allowInputInStage.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceReferenceDetailDialog_AllowInputInStage.value"),null,true ));
 		}
 		logger.debug("Leaving");
 	}

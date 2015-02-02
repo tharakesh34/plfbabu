@@ -92,6 +92,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -634,14 +635,10 @@ public class AdditionalFieldsDialogCtrl extends GFCBaseCtrl implements Serializa
 		setValidationOn(true);
 
 		if (!this.code.isReadonly()) {
-			this.code.setConstraint("NO EMPTY:"
-			        + Labels.getLabel("FIELD_NO_EMPTY",
-			                new String[] { Labels.getLabel("label_AdditionalFieldsDialog_Code.value") }));
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_AdditionalFieldsDialog_Code.value"),null,true));
 		}
 		if (!this.description.isReadonly()) {
-			this.description.setConstraint("NO EMPTY:"
-			        + Labels.getLabel("FIELD_NO_EMPTY",
-			                new String[] { Labels.getLabel("label_AdditionalFieldsDialog_Description.value") }));
+			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_AdditionalFieldsDialog_Description.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

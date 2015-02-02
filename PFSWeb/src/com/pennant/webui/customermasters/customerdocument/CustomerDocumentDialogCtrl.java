@@ -232,9 +232,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
 	private List<DocumentDetails> documentDetailList = null;
 	private String userRole="";
-
-
-
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -753,18 +753,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}		try {
-			if (this.custDocExpDate.getValue() != null ) {
-				
-				if(this.custDocIssuedOn.getValue() != null && !(this.custDocExpDate.getValue().after(this.custDocIssuedOn.getValue()))){
-					throw new WrongValueException(custDocExpDate,  Labels.getLabel(
-							"DATE_ALLOWED_AFTER",new String[]{Labels.getLabel(
-									"label_CustomerDocumentDialog_CustDocExpDate.value"),
-									DateUtility.formatUtilDate(this.custDocRcvdOn.getValue(), PennantConstants.dateFormat),
-									DateUtility.formatUtilDate(this.custDocIssuedOn.getValue(), PennantConstants.dateFormat)}));
-				}
 				aCustomerDocument.setCustDocExpDate(this.custDocExpDate.getValue());
-			}
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1031,8 +1020,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocCIF.value"),null,true));
 		}
 
 		if (!this.custDocTitle.isReadonly()){
@@ -1046,15 +1034,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		}
 
 		if (!this.custDocRcvdOn.isReadonly() && !this.custDocRcvdOn.isDisabled()) {
-			this.custDocRcvdOn.setConstraint("NO EMPTY,NO FUTURE:"+ Labels.getLabel(
-					"DATE_EMPTY_FUTURE",new String[] { Labels.getLabel(
-							"label_CustomerDocumentDialog_CustDocRcvdOn.value") }));
+			this.custDocRcvdOn.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocRcvdOn.value"),true,startDate,appStartDate,true));
 		}
 
 		if (!this.custDocExpDate.isReadonly() && !this.custDocExpDate.isDisabled()) {
-			this.custDocExpDate.setConstraint("NO EMPTY,NO PAST:"+ Labels.getLabel(
-					"DATE_EMPTY_PAST",new String[] { Labels.getLabel(
-							"label_CustomerDocumentDialog_CustDocExpDate.value") }));
+			this.custDocExpDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),true,appStartDate,endDate,true));
 		}
 
 		if (!this.custDocIssuedOn.isReadonly() && !this.custDocIssuedOn.isDisabled()) {

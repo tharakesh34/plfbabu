@@ -43,6 +43,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.model.ExtendedFieldListItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -507,8 +508,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseListCtrl<ExtendedFieldDetail
 		setValidationOn(true);
 
 		if (!this.tabHeading.isReadonly()) {
-			this.tabHeading.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_ExtendedFieldDialog_TabHeading.value") }));
+			this.tabHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ExtendedFieldDialog_TabHeading.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

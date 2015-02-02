@@ -98,6 +98,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -809,8 +810,7 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 		setValidationOn(true);
 
 		if (!this.oDCRuleCode.isReadonly()) {
-			this.oDCRuleCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_OverdueChargeDialog_ODCRuleCode.value") }));
+			this.oDCRuleCode.setConstraint(new PTStringValidator(Labels.getLabel("label_OverdueChargeDialog_ODCRuleCode.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1323,10 +1323,8 @@ public class OverdueChargeDialogCtrl extends GFCBaseListCtrl<OverdueCharge> impl
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescODCPLAccountName.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_OverdueChargeDialog_ODCPLAccount.value") }));
-		this.lovDescODCCharityAccountName.setConstraint("NO EMPTY:"
-				+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_OverdueChargeDialog_ODCCharityAccount.value") }));
+		this.lovDescODCPLAccountName.setConstraint(new PTStringValidator(Labels.getLabel("label_OverdueChargeDialog_ODCPLAccount.value"),null,true));
+		this.lovDescODCCharityAccountName.setConstraint(new PTStringValidator(Labels.getLabel("label_OverdueChargeDialog_ODCCharityAccount.value"),null,true));
 	}
 
 	private void doRemoveLOVValidation() {

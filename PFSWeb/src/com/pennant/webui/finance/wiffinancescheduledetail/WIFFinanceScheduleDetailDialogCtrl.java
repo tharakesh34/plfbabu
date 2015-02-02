@@ -89,6 +89,8 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1031,10 +1033,10 @@ public class WIFFinanceScheduleDetailDialogCtrl extends GFCBaseCtrl implements S
 		setValidationOn(true);
 		
 		if (!this.finReference.isReadonly()){
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceScheduleDetailDialog_FinReference.value")}));
+			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceScheduleDetailDialog_FinReference.value"),null,true));
 		}	
 		if (!this.schDate.isDisabled()){
-			this.schDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceScheduleDetailDialog_SchDate.value")}));
+			this.schDate.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceScheduleDetailDialog_SchDate.value"),true));
 		}
 		if (!this.schSeq.isReadonly()){
 			this.schSeq.setConstraint(new IntValidator(10,Labels.getLabel("label_WIFFinanceScheduleDetailDialog_SchSeq.value")));
@@ -1724,8 +1726,8 @@ public class WIFFinanceScheduleDetailDialogCtrl extends GFCBaseCtrl implements S
 	}	
 
 	private void doSetLOVValidation() {
-		this.lovDescBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceScheduleDetailDialog_BaseRate.value")}));
-		this.lovDescSplRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_WIFFinanceScheduleDetailDialog_SplRate.value")}));
+		this.lovDescBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceScheduleDetailDialog_BaseRate.value"),null,true));
+		this.lovDescSplRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceScheduleDetailDialog_SplRate.value"),null,true));
 	}
 	private void doRemoveLOVValidation() {
 		this.lovDescBaseRateName.setConstraint("");

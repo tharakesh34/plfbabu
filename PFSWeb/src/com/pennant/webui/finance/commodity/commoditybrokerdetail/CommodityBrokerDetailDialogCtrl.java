@@ -85,6 +85,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1069,8 +1070,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl implements Seri
 			this.brokerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}	
 		if (!this.brokerFrom.isReadonly()){
-			this.brokerFrom.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerFrom.value")}));
+			this.brokerFrom.setConstraint(new PTDateValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerFrom.value"),true));
 		}	
 		if (!this.brokerAddrHNbr.isReadonly()){
 			this.brokerAddrHNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrHNbr.value"),
@@ -1092,16 +1092,13 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl implements Seri
 
 		}	
 		if (!this.brokerAddrCountry.isReadonly()){
-			this.brokerAddrCountry.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value")}));
+			this.brokerAddrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCountry.value"),null,true));
 		}	
 		if (!this.brokerAddrProvince.isReadonly()){
-			this.brokerAddrProvince.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value")}));
+			this.brokerAddrProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrProvince.value"),null,true));
 		}	
 		if (!this.brokerAddrCity.isReadonly()){
-			this.brokerAddrCity.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value")}));
+			this.brokerAddrCity.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrCity.value"),null,true));
 		}	
 		if (!this.brokerAddrZIP.isReadonly()){
 			this.brokerAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));

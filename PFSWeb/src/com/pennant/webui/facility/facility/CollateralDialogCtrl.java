@@ -713,10 +713,10 @@ public class CollateralDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.reference.isReadonly()) {
-			this.reference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CollateralDialog_Reference.value") }));
+			this.reference.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_Reference.value"),null,true));
 		}
 		if (!this.lastReview.isReadonly()) {
-			this.lastReview.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CollateralDialog_LastReview.value") }));
+			this.lastReview.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralDialog_LastReview.value"),null,true));
 		}
 		if (!this.value.isReadonly()) {
 			this.value.setConstraint(new PTDecimalValidator(Labels.getLabel("label_CollateralDialog_Value.value"), ccyFormat, false, false));

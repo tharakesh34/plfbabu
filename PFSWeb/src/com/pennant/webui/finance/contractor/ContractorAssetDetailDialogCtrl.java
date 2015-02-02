@@ -808,8 +808,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseListCtrl<ContractorA
 	 */
 	private void doSetLOVValidation() {
 		if (this.btnSearchcustID.isVisible() && !this.btnSearchcustID.isDisabled()) {
-			this.custIDName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_ContractorAssetDetailDialog_custID.value") }));
+			this.custIDName.setConstraint(new PTStringValidator(Labels.getLabel("label_ContractorAssetDetailDialog_custID.value"),null,true));
 		}
 	}
 

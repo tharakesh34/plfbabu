@@ -99,6 +99,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -896,13 +897,11 @@ public class DealFinanceDialogCtrl extends DealFinanceBaseCtrl implements Serial
 		setValidationOn(true);
 
 		if (!this.disbAcctId.isReadonly()) {
-			this.disbAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_DisbAcctId.value") }));
+			this.disbAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_DisbAcctId.value"),null,true));
 		}
 
 		if (!this.repayAcctId.isReadonly() && StringUtils.trimToEmpty(this.repayAcctId.getSclass()).equals("mandatory")) {
-			this.repayAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_RepayAcctId.value") }));
+			this.repayAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_RepayAcctId.value"),null,true));
 		}
 
 

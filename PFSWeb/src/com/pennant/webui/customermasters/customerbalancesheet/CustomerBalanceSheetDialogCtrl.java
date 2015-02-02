@@ -89,6 +89,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -810,8 +811,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl implements Seria
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerBalanceSheetDialog_CustId.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerBalanceSheetDialog_CustId.value"),null,true));
 		}
 		if (!this.financialYear.isDisabled()){
 			this.financialYear.setConstraint(new StaticListValidator(listFinancialYear,Labels.getLabel("label_CustomerBalanceSheetDialog_FinancialYear.value")));

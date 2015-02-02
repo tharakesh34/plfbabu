@@ -76,6 +76,8 @@ import com.pennant.backend.service.smtmasters.HolidayMasterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -642,19 +644,13 @@ public class HolidayMasterDetailsDialogCtrl extends GFCBaseCtrl implements Seria
 		setValidationOn(true);
 		
 		if (!this.holidayType.isReadonly()){
-			this.holidayType.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-							"label_HolidayMasterDialog_HolidayType.value")}));
+			this.holidayType.setConstraint(new PTStringValidator(Labels.getLabel("label_HolidayMasterDialog_HolidayType.value"),null,true));
 		}	
 		if (!this.holidays.isReadonly()){
-			this.holidays.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-							"label_HolidayMasterDialog_Holidays.value")}));
+			this.holidays.setConstraint(new PTDateValidator(Labels.getLabel("label_HolidayMasterDialog_Holidays.value"),true));
 		}	
 		if (!this.holidayDesc.isReadonly()){
-			this.holidayDesc.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-							"label_HolidayMasterDialog_HolidayDesc.value")}));
+			this.holidayDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_HolidayMasterDialog_HolidayDesc.value"),null,true));
 		}	
 		logger.debug("Leaving ");
 

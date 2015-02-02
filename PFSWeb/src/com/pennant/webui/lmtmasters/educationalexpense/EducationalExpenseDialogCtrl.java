@@ -88,6 +88,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.lmtmasters.educationalloan.EducationalLoanDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -833,8 +834,7 @@ public class EducationalExpenseDialogCtrl extends GFCBaseCtrl implements Seriali
 					,Labels.getLabel("label_EducationalExpenseDialog_EduExpAmount.value"),false));
 		}	
 		if (!this.eduExpDate.isDisabled()){
-			this.eduExpDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_EducationalExpenseDialog_EduExpDate.value")}));
+			this.eduExpDate.setConstraint(new PTDateValidator(Labels.getLabel("label_EducationalExpenseDialog_EduExpDate.value"),true));
 		}
 		logger.debug("Leaving");
 	}

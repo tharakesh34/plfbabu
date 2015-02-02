@@ -621,7 +621,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl implements Ser
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.custID.isReadonly()) {
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerRatingDialog_CustID.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustID.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}
@@ -643,10 +643,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl implements Ser
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		this.custRatingType.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value"),null,true,true));
-		// this.custRatingCode.setConstraint("NO EMPTY:" +
-		// Labels.getLabel("FIELD_NO_EMPTY",
-		// new String[]{
-		// Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value")}));
+		// this.custRatingCode.setConstraint("new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value"),null,true));
 		logger.debug("Leaving");
 	}
 

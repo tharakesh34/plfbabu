@@ -117,6 +117,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
@@ -1599,8 +1600,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (!this.finReference.isReadonly() && 
 				!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsGenRef()) {
 
-			this.finReference.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_FinReference.value") }));
+			this.finReference.setConstraint(new PTStringValidator( Labels.getLabel("label_TawarruqFinanceMainDialog_FinReference.value"),null,true));
 		}
 
 		if (!this.finAmount.isDisabled()) {
@@ -1636,8 +1636,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (this.gb_gracePeriodDetails.isVisible()) {
 
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms.setConstraint("NO NEGATIVE:" + Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO",
-						new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_GraceTerms.value") }));
+				this.graceTerms.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_GraceTerms.value"),null,true));
 			}
 			
 			if (!this.grcMargin.isDisabled()) {
@@ -1653,15 +1652,13 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			if (!this.nextGrcPftDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 
-				this.nextGrcPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextGrcPftDate.value") }));
+				this.nextGrcPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextGrcPftDate.value"),true));
 			}
 
 			if (!this.nextGrcPftRvwDate.isDisabled() && 
 					FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
-				this.nextGrcPftRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextGrcPftRvwDate.value") }));
+				this.nextGrcPftRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextGrcPftRvwDate.value"),true));
 			}
 		}
 
@@ -1670,29 +1667,25 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (!this.nextRepayDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
-			this.nextRepayDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayDate.value") }));
+			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayDate.value"),true));
 		}
 
 		if (!this.nextRepayPftDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
-			this.nextRepayPftDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayPftDate.value") }));
+			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayPftDate.value"),true));
 		}
 
 		if (!this.nextRepayRvwDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
-			this.nextRepayRvwDate_two.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayRvwDate.value") }));
+			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayRvwDate.value"),true));
 		}
 
 		if (!this.nextRepayCpzDate.isDisabled() && 
 				FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
-			this.nextRepayCpzDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayCpzDate.value") }));
+			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_NextRepayCpzDate.value"),true));
 		}
 
 		this.repayEffectiveRate.setConstraint(new RateValidator(13, 9,
@@ -1706,8 +1699,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 			
-			this.maturityDate_two.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_MaturityDate.value") }));
+			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_MaturityDate.value"),true));
 		}
 
 		logger.debug("Leaving");
@@ -1819,8 +1811,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 		//FinanceMain Details Tab ---> 1. Basic Details
 
-		this.lovDescFinTypeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_FinType.value") }));
+		this.lovDescFinTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_FinType.value"),null,true));
 
 		this.finCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_FinCcy.value"),null,true,true));
 
@@ -1833,24 +1824,20 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if (!recSave && StringUtils.trimToEmpty(this.disbAcctId.getSclass()).equals("mandatory")) {
-			this.disbAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_DisbAcctId.value") }));
+			this.disbAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_DisbAcctId.value"),null,true));
 		}
 
 		if (!recSave && this.repayAcctId.getSclass().equals("mandatory")) {
-			this.repayAcctId.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_RepayAcctId.value") }));
+			this.repayAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_RepayAcctId.value"),null,true));
 		}
 
 		if (!recSave && this.downPayAccount.getSclass().equals("mandatory")) {
-			this.downPayAccount.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_MurabahaFinanceMainDialog_DownPayAccount.value") }));
+			this.downPayAccount.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_DownPayAccount.value"),null,true));
 		}
 
 		if (!this.btnSearchCommitmentRef.isDisabled() && 
 				StringUtils.trimToEmpty(space_commitmentRef.getSclass()).equals("mandatory")) {
-			this.lovDescCommitmentRefName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_TawarruqFinanceMainDialog_CommitRef.value") }));
+			this.lovDescCommitmentRefName.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_CommitRef.value"),null,true));
 		}
 
 		if (!this.finPurpose.isReadonly()) {
@@ -1864,8 +1851,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
-			this.lovDescGrcIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_TawarruqFinanceMainDialog_FinGrcIndBaseRate.value")}));			
+			this.lovDescGrcIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_FinGrcIndBaseRate.value"),null,true));			
 		}
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
@@ -1875,8 +1861,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if(this.allowRpyInd.isChecked() && !this.btnSearchRpyIndBaseRate.isDisabled()){
-			this.lovDescRpyIndBaseRateName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_TawarruqFinanceMainDialog_FinRpyIndBaseRate.value")}));			
+			this.lovDescRpyIndBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_TawarruqFinanceMainDialog_FinRpyIndBaseRate.value"),null,true));			
 		}
 		logger.debug("Leaving ");
 	}

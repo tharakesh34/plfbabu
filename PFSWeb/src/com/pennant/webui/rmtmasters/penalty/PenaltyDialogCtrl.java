@@ -90,6 +90,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -832,9 +833,7 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.penaltyEffDate.isDisabled()){
-			this.penaltyEffDate.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-							"label_PenaltyDialog_PenaltyEffDate.value")}));
+			this.penaltyEffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_PenaltyDialog_PenaltyEffDate.value"),true));
 		}
 		if (!this.oDueGraceDays.isReadonly()){
 			this.oDueGraceDays.setConstraint(new IntValidator(3,Labels.getLabel(
@@ -905,8 +904,7 @@ public class PenaltyDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescPenaltyTypeName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_PenaltyDialog_PenaltyType.value")}));
+		this.lovDescPenaltyTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_PenaltyDialog_PenaltyType.value"),null,true));
 		logger.debug("Leaving");
 	}
 	

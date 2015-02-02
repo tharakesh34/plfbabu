@@ -79,6 +79,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -640,12 +641,10 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl implements Serializable
 		setValidationOn(true);
 		
 		if (!this.custGrpCode.isReadonly()){
-			this.custGrpCode.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CustomerGroupDialog_CustGrpCode.value")}));
+			this.custGrpCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpCode.value"),null,true));
 		}	
 		if (!this.custGrpDesc.isReadonly()){
-			this.custGrpDesc.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CustomerGroupDialog_CustGrpDesc.value")}));
+			this.custGrpDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpDesc.value"),null,true));
 		}	
 		if (!this.custGrpLimit.isReadonly()){
 			this.custGrpLimit.setConstraint(new LongValidator(8,Labels.getLabel(
@@ -670,8 +669,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl implements Serializable
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		this.lovDescCustGrpRO1Name.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{ Labels.getLabel("label_CustomerGroupDialog_CustGrpRO1.value")}));
+		this.lovDescCustGrpRO1Name.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerGroupDialog_CustGrpRO1.value"),null,true));
 	}
 	
 	/**

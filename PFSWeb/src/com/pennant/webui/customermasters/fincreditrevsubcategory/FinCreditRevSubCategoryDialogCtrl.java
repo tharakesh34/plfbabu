@@ -105,6 +105,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.IntValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -1084,23 +1085,23 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseListCtrl<FinCredit
 		setValidationOn(true);
 		
 		if (!this.subCategoryCode.isReadonly()){
-			this.subCategoryCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryCode.value")}));
+			this.subCategoryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryCode.value"),null,true));
 		}	
 			
 		if (!this.subCategoryDesc.isReadonly()){
-			this.subCategoryDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryDesc.value")}));
+			this.subCategoryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryDesc.value"),null,true));
 		}	
 		/*if (!this.subCategoryItemType.isReadonly()){
-			this.subCategoryItemType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryItemType.value")}));
+			this.subCategoryItemType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryItemType.value"),null,true));
 		}*/	
 		/*if (!this.itemsToCal.isReadonly()){
-			this.itemsToCal.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_ItemsToCal.value")}));
+			this.itemsToCal.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_ItemsToCal.value"),null,true));
 		}*/	
 		if (!this.itemRule.isReadonly()){
-			this.itemRule.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_ItemRule.value")}));
+			this.itemRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_ItemRule.value"),null,true));
 		}	
 		/*if (!this.mainSubCategoryCode.isReadonly()){
-			this.mainSubCategoryCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_FinCreditRevSubCategoryDialog_mainSubCategoryCode.value")}));
+			this.mainSubCategoryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCreditRevSubCategoryDialog_mainSubCategoryCode.value"),null,true));
 		}*/	
 		if (!this.calcSeque.isReadonly()){
 			this.calcSeque.setConstraint(new IntValidator(10,Labels.getLabel("label_FinCreditRevSubCategoryDialog_CalcSeque.value")));

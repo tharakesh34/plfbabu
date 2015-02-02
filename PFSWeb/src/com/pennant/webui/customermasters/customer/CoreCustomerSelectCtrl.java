@@ -271,9 +271,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl implements Serializable 
 					}
 				}else{
 					if(isCustCatIndividual){
-						this.custCPR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustCPR.value") }));
+						this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCPR.value"),null,true));
 					}else{
-						this.custCPR.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_CustomerDialog_CustCR.value") }));
+						this.custCPR.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerDialog_CustCR.value"),null,true));
 					}
 				}
 				if (isCustCatIndividual || !isCountryBehrain) {

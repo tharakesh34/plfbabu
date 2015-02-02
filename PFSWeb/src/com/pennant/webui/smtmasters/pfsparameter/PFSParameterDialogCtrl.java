@@ -92,6 +92,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.SystemParameterUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -786,36 +788,29 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 		setValidationOn(true);
 
 		if (!this.sysParmCode.isReadonly()) {
-			this.sysParmCode.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmCode.value") }));
+			this.sysParmCode.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmCode.value"),null,true));
 		}
 		if (!this.sysParmDesc.isReadonly()) {
-			this.sysParmDesc.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY", 
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value") }));
+			this.sysParmDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value"),null,true));
 		}
 		if (!this.sysParmValue.isReadonly()) {
-			this.sysParmValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
+			this.sysParmValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
 		}
 		if (!this.comboParmValue.isDisabled()) {
 			this.comboParmValue.setConstraint(new StaticListValidator(listSysParmType,
 					Labels.getLabel("label_PFSParameterDialog_SysParmValue.value")));
 		}
 		if (!this.txtParmValue.isDisabled()) {
-			this.txtParmValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
+			this.txtParmValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
 		}
 		if (!this.doubleParamValue.isDisabled()) {
-			this.doubleParamValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
+			this.doubleParamValue.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),null,true ));
 		}
 		if (!this.dateParamValue.isReadonly()) {
-			this.dateParamValue.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmValue.value") }));
+			this.dateParamValue.setConstraint(new PTDateValidator(Labels.getLabel("label_PFSParameterDialog_SysParmValue.value"),true));
 		}
 		if (!this.sysParmDescription.isReadonly()) {
-			this.sysParmDescription.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_PFSParameterDialog_SysParmDescription.value") }));
+			this.sysParmDescription.setConstraint(new PTStringValidator(Labels.getLabel("label_PFSParameterDialog_SysParmDescription.value"),null,true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -1427,9 +1422,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl implements Serializable 
 	}
 
 	private void doSetLOVValidation() {
-		this.lovDescLanguageName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[] { Labels.getLabel(
-				"label_PFSParameterDialog_SysParmValue.value") }));
+		this.lovDescLanguageName.setConstraint(new PTStringValidator(Labels.getLabel(
+				"label_PFSParameterDialog_SysParmValue.value"),null,true));
 	}
 
 	private void doRemoveLOVValidation() {

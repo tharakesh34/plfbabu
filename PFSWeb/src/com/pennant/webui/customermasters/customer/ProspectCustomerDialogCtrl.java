@@ -68,6 +68,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -477,10 +478,8 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 		logger.debug("Entering");
  
 		doClearErrorMessage();
-		this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_FinanceMainDialog_CustID.value") }));
-		this.custCoreBank.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerDialog_CustCoreBank.value") }));
+		this.lovDescCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_CustID.value"),null,true));
+		this.custCoreBank.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustCoreBank.value"),null,true));
 
 		
 /* 		if (!this.lovDescCustCIF.isReadonly()) {

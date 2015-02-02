@@ -1097,8 +1097,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl implements Serializable,
 		setValidationOn(true);
 
 		if (!this.usrLogin.isReadonly()){
-			this.usrLogin.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_SecurityUserDialog_UsrLogin.value") }));
+			this.usrLogin.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrLogin.value"),null,true));
 		}
 		if (!this.userStaffID.isReadonly()){
 			this.userStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UserStaffID.value"), 

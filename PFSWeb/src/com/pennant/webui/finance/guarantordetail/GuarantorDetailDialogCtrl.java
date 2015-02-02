@@ -1452,7 +1452,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doSetLOVValidation() {
 		// Guarantor CIF
 		if (!btnSearchGuarantorCIF.isVisible()) {
-			this.guarantorCIFName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value") }));
+			this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value"),null,true));
 		}
 	}
 

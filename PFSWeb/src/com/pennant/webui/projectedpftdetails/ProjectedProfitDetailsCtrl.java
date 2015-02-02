@@ -42,6 +42,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 import com.pennant.search.Filter;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -80,7 +81,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl{
 		
 		if("".equals(AccrualProcess.ACC_RUNNING)) {
 			this.valueDate.setValue(DateUtility.getMonthEndDate(DateUtility.getDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString(), PennantConstants.DBDateFormat)));
-			this.valueDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_ProjectedProfitDetails_valueDate.value") }));
+			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"),true));
 		}
 		
 		

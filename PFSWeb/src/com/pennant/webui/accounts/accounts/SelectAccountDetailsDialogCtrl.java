@@ -29,6 +29,7 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -255,17 +256,13 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl implements Seria
 	}
 	private void doSetLOVValidation() {
 		logger.debug("Entering ");
-		this.lovDescAccType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SelectAccountDetailsDialog_AccType.value")}));
+		this.lovDescAccType.setConstraint(new PTStringValidator(Labels.getLabel("label_SelectAccountDetailsDialog_AccType.value"),null,true));
 
-		this.lovDescCurrency.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SelectAccountDetailsDialog_Currency.value")}));
+		this.lovDescCurrency.setConstraint(new PTStringValidator(Labels.getLabel("label_SelectAccountDetailsDialog_Currency.value"),null,true));
 
-		this.lovDescBranchCodeName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-				,new String[]{Labels.getLabel("label_SelectAccountDetailsDialog_Branch.value")}));
+		this.lovDescBranchCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_SelectAccountDetailsDialog_Branch.value"),null,true));
 		if(!isInterAcc){
-			this.lovDescCustCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY"
-					,new String[]{Labels.getLabel("label_SelectAccountDetailsDialog_CustCIF.value")}));
+			this.lovDescCustCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_SelectAccountDetailsDialog_CustCIF.value"),null,true));
 		}
 		logger.debug("Leaving ");	
 	}

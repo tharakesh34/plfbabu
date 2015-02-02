@@ -661,8 +661,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescRatingTypeName.setConstraint("NO EMPTY:"+ Labels.getLabel(
-				"FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_RatingCodeDialog_RatingType.value") }));
+		this.lovDescRatingTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_RatingCodeDialog_RatingType.value"),null,true));
 		logger.debug("Leaving");
 	}
 

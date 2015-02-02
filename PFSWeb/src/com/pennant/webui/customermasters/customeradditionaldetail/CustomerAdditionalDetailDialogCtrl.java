@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.LongValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -665,17 +666,14 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl implements S
 		setValidationOn(true);
 
 		if (!this.btnSearchPRCustid.isVisible()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerAdditionalDetailDialog_CustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustID.value"),null,true));
 		}
 		if (!this.custRefCustID.isReadonly()){
 			this.custRefCustID.setConstraint(new LongValidator(19,Labels.getLabel(
 			"label_CustomerAdditionalDetailDialog_CustRefCustID.value")));
 		}
 		if (!this.custRefStaffID.isReadonly()){
-			this.custRefStaffID.setConstraint("NO EMPTY:" + Labels.getLabel(
-					"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-					"label_CustomerAdditionalDetailDialog_CustRefStaffID.value")}));
+			this.custRefStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustRefStaffID.value"),null,true));
 		}
 		logger.debug("Leaving ");
 	}
@@ -697,12 +695,8 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl implements S
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCustAcademicLevelName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-				"label_CustomerAdditionalDetailDialog_CustAcademicLevel.value")}));
-		this.lovDescAcademicDeciplineName.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel(
-				"label_CustomerAdditionalDetailDialog_AcademicDecipline.value")}));
+		this.lovDescCustAcademicLevelName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_CustAcademicLevel.value"),null,true));
+		this.lovDescAcademicDeciplineName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAdditionalDetailDialog_AcademicDecipline.value"),null,true));
 		logger.debug("Leaving");
 	}
 

@@ -731,8 +731,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl implements Serializabl
 		setValidationOn(true);
 
 		if (!this.custID.isReadonly()){
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerRatingDialog_CustID.value")}));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustID.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

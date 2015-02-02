@@ -94,6 +94,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -1282,7 +1283,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl implements Seriali
 	private void doSetLOVValidation() {
 		// Cust C I F
 		if (!btnSearchCustCIF.isDisabled()) {
-			this.custCIF.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value") }));
+			this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value"),null,true));
 		}
 	}
 

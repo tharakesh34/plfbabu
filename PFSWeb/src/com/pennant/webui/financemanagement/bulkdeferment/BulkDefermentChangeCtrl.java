@@ -71,6 +71,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -346,25 +347,21 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 		logger.debug("Entering");
 
 		if(!this.fromDate.isDisabled()){
-			this.fromDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_BulkDefferment_FromDate.value")}));
+			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_FromDate.value"),true));
 		}
 
 		if(!this.toDate.isDisabled()){
-			this.toDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_BulkDefferment_ToDate.value")}));
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_ToDate.value"),true));
 		}
 
 		if(this.recalFromDateRow.isVisible()) {
 
 			if(!this.calFromDate.isDisabled()){
-				this.calFromDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-						new String[]{Labels.getLabel("label_BulkDefferment_CalFromDate.value")}));
+				this.calFromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalFromDate.value"),true));
 			}
 
 			if(!this.calToDate.isDisabled()){
-				this.calToDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-						new String[]{Labels.getLabel("label_BulkDefferment_CalToDate.value")}));
+				this.calToDate.setConstraint(new PTDateValidator(Labels.getLabel("label_BulkDefferment_CalToDate.value"),true));
 			}
 
 		}

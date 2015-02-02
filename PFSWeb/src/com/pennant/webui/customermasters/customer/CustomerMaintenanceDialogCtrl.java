@@ -118,6 +118,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -590,6 +591,9 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 	private transient CustomerService customerService;
 	private String module="";
 
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1404,12 +1408,6 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 			try {
 				if (this.custDOB.getValue() != null) {
-					if (!this.custDOB.getValue().after((Date) SystemParameterDetails
-									.getSystemParameterValue("APP_DFT_START_DATE"))) {
-						throw new WrongValueException(this.custDOB,Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustDOB.value"),SystemParameterDetails
-								.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
-					}
 					aCustomer.setCustDOB(new Timestamp(this.custDOB.getValue().getTime()));
 				}
 			} catch (WrongValueException we) {
@@ -1550,27 +1548,11 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 				wve.add(we);
 			}
 			try {
-				if (this.custDateOfIncorporation.getValue() != null) {
-					if (!this.custDateOfIncorporation.getValue().after((Date) SystemParameterDetails
-							.getSystemParameterValue("APP_DFT_START_DATE"))) {
-						throw new WrongValueException(this.custDateOfIncorporation,Labels.getLabel("DATE_ALLOWED_AFTER",
-								new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustDateOfIncorporation.value"),SystemParameterDetails
-								.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
-					}
-				}
 				aCustomer.setCustDOB(new Timestamp(this.custDateOfIncorporation.getValue().getTime()));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				if (this.custTradeLicenceExpiry.getValue() != null) {
-					if (!this.custTradeLicenceExpiry.getValue().before((Date) SystemParameterDetails
-							.getSystemParameterValue("APP_DFT_END_DATE"))) {
-						throw new WrongValueException(this.custTradeLicenceExpiry, Labels.getLabel(
-								"DATE_ALLOWED_BEFORE",new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustTradeLicenceExpiry.value"),
-										SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE").toString() }));
-					}
-				}
 				aCustomer.setCustTradeLicenceExpiry(this.custTradeLicenceExpiry.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1587,14 +1569,6 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 				wve.add(we);
 			}
 			try {
-				if (this.custPassportExpiry.getValue() != null) {
-					if (!this.custPassportExpiry.getValue().before(((Date) SystemParameterDetails
-									.getSystemParameterValue("APP_DFT_END_DATE")))) {
-						throw new WrongValueException(this.custPassportExpiry,Labels.getLabel("DATE_ALLOWED_BEFORE",
-							new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustPassportExpiry.value"),SystemParameterDetails
-									.getSystemParameterValue("APP_DFT_END_DATE").toString() }));
-					}
-				}
 				aCustomer.setCustPassportExpiry(this.custPassportExpiry.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1605,14 +1579,6 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 				wve.add(we);
 			}
 			try {
-				if (this.custVisaExpiry.getValue() != null) {
-					if (!this.custVisaExpiry.getValue().before(((Date) SystemParameterDetails
-									.getSystemParameterValue("APP_DFT_END_DATE")))) {
-						throw new WrongValueException(this.custVisaExpiry,Labels.getLabel("DATE_ALLOWED_BEFORE",
-							new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustVisaExpiry.value"),SystemParameterDetails
-									.getSystemParameterValue("APP_DFT_END_DATE").toString() }));
-					}
-				}
 				aCustomer.setCustVisaExpiry(this.custVisaExpiry.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1816,15 +1782,6 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 
 		try {
-			if (this.custStmtNextDate.getValue() != null) {
-				if (!this.custStmtNextDate.getValue().before(((Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DFT_END_DATE")))) {
-					throw new WrongValueException(this.custStmtNextDate,Labels.getLabel("DATE_ALLOWED_BEFORE",
-							new String[] {Labels.getLabel("label_CustomerMaintenanceDialog_CustStmtNextDate.value"),SystemParameterDetails
-							.getSystemParameterValue("APP_DFT_END_DATE").toString() }));
-				}
-				aCustomer.setCustStmtNextDate(new Timestamp(this.custStmtNextDate.getValue().getTime()));
-			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2969,8 +2926,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 						"label_CustomerMaintenanceDialog_CustCIF.value"),parms[0], parms[1] })));
 		}
 		if (!this.custCoreBank.isReadonly()) {
-			this.custCoreBank.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustCoreBank.value") }));
+			this.custCoreBank.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustCoreBank.value"),null,true));
 		}
 		
 		//Basic Details Tab-->2.Personal Details(Retail Customer)
@@ -2995,9 +2951,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 						PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.custDOB.isReadonly() && !this.custDOB.isDisabled()) {
-				this.custDOB.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
-					"DATE_EMPTY_FUTURE_TODAY",new String[] { Labels.getLabel(
-							"label_CustomerMaintenanceDialog_CustDOB.value") }));
+				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustDOB.value"),true,startDate,appStartDate,false));
 			}
 			if (!this.custMotherMaiden.isReadonly()) {
 				this.custMotherMaiden.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustMotherMaiden.value"), 
@@ -3057,9 +3011,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 								"label_CustomerMaintenanceDialog_CustPassportNo.value") })));
 				}
 				if (!this.custPassportExpiry.isDisabled() && !(custPassportNo.getValue().equals(""))) {
-					this.custPassportExpiry.setConstraint("NO EMPTY,NO TODAY,NO PAST:"+ Labels.getLabel(
-						"DATE_EMPTY_PAST_TODAY", new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustPassportExpiryDate.value") }));
+					this.custPassportExpiry.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustPassportExpiryDate.value"),true,appStartDate,endDate,false));
 				}
 				if (!this.custVisaNum.isReadonly()) {
 					this.custVisaNum.setConstraint(new SimpleConstraint(PennantConstants.PPT_VISA_REGEX,
@@ -3067,9 +3019,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 								"label_CustomerMaintenanceDialog_CustVisaNum.value") })));
 				}
 				if (!this.custVisaExpiry.isDisabled() && !this.custVisaNum.getValue().equals("")) {
-					this.custVisaExpiry.setConstraint("NO EMPTY,NO TODAY,NO PAST:" + Labels.getLabel(
-						"DATE_EMPTY_PAST_TODAY", new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustVisaExpiryDate.value") }));
+					this.custVisaExpiry.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustVisaExpiryDate.value"),true,appStartDate,endDate,false));
 				}
 				if (this.custIsStaff.isChecked()) {
 					this.custStaffID.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustStaffID.value"), 
@@ -3085,14 +3035,10 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 								"label_CustomerMaintenanceDialog_CustTradeLicenceNum.value") })));
 				}
 				if (!this.custTradeLicenceExpiry.isReadonly() && !this.custTradeLicenceNum.getValue().equals("")) {
-					this.custTradeLicenceExpiry.setConstraint("NO EMPTY,NO TODAY,NO PAST:"+ Labels.getLabel(
-						"DATE_EMPTY_PAST_TODAY",new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustTradeLicenceExpiryDate.value") }));
+					this.custTradeLicenceExpiry.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustTradeLicenceExpiryDate.value"),true,appStartDate,endDate,false));
 				}
 				if (!this.custDateOfIncorporation.isReadonly()) {
-					this.custDateOfIncorporation.setConstraint("NO EMPTY,NO TODAY,NO FUTURE:"+ Labels.getLabel(
-						"DATE_EMPTY_FUTURE_TODAY",new String[] { Labels.getLabel(
-								"label_CustomerMaintenanceDialog_CustDateOfIncorporation.value") }));
+					this.custDateOfIncorporation.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustDateOfIncorporation.value"),true,startDate,appStartDate,false));
 				}
 			}
 		}
@@ -3101,16 +3047,13 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 					PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (custIsClosed.isChecked()) {
-			this.custClosedOn.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustClosedOn.value") }));
+			this.custClosedOn.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustClosedOn.value"),true));
 		}
 		if (custIsBlackListed.isChecked()) {
-			this.lovDescCustBLRsnCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustBLRsnCode.value") }));
+			this.lovDescCustBLRsnCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustBLRsnCode.value"),null,true));
 		}
 		if (custIsRejected.isChecked()) {
-			this.lovDescCustRejectedRsnName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustRejectedRsn.value") }));
+			this.lovDescCustRejectedRsnName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustRejectedRsn.value"),null,true));
 		}
 		
 		// Preferential Details Tab
@@ -3124,8 +3067,7 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 						"label_CustomerMaintenanceDialog_CustReferedBy.value"),parms[0], parms[1] })));
 		}
 		if (this.custStmtNextDate.getValue() != null) {
-			this.custStmtNextDate.setConstraint("NO TODAY,NO PAST:"+ Labels.getLabel(
-				"DATE_PAST_TODAY",new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustStmtNextDate.value") }));
+			this.custStmtNextDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustStmtNextDate.value"),true,appStartDate,endDate,false));
 		}
 		logger.debug("Leaving");
 	}
@@ -3219,84 +3161,62 @@ public class CustomerMaintenanceDialogCtrl extends GFCBaseCtrl implements Serial
 		logger.debug("Entering");
 		
 		//Basic Details Tab-->1.Key Details
-		this.lovDescCustTypeCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-			new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustTypeCode.value") }));
+		this.lovDescCustTypeCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustTypeCode.value"),null,true));
 
-		this.lovDescCustDftBranchName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-			new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustDftBranch.value") }));
+		this.lovDescCustDftBranchName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustDftBranch.value"),null,true));
 
-		this.lovDescCustBaseCcyName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY", 
-			new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustBaseCcy.value") }));
+		this.lovDescCustBaseCcyName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustBaseCcy.value"),null,true));
 
-		this.lovDescCustLngName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustLng.value") }));
+		this.lovDescCustLngName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustLng.value"),null,true));
 		
 		if (this.gb_personalDetails.isVisible()) {
 			//Basic Details Tab-->2.Personal Details(Retail Customer)
 
-			this.lovDescCustGenderCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustGenderCode.value") }));
+			this.lovDescCustGenderCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustGenderCode.value"),null,true));
 
-			this.lovDescCustSalutationCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustSalutationCode.value") }));
+			this.lovDescCustSalutationCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustSalutationCode.value"),null,true));
 
-			this.lovDescCustCOBName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustCOB.value") }));
+			this.lovDescCustCOBName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustCOB.value"),null,true));
 
-			this.lovDescCustMaritalStsName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustMaritalSts.value") }));
+			this.lovDescCustMaritalStsName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustMaritalSts.value"),null,true));
 
-			this.lovDescCustProfessionName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustProfession.value") }));
+			this.lovDescCustProfessionName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustProfession.value") ,null,true));
 
 		} else if (this.gb_corporateCustomerPersonalDetails.isVisible()) {
 			//Basic Details Tab-->3.Organization Details(Corporate Customer)
-			this.lovDescCorpCustCOBName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CorpCustCOB.value") }));
+			this.lovDescCorpCustCOBName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CorpCustCOB.value"),null,true));
 		}
 		
 		//Generic Details Tab
 		if (getCustomer().getLovDescCustCtgType().equals("I")) {
-			this.lovDescCustEmpStsName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustEmpSts.value") }));
+			this.lovDescCustEmpStsName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustEmpSts.value"),null,true));
 		}
 		if(this.custGroupID.getValue() != 0){
-			this.lovDescCustGroupStsName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_CustomerMaintenanceDialog_CustGroupSts.value")}));
+			this.lovDescCustGroupStsName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustGroupSts.value"),null,true));
 		}
 
 		//Other Details Tab-->1.Segmentation Details
-		this.lovDescCustCtgCodeName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustCtgCode.value") }));
+		this.lovDescCustCtgCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustCtgCode.value"),null,true));
 
-		this.lovDescCustSectorName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustSector.value") }));
+		this.lovDescCustSectorName.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerMaintenanceDialog_CustSector.value"),null,true));
 
-		this.lovDescCustSubSectorName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustSubSector.value") }));
+		this.lovDescCustSubSectorName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustSubSector.value"),null,true));
 		
-		this.lovDescCustIndustryName.setConstraint("NO EMPTY:" + Labels.getLabel( "FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustIndustry.value") }));
+		this.lovDescCustIndustryName.setConstraint(new PTStringValidator( Labels.getLabel("label_CustomerMaintenanceDialog_CustIndustry.value"),null,true));
 
-		this.lovDescCustSegmentName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustSegment.value") }));
+		this.lovDescCustSegmentName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustSegment.value"),null,true));
 
-		this.lovDescCustSubSegmentName.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustSubSegment.value") }));
+		this.lovDescCustSubSegmentName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustSubSegment.value"),null,true));
 		
 		//Other Details Tab -->2.Identity Details
-		this.lovDescCustResdCountryName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustResdCountry.value") }));
+		this.lovDescCustResdCountryName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustResdCountry.value"),null,true));
 
-		this.lovDescCustNationalityName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustNationality.value") }));
+		this.lovDescCustNationalityName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustNationality.value"),null,true));
 
 		//Other Details Tab --> 3.Non-Financial RelationShip Details
-		this.lovDescCustDSADeptName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustDSADept.value") }));
+		this.lovDescCustDSADeptName.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustDSADept.value"),null,true));
 
-		this.lovDescCustRO1Name.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY", 
-				new String[] { Labels.getLabel("label_CustomerMaintenanceDialog_CustRO1.value") }));
+		this.lovDescCustRO1Name.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerMaintenanceDialog_CustRO1.value"),null,true));
 		
 		logger.debug("Leaving");
 	}

@@ -671,10 +671,10 @@ public class TasksCalendarDialogCtrl extends GFCBaseCtrl implements Serializable
 		setValidationOn(true);
 		
 		if (!this.countryCode.isReadonly()){
-			this.countryCode.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CountryDialog_CountryCode.value")}));
+			this.countryCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryCode.value"),null,true));
 		}	
 		if (!this.countryDesc.isReadonly()){
-			this.countryDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_CountryDialog_CountryDesc.value")}));
+			this.countryDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CountryDialog_CountryDesc.value"),null,true));
 		}	
 		if (!this.countryParentLimit.isReadonly()){
 			this.countryParentLimit.setConstraint(new AmountValidator(21,0,Labels.getLabel("label_CountryDialog_CountryParentLimit.value")));

@@ -87,6 +87,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.productAsset.model.ProductAssetListModelItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -642,12 +643,10 @@ public class ProductDialogCtrl extends GFCBaseListCtrl<ProductAsset> implements 
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.productCode.isReadonly()) {
-			this.productCode.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_ProductDialog_ProductCode.value") }));
+			this.productCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductDialog_ProductCode.value"),null,true));
 		}
 		if (!this.productDesc.isReadonly()) {
-			this.productDesc.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_ProductDialog_ProductDesc.value") }));
+			this.productDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductDialog_ProductDesc.value"),null,true));
 		}
 		logger.debug("Leaving");
 	}

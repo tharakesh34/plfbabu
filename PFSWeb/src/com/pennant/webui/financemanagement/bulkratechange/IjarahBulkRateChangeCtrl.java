@@ -73,6 +73,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -326,24 +328,20 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		logger.debug("Entering");
 
 		if(!this.fromDate.isDisabled()){
-			this.fromDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_IjaraBulkRateChange_FromDate.value")}));
+			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_FromDate.value"),true));
 		}
 
 		if(!this.toDate.isDisabled()){
-			this.toDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_IjaraBulkRateChange_ToDate.value")}));
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_ToDate.value"),true));
 		}
 
 		if(!this.rateChange.isDisabled()){
-			this.rateChange.setConstraint("NO ZERO, NO NEGATIVE:" + Labels.getLabel("RATE_NO_LESS_ZERO",
-					new String[]{Labels.getLabel("label_IjaraBulkRateChange_Rate.value")}));
+			this.rateChange.setConstraint(new PTStringValidator(Labels.getLabel("label_IjaraBulkRateChange_Rate.value"),null,true));
 		}
 
 		if(this.hbox_TillDate.isVisible()){
 			if(!this.tillDate.isDisabled()){
-				this.tillDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-						new String[]{Labels.getLabel("label_IjaraBulkRateChange_TillDate.value")}));
+				this.tillDate.setConstraint(new PTDateValidator(Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),true));
 			}
 		}
 		logger.debug("Leaving");

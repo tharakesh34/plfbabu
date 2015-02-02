@@ -76,6 +76,7 @@ import com.pennant.backend.service.bmtmasters.ScoringTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -565,12 +566,10 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		setValidationOn(true);
 
 		if (!this.scoType.isReadonly()){
-			this.scoType.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ScoringTypeDialog_ScoType.value")}));
+			this.scoType.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringTypeDialog_ScoType.value"),null,true));
 		}	
 		if (!this.scoDesc.isReadonly()){
-			this.scoDesc.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_ScoringTypeDialog_ScoDesc.value")}));
+			this.scoDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ScoringTypeDialog_ScoDesc.value"),null,true));
 		}	
 		logger.debug("Leaving");
 	}

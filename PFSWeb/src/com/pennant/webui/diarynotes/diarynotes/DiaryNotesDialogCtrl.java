@@ -80,6 +80,7 @@ import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -94,6 +95,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -192,7 +195,8 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private List<ValueLabel> listDnType=PennantStaticListUtil.getNotesType(); // autoWired
 		
 	private HashMap<String, ArrayList<ErrorDetails>> overrideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-	
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -614,14 +618,6 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 				}		
 				
 				try {
-					if(errorDetails == null){
-						validFrequency   = FrequencyUtil.isFrqDate(this.frqCode.getValue(),
-											this.firstActionDate.getValue()!=null?this.firstActionDate.getValue():new Date());				
-						if(!validFrequency){
-							this.frqCode.setConstraint("NO TODAY,NO PAST:" + Labels.getLabel("FREQ_CODE_INVALID",new String[]{Labels.getLabel("label_DiaryNotesDialog_dnDftStmtFrqCode.value")}));				
-							throw new WrongValueException(this.cbfrqDays,Labels.getLabel("FREQ_CODE_INVALID"));
-						}
-					}
 				}catch(WrongValueException we){
 					wve.add(we);
 				}
@@ -967,44 +963,43 @@ public class DiaryNotesDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.dnType.setConstraint(new StaticListValidator(listDnType,Labels.getLabel("label_DiaryNotesDialog_DnType.value")));
 		}	
 		if (!this.dnCreatedNo.isReadonly()){
-			this.dnCreatedNo.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_DnCreatedNo.value")}));
+			this.dnCreatedNo.setConstraint(new PTStringValidator(Labels.getLabel("label_DiaryNotesDialog_DnCreatedNo.value"),null,true));
 		}	
 		if (!this.dnCreatedName.isReadonly()){
-			this.dnCreatedName.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_DnCreatedName.value")}));
+			this.dnCreatedName.setConstraint(new PTStringValidator(Labels.getLabel("label_DiaryNotesDialog_DnCreatedName.value"),null,true));
 		}
 		
 		if(this.firstActionDate.getValue()!= null && !this.firstActionDate.isDisabled()){
-			this.firstActionDate.setConstraint("NO EMPTY,NO TODAY,NO PAST:"+ Labels.getLabel("DATE_EMPTY_PAST_TODAY",new String[] { Labels.getLabel("label_DiaryNotesDialog_FirstActionDate.value") }));
+			this.firstActionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_FirstActionDate.value"),true,appStartDate,endDate,false));
 		}
 		
 		if (this.nextActionDate.getValue()!= null && (!this.recordDeleted.isChecked()) && !this.nextActionDate.isDisabled()){
-			this.nextActionDate.setConstraint("NO EMPTY,NO TODAY,NO PAST:" + Labels.getLabel("DATE_EMPTY_PAST_TODAY",new String[]{Labels.getLabel("label_DiaryNotesDialog_NextActionDate.value")}));
+			this.nextActionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_NextActionDate.value"),true,appStartDate,endDate,false));
 		}
 				
 		if(this.finalActionDate.getValue()!= null){			
-			this.finalActionDate.setConstraint("NO EMPTY,NO TODAY,NO PAST:" + Labels.getLabel("DATE_EMPTY_PAST_TODAY",
-						new String[]{Labels.getLabel("label_DiaryNotesDialog_FinalActionDate.value")}));
+			this.finalActionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_FinalActionDate.value"),true,appStartDate,endDate,false));
 		}
 		
 		//Added Validation to be done when the Suspended is Selected
 		if(this.suspend.isChecked()){
 			
 			if (!this.suspendStartDate.isDisabled()){
-				this.suspendStartDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_SuspendStartDate.value")}));
+				this.suspendStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_SuspendStartDate.value"),true));
 			}
 		
 			if (!this.suspendEndDate.isDisabled()){
-				this.suspendEndDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_SuspendEndDate.value")}));
+				this.suspendEndDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_SuspendEndDate.value"),true));
 			}
 			
 			if (!this.finalActionDate.isDisabled()){
-				this.finalActionDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_FinalActionDate.value")}));
+				this.finalActionDate.setConstraint(new PTDateValidator(Labels.getLabel("label_DiaryNotesDialog_FinalActionDate.value"),true));
 			}
 		
 		}
 		
 		if (!this.narration.isReadonly()){
-			this.narration.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_DiaryNotesDialog_Narration.value")}));
+			this.narration.setConstraint(new PTStringValidator(Labels.getLabel("label_DiaryNotesDialog_Narration.value"),null,true));
 		}	
 	logger.debug("Leaving");
 	}

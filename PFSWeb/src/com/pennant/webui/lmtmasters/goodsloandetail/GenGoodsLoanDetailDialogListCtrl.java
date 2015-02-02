@@ -1103,8 +1103,7 @@ public class GenGoodsLoanDetailDialogListCtrl extends GFCBaseCtrl implements Ser
 	 */
 
 	private void doSetLOVValidation() {
-		this.lovDescSellerID.setConstraint("NO EMPTY:" + Labels.getLabel(
-				"FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_GenGoodsLoanDetailDialog_SellerID.value")}));
+		this.lovDescSellerID.setConstraint(new PTStringValidator(Labels.getLabel("label_GenGoodsLoanDetailDialog_SellerID.value"),null,true));
 	}
 
 	/**
