@@ -221,6 +221,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 	protected JdbcSearchObject<Customer> newSearchObject ;
     Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+    Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -1216,14 +1217,14 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl implements Se
 			this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_EmailId.value"),true));
 		}	
 		if (!this.bussCommenceDate.isDisabled()){
-			this.bussCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value"),true,startDate,DateUtility.getSystemDate(),false));
+			this.bussCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BussCommenceDate.value"),true,startDate,appStartDate,false));
 		}
 		if (!this.servCommenceDate.isDisabled()){
-			this.servCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value"),true, startDate,DateUtility.getSystemDate(),false));
+			this.servCommenceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_ServCommenceDate.value"),true, startDate,appStartDate,false));
 		}
 		if (!this.bankRelationshipDate.isDisabled()){
 			if(this.bankRelationshipDate.getValue() != null){
-				this.bankRelationshipDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value"),true,startDate,DateUtility.getSystemDate(),false));
+				this.bankRelationshipDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CorporateCustomerDetailDialog_BankRelationshipDate.value"),true,startDate,appStartDate,false));
 			}
 		}
 		/*if (!this.paidUpCapital.isReadonly()){
