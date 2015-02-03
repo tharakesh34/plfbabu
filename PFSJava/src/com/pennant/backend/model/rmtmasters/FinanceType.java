@@ -26,6 +26,7 @@ package com.pennant.backend.model.rmtmasters;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ public class FinanceType implements java.io.Serializable {
 	private static final long serialVersionUID = -4098586745401583126L;
 	
 	//	Ordered Same AS Table please don't break It
+	private String product = "";
 	private String finType;
 	private String finCategory;
 	private String finTypeDesc;
@@ -162,6 +164,8 @@ public class FinanceType implements java.io.Serializable {
 	private String finAEProgClaim;
 	private String finAEMaturity;
 	private boolean finPftUnChanged;
+	private Date startDate;
+	private Date endDate;
 	
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
@@ -312,7 +316,7 @@ public class FinanceType implements java.io.Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
+	
 	public String getId() {
 		return finType;
 	}
@@ -327,6 +331,14 @@ public class FinanceType implements java.io.Serializable {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+	
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
 	}
 
 	public String getFinCategory() {
@@ -2271,4 +2283,17 @@ public class FinanceType implements java.io.Serializable {
 	    this.lovDescDftStepPolicyName = lovDescDftStepPolicyName;
     }
 
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 }
