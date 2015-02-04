@@ -59,6 +59,8 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
+import bsh.StringUtil;
+
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -359,6 +361,9 @@ public class ExtendedCombobox extends Hbox {
 			this.label.setValue(value);
 		}else{
 			this.textbox.setValue(value);
+			if(StringUtils.trimToEmpty(value).equals("")){
+				this.label.setValue(value);
+			}
 		}
 	}
 	public String getValue() {
