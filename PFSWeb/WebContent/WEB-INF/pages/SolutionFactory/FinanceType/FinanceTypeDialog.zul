@@ -43,7 +43,7 @@
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
-							<label
+							<label id = "dialogTitle"
 								value="${c:l('window_FinanceTypeDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
@@ -100,6 +100,15 @@
 										<column />
 									</columns>
 									<rows>
+										<row visible="false" id="row_Product">
+											<label
+												id="label_FinanceTypeDialog_Product"
+												value="${c:l('label_FinanceTypeDialog_Product.value')}" />
+											<hbox>
+												<extendedcombobox
+													id="product"  />
+											</hbox>
+										</row>
 										<row visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinType"
@@ -119,6 +128,26 @@
 													sclass="mandatory" />
 												<textbox
 													id="finTypeDesc" maxlength="50" width="300px" />
+											</hbox>
+										</row>
+										<row visible="false" id="row_PromoDates">
+											<label
+												id="label_FinanceTypeDialog_StartDate"
+												value="${c:l('label_FinanceTypeDialog_StartDate.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="startDate" width="100px" />
+											</hbox>
+											<label
+												id="label_FinanceTypeDialog_EndDate"
+												value="${c:l('label_FinanceTypeDialog_EndDate.value')}" />
+											<hbox>
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="endDate" width="100px" />
 											</hbox>
 										</row>
 										<row visible="true">

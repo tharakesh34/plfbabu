@@ -143,6 +143,7 @@
 		<!-- <menuItem id="menu_Item_DiaryNotes" zulNavigation="/WEB-INF/pages/SolutionFactory/DiaryNotes/DiaryNotesList.zul"  rightName="menuItem_SolutionFactory_DiaryNotes"/> -->
 		<menuItem id="menu_Item_ExtendedFieldDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailList.zul"  rightName="menuItem_SolutionFactory_ExtendedFieldDetail"/>
  		<menuItem id="menu_Item_FinanceType" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeList.zul"  rightName="menuItem_SolutionFactory_FinanceType"/>
+ 		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/PromotionList.zul"  rightName="menuItem_SolutionFactory_Promotion"/>
  		<!-- <menuItem id="menu_Item_FinanceCampaign" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceCampaign/FinanceCampaignList.zul"  rightName="menuItem_SolutionFactory_FinanceCampaign"/> -->
 		<menuItem id="menu_Item_FinanceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul"  rightName="menuItem_SolutionFactory_FinanceWorkFlow" />		
 		<menuItem id="menu_Item_HolidayMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterList.zul"   rightName="menuItem_SolutionFactory_HolidayMaster"/>

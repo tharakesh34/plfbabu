@@ -171,6 +171,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 	private transient PagedListService pagedListService;
 	private transient FinanceTypeService financeTypeService;
 	private transient WorkFlowDetails workFlowDetails = null;
+	
+	private transient boolean isPromotion = false;
 
 	/**
 	 * default constructor.<br>
@@ -207,6 +209,10 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			}
 		} else {
 			wfAvailable = false;
+		}
+		
+		if(StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.PROMOTION)){
+			isPromotion = true;
 		}
 
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
@@ -454,6 +460,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeType", aFinanceType);
 		map.put("isCopyProcess", isCopyProcess);
+		map.put("isPromotion", isPromotion);
 		/*
 		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
 		 * listBox ListModel. This is fine for synchronizing the data in the FinanceTypeListbox from the dialog when we
@@ -552,6 +559,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		// Defualt Sort on the table
 		this.searchObj.addSort("FinType", false);
 
+		this.searchObj.addField("Product");
 		this.searchObj.addField("FinType");
 		this.searchObj.addField("FinTypeDesc");
 		this.searchObj.addField("FinCcy");
@@ -569,7 +577,11 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		// Workflow
 		if (isWorkFlowEnabled()) {
 			this.searchObj.addTabelName("RMTFinanceTypes_View");
-
+			
+			if(isPromotion){
+				this.searchObj.addFilterNotEqual("Product", "");
+			}
+			
 			if(this.moduleType==null){
 				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
 				approvedList=false;

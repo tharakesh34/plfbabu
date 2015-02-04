@@ -621,6 +621,8 @@ public class PennantConstants {
 	public static final String CORP_CRDTRVW_RATIOS_EBITDA4 = "EBITDA4";
 	public static final String CORP_CRDTRVW_RATIOS_FCF = "FCF";
 
-	public static final String REPAY_HIERARCHY_METHOD = "CIP";
+	public static final String REPAY_HIERARCHY_METHOD = "IPCS";
+
+	public static final String PROMOTION = "PROMOTION";
 
 }

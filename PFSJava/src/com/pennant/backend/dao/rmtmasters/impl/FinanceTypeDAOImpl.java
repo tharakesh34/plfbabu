@@ -144,7 +144,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		FinanceType financeType = new FinanceType();
 		financeType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType,FinCategory, FinTypeDesc, FinCcy, FinDaysCalType,");
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product,FinCategory, FinTypeDesc, FinCcy, FinDaysCalType,");
 		selectSql.append(" FinAcType, FinContingentAcType, FinBankContingentAcType, FinProvisionAcType,FinSuspAcType,");
 		selectSql.append(" FinIsGenRef, FinMaxAmount, FinMinAmount,");
 		selectSql.append(" FinIsOpenNewFinAc, FinDftStmtFrq, FinIsAlwMD, FinSchdMthd, FInIsAlwGrace,");
@@ -169,7 +169,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append("  AllowRIAInvestment , AllowParllelFinance , OverrideLimit , LimitRequired , " );
 		selectSql.append(" FinCommitmentOvrride , FinCollateralOvrride ,FinInstDate ,FinRepayPftOnFrq, FinAEProgClaim , FinAEMaturity, FinPftUnChanged, ");
 		selectSql.append(" ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc,FinDivision, ");
-		selectSql.append(" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, ");
+		selectSql.append(" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate,  ");
 
 		if (type.contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescFinDaysCalTypeName, lovDescFinContingentAcTypeName,");
@@ -227,12 +227,12 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinAcType, FinCategory,FinDivision, " );
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory,FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , FinAEAddDsbFD, " );
 		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinAEPlanDef, " );
 		selectSql.append(" FinAEEarlyPay, FinAEEarlySettle, FinLatePayRule, FinToAmz, FinAEToNoAmz, FinAERateChg, " );
 		selectSql.append(" FinAERepay, FinAEWriteOff, FinSchdChange, FinAECapitalize, FinProvision, " );
-		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd" );
+		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd, StartDate, EndDate" );
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 
@@ -257,13 +257,13 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
     public List<FinanceType> getFinTypeDetailForBatch() {
 		logger.debug("Entering");
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, FinAcType, FinCategory, FinDivision, " );
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , FinAEAddDsbFD, " );
 		selectSql.append(" FinAEAddDsbFDA, FinAEAddDsbOD, FinAEAmzNorm, FinAEAmzSusp, FinDefRepay, FinAEPlanDef, " );
 		selectSql.append(" FinAEEarlyPay, FinAEEarlySettle, FinLatePayRule, FinToAmz, FinAEToNoAmz, FinAERateChg, " );
 		selectSql.append(" FinAERepay, FinAEWriteOff, FinSchdChange, FinAECapitalize, FinProvision, " );
 		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd," );
-		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy" );
+		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, StartDate, EndDate" );
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -368,7 +368,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTFinanceTypes");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(FinType, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, FinAcType, FinContingentAcType,"); 
+		insertSql.append("(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, FinAcType, FinContingentAcType,"); 
 		insertSql.append(" FinBankContingentAcType, FinProvisionAcType,FinSuspAcType, FinIsGenRef,");
 		insertSql.append(" FinMaxAmount, FinMinAmount,  FinIsOpenNewFinAc, FinDftStmtFrq,  FinIsAlwMD,");
 		insertSql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, FinOrgPrfUnchanged, FinFrEqrepayment, FinRateType,");
@@ -389,9 +389,9 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" FinAlwIndRate,FinIndBaseRate,FinGrcAlwIndRate,FinGrcIndBaseRate,FinAECapitalize, FinAEProgClaim , FinAEMaturity , FinPftUnChanged ,");
 		insertSql.append("  AllowRIAInvestment , AllowParllelFinance , OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinInstDate , FinRepayPftOnFrq, ");
 		insertSql.append("  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, FinDivision, ");
-		insertSql.append("  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy) ");
+		insertSql.append("  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate) ");
 
-		insertSql.append(" Values(:FinType, :FinCategory, :FinTypeDesc, :FinCcy, :FinDaysCalType, :FinAcType, ");
+		insertSql.append(" Values(:FinType, :Product, :FinCategory, :FinTypeDesc, :FinCcy, :FinDaysCalType, :FinAcType, ");
 		insertSql.append(" :FinContingentAcType, :FinBankContingentAcType, :FinProvisionAcType, :FinSuspAcType,");
 		insertSql.append(" :FinIsGenRef, :FinMaxAmount, :FinMinAmount, :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD, ");
 		insertSql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :FinOrgPrfUnchanged, :FinFrEqrepayment, ");
@@ -414,7 +414,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" :FinAlwIndRate,:FinIndBaseRate,:FinGrcAlwIndRate,:FinGrcIndBaseRate, :FinAECapitalize , :FinAEProgClaim ,:FinAEMaturity , :FinPftUnChanged,");
 		insertSql.append(" :AllowRIAInvestment , :AllowParllelFinance , :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride, :FinInstDate, :FinRepayPftOnFrq , ");
 		insertSql.append(" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :FinDivision , ");
-		insertSql.append(" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies , :DftStepPolicy) ");
+		insertSql.append(" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies , :DftStepPolicy, :StartDate, :EndDate) ");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -445,7 +445,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update RMTFinanceTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinType = :FinType, FinTypeDesc = :FinTypeDesc, FinCategory =:FinCategory, FinCcy = :FinCcy,");
+		updateSql.append(" Set FinType = :FinType, Product = :Product,  FinTypeDesc = :FinTypeDesc, FinCategory =:FinCategory, FinCcy = :FinCcy,");
 		updateSql.append(" FinDaysCalType = :FinDaysCalType,FinAcType = :FinAcType, FinContingentAcType = :FinContingentAcType,");
 		updateSql.append(" FinBankContingentAcType= :FinBankContingentAcType, FinProvisionAcType= :FinProvisionAcType,FinSuspAcType=:FinSuspAcType,");
 		updateSql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
@@ -486,8 +486,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" LimitRequired=:LimitRequired ,FinCommitmentOvrride=:FinCommitmentOvrride ,FinCollateralOvrride=:FinCollateralOvrride ,FinInstDate=:FinInstDate, FinRepayPftOnFrq =:FinRepayPftOnFrq, ");
 		updateSql.append(" ApplyODPenalty =:ApplyODPenalty , ODIncGrcDays =:ODIncGrcDays, ODChargeType=:ODChargeType , ODGraceDays=:ODGraceDays , " );
 		updateSql.append(" ODChargeCalOn=:ODChargeCalOn , ODChargeAmtOrPerc=:ODChargeAmtOrPerc , ODAllowWaiver=:ODAllowWaiver , ODMaxWaiverPerc=:ODMaxWaiverPerc, FinDivision=:FinDivision, ");
-		updateSql.append(" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy");
-
+		updateSql.append(" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy,");
+		updateSql.append(" StartDate=:StartDate, EndDate=:EndDate");
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_TEMP")) {

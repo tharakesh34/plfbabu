@@ -247,7 +247,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @return FinanceType
 	 */
 	public FinanceType getApprovedFinanceTypeById(String id) {
-		return getFinanceTypeDAO().getFinanceTypeByID(id, "_AView");
+		FinanceType financeType =  getFinanceTypeDAO().getFinanceTypeByID(id, "_AView");
+		List<AccountingSet> accountEngineRules=getAccountingSetDAO().getListAERuleBySysDflt("");
+		for (int i = 0; i < accountEngineRules.size(); i++) {
+			financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
+		}
+		financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(id, "_AView"));
+		return financeType;
 	}
 
 	/**
