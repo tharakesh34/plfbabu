@@ -143,7 +143,7 @@ public class OverDueRecoveryCalculation implements Tasklet {
 		selectSql.append(" SELECT count(1)");
 		selectSql.append(" FROM Financemain FM ");
 		selectSql.append(" INNER JOIN FinRpyQueue RQ ON RQ.FinReference = FM.FinReference ");
-		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0)");
+		selectSql.append(" WHERE RQ.RpyDate < ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0)");
 		return selectSql.toString();
 	}
 
@@ -160,7 +160,7 @@ public class OverDueRecoveryCalculation implements Tasklet {
 		selectSql.append(" RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, " );
 		selectSql.append(" FM.ProfitDaysBasis " );
 		selectSql.append(" FROM FinRpyQueue RQ  INNER JOIN FinanceMain FM ON FM.FinReference = RQ.FinReference " );
-		selectSql.append(" WHERE RQ.RpyDate <= ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) " );
+		selectSql.append(" WHERE RQ.RpyDate < ? AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) " );
 		return selectSql.toString();
 	}
 
@@ -182,7 +182,6 @@ public class OverDueRecoveryCalculation implements Tasklet {
 			finRepayQueue.setFinType(resultSet.getString("FinType"));
 			finRepayQueue.setCustomerID(resultSet.getLong("CustomerID"));
 			finRepayQueue.setRpyDate(resultSet.getDate("RpyDate"));
-			finRepayQueue.setFinPriority(resultSet.getInt("FinPriority"));
 			finRepayQueue.setFinRpyFor(resultSet.getString("FinRpyFor"));
 			finRepayQueue.setSchdPft(resultSet.getBigDecimal("SchdPft"));
 			finRepayQueue.setSchdPri(resultSet.getBigDecimal("SchdPri"));

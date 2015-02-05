@@ -57,7 +57,7 @@
 
 			<borderlayout id="borderLayout_FinanceWorkFlowList">
 				<north border="none">
-					<textbox id="wfModule" value="Finance" visible="false" />
+					<textbox id="wfModule" value="Promotion" visible="false" />
 				</north>
 
 				<center border="none">
@@ -77,7 +77,7 @@
 								<row>
 									<label
 										id="label_FinanceWorkFlowSearch_FinType"
-										value="${c:l('label_FinanceWorkFlowSearch_FinType.value')}" />
+										value="${c:l('label_PromotionWorkFlowSearch_FinType.value')}" />
 									<listbox id="sortOperator_finType"
 										width="43px" mold="select" rows="1" />
 									<uppercasebox id="finType"
@@ -85,7 +85,7 @@
 
 									<label
 										id="label_FinanceWorkFlowSearch_ScreenCode"
-										value="${c:l('label_FinanceWorkFlowSearch_ScreenCode.value')}" />
+										value="${c:l('label_PromotionWorkFlowSearch_ScreenCode.value')}" />
 									<listbox
 										id="sortOperator_screenCode" width="43px" mold="select"
 										rows="1" />
@@ -95,7 +95,7 @@
 								<row>
 									<label
 										id="label_FinanceWorkFlowSearch_WorkFlowType"
-										value="${c:l('label_FinanceWorkFlowSearch_WorkFlowType.value')}" />
+										value="${c:l('label_PromotionWorkFlowSearch_WorkFlowType.value')}" />
 									<listbox
 										id="sortOperator_workFlowType" width="43px" mold="select"
 										rows="1" />
@@ -107,7 +107,7 @@
 								<row id="row_AlwWorkflow">
 									<label
 										id="label_FinanceWorkFlowSearch_RecordStatus"
-										value="${c:l('label_FinanceWorkFlowSearch_RecordStatus.value')}" />
+										value="${c:l('label_PromotionWorkFlowSearch_RecordStatus.value')}" />
 									<listbox
 										id="sortOperator_recordStatus" width="43px" mold="select"
 										rows="1" />
@@ -116,7 +116,7 @@
 
 									<label
 										id="label_FinanceWorkFlowSearch_RecordType"
-										value="${c:l('label_FinanceWorkFlowSearch_RecordType.value')}" />
+										value="${c:l('label_PromotionWorkFlowSearch_RecordType.value')}" />
 									<listbox
 										id="sortOperator_recordType" width="43px" mold="select"
 										rows="1" />
@@ -132,13 +132,13 @@
 							height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_FinType"
-									label="${c:l('listheader_FinType.label')}" sort="auto"
+									label="${c:l('listheader_Promotion_FinType.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_ScreenCode"
-									label="${c:l('listheader_ScreenCode.label')}" sort="auto"
+									label="${c:l('listheader_Promotion_ScreenCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_WorkFlowType"
-									label="${c:l('listheader_WorkFlowType.label')}" sort="auto"
+									label="${c:l('listheader_Promotion_WorkFlowType.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"

@@ -263,7 +263,7 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> implement
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/workflow/WorkflowDesign.zul", null, map);
+					"/WEB-INF/pages/SolutionFactory/workFlow/WorkflowDesign.zul", null, map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());

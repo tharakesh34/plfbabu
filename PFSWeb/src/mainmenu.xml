@@ -146,6 +146,7 @@
  		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/PromotionList.zul"  rightName="menuItem_SolutionFactory_Promotion"/>
  		<!-- <menuItem id="menu_Item_FinanceCampaign" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceCampaign/FinanceCampaignList.zul"  rightName="menuItem_SolutionFactory_FinanceCampaign"/> -->
 		<menuItem id="menu_Item_FinanceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul"  rightName="menuItem_SolutionFactory_FinanceWorkFlow" />		
+		<menuItem id="menu_Item_PromotionWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/PromotionWorkFlowList.zul"  rightName="menuItem_SolutionFactory_PromotionWorkFlow" />		
 		<menuItem id="menu_Item_HolidayMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterList.zul"   rightName="menuItem_SolutionFactory_HolidayMaster"/>
 		<menuItem id="menu_Item_FinanceReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul"	 rightName="menuItem_SolutionFactory_FinanceReferenceDetail"/>
 		<menuItem id="menu_Item_FacilityReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailList.zul"	 rightName="menuItem_SolutionFactory_FacilityReferenceDetail"/>

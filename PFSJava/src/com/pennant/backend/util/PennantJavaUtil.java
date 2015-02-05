@@ -592,11 +592,17 @@ public class PennantJavaUtil {
 			put("FinanceWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
 					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, "MSTGRP1", 600));
 			
+			put("PromotionWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
+					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, "MSTGRP1", 600));
+			
 			put("FacilityWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
 					new String[] {  "FinType", "lovDescFacilityTypeName" }, new String[][] { { "ModuleName", "0", "FACILITY" } }, "MSTGRP1", 600));
 			
 			put("FinanceType", new ModuleMapping(new FinanceType(), new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, 
-					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" } }, "MSTGRP1", 600));
+					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "0", "" } }, "MSTGRP1", 600));
+			
+			put("PromotionCode", new ModuleMapping(new FinanceType(), new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, 
+					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "1", "" } }, "MSTGRP1", 600));
 			
 			put("HolidayMaster", new ModuleMapping(new HolidayMaster(""), new String[] { "SMTHolidayMaster", "SMTHolidayMaster_AView" },
 					new String[] { "HolidayCode", "HolidayType" }, null, null, 300));

@@ -116,6 +116,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	protected Label 		recordStatus; 					// autoWired
 	protected Radiogroup 	userAction;
 	protected Groupbox 		groupboxWf;
+	protected Label 		label_Title; 					// autoWired
 
 	// not auto wired variables
 	private FinanceWorkFlow financeWorkFlow; // overHanded per parameter
@@ -133,7 +134,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private boolean notes_Entered=false;
 
 	// Button controller for the CRUD buttons
-	private transient final String btnCtroller_ClassPrefix = "button_FinanceWorkFlowDialog_";
+	private transient String btnCtroller_ClassPrefix = "button_FinanceWorkFlowDialog_";
 	private transient ButtonStatusCtrl btnCtrl;
 	protected Button btnNew; 		// autoWire
 	protected Button btnEdit; 		// autoWire
@@ -147,6 +148,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private transient String 		oldVar_lovDescFinTypeName;
 	
 	private transient String 		oldVar_lovDescWorkFlowTypeName;
+	private boolean isPromotion = false;
+	private String dialogName = "";
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceWorkFlowService financeWorkFlowService;
@@ -173,6 +176,18 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	 */
 	public void onCreate$window_FinanceWorkFlowDialog(Event event) throws Exception {
 		logger.debug(event.toString());
+		
+		// get the parameters map that are overHanded by creation.
+		final Map<String, Object> args = getCreationArgsMap(event);
+		
+		dialogName ="FinanceWorkFlowDialog";
+		if (args.containsKey("isPromotion")) {
+			isPromotion = (Boolean) args.get("isPromotion");
+		}
+		if(isPromotion){
+			dialogName ="PromotionWorkFlowDialog";
+			this.btnCtroller_ClassPrefix = "button_PromotionWorkFlowDialog_";
+		}
 
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -180,9 +195,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		/* create the Button Controller. Disable not used buttons during working */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose,this.btnNotes);
-
-		// get the parameters map that are overHanded by creation.
-		final Map<String, Object> args = getCreationArgsMap(event);
 
 		// READ OVERHANDED parameters !
 		if (args.containsKey("financeWorkFlow")) {
@@ -200,7 +212,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 
 		if (isWorkFlowEnabled()){
 			this.userAction	= setListRecordStatus(this.userAction);
-			getUserWorkspace().alocateRoleAuthorities(getRole(), "FinanceWorkFlowDialog");
+			getUserWorkspace().alocateRoleAuthorities(getRole(), dialogName);
 		}
 
 		setListScreenCode();
@@ -258,6 +270,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 				this.finType.setValueColumn("FinType");
 				this.finType.setDescColumn("FinTypeDesc");
 				this.finType.setValidateColumns(new String[] { "FinType" });
+			}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_PROMOTION)) {
+				this.finType.setModuleName("PromotionCode");
+				this.finType.setValueColumn("FinType");
+				this.finType.setDescColumn("FinTypeDesc");
+				this.finType.setValidateColumns(new String[] { "FinType" });
 			}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
 				this.finType.setModuleName("CAFFacilityType");
 				this.finType.setValueColumn("FacilityType");
@@ -279,12 +296,12 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	private void doCheckRights() {
 		logger.debug("Entering") ;
 
-		getUserWorkspace().alocateAuthorities("FinanceWorkFlowDialog");
+		getUserWorkspace().alocateAuthorities(dialogName);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceWorkFlowDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceWorkFlowDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceWorkFlowDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceWorkFlowDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving") ;
@@ -431,7 +448,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		if(close){
-			closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog");	
+			closeDialog(this.window_FinanceWorkFlowDialog, dialogName);	
 		}
 
 		logger.debug("Leaving") ;
@@ -460,7 +477,14 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void doWriteBeanToComponents(FinanceWorkFlow aFinanceWorkFlow) {
 		logger.debug("Entering") ;
 		
-		fillComboBox(this.moduleName, aFinanceWorkFlow.getModuleName(), PennantStaticListUtil.getWorkFlowModules(), "");
+		String exclFields = "";
+		if(isPromotion){
+			exclFields = ","+PennantConstants.WORFLOW_MODULE_FINANCE+","+PennantConstants.WORFLOW_MODULE_FACILITY+",";
+		}else{
+			exclFields = ","+PennantConstants.WORFLOW_MODULE_PROMOTION+",";
+		}
+		
+		fillComboBox(this.moduleName, aFinanceWorkFlow.getModuleName(), PennantStaticListUtil.getWorkFlowModules(), exclFields);
 		this.finType.setValue(aFinanceWorkFlow.getFinType());
 		this.screenCode.setValue(PennantAppUtil.getlabelDesc(aFinanceWorkFlow.getScreenCode(),PennantStaticListUtil.getScreenCodes()));
 		this.workFlowType.setValue(aFinanceWorkFlow.getWorkFlowType());
@@ -469,7 +493,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.finType.setDescription("");
 			this.workFlowType.setDescription("");
 		}else{
-			if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FINANCE)) {
+			if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FINANCE)
+					|| aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_PROMOTION)) {
 				this.finType.setDescription(aFinanceWorkFlow.getLovDescFinTypeName());
 			}else if (aFinanceWorkFlow.getModuleName().equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
 				this.finType.setDescription(aFinanceWorkFlow.getLovDescFacilityTypeName());
@@ -583,6 +608,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
+			if(isPromotion){
+				this.label_Title.setValue(Labels.getLabel("window_PromotionWorkFlowDialog.title"));
+			}
 			setDialog(this.window_FinanceWorkFlowDialog);
 		} catch (final Exception e) {
 			logger.error(e);
@@ -759,7 +787,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			try {
 				if(doProcess(aFinanceWorkFlow,tranType)){
 					refreshList();
-					closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog"); 
+					closeDialog(this.window_FinanceWorkFlowDialog, dialogName); 
 				}
 
 			}catch (DataAccessException e){
@@ -808,8 +836,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 			this.btnCancel.setVisible(true);
 		}
 
-		this.screenCode.setDisabled(isReadOnly("FinanceWorkFlowDialog_screenCode"));
-		this.workFlowType.setReadonly(isReadOnly("FinanceWorkFlowDialog_workFlowType"));
+		this.screenCode.setDisabled(isReadOnly(dialogName+"_screenCode"));
+		this.workFlowType.setReadonly(isReadOnly(dialogName+"_workFlowType"));
 
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -916,7 +944,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl implements Serializab
 		try {
 			if(doProcess(aFinanceWorkFlow,tranType)){
 				refreshList();
-				closeDialog(this.window_FinanceWorkFlowDialog, "FinanceWorkFlowDialog");
+				closeDialog(this.window_FinanceWorkFlowDialog, dialogName);
 			}
 
 		} catch (final DataAccessException e) {

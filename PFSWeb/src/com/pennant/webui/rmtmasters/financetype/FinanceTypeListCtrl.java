@@ -211,7 +211,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			wfAvailable = false;
 		}
 		
-		if(StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.PROMOTION)){
+		if(StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_PROMOTION)){
 			isPromotion = true;
 		}
 

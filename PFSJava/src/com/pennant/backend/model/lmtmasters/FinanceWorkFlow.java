@@ -61,6 +61,7 @@ public class FinanceWorkFlow implements java.io.Serializable {
 	private String lovDescFacilityTypeName;
 	private String lovDescFinDivisionName;
 	private String lovDescProductCodeName;
+	private String lovDescProductName;
 	private String screenCode = PennantConstants.defaultScreenCode;
 	private String workFlowType;
 	private String moduleName;
@@ -319,5 +320,13 @@ public class FinanceWorkFlow implements java.io.Serializable {
 		}
 		return false;
 	}
+
+	public String getLovDescProductName() {
+	    return lovDescProductName;
+    }
+
+	public void setLovDescProductName(String lovDescProductName) {
+	    this.lovDescProductName = lovDescProductName;
+    }
 
 }

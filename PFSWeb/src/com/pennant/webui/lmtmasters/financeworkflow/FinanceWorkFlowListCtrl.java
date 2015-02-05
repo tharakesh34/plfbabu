@@ -133,11 +133,13 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	
 	private Grid 			searchGrid;							// autowired
 	protected Textbox 		moduleType; 						// autowired
+	protected Textbox 		wfModule; 							// autowired
 	protected Radio			fromApproved;
 	protected Radio			fromWorkFlow;
 	protected Row			workFlowFrom;
 
 	private transient boolean  approvedList=false;
+	private transient boolean  isPromotion = false;
 	
 	// checkRights
 	protected Button btnHelp; 													// autoWired
@@ -173,11 +175,11 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	public void onCreate$window_FinanceWorkFlowList(Event event) throws Exception {
 		logger.debug("Entering");
 		
-		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("FinanceWorkFlow");
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(wfModule.getValue()+"WorkFlow");
 		boolean wfAvailable=true;
 		
 		if (moduleMapping.getWorkflowType()!=null){
-			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceWorkFlow");
+			workFlowDetails = WorkFlowUtil.getWorkFlowDetails(wfModule.getValue()+"WorkFlow");
 			
 			if (workFlowDetails==null){
 				setWorkFlowEnabled(false);
@@ -267,14 +269,21 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("FinanceWorkFlowList");
+		
+		String listName = "FinanceWorkFlowList";
+		if(wfModule.getValue().equals("Promotion")){
+			listName = "PromotionWorkFlowList";
+			isPromotion = true;
+		}
+		
+		getUserWorkspace().alocateAuthorities(listName);
 		
 		this.button_FinanceWorkFlowList_NewFinanceWorkFlow.setVisible(getUserWorkspace()
-				.isAllowed("button_FinanceWorkFlowList_NewFinanceWorkFlow"));
+				.isAllowed("button_"+listName+"_NewFinanceWorkFlow"));
 		this.button_FinanceWorkFlowList_FinanceWorkFlowSearchDialog.setVisible(getUserWorkspace()
-				.isAllowed("button_FinanceWorkFlowList_FinanceWorkFlowFindDialog"));
+				.isAllowed("button_"+listName+"_FinanceWorkFlowFindDialog"));
 		this.button_FinanceWorkFlowList_PrintList.setVisible(getUserWorkspace()
-				.isAllowed("button_FinanceWorkFlowList_PrintList"));
+				.isAllowed("button_"+listName+"_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -363,6 +372,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 		 * dialog when we do a delete, edit or insert a FinanceWorkFlow.
 		 */
 		map.put("financeWorkFlowListCtrl", this);
+		map.put("isPromotion", isPromotion);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -436,77 +446,83 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 	}
 	
 	public void doSearch(){
-		 logger.debug("Entering");
-			// ++ create the searchObject and init sorting ++//
-			this.searchObj = new JdbcSearchObject<FinanceWorkFlow>(FinanceWorkFlow.class,getListRows());
+		logger.debug("Entering");
+		// ++ create the searchObject and init sorting ++//
+		this.searchObj = new JdbcSearchObject<FinanceWorkFlow>(FinanceWorkFlow.class,getListRows());
 
-			// Defualt Sort on the table
-			this.searchObj.addSort("FinType", false);
-			
-			// Workflow
-			if (isWorkFlowEnabled()) {
-				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
+		// Defualt Sort on the table
+		this.searchObj.addSort("FinType", false);
 
-				if(this.moduleType==null){
-					this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
-					approvedList=false;
-					
+		if(isPromotion){
+			this.searchObj.addFilter(new Filter("lovDescProductName", "", Filter.OP_NOT_EQUAL));
+		}else{
+			this.searchObj.addFilter(new Filter("lovDescProductName", "", Filter.OP_EQUAL));
+		}
+
+		// Workflow
+		if (isWorkFlowEnabled()) {
+			this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
+
+			if(this.moduleType==null){
+				this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
+				approvedList=false;
+
+			}else{
+				if(this.fromApproved.isSelected()){
+					approvedList=true;
 				}else{
-					if(this.fromApproved.isSelected()){
-						approvedList=true;
-					}else{
-						approvedList=false;
-					}
-				}
-			}else{
-				approvedList=true;
-			}
-			if(approvedList){
-				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_AView");
-			}else{
-				this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
-			}
-			
-			//Finance Type
-			if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue(), "finType");
-			}
-			//Screen Code
-			if (!StringUtils.trimToEmpty(this.screenCode.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_screenCode.getSelectedItem(),this.screenCode.getValue(), "screenCode");
-			}
-			//Screen Code
-			if (!StringUtils.trimToEmpty(this.workFlowType.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_workFlowType.getSelectedItem(),this.workFlowType.getValue(), "workFlowType");
-			}
-		
-			// Record Status
-			if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
-			}
-			
-			// Record Type
-			if (this.recordType.getSelectedItem() != null
-					&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
-				searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
-						this.recordType.getSelectedItem().getValue().toString(),"RecordType");
-			}
-
-			if (logger.isDebugEnabled()) {
-				final List<Filter> lf = this.searchObj.getFilters();
-				for (final Filter filter : lf) {
-					logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
-
-					if (Filter.OP_ILIKE == filter.getOperator()) {
-						logger.debug(filter.getOperator());
-					}
+					approvedList=false;
 				}
 			}
+		}else{
+			approvedList=true;
+		}
+		if(approvedList){
+			this.searchObj.addTabelName("LMTFinanceWorkFlowDef_AView");
+		}else{
+			this.searchObj.addTabelName("LMTFinanceWorkFlowDef_View");
+		}
 
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxFinanceWorkFlow,this.pagingFinanceWorkFlowList);
+		//Finance Type
+		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue(), "FinType");
+		}
+		//Screen Code
+		if (!StringUtils.trimToEmpty(this.screenCode.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_screenCode.getSelectedItem(),this.screenCode.getValue(), "ScreenCode");
+		}
+		//Screen Code
+		if (!StringUtils.trimToEmpty(this.workFlowType.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_workFlowType.getSelectedItem(),this.workFlowType.getValue(), "WorkFlowType");
+		}
 
-			logger.debug("Leaving");
+		// Record Status
+		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordStatus.getSelectedItem(),this.recordStatus.getValue(), "RecordStatus");
+		}
+
+		// Record Type
+		if (this.recordType.getSelectedItem() != null
+				&& !StringUtils.trimToEmpty(this.recordType.getSelectedItem().getValue().toString()).equals("")) {
+			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),
+					this.recordType.getSelectedItem().getValue().toString(),"RecordType");
+		}
+
+		if (logger.isDebugEnabled()) {
+			final List<Filter> lf = this.searchObj.getFilters();
+			for (final Filter filter : lf) {
+				logger.debug(filter.getProperty().toString() + " / "+ filter.getValue().toString());
+
+				if (Filter.OP_ILIKE == filter.getOperator()) {
+					logger.debug(filter.getOperator());
+				}
+			}
+		}
+
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj, this.listBoxFinanceWorkFlow,this.pagingFinanceWorkFlowList);
+
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

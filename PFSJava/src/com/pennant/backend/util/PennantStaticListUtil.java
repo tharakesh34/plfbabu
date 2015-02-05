@@ -567,6 +567,7 @@ public class PennantStaticListUtil {
 		if(workFlowModuleList == null){
 			workFlowModuleList = new ArrayList<ValueLabel>(2);
 			workFlowModuleList.add(new ValueLabel(PennantConstants.WORFLOW_MODULE_FINANCE, Labels.getLabel("label_FinanceWorkFlowDialog_Finance")));
+			workFlowModuleList.add(new ValueLabel(PennantConstants.WORFLOW_MODULE_PROMOTION, Labels.getLabel("label_FinanceWorkFlowDialog_Promotion")));
 			workFlowModuleList.add(new ValueLabel(PennantConstants.WORFLOW_MODULE_FACILITY, Labels.getLabel("label_FinanceWorkFlowDialog_Facility")));
 		}
 		return workFlowModuleList;

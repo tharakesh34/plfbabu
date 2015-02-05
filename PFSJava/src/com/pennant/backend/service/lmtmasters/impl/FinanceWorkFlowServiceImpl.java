@@ -269,7 +269,8 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 				FinanceWorkFlow apprvFinWorkflow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeWorkFlow.getId(), "");
 				if(apprvFinWorkflow != null){
 					if(!apprvFinWorkflow.getWorkFlowType().equals(financeWorkFlow.getWorkFlowType())){
-						if(PennantConstants.WORFLOW_MODULE_FINANCE.equals(financeWorkFlow.getModuleName())){
+						if(PennantConstants.WORFLOW_MODULE_FINANCE.equals(financeWorkFlow.getModuleName()) || 
+								PennantConstants.WORFLOW_MODULE_PROMOTION.equals(financeWorkFlow.getModuleName())){
 							getFinanceReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(), "");
 						}else if(PennantConstants.WORFLOW_MODULE_FACILITY.equals(financeWorkFlow.getModuleName())){
 							getFacilityReferenceDetailDAO().deleteByFinType(financeWorkFlow.getFinType(), "");

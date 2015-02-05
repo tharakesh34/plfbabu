@@ -474,6 +474,7 @@ public class PennantConstants {
 	public static final String DEAL = "DEAL";
 	public static final String FIN_DIVISION_TREASURY = "TREASURY";
 	public static final String WORFLOW_MODULE_FINANCE = "FINANCE";
+	public static final String WORFLOW_MODULE_PROMOTION = "PROMOTION";
 	public static final String WORFLOW_MODULE_FACILITY = "FACILITY";
 
 	// Query Builder Constants
@@ -622,7 +623,5 @@ public class PennantConstants {
 	public static final String CORP_CRDTRVW_RATIOS_FCF = "FCF";
 
 	public static final String REPAY_HIERARCHY_METHOD = "IPCS";
-
-	public static final String PROMOTION = "PROMOTION";
 
 }
