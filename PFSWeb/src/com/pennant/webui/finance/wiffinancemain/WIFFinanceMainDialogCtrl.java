@@ -3296,7 +3296,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if (this.gb_gracePeriodDetails.isVisible()) {
 
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value"),null,true));
+				this.graceTerms.setConstraint(new PTNumberValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceTerms.value"),false, false));
 			}	
 			
 			if (!this.grcMargin.isDisabled()) {
@@ -5706,6 +5706,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					this.nextRepayRvwDate.setValue(detail.getSchDate());
 					this.nextRepayRvwDate_two.setValue(detail.getSchDate());
 					rvwchecked = true;
+				}else if(!main.isAllowRepayRvw()){
+					rvwchecked = true;
 				}
 				
 				if(pftchecked && repaychecked && rvwchecked){
@@ -5922,12 +5924,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.nextGrcPftDate_two.setValue(this.nextGrcPftDate.getValue());
 			}
 
-			if (this.nextGrcPftDate.getValue() == null && this.nextGrcPftDate_two.getValue() != null) {
-				if (this.nextGrcPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-					this.nextGrcPftDate_two.setValue(this.gracePeriodEndDate_two.getValue());
-				}
-			}
-
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinGrcIsRvwAlw()
 					&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
@@ -5999,7 +5995,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 				this.graceTerms.setText("");
 			}
+			
+			if (this.nextGrcPftDate.getValue() == null && this.nextGrcPftDate_two.getValue() != null) {
+				if (this.nextGrcPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
+					this.nextGrcPftDate_two.setValue(this.gracePeriodEndDate_two.getValue());
+				}
+			}
 		}
+		
 		
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 

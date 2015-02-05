@@ -274,17 +274,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		doSetLabels();
 		doShowDialog();
 		
-		if(getFinScheduleData().getFinanceMain().isStepFinance()){
-			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
-				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
-				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
-			}
-		} else {
-			this.listHeader_cashFlowEffect.setVisible(false);
-			this.listHeader_vSProfit.setVisible(false);
-			this.listHeader_orgPrincipalDue.setVisible(false);
-		}  
-		
 		logger.debug("Leaving " + event.toString());
 	}
 	
@@ -461,6 +450,21 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
+		
+		if(getFinScheduleData().getFinanceMain().isStepFinance() && moduleDefiner.equals("")){
+			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name
+				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
+				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
+			}else{
+				this.listHeader_cashFlowEffect.setVisible(true);
+				this.listHeader_vSProfit.setVisible(true);
+				this.listHeader_orgPrincipalDue.setVisible(true);
+			}
+		} else {
+			this.listHeader_cashFlowEffect.setVisible(false);
+			this.listHeader_vSProfit.setVisible(false);
+			this.listHeader_orgPrincipalDue.setVisible(false);
+		}  
 		
 		setFinScheduleData(aFinSchData);
 		FinanceMain financeMain = aFinSchData.getFinanceMain();

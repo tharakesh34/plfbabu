@@ -6443,6 +6443,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 					this.nextRepayRvwDate.setValue(detail.getSchDate());
 					this.nextRepayRvwDate_two.setValue(detail.getSchDate());
 					rvwchecked = true;
+				}else if(!main.isAllowRepayRvw()){
+					rvwchecked = true;
 				}
 				
 				if(pftchecked && repaychecked && rvwchecked){

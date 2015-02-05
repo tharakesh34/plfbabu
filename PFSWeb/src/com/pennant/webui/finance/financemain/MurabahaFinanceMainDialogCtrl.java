@@ -1713,7 +1713,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if (this.gb_gracePeriodDetails.isVisible()) {
 			
 			if (!this.graceTerms.isReadonly()) {
-				this.graceTerms.setConstraint(new PTStringValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_GraceTerms.value"),null,true));
+				this.graceTerms.setConstraint(new PTNumberValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_GraceTerms.value"),false, false));
 			}
 			
 			if (!this.grcMargin.isReadonly()) {

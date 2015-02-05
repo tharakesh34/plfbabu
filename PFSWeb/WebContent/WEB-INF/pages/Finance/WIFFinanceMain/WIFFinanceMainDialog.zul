@@ -286,7 +286,7 @@
 												<row>
 												 <label
 													id="label_FinanceMainDialog_graceTerms"
-													value="${c:l('label_FinanceMainDialog_graceTerms.value')}" />
+													value="${c:l('label_WIFFinanceMainDialog_GraceTerms.value')}" />
 												<hbox>
 													<space spacing="2px"
 														sclass="mandatory" />

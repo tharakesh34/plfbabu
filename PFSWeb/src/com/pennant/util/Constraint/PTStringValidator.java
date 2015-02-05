@@ -111,7 +111,7 @@ public class PTStringValidator implements Constraint{
 			compValue= value.toString();
 		}
 		
-		if (StringUtils.trim(compValue).equals("") ) {
+		if (StringUtils.trimToEmpty(compValue).equals("") ) {
 			if(isMandatory()){
 				return Labels.getLabel("FIELD_IS_MAND", new String[] {fieldParm});	
 			}else{

@@ -5810,12 +5810,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.nextGrcPftDate_two.setValue(this.nextGrcPftDate.getValue());
 			}
 
-			if (this.nextGrcPftDate.getValue() == null && this.nextGrcPftDate_two.getValue() != null) {
-				if (this.nextGrcPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
-					this.nextGrcPftDate_two.setValue(this.gracePeriodEndDate_two.getValue());
-				}
-			}
-
 			if (financeType.isFinGrcIsRvwAlw()
 					&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 
@@ -5886,6 +5880,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 
 				this.graceTerms.setText("");
+			}
+			
+			if (this.nextGrcPftDate.getValue() == null && this.nextGrcPftDate_two.getValue() != null) {
+				if (this.nextGrcPftDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
+					this.nextGrcPftDate_two.setValue(this.gracePeriodEndDate_two.getValue());
+				}
 			}
 		}
 
