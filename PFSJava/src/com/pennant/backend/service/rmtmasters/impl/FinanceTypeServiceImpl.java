@@ -53,12 +53,16 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -78,6 +82,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private FinanceTypeDAO financeTypeDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private FinTypeAccountDAO finTypeAccountDAO;
+	private FinanceWorkFlowDAO financeWorkFlowDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -321,6 +328,33 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				tranType = PennantConstants.TRAN_ADD;
 				financeType.setRecordType("");
 				getFinanceTypeDAO().save(financeType, "");
+				
+				// Copy of Finance Workflow & Process Editor Details to Promotion by Finance Type(Product Code)
+				if(!StringUtils.trimToEmpty(financeType.getProduct()).equals("")){
+					
+					//Finance Workflow Details
+					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(financeType.getProduct(), "");
+					financeWorkFlow.setFinType(financeType.getFinType());
+					financeWorkFlow.setModuleName(PennantConstants.WORFLOW_MODULE_PROMOTION);
+					financeWorkFlow.setVersion(0);
+					financeWorkFlow.setLastMntBy(financeType.getLastMntBy());
+					financeWorkFlow.setLastMntOn(financeType.getLastMntOn());
+				
+					getFinanceWorkFlowDAO().save(financeWorkFlow,"");
+					
+					//Process Editor Details
+					List<FinanceReferenceDetail> refList = getFinanceReferenceDetailDAO().getFinanceReferenceDetail(financeType.getProduct(), "", "");
+					for (FinanceReferenceDetail refDetail : refList) {
+						refDetail.setFinType(financeType.getFinType());
+						refDetail.setFinRefDetailId(Long.MIN_VALUE);
+						refDetail.setVersion(0);
+						refDetail.setLastMntBy(financeType.getLastMntBy());
+						refDetail.setLastMntOn(financeType.getLastMntOn());
+						getFinanceReferenceDetailDAO().save(refDetail, "");
+                    }
+					
+				}
+				
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				financeType.setRecordType("");
@@ -870,11 +904,24 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	public FinTypeAccountDAO getFinTypeAccountDAO() {
     	return finTypeAccountDAO;
     }
-
 	public void setFinTypeAccountDAO(FinTypeAccountDAO finTypeAccountDAO) {
     	this.finTypeAccountDAO = finTypeAccountDAO;
     }
 	
+	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
+		return financeWorkFlowDAO;
+	}
+	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
+		this.financeWorkFlowDAO = financeWorkFlowDAO;
+	}
+
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+		return financeReferenceDetailDAO;
+	}
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
 	@Override
 	public FinTypeAccount getFinTypeAccount() {
 		return getFinTypeAccountDAO().getFinTypeAccount();
