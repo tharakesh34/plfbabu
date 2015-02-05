@@ -245,7 +245,6 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 			this.listheader_RecordType.setVisible(false);
 		}
 		
-
 		// set the itemRenderer
 		this.listBoxFinanceWorkFlow.setItemRenderer(new FinanceWorkFlowListModelItemRenderer());
 		
@@ -271,7 +270,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> im
 		logger.debug("Entering");
 		
 		String listName = "FinanceWorkFlowList";
-		if(wfModule.getValue().equals("Promotion")){
+		if(wfModule.getValue().equalsIgnoreCase(PennantConstants.WORFLOW_MODULE_PROMOTION)){
 			listName = "PromotionWorkFlowList";
 			isPromotion = true;
 		}

@@ -60,7 +60,7 @@
 			<borderlayout
 				id="borderLayout_FinanceReferenceDetailList">
 				<north border="none">
-					<textbox id="referenceModule" value="Finance"
+					<textbox id="referenceModule" value="Promotion"
 						visible="false" />
 				</north>
 
@@ -81,14 +81,14 @@
 								<row>
 									<label
 										id="label_FinanceReferenceDetailList_FinType"
-										value="${c:l('label_FinanceReferenceDetailList_FinType.value')}" />
+										value="${c:l('label_PromotionReferenceDetailList_FinType.value')}" />
 									<listbox id="sortOperator_finType"
 										width="43px" mold="select" rows="1" />
 									<textbox id="finType" width="250px"
 										maxlength="50" />
 									<label
 										id="label_FinanceReferenceDetailList_FinTypeDesc"
-										value="${c:l('label_FinanceReferenceDetailList_FinTypeDesc.value')}" />
+										value="${c:l('label_PromotionReferenceDetailList_FinTypeDesc.value')}" />
 									<listbox
 										id="sortOperator_finTypeDesc" width="43px" mold="select"
 										rows="1" />
@@ -103,12 +103,12 @@
 							width="100%" height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_FinanceType"
-									label="${c:l('listheader_FinanceType.label')}" sort="auto"
-									width="30%" />
+									label="${c:l('listheader_Promotion_FinanceType.label')}"
+									sort="auto" width="30%" />
 								<listheader
 									id="listheader_FinanceTypeDesc"
-									label="${c:l('listheader_FinanceTypeDesc.label')}" sort="auto"
-									width="70%" />
+									label="${c:l('listheader_Promotion_FinanceTypeDesc.label')}"
+									sort="auto" width="70%" />
 							</listhead>
 						</listbox>
 					</div>

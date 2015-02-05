@@ -82,7 +82,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.FinanceReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
@@ -158,7 +157,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
-	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 
 	private FinanceReference financeReference;
@@ -1213,14 +1211,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 
 	public FinanceReferenceDetailListCtrl getFinanceReferenceDetailListCtrl() {
 		return this.financeReferenceDetailListCtrl;
-	}
-
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
 	}
 
 	private AuditHeader getAuditHeader(FinanceReferenceDetail aFinanceReferenceDetail, String tranType) {

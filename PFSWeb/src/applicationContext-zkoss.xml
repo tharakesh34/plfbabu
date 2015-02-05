@@ -2122,7 +2122,6 @@
 	<bean id="financeReferenceDetailDialogCtrl"
 		class="com.pennant.webui.lmtmasters.financereferencedetail.FinanceReferenceDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 

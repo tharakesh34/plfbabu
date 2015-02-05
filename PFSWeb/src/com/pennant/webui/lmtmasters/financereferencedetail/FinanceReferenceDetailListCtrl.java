@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.lmtmasters.financereferencedetail;
 
@@ -70,7 +70,6 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FinanceReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -112,7 +111,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	protected Listbox  sortOperator_finType;
 	protected Textbox  finTypeDesc;
 	protected Listbox  sortOperator_finTypeDesc;
-	
+	protected Textbox  referenceModule; 		
+
 	// List headers
 	protected Listheader listheader_FinanceType; 		// auto wired
 	protected Listheader listheader_FinanceTypeDesc; 	// auto wired
@@ -127,8 +127,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	protected JdbcSearchObject<FinanceType> searchObj;
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
 	private transient WorkFlowDetails workFlowDetails=null;
-	private PagedListService pagedListService;
-	
+	private transient boolean  isPromotion = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -150,13 +150,13 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	 */
 	public void onCreate$window_FinanceReferenceDetailList(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap("FinanceReferenceDetail");
 		boolean wfAvailable=true;
-		
+
 		if (moduleMapping.getWorkflowType()!=null){
 			workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceReferenceDetail");
-			
+
 			if (workFlowDetails==null){
 				setWorkFlowEnabled(false);
 			}else{
@@ -167,17 +167,17 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		}else{
 			wfAvailable=false;
 		}
-		
+
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 		this.sortOperator_finType.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finType.setItemRenderer(new SearchOperatorListModelItemRenderer());
-	
+
 		this.sortOperator_finTypeDesc.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finTypeDesc.setItemRenderer(new SearchOperatorListModelItemRenderer());
-		
+
 		/* set components visible dependent on the users rights */
 		doCheckRights();
-		
+
 		this.borderLayout_FinanceReferenceDetailList.setHeight(getBorderLayoutHeight());
 
 		// set the paging parameters
@@ -193,6 +193,12 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		this.searchObj = new JdbcSearchObject<FinanceType>(FinanceType.class,getListRows());
 		this.searchObj.addSort("FinType", false);
 		this.searchObj.addFilter(new Filter("finIsActive", 1, Filter.OP_EQUAL));
+
+		if(isPromotion){
+			this.searchObj.addFilter(new Filter("Product", "", Filter.OP_NOT_EQUAL));
+		}else{
+			this.searchObj.addFilter(new Filter("Product", "", Filter.OP_EQUAL));
+		}
 		
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
@@ -228,7 +234,14 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("FinanceReferenceDetailList");
+		
+		String listName = "FinanceReferenceDetailList";
+		if(referenceModule.getValue().equalsIgnoreCase(PennantConstants.WORFLOW_MODULE_PROMOTION)){
+			listName = "PromotionReferenceDetailList";
+			isPromotion = true;
+		}
+		
+		getUserWorkspace().alocateAuthorities(listName);
 
 		/*this.button_FinanceReferenceDetailList_NewFinanceReferenceDetail.setVisible(
 				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_NewFinanceReferenceDetail"));*/
@@ -236,7 +249,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		/*this.button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog.setVisible(
 				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_FinanceReferenceDetailFindDialog"));*/
 		this.button_FinanceReferenceDetailList_PrintList.setVisible(
-				getUserWorkspace().isAllowed("button_FinanceReferenceDetailList_PrintList"));
+				getUserWorkspace().isAllowed("button_"+listName+"_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -274,7 +287,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 				PTMessageUtils.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}else{
 				financeReference.setLovDescFinTypeDescName(aFinanceType.getFinTypeDesc());
-			showDetailView(financeReference);
+				showDetailView(financeReference);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -305,7 +318,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		 * with a object of the selected item. For handed over these parameter
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
-		
+
 		FinanceReferenceDetail financeReferenceDetail = getFinanceReferenceDetailService().getNewFinanceReferenceDetail();
 		financeReferenceDetail.setWorkflowId(0);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -372,7 +385,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		doSearch();
 		logger.debug("Leaving");
 	}
-	
+
 	public void doSearch(){
 		logger.debug("Entering");
 		// ++ create the searchObject and initialize sorting ++//
@@ -380,18 +393,23 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 		this.searchObj.addSort("FinType", false);
 		this.searchObj.addSort("FinTypeDesc", false);
 		this.searchObj.addTabelName("RMTFinanceTypes_AView");
-	
-			
+
+		if(isPromotion){
+			this.searchObj.addFilter(new Filter("Product", "", Filter.OP_NOT_EQUAL));
+		}else{
+			this.searchObj.addFilter(new Filter("Product", "", Filter.OP_EQUAL));
+		}
+
 		//Finance Type
 		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finType.getSelectedItem(), this.finType.getValue(), "finType");
 		}
-		
+
 		// Finance Type Desc
 		if (!StringUtils.trimToEmpty(this.finTypeDesc.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "finTypeDesc");
 		}
-		
+
 		if (logger.isDebugEnabled()) {
 			final List<Filter> lf = this.searchObj.getFilters();
 			for (final Filter filter : lf) {
@@ -401,18 +419,12 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 					logger.debug(filter.getOperator());
 				}
 			}
-		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
-		logger.debug("Leaving" );
+			// Set the ListModel for the articles.
+			getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
+			logger.debug("Leaving" );
+		}
 	}
-}
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * When the financeReferenceDetail print button is clicked.
 	 * 
@@ -428,7 +440,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	
+
 	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
@@ -442,11 +454,5 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceType>
 	public void setSearchObj(JdbcSearchObject<FinanceType> searchObj) {
 		this.searchObj = searchObj;
 	}
-	
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
-	}
+
 }
