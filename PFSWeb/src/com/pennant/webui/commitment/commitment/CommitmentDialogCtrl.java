@@ -166,7 +166,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	
 	protected Label	                     label_custID;
 	protected Hlayout	                 hlayout_custID;
-	protected Space	                     space_custID;
 	protected Longbox	                 custID;
 	
 	protected Row	                     row1;
@@ -298,7 +297,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Groupbox	                 groupboxWf;
 	protected South	                     south;
 	private boolean	                     enqModule	             = false;
-	protected Button	                 btnSearchcustID;
 
 	// not auto wired vars
 	private Commitment	                 commitment;	                                                                                            // overhanded
@@ -345,7 +343,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Button	                 btnHelp;
 	protected Button	                 btnNotes;
 
-	protected Textbox	         		 custIDName;
+	protected ExtendedCombobox	         		 custIDName;
 	private transient String	         oldVar_custIDName;
 
 	private transient String	         oldVar_CmtBranchName;
@@ -392,7 +390,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 	boolean	                             newMaintain	         = false;
 	BigDecimal	                         oldCmtAmount	         = BigDecimal.ZERO;
 	boolean								 proceed				 = true;
-	protected Label	                     labelCustIDName;
 	public int	                       borderLayoutHeight	= 0;
 	Date dateAppDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR).toString());
 
@@ -616,7 +613,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(details == null) {
 			this.custID.setValue(Long.valueOf(0));
 			this.custIDName.setValue("");
-			this.labelCustIDName.setValue("");
+			this.custIDName.setDescription("");
 			this.cmtBranch.setValue("","");
 			this.cmtAccount.setValue("");
 			this.cmtAccountName.setValue("");
@@ -631,17 +628,17 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	public void onClick$btnSearchcustID(Event event) throws InterruptedException {
+	public void onFulfill$custIDName(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
 		if(this.custID.getValue() != null){
 			custIDTemp = this.custID.getValue();
 		}
-		Object dataObject = ExtendedSearchListBox.show(this.window_CommitmentDialog, "Customer");
+		Object dataObject = this.custIDName.getObject();
 		if (dataObject instanceof String) {
 			this.custID.setText("");
 			this.custIDName.setValue("");
-			this.labelCustIDName.setValue("");
+			this.custIDName.setDescription("");
 			this.cmtChargesAccount.setCustCIF("");
 		} else {
 			Customer details = (Customer) dataObject;
@@ -669,7 +666,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//				doCheckOpenAccount();
 		this.custID.setValue(Long.valueOf(details.getCustID()));
 		this.custIDName.setValue(String.valueOf(details.getCustCIF()));
-		this.labelCustIDName.setValue(details.getCustShrtName());
+		this.custIDName.setDescription(details.getCustShrtName());
 		this.cmtBranch.setValue(details.getCustDftBranch(),details.getLovDescCustDftBranchName());
 		this.cmtChargesAccount.setCustCIF(String.valueOf(details.getCustCIF()));
 		Filter[] filters = new Filter[1];
@@ -880,8 +877,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		setComponentAccessType("CommitmentDialog_CmtTitle", tempReadOnly, this.cmtTitle, this.space_CmtTitle, this.label_CmtTitle, this.hlayout_CmtTitle, null);
 		setRowInvisible(this.row0, this.hlayout_CmtReference, this.hlayout_CmtTitle);
-		setLovAccess("CommitmentDialog_custID", tempReadOnly, this.btnSearchcustID, this.space_custID, this.label_custID, this.hlayout_custID, null);
-		setComponentAccessType("CommitmentDialog_custID", tempReadOnly, this.custIDName, this.space_custID, this.label_custID, this.hlayout_custID, null);
+		setComponentAccessType("CommitmentDialog_custID", tempReadOnly, this.custIDName, null, this.label_custID, this.hlayout_custID, null);
 		setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount, this.label_OpenAccount, this.hlayout_OpenAccount, null);
 		setLovAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.btnSearchCmtAccount, this.space_CmtAccount, this.label_CmtAccount, this.hlayout_CmtAccount, null);
 		setRowInvisible(this.row3, this.hlayout_OpenAccount, hlayout_CmtAccount);
@@ -1007,8 +1003,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		this.cmtChargesAccount.setFinanceDetails(PennantConstants.COMMITMENT_FIN_TYPE, PennantConstants.COMMITMENT_FIN_EVENT, PennantConstants.COMMITMENT_FIN_CCY);
 		this.cmtChargesAccount.setFormatter(PennantConstants.COMMITMENT_FIN_FORMATTER);
-		
-	
+		this.custIDName.setMandatoryStyle(true);
+		this.custIDName.setModuleName("Customer");
+		this.custIDName.setValueColumn("CustCIF");
+		this.custIDName.setDescColumn("CustShrtName");
+		this.custIDName.setValidateColumns(new String[]{"CustCIF"});
 		logger.debug("Leaving");}
 
 	/**
@@ -1104,7 +1103,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cmtReference.setValue(aCommitment.getCmtReference());
 		this.custID.setValue(aCommitment.getCustID());
 		this.custIDName.setValue(aCommitment.getCustCIF());
-		this.labelCustIDName.setValue(aCommitment.getCustShrtName());
+		this.custIDName.setDescription(aCommitment.getCustShrtName());
 		this.cmtBranch.setValue(aCommitment.getCmtBranch());
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("CustID", this.custID.getValue(), Filter.OP_EQUAL);
@@ -1819,9 +1818,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	private void doSetLOVValidation() {
 		// cust ID
-		if (btnSearchcustID.isVisible()) {
-			this.custIDName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_custID.value"),null,true));
-		}
+			this.custIDName.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_custID.value"),null,true,true));
+		
 		// Cmt Branch
 		if (cmtBranch.isButtonVisible()) {
 			this.cmtBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtBranch.value"),null,true,true));
@@ -2795,9 +2793,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.label_windowTitle.setValue(Labels.getLabel("window_MaintainCommitmentDialog.title"));
 			this.cmtTitle.setReadonly(true);
 			setStyle(this.cmtTitle); 
-			this.btnSearchcustID.setVisible(false);
 			this.custIDName.setReadonly(true);
-			setStyle(this.btnSearchcustID);
 			this.cmtBranch.setReadonly(true);
 			this.cmtCcy.getButton().setVisible(false);
 			this.cmtCcy.setReadonly(true);
@@ -2831,7 +2827,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering doCheckEnq()");
 		if (enqModule) {
 			this.cmtTitle.setReadonly(true);
-			this.btnSearchcustID.setVisible(false);
 			this.custIDName.setReadonly(true);
 			this.cmtBranch.setReadonly(true);
 			this.cmtCcy.setReadonly(true);

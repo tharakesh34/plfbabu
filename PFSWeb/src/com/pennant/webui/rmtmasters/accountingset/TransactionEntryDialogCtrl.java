@@ -85,16 +85,14 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
-import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
@@ -134,11 +132,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	protected Combobox	   debitcredit;	                	// autowired
 	protected Checkbox	   shadowPosting;	                // autowired
 	protected Combobox	   account;	                    	// autowired
-	protected Textbox	   accountType;	                	// autowired
-	protected Textbox	   accountBranch;	                // autowired
-	protected Textbox	   accountSubHeadRule;	        	// autowired
-	protected Textbox	   transcationCode;	            	// autowired
-	protected Textbox	   rvsTransactionCode;	        	// autowired
+	protected ExtendedCombobox	   accountType;	                	// autowired
+	protected ExtendedCombobox	   accountBranch;	                // autowired
+	protected ExtendedCombobox	   accountSubHeadRule;	        	// autowired
+	protected ExtendedCombobox	   transcationCode;	            	// autowired
+	protected ExtendedCombobox	   rvsTransactionCode;	        	// autowired
 	protected Codemirror   amountRule;	                	// autowired
 	protected Textbox	   eventCode;	                    // autowired
 	protected Textbox	   accountSetCode;	            	// autowired
@@ -189,24 +187,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	protected Button btnHelp;	// autowire
 	protected Button btnNotes; 	// autowire
 
-	protected Button btnSearchAccountType; // autowire
-	protected Textbox lovDescAccountTypeName;
 	private transient String oldVar_lovDescAccountTypeName;
 
-	protected Button btnSearchAccountBranch; // autowire
-	protected Textbox lovDescAccountBranchName;
 	private transient String oldVar_lovDescAccountBranchName;
 
-	protected Button btnSearchAccountSubHeadRule; // autowire
-	protected Textbox lovDescAccountSubHeadRuleName;
 	private transient String oldVar_lovDescAccountSubHeadRuleName;
 
-	protected Button btnSearchTranscationCode; // autowire
-	protected Textbox lovDescTranscationCodeName;
 	private transient String oldVar_lovDescTranscationCodeName;
 
-	protected Button btnSearchRvsTransactionCode; // autowire
-	protected Textbox lovDescRvsTransactionCodeName;
 	private transient String oldVar_lovDescRvsTransactionCodeName;
 
 	// ServiceDAOs / Domain Classes
@@ -232,10 +220,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	protected Button btnValidate;
 	JSONArray variables = new JSONArray();
 	HashSet<String> amountcodes = new HashSet<String>();
-	protected Button btnSearchSystemIntAccount;
-
-	protected Space spAccountType;
-	protected Space spSubHead;
+	protected ExtendedCombobox systemIntAccount;
 
 	protected Radiogroup chargeType;
 	ArrayList<ValueLabel> chargeTypes = PennantStaticListUtil.getChargeTypes();
@@ -338,7 +323,41 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.accountSubHeadRule.setMaxlength(8);
 		this.transcationCode.setMaxlength(8);
 		this.rvsTransactionCode.setMaxlength(8);
-
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("RuleModule", "SUBHEAD", Filter.OP_EQUAL);
+		this.accountSubHeadRule.setModuleName("Rule");
+		this.accountSubHeadRule.setValueColumn("RuleCode");
+		this.accountSubHeadRule.setDescColumn("RuleCodeDesc");
+		this.accountSubHeadRule.setFilters(filter);
+		this.accountSubHeadRule.setValidateColumns(new String[]{"RuleCode"});
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
+		this.accountType.setModuleName("AccountType");
+		this.accountType.setValueColumn("AcType");
+		this.accountType.setDescColumn("AcTypeDesc");
+		this.accountType.setFilters(filters);
+		this.accountType.setValidateColumns(new String[]{"AcType"});
+		
+		this.systemIntAccount.setModuleName("SystemInternalAccountDefinition");
+		this.systemIntAccount.setValueColumn("SIACode");
+		this.systemIntAccount.setDescColumn("SIAName");
+		this.systemIntAccount.setValidateColumns(new String[]{"SIACode"});
+		
+		this.accountBranch.setModuleName("Branch");
+		this.accountBranch.setValueColumn("BranchCode");
+		this.accountBranch.setDescColumn("BranchDesc");
+		this.accountBranch.setValidateColumns(new String[]{"BranchCode"});
+		
+		this.transcationCode.setModuleName("TransactionCode");
+		this.transcationCode.setValueColumn("TranCode");
+		this.transcationCode.setValidateColumns(new String[]{"TransactionCode"});
+		this.transcationCode.setDescColumn("TranDesc");
+		
+		this.rvsTransactionCode.setModuleName("TransactionCode");
+		this.rvsTransactionCode.setValueColumn("TranCode");
+		this.rvsTransactionCode.setValidateColumns(new String[]{"TransactionCode"});
+		this.rvsTransactionCode.setDescColumn("TranDesc");
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			this.statusRow.setVisible(true);
@@ -579,39 +598,39 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.rvsTransactionCode.setValue(aTransactionEntry.getRvsTransactionCode());
 
 		if (aTransactionEntry.getLovDescTranscationCodeName() != null && !aTransactionEntry.getLovDescTranscationCodeName().equals("")) {
-			this.lovDescTranscationCodeName.setValue( aTransactionEntry.getLovDescTranscationCodeName().contains("-")? aTransactionEntry.getLovDescTranscationCodeName()
-					:aTransactionEntry.getTranscationCode() + "-" + aTransactionEntry.getLovDescTranscationCodeName());
+			this.transcationCode.setDescription( aTransactionEntry.getLovDescTranscationCodeName().contains("-")? aTransactionEntry.getLovDescTranscationCodeName()
+					: aTransactionEntry.getLovDescTranscationCodeName());
 		} else {
-			this.lovDescTranscationCodeName.setValue("");
+			this.transcationCode.setDescription("");
 		}
 		if (aTransactionEntry.getLovDescRvsTransactionCodeName() != null && !aTransactionEntry.getLovDescRvsTransactionCodeName().equals("")) {
-			this.lovDescRvsTransactionCodeName.setValue(aTransactionEntry.getLovDescRvsTransactionCodeName().contains("-")?aTransactionEntry.getLovDescRvsTransactionCodeName()
-					:aTransactionEntry.getRvsTransactionCode() + "-" + aTransactionEntry.getLovDescRvsTransactionCodeName());
+			this.rvsTransactionCode.setDescription(aTransactionEntry.getLovDescRvsTransactionCodeName().contains("-")?aTransactionEntry.getLovDescRvsTransactionCodeName()
+					:aTransactionEntry.getLovDescRvsTransactionCodeName());
 		} else {
-			this.lovDescRvsTransactionCodeName.setValue("");
+			this.rvsTransactionCode.setDescription("");
 		}
 		
 		if (aTransactionEntry.getLovDescAccountTypeName() != null && !aTransactionEntry.getLovDescAccountTypeName().equals("")) {
-			this.lovDescAccountTypeName.setValue(aTransactionEntry.getLovDescAccountTypeName().contains("-")?aTransactionEntry.getLovDescAccountTypeName()
-					:aTransactionEntry.getAccountType() + "-" + aTransactionEntry.getLovDescAccountTypeName());
+			this.accountType.setDescription(aTransactionEntry.getLovDescAccountTypeName().contains("-")?aTransactionEntry.getLovDescAccountTypeName()
+					:aTransactionEntry.getLovDescAccountTypeName());
 		} else if (aTransactionEntry.getLovDescSysInAcTypeName() != null && !aTransactionEntry.getLovDescSysInAcTypeName().equals("")) {
-			this.lovDescAccountTypeName.setValue(aTransactionEntry.getLovDescSysInAcTypeName().contains("-")?aTransactionEntry.getLovDescSysInAcTypeName()
-					:aTransactionEntry.getAccountType() + "-" + aTransactionEntry.getLovDescSysInAcTypeName());
+			this.accountType.setDescription(aTransactionEntry.getLovDescSysInAcTypeName().contains("-")?aTransactionEntry.getLovDescSysInAcTypeName()
+					:aTransactionEntry.getLovDescSysInAcTypeName());
 		} else {
-			this.lovDescAccountTypeName.setValue("");
+			this.accountType.setDescription("");
 		}
 				
 		if (aTransactionEntry.getLovDescAccountBranchName() != null && !aTransactionEntry.getLovDescAccountBranchName().equals("")) {
-			this.lovDescAccountBranchName.setValue(aTransactionEntry.getLovDescAccountBranchName().contains("-")?aTransactionEntry.getLovDescAccountBranchName():
-				aTransactionEntry.getAccountBranch() + "-" + aTransactionEntry.getLovDescAccountBranchName());
+			this.accountBranch.setDescription(aTransactionEntry.getLovDescAccountBranchName().contains("-")?aTransactionEntry.getLovDescAccountBranchName():
+				aTransactionEntry.getLovDescAccountBranchName());
 		} else {
-			this.lovDescAccountBranchName.setValue("");
+			this.accountBranch.setDescription("");
 		}
 		if (aTransactionEntry.getLovDescAccountSubHeadRuleName() != null && !aTransactionEntry.getLovDescAccountSubHeadRuleName().equals("")) {
-			this.lovDescAccountSubHeadRuleName.setValue(aTransactionEntry.getLovDescAccountSubHeadRuleName().contains("-")?aTransactionEntry.getLovDescAccountSubHeadRuleName()
-					:aTransactionEntry.getAccountSubHeadRule() + "-" + aTransactionEntry.getLovDescAccountSubHeadRuleName());
+			this.accountSubHeadRule.setDescription(aTransactionEntry.getLovDescAccountSubHeadRuleName().contains("-")?aTransactionEntry.getLovDescAccountSubHeadRuleName()
+					:aTransactionEntry.getLovDescAccountSubHeadRuleName());
 		} else {
-			this.lovDescAccountSubHeadRuleName.setValue("");
+			this.accountSubHeadRule.setDescription("");
 		}
 		
 		/*if(this.accountingSetDialogCtrl.entryByInvestment.isChecked()){
@@ -683,7 +702,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			wve.add(we);
 		}
 		try {
-			aTransactionEntry.setLovDescAccountTypeName(this.lovDescAccountTypeName.getValue());
+			aTransactionEntry.setLovDescAccountTypeName(this.accountType.getDescription());
 			aTransactionEntry.setAccountType(this.accountType.getValue());
 			if(this.accountType.getValue().equals("")){
 				aTransactionEntry.setLovDescSysInAcTypeName("");
@@ -692,26 +711,26 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			wve.add(we);
 		}
 		try {
-			aTransactionEntry.setLovDescAccountBranchName(this.lovDescAccountBranchName.getValue());
-			aTransactionEntry.setAccountBranch(this.accountBranch.getValue());
+			aTransactionEntry.setLovDescAccountBranchName(this.accountBranch.getDescription());
+			aTransactionEntry.setAccountBranch(this.accountBranch.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aTransactionEntry.setLovDescAccountSubHeadRuleName(this.lovDescAccountSubHeadRuleName.getValue());
-			aTransactionEntry.setAccountSubHeadRule(this.accountSubHeadRule.getValue());
+			aTransactionEntry.setLovDescAccountSubHeadRuleName(this.accountSubHeadRule.getDescription());
+			aTransactionEntry.setAccountSubHeadRule(this.accountSubHeadRule.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aTransactionEntry.setLovDescTranscationCodeName(this.lovDescTranscationCodeName.getValue());
-			aTransactionEntry.setTranscationCode(this.transcationCode.getValue());
+			aTransactionEntry.setLovDescTranscationCodeName(this.transcationCode.setDescription());
+			aTransactionEntry.setTranscationCode(this.transcationCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aTransactionEntry.setLovDescRvsTransactionCodeName(this.lovDescRvsTransactionCodeName.getValue());
-			aTransactionEntry.setRvsTransactionCode(this.rvsTransactionCode.getValue());
+			aTransactionEntry.setLovDescRvsTransactionCodeName(this.rvsTransactionCode.getDescription());
+			aTransactionEntry.setRvsTransactionCode(this.rvsTransactionCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -795,8 +814,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 			// fill the components with the data
 			doWriteBeanToComponents(aTransactionEntry);
 			if(getTransactionEntry().isNewRecord()){
-				this.btnSearchTranscationCode.setDisabled(true);
-				this.btnSearchRvsTransactionCode.setDisabled(true);
+				this.transcationCode.setReadonly(true);
+				this.transcationCode.setMandatoryStyle(true);
+				this.rvsTransactionCode.setReadonly(true);
+				this.rvsTransactionCode.setMandatoryStyle(true);
 			}
 			// stores the initial data for comparing if they are changed
 			// during user action.
@@ -827,13 +848,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.oldVar_openNewFinAc = this.openNewFinAc.isChecked();
 		this.oldVar_accountType = this.accountType.getValue();
 		this.oldVar_accountBranch = this.accountBranch.getValue();
-		this.oldVar_lovDescAccountTypeName = this.lovDescAccountTypeName.getValue();
+		this.oldVar_lovDescAccountTypeName = this.accountType.getDescription();
 		this.oldVar_accountSubHeadRule = this.accountSubHeadRule.getValue();
-		this.oldVar_lovDescAccountSubHeadRuleName = this.lovDescAccountSubHeadRuleName.getValue();
+		this.oldVar_lovDescAccountSubHeadRuleName = this.accountSubHeadRule.getDescription();
 		this.oldVar_transcationCode = this.transcationCode.getValue();
-		this.oldVar_lovDescTranscationCodeName = this.lovDescTranscationCodeName.getValue();
+		this.oldVar_lovDescTranscationCodeName = this.transcationCode.getDescription();
 		this.oldVar_rvsTransactionCode = this.rvsTransactionCode.getValue();
-		this.oldVar_lovDescRvsTransactionCodeName = this.lovDescRvsTransactionCodeName.getValue();
+		this.oldVar_lovDescRvsTransactionCodeName = this.rvsTransactionCode.getDescription();
 		this.oldVar_amountRule = this.amountRule.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
@@ -852,14 +873,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.account.setValue(this.oldVar_account);
 		this.accountType.setValue(this.oldVar_accountType);
 		this.accountBranch.setValue(this.oldVar_accountBranch);
-		this.lovDescAccountTypeName.setValue(this.oldVar_lovDescAccountTypeName);
-		this.lovDescAccountBranchName.setValue(this.oldVar_lovDescAccountBranchName);
+		this.accountType.setDescription(this.oldVar_lovDescAccountTypeName);
+		this.accountBranch.setDescription(this.oldVar_lovDescAccountBranchName);
 		this.accountSubHeadRule.setValue(this.oldVar_accountSubHeadRule);
-		this.lovDescAccountSubHeadRuleName.setValue(this.oldVar_lovDescAccountSubHeadRuleName);
+		this.accountSubHeadRule.setDescription(this.oldVar_lovDescAccountSubHeadRuleName);
 		this.transcationCode.setValue(this.oldVar_transcationCode);
-		this.lovDescTranscationCodeName.setValue(this.oldVar_lovDescTranscationCodeName);
+		this.transcationCode.setDescription(this.oldVar_lovDescTranscationCodeName);
 		this.rvsTransactionCode.setValue(this.oldVar_rvsTransactionCode);
-		this.lovDescRvsTransactionCodeName.setValue(this.oldVar_lovDescRvsTransactionCodeName);
+		this.rvsTransactionCode.setDescription(this.oldVar_lovDescRvsTransactionCodeName);
 		this.amountRule.setValue(this.oldVar_amountRule);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -963,20 +984,20 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.CUSTSYS)
 					|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
 
-				this.lovDescAccountTypeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountType.value"),null,true));
+				this.accountType.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountType.value"),null,true,true));
 
 				if (this.account.getSelectedItem().getValue().toString().equals(PennantConstants.GLNPL)
 						|| this.account.getSelectedItem().getValue().toString().equals(PennantConstants.BUILD)) {
-					this.lovDescAccountSubHeadRuleName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value"),null,true));
+					this.accountSubHeadRule.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value"),null,true,true));
 
 				}
 
 			}
 		}
 		
-		this.lovDescTranscationCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value"),null,true));
+		this.transcationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value"),null,true,true));
 		
-		this.lovDescRvsTransactionCodeName.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value"),null,true));
+		this.rvsTransactionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value"),null,true,true));
 		logger.debug("Leaving");
 	}
 
@@ -985,10 +1006,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescAccountTypeName.setConstraint("");
-		this.lovDescAccountSubHeadRuleName.setConstraint("");
-		this.lovDescTranscationCodeName.setConstraint("");
-		this.lovDescRvsTransactionCodeName.setConstraint("");
+		this.accountType.setConstraint("");
+		this.accountSubHeadRule.setConstraint("");
+		this.transcationCode.setConstraint("");
+		this.rvsTransactionCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1000,10 +1021,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.transOrder.setErrorMessage("");
 		this.transDesc.setErrorMessage("");
 		this.debitcredit.setErrorMessage("");
-		this.lovDescAccountTypeName.setErrorMessage("");
-		this.lovDescAccountSubHeadRuleName.setErrorMessage("");
-		this.lovDescTranscationCodeName.setErrorMessage("");
-		this.lovDescRvsTransactionCodeName.setErrorMessage("");
+		this.accountType.setErrorMessage("");
+		this.accountSubHeadRule.setErrorMessage("");
+		this.transcationCode.setErrorMessage("");
+		this.rvsTransactionCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1107,12 +1128,12 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.openNewFinAc.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_openNewFinAc"));
 		this.account.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_account"));
 		//this.ruleDecider.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_ruleDecider"));
-		this.btnSearchAccountBranch.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountBranch"));
-		this.btnSearchAccountType.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-		this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-		this.btnSearchAccountSubHeadRule.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
-		this.btnSearchTranscationCode.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_transcationCode"));
-		this.btnSearchRvsTransactionCode.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_rvsTransactionCode"));
+		this.accountBranch.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountBranch"));
+		this.accountType.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+		this.systemIntAccount.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+		this.accountSubHeadRule.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
+		this.transcationCode.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_transcationCode"));
+		this.rvsTransactionCode.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_rvsTransactionCode"));
 		
 		if(!this.accountingSetDialogCtrl.entryByInvestment.isChecked()){
 			this.label_TransactionEntryDialog_EntryByInvestment.setVisible(false);
@@ -1184,11 +1205,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.entryByInvestment.setDisabled(true);
 		this.openNewFinAc.setDisabled(true);
 		this.account.setDisabled(true);
-		this.btnSearchAccountType.setDisabled(true);
-		this.btnSearchAccountBranch.setDisabled(true);
-		this.btnSearchAccountSubHeadRule.setDisabled(true);
-		this.btnSearchTranscationCode.setDisabled(true);
-		this.btnSearchRvsTransactionCode.setDisabled(true);
+		this.accountType.setReadonly(true);
+		this.accountBranch.setReadonly(true);
+		this.accountSubHeadRule.setReadonly(true);
+		this.transcationCode.setReadonly(true);
+		this.rvsTransactionCode.setReadonly(true);
 		this.amountRule.setReadonly(true);
 		this.column_CustomerData.setWidth("0%");
 		this.amountCodeListbox.setVisible(false);
@@ -1225,14 +1246,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		this.openNewFinAc.setChecked(false);
 		this.accountType.setValue("");
 		this.accountBranch.setValue("");
-		this.lovDescAccountTypeName.setValue("");
-		this.lovDescAccountBranchName.setValue("");
+		this.accountType.setDescription("");
+		this.accountBranch.setDescription("");
 		this.accountSubHeadRule.setValue("");
-		this.lovDescAccountSubHeadRuleName.setValue("");
 		this.transcationCode.setValue("");
-		this.lovDescTranscationCodeName.setValue("");
+		this.transcationCode.setDescription("");
 		this.rvsTransactionCode.setValue("");
-		this.lovDescRvsTransactionCodeName.setValue("");
+		this.rvsTransactionCode.setDescription("");
 		this.amountRule.setValue("");
 		logger.debug("Leaving");
 	}
@@ -1384,123 +1404,28 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		return auditHeader;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++ Search Button Component Events+++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	//
-	public void onClick$btnSearchAccountType(Event event) {
+	public void onFulfill$transcationCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType", filter);
-		if (dataObject instanceof String) {
-			this.accountType.setValue(dataObject.toString());
-			this.lovDescAccountTypeName.setValue("");
-		} else {
-			AccountType details = (AccountType) dataObject;
-			if (details != null) {
-				this.accountType.setValue(details.getAcType());
-				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
-
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchSystemIntAccount(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "SystemInternalAccountDefinition");
-		if (dataObject instanceof String) {
-			this.accountType.setValue(dataObject.toString());
-			this.lovDescAccountTypeName.setValue("");
-		} else {
-			SystemInternalAccountDefinition details = (SystemInternalAccountDefinition) dataObject;
-			if (details != null) {
-				this.accountType.setValue(details.getSIACode());
-				this.lovDescAccountTypeName.setValue(details.getSIACode() + "-" + details.getSIAShortName());
-
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchAccountBranch(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "Branch");
-		if (dataObject instanceof String) {
-			this.accountBranch.setValue(dataObject.toString());
-			this.lovDescAccountBranchName.setValue("");
-		} else {
-			Branch details = (Branch) dataObject;
-			if (details != null) {
-				this.accountBranch.setValue(details.getBranchCode());
-				this.lovDescAccountBranchName.setValue(details.getBranchCode() + "-" + details.getBranchDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchAccountSubHeadRule(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("RuleModule", "SUBHEAD", Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "Rule", filter);
-		if (dataObject instanceof String) {
-			this.accountSubHeadRule.setValue(dataObject.toString());
-			this.lovDescAccountSubHeadRuleName.setValue("");
-		} else {
-			Rule details = (Rule) dataObject;
-			if (details != null) {
-				this.accountSubHeadRule.setValue(details.getRuleCode());
-				this.lovDescAccountSubHeadRuleName.setValue(details.getRuleCode() + "-" + details.getRuleCodeDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchTranscationCode(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("TranType", this.debitcredit.getSelectedItem().getValue(), Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "TransactionCode", filter);
-
-		// TranType
-		if (dataObject instanceof String) {
-			this.transcationCode.setValue(dataObject.toString());
-			this.lovDescTranscationCodeName.setValue("");
-		} else {
-			TransactionCode details = (TransactionCode) dataObject;
-			if (details != null) {
-				this.transcationCode.setValue(details.getTranCode());
-				this.lovDescTranscationCodeName.setValue(details.getTranCode() + "-" + details.getTranDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchRvsTransactionCode(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("TranType", this.debitcredit.getSelectedItem().getValue(), Filter.OP_NOT_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "TransactionCode", filter);
-
-		if (dataObject instanceof String) {
-			this.rvsTransactionCode.setValue(dataObject.toString());
-			this.lovDescRvsTransactionCodeName.setValue("");
-		} else {
-			TransactionCode details = (TransactionCode) dataObject;
-			if (details != null) {
-				this.rvsTransactionCode.setValue(details.getTranCode());
-				this.lovDescRvsTransactionCodeName.setValue(details.getTranCode() + "-" + details.getTranDesc());
-			}
-		}
+        doTranscationCode();
 		logger.debug("Leaving" + event.toString());
 	}
 	
+	public void onFulfill$rvsTransactionCode(Event event) {
+		logger.debug("Entering" + event.toString());
+        dorvsTransactionCode();
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void doTranscationCode(){
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("TranType", this.debitcredit.getSelectedItem().getValue(), Filter.OP_EQUAL);
+			this.transcationCode.setFilters(filter);
+	}
+	public void dorvsTransactionCode(){
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("TranType", this.debitcredit.getSelectedItem().getValue(), Filter.OP_EQUAL);
+			this.rvsTransactionCode.setFilters(filter);
+	}
 	/**
 	 * Method for Fill the ComboBox items with getting list of data
 	 * 
@@ -1857,22 +1782,22 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		logger.debug("Entering");
 		if (this.debitcredit.getSelectedItem() != null) {
 			this.transcationCode.setValue("");
-			this.lovDescTranscationCodeName.setValue("");
+			this.transcationCode.setDescription("");
 			this.rvsTransactionCode.setValue("");
-			this.lovDescRvsTransactionCodeName.setValue("");
+			this.rvsTransactionCode.setDescription("");
 			if (!this.debitcredit.getSelectedItem().getValue().equals("#")) {
-				this.btnSearchTranscationCode.setDisabled(isReadOnly("TransactionEntryDialog_transcationCode"));
-				this.btnSearchRvsTransactionCode.setDisabled(isReadOnly("TransactionEntryDialog_transcationCode"));
+				this.transcationCode.setReadonly(isReadOnly("TransactionEntryDialog_transcationCode"));
+				this.rvsTransactionCode.setReadonly(isReadOnly("TransactionEntryDialog_transcationCode"));
 				/*if(this.eventCode.getValue().equals("LATEPAY")){
 					transCodeChange();
 				}*/
 			}else{
-				this.btnSearchTranscationCode.setDisabled(true);
-				this.btnSearchRvsTransactionCode.setDisabled(true);
+				this.transcationCode.setReadonly(true);
+				this.rvsTransactionCode.setReadonly(true);
 			}
 		} else {
-			this.btnSearchTranscationCode.setDisabled(true);
-			this.btnSearchRvsTransactionCode.setDisabled(true);
+			this.transcationCode.setReadonly(true);
+			this.rvsTransactionCode.setReadonly(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -1993,58 +1918,62 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 		
 		this.openNewFinAc.setChecked(false);
 		this.row_OpenNewFinAc.setVisible(false);
-		this.btnSearchAccountType.setDisabled(true);
-		this.btnSearchSystemIntAccount.setDisabled(true);
-		this.btnSearchAccountSubHeadRule.setDisabled(true);
-		this.lovDescAccountTypeName.setValue("");
-		this.spAccountType.setSclass("");
+		this.accountType.setReadonly(true);
+		this.systemIntAccount.setReadonly(true);
+		this.accountSubHeadRule.setReadonly(true);
+		this.accountSubHeadRule.setDescription("");
+		this.accountType.setDescription("");
+		this.accountType.setMandatoryStyle(false);
 
 		if (value != null && !value.equals("#")) {
 			
 			if(value.equals(PennantConstants.DISB) || value.equals(PennantConstants.REPAY) ||
 					value.equals(PennantConstants.INVSTR) || value.equals(PennantConstants.DOWNPAY)){
 				
-				this.btnSearchAccountType.setDisabled(true);
-				this.spSubHead.setSclass("");
-				this.spAccountType.setSclass("");
-				this.btnSearchAccountSubHeadRule.setDisabled(true);
-				this.btnSearchSystemIntAccount.setDisabled(true);
+				this.accountType.setReadonly(true);
+				this.accountSubHeadRule.setMandatoryStyle(false);
+				this.accountType.setMandatoryStyle(false);
+				this.accountSubHeadRule.setReadonly(true);
+				this.systemIntAccount.setReadonly(true);
 				this.accountType.setValue("");
-				this.lovDescAccountTypeName.setValue("");
-				this.btnSearchSystemIntAccount.setVisible(false);
+				this.accountType.setDescription("");
+				this.systemIntAccount.setVisible(false);
 				this.accountSubHeadRule.setValue("");
-				this.lovDescAccountSubHeadRuleName.setValue("");
+				this.accountSubHeadRule.setDescription("");
 				this.openNewFinAc.setChecked(false);
 				this.row_OpenNewFinAc.setVisible(false);
 				
 			} else if (value.equals(PennantConstants.GLNPL) || value.equals(PennantConstants.BUILD)) {
 				
-				this.btnSearchAccountType.setVisible(false);
+				this.accountType.setVisible(false);
 				this.accountType.setValue("");
+				this.accountType.setDescription("");
 				//this.lovDescAccountTypeName.setValue("");
-				this.spSubHead.setSclass("mandatory");
-				this.spAccountType.setSclass("mandatory");
-				this.btnSearchAccountSubHeadRule.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
+				this.accountType.setMandatoryStyle(false);
+				this.accountSubHeadRule.setMandatoryStyle(true);
+				this.systemIntAccount.setMandatoryStyle(true);
+				this.accountSubHeadRule.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
 				/*if(!getTransactionEntry().isNewRecord() && value.equals(PennantConstants.GLNPL) &&
 						getTransactionEntry().getLovDescEventCodeName().equals("LATEPAY")){
 					this.btnSearchSystemIntAccount.setVisible(false);
 				}else{*/
-					this.btnSearchSystemIntAccount.setVisible(true);
-					this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+					this.systemIntAccount.setVisible(true);
+					this.systemIntAccount.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+				
 				//}
 				this.openNewFinAc.setChecked(false);
 				this.row_OpenNewFinAc.setVisible(false);
 				
 			} else if (value.equals(PennantConstants.CUSTSYS)) {
 				
-				this.btnSearchAccountType.setVisible(true);
-				this.btnSearchAccountType.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
-				this.spSubHead.setSclass("");
-				this.spAccountType.setSclass("mandatory");
-				this.btnSearchAccountSubHeadRule.setDisabled(true);
-				this.btnSearchSystemIntAccount.setVisible(false);
+				this.accountType.setVisible(true);
+				this.accountType.setReadonly(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+				this.accountSubHeadRule.setMandatoryStyle(false);
+				this.accountType.setMandatoryStyle(true);
+				this.accountSubHeadRule.setReadonly(true);
+				this.systemIntAccount.setVisible(false);
 				this.accountSubHeadRule.setValue("");
-				this.lovDescAccountSubHeadRuleName.setValue("");
+				this.accountSubHeadRule.setDescription("");
 				this.row_OpenNewFinAc.setVisible(true);
 				
 			}else if (value.equals(PennantConstants.UNEARN)) {
@@ -2061,16 +1990,16 @@ public class TransactionEntryDialogCtrl extends GFCBaseListCtrl<TransactionEntry
 				
 			}else if (value.equals(PennantConstants.COMMIT)) {
 				
-				this.btnSearchAccountType.setDisabled(true);
-				this.spSubHead.setSclass("");
-				this.spAccountType.setSclass("");
-				this.btnSearchAccountSubHeadRule.setDisabled(true);
-				this.btnSearchSystemIntAccount.setDisabled(true);
+				this.accountType.setReadonly(true);
+				this.accountSubHeadRule.setMandatoryStyle(false);
+				this.accountType.setMandatoryStyle(false);
+				this.accountSubHeadRule.setReadonly(true);
+				this.systemIntAccount.setReadonly(true);
 				this.accountType.setValue("");
-				this.lovDescAccountTypeName.setValue("");
-				this.btnSearchSystemIntAccount.setVisible(false);
+				this.accountType.setDescription("");
+				this.systemIntAccount.setVisible(false);
 				this.accountSubHeadRule.setValue("");
-				this.lovDescAccountSubHeadRuleName.setValue("");
+				this.accountSubHeadRule.setDescription("");
 				this.openNewFinAc.setChecked(false);
 				this.row_OpenNewFinAc.setVisible(false);
 				

@@ -63,6 +63,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
@@ -73,7 +74,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.rits.cloning.Cloner;
 
 /**
@@ -95,7 +95,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 	 */
 	protected Window window_ProspectCustomerDialog; 			// autowired
 	
-	protected Textbox lovDescCustCIF;							//autowired
+	protected ExtendedCombobox lovDescCustCIF;							//autowired
 	protected Label lovDescCustShrtName;						//autowired
 	protected Textbox custCoreBank; 							// autowired
 
@@ -169,6 +169,11 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.lovDescCustCIF.setMaxlength(10);
+		this.lovDescCustCIF.setModuleName("Customer");
+		this.lovDescCustCIF.setValidateColumns(new String[]{"CustCIF"});
+		Filter [] filters = new Filter[1];
+		filters[0] = new Filter("custCoreBank","",Filter.OP_EQUAL);
+		this.lovDescCustCIF.setFilters(filters);
 		this.custCoreBank.setMaxlength(6);
 		logger.debug("Leaving");
 	}
@@ -328,16 +333,8 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 	 * @param aCustomer
 	 *            Customer
 	 */
-	public void onClick$btnSearchCustCIF(Event event) {
-
-		Filter [] filters = new Filter[1];
-		filters[0] = new Filter("custCoreBank","",Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_ProspectCustomerDialog, "Customer", filters);
-		if (dataObject instanceof String) {
-			this.lovDescCustCIF.setValue(dataObject.toString());
-			this.lovDescCustShrtName.setValue("");
-		} else {
+	public void onFulfill$lovDescCustCIF(Event event) {
+		Object dataObject = this.lovDescCustCIF.getObject();
 			 this.customer = (Customer) dataObject;
 			if(customer != null){
 				this.lovDescCustCIF.setValue(customer.getCustCIF());
@@ -345,8 +342,6 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 			logger.debug("Leaving");
 		}
-	}
-	
 	/**
 	 * To set the customer id from Customer filter
 	 * 
@@ -388,6 +383,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl implements Serializa
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			aCustomer.setCustCIF(this.lovDescCustCIF.getValue());
+			aCustomer.setCustCIF(this.lovDescCustCIF.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

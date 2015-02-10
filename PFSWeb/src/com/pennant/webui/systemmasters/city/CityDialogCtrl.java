@@ -493,7 +493,7 @@ public class CityDialogCtrl extends GFCBaseCtrl implements Serializable {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aCity.setLovDescPCCountryName(this.pCCountry.getValue());
+			aCity.setLovDescPCCountryName(this.pCCountry.getDescription());
 			aCity.setPCCountry(this.pCCountry.getValidatedValue().toUpperCase());
 		}catch (WrongValueException we ) {
 			wve.add(we);

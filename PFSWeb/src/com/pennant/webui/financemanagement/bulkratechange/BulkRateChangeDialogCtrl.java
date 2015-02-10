@@ -317,7 +317,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	
 	public void doCheckRights(){
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("BulkProcessHeader", getRole());
+		getUserWorkspace().alocateRoleAuthorities("BulkProcessHeader");
 		this.btnProceed.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnProceed"));
 		this.btnPreview.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnPreview"));
 		//this.btnRecal.setVisible(getUserWorkspace().isAllowed("button_BulkProcessHeader_btnRecal"));

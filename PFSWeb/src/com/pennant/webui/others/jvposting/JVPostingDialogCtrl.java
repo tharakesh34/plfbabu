@@ -825,7 +825,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateAuthorities("JVPosting");
+		getUserWorkspace().alocateRoleAuthorities("JVPosting");
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed(
 					"button_JVPostingEntry_btnNew"));

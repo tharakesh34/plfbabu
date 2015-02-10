@@ -21,10 +21,6 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						 sclass="toolbar-center">
-						<button id="button_JVPostingList_NewJVPosting"
-							 label="${c:l('label_New')}" visible="false"
-							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JVPostingList_NewJVPosting.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button
 							id="button_JVPostingList_JVPostingSearch" 
 							label="${c:l('label_Filter')}"
@@ -38,6 +34,10 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"  sclass="toolbar-end">
+						<button id="button_JVPostingList_NewJVPosting"
+							 label="${c:l('label_New')}" visible="false"
+							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_JVPostingList_NewJVPosting.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 
 							label="${c:l('label_Refresh')}"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"

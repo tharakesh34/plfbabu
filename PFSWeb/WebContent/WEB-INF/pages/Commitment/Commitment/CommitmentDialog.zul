@@ -125,16 +125,9 @@
 														value="${c:l('label_CommitmentDialog_custID.value')}" />
 													<hlayout
 														id="hlayout_custID" spacing="2px">
-														<space
-															id="space_custID" spacing="2px" />
-														<longbox
+													 	<longbox
 															id="custID" visible="false" />
-														<textbox id="custIDName" width="180px" />
-														<button label=""
-															id="btnSearchcustID" image="/images/icons/LOVSearch.png"
-															 />
-														<label
-															id="labelCustIDName" />
+															<extendedcombobox id="custIDName" />
 
 													</hlayout>
 													<label

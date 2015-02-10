@@ -75,6 +75,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -119,7 +120,7 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	 */
 	protected Window 		window_AccountingSetDialog; // autowired
 
-	protected Textbox 		eventCode; 					// autowired
+	protected ExtendedCombobox 		eventCode; 					// autowired
 	protected Textbox 		accountSetCode; 			// autowired
 	protected Textbox 		accountSetCodeName; 		// autowired
 	protected Checkbox 		entryByInvestment; 			// autowired
@@ -163,8 +164,6 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 
 	protected Button button_TransactionEntryList_NewTransactionEntry; // autowired
 	protected Button btnSearchAccountSetCode; // autowire
-	
-	protected Button btnSearchEventCode; // autowire
 	protected Textbox lovDescEventCodeName;
 	private transient String oldVar_lovDescEventCodeName;
 
@@ -265,6 +264,11 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 		this.eventCode.setMaxlength(8);
 		this.accountSetCode.setMaxlength(8);
 		this.accountSetCodeName.setMaxlength(50);
+		this.eventCode.setMandatoryStyle(true);
+		this.eventCode.setModuleName("AccountEngineEvent");/*
+		this.eventCode.setValueColumn("AEEventCode");
+		this.eventCode.setDescColumn("AEEventCodeDesc");*/
+		this.eventCode.setValidateColumns(new String[]{"AEEventCode"});
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -630,10 +634,10 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	private void checkListboxcount() {
 		logger.debug("Entering");
 		if (this.listBoxTransactionEntry.getItemCount() > 0) {
-			this.btnSearchEventCode.setVisible(false);
+			this.eventCode.setVisible(false);
 			this.entryByInvestment.setDisabled(true);
 		} else {
-			this.btnSearchEventCode.setVisible(true);
+			this.eventCode.setVisible(true);
 			this.entryByInvestment.setDisabled(false);
 		}
 		logger.debug("Leaving");
@@ -859,12 +863,12 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 
 		if (getAccountingSet().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			this.btnSearchEventCode.setDisabled(false);
+			this.eventCode.setVisible(false);
 			this.btnCopyTo.setDisabled(true);
 			this.btnCopyTo.setVisible(false);
 		} else {
 			this.btnCancel.setVisible(true);
-			this.btnSearchEventCode.setDisabled(true);
+			this.eventCode.setVisible(true);
 		}
 		
 		// this.btnSearchEventCode.setDisabled(isReadOnly("AccountingSetDialog_eventCode"));
@@ -903,7 +907,7 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchEventCode.setDisabled(true);
+		this.eventCode.setReadonly(true);
 		this.accountSetCode.setReadonly(true);
 		this.accountSetCodeName.setReadonly(true);
 		this.entryByInvestment.setDisabled(true);
@@ -1185,10 +1189,10 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	// ++++++++++++ Search Button Component Events+++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-	public void onClick$btnSearchEventCode(Event event) {
+	public void onFulfill$eventCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_AccountingSetDialog, "AccountEngineEvent");
+		Object dataObject = eventCode.getObject();
 		if (dataObject instanceof String) {
 			this.eventCode.setValue(dataObject.toString());
 			this.lovDescEventCodeName.setValue("");

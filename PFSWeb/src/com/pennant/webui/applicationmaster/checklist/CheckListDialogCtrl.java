@@ -77,13 +77,13 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
-import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.CheckListService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -99,7 +99,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -123,10 +122,10 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 	protected Textbox 	checkListDesc; 				// autoWired
 	protected Intbox 	checkMinCount; 				// autoWired
 	protected Intbox 	checkMaxCount; 				// autoWired
-	protected Textbox 	checkRule; 					// autoWired
-	protected Textbox 	lovDescCheckRule; 			// autoWired
+	protected ExtendedCombobox 	checkRule; 					// autoWired
+	/*protected Textbox 	lovDescCheckRule; 			// autoWired
 	protected Button 	btnSearchCheckRule; 		// autoWired
-	protected Checkbox 	active; 					// autoWired
+*/	protected Checkbox 	active; 					// autoWired
 	protected Listbox   listbox_ChkListDetails;     // autoWired
 	protected Paging    pagingChkListDetailsList;   // autoWired
 
@@ -263,7 +262,15 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setMaxlength(10);
 		this.checkMaxCount.setMaxlength(10);
 		this.checkRule.setMaxlength(8);
-
+		this.checkRule.setModuleName("Rule");
+		this.checkRule.setValueColumn("RuleCode");
+		this.checkRule.setDescColumn("RuleCodeDesc");
+		this.checkRule.setValidateColumns(new String[]{"RuleCode"});
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("RuleModule", "CLRULE", Filter.OP_EQUAL);
+		filters[1] = new Filter("RuleEvent", "", Filter.OP_EQUAL);
+		this.checkRule.setFilters(filters);
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -468,7 +475,7 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setValue(aCheckList.getCheckMinCount());
 		this.checkMaxCount.setValue(aCheckList.getCheckMaxCount());
 		this.checkRule.setValue(aCheckList.getCheckRule());
-		this.lovDescCheckRule.setValue(StringUtils.trimToEmpty(aCheckList.getCheckRule()).equals("")? "" : aCheckList.getCheckRule()+"-"+aCheckList.getLovDescCheckRuleName());
+		this.checkRule.setDescription(StringUtils.trimToEmpty(aCheckList.getCheckRule()).equals("")? "" :aCheckList.getLovDescCheckRuleName());
 		this.active.setChecked(aCheckList.isActive());
 		this.recordStatus.setValue(aCheckList.getRecordStatus());
 		
@@ -506,7 +513,8 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 			wve.add(we);
 		}
 		try {
-			aCheckList.setCheckRule(this.checkRule.getValue());
+			aCheckList.setCheckRule(this.checkRule.getValidatedValue());
+			aCheckList.setLovDescCheckRuleName(this.checkRule.getDescription());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -710,8 +718,8 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		if (!this.btnSearchCheckRule.isDisabled()){
-			this.lovDescCheckRule.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDialog_CheckRule.value"), null, true));
+		if (!this.checkRule.isReadonly()){
+			this.checkRule.setConstraint(new PTStringValidator(Labels.getLabel("label_CheckListDialog_CheckRule.value"), null, true,true));
 		}	
 		logger.debug("Leaving");
 	}
@@ -721,7 +729,7 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
-		this.lovDescCheckRule.setConstraint("");
+		this.checkRule.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -733,6 +741,7 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkListDesc.setErrorMessage("");
 		this.checkMinCount.setErrorMessage("");
 		this.checkMaxCount.setErrorMessage("");
+		this.checkRule.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -821,7 +830,6 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setReadonly(isReadOnly("CheckListDialog_checkMinCount"));
 		this.checkMaxCount.setReadonly(isReadOnly("CheckListDialog_checkMaxCount"));
 		this.checkRule.setReadonly(isReadOnly("CheckListDialog_checkRule"));
-		this.btnSearchCheckRule.setDisabled(isReadOnly("CheckListDialog_checkRule"));
 		this.active.setDisabled(isReadOnly("CheckListDialog_active"));
 
 		if (isWorkFlowEnabled()){
@@ -853,7 +861,6 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setReadonly(true);
 		this.checkMaxCount.setReadonly(true);
 		this.checkRule.setReadonly(true);
-		this.btnSearchCheckRule.setDisabled(true);
 		this.active.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
@@ -880,7 +887,7 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 		this.checkMinCount.setText("");
 		this.checkMaxCount.setText("");
 		this.checkRule.setValue("");
-		this.lovDescCheckRule.setValue("");
+		this.checkRule.setDescription("");
 		this.active.setChecked(false);
 		logger.debug("Leaving");
 	}
@@ -1286,29 +1293,6 @@ public class CheckListDialogCtrl extends GFCBaseListCtrl<CheckList> implements S
 	}
 	
 	
-	/**
-	 * To get the AccountingSet LOV List From RMTAERules Table Records are filtered by EventCode where EventCode=INCPFT
-	 */
-	public void onClick$btnSearchCheckRule(Event event) {
-		logger.debug("Entering" + event.toString());
-		
-		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("RuleModule", "CLRULE", Filter.OP_EQUAL);
-		filters[1] = new Filter("RuleEvent", "", Filter.OP_EQUAL);
-		
-		Object dataObject = ExtendedSearchListBox.show(this.window_CheckListDialog, "Rule", filters);
-		if (dataObject instanceof String) {
-			this.checkRule.setValue("");
-			this.lovDescCheckRule.setValue("");
-		} else {
-			Rule details = (Rule) dataObject;
-			if (details != null) {
-				this.checkRule.setValue(String.valueOf(details.getRuleCode()));
-				this.lovDescCheckRule.setValue(details.getRuleCode() + "-" + details.getRuleCodeDesc());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

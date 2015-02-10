@@ -2768,7 +2768,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering" + event.toString());
 		if(this.finStartDate.getValue() != null){
 			changeFrequencies();
-			this.finReference.setFocus(true);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

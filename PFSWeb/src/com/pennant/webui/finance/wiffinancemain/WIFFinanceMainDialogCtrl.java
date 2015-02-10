@@ -108,7 +108,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.DefermentDetail;
@@ -222,8 +221,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Combobox	    grcRateBasis;							// autoWired
 	protected Decimalbox 	gracePftRate; 							// autoWired
 	protected Decimalbox 	grcEffectiveRate; 						// autoWired
-	protected Textbox 		graceBaseRate; 							// autoWired
-	protected Textbox 		graceSpecialRate; 						// autoWired
+	protected ExtendedCombobox 		graceBaseRate; 							// autoWired
+	protected ExtendedCombobox 		graceSpecialRate; 						// autoWired
 	protected Decimalbox 	grcMargin; 								// autoWired
 	protected Combobox      grcPftDaysBasis;						// autoWired
 	protected Row 			alwGrcIndRow; 							// autoWired
@@ -269,8 +268,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Decimalbox 	repayProfitRate; 						// autoWired
 	protected Decimalbox 	repayEffectiveRate; 					// autoWired
 	protected Row			repayBaseRateRow;						// autoWired
-	protected Textbox 		repayBaseRate; 							// autoWired
-	protected Textbox 		repaySpecialRate; 						// autoWired
+	protected ExtendedCombobox 		repayBaseRate; 							// autoWired
+	protected ExtendedCombobox 		repaySpecialRate; 						// autoWired
 	protected Decimalbox 	repayMargin; 							// autoWired
 	protected Combobox 		cbScheduleMethod; 						// autoWired
 	protected Row 			rpyPftFrqRow; 							// autoWired
@@ -344,20 +343,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Button 		btnSearchFinType; 						// autoWired
 	protected Textbox 		lovDescFinTypeName; 					// autoWired
 
-	protected Button 		btnSearchGraceBaseRate; 				// autoWired
-	protected Textbox 		lovDescGraceBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchGraceSpecialRate;		 		// autoWired
-	protected Textbox 		lovDescGraceSpecialRateName; 			// autoWired
-
 	protected Button 		btnSearchGrcIndBaseRate; 				// autoWired
 	protected Textbox 		lovDescGrcIndBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchRepayBaseRate; 				// autoWired
-	protected Textbox 		lovDescRepayBaseRateName; 				// autoWired
-
-	protected Button 		btnSearchRepaySpecialRate; 				// autoWired
-	protected Textbox 		lovDescRepaySpecialRateName; 			// autoWired
 
 	protected Button 		btnValidate; 							// autoWired
 	protected Button 		btnBuildSchedule; 						// autoWired
@@ -613,7 +600,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		// Finance Basic Details Tab ---> 2. Grace Period Details
 		this.gracePeriodEndDate.setFormat(PennantConstants.dateFormat);
 		this.graceBaseRate.setMaxlength(8);
+		this.graceBaseRate.setModuleName("BaseRateCode");
+		this.graceBaseRate.setValueColumn("BRType");
+		this.graceBaseRate.setDescColumn("BRTypeDesc");
+		this.graceBaseRate.setValidateColumns(new String[]{"BRType"});
 		this.graceSpecialRate.setMaxlength(8);
+		this.graceSpecialRate.setModuleName("SplRateCode");
+		this.graceSpecialRate.setValueColumn("SRType");
+		this.graceSpecialRate.setDescColumn("SRTypeDesc");
+		this.graceSpecialRate.setValidateColumns(new String[]{"SRType"});
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
 		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -643,7 +638,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.rpyIndBaseRate.setDescColumn("BRTypeDesc");
 		this.rpyIndBaseRate.setValidateColumns(new String[] { "BRType" });
 		this.repayBaseRate.setMaxlength(8);
+		this.repayBaseRate.setModuleName("BaseRateCode");
+		this.repayBaseRate.setValueColumn("BRType");
+		this.repayBaseRate.setDescColumn("BRTypeDesc");
+		this.repayBaseRate.setValidateColumns(new String[]{"BRType"});
 		this.repaySpecialRate.setMaxlength(8);
+		this.repaySpecialRate.setModuleName("SplRateCode");
+		this.repaySpecialRate.setValueColumn("SRType");
+		this.repaySpecialRate.setDescColumn("SRTypeDesc");
+		this.repaySpecialRate.setValidateColumns(new String[]{"SRType"});
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
 		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -976,11 +979,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if (!StringUtils.trimToEmpty(aFinanceMain.getGraceBaseRate()).equals("")) {
 				this.grcBaseRateRow.setVisible(true);
 				this.graceBaseRate.setValue(aFinanceMain.getGraceBaseRate());
-				this.lovDescGraceBaseRateName.setValue(aFinanceMain.getGraceBaseRate() == null ? "" : 
-					aFinanceMain.getGraceBaseRate() + "-" + aFinanceMain.getLovDescGraceBaseRateName());
+				this.graceBaseRate.setDescription(aFinanceMain.getGraceBaseRate() == null ? "" : 
+					 aFinanceMain.getLovDescGraceBaseRateName());
 				this.graceSpecialRate.setValue(aFinanceMain.getGraceSpecialRate());
-				this.lovDescGraceSpecialRateName.setValue(aFinanceMain.getGraceSpecialRate() == null ? "" : 
-					aFinanceMain.getGraceSpecialRate() + "-" + aFinanceMain.getLovDescGraceSpecialRateName());
+				this.graceSpecialRate.setDescription(aFinanceMain.getGraceSpecialRate() == null ? "" : 
+					aFinanceMain.getLovDescGraceSpecialRateName());
 				RateDetail rateDetail = RateUtil.rates(aFinanceMain.getGraceBaseRate(), 
 						aFinanceMain.getGraceSpecialRate(), aFinanceMain.getGrcMargin());
 
@@ -993,11 +996,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 				this.grcBaseRateRow.setVisible(false);
 				this.graceBaseRate.setValue("");
-				this.lovDescGraceBaseRateName.setValue("");
-				this.btnSearchGraceBaseRate.setDisabled(true);
+				this.graceBaseRate.setDescription("");
+				this.graceBaseRate.setReadonly(true);
+				this.graceSpecialRate.setDescription("");
 				this.graceSpecialRate.setValue("");
-				this.lovDescGraceSpecialRateName.setValue("");
-				this.btnSearchGraceSpecialRate.setDisabled(true);
+				this.graceSpecialRate.setReadonly(true);
 				this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 				this.gracePftRate.setValue(aFinanceMain.getGrcPftRate());
 				this.grcEffectiveRate.setValue(aFinanceMain.getGrcPftRate());
@@ -1161,11 +1164,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 			this.repayBaseRateRow.setVisible(true);
 			this.repayBaseRate.setValue(aFinanceMain.getRepayBaseRate());
-			this.lovDescRepayBaseRateName.setValue(aFinanceMain.getRepayBaseRate() == null ? "" : 
-				aFinanceMain.getRepayBaseRate() + "-" + aFinanceMain.getLovDescRepayBaseRateName());
+			this.repayBaseRate.setDescription(aFinanceMain.getRepayBaseRate() == null ? "" : 
+				 aFinanceMain.getLovDescRepayBaseRateName());
 			this.repaySpecialRate.setValue(aFinanceMain.getRepaySpecialRate());
-			this.lovDescRepaySpecialRateName.setValue(aFinanceMain.getRepaySpecialRate() == null ? "" : 
-				aFinanceMain.getRepaySpecialRate() + "-" + aFinanceMain.getLovDescRepaySpecialRateName());
+			this.repaySpecialRate.setDescription(aFinanceMain.getRepaySpecialRate() == null ? "" : 
+				aFinanceMain.getLovDescRepaySpecialRateName());
 
 			RateDetail rateDetail = RateUtil.rates(
 					this.repayBaseRate.getValue(), this.repaySpecialRate.getValue(), this.repayMargin.getValue());
@@ -1180,11 +1183,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 			this.repayBaseRateRow.setVisible(false);
 			this.repayBaseRate.setValue("");
-			this.lovDescRepayBaseRateName.setValue("");
-			this.btnSearchRepayBaseRate.setDisabled(true);
+			this.repayBaseRate.setDescription("");
+			this.repayBaseRate.setReadonly(true);
 			this.repaySpecialRate.setValue("");
-			this.lovDescRepaySpecialRateName.setValue("");
-			this.btnSearchRepaySpecialRate.setDisabled(true);
+			this.repaySpecialRate.setDescription("");
+			this.repaySpecialRate.setReadonly(true);
 			this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
 			this.repayEffectiveRate.setValue(aFinanceMain.getRepayProfitRate());
@@ -1587,11 +1590,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.lovDescGraceBaseRateName.getValue().equals("")) {
+				if (this.graceBaseRate.getDescription().equals("")) {
 					aFinanceMain.setLovDescGraceBaseRateName("");
 					aFinanceMain.setGraceBaseRate(null);
 				} else {
-					aFinanceMain.setLovDescGraceBaseRateName(this.lovDescGraceBaseRateName.getValue());
+					aFinanceMain.setLovDescGraceBaseRateName(this.graceBaseRate.getDescription());
 					aFinanceMain.setGraceBaseRate(this.graceBaseRate.getValue());
 				}
 			} catch (WrongValueException we) {
@@ -1611,11 +1614,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.lovDescGraceSpecialRateName.getValue().equals("")) {
+				if (this.graceSpecialRate.getDescription().equals("")) {
 					aFinanceMain.setLovDescGraceSpecialRateName("");
 					aFinanceMain.setGraceSpecialRate(null);
 				} else {
-					aFinanceMain.setLovDescGraceSpecialRateName(this.lovDescGraceSpecialRateName.getValue());
+					aFinanceMain.setLovDescGraceSpecialRateName(this.graceSpecialRate.getDescription());
 					aFinanceMain.setGraceSpecialRate(this.graceSpecialRate.getValue());
 				}
 				aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
@@ -1624,9 +1627,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			} 
 
 			try {
-				if(!this.btnSearchGraceBaseRate.isDisabled()) {
+				if(!this.graceBaseRate.isReadonly()) {
 					calculateRate(this.graceBaseRate, this.graceSpecialRate,
-							this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);	
+							 this.grcMargin, this.grcEffectiveRate);	
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1637,7 +1640,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if (this.gracePftRate.getValue() != null && !this.gracePftRate.isDisabled()) {
 					if ((this.gracePftRate.getValue().intValue() > 0) && 
-							(!this.lovDescGraceBaseRateName.getValue().equals(""))) {
+							(!this.graceBaseRate.getDescription().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
 								new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),
@@ -1848,11 +1851,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.lovDescRepayBaseRateName.getValue().equals("")) {
+			if (this.repayBaseRate.getDescription().equals("")) {
 				aFinanceMain.setLovDescRepayBaseRateName("");
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
-				aFinanceMain.setLovDescRepayBaseRateName(this.lovDescRepayBaseRateName.getValue());
+				aFinanceMain.setLovDescRepayBaseRateName(this.repayBaseRate.getDescription());
 				aFinanceMain.setRepayBaseRate(this.repayBaseRate.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -1862,11 +1865,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.lovDescRepaySpecialRateName.getValue().equals("")) {
+			if (this.repaySpecialRate.getDescription().equals("")) {
 				aFinanceMain.setLovDescRepaySpecialRateName("");
 				aFinanceMain.setRepaySpecialRate(null);
 			} else {
-				aFinanceMain.setLovDescRepaySpecialRateName(this.lovDescRepaySpecialRateName.getValue());
+				aFinanceMain.setLovDescRepaySpecialRateName(this.repaySpecialRate.getDescription());
 				aFinanceMain.setRepaySpecialRate(this.repaySpecialRate.getValue());
 			}
 			aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
@@ -1881,9 +1884,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		try {
-			if(!this.btnSearchRepayBaseRate.isDisabled()) {
+			if(!this.repayBaseRate.isReadonly()) {
 				calculateRate(this.repayBaseRate, this.repaySpecialRate,
-						this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+						 this.repayMargin, this.repayEffectiveRate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1919,7 +1922,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			if (this.repayProfitRate.getValue() != null && !this.repayProfitRate.isDisabled()) {
 				if ((this.repayProfitRate.getValue().intValue() > 0)
-						&& (!this.lovDescRepayBaseRateName.getValue().equals(""))) {
+						&& (!this.repayBaseRate.getDescription().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
 							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),
 							Labels.getLabel("label_WIFFinanceMainDialog_ProfitRate.value") }));
@@ -2593,9 +2596,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.oldVar_grcRateBasis = this.grcRateBasis.getSelectedIndex();
 			this.oldVar_allowGrcRepay = this.allowGrcRepay.isChecked();
 			this.oldVar_graceBaseRate = this.graceBaseRate.getValue();
-			this.oldVar_lovDescGraceBaseRateName = this.lovDescGraceBaseRateName.getValue();
+			this.oldVar_lovDescGraceBaseRateName = this.graceBaseRate.getDescription();
 			this.oldVar_graceSpecialRate = this.graceSpecialRate.getValue();
-			this.oldVar_lovDescGraceSpecialRateName = this.lovDescGraceSpecialRateName.getValue();
+			this.oldVar_lovDescGraceSpecialRateName = this.graceSpecialRate.getDescription();
 			this.oldVar_gracePftRate = this.gracePftRate.getValue();
 			this.oldVar_gracePftFrq = this.gracePftFrq.getValue();
 			this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
@@ -2615,9 +2618,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.oldVar_numberOfTerms = this.numberOfTerms_two.intValue();
 		this.oldVar_repayBaseRate = this.repayBaseRate.getValue();
 		this.oldVar_repayRateBasis = this.repayRateBasis.getSelectedIndex();
-		this.oldVar_lovDescRepayBaseRateName = this.lovDescRepayBaseRateName.getValue();
+		this.oldVar_lovDescRepayBaseRateName = this.repayBaseRate.getDescription();
 		this.oldVar_repaySpecialRate = this.repaySpecialRate.getValue();
-		this.oldVar_lovDescRepaySpecialRateName = this.lovDescRepaySpecialRateName.getValue();
+		this.oldVar_lovDescRepaySpecialRateName = this.repaySpecialRate.getDescription();
 		this.oldVar_repayProfitRate = this.repayProfitRate.getValue();
 		this.oldVar_repayMargin = this.repayMargin.getValue();
 		this.oldVar_scheduleMethod = this.cbScheduleMethod.getSelectedIndex();
@@ -2692,9 +2695,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.allowGrcRepay.setChecked(this.oldVar_allowGrcRepay);
 			this.graceBaseRate.setValue(this.oldVar_graceBaseRate);
 			this.grcPftDaysBasis.setSelectedIndex(this.oldVar_grcPftDaysBasis);
-			this.lovDescGraceBaseRateName.setValue(this.oldVar_lovDescGraceBaseRateName);
+			this.graceBaseRate.setDescription(this.oldVar_lovDescGraceBaseRateName);
 			this.graceSpecialRate.setValue(this.oldVar_graceSpecialRate);
-			this.lovDescGraceSpecialRateName.setValue(this.oldVar_lovDescGraceSpecialRateName);
+			this.graceSpecialRate.setDescription(this.oldVar_lovDescGraceSpecialRateName);
 			this.gracePftRate.setValue(this.oldVar_gracePftRate);
 			this.gracePftFrq.setValue(this.oldVar_gracePftFrq);
 			this.nextGrcPftDate_two.setValue(this.oldVar_nextGrcPftDate);
@@ -2712,9 +2715,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.numberOfTerms.setValue(this.oldVar_numberOfTerms);
 		this.repayRateBasis.setSelectedIndex(this.oldVar_repayRateBasis);
 		this.repayBaseRate.setValue(this.oldVar_repayBaseRate);
-		this.lovDescRepayBaseRateName.setValue(this.oldVar_lovDescRepayBaseRateName);
+		this.repayBaseRate.setDescription(this.oldVar_lovDescRepayBaseRateName);
 		this.repaySpecialRate.setValue(this.oldVar_repaySpecialRate);
-		this.lovDescRepaySpecialRateName.setValue(this.oldVar_lovDescRepaySpecialRateName);
+		this.repaySpecialRate.setDescription(this.oldVar_lovDescRepaySpecialRateName);
 		this.repayProfitRate.setValue(this.oldVar_repayProfitRate);
 		this.repayMargin.setValue(this.oldVar_repayMargin);
 		this.cbScheduleMethod.setSelectedIndex(this.oldVar_scheduleMethod);
@@ -3472,8 +3475,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
-		if(!this.btnSearchGraceBaseRate.isDisabled()) {
-			this.lovDescGraceBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),null,true));
+		if(!this.graceBaseRate.isReadonly()) {
+			this.graceBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),null,true,true));
 		}
 
 		if(this.allowGrcInd.isChecked() && !this.btnSearchGrcIndBaseRate.isDisabled()){
@@ -3482,8 +3485,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-		if(!this.btnSearchRepayBaseRate.isDisabled()) {
-			this.lovDescRepayBaseRateName.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),null,true));
+		if(!this.repayBaseRate.isReadonly()) {
+			this.repayBaseRate.setConstraint(new PTStringValidator(Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),null,true));
 		}
 
 		if(this.allowRpyInd.isChecked() && this.rpyIndBaseRate.isButtonVisible()){
@@ -3506,14 +3509,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
-		this.lovDescGraceBaseRateName.setConstraint("");
-		this.lovDescGraceSpecialRateName.setConstraint("");
+		this.graceBaseRate.setConstraint("");
+		this.graceSpecialRate.setConstraint("");
 		this.lovDescGrcIndBaseRateName.setConstraint("");
 
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-		this.lovDescRepayBaseRateName.setConstraint("");
-		this.lovDescRepaySpecialRateName.setConstraint("");
+		this.repayBaseRate.setConstraint("");
+		this.repaySpecialRate.setConstraint("");
 		this.rpyIndBaseRate.setConstraint("");
 
 		logger.debug("Leaving ");
@@ -3545,8 +3548,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.grcRateBasis.setErrorMessage("");
 		this.gracePeriodEndDate.setErrorMessage("");
-		this.lovDescGraceBaseRateName.setErrorMessage("");
-		this.lovDescGraceSpecialRateName.setErrorMessage("");
+		this.graceBaseRate.setErrorMessage("");
+		this.graceSpecialRate.setErrorMessage("");
 		this.gracePftRate.setErrorMessage("");
 		this.grcPftDaysBasis.setErrorMessage("");
 		this.grcEffectiveRate.setErrorMessage("");
@@ -3564,8 +3567,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.numberOfTerms.setErrorMessage("");
 		this.repayRateBasis.setErrorMessage("");
-		this.lovDescRepayBaseRateName.setErrorMessage("");
-		this.lovDescRepaySpecialRateName.setErrorMessage("");
+		this.repaySpecialRate.setErrorMessage("");
+		this.repayBaseRate.setErrorMessage("");
 		this.repayProfitRate.setErrorMessage("");
 		this.repayEffectiveRate.setErrorMessage("");
 		this.repayMargin.setErrorMessage("");
@@ -3714,8 +3717,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.gracePeriodEndDate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePeriodEndDate"));
 		this.cbGrcSchdMthd.setDisabled(isReadOnly("WIFFinanceMainDialog_grcSchdMthd"));
 		this.allowGrcRepay.setDisabled(isReadOnly("WIFFinanceMainDialog_allowGrcRepay"));
-		this.btnSearchGraceBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
-		this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
+		this.graceBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
+		this.graceSpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
 		this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 		this.grcMargin.setDisabled(isReadOnly("WIFFinanceMainDialog_grcMargin"));
 		this.grcPftDaysBasis.setDisabled(isReadOnly("WIFFinanceMainDialog_grcPftDaysBasis"));
@@ -3741,8 +3744,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.repayRateBasis.setDisabled(isReadOnly("WIFFinanceMainDialog_repayRateBasis"));
 		this.numberOfTerms.setReadonly(isReadOnly("WIFFinanceMainDialog_numberOfTerms"));
-		this.btnSearchRepayBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_repayBaseRate"));
-		this.btnSearchRepaySpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_repaySpecialRate"));
+		this.repayBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_repayBaseRate"));
+		this.repaySpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_repaySpecialRate"));
 		this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 		this.repayMargin.setDisabled(isReadOnly("WIFFinanceMainDialog_repayMargin"));
 		this.cbScheduleMethod.setDisabled(isReadOnly("WIFFinanceMainDialog_scheduleMethod"));
@@ -3821,8 +3824,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.grcRateBasis.setDisabled(true);
 		this.cbGrcSchdMthd.setDisabled(true);
 		this.allowGrcRepay.setDisabled(true);
-		this.btnSearchGraceBaseRate.setDisabled(true);
-		this.btnSearchGraceSpecialRate.setDisabled(true);
+		this.graceBaseRate.setReadonly(true);
+		this.graceSpecialRate.setReadonly(true);
 		this.gracePftRate.setReadonly(true);
 		this.grcMargin.setReadonly(true);
 		this.grcPftDaysBasis.setDisabled(true);
@@ -3852,8 +3855,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		this.numberOfTerms.setReadonly(true);
 		this.repayRateBasis.setDisabled(true);
-		this.btnSearchRepayBaseRate.setDisabled(true);
-		this.btnSearchRepaySpecialRate.setDisabled(true);
+		this.repayBaseRate.setReadonly(true);
+		this.repaySpecialRate.setReadonly(true);
 		this.repayProfitRate.setDisabled(true);
 		this.repayMargin.setDisabled(true);
 		this.cbScheduleMethod.setDisabled(true);
@@ -3930,9 +3933,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.graceTerms.setText("");
 		this.gracePeriodEndDate.setText("");
 		this.graceBaseRate.setValue("");
-		this.lovDescGraceBaseRateName.setValue("");
+		this.graceBaseRate.setDescription("");
 		this.graceSpecialRate.setValue("");
-		this.lovDescGraceSpecialRateName.setValue("");
+		this.graceSpecialRate.setDescription("");
 		this.gracePftRate.setValue("");
 		this.grcMargin.setValue("");
 		this.grcPftDaysBasis.setValue("");
@@ -3948,9 +3951,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.numberOfTerms.setText("");
 		this.repayRateBasis.setSelectedIndex(0);
 		this.repayBaseRate.setValue("");
-		this.lovDescRepayBaseRateName.setValue("");
+		this.repayBaseRate.setDescription("");
 		this.repaySpecialRate.setValue("");
-		this.lovDescRepaySpecialRateName.setValue("");
+		this.repaySpecialRate.setDescription("");
 		this.repayProfitRate.setValue("");
 		this.repayMargin.setValue("");
 		this.repayFrq.setValue("");
@@ -4615,26 +4618,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchGraceBaseRate(Event event) throws InterruptedException {
+	public void onFulfill$graceBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-
-		this.grcEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_WIFFinanceMainDialog, "BaseRateCode");
-
-		if (dataObject instanceof String) {
-			this.graceBaseRate.setValue(dataObject.toString());
-			this.lovDescGraceBaseRateName.setValue("");
-			this.grcEffectiveRate.setValue(BigDecimal.ZERO);
-		} else {
-			BaseRateCode details = (BaseRateCode) dataObject;
-			if (details != null) {
-				this.graceBaseRate.setValue(details.getBRType());
-				this.lovDescGraceBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
-			}
-		}
-
 		calculateRate(this.graceBaseRate, this.graceSpecialRate,
-				this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);
+				 this.grcMargin, this.grcEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -4645,26 +4632,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchGraceSpecialRate(Event event) throws InterruptedException {
+	public void onFulfill$graceSpecialRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		this.grcEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_WIFFinanceMainDialog, "SplRateCode");
-
-		if (dataObject instanceof String) {
-			this.graceSpecialRate.setValue(dataObject.toString());
-			this.lovDescGraceSpecialRateName.setValue("");
-			this.grcEffectiveRate.setValue(BigDecimal.ZERO);
-		} else {
-			SplRateCode details = (SplRateCode) dataObject;
-			if (details != null) {
-				this.graceSpecialRate.setValue(details.getSRType());
-				this.lovDescGraceSpecialRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
-			}
-		}
-
 		calculateRate(this.graceBaseRate, this.graceSpecialRate,
-				this.lovDescGraceBaseRateName, this.grcMargin, this.grcEffectiveRate);
+				 this.grcMargin, this.grcEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -4743,8 +4715,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.gracePeriodEndDate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePeriodEndDate"));
 			this.grcRateBasis.setDisabled(isReadOnly("WIFFinanceMainDialog_graceRateBasis"));
 			this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
-			this.btnSearchGraceBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
-			this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
+			this.graceBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
+			this.graceSpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
 			this.grcMargin.setDisabled(isReadOnly("WIFFinanceMainDialog_grcMargin"));
 			this.allowGrcInd.setDisabled(isReadOnly("WIFFinanceMainDialog_allowGrcInd"));
 			this.btnSearchGrcIndBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_grcIndRate"));
@@ -4796,8 +4768,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.gracePeriodEndDate.setDisabled(true);
 			this.grcRateBasis.setDisabled(true);
 			this.gracePftRate.setDisabled(true);
-			this.btnSearchGraceBaseRate.setDisabled(true);
-			this.btnSearchGraceSpecialRate.setDisabled(true);
+			this.graceBaseRate.setReadonly(true);
+			this.graceSpecialRate.setReadonly(true);
 			this.grcMargin.setDisabled(true);
 			this.allowGrcInd.setDisabled(true);
 			this.btnSearchGrcIndBaseRate.setDisabled(true);
@@ -4830,12 +4802,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if("R".equals(getComboboxValue(this.grcRateBasis))){
 
 				this.graceBaseRate.setValue(finType.getFinGrcBaseRate());
-				this.lovDescGraceBaseRateName.setValue(StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")?"":
-					finType.getFinGrcBaseRate()+"-"+finType.getLovDescFinGrcBaseRateName());
+				this.graceBaseRate.setDescription(StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")?"":
+					finType.getLovDescFinGrcBaseRateName());
 
 				this.graceSpecialRate.setValue(finType.getFinGrcSplRate());
-				this.lovDescGraceSpecialRateName.setValue(StringUtils.trimToEmpty(finType.getFinGrcSplRate()).equals("")?"":
-					finType.getFinGrcSplRate()+"-"+finType.getLovDescFinGrcSplRateName());
+				this.graceSpecialRate.setDescription(StringUtils.trimToEmpty(finType.getFinGrcSplRate()).equals("")?"":
+					finType.getLovDescFinGrcSplRateName());
 				
 				if(!StringUtils.trimToEmpty(finType.getFinGrcBaseRate()).equals("")){
 					RateDetail rateDetail = RateUtil.rates(this.graceBaseRate.getValue(),
@@ -4966,8 +4938,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			this.nextGrcPftDate_two.setValue(this.finStartDate.getValue());
 		}
 		if(!this.grcRateBasis.getSelectedItem().getValue().toString().equals("#")) {
-			this.btnSearchGraceBaseRate.setDisabled(true);
-			this.btnSearchGraceSpecialRate.setDisabled(true);
+			this.graceBaseRate.setReadonly(true);
+			this.graceSpecialRate.setReadonly(true);
 			if("F".equals(this.grcRateBasis.getSelectedItem().getValue().toString()) || 
 					"C".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 				if(!this.allowGrace.isChecked()){
@@ -4978,11 +4950,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}else if("R".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate()).equals("")){
 					if(!this.allowGrace.isChecked()){
-						this.btnSearchGraceBaseRate.setDisabled(true);
-						this.btnSearchGraceSpecialRate.setDisabled(true);
+						this.graceBaseRate.setReadonly(true);
+						this.graceSpecialRate.setReadonly(true);
 					}else{
-						this.btnSearchGraceBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
-						this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
+						this.graceBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
+						this.graceSpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
 					}
 					this.gracePftRate.setDisabled(true);
 					this.gracePftRate.setText("");
@@ -5007,26 +4979,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchRepayBaseRate(Event event) throws InterruptedException {
+	public void onFulfill$repayBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		this.repayEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_WIFFinanceMainDialog, "BaseRateCode");
-
-		if (dataObject instanceof String) {
-			this.repayBaseRate.setValue(dataObject.toString());
-			this.lovDescRepayBaseRateName.setValue("");
-			this.repayEffectiveRate.setValue(BigDecimal.ZERO);
-		} else {
-			BaseRateCode details = (BaseRateCode) dataObject;
-			if (details != null) {
-				this.repayBaseRate.setValue(details.getBRType());
-				this.lovDescRepayBaseRateName.setValue(details.getBRType() + "-" + details.getBRTypeDesc());
-			}
-		}
-
 		calculateRate(this.repayBaseRate, this.repaySpecialRate,
-				this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+				 this.repayMargin, this.repayEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -5037,26 +4994,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchRepaySpecialRate(Event event) throws InterruptedException {
+	public void onFulfill$repaySpecialRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
-
-		this.repayEffectiveRate.setConstraint("");
-		Object dataObject = ExtendedSearchListBox.show(this.window_WIFFinanceMainDialog, "SplRateCode");
-
-		if (dataObject instanceof String) {
-			this.repaySpecialRate.setValue(dataObject.toString());
-			this.lovDescRepaySpecialRateName.setValue("");
-			this.repayEffectiveRate.setValue(BigDecimal.ZERO);
-		} else {
-			SplRateCode details = (SplRateCode) dataObject;
-			if (details != null) {
-				this.repaySpecialRate.setValue(details.getSRType());
-				this.lovDescRepaySpecialRateName.setValue(details.getSRType() + "-" + details.getSRTypeDesc());
-			}
-		}
-
 		calculateRate(this.repayBaseRate, this.repaySpecialRate,
-				this.lovDescRepayBaseRateName, this.repayMargin, this.repayEffectiveRate);
+				this.repayMargin, this.repayEffectiveRate);
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -5875,25 +5816,23 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.grcMargin.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcMargin());
 			}
 
-			if (!this.btnSearchGraceBaseRate.isDisabled() && this.lovDescGraceBaseRateName.getValue().equals("")) {
+			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getDescription().equals("")) {
 
 				this.graceBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate());
 
-				this.lovDescGraceBaseRateName.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate() == null ?
-						"" : getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate()
-						+ "-" + getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinGrcBaseRateName());
+				this.graceBaseRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate() == null ?
+						"" : getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinGrcBaseRateName());
 			}
 
-			if (!this.btnSearchGraceSpecialRate.isDisabled()
-					&& this.lovDescGraceSpecialRateName.getValue().equals("")) {
+			if (!this.graceSpecialRate.isReadonly()
+					&& this.graceSpecialRate.getDescription().equals("")) {
 
 				this.graceSpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate());
-				this.lovDescGraceSpecialRateName.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate() == null ?
-						"" : getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate()+ "-"
-						+ getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinGrcSplRateName());
+				this.graceSpecialRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate() == null ?
+						"" : getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinGrcSplRateName());
 			}
 
-			if (!this.btnSearchGraceBaseRate.isDisabled()) {
+			if (!this.graceBaseRate.isReadonly()) {
 
 				RateDetail rateDetail = RateUtil.rates(this.graceBaseRate.getValue(), this.graceSpecialRate.getValue(),
 						this.grcMargin.getValue() == null ? BigDecimal.ZERO : this.grcMargin.getValue());
@@ -6017,25 +5956,23 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		if(CalculationConstants.RATE_BASIS_R.equals(getComboboxValue(this.repayRateBasis))){
 			
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.lovDescRepayBaseRateName.getValue().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getDescription().equals("")) {
 
 				this.repayBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate());
 
-				this.lovDescRepayBaseRateName.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate() == null ? ""
-						: getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate()+ "-"
-						+ getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinBaseRateName());
+				this.repayBaseRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate() == null ? ""
+						:getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinBaseRateName());
 			}
 
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.lovDescRepaySpecialRateName.getValue().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repaySpecialRate.getDescription().equals("")) {
 
 				this.repaySpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate());
 
-				this.lovDescRepaySpecialRateName.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate() == null ? ""
-						: getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate()+ "-"
-						+ getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinSplRateName());
+				this.repaySpecialRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate() == null ? ""
+						:getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinSplRateName());
 			}
 
-			if (!this.btnSearchRepayBaseRate.isDisabled()) {
+			if (!this.repayBaseRate.isReadonly()) {
 
 				RateDetail rateDetail = RateUtil.rates(this.repayBaseRate.getValue(), this.repaySpecialRate.getValue(), 
 						this.repayMargin.getValue() == null ? BigDecimal.ZERO : this.repayMargin.getValue());
@@ -6362,7 +6299,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				}
 
 				// validate finance profit rate
-				if (!this.btnSearchGraceBaseRate.isDisabled() && this.graceBaseRate.getValue().equals("")) {
+				if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
 					errorList.add(new ErrorDetails("btnSearchGraceBaseRate", "E0013", new String[] {}, new String[] {}));
 				}
 
@@ -6460,7 +6397,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 			//FinanceMain Details Tab ---> 3. Repayment Period Details
 
-			if (!this.btnSearchRepayBaseRate.isDisabled() && this.repayBaseRate.getValue().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
 				errorList.add(new ErrorDetails("btnSearchRepayBaseRate", "E0013", new String[] {}, null));
 			}
 
@@ -6681,17 +6618,17 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doRemoveLOVValidation();
 		doClearMessage();
 
-		this.lovDescGraceBaseRateName.setConstraint("");
-		this.lovDescGraceSpecialRateName.setConstraint("");
+		this.graceBaseRate.setConstraint("");
+		this.graceSpecialRate.setConstraint("");
 		this.grcEffectiveRate.setConstraint("");
 
-		this.btnSearchGraceBaseRate.setDisabled(true);
-		this.btnSearchGraceSpecialRate.setDisabled(true);
+		this.graceBaseRate.setReadonly(true);
+		this.graceSpecialRate.setReadonly(true);
 
 		this.graceBaseRate.setValue("");
 		this.graceSpecialRate.setValue("");
-		this.lovDescGraceBaseRateName.setValue("");
-		this.lovDescGraceSpecialRateName.setValue("");
+		this.graceBaseRate.setDescription("");
+		this.graceSpecialRate.setDescription("");
 		this.gracePftRate.setDisabled(true);
 		this.grcEffectiveRate.setText("0.00");
 		this.gracePftRate.setText("0.00");
@@ -6699,19 +6636,19 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if(!this.grcRateBasis.getSelectedItem().getValue().toString().equals("#")) {
 			if("F".equals(this.grcRateBasis.getSelectedItem().getValue().toString()) || 
 					"C".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
-				this.btnSearchGraceBaseRate.setDisabled(true);
-				this.btnSearchGraceSpecialRate.setDisabled(true);
+				this.graceBaseRate.setReadonly(true);
+				this.graceSpecialRate.setReadonly(true);
 
-				this.lovDescGraceBaseRateName.setValue("");
-				this.lovDescGraceSpecialRateName.setValue("");
+				this.graceBaseRate.setDescription("");
+				this.graceSpecialRate.setDescription("");
 
 				this.grcEffectiveRate.setText("0.00");
 				this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 			}else if("R".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
 				
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate()).equals("")){
-					this.btnSearchGraceBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
-					this.btnSearchGraceSpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
+					this.graceBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceBaseRate"));
+					this.graceSpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_graceSpecialRate"));
 				}else{
 					this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 				}
@@ -6730,17 +6667,17 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		doRemoveLOVValidation();
 		doClearMessage();
 
-		this.lovDescRepayBaseRateName.setConstraint("");
-		this.lovDescRepaySpecialRateName.setConstraint("");
+		this.repayBaseRate.setConstraint("");
+		this.repaySpecialRate.setConstraint("");
 		this.repayEffectiveRate.setConstraint("");
 
-		this.btnSearchRepayBaseRate.setDisabled(true);
-		this.btnSearchRepaySpecialRate.setDisabled(true);
+		this.repayBaseRate.setReadonly(true);
+		this.repaySpecialRate.setReadonly(true);
 
 		this.repayBaseRate.setValue("");
 		this.repaySpecialRate.setValue("");
-		this.lovDescRepayBaseRateName.setValue("");
-		this.lovDescRepaySpecialRateName.setValue("");
+		this.repayBaseRate.setDescription("");
+		this.repaySpecialRate.setDescription("");
 		this.repayProfitRate.setDisabled(true);
 		this.repayEffectiveRate.setText("0.00");
 		this.repayProfitRate.setText("0.00");
@@ -6748,18 +6685,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		if(!this.repayRateBasis.getSelectedItem().getValue().toString().equals("#")) {
 			if("F".equals(this.repayRateBasis.getSelectedItem().getValue().toString()) ||
 					"C".equals(this.repayRateBasis.getSelectedItem().getValue().toString())) {
-				this.btnSearchRepayBaseRate.setDisabled(true);
-				this.btnSearchRepaySpecialRate.setDisabled(true);
+				this.repayBaseRate.setReadonly(true);
+				this.repaySpecialRate.setReadonly(true);
 
-				this.lovDescRepayBaseRateName.setValue("");
-				this.lovDescRepaySpecialRateName.setValue("");
+				this.repayBaseRate.setDescription("");
+				this.repaySpecialRate.setDescription("");
 
 				this.repayEffectiveRate.setText("0.00");
 				this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 			}else if("R".equals(this.repayRateBasis.getSelectedItem().getValue().toString())) {
 				if(!StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate()).equals("")){
-					this.btnSearchRepayBaseRate.setDisabled(isReadOnly("WIFFinanceMainDialog_repayBaseRate"));
-					this.btnSearchRepaySpecialRate.setDisabled(isReadOnly("WIFFinanceMainDialog_repaySpecialRate"));
+					this.repayBaseRate.setReadonly(isReadOnly("WIFFinanceMainDialog_repayBaseRate"));
+					this.repaySpecialRate.setReadonly(isReadOnly("WIFFinanceMainDialog_repaySpecialRate"));
 				}else{
 					this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 				}
@@ -6806,7 +6743,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	 * 
 	 * @throws InterruptedException
 	 * **/
-	private void calculateRate(Textbox baseRate, Textbox splRate, Textbox lovFieldTextBox, 
+	private void calculateRate(ExtendedCombobox baseRate, ExtendedCombobox splRate, 
 			Decimalbox margin, Decimalbox effectiveRate) throws InterruptedException {
 		logger.debug("Entering");
 
@@ -6817,7 +6754,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			PTMessageUtils.showErrorMessage(ErrorUtil.getErrorDetail(
 					rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			splRate.setValue("");
-			lovFieldTextBox.setValue("");
+			baseRate.setDescription("");
 		}
 		logger.debug("Leaving");
 	}

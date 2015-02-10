@@ -156,27 +156,13 @@
 									id="label_VehicleDealerDialog_Country"
 									value="${c:l('label_VehicleDealerDialog_DealerCountry.value')}" />
 								<hbox id= "hlayout_Country" >
-									<space id="space_Country" spacing="2px"
-										 />
-									<textbox id="dealerCountry"
-										width="171px" visible="false" />
-									<textbox id="lovDescCountry"
-										width="180px" readonly="true" />
-									<button id="btnSearchCountry"
-										image="/images/icons/LOVSearch.png"  />
+										 <extendedcombobox id="dealerCountry" />
 								</hbox>
 							          <label
 									id="label_VehicleDealerDialog_DealerProvince"
 									value="${c:l('label_VehicleDealerDialog_DealerProvince.value')}" />
 								<hbox id= "hlayout_Province" >
-									<space id="space_Province" spacing="2px"
-										 />
-									<textbox id="dealerProvince"
-										width="171px" visible="false" />
-									<textbox id="lovDescProvince"
-										width="180px" readonly="true" />
-									<button id="btnSearchProvince"
-										image="/images/icons/LOVSearch.png"  />
+										 <extendedcombobox id="dealerProvince" />
 								</hbox>
 							</row>
 								<row visible="true">
@@ -184,14 +170,7 @@
 									id="label_VehicleDealerDialog_DealerCity"
 									value="${c:l('label_VehicleDealerDialog_DealerCity.value')}" />
 								<hbox id= "hlayout_City" >
-									<space id="space_City" spacing="2px"
-										 />
-									<textbox id="dealerCity"
-										width="171px" visible="false" />
-									<textbox id="lovDescCity"
-										width="180px" readonly="true" />
-									<button id="btnSearchCity"
-										image="/images/icons/LOVSearch.png"  />
+										<extendedcombobox id="dealerCity" />
 								</hbox>
 							</row>
 						</rows>

@@ -67,14 +67,12 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Country;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -89,7 +87,6 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -118,12 +115,10 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Textbox dealerAddress2; // autowired
 	protected Textbox dealerAddress3; // autowired
 	protected Textbox dealerAddress4; // autowired
-	protected Textbox dealerCountry; // autowired
-	protected Textbox dealerCity; // autowired
-	protected Textbox dealerProvince; // autowired
-	protected Textbox lovDescCountry;
-	protected Textbox lovDescCity;
-	protected Textbox lovDescProvince;
+	protected ExtendedCombobox dealerCountry; // autowired
+	protected ExtendedCombobox dealerCity; // autowired
+	protected ExtendedCombobox dealerProvince; // autowired
+
 
 	protected Label recordStatus; // autowired
 	protected Radiogroup userAction;
@@ -164,15 +159,14 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Button btnClose; // autowire
 	protected Button btnHelp; // autowire
 	protected Button btnNotes; // autowire
-	protected Button btnSearchCountry;
-	protected Button btnSearchProvince;
-	protected Button btnSearchCity;
 
 	// ServiceDAOs / Domain Classes
 	private transient VehicleDealerService vehicleDealerService;
 	private transient PagedListService pagedListService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap= new HashMap<String, ArrayList<ErrorDetails>>();
 
+	private transient String sDealerCountry;
+	private transient String sDealerProvince;
 	/**
 	 * default constructor.<br>
 	 */
@@ -257,6 +251,25 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerAddress2.setMaxlength(50);
 		this.dealerAddress3.setMaxlength(50);
 		this.dealerAddress4.setMaxlength(50);
+		
+		this.dealerCountry.setMandatoryStyle(true);
+		this.dealerCountry.setModuleName("Country");
+		this.dealerCountry.setValueColumn("CountryCode");
+		this.dealerCountry.setDescColumn("CountryDesc");
+		this.dealerCountry.setValidateColumns(new String[]{"CountryCode"});
+		
+		this.dealerProvince.setMandatoryStyle(true);
+		this.dealerProvince.setModuleName("Province");
+		this.dealerProvince.setValueColumn("CPProvince");
+		this.dealerProvince.setDescColumn("CPProvinceName");
+		this.dealerProvince.setValidateColumns(new String[] {"CPProvince"});
+		
+		this.dealerCity.setMandatoryStyle(true);
+		this.dealerCity.setModuleName("City");
+		this.dealerCity.setValueColumn("PCCity");
+		this.dealerCity.setDescColumn("PCCityName");
+		this.dealerCity.setValidateColumns(new String[] {"PCCity"});
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 
@@ -394,90 +407,49 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 
 	// GUI Process
 
-	public void onClick$btnSearchCountry(Event event){
-		logger.debug("Entering" + event.toString());
-		String sDealerCountry = this.dealerCountry.getValue();
-		Object dataObject = ExtendedSearchListBox.show(this.window_VehicleDealerDialog,"Country");
-		if (dataObject instanceof String){
-			this.dealerCountry.setText("");
-			this.lovDescCountry.setValue("");
-		}else{
-			Country country= (Country) dataObject;
-			if (country != null) {
-				this.dealerCountry.setValue(country.getCountryCode());
-				this.lovDescCountry.setValue(country.getCountryDesc());
+	 public void onFulfill$dealerCountry(Event event){
+		   logger.debug("Entering"+event.toString());
+		   doSetDealerProvince();
+		   doSetDealerCity();
+		   logger.debug("Leaving"+event.toString());
+	   }
+	 
+	 public void onFulfill$dealerProvince(Event event){
+		   logger.debug("Entering"+event.toString());
+		   doSetDealerCity();
+		   logger.debug("Leaving"+event.toString());
+	   }
+	 
+	 private void doSetDealerProvince(){
+		   if (!StringUtils.trimToEmpty(sDealerCountry).equals(this.dealerCountry.getValue())){
+			   this.dealerProvince.setValue("");
+			   this.dealerProvince.setObject("");
+			   this.dealerProvince.setDescription("");
+			   this.dealerCity.setValue("");
+			   this.dealerCity.setDescription("");
+			   this.dealerCity.setObject("");
+			   
+		   } 
+		   sDealerCountry = this.dealerCountry.getValue();
+			Filter[] filtersProvince = new Filter[1] ;
+			filtersProvince[0]= new Filter("CPCountry", this.dealerCountry.getValue(), Filter.OP_EQUAL);
+			this.dealerProvince.setFilters(filtersProvince);
+	   }
+	   
+	   private void doSetDealerCity(){
+			if (!StringUtils.trimToEmpty(sDealerProvince).equals(this.dealerProvince.getValue())){
+				this.dealerCity.setObject("");
+				this.dealerCity.setValue("");
+				this.dealerCity.setDescription("");   
 			}
+			sDealerProvince= this.dealerProvince.getValue();
+			Filter[] filtersCity = new Filter[2] ;
+			filtersCity[0] = new Filter("PCCountry", this.dealerCountry.getValue(),Filter.OP_EQUAL);
+			filtersCity[1]= new Filter("PCProvince", this.dealerProvince.getValue(), Filter.OP_EQUAL);
+			this.dealerCity.setFilters(filtersCity);
 		}
-		if (!StringUtils.trimToEmpty(sDealerCountry).equals(
-				this.dealerCountry.getValue())) {
-			this.dealerProvince.setValue("");
-			this.dealerCity.setValue("");
-			this.lovDescProvince.setValue("");
-			this.lovDescCity.setValue("");
-			this.btnSearchCity.setVisible(false);
-		}
-		if (this.dealerCountry.getValue() != "") {
-			this.btnSearchProvince.setVisible(true);
-		} else {
-			this.btnSearchCity.setVisible(false);
-			this.btnSearchProvince.setVisible(false);
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchProvince(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		String sDealerProvince = this.dealerProvince.getValue();
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("CPCountry", this.dealerCountry.getValue(),Filter.OP_EQUAL);
-		Object dataObject = ExtendedSearchListBox.show(
-				this.window_VehicleDealerDialog, "Province", filters);
-		if (dataObject instanceof String) {
-			this.dealerProvince.setValue(dataObject.toString());
-			this.lovDescProvince.setValue("");
-		} else {
-			Province details = (Province) dataObject;
-			if (details != null) {
-				this.dealerProvince.setValue(details.getCPProvince());
-				this.lovDescProvince.setValue(details.getLovValue()
-						+ "-" + details.getCPProvinceName());
-			}
-		}
-		if (!StringUtils.trimToEmpty(sDealerProvince).equals(
-				this.dealerProvince.getValue())) {
-			this.dealerCity.setValue("");
-			this.lovDescCity.setValue("");
-			this.btnSearchCity.setVisible(false);
-		}
-		if (this.dealerProvince.getValue() != "") {
-			this.btnSearchCity.setVisible(true);
-		} else {
-			this.btnSearchCity.setVisible(false);
-		}
-
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onClick$btnSearchCity(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("PCProvince", this.dealerProvince.getValue(), Filter.OP_EQUAL);
-
-		Object dataObject = ExtendedSearchListBox.show(this.window_VehicleDealerDialog, "City", filters);
-		if (dataObject instanceof String) {
-			this.dealerCity.setValue(dataObject.toString());
-			this.lovDescCity.setValue("");
-		} else {
-			City details = (City) dataObject;
-			if (details != null) {
-				this.dealerCity.setValue(details.getPCCity());
-				this.lovDescCity.setValue(details.getPCCity() + "-" + details.getPCCityName());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
+	   
+	
 	/**
 	 * Closes the dialog window. <br>
 	 * <br>
@@ -553,15 +525,18 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerProvince.setValue(aVehicleDealer.getDealerProvince());
 
 		if (aVehicleDealer.isNewRecord()){
-			this.lovDescCountry.setValue("");
-			this.lovDescProvince.setValue("");
-			this.lovDescCity.setValue("");
+			this.dealerCountry.setDescription("");
+			this.dealerProvince.setDescription("");
+			this.dealerCity.setDescription("");
 		}else{
-			this.lovDescCountry.setValue(aVehicleDealer.getLovDescCountry());
-			this.lovDescProvince.setValue(aVehicleDealer.getLovDescProvince());
-			this.lovDescCity.setValue(aVehicleDealer.getLovDescCity());
+			this.dealerCountry.setDescription(aVehicleDealer.getLovDescCountry());
+			this.dealerProvince.setDescription(aVehicleDealer.getLovDescProvince());
+			this.dealerCity.setDescription(aVehicleDealer.getLovDescCity());
 		}
-
+		sDealerCountry = this.dealerCountry.getValue();
+		sDealerProvince = this.dealerProvince.getValue();
+		doSetDealerProvince();
+		doSetDealerCity();
 		this.recordStatus.setValue(aVehicleDealer.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -622,19 +597,19 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			aVehicleDealer.setLovDescCountry(this.lovDescCountry.getValue());
+			aVehicleDealer.setLovDescCountry(this.dealerCountry.getDescription());
 			aVehicleDealer.setDealerCountry(this.dealerCountry.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aVehicleDealer.setLovDescCity(this.lovDescCity.getValue());
+			aVehicleDealer.setLovDescCity(this.dealerCity.getDescription());
 			aVehicleDealer.setDealerCity(this.dealerCity.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		try {
-			aVehicleDealer.setLovDescProvince(this.lovDescProvince.getValue());
+			aVehicleDealer.setLovDescProvince(this.dealerProvince.getDescription());
 			aVehicleDealer.setDealerProvince(this.dealerProvince.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
@@ -704,13 +679,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-			if (this.dealerCountry.getValue() != "") {
-				this.btnSearchProvince.setVisible(true);
-				if(this.dealerProvince.getValue() == ""){
-					this.btnSearchCity.setVisible(false);
-				}else{
-					this.btnSearchCity.setVisible(true);
-			}}
 			setDialog(this.window_VehicleDealerDialog);
 		} catch (final Exception e) {
 			logger.error(e);
@@ -839,6 +807,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (!this.dealerAddress2.isReadonly()){
 			this.dealerAddress2.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerAddress2.value"), PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
+		if (!this.dealerCountry.isReadonly()) {
+			this.dealerCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerCountry.value"), PennantRegularExpressions.REGEX_ADDRESS, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -943,8 +914,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (getVehicleDealer().isNewRecord()){
 			this.btnCancel.setVisible(false);
 			this.dealerName.setReadonly(false);
-			this.btnSearchProvince.setVisible(false);
-			this.btnSearchCity.setVisible(false);
+			this.dealerProvince.setReadonly(true);
+			this.dealerCity.setReadonly(true);
 		}else{
 			this.dealerType.setDisabled(true);
 			this.dealerName.setReadonly(true);
@@ -958,10 +929,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerAddress4.setReadonly(isReadOnly("VehicleDealerDialog_dealerAddress4"));
 		this.dealerCountry.setReadonly(isReadOnly("VehicleDealerDialog_dealerCountry"));    
 		this.dealerCity.setReadonly(isReadOnly("VehicleDealerDialog_dealerCity"));       
-		this.dealerProvince.setReadonly(isReadOnly("VehicleDealerDialog_dealerProvince"));   
-		this.btnSearchCountry.setDisabled(isReadOnly("VehicleDealerDialog_btnSearchCountry")); 
-		this.btnSearchProvince.setDisabled(isReadOnly("VehicleDealerDialog_btnSearchProvince"));
-		this.btnSearchCity.setDisabled(isReadOnly("VehicleDealerDialog_btnSearchCity"));    
+		this.dealerProvince.setReadonly(isReadOnly("VehicleDealerDialog_dealerProvince"));
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -998,9 +966,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerCountry.setReadonly(true);
 		this.dealerCity.setReadonly(true);
 		this.dealerProvince.setReadonly(true);
-		this.btnSearchCountry.setDisabled(true);
-		this.btnSearchProvince.setDisabled(true);
-		this.btnSearchCity.setDisabled(true);
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1032,6 +997,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerCountry.setValue("");
 		this.dealerCity.setValue("");
 		this.dealerProvince.setValue("");
+		this.dealerCountry.setDescription("");
+		this.dealerCity.setDescription("");
+		this.dealerProvince.setDescription("");
 		logger.debug("Leaving");
 	}
 

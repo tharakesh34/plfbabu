@@ -72,92 +72,92 @@
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldName"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldName.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="fieldName"
 										width="200px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldLabel"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldLabel.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="fieldLabel"
 										width="200px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldType"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldType.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="fieldType"
 										readonly="true" width="200px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row id="rowfieldLength">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldLength"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldLength.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<intbox id="fieldLength"
 										width="50px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row id="rowfieldPrec">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldPrec"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldPrec.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<intbox id="fieldPrec" width="50px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row id="rowMandatory" visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldMandatory"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldMandatory.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px" />
 									<checkbox id="fieldMandatory"
 										checked="false" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="true" id="rowUnique">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldUnique"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldUnique.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px" />
 									<checkbox id="fieldUnique"
 										checked="false" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="false"
 								id="rowfieldDefaultValue">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldDefaultValue"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldDefaultValue.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px" />
 									<textbox id="fieldDefaultValue"
 										maxlength="50" width="370px" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="false" id="rowfieldList">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldList"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldList.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="combofieldList"
@@ -166,49 +166,49 @@
 										id="label_ExtendedFieldDetailDialog_FieldListInstrLabel"
 										style="font-weight:bold;color:#FF6600;"
 										value="${c:l('label_ExtendedFieldDetailDialog_FieldListInstrLabel.value')}" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="false"
 								id="rowfieldMinValue">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldMinValue"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldMinValue.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px" />
 									<longbox id="fieldMinValue"
 										width="171px" maxlength="11" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="false"
 								id="rowfieldMaxValue">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldMaxValue"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldMaxValue.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px" />
 									<longbox id="fieldMaxValue"
 										width="171px" maxlength="11" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row id="rowConstraint" visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldConstraint"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldConstraint.value')}" />
-								<hlayout id="parent_fieldConstraint" spacing="0px">
+								<hbox id="parent_fieldConstraint">
 									<space spacing="2px" sclass="mandatory" />
 									<combobox id="fieldConstraint" width="200px" readonly="true"/>
-								</hlayout>
+								</hbox>
 							</row>
 							<row visible="true">
 								<label
 									id="label_ExtendedFieldDetailDialog_FieldSeqOrder"
 									value="${c:l('label_ExtendedFieldDetailDialog_FieldSeqOrder.value')}" />
-								<hlayout spacing="0px">
+								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
 									<intbox id="fieldSeqOrder"
 										width="90px" maxlength="14" />
-								</hlayout>
+								</hbox>
 							</row>
 							<row id="statusRow">
 								<label
@@ -220,10 +220,10 @@
 								<groupbox id="groupboxWf" width="97%">
 									<caption label="${c:l('Action')}"
 										style="font-weight:bold" />
-									<hlayout spacing="0px">
+									<hbox>
 										<radiogroup id="userAction"
 											name="action" />
-									</hlayout>
+									</hbox>
 								</groupbox>
 							</row>
 						</rows>

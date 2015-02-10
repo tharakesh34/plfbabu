@@ -261,16 +261,7 @@
 											id="label_TransactionEntryDialog_AccountSubHeadRule"
 											value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
 										<hbox>
-											<space spacing="2px"
-												id="spSubHead" />
-											<textbox
-												id="accountSubHeadRule" width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountSubHeadRuleName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchAccountSubHeadRule"
-												image="/images/icons/LOVSearch.png"  />
+												<extendedcombobox id="accountSubHeadRule" />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -278,32 +269,14 @@
 											id="label_TransactionEntryDialog_AccountType"
 											value="${c:l('label_TransactionEntryDialog_AccountType.value')}" />
 										<hbox>
-											<space spacing="2px"
-												id="spAccountType" />
-											<textbox id="accountType"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountTypeName" width="250px" readonly="true" />
-											<button label=""
-												id="btnSearchAccountType"
-												image="/images/icons/LOVSearch.png"  />
-											<button label=""
-												id="btnSearchSystemIntAccount"
-												image="/images/icons/LOVSearch.png" 
-												visible="false" />
+												<extendedcombobox id="accountType" />
+												<extendedcombobox id="systemIntAccount" visible="false"/>
 										</hbox>
 										<label
 											id="label_TransactionEntryDialog_AccountBranch"
 											value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
 										<hbox>
-											<space spacing="2px" />
-											<textbox id="accountBranch"
-												width="72px" visible="false" />
-											<textbox
-												id="lovDescAccountBranchName" width="250px" readonly="true" />
-											<button label=""
-												id="btnSearchAccountBranch"
-												image="/images/icons/LOVSearch.png"  />
+											<extendedcombobox id="accountBranch" />
 										</hbox>
 									</row>
 									<row visible="true">
@@ -311,31 +284,13 @@
 											id="label_TransactionEntryDialog_TranscationCode"
 											value="${c:l('label_TransactionEntryDialog_TranscationCode.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox
-												id="transcationCode" width="72px" visible="false" />
-											<textbox
-												id="lovDescTranscationCodeName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchTranscationCode"
-												image="/images/icons/LOVSearch.png"  />
+												<extendedcombobox id="transcationCode" />
 										</hbox>
 										<label
 											id="label_TransactionEntryDialog_RvsTransactionCode"
 											value="${c:l('label_TransactionEntryDialog_RvsTransactionCode.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<textbox
-												id="rvsTransactionCode" width="72px" visible="false" />
-											<textbox
-												id="lovDescRvsTransactionCodeName" width="250px"
-												readonly="true" />
-											<button label=""
-												id="btnSearchRvsTransactionCode"
-												image="/images/icons/LOVSearch.png"  />
+												<extendedcombobox id="rvsTransactionCode" />
 										</hbox>
 									</row>
 									<!-- <row>

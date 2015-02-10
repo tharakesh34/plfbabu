@@ -73,6 +73,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.customermasters.Customer;
@@ -111,8 +112,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 	
 	protected Row customerRow;
 	protected Longbox custID;
-	protected Textbox lovDescCustCIF;
-	protected Button btnSearchCustCIF;
+	protected ExtendedCombobox lovDescCustCIF;
 	protected Label custShrtName;
 
 	protected Row       auditYearRow;
@@ -184,14 +184,15 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 //			this.auditYear.setConstraint(new IntValidator(4,Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), false));
 //		}
 		this.customerCategoryRow.setVisible(false);
-		this.btnSearchCustCIF.setVisible(true);
+		this.lovDescCustCIF.setVisible(true);
+		this.lovDescCustCIF.setMandatoryStyle(true);
 		this.window_CreditRevSelectCategory.doModal();
 	
 		logger.debug("Leaving" + event.toString());
 	}
 	
 	
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onFulfill$lovDescCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException{
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
@@ -284,12 +285,14 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseListCtrl<Finance
 		if(this.custType.getSelectedItem() != null){
 			if(this.custType.getSelectedIndex() == 0){
 				this.customerCategoryRow.setVisible(false);
-				this.btnSearchCustCIF.setVisible(true);
+				this.lovDescCustCIF.setVisible(true);
                 this.lovDescCustCIF.setValue("");
+                this.lovDescCustCIF.setDescription("");
                 this.custShrtName.setValue("");
                 this.auditYear.setText("");
              } else {
                  this.lovDescCustCIF.setValue("");
+                 this.lovDescCustCIF.setDescription("");
                  this.custShrtName.setValue("");
                  this.auditYear.setText("");
 				//this.customerCategoryRow.setVisible(true);

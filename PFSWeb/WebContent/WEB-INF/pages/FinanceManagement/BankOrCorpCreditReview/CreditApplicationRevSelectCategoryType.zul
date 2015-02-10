@@ -47,14 +47,9 @@
 								id="label_CreditRevSelectCategory_CustomerCIF"
 								value="${c:l('label_CreditRevSelectCategory_CustomerCIF.value')}" />
 							<hbox>
-								<space spacing="2px" sclass="mandatory" />
 								<longbox id="custID" width="171px"
 									maxlength="26" visible="false" />
-								<textbox id="lovDescCustCIF"
-									width="150px" />
-								<button id="btnSearchCustCIF"
-									visible="false" image="/images/icons/LOVSearch.png"
-									 tabindex="5" />
+									<extendedcombobox id ="lovDescCustCIF" />
 								<label id="custShrtName" />
 							</hbox>
 						</row>

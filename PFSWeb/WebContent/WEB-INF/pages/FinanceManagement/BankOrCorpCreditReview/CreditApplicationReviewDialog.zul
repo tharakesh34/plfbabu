@@ -86,16 +86,11 @@
 										id="label_CreditApplicationReviewDialog_CustID"
 										value="${c:l('label_CreditApplicationReviewDialog_CustId.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
 										<longbox id="custID"
 											width="150px" maxlength="26" visible="false" />
-										<textbox id="custCIF"
-											width="150px" maxlength="150" style="overflow: hidden;" />
-										<button id="btnSearchPRCustid"
-											image="/images/icons/LOVSearch.png"  />
+											<extendedcombobox id="custCIF" />
 										<label id="custShrtName"
-											width="150px" />
+											width="150px" /> 
 									</hbox>
 									<label
 										id="label_CreditApplicationReviewDialog_BankName"

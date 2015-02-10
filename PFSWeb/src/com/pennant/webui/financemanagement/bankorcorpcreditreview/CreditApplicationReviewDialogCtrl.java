@@ -132,7 +132,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	protected Textbox 			auditedYear;                        // autowired
 	protected Datebox 			auditedDate;                        // autowired
 	protected Decimalbox 		conversionRate;                     // autowired
-	protected Textbox 	 		custCIF;							// autowired
+	protected ExtendedCombobox 	 		custCIF;							// autowired
 	protected Label 	 		custShrtName;						// autowired
 	protected Longbox 	 		noOfShares;							// autowired
 	protected CurrencyBox 	 	marketPrice;						// autowired
@@ -152,7 +152,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	protected Grid 				grid_Basicdetails;			// autoWired
     protected Label             label_CreditApplicationReviewDialog_BankName; // autowired
     protected Space             space_BankName; // autowired
-	protected Button            btnSearchPRCustid; // autowire
 	protected Groupbox          gb_basicDetails; // autowire
 	
 
@@ -357,7 +356,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	    this.marketPrice.setMandatory(false);
 	    this.auditedDate.setFormat(PennantConstants.dateFormat);
 	    this.conversionRate.setFormat(PennantConstants.rateFormate9);
-	    
+	    this.custCIF.setMandatoryStyle(true);
 	    this.currencyType.setMaxlength(3);
         this.currencyType.setMandatoryStyle(true);
 		this.currencyType.setModuleName("Currency");
@@ -392,7 +391,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		this.btnCancel.setVisible(false);
 		this.btnCopyTo.setVisible(getUserWorkspace().isAllowed("button_CreditApplicationReviewDialog_btnCopyTo"));
 		//this.finCcy.setReadonly(!getUserWorkspace().isAllowed("CreditApplicationReviewDialog_finCcy")); // TODO
-		this.btnSearchPRCustid.setDisabled(true);
 		this.custCIF.setReadonly(true);
 		logger.debug("Leaving");
 	}
@@ -867,9 +865,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 			this.totLibAsstDiff.setValue(BigDecimal.ZERO);
 			doEdit();
 			// setFocus
-			this.btnSearchPRCustid.focus();
+			this.custCIF.focus();
 		} else {
-			this.btnSearchPRCustid.focus();
+			this.custCIF.focus();
 			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				doEdit();
@@ -1200,7 +1198,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 		doEdit(); // edit mode
 		this.btnCtrl.setBtnStatus_New();
 		// setFocus
-		this.btnSearchPRCustid.focus();
+		this.custCIF.focus();
 		logger.debug("Leaving");
 	}
 
@@ -1216,8 +1214,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 			//this.custCIF.setReadonly(false);
 		} else {
 			this.btnCancel.setVisible(true);
-			this.btnSearchPRCustid.setDisabled(true);
-			this.custCIF.setDisabled(true);
+			this.custCIF.setReadonly(true);
 		}
 		this.location.setReadonly(isReadOnly("CreditApplicationReviewDialog_location"));
 		this.bankName.setReadonly(isReadOnly("CreditApplicationReviewDialog_bankName"));
@@ -1260,7 +1257,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		this.btnSearchPRCustid.setDisabled(true);
+		this.custCIF.setReadonly(true);
 		this.bankName.setReadonly(true);
 		this.location.setReadonly(true);
 		this.auditedDate.setReadonly(true);
@@ -2395,7 +2392,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseListCtrl<FinCredit
 	 * @throws SuspendNotAllowedException
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException{
+	public void onFulfill$custCIF(Event event) throws SuspendNotAllowedException, InterruptedException{
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
