@@ -157,6 +157,7 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -2620,6 +2621,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
 
 				if(this.allowGrace.isChecked()){
+					if(this.finStartDate.getValue() == null){
+						this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value"), true));
+					}
 					this.nextGrcPftDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftFrq.getValue(),1,
 							this.finStartDate.getValue(),"A",false).getNextFrequencyDate());
 

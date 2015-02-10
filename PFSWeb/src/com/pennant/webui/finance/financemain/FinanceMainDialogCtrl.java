@@ -885,6 +885,10 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private List<GuarantorDetail> guarantorDetailList = new ArrayList<GuarantorDetail>();
 	private List<GuarantorDetail> oldVar_GuarantorDetailList = new ArrayList<GuarantorDetail>();
 	int ccDecimal = 0;
+	
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -4367,7 +4371,9 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 			
 			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_MaturityDate.value"),true));
 		}
-
+		if(!this.finStartDate.isReadonly()){
+			this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"), true,startDate,endDate,false));
+			}
 		//Contribution Details Tab
 		if(isRIAExist){
 			if (!this.minContributors.isReadonly()) {

@@ -166,6 +166,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
 	protected transient BigDecimal 		oldVar_downPaySupl;
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
 
 	/**
 	 * default constructor.<br>
@@ -1778,7 +1780,9 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value"),true));
 		}
-
+		if(!this.finStartDate.isReadonly()){
+		this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value"), true,startDate,endDate,false));
+		}
 		logger.debug("Leaving");
 	}
 

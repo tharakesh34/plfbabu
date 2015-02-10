@@ -199,6 +199,9 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 	protected transient BigDecimal 		oldVar_fairValuePerUnit;
 	protected transient BigDecimal 		oldVar_fairValueAmount;
 
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -2019,6 +2022,9 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_MaturityDate.value"),true));
 		}
 		
+		if(!this.finStartDate.isReadonly()){
+			this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_SukukFinanceMainDialog_FinStartDate.value"), true,startDate,endDate,false));
+			}
 		//Finance Premium or Discount Details
 		int ccyformatter = getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter();
 		
