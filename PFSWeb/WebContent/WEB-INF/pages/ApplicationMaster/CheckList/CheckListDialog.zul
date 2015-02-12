@@ -110,9 +110,7 @@
 										<label
 											id="label_CheckListDialog_CheckRule"
 											value="${c:l('label_CheckListDialog_CheckRule.value')}" />
-										<hbox>
 										<extendedcombobox id="checkRule" />
-										</hbox>
 										<label
 											id="label_CheckListDialog_Active"
 											value="${c:l('label_CheckListDialog_Active.value')}" />

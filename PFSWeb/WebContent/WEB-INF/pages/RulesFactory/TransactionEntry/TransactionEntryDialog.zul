@@ -260,18 +260,14 @@
 										<label
 											id="label_TransactionEntryDialog_AccountSubHeadRule"
 											value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
-										<hbox>
 												<extendedcombobox id="accountSubHeadRule" />
-										</hbox>
 									</row>
 									<row visible="true">
 										<label
 											id="label_TransactionEntryDialog_AccountType"
 											value="${c:l('label_TransactionEntryDialog_AccountType.value')}" />
-										<hbox>
 												<extendedcombobox id="accountType" />
 												<extendedcombobox id="systemIntAccount" visible="false"/>
-										</hbox>
 										<label
 											id="label_TransactionEntryDialog_AccountBranch"
 											value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
@@ -283,15 +279,11 @@
 										<label
 											id="label_TransactionEntryDialog_TranscationCode"
 											value="${c:l('label_TransactionEntryDialog_TranscationCode.value')}" />
-										<hbox>
 												<extendedcombobox id="transcationCode" />
-										</hbox>
 										<label
 											id="label_TransactionEntryDialog_RvsTransactionCode"
 											value="${c:l('label_TransactionEntryDialog_RvsTransactionCode.value')}" />
-										<hbox>
 												<extendedcombobox id="rvsTransactionCode" />
-										</hbox>
 									</row>
 									<!-- <row>
 										<label

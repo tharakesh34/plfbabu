@@ -458,7 +458,7 @@
 											<hbox>
 												<textbox
 													id="finGrcDftIntFrq" maxlength="15" visible="false" />
-												<space spacing="2px" />
+												<space spacing="2px" sclass="mandatory"  />
 												<combobox
 													id="cbfinGrcDftIntFrqCode" width="90px" readonly="true" />
 												<combobox
@@ -502,7 +502,7 @@
 											<hbox>
 												<textbox
 													id="finGrcCpzFrq" maxlength="15" visible="false" />
-												<space spacing="2px" />
+												<space id="space_finGrcCpzFrq" spacing="2px" />
 												<combobox
 													id="cbfinGrcCpzFrqCode" width="90px" readonly="true" />
 												<combobox
@@ -529,7 +529,7 @@
 											<hbox>
 												<textbox
 													id="finGrcRvwFrq" maxlength="15" visible="false" />
-												<space spacing="2px" />
+												<space id="space_finGrcRvwFrq" spacing="2px" />
 												<combobox
 													id="cbfinGrcRvwFrqCode" width="90px" readonly="true" />
 												<combobox
@@ -672,7 +672,7 @@
 													<textbox
 														id="finDftIntFrq" maxlength="15" visible="false" />
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="cbfinDftIntFrqCode" width="90px" readonly="true" />
 													<combobox
@@ -698,7 +698,7 @@
 													<textbox
 														id="finRpyFrq" maxlength="15" visible="false" />
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="cbfinRpyFrqCode" width="90px" readonly="true" />
 													<combobox
@@ -733,7 +733,7 @@
 													<textbox
 														id="finCpzFrq" maxlength="15" visible="false" />
 													<space
-														spacing="2px" />
+														id="space_cbfinCpzFrqCode" spacing="2px" />
 													<combobox
 														id="cbfinCpzFrqCode" width="90px" readonly="true" />
 													<combobox
@@ -759,7 +759,7 @@
 												<hbox>
 													<textbox
 														id="finRvwFrq" maxlength="15" visible="false" />
-													<space
+													<space id="space_cbfinRvwFrqCode"
 														spacing="2px" />
 													<combobox
 														id="cbfinRvwFrqCode" width="90px" readonly="true" />

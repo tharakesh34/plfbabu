@@ -601,6 +601,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private boolean recommendEntered = false;
 	
 	protected String finDivision="";
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -2622,7 +2623,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 				if(this.allowGrace.isChecked()){
 					if(this.finStartDate.getValue() == null){
-						this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value"), true));
+						this.finStartDate.setValue(appStartDate);
 					}
 					this.nextGrcPftDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftFrq.getValue(),1,
 							this.finStartDate.getValue(),"A",false).getNextFrequencyDate());

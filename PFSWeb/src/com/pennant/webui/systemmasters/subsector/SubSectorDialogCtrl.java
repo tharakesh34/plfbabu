@@ -224,7 +224,6 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.subSectorCode.setMaxlength(8);
 		this.subSectorDesc.setMaxlength(50);
 
-		this.sectorCode.setMandatoryStyle(true);
 		this.sectorCode.setModuleName("Sector");
 		this.sectorCode.setValueColumn("SectorCode");
 		this.sectorCode.setDescColumn("SectorDesc");
@@ -432,6 +431,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.subSectorCode.setValue(aSubSector.getSubSectorCode());
 		this.subSectorDesc.setValue(aSubSector.getSubSectorDesc());
 		this.subSectorIsActive.setChecked(aSubSector.isSubSectorIsActive());
+		this.sectorCode.setMandatoryStyle(true);
 
 		if (aSubSector.isNewRecord()) {
 			this.sectorCode.setDescription("");

@@ -115,7 +115,6 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
-import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -1992,7 +1991,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceBaseRate.getDescription().equals("")) {
+				if (this.graceBaseRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceBaseRateName("");
 					aFinanceMain.setGraceBaseRate(null);
 				} else {
@@ -2016,7 +2015,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceSpecialRate.getDescription().equals("")) {
+				if (this.graceSpecialRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceSpecialRateName("");
 					aFinanceMain.setGraceSpecialRate(null);
 				} else {
@@ -2042,7 +2041,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			try {
 				if (this.gracePftRate.getValue() != null && !this.gracePftRate.isDisabled()) {
 					if ((this.gracePftRate.getValue().intValue() > 0) && 
-							(!this.graceBaseRate.getDescription().equals(""))) {
+							(!this.graceBaseRate.getValue().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
 								new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_GraceBaseRate.value"),
@@ -2241,7 +2240,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repayBaseRate.getDescription().equals("")) {
+			if (this.repayBaseRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepayBaseRateName("");
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
@@ -2255,7 +2254,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repaySpecialRate.getDescription().equals("")) {
+			if (this.repaySpecialRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepaySpecialRateName("");
 				aFinanceMain.setRepaySpecialRate(null);
 			} else {
@@ -2311,7 +2310,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		try {
 			if (this.repayProfitRate.getValue() != null && !this.repayProfitRate.isDisabled()) {
 				if ((this.repayProfitRate.getValue().intValue() > 0)
-						&& (!this.repayBaseRate.getDescription().equals(""))) {
+						&& (!this.repayBaseRate.getValue().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
 							new String[] {Labels.getLabel("label_MurabahaFinanceMainDialog_RepayBaseRate.value"),
 							Labels.getLabel("label_MurabahaFinanceMainDialog_ProfitRate.value") }));
@@ -6591,7 +6590,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				this.grcMargin.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcMargin());
 			}
 
-			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getDescription().equals("")) {
+			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
 
 				this.graceBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate());
 
@@ -6600,7 +6599,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			}
 
 			if (!this.graceSpecialRate.isReadonly()
-					&& this.graceSpecialRate.getDescription().equals("")) {
+					&& this.graceSpecialRate.getValue().equals("")) {
 
 				this.graceSpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate());
 				this.graceSpecialRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate() == null ?
@@ -6731,7 +6730,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		
 		if(CalculationConstants.RATE_BASIS_R.equals(getComboboxValue(this.repayRateBasis))){
 			
-			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getDescription().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
 
 				this.repayBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate());
 
@@ -6739,7 +6738,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 						: getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinBaseRateName());
 			}
 
-			if (!this.repayBaseRate.isReadonly() && this.repaySpecialRate.getDescription().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repaySpecialRate.getValue().equals("")) {
 
 				this.repaySpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate());
 

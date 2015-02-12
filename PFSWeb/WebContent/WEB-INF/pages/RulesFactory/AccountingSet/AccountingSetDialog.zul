@@ -78,9 +78,7 @@
 									<label
 										id="label_AccountingSetDialog_EventCode"
 										value="${c:l('label_AccountingSetDialog_EventCode.value')}" />
-									<hbox>
 												 <extendedcombobox id="eventCode" />
-									</hbox>
 									<label
 										id="label_AccountingSetDialog_EventDesc"
 										value="${c:l('label_AccountingSetDialog_EventCodeDesc.value')}" />

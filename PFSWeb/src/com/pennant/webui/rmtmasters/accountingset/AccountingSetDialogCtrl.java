@@ -634,10 +634,8 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	private void checkListboxcount() {
 		logger.debug("Entering");
 		if (this.listBoxTransactionEntry.getItemCount() > 0) {
-			this.eventCode.setVisible(false);
 			this.entryByInvestment.setDisabled(true);
 		} else {
-			this.eventCode.setVisible(true);
 			this.entryByInvestment.setDisabled(false);
 		}
 		logger.debug("Leaving");
@@ -861,14 +859,15 @@ public class AccountingSetDialogCtrl extends GFCBaseListCtrl<TransactionEntry> i
 	private void doEdit() {
 		logger.debug("Entering");
 
+			
 		if (getAccountingSet().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			this.eventCode.setVisible(false);
 			this.btnCopyTo.setDisabled(true);
 			this.btnCopyTo.setVisible(false);
+			this.eventCode.setReadonly(false);
 		} else {
+		 this.eventCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			this.eventCode.setVisible(true);
 		}
 		
 		// this.btnSearchEventCode.setDisabled(isReadOnly("AccountingSetDialog_eventCode"));

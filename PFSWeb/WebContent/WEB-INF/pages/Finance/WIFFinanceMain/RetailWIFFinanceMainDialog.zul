@@ -367,15 +367,11 @@
 													<label
 														id="label_MurabahaFinanceMainDialog_GraceBaseRate"
 														value="${c:l('label_MurabahaFinanceMainDialog_GraceBaseRate.value')}" />
-													<hbox>
 													<extendedcombobox id="graceBaseRate" />
-													</hbox>
 													<label
 														id="label_MurabahaFinanceMainDialog_GraceSpecialRate"
 														value="${c:l('label_MurabahaFinanceMainDialog_GraceSpecialRate.value')}" />
-													<hbox>
 													<extendedcombobox id="graceSpecialRate" />
-													</hbox>
 												</row>
 												<row id="grcMarginRow"
 													visible="false">
@@ -622,15 +618,11 @@
 													<label
 														id="label_MurabahaFinanceMainDialog_RepayBaseRate"
 														value="${c:l('label_MurabahaFinanceMainDialog_RepayBaseRate.value')}" />
-													<hbox>
 													<extendedcombobox id="repayBaseRate" />
-													</hbox>
 													<label
 														id="label_MurabahaFinanceMainDialog_RepaySpecialRate"
 														value="${c:l('label_MurabahaFinanceMainDialog_RepaySpecialRate.value')}" />
-													<hbox>
 													<extendedcombobox id ="repaySpecialRate" />
-													</hbox>
 												</row>
 												<row id="repayMarginRow"
 													visible="false">

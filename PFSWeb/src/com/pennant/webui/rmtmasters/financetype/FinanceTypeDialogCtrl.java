@@ -229,7 +229,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 				lovDescFinGrcIndBaseRateName;		// autoWired
 	protected Button 				btnSearchFinGrcIndBaseRate; 		// autoWired
 	protected Checkbox 				finIsIntCpzAtGrcEnd; 				// autoWired
-
+	protected Space space_finGrcCpzFrq;
+	protected Space space_finGrcRvwFrq;
 	//Repay Schedule Details Tab 
 	protected Combobox 				cbfinRateType; 						// autoWired
 	protected Decimalbox 			finIntRate; 						// autoWired
@@ -274,7 +275,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Intbox 				planDeferCount; 					// autoWired	
 	protected Combobox 				cbFinScheduleOn; 					// autoWired
 	protected Checkbox 				finPftUnChanged; 					// autoWired
-	
+	protected Space 				space_cbfinCpzFrqCode;
+	protected Space					space_cbfinRvwFrqCode;
 	protected Div 					repayDetailDiv; 					// autoWired
 	
 	//Overdue Penalty Details
@@ -2152,8 +2154,59 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				if (!this.gracePeriod.isDisabled()) {
+					if (isValidComboValue(this.cbfinGrcDftIntFrqCode, Labels.getLabel("label_cbfinGrcDftIntFrqCode.value"))) {
 
+						if (isValidComboValue(this.cbfinGrcDftIntFrqMth, Labels.getLabel("label_cbfinGrcDftIntFrqMth.value"))) {
+
+							if (isValidComboValue(this.cbfinGrcDftIntFrqDays, Labels.getLabel("label_cbfinGrcDftIntFrqDays.value"))) {
+
+								aFinanceType.setFinGrcDftIntFrq(this.finGrcDftIntFrq.getValue() == null ? "" : 
+									this.finGrcDftIntFrq.getValue());
+							}
+						}
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try{
+				if(this.finGrcIsIntCpz.isChecked()){
+					if (isValidComboValue(this.cbfinGrcCpzFrqCode, Labels.getLabel("label_cbfinGrcCpzFrqCode.value"))) {
+
+						if (isValidComboValue(this.cbfinGrcCpzFrqMth, Labels.getLabel("label_cbfinGrcCpzFrqMth.value"))) {
+
+							if (isValidComboValue(this.cbfinGrcCpzFrqDays, Labels.getLabel("label_cbfinGrcCpzFrqDays.value"))) {
+
+								aFinanceType.setFinGrcCpzFrq(this.finGrcCpzFrq.getValue() == null ? "" : 
+									this.finGrcCpzFrq.getValue());
+							}
+						}
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try{
+				if(this.finGrcIsRvwAlw.isChecked()){
+					if (isValidComboValue(this.cbfinGrcRvwFrqCode, Labels.getLabel("label_CbfinGrcRvwFrqCode.value"))) {
+
+						if (isValidComboValue(this.cbfinGrcRvwFrqMth, Labels.getLabel("label_CbfinGrcRvwFrqMth.value"))) {
+
+							if (isValidComboValue(this.cbfinGrcRvwFrqDays, Labels.getLabel("label_CfinGrcRvwFrqDay.value"))) {
+
+								aFinanceType.setFinGrcCpzFrq(this.finGrcRvwFrq.getValue() == null ? "" : 
+									this.finGrcRvwFrq.getValue());
+							}
+						}
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
+	
 		showErrorDetails(wve, gracePeriod);
 
 		// ++++++++++++++++++ End of tab 2 ++++++++++++++++++++//
@@ -2464,7 +2517,74 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try{
+				if (isValidComboValue(this.cbfinDftIntFrqCode, Labels.getLabel("label_cbfinDftIntFrqCode.value"))) {
+
+					if (isValidComboValue(this.cbfinDftIntFrqMth, Labels.getLabel("label_cbfinDftIntFrqMth.value"))) {
+
+						if (isValidComboValue(this.cbfinDftIntFrqDays, Labels.getLabel("label_cbfinDftIntFrqDays.value"))) {
+
+							aFinanceType.setFinGrcCpzFrq(this.finDftIntFrq.getValue() == null ? "" : 
+								this.finDftIntFrq.getValue());
+						}
+					}
+				}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try{
+			if (isValidComboValue(this.cbfinRpyFrqCode, Labels.getLabel("label_cbfinRpyFrqCode.value"))) {
+
+				if (isValidComboValue(this.cbfinRpyFrqMth, Labels.getLabel("label_cbfinRpyFrqMth.value"))) {
+
+					if (isValidComboValue(this.cbfinRpyFrqDays, Labels.getLabel("label_cbfinRpyFrqDays.value"))) {
+
+						aFinanceType.setFinGrcCpzFrq(this.finRpyFrq.getValue() == null ? "" : 
+							this.finRpyFrq.getValue());
+					}
+				}
+			}
+	} catch (WrongValueException we) {
+		wve.add(we);
+	}
 		
+		try{
+			if(finIsIntCpz.isChecked()){
+
+				if (isValidComboValue(this.cbfinCpzFrqCode, Labels.getLabel("label_cbfinCpzFrqCode.value"))) {
+
+					if (isValidComboValue(this.cbfinCpzFrqMth, Labels.getLabel("label_cbfinCpzFrqMth.value"))) {
+
+						if (isValidComboValue(this.cbfinCpzFrqDays, Labels.getLabel("label_cbfinCpzFrqDays.value"))) {
+
+							aFinanceType.setFinGrcCpzFrq(this.finCpzFrq.getValue() == null ? "" : 
+								this.finCpzFrq.getValue());
+						}
+					}
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try{
+			if(finIsRvwAlw.isChecked()){
+
+				if (isValidComboValue(this.cbfinRvwFrqCode, Labels.getLabel("label_cbfinRvwFrqCode.value"))) {
+
+					if (isValidComboValue(this.cbfinRvwFrqMth, Labels.getLabel("label_cbfinRvwFrqMth.value"))) {
+
+						if (isValidComboValue(this.cbfinRvwFrqDays, Labels.getLabel("label_cbfinRvwFrqDays.value"))) {
+
+							aFinanceType.setFinGrcCpzFrq(this.finRvwFrq.getValue() == null ? "" : 
+								this.finRvwFrq.getValue());
+						}
+					}
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		//showErrorDetails(wve, scheduleProfit);
 		showErrorDetails(wve, repayment);
 
@@ -6145,12 +6265,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering ");
 		if (this.finGrcIsIntCpz.isChecked()) {
 			if (!isReadOnly("FinanceTypeDialog_finGrcIsIntCpz")) {
+				this.space_finGrcCpzFrq.setSclass("mandatory");
 				this.cbfinGrcCpzFrqCode.setDisabled(false);
 				this.cbfinGrcCpzFrqDays.setDisabled(false);
 				this.cbfinGrcCpzFrqMth.setDisabled(false);
 			}
 		} else {
 			this.finGrcCpzFrq.setValue("");
+			this.space_finGrcCpzFrq.setSclass("none");
 			this.cbfinGrcCpzFrqCode.setSelectedIndex(0);
 			this.cbfinGrcCpzFrqCode.setDisabled(true);
 			this.cbfinGrcCpzFrqDays.setSelectedIndex(0);
@@ -6173,6 +6295,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.cbfinRvwRateApplFor.setDisabled(false);
 				this.cbfinSchCalCodeOnRvw.setDisabled(false);
 				this.space_cbfinSchCalCodeOnRvw.setSclass("mandatory");
+				this.space_cbfinRvwFrqCode.setSclass("mandatory");
 				if (this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PRI_PFT)
 				        || this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.PFT)) {
 					fillComboBox(this.cbfinSchCalCodeOnRvw, "TILLMDT", PennantStaticListUtil.getSchCalCodes(), "");
@@ -6199,6 +6322,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.finIndBaseRate.setValue("");
 				this.finIndBaseRate.setDescription("");
 			}
+			this.space_cbfinRvwFrqCode.setSclass("none");
 			this.space_FinRvwRateApplFor.setSclass("none");
 			this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 			this.cbfinRvwFrqCode.setDisabled(true);
@@ -6245,8 +6369,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				this.cbfinCpzFrqCode.setDisabled(false);
 				this.cbfinCpzFrqMth.setDisabled(false);
 				this.cbfinCpzFrqDays.setDisabled(false);
+				this.space_cbfinCpzFrqCode.setSclass("mandatory");
 			}
 		} else {
+			this.space_cbfinCpzFrqCode.setSclass("none");
 			this.cbfinCpzFrqCode.setSelectedIndex(0);
 			this.cbfinCpzFrqCode.setDisabled(true);
 			this.cbfinCpzFrqMth.setSelectedIndex(0);
@@ -6641,6 +6767,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering doDisableGrcRVFrequency()");
 		if (this.finGrcIsRvwAlw.isChecked()) {
 			if (!isReadOnly("FinanceTypeDialog_finGrcIsRvwAlw")) {
+				this.space_finGrcRvwFrq.setSclass("mandatory");
 				this.cbfinGrcRvwFrqCode.setDisabled(false);
 				this.cbfinGrcRvwFrqMth.setDisabled(false);
 				this.cbfinGrcRvwFrqDays.setDisabled(false);
@@ -6664,6 +6791,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.finGrcIndBaseRate.setValue("");
 			this.lovDescFinGrcIndBaseRateName.setValue("");
 			this.btnSearchFinGrcIndBaseRate.setDisabled(true);
+			this.space_finGrcRvwFrq.setSclass("none");
 		}
 		this.space_finGrcIndBaseRate.setStyle("background-color:white");
 		logger.debug("Leaving doDisableGrcRVFrequency()");

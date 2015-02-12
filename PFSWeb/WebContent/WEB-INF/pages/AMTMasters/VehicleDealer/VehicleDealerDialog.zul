@@ -19,23 +19,29 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" 
+							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnEdit" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnDelete" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnSave" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnCancel" 
-								tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnNotes" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -48,13 +54,15 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" 
+							<button id="btnHelp"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -72,14 +80,14 @@
 						</columns>
 						<rows>
 							<row visible="true">
-							    <label
+								<label
 									id="label_VehicleDealerDialog_DealerType"
 									value="${c:l('label_VehicleDealerDialog_DealerType.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<combobox id="dealerType" readonly="true"
-										maxlength="50" width="190px" />
+									<combobox id="dealerType"
+										readonly="true" maxlength="50" width="190px" />
 								</hbox>
 								<label
 									id="label_VehicleDealerDialog_DealerName"
@@ -91,22 +99,21 @@
 										maxlength="50" width="180px" />
 								</hbox>
 							</row>
-									<row visible="true">
+							<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_DealerTelephone"
 									value="${c:l('label_VehicleDealerDialog_DealerTelephone.value')}" />
 								<hbox>
 									<space spacing="2px"
-									   sclass="mandatory"/>
+										sclass="mandatory" />
 									<textbox id="dealerTelephone"
 										maxlength="24" width="180px" />
 								</hbox>
-									<label
+								<label
 									id="label_VehicleDealerDialog_DealerFax"
 									value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
-									<space spacing="2px"
-										 />
+									<space spacing="2px" />
 									<textbox id="dealerFax"
 										maxlength="24" width="180px" />
 								</hbox>
@@ -117,61 +124,53 @@
 									value="${c:l('label_VehicleDealerDialog_DealerAddress1.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory"/>
-									<textbox id="dealerAddress1" 
+										sclass="mandatory" />
+									<textbox id="dealerAddress1"
 										maxlength="50" width="280px" />
 								</hbox>
-									<label
+								<label
 									id="label_VehicleDealerDialog_DealerAddress2"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress2.value')}" />
 								<hbox>
 									<space spacing="2px"
-										 sclass="mandatory"/>
+										sclass="mandatory" />
 									<textbox id="dealerAddress2"
 										maxlength="50" width="280px" />
 								</hbox>
 							</row>
-								<row visible="true">
+							<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_DealerAddress3"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress3.value')}" />
 								<hbox>
-									<space spacing="2px"
-										 />
+									<space spacing="2px" />
 									<textbox id="dealerAddress3"
 										maxlength="50" width="280px" />
 								</hbox>
-									<label
+								<label
 									id="label_VehicleDealerDialog_DealerAddress4"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress4.value')}" />
 								<hbox>
-									<space spacing="2px"
-										 />
+									<space spacing="2px" />
 									<textbox id="dealerAddress4"
 										maxlength="50" width="280px" />
 								</hbox>
 							</row>
-								<row visible="true">
-									  <label
+							<row visible="true">
+								<label
 									id="label_VehicleDealerDialog_Country"
 									value="${c:l('label_VehicleDealerDialog_DealerCountry.value')}" />
-								<hbox id= "hlayout_Country" >
-										 <extendedcombobox id="dealerCountry" />
-								</hbox>
-							          <label
+								<extendedcombobox id="dealerCountry" />
+								<label
 									id="label_VehicleDealerDialog_DealerProvince"
 									value="${c:l('label_VehicleDealerDialog_DealerProvince.value')}" />
-								<hbox id= "hlayout_Province" >
-										 <extendedcombobox id="dealerProvince" />
-								</hbox>
+								<extendedcombobox id="dealerProvince" />
 							</row>
-								<row visible="true">
-										  <label
+							<row visible="true">
+								<label
 									id="label_VehicleDealerDialog_DealerCity"
 									value="${c:l('label_VehicleDealerDialog_DealerCity.value')}" />
-								<hbox id= "hlayout_City" >
-										<extendedcombobox id="dealerCity" />
-								</hbox>
+								<extendedcombobox id="dealerCity" />
 							</row>
 						</rows>
 					</grid>

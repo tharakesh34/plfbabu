@@ -1590,7 +1590,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceBaseRate.getDescription().equals("")) {
+				if (this.graceBaseRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceBaseRateName("");
 					aFinanceMain.setGraceBaseRate(null);
 				} else {
@@ -1614,7 +1614,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				// Field is foreign key and not a mandatory value so it should
 				// be either null or non empty
-				if (this.graceSpecialRate.getDescription().equals("")) {
+				if (this.graceSpecialRate.getValue().equals("")) {
 					aFinanceMain.setLovDescGraceSpecialRateName("");
 					aFinanceMain.setGraceSpecialRate(null);
 				} else {
@@ -1640,7 +1640,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			try {
 				if (this.gracePftRate.getValue() != null && !this.gracePftRate.isDisabled()) {
 					if ((this.gracePftRate.getValue().intValue() > 0) && 
-							(!this.graceBaseRate.getDescription().equals(""))) {
+							(!this.graceBaseRate.getValue().equals(""))) {
 
 						throw new WrongValueException(this.gracePftRate, Labels.getLabel("EITHER_OR",
 								new String[] {Labels.getLabel("label_WIFFinanceMainDialog_GraceBaseRate.value"),
@@ -1851,7 +1851,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repayBaseRate.getDescription().equals("")) {
+			if (this.repayBaseRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepayBaseRateName("");
 				aFinanceMain.setRepayBaseRate(null);
 			} else {
@@ -1865,7 +1865,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			// Field is foreign key and not a mandatory value so it should be
 			// either null or non empty
-			if (this.repaySpecialRate.getDescription().equals("")) {
+			if (this.repaySpecialRate.getValue().equals("")) {
 				aFinanceMain.setLovDescRepaySpecialRateName("");
 				aFinanceMain.setRepaySpecialRate(null);
 			} else {
@@ -1922,7 +1922,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			if (this.repayProfitRate.getValue() != null && !this.repayProfitRate.isDisabled()) {
 				if ((this.repayProfitRate.getValue().intValue() > 0)
-						&& (!this.repayBaseRate.getDescription().equals(""))) {
+						&& (!this.repayBaseRate.getValue().equals(""))) {
 					throw new WrongValueException(this.repayProfitRate, Labels.getLabel("EITHER_OR",
 							new String[] {Labels.getLabel("label_WIFFinanceMainDialog_RepayBaseRate.value"),
 							Labels.getLabel("label_WIFFinanceMainDialog_ProfitRate.value") }));
@@ -5816,7 +5816,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				this.grcMargin.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcMargin());
 			}
 
-			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getDescription().equals("")) {
+			if (!this.graceBaseRate.isReadonly() && this.graceBaseRate.getValue().equals("")) {
 
 				this.graceBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcBaseRate());
 
@@ -5825,7 +5825,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 
 			if (!this.graceSpecialRate.isReadonly()
-					&& this.graceSpecialRate.getDescription().equals("")) {
+					&& this.graceSpecialRate.getValue().equals("")) {
 
 				this.graceSpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate());
 				this.graceSpecialRate.setDescription(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcSplRate() == null ?
@@ -5956,7 +5956,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		if(CalculationConstants.RATE_BASIS_R.equals(getComboboxValue(this.repayRateBasis))){
 			
-			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getDescription().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repayBaseRate.getValue().equals("")) {
 
 				this.repayBaseRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinBaseRate());
 
@@ -5964,7 +5964,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 						:getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescFinBaseRateName());
 			}
 
-			if (!this.repayBaseRate.isReadonly() && this.repaySpecialRate.getDescription().equals("")) {
+			if (!this.repayBaseRate.isReadonly() && this.repaySpecialRate.getValue().equals("")) {
 
 				this.repaySpecialRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSplRate());
 

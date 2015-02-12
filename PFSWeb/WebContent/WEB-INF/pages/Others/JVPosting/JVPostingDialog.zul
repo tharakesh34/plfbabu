@@ -94,19 +94,14 @@
 									<row id="row2">
 										<label id="label_BaseCcy"
 											value="${c:l('label_BaseCcy')}" />
-										<hlayout id="hlayout_baseCCy">
 											<extendedcombobox
 												id="baseCCy" />
-										</hlayout>
 											<label
 											id="label_PostingBranch"
 											value="${c:l('label_JVPostingDialog_PostingBranch.value')}"
 											/>
-										<hlayout
-											id="hlayout_postingBranch">
 											<extendedcombobox
 												id="postingBranch" />
-										</hlayout>
 										<label
 											id="label_ExchangeRateType"
 											value="${c:l('label_JVPostingDialog_ExchRateType.value')}"

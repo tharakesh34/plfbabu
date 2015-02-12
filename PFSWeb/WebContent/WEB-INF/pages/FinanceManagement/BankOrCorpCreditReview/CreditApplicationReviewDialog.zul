@@ -203,10 +203,7 @@
 									<label
 										id="label_CreditApplicationReviewDialog_FinCcy"
 										value="${c:l('labelCreditApplicationReviewDialog_FinCcy.value')}" />
-									<hbox>
-										<extendedcombobox
-											id="currencyType" />
-									</hbox>
+										<extendedcombobox id="currencyType" />
 									<label
 										id="label_CreditApplicationReviewDialog_ConversionRate"
 										value="${c:l('label_CreditApplicationReviewDialog_ConversionRate.value')}" />

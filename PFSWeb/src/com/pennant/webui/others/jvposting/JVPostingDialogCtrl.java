@@ -149,7 +149,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 
 	protected Label label_BaseCcy;
 	protected ExtendedCombobox baseCCy;
-	protected Hlayout hlayout_baseCCy;
 	protected Space space_baseCCy;
 
 	protected Row row2;
@@ -189,12 +188,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Label label_ExchangeRateType;
 	protected ExtendedCombobox exchangeRateType;
 	protected Space space_exchangeRateType;
-	protected Hlayout hlayout_exchangeRateType;
 
 	protected Label label_PostingBranch;
 	protected ExtendedCombobox postingBranch;
 	protected Space space_postingBranch;
-	protected Hlayout hlayout_postingBranch;
 
 	protected Label recordStatus;
 	protected Label recordType;
@@ -825,7 +822,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl implements Serializable {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().alocateRoleAuthorities("JVPosting");
+		getUserWorkspace().alocateAuthorities("JVPosting",getRole());
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed(
 					"button_JVPostingEntry_btnNew"));
