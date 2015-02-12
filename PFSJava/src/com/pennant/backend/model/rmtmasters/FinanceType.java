@@ -166,6 +166,9 @@ public class FinanceType implements java.io.Serializable {
 	private boolean finPftUnChanged;
 	private Date startDate;
 	private Date endDate;
+	private boolean takafulMandatory;
+	private boolean takafulReq;
+	private String remFeeSchdMethod;
 	
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
@@ -2295,5 +2298,26 @@ public class FinanceType implements java.io.Serializable {
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public boolean isTakafulMandatory() {
+		return takafulMandatory;
+	}
+	public void setTakafulMandatory(boolean takafulMandatory) {
+		this.takafulMandatory = takafulMandatory;
+	}
+
+	public boolean isTakafulReq() {
+		return takafulReq;
+	}
+	public void setTakafulReq(boolean takafulReq) {
+		this.takafulReq = takafulReq;
+	}
+
+	public String getRemFeeSchdMethod() {
+		return remFeeSchdMethod;
+	}
+	public void setRemFeeSchdMethod(String remFeeSchdMethod) {
+		this.remFeeSchdMethod = remFeeSchdMethod;
 	}
 }

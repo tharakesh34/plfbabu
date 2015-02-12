@@ -46,12 +46,14 @@ package com.pennant.webui.rmtmasters.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -315,6 +317,39 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	public void onOK(){
+		logger.debug("Entering");
+		doSearch();
+		logger.debug("Leaving");
+	}
+	
+	public void onCancel(){
+		logger.debug("Entering");
+		this.sortOperator_finDivision.setSelectedIndex(0);
+		this.finDivision.setValue("");
+		this.sortOperator_finCcy.setSelectedIndex(0);
+		this.finCcy.setValue("");
+		this.sortOperator_finDaysCalType.setSelectedIndex(0);
+		this.finDaysCalType.setSelectedIndex(0);
+		this.sortOperator_finIsAlwGrace.setSelectedIndex(0);
+		this.finIsAlwGrace.setChecked(false);
+		this.sortOperator_finSchdMthd.setSelectedIndex(0);
+		this.finSchdMthd.setSelectedIndex(0);
+		this.sortOperator_finType.setSelectedIndex(0);
+		this.finType.setValue("");
+		this.sortOperator_finTypeDesc.setSelectedIndex(0);
+		this.finTypeDesc.setValue("");
+		if (isWorkFlowEnabled()) {
+			this.sortOperator_recordStatus.setSelectedIndex(0);
+			this.recordStatus.setValue("");
+
+			this.sortOperator_recordType.setSelectedIndex(0);
+			this.recordType.setSelectedIndex(0);
+		}
+		doSearch();
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Internal Method for Grouping List items
@@ -406,6 +441,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 		if (event.getData() != null) {
 			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter(null);
 			ConvertUtils.register(bigDecimalConverter, BigDecimal.class);
+			DateConverter dateConverter = new DateConverter(null);
+			ConvertUtils.register(dateConverter, Date.class);
 			FinanceType sourceFin = (FinanceType) event.getData();
 			BeanUtils.copyProperties(aFinanceType, sourceFin);
 			aFinanceType.setFinType("");

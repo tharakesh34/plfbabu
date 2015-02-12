@@ -115,4 +115,11 @@ public class CalculationConstants {
 	public static final String EARLYPAY_RECRPY = "RECRPY";
 	public static final String EARLYPAY_RECPFI = "RECPFI";
 	
+	// TAKAFUL SCHEDULE METHODS
+	public static final String REMFEE_PART_OF_SALE_PRICE  = "POSP";
+	public static final String REMFEE_SCHD_TO_FIRST_INSTALLMENT  = "STFI";
+	public static final String REMFEE_SCHD_TO_ENTIRE_TENOR  = "STET";
+	public static final String REMFEE_SCHD_TO_N_INSTALLMENTS  = "STNI";
+	
+	
 }

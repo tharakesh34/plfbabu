@@ -21,7 +21,7 @@
 				<toolbar align="center"  sclass="toolbar-center">
 					<button
 						id="button_FinanceTypeList_FinanceTypeSearchDialog" 
-						label = "${c:l('label_Filter')}"
+						label = "${c:l('label_Filter')}" forward="window_FinanceTypeList.onOK"
 						autodisable="button_FinanceTypeList_FinanceTypeSearchDialog,button_FinanceTypeList_PrintList,
 							button_FinanceTypeList_NewFinanceType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_FinanceTypeList_FinanceTypeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -40,7 +40,7 @@
 							button_FinanceTypeList_NewFinanceType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('button_FinanceTypeList_NewFinanceType.tooltiptext')}" sclass="z-toolbarbutton" />
 					<button id="btnRefresh" 
-						label = "${c:l('label_Refresh')}"
+						label = "${c:l('label_Refresh')}" forward="window_FinanceTypeList.onCancel"
 						autodisable="button_FinanceTypeList_FinanceTypeSearchDialog,button_FinanceTypeList_PrintList,
 							button_FinanceTypeList_NewFinanceType,btnRefresh,btnHelp"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
