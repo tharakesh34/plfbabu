@@ -204,7 +204,6 @@ public class ScheduleCalculator {
 			
 			BigDecimal totalDesiredProfit =   BigDecimal.ZERO;
 			String pftComparisionFor = null;
-			BigDecimal repayAmount =   BigDecimal.ZERO;
 								
 			//IF Repayments is Convert from Flat to Reducing and first time calculation.
 			Boolean isCalFlat = false;
@@ -241,14 +240,14 @@ public class ScheduleCalculator {
 					totalDesiredProfit = financeMain.getTotalGrossPft().subtract(financeMain.getTotalGrossGrcPft());
 				}				
 				
-				//To GET Desired Profit Using Planned Deferment Case 
-				if(finScheduleData.getFinanceMain().getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+				//To GET Desired Profit Using Planned Deferment Case : Setting Actual Profits Before Calculation for Planned Deferment
+				if(financeMain.getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
 					
-					finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
-					finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
+					financeMain.setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
+					financeMain.setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
 
 					finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor,totalDesiredProfit, 
-							finScheduleData.getFinanceMain().getFinStartDate(), finScheduleData.getFinanceMain().getCalMaturity(), false);
+							financeMain.getFinStartDate(), financeMain.getCalMaturity(), false);
 					
 					int size = finScheduleData.getFinanceScheduleDetails().size();
 					for (int i = 0; i < size; i++) {
@@ -262,38 +261,35 @@ public class ScheduleCalculator {
 				if (financeMain.isEqualRepay()) {
 					
 					int iRepayStart = financeMain.getGraceTerms()+1;
-					
-					BigDecimal orgFinanceAmount = BigDecimal.ZERO;
-					if (financeMain.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
-						orgFinanceAmount = financeMain.getFinAmount().add(financeMain.getTotalProfit());
-					} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
-					        || financeMain.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
-						orgFinanceAmount = financeMain.getFinAmount();
-					}
-					
-					Date evtFromDate = financeMain.getFinStartDate();
-					if(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.PFT)){
-						evtFromDate = finScheduleData.getFinanceScheduleDetails().get(financeMain.getGraceTerms()+1).getSchDate();
-					}
-					
-					finScheduleData = calculateNewEMI(finScheduleData, evtFromDate, financeMain.getCalMaturity(), financeMain.getRecalType(), 
-							financeMain.getScheduleMethod(), BigDecimal.ZERO, orgFinanceAmount);
-					
-					if (financeMain.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
-						repayAmount = finScheduleData.getFinanceScheduleDetails().get(iRepayStart).getRepayAmount();
-					} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
-					        || financeMain.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
-						repayAmount = finScheduleData.getFinanceScheduleDetails().get(iRepayStart).getPrincipalSchd();
-					}
 
+					//Step Details Repay Instructions Preparation
 					if (financeMain.isStepFinance()) {
-
+						
 						finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
 						finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
 
 						finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor,totalDesiredProfit, 
 								calStart, finScheduleData.getFinanceMain().getCalMaturity(), false);
-
+						
+						//Calculate Repayment's Installment amount based on Schedule method
+						int stepSize = finScheduleData.getStepPolicyDetails().size();
+						BigDecimal totalPercentage = BigDecimal.ZERO;
+						BigDecimal repayAmount =   BigDecimal.ZERO;
+						for (int i = 0; i < stepSize; i++) {
+							FinanceStepPolicyDetail policyDetail = finScheduleData.getStepPolicyDetails().get(i);
+							totalPercentage = totalPercentage.add(new BigDecimal(policyDetail.getInstallments()).multiply(policyDetail.getEmiSplitPerc()));
+						}
+						
+						//Repayment's amount Calculation
+						if (financeMain.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
+							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).add(totalDesiredProfit);
+							repayAmount = (repayAmount.multiply(new BigDecimal(100))).divide(totalPercentage, 0, RoundingMode.HALF_DOWN);
+						} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
+								|| financeMain.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
+							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt());
+							repayAmount = (repayAmount.multiply(new BigDecimal(100))).divide(totalPercentage, 0, RoundingMode.HALF_DOWN);
+						}
+						
 						int size = finScheduleData.getFinanceScheduleDetails().size();
 						for (int i = 0; i < size; i++) {
 							FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -302,12 +298,9 @@ public class ScheduleCalculator {
 							curSchd.setOrgPri(curSchd.getPrincipalSchd());
 						}
 
-						//Setting Repay Instructions using Step Policy Details List
-						int stepSize = finScheduleData.getStepPolicyDetails().size();
+						//Sorting Step Details as of Step Order / Step Number
 						BigDecimal stepAmount = BigDecimal.ZERO;
 						int iRepayEnd = 0;
-						
-						//Sorting Step Details as of Step Order / Step Number
 						
 						for (int i = 0; i < stepSize; i++) {
 							
@@ -324,7 +317,11 @@ public class ScheduleCalculator {
 							iRepayStart = iRepayEnd;
 						}
 						
-					} 
+					}else{
+						
+						// Calculate New EMI Installment Amount
+						finScheduleData = calculateFirstEMI(finScheduleData, desiredPftAmount, totalDesiredProfit);
+					}
 				}			
 
 				finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
@@ -333,6 +330,7 @@ public class ScheduleCalculator {
 				finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor, totalDesiredProfit, calStart, 
 						finScheduleData.getFinanceMain().getCalMaturity(), false);
 				
+				//Setting Cash Flow amounts & VS Profits
 				if (financeMain.isStepFinance()) {
 					int size = finScheduleData.getFinanceScheduleDetails().size();
 					BigDecimal orgPft =   BigDecimal.ZERO;
@@ -346,6 +344,7 @@ public class ScheduleCalculator {
 				
 			}else{
 				
+				// Calculation for Planned deferment Schedule in case of Rate basis is not Flat Converting to Reduce Procedure.
 				if(finScheduleData.getFinanceMain().getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
 					
 					int size = finScheduleData.getFinanceScheduleDetails().size();
@@ -353,6 +352,24 @@ public class ScheduleCalculator {
 						FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 						curSchd.setOrgPlanPft(curSchd.getProfitSchd());
 					}
+					
+					FinanceMain main = finScheduleData.getFinanceMain();
+					BigDecimal orgFinanceAmount = BigDecimal.ZERO;
+					if (main.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
+						orgFinanceAmount = main.getFinAmount().add(desiredPftAmount);
+					} else if (main.getScheduleMethod().equals(CalculationConstants.PRI)
+					        || main.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
+						orgFinanceAmount = main.getFinAmount();
+					}
+					
+					Date evtFromDate = main.getFinStartDate();
+					if(StringUtils.trimToEmpty(main.getGrcSchdMthd()).equals(CalculationConstants.PFT)){
+						evtFromDate = finScheduleData.getFinanceScheduleDetails().get(main.getGraceTerms()+1).getSchDate();
+					}
+					
+					//Setting Installment EMI amount based on Schedule Method and desired Profit amount
+					finScheduleData = calculateNewEMI(finScheduleData, evtFromDate, main.getCalMaturity(), main.getRecalType(), 
+							main.getScheduleMethod(), BigDecimal.ZERO, orgFinanceAmount);
 
 					//Recalculation for Getting Desired Profit which was calculated Using Planned Deferment Case
 					finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
@@ -386,6 +403,8 @@ public class ScheduleCalculator {
 			} else {
 				finScheduleData.getFinanceMain().setEffectiveRateOfReturn(BigDecimal.ZERO);
 			}
+			
+			finScheduleData = feeSchedulePreparation(finScheduleData);
 
 			setFinScheduleData(finScheduleData);
 		}
@@ -449,9 +468,6 @@ public class ScheduleCalculator {
 
 		finScheduleData.getFinanceMain().setCpzAtGraceEnd(false);
 
-		BigDecimal totalDesiredProfit =   BigDecimal.ZERO;
-		String pftComparisionFor = null;
-
 		//IF Repayments is Convert from Flat to Reducing and first time calculation.
 		Boolean isCalFlat = false;
 		if (finScheduleData.getFinanceMain().getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
@@ -467,20 +483,24 @@ public class ScheduleCalculator {
 		//If Schedule Method is "Flat Converting to Reduce" Case
 		if (isCalFlat) {
 
+			BigDecimal totalDesiredProfit =   BigDecimal.ZERO;
+			String pftComparisionFor = null;
 			Date calStart = new Date();
 			finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			totalDesiredProfit = financeMain.getTotalGrossPft();
 			if (financeMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(financeMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
-					&& financeMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
-
+			        && financeMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+			        && StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+				
 				calStart = financeMain.getFinStartDate();
 				pftComparisionFor = CalculationConstants.TOTAL;
-
+				totalDesiredProfit = financeMain.getTotalGrossPft();
+			
 			} else {
 				calStart = financeMain.getGrcPeriodEndDate();
 				pftComparisionFor = CalculationConstants.REPAY;
+				totalDesiredProfit = financeMain.getTotalGrossPft().subtract(financeMain.getTotalGrossGrcPft());
 			}				
 
 			finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
@@ -493,8 +513,6 @@ public class ScheduleCalculator {
 		
 		//Set Total Amounts After Calculations
 		finScheduleData = setFinanceTotals(finScheduleData);
-
-		setFinScheduleData(finScheduleData);
 
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -4866,6 +4884,90 @@ public class ScheduleCalculator {
 			finScheduleData = setRpyInstructDetails(finScheduleData, recalStartDate, recalEndDate,
 			        calRepayAmount, schdMethod);
         }
+		
+		return finScheduleData;
+	}
+	
+	private FinScheduleData calculateFirstEMI(FinScheduleData finScheduleData, BigDecimal desiredPftAmount, BigDecimal totalDesiredProfit){
+		
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		
+		BigDecimal orgFinanceAmount = BigDecimal.ZERO;
+		if (financeMain.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
+			
+			orgFinanceAmount = financeMain.getFinAmount().add(financeMain.getTotalProfit());
+			
+			if(financeMain.getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+				orgFinanceAmount = financeMain.getFinAmount().add(totalDesiredProfit);
+			}
+		} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
+		        || financeMain.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
+			orgFinanceAmount = financeMain.getFinAmount();
+		}
+		
+		Date evtFromDate = financeMain.getFinStartDate();
+		if(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.PFT)){
+			evtFromDate = finScheduleData.getFinanceScheduleDetails().get(financeMain.getGraceTerms()+1).getSchDate();
+		}
+		
+		finScheduleData = calculateNewEMI(finScheduleData, evtFromDate, financeMain.getCalMaturity(), financeMain.getRecalType(), 
+				financeMain.getScheduleMethod(), BigDecimal.ZERO, orgFinanceAmount);
+		
+		return finScheduleData;
+	}
+	
+	/**
+	 * Method for Distribute Calculated Fee Amount based on Remaining Schedule Method and Number of Installments
+	 * @param finScheduleData
+	 * @return
+	 */
+	private FinScheduleData feeSchedulePreparation(FinScheduleData finScheduleData){
+		
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		
+		// Distribute Calculated Fee Amount only in case of Schedule Method other than Including Fee Amount to part of Schedule Calculation 
+		if(!financeMain.getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+				!financeMain.getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			
+			BigDecimal totalCalFee = financeMain.getCalSchdFeeAmt();			
+			
+			if(financeMain.getFeeSchdTerms() == 0){
+				finScheduleData.setErrorDetail(new ErrorDetails("SCH40",
+						"Calculate Fee Schedule Term with Mentioned Remaining Schedule method is not matched", new String[] { " " }));
+				return finScheduleData;
+			}
+			//Equal Distribution of Calculated Fee Amount by Number of Terms.
+			BigDecimal instlFeeAmt = totalCalFee.divide(new BigDecimal(financeMain.getFeeSchdTerms()), 0, RoundingMode.HALF_DOWN);
+			
+			//Distribute Fee Amount to each Schedule Installment
+			int size = finScheduleData.getFinanceScheduleDetails().size();
+			for (int i = 0; i < size; i++) {
+				
+				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				curSchd.setSchdFeeOS(totalCalFee);
+				
+				if(totalCalFee.compareTo(BigDecimal.ZERO) <= 0){
+					break;
+				}
+				
+				if(curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0){
+					continue;
+				}
+				
+				if(!curSchd.isRepayOnSchDate()){
+					continue;
+				}
+				
+				if(i == size-1){
+					curSchd.setFeeSchd(totalCalFee);
+					totalCalFee = BigDecimal.ZERO;
+				}else{
+					curSchd.setFeeSchd(instlFeeAmt);
+					totalCalFee = totalCalFee.subtract(instlFeeAmt);
+				}
+            }
+			
+		} 
 		
 		return finScheduleData;
 	}
