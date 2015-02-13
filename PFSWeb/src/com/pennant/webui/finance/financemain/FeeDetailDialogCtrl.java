@@ -58,11 +58,15 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -88,6 +92,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -121,6 +126,12 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	protected Label 		fee_profitDaysBasis; 					// autoWired
 	protected Label 		fee_finReference; 						// autoWired
 	protected Label 		fee_grcEndDate; 						// autoWired	
+	
+	//User Modified Fields
+	protected Combobox 		remFeeSchdMethod; 						// autoWired	
+	protected Intbox 		feeSchdTerms; 							// autoWired	
+	protected Label	 		label_FeeDetailDialog_FeeSchdTerms;		// autoWired	
+	protected Hbox	 		hbox_feeSchdTerms;						// autoWired	
 
 	protected Button 		btnFeeCharges;							// autoWired
 	protected Label 		label_feeChargesSummaryVal; 			// autoWired
@@ -129,6 +140,10 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	private Map<String, BigDecimal> waiverPaidChargesMap = null;
 	private Map<String,FeeRule> feeRuleDetailsMap = null;
 	private BigDecimal oldVar_FeeChargeAmount = BigDecimal.ZERO;
+	
+	//Old Variables
+	protected String 		oldVar_remFeeSchdMethod; 				// autoWired	
+	protected int 			oldVar_feeSchdTerms; 					// autoWired	
 	 
 	private String 				eventCode = "";
 	private boolean 			feeChargesExecuted;
@@ -209,6 +224,90 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++ GUI operations +++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
+	public void doEdit(){
+		this.remFeeSchdMethod.setDisabled(!isModify);
+		this.feeSchdTerms.setReadonly(!isModify);
+	}
+	
+	public boolean isDataChanged(){
+		if (this.oldVar_remFeeSchdMethod != this.remFeeSchdMethod.getSelectedItem().getValue().toString()) {
+			return true;
+		}
+		if (this.oldVar_feeSchdTerms != this.feeSchdTerms.intValue()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public void doStoreInitValues(){
+		this.oldVar_remFeeSchdMethod = this.remFeeSchdMethod.getSelectedItem().getValue().toString();
+		this.oldVar_feeSchdTerms = this.feeSchdTerms.intValue();
+	}
+	
+	public WrongValueException doValidate(){
+
+		if(getFinScheduleData().getFinanceMain().getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+			try {
+				isValidComboValue(this.remFeeSchdMethod, Labels.getLabel("label_FeeDetailDialog_RemFeeSchdMethod.value"));
+
+				if(this.remFeeSchdMethod.getSelectedItem().getValue().toString().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)){
+					if(this.feeSchdTerms.intValue() <= 1 || this.feeSchdTerms.intValue() >= getFinScheduleData().getFinanceMain().getNumberOfTerms()){
+						throw new WrongValueException(this.feeSchdTerms, Labels.getLabel("NUMBER_RANGE",
+								new String[] { Labels.getLabel("label_FeeDetailDialog_FeeSchdTerms.value"), "1" , 
+								String.valueOf(getFinScheduleData().getFinanceMain().getNumberOfTerms()) }));
+					}
+				}
+			} catch (WrongValueException we) {
+				return we;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Method for Adding data to Bean object
+	 * @param finScheduleData
+	 * @throws ParseException
+	 */
+	public FinScheduleData doWriteComponentsToBean(FinScheduleData finScheduleData) { 
+		logger.debug("Entering");
+		
+		if(finScheduleData.getFinanceMain().getFeeChargeAmt().compareTo(BigDecimal.ZERO) == 0){
+			this.remFeeSchdMethod.setSelectedIndex(0);
+			this.feeSchdTerms.setValue(0);
+		}
+		
+		finScheduleData.getFinanceMain().setRemFeeSchdMethod(this.remFeeSchdMethod.getSelectedItem().getValue().toString());
+		doSetFeeSchdTerms();
+		finScheduleData.getFinanceMain().setFeeSchdTerms(this.feeSchdTerms.intValue());
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+	
+	public void onSelect$remFeeSchdMethod(Event event){
+		this.feeSchdTerms.setValue(0);
+		doSetFeeSchdTerms();
+	}
+	
+	private void doSetFeeSchdTerms(){
+		this.label_FeeDetailDialog_FeeSchdTerms.setVisible(false);
+		this.hbox_feeSchdTerms.setVisible(false);
+		this.feeSchdTerms.setReadonly(true);
+		if(!this.remFeeSchdMethod.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)){
+			
+			if(this.remFeeSchdMethod.getSelectedItem().getValue().toString().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)){
+				this.feeSchdTerms.setValue(1);
+			}else if(this.remFeeSchdMethod.getSelectedItem().getValue().toString().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+				this.feeSchdTerms.setValue(finScheduleData.getFinanceMain().getNumberOfTerms());
+			}else if(this.remFeeSchdMethod.getSelectedItem().getValue().toString().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)){
+				this.label_FeeDetailDialog_FeeSchdTerms.setVisible(true);
+				this.hbox_feeSchdTerms.setVisible(true);
+				this.feeSchdTerms.setReadonly(!isModify);
+			}
+		}
+	}
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -226,6 +325,11 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		this.fee_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(getFinanceMain().getProfitDaysBasis(), profitDaysBasisList));
 		this.fee_finReference.setValue(StringUtils.trimToEmpty(getFinanceMain().getFinReference()));
 		this.fee_grcEndDate.setValue(DateUtility.formatDate(getFinanceMain().getGrcPeriodEndDate(), PennantConstants.dateFormate)) ;
+		
+		fillComboBox(this.remFeeSchdMethod, getFinanceMain().getRemFeeSchdMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), "");
+		doSetFeeSchdTerms();
+		this.feeSchdTerms.setValue(getFinanceMain().getFeeSchdTerms());
+		doStoreInitValues();
 		
 		this.feeChargesExecuted = false;
 		// fill schedule list and asset tabs
@@ -294,6 +398,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		}
 		
 		// fill the components with the data
+		doEdit();
 		doWriteBeanToComponents();
 		
 		getBorderLayoutHeight();
@@ -322,6 +427,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		BigDecimal feeAmt = BigDecimal.ZERO;
 		BigDecimal totalFee = BigDecimal.ZERO;
 		int formatter = finScheduleData.getFinanceMain().getLovDescFinFormatter();
+		this.remFeeSchdMethod.setDisabled(true);
 
 		if (feeChargesList != null && !feeChargesList.isEmpty()) {
 			for (Object chargeRule : feeChargesList) {
@@ -553,6 +659,10 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 			}
 
 			this.label_feeChargesSummaryVal.setValue(PennantAppUtil.amountFormate(totalFee, formatter));
+			
+			if(totalFee.compareTo(BigDecimal.ZERO) > 0 || feeRuleDetailsMap.size() == 0){
+				this.remFeeSchdMethod.setDisabled(!isModify);
+			}
 		}
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -911,6 +1021,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 			finScheduleData.getFeeRules().addAll(feeRules);
 		}
 		finScheduleData = dofillFeeCharges(finScheduleData.getFeeRules(), isSchdCal,renderSchdl, isReBuild,finScheduleData);
+		doStoreInitValues();
 		
 		logger.debug("Leaving");
 		return finScheduleData;

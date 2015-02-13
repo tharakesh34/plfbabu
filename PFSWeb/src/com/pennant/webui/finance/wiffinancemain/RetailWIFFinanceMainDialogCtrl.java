@@ -2599,6 +2599,25 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				} catch (AccountNotFoundException e) {
 					logger.error(e.getMessage());
 				}
+
+				// Fee Details Validation
+				WrongValueException valueException = getFeeDetailDialogCtrl().doValidate();
+				if(valueException != null){
+
+					if(tabsIndexCenter.getFellowIfAny("feeDetailTab") != null){
+						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
+						wve.add(valueException);
+						showErrorDetails(wve, tab);
+					}
+				}
+				
+				aFinanceDetail.setFinScheduleData(getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceDetail.getFinScheduleData()));
+			}
+			
+			if(!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+					!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setCalSchdFeeAmt(aFinanceDetail.getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
 			}
 
 			aFinanceDetail.getFinScheduleData().getDisbursementDetails().clear();	
@@ -3584,6 +3603,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			return true;
 		}
 		
+		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged()) {
+			return true;
+		}
+		
 		if (close && schReGenerated){
 			return true;
 		}
@@ -3840,6 +3863,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		}		
 
 		if(!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()){
+			return true;
+		}
+		
+		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged()) {
 			return true;
 		}
 
@@ -6274,7 +6301,17 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				}			
 				
 				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
-				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				planDeferSchdData = ScheduleCalculator.getPlanDeferPft(planDeferSchdData);
+				
+				FinanceMain planDefFinMain = planDeferSchdData.getFinanceMain();
+				
+				if (planDefFinMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(planDefFinMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+				        && planDefFinMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+				        && StringUtils.trimToEmpty(planDefFinMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+					plannedDeferPft = planDefFinMain.getTotalGrossPft();
+				} else {
+					plannedDeferPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
+				}
 				
  			}
  			

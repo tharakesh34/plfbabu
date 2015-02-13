@@ -215,6 +215,9 @@ public class FinScheduleData {
 		this.financeMain.setFinStartDate((Date)SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR));
 		this.financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
 		
+		//Fee Details
+		this.financeMain.setRemFeeSchdMethod(financeType.getRemFeeSchdMethod());
+		
 		//Step Policy Details 
 		this.financeMain.setStepFinance(financeType.isStepFinance());
 		this.financeMain.setAlwManualSteps(financeType.isAlwManualSteps());

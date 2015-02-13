@@ -172,6 +172,7 @@
 								<listheader  id= "listheader_ScheduleDetailDialog_Date"  hflex="min" value="" />
 								<listheader id = "listheader_ScheduleDetailDialog_ScheduleEvent"  hflex="min"  />
 								<listheader id = "listheader_ScheduleDetailDialog_CalProfit" hflex="min"  />
+								<listheader id = "listheader_ScheduleDetailDialog_SchFee" hflex="min"  />
 								<listheader id = "listheader_ScheduleDetailDialog_SchProfit"   hflex="min" />
 								<listheader id = "listheader_ScheduleDetailDialog_Principal"  hflex="min"  />
 								<listheader id = "listheader_ScheduleDetailDialog_Total"  hflex="min" />

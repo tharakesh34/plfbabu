@@ -64,6 +64,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -157,7 +158,6 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -4999,6 +4999,26 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				} catch (AccountNotFoundException e) {
 					logger.error(e.getMessage());
 				}
+				
+				// Fee Details Validation
+				WrongValueException valueException = getFeeDetailDialogCtrl().doValidate();
+				if(valueException != null){
+
+					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+					if(tabsIndexCenter.getFellowIfAny("feeDetailTab") != null){
+						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
+						wve.add(valueException);
+						showFeeErrorDetails(wve, tab);
+					}
+				}
+				
+				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData);
+			}
+			
+			if(!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+					!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+				aFinanceSchData.getFinanceMain().setCalSchdFeeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
+				aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
 			}
 
 			if(!isIstisnaProd){
@@ -5022,6 +5042,26 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		logger.debug("Leaving");
 		return aFinanceSchData; 
+	}
+	
+	/**
+	 * Method to show error details if occurred
+	 * 
+	 **/
+	private void showFeeErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug("Entering");
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			tab.setSelected(true);
+			// groupBox.set
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug("Leaving");
 	}
 	
 	/**
@@ -5503,6 +5543,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 
 		if (close && getFinanceDetail().getFinScheduleData().isSchduleGenerated()) {
+			return true;
+		}
+		
+		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged()) {
 			return true;
 		}
 

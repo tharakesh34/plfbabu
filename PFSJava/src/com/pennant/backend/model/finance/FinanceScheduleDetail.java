@@ -105,6 +105,11 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private BigDecimal orgEndBal = BigDecimal.ZERO;
 	private BigDecimal orgPlanPft = BigDecimal.ZERO;
 	
+	//Fee Details on Schedule Basis
+	private BigDecimal feeSchd = BigDecimal.ZERO;
+	private BigDecimal schdFeePaid = BigDecimal.ZERO;
+	private BigDecimal schdFeeOS = BigDecimal.ZERO;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -856,6 +861,27 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	}
 	public void setOrgPlanPft(BigDecimal orgPlanPft) {
 		this.orgPlanPft = orgPlanPft;
+	}
+
+	public BigDecimal getFeeSchd() {
+		return feeSchd;
+	}
+	public void setFeeSchd(BigDecimal feeSchd) {
+		this.feeSchd = feeSchd;
+	}
+
+	public BigDecimal getSchdFeePaid() {
+		return schdFeePaid;
+	}
+	public void setSchdFeePaid(BigDecimal schdFeePaid) {
+		this.schdFeePaid = schdFeePaid;
+	}
+
+	public BigDecimal getSchdFeeOS() {
+		return schdFeeOS;
+	}
+	public void setSchdFeeOS(BigDecimal schdFeeOS) {
+		this.schdFeeOS = schdFeeOS;
 	}
 
 }

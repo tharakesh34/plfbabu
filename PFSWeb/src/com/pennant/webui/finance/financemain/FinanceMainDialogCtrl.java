@@ -8537,7 +8537,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 							}
 							finRender.doFillListBox(aScheduleDetail, 2, Labels.getLabel(label, new String[]{
 									PennantAppUtil.amountFormate(billingDetailMap.get(billingDate),aFinSchData.getFinanceMain().getLovDescFinFormatter())}),
-									BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false,
+									BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false,
 									false, false, false, false, "","",2, billingDate,false);
 
 							billingDetailMap.remove(billingDate);

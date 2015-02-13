@@ -58,6 +58,29 @@
 									<label id="fee_grcEndDate"
 										style="font-weight:bold;" />
 								</row>
+								<!-- User Modified Fields -->
+								<row>
+									<label
+										id="label_FeeDetailDialog_RemFeeSchdMethod"
+										value="${c:l('label_FeeDetailDialog_RemFeeSchdMethod.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<combobox id="remFeeSchdMethod"
+											width="275px" readonly="true" />
+									</hbox>
+									<label
+										id="label_FeeDetailDialog_FeeSchdTerms"
+										value="${c:l('label_FeeDetailDialog_FeeSchdTerms.value')}"
+										visible="false" />
+									<hbox id="hbox_feeSchdTerms"
+										visible="false">
+										<space spacing="2px"
+											sclass="mandatory" />
+										<intbox id="feeSchdTerms"
+											width="45px" maxlength="3" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 						<toolbar align="start" sclass="toolbar-start" width="100%" height="25px">

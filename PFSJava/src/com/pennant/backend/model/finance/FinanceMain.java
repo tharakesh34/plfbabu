@@ -168,6 +168,14 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean 	finRepayPftOnFrq;
 	
 	//===========================================
+    //=========Fee Details Usage  ============
+    //===========================================
+	
+	private String 		remFeeSchdMethod;
+	private int 		feeSchdTerms;
+	private BigDecimal 	calSchdFeeAmt;
+	
+	//===========================================
     //=========Schedule Build Usage  ============
     //===========================================
 	
@@ -1880,6 +1888,27 @@ public class FinanceMain implements java.io.Serializable {
 	public int getLovDescNotes() {
 	    return lovDescNotes;
     }
+	
+	public String getRemFeeSchdMethod() {
+	    return remFeeSchdMethod;
+    }
+	public void setRemFeeSchdMethod(String remFeeSchdMethod) {
+	    this.remFeeSchdMethod = remFeeSchdMethod;
+    }
+
+	public int getFeeSchdTerms() {
+	    return feeSchdTerms;
+    }
+	public void setFeeSchdTerms(int feeSchdTerms) {
+	    this.feeSchdTerms = feeSchdTerms;
+    }
+
+	public BigDecimal getCalSchdFeeAmt() {
+	    return calSchdFeeAmt;
+    }
+	public void setCalSchdFeeAmt(BigDecimal calSchdFeeAmt) {
+	    this.calSchdFeeAmt = calSchdFeeAmt;
+    }
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();	
@@ -1979,5 +2008,5 @@ public class FinanceMain implements java.io.Serializable {
 
 		this.errorDetails.add(errorDetail);
 	}
-	
+
 }

@@ -177,6 +177,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate, ClosingStatus, FinApprovedDate, ");
 		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");
+		selectSql.append(" RemFeeSchdMethod, FeeSchdTerms , CalSchdFeeAmt, ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescScheduleMethodName, lovDescProfitDaysBasisName,");
@@ -560,6 +561,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" AlwIndRate, IndBaseRate, GrcAlwIndRate, GrcIndBaseRate,DedupFound,SkipDedup,Blacklisted,");
 		insertSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");
 		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, ");
+		insertSql.append(" RemFeeSchdMethod, FeeSchdTerms , CalSchdFeeAmt, ");
 		if (!isWIF) {
 			insertSql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,Authorization1,Authorization2,");
 			insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
@@ -587,6 +589,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :AlwIndRate, :IndBaseRate, :GrcAlwIndRate, :GrcIndBaseRate, :DedupFound,:SkipDedup,:Blacklisted,");
 		insertSql.append(" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
 		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq, ");
+		insertSql.append(" :RemFeeSchdMethod, :FeeSchdTerms , :CalSchdFeeAmt, ");
 		if (!isWIF) {
 			insertSql.append("  :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR, :Authorization1, :Authorization2, ");
 			insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
@@ -778,6 +781,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , FinRepayPftOnFrq =:FinRepayPftOnFrq ,");
 		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy,");
 		updateSql.append(" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
+		updateSql.append(" RemFeeSchdMethod=:RemFeeSchdMethod, FeeSchdTerms=:FeeSchdTerms , CalSchdFeeAmt=:CalSchdFeeAmt, ");
 		
 		if (!isWIF) {
 			updateSql.append(" MigratedFinance = :MigratedFinance,ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated,");
@@ -893,6 +897,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy,");
 		updateSql.append(" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
+		updateSql.append(" RemFeeSchdMethod=:RemFeeSchdMethod, FeeSchdTerms=:FeeSchdTerms , CalSchdFeeAmt=:CalSchdFeeAmt, ");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
@@ -1320,6 +1325,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
 		insertSql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit,  ");
 		insertSql.append(" GrcProfitDaysBasis, StepFinance, StepPolicy, AlwManualSteps, NoOfSteps, ");
+		insertSql.append(" RemFeeSchdMethod, FeeSchdTerms , CalSchdFeeAmt, ");
 		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
@@ -1344,6 +1350,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
 		insertSql.append(" :JointAccount,:JointCustId , :DownPayAccount,  :SecurityDeposit,");
 		insertSql.append(" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
+		insertSql.append(" :RemFeeSchdMethod, :FeeSchdTerms , :CalSchdFeeAmt, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());

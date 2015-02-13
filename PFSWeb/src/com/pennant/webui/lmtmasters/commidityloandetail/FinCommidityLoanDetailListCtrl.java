@@ -332,45 +332,38 @@ public class FinCommidityLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 		}
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		//###090414### Start - Commented the Code
-		if(!StringUtils.trim(this.brokerName.getValue()).equals("") ||( 
-				this.listBoxCommidityLoanDetail.getItems()!=null && !this.listBoxCommidityLoanDetail.getItems().isEmpty())){
-			try {
-				if(StringUtils.trim(this.brokerName.getValue()).equals("")){
-					throw new WrongValueException(this.lovDescbrokerName,Labels.getLabel("FIELD_NO_EMPTY", new String[]{
-							Labels.getLabel("label_BrokerName")}));
-				}
-				this.commidityLoanHeader.setBrokerName(this.brokerName.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
+		try {
+			if(StringUtils.trim(this.brokerName.getValue()).equals("")){
+				throw new WrongValueException(this.lovDescbrokerName,Labels.getLabel("FIELD_NO_EMPTY", new String[]{
+						Labels.getLabel("label_BrokerName")}));
 			}
-
-			try {
-				this.commidityLoanHeader.setSplInstruction(this.splInstruction.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				if(!recSave ){
-					if (this.listBoxCommidityLoanDetail.getItems()==null || this.listBoxCommidityLoanDetail.getItems().isEmpty()) {
-						throw new WrongValueException(this.listBoxCommidityLoanDetail,"Commodity Details Must Be Entered ");
-					}
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				if(!recSave){
-					if (main.getFinAmount().compareTo(totCost) != 0) {
-						throw new WrongValueException(this.listBoxCommidityLoanDetail, Labels.getLabel("MUST_BE_EQUAL", new String[] { "Total Buy Amount", "Finance Amount" }));
-					}
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
+			this.commidityLoanHeader.setBrokerName(this.brokerName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
+
+		try {
+			this.commidityLoanHeader.setSplInstruction(this.splInstruction.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if(!recSave ){
+				if (this.listBoxCommidityLoanDetail.getItems()==null || this.listBoxCommidityLoanDetail.getItems().isEmpty()) {
+					throw new WrongValueException(this.listBoxCommidityLoanDetail,Labels.getLabel("label_CommidityDetails_NoEmpty.value"));
+				}
+				if (main.getFinAmount().compareTo(totCost) != 0) {
+					throw new WrongValueException(this.listBoxCommidityLoanDetail, Labels.getLabel("MUST_BE_EQUAL", 
+							new String[] { Labels.getLabel("label_TotalBuyAmount"), Labels.getLabel("label_CommidityFinAmount") }));
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		showErrorDetails(wve);
+		
 		try {
 			financeMainDialogCtrl.getClass().getMethod("setCommidityLoanHeader", CommidityLoanHeader.class).invoke(financeMainDialogCtrl, commidityLoanHeader);
 			financeMainDialogCtrl.getClass().getMethod("setCommidityLoanDetails", List.class).invoke(financeMainDialogCtrl, commidityDetailLists);
@@ -462,7 +455,7 @@ public class FinCommidityLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 		logger.debug("Entering");
 
 		this.listBoxCommidityLoanDetail.getItems().clear();
-		if (commidityLoanDetails != null) {
+		if (commidityLoanDetails != null && !commidityLoanDetails.isEmpty()) {
 			totCost = BigDecimal.ZERO;
 			setCommidityDetailLists(commidityLoanDetails);
 			for (CommidityLoanDetail commidityLoanDetail : commidityLoanDetails) {

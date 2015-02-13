@@ -1642,6 +1642,10 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if(!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()){
 			return true;
 		}
+		
+		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged()) {
+			return true;
+		}
 
 		logger.debug("Leaving");
 		return false;
@@ -3381,7 +3385,17 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				}			
 				
 				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
-				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				planDeferSchdData = ScheduleCalculator.getPlanDeferPft(planDeferSchdData);
+				
+				FinanceMain planDefFinMain = planDeferSchdData.getFinanceMain();
+				
+				if (planDefFinMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(planDefFinMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+				        && planDefFinMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+				        && StringUtils.trimToEmpty(planDefFinMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+					plannedDeferPft = planDefFinMain.getTotalGrossPft();
+				} else {
+					plannedDeferPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
+				}
 				
  			}
 			

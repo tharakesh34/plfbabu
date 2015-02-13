@@ -789,7 +789,7 @@ public class CommidityLoanDetailDialogListCtrl extends GFCBaseCtrl implements Se
 			this.loanRefNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CommidityLoanDetailDialog_LoanRefNumber.value"),PennantRegularExpressions.REGEX_ALPHANUM_CODE,true));
 		}
 		
-		//Unit Buy Price
+		//Buy Amount
 		if (!this.buyAmount.isReadonly()){
 			this.buyAmount.setConstraint(new AmountValidator(18, ccyFormatter, Labels.getLabel("label_CommidityLoanDetailDialog_BuyAmount.value"), false));
 		}
@@ -850,7 +850,7 @@ public class CommidityLoanDetailDialogListCtrl extends GFCBaseCtrl implements Se
 		this.unitBuyPrice.setErrorMessage("");
 		this.unitSellPrice.setErrorMessage("");
 		this.quantity.setErrorMessage("");
-		this.buyAmount.clearErrorMessage();
+		this.buyAmount.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 

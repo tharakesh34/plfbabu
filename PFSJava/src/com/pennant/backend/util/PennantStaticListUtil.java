@@ -82,7 +82,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> ruleModuleList;
 	private static ArrayList<ValueLabel> custRelationList;
 	private static ArrayList<ValueLabel> importTablesList;
-	private static ArrayList<ValueLabel> takafulSchdMethodList;
+	private static ArrayList<ValueLabel> remFeeSchdMethodList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -1183,12 +1183,12 @@ public class PennantStaticListUtil {
 		return custRelationList;
 	}
 	
-	public static ArrayList<ValueLabel> getTakafulSchdMethods() {
-		takafulSchdMethodList = new ArrayList<ValueLabel>(4);
-		takafulSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PART_OF_SALE_PRICE ,Labels.getLabel("label_PartOfSalePrice")));
-		takafulSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, Labels.getLabel("label_ScheduleToFirstInstallment")));
-		takafulSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, Labels.getLabel("label_ScheduleToEntireTenor")));
-		takafulSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
-		return takafulSchdMethodList;
+	public static ArrayList<ValueLabel> getRemFeeSchdMethods() {
+		remFeeSchdMethodList = new ArrayList<ValueLabel>(4);
+		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PART_OF_SALE_PRICE ,Labels.getLabel("label_PartOfSalePrice")));
+		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, Labels.getLabel("label_ScheduleToFirstInstallment")));
+		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, Labels.getLabel("label_ScheduleToEntireTenor")));
+		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
+		return remFeeSchdMethodList;
 	}
 }

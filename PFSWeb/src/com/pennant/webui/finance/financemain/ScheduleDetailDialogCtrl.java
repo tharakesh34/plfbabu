@@ -171,6 +171,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Listheader    listheader_ScheduleDetailDialog_Date;
 	protected Listheader    listheader_ScheduleDetailDialog_ScheduleEvent;
 	protected Listheader    listheader_ScheduleDetailDialog_CalProfit;
+	protected Listheader    listheader_ScheduleDetailDialog_SchFee;
 	protected Listheader    listheader_ScheduleDetailDialog_SchProfit;
 	protected Listheader    listheader_ScheduleDetailDialog_Principal;
 	protected Listheader    listheader_ScheduleDetailDialog_Total;
@@ -316,6 +317,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Date"));
 		listheader_ScheduleDetailDialog_ScheduleEvent.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_ScheduleEvent"));
 		listheader_ScheduleDetailDialog_CalProfit.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_CalProfit"));
+		listheader_ScheduleDetailDialog_SchFee.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_SchFee"));
 		listheader_ScheduleDetailDialog_SchProfit.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_SchProfit"));
 		listheader_ScheduleDetailDialog_Principal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Principal"));
 		listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Total"));
@@ -329,7 +331,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			listHeader_vSProfit.setVisible(false);
 			listHeader_orgPrincipalDue.setVisible(false);
 		}
-		
+
 		if (product.equals(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
 			this.row_Musharak.setVisible(true);
 			this.label_ScheduleDetailDialog_BankShare.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_BankShare.value"));
@@ -460,11 +462,25 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				this.listHeader_vSProfit.setVisible(true);
 				this.listHeader_orgPrincipalDue.setVisible(true);
 			}
+			
+			String product = getFinScheduleData().getFinanceType().getFinCategory();
+			String productType = (product.substring(0, 1)).toUpperCase()+(product.substring(1)).toLowerCase();
+			listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_" + productType +"_CashFlowEffect"));
+			listHeader_vSProfit.setLabel(Labels.getLabel("listheader_" + productType +"_VsProfit"));
+			listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_" + productType +"_OrgPrincipalDue"));
+			
 		} else {
 			this.listHeader_cashFlowEffect.setVisible(false);
 			this.listHeader_vSProfit.setVisible(false);
 			this.listHeader_orgPrincipalDue.setVisible(false);
 		}  
+		
+		if(getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) ||
+				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			this.listheader_ScheduleDetailDialog_SchFee.setVisible(false);
+		}else{
+			this.listheader_ScheduleDetailDialog_SchFee.setVisible(true);
+		}
 		
 		setFinScheduleData(aFinSchData);
 		FinanceMain financeMain = aFinSchData.getFinanceMain();

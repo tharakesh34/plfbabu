@@ -1273,7 +1273,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finIsActive.setChecked(aFinanceType.isFinIsActive());
 		this.takafulMandatory.setChecked(aFinanceType.isTakafulMandatory());
 		this.takafulRequired.setChecked(aFinanceType.isTakafulReq());
-		fillComboBox(this.remFeeSchdMethod, aFinanceType.getRemFeeSchdMethod(), PennantStaticListUtil.getTakafulSchdMethods(), ",,");
+		fillComboBox(this.remFeeSchdMethod, aFinanceType.getRemFeeSchdMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), ",,");
 
 		doCheckRIA(aFinanceType.getFinCategory());
 		//doCheckFinAEProgClaim(aFinanceType.getLovDescProductCodeName());
