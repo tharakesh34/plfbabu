@@ -158,6 +158,7 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -183,8 +184,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		finReference; 							// autoWired
 	protected ExtendedCombobox finCcy;                              // autoWired
 	protected Combobox 		cbProfitDaysBasis; 						// autoWired
-	protected Longbox 	            custID; 						// autoWired
-	protected ExtendedCombobox 	    custCIF; 						// autoWired
+	protected Longbox 	     custID; 						// autoWired
+	protected Textbox 	    custCIF; 						// autoWired
+	protected Label 		custShrtName; 					// autoWired
 	protected ExtendedCombobox 		finBranch; 						// autoWired
 	protected Datebox 		finContractDate; 						// autoWired
 	protected CurrencyBox 	finAmount; 								// autoWired
@@ -396,6 +398,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 	protected Button 		btnValidate; 							// autoWired
 	protected Button 		btnBuildSchedule; 						// autoWired
+	protected Button 		btnSearchCustCIF; 						// autoWired
 
 
 	// old value variables for edit mode. that we can check if something 
@@ -602,7 +605,6 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	
 	protected String finDivision="";
 	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-	
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -629,11 +631,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finCcy.setDescColumn("CcyDesc");
 		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
 		
-		this.custCIF.setMandatoryStyle(true);
+/*		this.custCIF.setMandatoryStyle(true);
 		this.custCIF.setModuleName("Customer");
 		this.custCIF.setValueColumn("CustCIF");
 		this.custCIF.setDescColumn("CustShrtName");
-		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
+		this.custCIF.setValidateColumns(new String[] { "CustCIF" });*/
 		
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
 		this.finContractDate.setFormat(PennantConstants.dateFormat);
@@ -1844,7 +1846,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(), profitDaysBasisList, "");
 		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), repayMethodList, "");
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
-		this.custCIF.setValue(aFinanceMain.getLovDescCustCIF(), aFinanceMain.getLovDescCustShrtName());
+		this.custCIF.setValue(aFinanceMain.getLovDescCustCIF());
+		this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
 		this.custID.setValue(aFinanceMain.getCustID());
 		this.disbAcctId.setCustCIF(aFinanceMain.getLovDescCustCIF());
 		this.repayAcctId.setCustCIF(aFinanceMain.getLovDescCustCIF());
@@ -3939,7 +3942,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		financeMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 		financeMain.setCustID(this.custID.longValue());
 		financeMain.setLovDescCustCIF(this.custCIF.getValue());
-		financeMain.setLovDescCustShrtName(this.custCIF.getDescription());
+		financeMain.setLovDescCustShrtName(this.custShrtName.getValue());
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
 		financeMain.setLovDescFinFormatter(formatter);
@@ -4041,7 +4044,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_CustID.value") }));
 				} else {
 					aFinanceMain.setCustID(this.custID.longValue());
-					aFinanceMain.setLovDescCustShrtName(this.custCIF.getDescription());
+					//aFinanceMain.setLovDescCustShrtName(this.custCIF.getDescription());
 				}
 			}
 			if(!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")){
@@ -6212,6 +6215,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAmount.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
 		this.downPayBank.setDisabled(true);
 		this.downPayAccount.setReadonly(true);
+		this.btnSearchCustCIF.setVisible(!isReadOnly("FinanceMainDialog_custID"));
  		
  		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsDwPayRequired() &&
 				getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinDownPayAmount().compareTo(BigDecimal.ZERO) >= 0) {

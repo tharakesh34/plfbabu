@@ -94,24 +94,24 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 
 	protected Textbox custCIF; 							// autowired
 	protected Listbox sortOperator_custCIF; 			// autowired
-	protected Textbox custCoreBank; 					// autowired
-	protected Listbox sortOperator_custCoreBank; 		// autowired
-	protected Textbox custCtgCode; 						// autowired
-	protected Listbox sortOperator_custCtgCode; 		// autowired
-	protected Textbox custTypeCode; 					// autowired
-	protected Listbox sortOperator_custTypeCode; 		// autowired
-	protected Textbox custSalutationCode; 				// autowired
-	protected Listbox sortOperator_custSalutationCode; 	// autowired
-	protected Textbox custFName; 						// autowired
-	protected Listbox sortOperator_custFName; 			// autowired
-	protected Textbox custMName; 						// autowired
-	protected Listbox sortOperator_custMName; 			// autowired
-	protected Textbox custLName; 						// autowired
-	protected Listbox sortOperator_custLName;	 		// autowired
-	protected Textbox custShrtName; 					// autowired
-	protected Listbox sortOperator_custShrtName; 		// autowired
-	protected Textbox custDftBranch; 					// autowired
-	protected Listbox sortOperator_custDftBranch; 		// autowired
+	protected Textbox custDob; 					// autowired
+	protected Listbox sortOperator_custDob; 		// autowired
+	protected Textbox custName; 						// autowired
+	protected Listbox sortOperator_custName; 		// autowired
+	protected Textbox custMobile; 					// autowired
+	protected Listbox sortOperator_custMobile; 		// autowired
+	protected Textbox custEid; 				// autowired
+	protected Listbox sortOperator_custEID; 	// autowired
+	protected Textbox custPassport; 						// autowired
+	protected Listbox sortOperator_custPassport; 			// autowired
+	protected Textbox custType; 						// autowired
+	protected Listbox sortOperator_custType; 			// autowired
+	protected Textbox custNationality; 						// autowired
+	protected Listbox sortOperator_custNationality;	 		// autowired
+	protected Textbox custSector; 					// autowired
+	protected Listbox sortOperator_custSector; 		// autowired
+	protected Textbox custSubSector; 					// autowired
+	protected Listbox sortOperator_custSubSector; 		// autowired
 
 	protected Paging pagingCustomerList; 				// autowired
 	protected Listbox listBoxCustomer; 					// autowired
@@ -174,32 +174,32 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custCoreBank.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custCoreBank.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custDob.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custCtgCode.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custCtgCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
-		this.sortOperator_custTypeCode.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custTypeCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custMobile.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custMobile.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custSalutationCode.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custSalutationCode.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custEID.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custEID.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custFName.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custFName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custPassport.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custPassport.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custMName.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custMName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custType.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custType.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custLName.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custLName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custNationality.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custNationality.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custShrtName.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custShrtName.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custSector.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custSector.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDftBranch.setModel(new ListModelList<SearchOperators>(list));
-		this.sortOperator_custDftBranch.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		this.sortOperator_custSubSector.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custSubSector.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		// get the params map that are overhanded by creation.
 		final Map<String, Object> args = getCreationArgsMap(event);
@@ -250,32 +250,32 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 					SearchOperators.resetOperator(this.sortOperator_custCIF, filter);
 					this.custCIF.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCIF));
 				} else if (filter.getProperty().equals("custCoreBank")) {
-					SearchOperators.resetOperator(this.sortOperator_custCoreBank, filter);
-					this.custCoreBank.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCoreBank));
+					SearchOperators.resetOperator(this.sortOperator_custDob, filter);
+					this.custDob.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custDob));
 				} else if (filter.getProperty().equals("custCtgCode")) {
-					SearchOperators.resetOperator(this.sortOperator_custCtgCode, filter);
-					this.custCtgCode.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCtgCode));
+					SearchOperators.resetOperator(this.sortOperator_custName, filter);
+					this.custName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custName));
 				} else if (filter.getProperty().equals("custTypeCode")) {
-					SearchOperators.resetOperator(this.sortOperator_custTypeCode, filter);
-					this.custTypeCode.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custTypeCode));
+					SearchOperators.resetOperator(this.sortOperator_custMobile, filter);
+					this.custMobile.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custMobile));
 				} else if (filter.getProperty().equals("custSalutationCode")) {
-					SearchOperators.resetOperator(this.sortOperator_custSalutationCode, filter);
-					this.custSalutationCode.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custSalutationCode));
+					SearchOperators.resetOperator(this.sortOperator_custEID, filter);
+					this.custEid.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custEID));
 				} else if (filter.getProperty().equals("custFName")) {
-					SearchOperators.resetOperator(this.sortOperator_custFName, filter);
-					this.custFName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custFName));
+					SearchOperators.resetOperator(this.sortOperator_custPassport, filter);
+					this.custPassport.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custPassport));
 				} else if (filter.getProperty().equals("custMName")) {
-					SearchOperators.resetOperator(this.sortOperator_custMName, filter);
-					this.custMName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custMName));
+					SearchOperators.resetOperator(this.sortOperator_custType, filter);
+					this.custType.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custType));
 				} else if (filter.getProperty().equals("custLName")) {
-					SearchOperators.resetOperator(this.sortOperator_custLName, filter);
-					this.custLName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custLName));
+					SearchOperators.resetOperator(this.sortOperator_custNationality, filter);
+					this.custNationality.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custNationality));
 				} else if (filter.getProperty().equals("custShrtName")) {
-					SearchOperators.resetOperator(this.sortOperator_custShrtName, filter);
-					this.custShrtName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custShrtName));
+					SearchOperators.resetOperator(this.sortOperator_custSector, filter);
+					this.custSector.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custSector));
 				} else if (filter.getProperty().equals("custDftBranch")) {
-					SearchOperators.resetOperator(this.sortOperator_custDftBranch, filter);
-					this.custDftBranch.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custDftBranch));
+					SearchOperators.resetOperator(this.sortOperator_custSubSector, filter);
+					this.custSubSector.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custSubSector));
 				}
 			}
 		}
@@ -399,158 +399,159 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custCoreBank.getValue())) {
+		if (StringUtils.isNotEmpty(this.custDob.getValue())) {
 
 			// get the search operator
-			final Listitem itemCustCoreBank = this.sortOperator_custCoreBank.getSelectedItem();
+			final Listitem itemCustCoreBank = this.sortOperator_custDob.getSelectedItem();
 			if (itemCustCoreBank != null) {
 				final int searchOpId = ((SearchOperators) itemCustCoreBank.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custCoreBank", "%" + this.custCoreBank.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(new Filter("CustDOB", "%" + this.custDob.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					searchObject.addFilter(new Filter("custCoreBank", this.custCoreBank.getValue(), searchOpId));
+					searchObject.addFilter(new Filter("CustDOB", this.custDob.getValue(), searchOpId));
 				}
 			}
 		}
-
-		if (StringUtils.isNotEmpty(this.custCtgCode.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustCtgCode = this.sortOperator_custCtgCode.getSelectedItem();
-			if (itemCustCtgCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustCtgCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custCtgCode", "%" + this.custCtgCode.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custCtgCode", this.custCtgCode.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custTypeCode.getValue())) {
+		
+		if (StringUtils.isNotEmpty(this.custName.getValue())) {
 
 			// get the search operator
-			final Listitem itemCustTypeCode = this.sortOperator_custTypeCode.getSelectedItem();
-			if (itemCustTypeCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustTypeCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custTypeCode", "%" + this.custTypeCode.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custTypeCode", this.custTypeCode.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custSalutationCode.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustSalutationCode = this.sortOperator_custSalutationCode.getSelectedItem();
-			if (itemCustSalutationCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustSalutationCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custSalutationCode", "%" + this.custSalutationCode.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custSalutationCode", this.custSalutationCode.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custFName.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustFName = this.sortOperator_custFName.getSelectedItem();
-			if (itemCustFName != null) {
-				final int searchOpId = ((SearchOperators) itemCustFName.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custFName", "%" + this.custFName.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custFName", this.custFName.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custMName.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustMName = this.sortOperator_custMName.getSelectedItem();
-			if (itemCustMName != null) {
-				final int searchOpId = ((SearchOperators) itemCustMName.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custMName", "%" + this.custMName.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custMName", this.custMName.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custLName.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustLName = this.sortOperator_custLName.getSelectedItem();
-			if (itemCustLName != null) {
-				final int searchOpId = ((SearchOperators) itemCustLName.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custLName", "%" + this.custLName.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custLName", this.custLName.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custShrtName.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustShrtName = this.sortOperator_custShrtName.getSelectedItem();
-			if (itemCustShrtName != null) {
-				final int searchOpId = ((SearchOperators) itemCustShrtName.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custShrtName", "%" + this.custShrtName.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("custShrtName", this.custShrtName.getValue(), searchOpId));
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(this.custDftBranch.getValue())) {
-
-			// get the search operator
-			final Listitem itemCustDftBranch = this.sortOperator_custDftBranch.getSelectedItem();
+			final Listitem itemCustDftBranch = this.sortOperator_custName.getSelectedItem();
 			if (itemCustDftBranch != null) {
 				final int searchOpId = ((SearchOperators) itemCustDftBranch.getAttribute("data")).getSearchOperatorId();
 
 				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("custDftBranch", "%" + this.custDftBranch.getValue().toUpperCase() + "%", searchOpId));
+					searchObject.addFilter(new Filter("CustFName", "%" + this.custName.getValue().toUpperCase() + "%", searchOpId));
 				} else if (searchOpId == -1) {
 					// do nothing
 				} else {
-					searchObject.addFilter(new Filter("custDftBranch", this.custDftBranch.getValue(), searchOpId));
+					searchObject.addFilter(new Filter("CustFName", this.custName.getValue(), searchOpId));
 				}
 			}
 		}
+
+		if (StringUtils.isNotEmpty(this.custMobile.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustCtgCode = this.sortOperator_custMobile.getSelectedItem();
+			if (itemCustCtgCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustCtgCode.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("PhoneNumber", "%" + this.custMobile.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("PhoneNumber", this.custMobile.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custEid.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustTypeCode = this.sortOperator_custEID.getSelectedItem();
+			if (itemCustTypeCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustTypeCode.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustCRCPR", "%" + this.custEid.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustCRCPR", this.custEid.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custPassport.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustSalutationCode = this.sortOperator_custPassport.getSelectedItem();
+			if (itemCustSalutationCode != null) {
+				final int searchOpId = ((SearchOperators) itemCustSalutationCode.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustPassportNo", "%" + this.custPassport.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustPassportNo", this.custPassport.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custType.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustFName = this.sortOperator_custType.getSelectedItem();
+			if (itemCustFName != null) {
+				final int searchOpId = ((SearchOperators) itemCustFName.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustTypeCode", "%" + this.custType.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustTypeCode", this.custType.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custNationality.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustMName = this.sortOperator_custNationality.getSelectedItem();
+			if (itemCustMName != null) {
+				final int searchOpId = ((SearchOperators) itemCustMName.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustNationality", "%" + this.custNationality.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustNationality", this.custNationality.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custSector.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustLName = this.sortOperator_custSector.getSelectedItem();
+			if (itemCustLName != null) {
+				final int searchOpId = ((SearchOperators) itemCustLName.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustSector", "%" + this.custSector.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustSector", this.custSector.getValue(), searchOpId));
+				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(this.custSubSector.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustShrtName = this.sortOperator_custSubSector.getSelectedItem();
+			if (itemCustShrtName != null) {
+				final int searchOpId = ((SearchOperators) itemCustShrtName.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == Filter.OP_LIKE) {
+					searchObject.addFilter(new Filter("CustSubSector", "%" + this.custSubSector.getValue().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == -1) {
+					// do nothing
+				} else {
+					searchObject.addFilter(new Filter("CustSubSector", this.custSubSector.getValue(), searchOpId));
+				}
+			}
+		}
+
 
 		// Default Sort on the table
 		searchObject.addSort("CustID", false);
@@ -617,22 +618,24 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 		if (this.searchObj!=null) {	
 			this.custCIF.setValue("");
 			this.sortOperator_custCIF.setSelectedIndex(0);
-			this.custCoreBank.setValue("");
-			this.sortOperator_custCoreBank.setSelectedIndex(0);
-			this.custCtgCode.setValue("");
-			this.sortOperator_custCtgCode.setSelectedIndex(0);
-			this.custTypeCode.setValue("");
-			this.sortOperator_custTypeCode.setSelectedIndex(0);
-			this.custSalutationCode.setValue("");
-			this.sortOperator_custSalutationCode.setSelectedIndex(0);
-			this.custFName.setValue("");
-			this.sortOperator_custFName.setSelectedIndex(0);
-			this.custMName.setValue("");
-			this.sortOperator_custMName.setSelectedIndex(0);
-			this.custLName.setValue("");
-			this.sortOperator_custLName.setSelectedIndex(0);
-			this.custDftBranch.setValue("");
-			this.sortOperator_custDftBranch.setSelectedIndex(0);
+			this.custDob.setValue("");
+			this.sortOperator_custDob.setSelectedIndex(0);
+			this.custName.setValue("");
+			this.sortOperator_custName.setSelectedIndex(0);
+			this.custMobile.setValue("");
+			this.sortOperator_custMobile.setSelectedIndex(0);
+			this.custEid.setValue("");
+			this.sortOperator_custEID.setSelectedIndex(0);
+			this.custPassport.setValue("");
+			this.sortOperator_custPassport.setSelectedIndex(0);
+			this.custType.setValue("");
+			this.sortOperator_custType.setSelectedIndex(0);
+			this.custNationality.setValue("");
+			this.sortOperator_custNationality.setSelectedIndex(0);
+			this.custSector.setValue("");
+			this.sortOperator_custSector.setSelectedIndex(0);
+			this.custSubSector.setValue("");
+			this.sortOperator_custSubSector.setSelectedIndex(0);
 			this.listBoxCustomer.getItems().clear();
 			this.searchObj.clearFilters();	
 			paging(getSearchObj());

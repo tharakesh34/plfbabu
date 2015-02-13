@@ -1125,7 +1125,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl implements Se
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
-			map.put("custShrtName", this.custCIF.getDescription());
+			map.put("custShrtName", this.custShrtName.getValue());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);

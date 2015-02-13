@@ -137,11 +137,19 @@
 													<label
 														id="label_TawarruqFinanceMainDialog_CustID"
 														value="${c:l('label_TawarruqFinanceMainDialog_CustID.value')}" />
-													<hbox>
-														<longbox 
-														      id="custID" width="171px" maxlength="26" visible="false" />
- 														<extendedcombobox 
- 														       id="custCIF" />
+																										<hbox>
+														<longbox
+															id="custID" width="171px" maxlength="26" visible="false" />
+														<hbox>
+															<uppercasebox
+																id="custCIF" width="150px" />
+															<button
+																id="btnSearchCustCIF"
+																tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
+																image="/images/icons/LOVSearch.png" />
+															<label
+																id="custShrtName" />
+														</hbox>
 														<button
 															id="viewCustInfo" image="/images/icons/more.png"
 															tooltiptext="${c:l('tooltip_Custinfo')}">

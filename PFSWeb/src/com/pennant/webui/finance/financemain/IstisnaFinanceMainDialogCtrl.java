@@ -114,6 +114,7 @@ import com.pennant.backend.model.rulefactory.AECommitment;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -166,7 +167,8 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	protected Label 		label_IstisnaFinanceMainDialog_StepPolicy; 		// autoWired
 	protected Label 		label_IstisnaFinanceMainDialog_numberOfSteps; 	// autoWired
 
-
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
 	//Finance Main Details Tab---> 1. Key Details
@@ -3809,7 +3811,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	/*
 	 * onFullFill Event For CustCIF
 	 */
-	public void onFulfill$custCIF(Event event){
+	/*public void onFulfill$custCIF(Event event){
 		logger.debug("Entering " + event.toString()); 
 
 		this.custCIF.setConstraint("");
@@ -3834,12 +3836,12 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 		//doFillCommonDetails();
 		logger.debug("Leaving " + event.toString());
-	}
+	}*/
 	
 	/**
 	 * Method for Reset Customer Data
 	 */
-	private void setCustomerData(){
+	/*private void setCustomerData(){
 		logger.debug("Entering");
 		
 		this.custID.setValue(customer.getCustID());
@@ -3928,7 +3930,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			setDiscrepancy(getFinanceDetail());
         }	
 		logger.debug("Leaving");
-	}
+	}*/
 	
 	/**
 	 * Method to prepare data required for scoring check
@@ -4285,7 +4287,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
-			map.put("custShrtName", this.custCIF.getDescription());
+			map.put("custShrtName", this.custShrtName.getValue());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);
@@ -4297,6 +4299,43 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 		}
+	}
+	
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		
+		this.custCIF.clearErrorMessage();
+		final Customer aCustomer = (Customer) nCustomer;
+		this.custCIF.setValue(aCustomer.getCustCIF());
+		this.custID.setValue(aCustomer.getCustID());
+		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		this.custCIFSearchObject = newSearchObject;
+		setCustomer(aCustomer);
+		
+		this.custCIFSearchObject = newSearchObject;
+		
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		logger.debug("Leaving");
 	}
 	
 	/** To pass Data For Agreement Child Windows
@@ -4407,5 +4446,13 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	public void setDisbursementDetailDialogCtrl(
 			DisbursementDetailDialogCtrl disbursementDetailDialogCtrl) {
 		this.disbursementDetailDialogCtrl = disbursementDetailDialogCtrl;
+	}
+	
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 }

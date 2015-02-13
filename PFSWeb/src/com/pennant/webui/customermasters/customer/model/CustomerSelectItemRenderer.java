@@ -67,14 +67,27 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 		Listcell lc;
 	  	lc = new Listcell(customer.getCustCIF());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustCoreBank());
-		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustCtgCode()+"-"+customer.getLovDescCustCtgCodeName());
-		lc.setParent(item);
 	  	lc = new Listcell(customer.getCustFName());
 		lc.setParent(item);
-		lc = new Listcell(customer.getCustLName());
+	  	lc = new Listcell(customer.getCustDOB().toString());
 		lc.setParent(item);
+	  	lc = new Listcell(customer.getPhoneNumber());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustCRCPR());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustPassportNo());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustTypeCode());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustNationality());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustIndustry());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustSector());
+		lc.setParent(item);
+	  	lc = new Listcell(customer.getCustSubSector());
+		lc.setParent(item);
+		
 		item.setAttribute("data", customer);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerItemDoubleClicked");
 	}

@@ -108,6 +108,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
 import com.pennant.backend.model.rulefactory.AECommitment;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -162,6 +163,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	//protected Label 		label_MurabahaFinanceMainDialog_CcyConversionRate; 	// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_StepPolicy; 		// autoWired
 	protected Label 		label_MurabahaFinanceMainDialog_numberOfSteps; 		// autoWired
+	
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	// old value variables for edit mode. that we can check if something 
 	// on the values are edited since the last initialization.
@@ -1642,10 +1645,6 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		if(!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()){
 			return true;
 		}
-		
-		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged()) {
-			return true;
-		}
 
 		logger.debug("Leaving");
 		return false;
@@ -2832,9 +2831,9 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	/*
 	 * onFullFill Event For CustCIF
 	 */
-	public void onFulfill$custCIF(Event event){
+	/*public void onFulfill$custCIF(Event event) throws SuspendNotAllowedException, InterruptedException{
 		logger.debug("Entering " + event.toString()); 
-
+		
 		this.custCIF.setConstraint("");
 		Object dataObject = custCIF.getObject();
 		
@@ -2857,7 +2856,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		//doFillCommonDetails();
 		logger.debug("Leaving " + event.toString());
-	}
+	}*/
 	
 	/**
 	 * when clicks on button "btnSearchCommitmentRef"
@@ -3385,17 +3384,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				}			
 				
 				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
-				planDeferSchdData = ScheduleCalculator.getPlanDeferPft(planDeferSchdData);
-				
-				FinanceMain planDefFinMain = planDeferSchdData.getFinanceMain();
-				
-				if (planDefFinMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(planDefFinMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
-				        && planDefFinMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
-				        && StringUtils.trimToEmpty(planDefFinMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
-					plannedDeferPft = planDefFinMain.getTotalGrossPft();
-				} else {
-					plannedDeferPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
-				}
+				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
 				
  			}
 			
@@ -3547,11 +3536,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	/**
 	 * Method for Reset Customer Data
 	 */
-	private void setCustomerData(){
+	/*private void setCustomerData(){
 		logger.debug("Entering");
 
 		this.custID.setValue(customer.getCustID());
-		this.custCIF.setValue(customer.getCustCIF(), customer.getCustShrtName());
+		this.custCIF.setValue(customer.getCustCIF());
+		this.custShrtName.setValue(customer.getCustShrtName());
 		this.disbAcctId.setCustCIF(customer.getCustCIF());
 		this.repayAcctId.setCustCIF(customer.getCustCIF());
 		this.downPayAccount.setCustCIF(customer.getCustCIF());
@@ -3635,7 +3625,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			setDiscrepancy(getFinanceDetail());
         }
 		logger.debug("Leaving");
-	}
+	}*/
 	
 
 	/**
@@ -3967,14 +3957,29 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	public void onChange$custCIF(Event event) throws InterruptedException{
+		logger.debug("Entering" + event.toString());
+		
+		this.custCIF.clearErrorMessage();
+		
+		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
 
+		if(customer == null) {	
+			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
+		} else {
+			doSetCustomer(customer, null);
+		}
 
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	public void onClick$viewCustInfo(Event event){
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
-			map.put("custShrtName", this.custCIF.getDescription());
+			map.put("custShrtName", this.custShrtName.getValue());
 			map.put("finFormatter", getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter());
 			map.put("finReference", this.finReference.getValue());
 			map.put("finance", true);
@@ -3986,6 +3991,43 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 		}
+	}
+	
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		
+		this.custCIF.clearErrorMessage();
+		final Customer aCustomer = (Customer) nCustomer;
+		this.custCIF.setValue(aCustomer.getCustCIF());
+		this.custID.setValue(aCustomer.getCustID());
+		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		this.custCIFSearchObject = newSearchObject;
+		setCustomer(aCustomer);
+		
+		this.custCIFSearchObject = newSearchObject;
+		
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * When user clicks on button "customerId Search" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doSearchCustomerCIF();
+		logger.debug("Leaving " + event.toString());
+	}
+	
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul",null, map);
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -4107,5 +4149,13 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		return null;
  	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
 }

@@ -64,82 +64,82 @@
 									<textbox id="custCIF" width="150px"
 										maxlength="12" />
 									<label
-										id="label_CustomerSearch_CustCoreBank"
-										value="${c:l('label_CustomerSearch_CustCoreBank.value')}" />
+										id="label_CustomerSearch_CustDOB"
+										value="${c:l('label_CustomerSearch_CustDOB.value')}" />
 									<listbox
-										id="sortOperator_custCoreBank" width="43px" mold="select"
+										id="sortOperator_custDob" width="43px" mold="select"
 										rows="1" />
-									<textbox id="custCoreBank"
-										width="150px" maxlength="50" />
+									<textbox id="custDob"
+										width="150px" maxlength="30" />
 								</row>
 								<row>
 									<label
-										id="label_CustomerSearch_CustCtgCode"
-										value="${c:l('label_CustomerSearch_CustCtgCode.value')}" />
+										id="label_CustomerSearch_CustName"
+										value="${c:l('label_CustomerSearch_CustName.value')}" />
 									<listbox
-										id="sortOperator_custCtgCode" width="43px" mold="select"
+										id="sortOperator_custName" width="43px" mold="select"
 										rows="1" />
-									<textbox id="custCtgCode"
-										width="150px" maxlength="8" />
+									<textbox id="custName"
+										width="150px" maxlength="25" />
 									<label
-										id="label_CustomerSearch_CustTypeCode"
-										value="${c:l('label_CustomerSearch_CustTypeCode.value')}" />
+										id="label_CustomerSearch_CustMobile"
+										value="${c:l('label_CustomerSearch_CustMobile.value')}" />
 									<listbox
-										id="sortOperator_custTypeCode" width="43px" mold="select"
+										id="sortOperator_custMobile" width="43px" mold="select"
 										rows="1" />
-									<textbox id="custTypeCode"
-										width="150px" maxlength="8" />
+									<textbox id="custMobile"
+										width="150px" maxlength="15" />
 								</row>
 								<row>
 									<label
-										id="label_CustomerSearch_CustDftBranch"
-										value="${c:l('label_CustomerSearch_CustDftBranch.value')}" />
+										id="label_CustomerSearch_CustEID"
+										value="${c:l('label_CustomerSearch_CustEID.value')}" />
 									<listbox
-										id="sortOperator_custDftBranch" width="43px" mold="select"
+										id="sortOperator_custEID" width="43px" mold="select"
 										rows="1" />
-									<textbox id="custDftBranch"
-										width="150px" maxlength="8" />
+									<textbox id="custEid"
+										width="150px" maxlength="20" />
 									<label
-										id="label_CustomerSearch_CustSalutationCode"
-										value="${c:l('label_CustomerSearch_CustSalutationCode.value')}" />
+										id="label_CustomerSearch_CustPassport"
+										value="${c:l('label_CustomerSearch_CustPassport.value')}" />
 									<listbox
-										id="sortOperator_custSalutationCode" width="43px"
+										id="sortOperator_custPassport" width="43px"
 										mold="select" rows="1" />
-									<textbox id="custSalutationCode"
+									<textbox id="custPassport"
+										width="150px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_CustomerSearch_CustType"
+										value="${c:l('label_CustomerSearch_CustType.value')}" />
+									<listbox id="sortOperator_custType"
+										width="43px" mold="select" rows="1" />
+									<textbox id="custType"
 										width="150px" maxlength="8" />
+									<label
+										id="label_CustomerSearch_CustNationality"
+										value="${c:l('label_CustomerSearch_CustNationality.value')}" />
+									<listbox id="sortOperator_custNationality"
+										width="43px" mold="select" rows="1" />
+									<textbox id="custNationality"
+										width="150px" maxlength="2" />
 								</row>
 								<row>
 									<label
-										id="label_CustomerSearch_CustFName"
-										value="${c:l('label_CustomerSearch_CustFName.value')}" />
-									<listbox id="sortOperator_custFName"
+										id="label_CustomerSearch_CustSector"
+										value="${c:l('label_CustomerSearch_CustSector.value')}" />
+									<listbox id="sortOperator_custSector"
 										width="43px" mold="select" rows="1" />
-									<textbox id="custFName"
-										width="150px" maxlength="50" />
+									<textbox id="custSector"
+										width="150px" maxlength="8" />
 									<label
-										id="label_CustomerSearch_CustMName"
-										value="${c:l('label_CustomerSearch_CustMName.value')}" />
-									<listbox id="sortOperator_custMName"
-										width="43px" mold="select" rows="1" />
-									<textbox id="custMName"
-										width="150px" maxlength="50" />
-								</row>
-								<row>
-									<label
-										id="label_CustomerSearch_CustLName"
-										value="${c:l('label_CustomerSearch_CustLName.value')}" />
-									<listbox id="sortOperator_custLName"
-										width="43px" mold="select" rows="1" />
-									<textbox id="custLName"
-										width="150px" maxlength="50" />
-									<label
-										id="label_CustomerSearch_CustShrtName"
-										value="${c:l('label_CustomerSearch_CustShrtName.value')}" />
+										id="label_CustomerSearch_CustSubSector"
+										value="${c:l('label_CustomerSearch_CustSubSector.value')}" />
 									<listbox
-										id="sortOperator_custShrtName" width="43px" mold="select"
+										id="sortOperator_custSubSector" width="43px" mold="select"
 										rows="1" />
-									<textbox id="custShrtName"
-										width="150px" maxlength="50" />
+									<textbox id="custSubSector"
+										width="150px" maxlength="8" />
 								</row>
 							</rows>
 						</grid>
@@ -159,26 +159,58 @@
 							 />
 					</toolbar>
 					<listbox id="listBoxCustomer" vflex="true"
+					style="overflow:auto"
 						tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%"
 						height="100%" multiple="false" span="true" sizedByContent="true">
 						<listhead sizable="true">
 							<listheader id="listheader_CustCIF"
 								label="${c:l('listheader_CustCIF.label')}" sort="false"
 								hflex="min" />
+							<listheader id="listheader_CustName"
+								label="${c:l('listheader_CustName.label')}" sort="false"
+								hflex="min" />	
+							<listheader id="listheader_CustDob"
+								label="${c:l('listheader_CustDOB.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustMobile"
+								label="${c:l('listheader_CustMobile.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustEid"
+								label="${c:l('listheader_CustEid.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustPassportNo"
+								label="${c:l('listheader_CustPassportNo.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustType"
+								label="${c:l('listheader_CustType.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustNationality"
+								label="${c:l('listheader_CustNationality.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustIndustry"
+								label="${c:l('listheader_CustIndustry.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustSector"
+								label="${c:l('listheader_CustSector.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_CustSubSector"
+								label="${c:l('listheader_CustSubSector.label')}" sort="false"
+								hflex="min" />
+								
 							<listheader id="listheader_CustCoreBank"
 								label="${c:l('listheader_CustCoreBank.label')}" sort="false"
-								hflex="min" />
+								hflex="min" visible="false"/>
 							<listheader id="listheader_CustCtgCode"
 								label="${c:l('listheader_CustCtgCode.label')}" sort="false"
-								hflex="min" />
+								hflex="min" visible="false"/>
 							<listheader
 								id="listheader_CustomerSearch_CustFName"
 								label="${c:l('label_CustomerSearch_CustFName.value')}"
-								sort="false" hflex="min" />
+								sort="false" hflex="min" visible="false"/>
 							<listheader
 								id="listheader_CustomerSearch_CustLName"
 								label="${c:l('label_CustomerSearch_CustLName.value')}"
-								sort="false" hflex="min" />
+								sort="false" hflex="min" visible="false"/>
 						</listhead>
 					</listbox>
 				</vlayout>

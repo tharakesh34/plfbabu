@@ -19,19 +19,41 @@
 						<column />
 					</columns>
 					<rows>
-						<row id="finTypeRow" visible="true">
-							<label
-								id="label_FinanceMainQDEDialog_FinType"
-								value="${c:l('label_FinanceMainQDEDialog_FinType.value')}" />
-								<extendedcombobox id="finType"/>
-						</row>
-						<row id="wIfReferenceRow" visible="true">
-							<label
-								id="label_FinanceMainQDEDialog_WIFFinaceRef"
-								value="${c:l('label_FinanceMainQDEDialog_WIFFinaceRef.value')}" />
-								<extendedcombobox id="wIfFinaceRef"/>
-						</row>
-						<row visible="true">
+					<row>
+					<label id="label_FinanceMainQDEDialog_CustCIF"
+							value="${c:l('label_FinanceMainQDEDialog_CustCIF.value')}" />
+						<radiogroup>
+							<radio id="newCust"
+								label="${c:l('label_CustomerDialog_NewCust.value')}"
+								selected="true">
+							</radio>
+							<radio id="exeCust"
+								label="${c:l('label_CustomerDialog_ExeCust.value')}">
+							</radio>
+						</radiogroup>
+					</row>
+					<row id="finTypeRow" visible="true">
+						<label id="label_FinanceMainQDEDialog_FinType"
+							value="${c:l('label_FinanceMainQDEDialog_FinType.value')}" />
+						<extendedcombobox id="finType" />
+					</row>
+					<row id="promotionCodeRow" visible="true">
+						<label id="label_FinanceMainQDEDialog_PromoCode"
+							value="${c:l('label_FinanceMainQDEDialog_PromoCode.value')}" />
+						<extendedcombobox id="promoCode" />
+					</row>
+					<row visible="true">
+						<label />
+						<label value="OR" />
+					</row>
+
+					<row id="wIfReferenceRow" visible="true">
+						<label
+							id="label_FinanceMainQDEDialog_WIFFinaceRef"
+							value="${c:l('label_FinanceMainQDEDialog_WIFFinaceRef.value')}" />
+						<extendedcombobox id="wIfFinaceRef" />
+					</row>
+					<row visible="true">
 							<space spacing="200px" />
 							<hbox>
 								<space spacing="2px" />
