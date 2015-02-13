@@ -43,10 +43,13 @@
 
 package com.pennant.backend.model.lmtmasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -104,6 +107,19 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String dealerPhone;
 	private Date purchaseDate;
 	
+	private boolean thirdPartyReg=false;
+	private String thirdPartyName;
+	private String passportNum;
+	private String thirdPartyNat;
+	private String emiratesRegNum;
+	private String dealerOrSellerAcc;
+	private String sellerType;
+	private String vehicleItemNum;
+	private BigDecimal vehicleValue=BigDecimal.ZERO;
+	
+	
+	
+
 	private String recordStatus;
 	private String roleCode="";
 	private String nextRoleCode= "";
@@ -541,5 +557,79 @@ public class CarLoanDetail implements java.io.Serializable {
 	public String getLovDescCarDealerFax() {
 	    return lovDescCarDealerFax;
     }
+	public boolean isThirdPartyReg() {
+		return thirdPartyReg;
+	}
+
+	public void setThirdPartyReg(boolean thirdPartyReg) {
+		this.thirdPartyReg = thirdPartyReg;
+	}
+
+	public String getThirdPartyName() {
+		return thirdPartyName;
+	}
+
+	public void setThirdPartyName(String thirdPartyName) {
+		this.thirdPartyName = thirdPartyName;
+	}
+
+	public String getPassportNum() {
+		return passportNum;
+	}
+
+	public void setPassportNum(String passportNum) {
+		this.passportNum = passportNum;
+	}
+
+	public String getThirdPartyNat() {
+		return thirdPartyNat;
+	}
+
+	public void setThirdPartyNat(String thirdPartyNat) {
+		this.thirdPartyNat = thirdPartyNat;
+	}
+
+	
+
+	public String getDealerOrSellerAcc() {
+		return dealerOrSellerAcc;
+	}
+
+	public void setDealerOrSellerAcc(String dealerOrSellerAcc) {
+		this.dealerOrSellerAcc = dealerOrSellerAcc;
+	}
+
+	public String getSellerType() {
+		return sellerType;
+	}
+
+	public void setSellerType(String sellerType) {
+		this.sellerType = sellerType;
+	}
+
+	public String getVehicleItemNum() {
+		return vehicleItemNum;
+	}
+
+	public void setVehicleItemNum(String vehicleItemNum) {
+		this.vehicleItemNum = vehicleItemNum;
+	}
+
+	public BigDecimal getVehicleValue() {
+		return vehicleValue;
+	}
+
+	public void setVehicleValue(BigDecimal vehicleValue) {
+		this.vehicleValue = vehicleValue;
+	}
+
+	public String getEmiratesRegNum() {
+	    return emiratesRegNum;
+    }
+
+	public void setEmiratesRegNum(String emiratesRegNum) {
+	    this.emiratesRegNum = emiratesRegNum;
+    }
+
 	
 }

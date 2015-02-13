@@ -65,6 +65,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> mortSatus;
 	private static ArrayList<ValueLabel> insurenceType;
 	private static ArrayList<ValueLabel> paymentMode;
+	private static ArrayList<ValueLabel> sellerTypeList;
 	private static ArrayList<ValueLabel> approveStatus;
 	private static ArrayList<ValueLabel> cmtMovementTypes;
 	private static ArrayList<ValueLabel> aggDetails;
@@ -825,12 +826,20 @@ public class PennantStaticListUtil {
 
 		if(paymentMode == null){
 			paymentMode = new ArrayList<ValueLabel>(4);
-			paymentMode.add(new ValueLabel("Cash", "Cash"));
-			paymentMode.add(new ValueLabel("DD","Demand Draft"));
-			paymentMode.add(new ValueLabel("Check","Cheque")); 
-			paymentMode.add(new ValueLabel("Account","Account"));
+			paymentMode.add(new ValueLabel("AHB Account",Labels.getLabel("label_AHBAccount")));
+			paymentMode.add(new ValueLabel("FTS",Labels.getLabel("label_FTS")));
+			paymentMode.add(new ValueLabel("Pay Order",Labels.getLabel("label_PayOrder")));
+	
 		}
 		return paymentMode;
+	}
+	public static List<ValueLabel>getSellerTypeList() {
+		if(sellerTypeList == null){
+			sellerTypeList = new ArrayList<ValueLabel>(4);
+			sellerTypeList.add(new ValueLabel("Dealer",Labels.getLabel("label_Dealer")));
+			sellerTypeList.add(new ValueLabel("Private",Labels.getLabel("label_Private")));
+		}
+		return sellerTypeList;
 	}
 
 	public static List<ValueLabel> getApproveStatus() {
