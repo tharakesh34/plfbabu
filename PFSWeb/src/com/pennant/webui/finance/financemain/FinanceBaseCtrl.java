@@ -2620,11 +2620,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				fillFrqDay(this.cbGracePftFrqDay, finType.getFinGrcDftIntFrq(), 
 						checked ? isReadOnly("WIFFinanceMainDialog_gracePftFrq"):true);			
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
-
+				if(this.finStartDate.getValue() == null){
+					this.finStartDate.setValue(appStartDate);
+				}
 				if(this.allowGrace.isChecked()){
-					if(this.finStartDate.getValue() == null){
-						this.finStartDate.setValue(appStartDate);
-					}
 					this.nextGrcPftDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftFrq.getValue(),1,
 							this.finStartDate.getValue(),"A",false).getNextFrequencyDate());
 

@@ -2156,11 +2156,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			try {
 				if (!this.gracePeriod.isDisabled()) {
-					if (isValidComboValue(this.cbfinGrcDftIntFrqCode, Labels.getLabel("label_cbfinGrcDftIntFrqCode.value"))) {
+					if (isValidComboValue(this.cbfinGrcDftIntFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcDftIntFrqCode.value"))) {
 
-						if (isValidComboValue(this.cbfinGrcDftIntFrqMth, Labels.getLabel("label_cbfinGrcDftIntFrqMth.value"))) {
+						if (isValidComboValue(this.cbfinGrcDftIntFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcDftIntFrqMth.value"))) {
 
-							if (isValidComboValue(this.cbfinGrcDftIntFrqDays, Labels.getLabel("label_cbfinGrcDftIntFrqDays.value"))) {
+							if (isValidComboValue(this.cbfinGrcDftIntFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcDftIntFrqDays.value"))) {
 
 								aFinanceType.setFinGrcDftIntFrq(this.finGrcDftIntFrq.getValue() == null ? "" : 
 									this.finGrcDftIntFrq.getValue());
@@ -2173,11 +2173,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			try{
 				if(this.finGrcIsIntCpz.isChecked()){
-					if (isValidComboValue(this.cbfinGrcCpzFrqCode, Labels.getLabel("label_cbfinGrcCpzFrqCode.value"))) {
+					if (isValidComboValue(this.cbfinGrcCpzFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcCpzFrqCode.value"))) {
 
-						if (isValidComboValue(this.cbfinGrcCpzFrqMth, Labels.getLabel("label_cbfinGrcCpzFrqMth.value"))) {
+						if (isValidComboValue(this.cbfinGrcCpzFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcCpzFrqMth.value"))) {
 
-							if (isValidComboValue(this.cbfinGrcCpzFrqDays, Labels.getLabel("label_cbfinGrcCpzFrqDays.value"))) {
+							if (isValidComboValue(this.cbfinGrcCpzFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinGrcCpzFrqDays.value"))) {
 
 								aFinanceType.setFinGrcCpzFrq(this.finGrcCpzFrq.getValue() == null ? "" : 
 									this.finGrcCpzFrq.getValue());
@@ -2190,11 +2190,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			try{
 				if(this.finGrcIsRvwAlw.isChecked()){
-					if (isValidComboValue(this.cbfinGrcRvwFrqCode, Labels.getLabel("label_CbfinGrcRvwFrqCode.value"))) {
+					if (isValidComboValue(this.cbfinGrcRvwFrqCode, Labels.getLabel("label_FinanceTypeDialog_CbfinGrcRvwFrqCode.value"))) {
 
-						if (isValidComboValue(this.cbfinGrcRvwFrqMth, Labels.getLabel("label_CbfinGrcRvwFrqMth.value"))) {
+						if (isValidComboValue(this.cbfinGrcRvwFrqMth, Labels.getLabel("label_FinanceTypeDialog_CbfinGrcRvwFrqMth.value"))) {
 
-							if (isValidComboValue(this.cbfinGrcRvwFrqDays, Labels.getLabel("label_CfinGrcRvwFrqDay.value"))) {
+							if (isValidComboValue(this.cbfinGrcRvwFrqDays, Labels.getLabel("label_FinanceTypeDialog_CfinGrcRvwFrqDay.value"))) {
 
 								aFinanceType.setFinGrcCpzFrq(this.finGrcRvwFrq.getValue() == null ? "" : 
 									this.finGrcRvwFrq.getValue());
@@ -2518,11 +2518,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try{
-				if (isValidComboValue(this.cbfinDftIntFrqCode, Labels.getLabel("label_cbfinDftIntFrqCode.value"))) {
+				if (isValidComboValue(this.cbfinDftIntFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinDftIntFrqCode.value"))) {
 
-					if (isValidComboValue(this.cbfinDftIntFrqMth, Labels.getLabel("label_cbfinDftIntFrqMth.value"))) {
+					if (isValidComboValue(this.cbfinDftIntFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinDftIntFrqMth.value"))) {
 
-						if (isValidComboValue(this.cbfinDftIntFrqDays, Labels.getLabel("label_cbfinDftIntFrqDays.value"))) {
+						if (isValidComboValue(this.cbfinDftIntFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinDftIntFrqDays.value"))) {
 
 							aFinanceType.setFinGrcCpzFrq(this.finDftIntFrq.getValue() == null ? "" : 
 								this.finDftIntFrq.getValue());
@@ -2533,11 +2533,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			wve.add(we);
 		}
 		try{
-			if (isValidComboValue(this.cbfinRpyFrqCode, Labels.getLabel("label_cbfinRpyFrqCode.value"))) {
+			if (isValidComboValue(this.cbfinRpyFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinRpyFrqCode.value"))) {
 
-				if (isValidComboValue(this.cbfinRpyFrqMth, Labels.getLabel("label_cbfinRpyFrqMth.value"))) {
+				if (isValidComboValue(this.cbfinRpyFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinRpyFrqMth.value"))) {
 
-					if (isValidComboValue(this.cbfinRpyFrqDays, Labels.getLabel("label_cbfinRpyFrqDays.value"))) {
+					if (isValidComboValue(this.cbfinRpyFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinRpyFrqDays.value"))) {
 
 						aFinanceType.setFinGrcCpzFrq(this.finRpyFrq.getValue() == null ? "" : 
 							this.finRpyFrq.getValue());
@@ -2551,11 +2551,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		try{
 			if(finIsIntCpz.isChecked()){
 
-				if (isValidComboValue(this.cbfinCpzFrqCode, Labels.getLabel("label_cbfinCpzFrqCode.value"))) {
+				if (isValidComboValue(this.cbfinCpzFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinCpzFrqCode.value"))) {
 
-					if (isValidComboValue(this.cbfinCpzFrqMth, Labels.getLabel("label_cbfinCpzFrqMth.value"))) {
+					if (isValidComboValue(this.cbfinCpzFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinCpzFrqMth.value"))) {
 
-						if (isValidComboValue(this.cbfinCpzFrqDays, Labels.getLabel("label_cbfinCpzFrqDays.value"))) {
+						if (isValidComboValue(this.cbfinCpzFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinCpzFrqDays.value"))) {
 
 							aFinanceType.setFinGrcCpzFrq(this.finCpzFrq.getValue() == null ? "" : 
 								this.finCpzFrq.getValue());
@@ -2570,11 +2570,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		try{
 			if(finIsRvwAlw.isChecked()){
 
-				if (isValidComboValue(this.cbfinRvwFrqCode, Labels.getLabel("label_cbfinRvwFrqCode.value"))) {
+				if (isValidComboValue(this.cbfinRvwFrqCode, Labels.getLabel("label_FinanceTypeDialog_cbfinRvwFrqCode.value"))) {
 
-					if (isValidComboValue(this.cbfinRvwFrqMth, Labels.getLabel("label_cbfinRvwFrqMth.value"))) {
+					if (isValidComboValue(this.cbfinRvwFrqMth, Labels.getLabel("label_FinanceTypeDialog_cbfinRvwFrqMth.value"))) {
 
-						if (isValidComboValue(this.cbfinRvwFrqDays, Labels.getLabel("label_cbfinRvwFrqDays.value"))) {
+						if (isValidComboValue(this.cbfinRvwFrqDays, Labels.getLabel("label_FinanceTypeDialog_cbfinRvwFrqDays.value"))) {
 
 							aFinanceType.setFinGrcCpzFrq(this.finRvwFrq.getValue() == null ? "" : 
 								this.finRvwFrq.getValue());

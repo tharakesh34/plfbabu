@@ -559,6 +559,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -2854,7 +2855,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			doWriteBeanToComponents(afinanceDetail,true);
 			if(afinanceDetail.getFinScheduleData().getFinanceMain().isNew()){
 				changeFrequencies();
-				this.finReference.focus();
 			}
 			doCheckElgRequired();
 			
@@ -3994,7 +3994,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			
 			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_MaturityDate.value"),true));
 		}
-
+		if(!this.finStartDate.isReadonly()){
+			this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value"), true,startDate,endDate,false));
+			}
 		logger.debug("Leaving");
 	}
 
@@ -5557,7 +5559,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				fillFrqDay(this.cbGracePftFrqDay, this.repayFrq.getValue(), 
 						checked ? isReadOnly("WIFFinanceMainDialog_gracePftFrq"):true);			
 				this.gracePftFrq.setValue(this.repayFrq.getValue());
-
+				if(finStartDate.getValue()== null){
+					this.finStartDate.setValue(appStartDate);
+				}
 				if(this.allowGrace.isChecked()){
 					
 					//TODO --  modify if grace profit Frequency need to visible-- gracePftFrq
@@ -5752,7 +5756,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		if(this.finStartDate.getValue() != null){
 			
 			changeFrequencies();
-			this.finReference.setFocus(true);
 			
 			Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
 			if(this.finStartDate.getValue().compareTo(curBussDate) > 0 ){
@@ -5820,6 +5823,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			changeAutoFrequency(this.depreciationFrq,  this.cbDepreciationFrqCode, this.cbDepreciationFrqMth, 
 					this.cbDepreciationFrqDay,  isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 		}*/
+		if(this.finStartDate.getValue() == null){
+			this.finStartDate.setValue(appStartDate);
+		}
 		if(!StringUtils.trimToEmpty(this.gracePftFrq.getValue()).equals("")){
 			changeAutoFrequency(this.gracePftFrq, this.cbGracePftFrqCode, this.cbGracePftFrqMth,
 					this.cbGracePftFrqDay, isReadOnly("WIFFinanceMainDialog_gracePftFrq"));

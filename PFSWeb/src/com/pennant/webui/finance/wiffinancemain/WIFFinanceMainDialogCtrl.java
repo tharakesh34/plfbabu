@@ -470,7 +470,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	private List<ValueLabel> profitDaysBasisList = PennantAppUtil.getProfitDaysBasis();
 	private List<ValueLabel> schMethodList = PennantAppUtil.getScheduleMethod();
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-	
+	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
+	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	/**
 	 * default constructor.<br>
 	 */
@@ -2318,7 +2320,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			doWriteBeanToComponents(afinanceDetail,true);
 			if(afinanceDetail.getFinScheduleData().getFinanceMain().isNew()){
 				changeFrequencies();
-				this.finReference.focus();
 			}
 			
 			if(isEnquiry){
@@ -3399,7 +3400,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			
 			this.maturityDate_two.setConstraint(new PTDateValidator(Labels.getLabel("label_WIFFinanceMainDialog_MaturityDate.value"),true));
 		}
-
+		if(!this.finStartDate.isReadonly()){
+			this.finStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MurabahaFinanceMainDialog_FinStartDate.value"), true,startDate,endDate,false));
+			}
 		logger.debug("Leaving");
 	}
 
@@ -4868,7 +4871,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 				fillFrqDay(this.cbGracePftFrqDay, finType.getFinGrcDftIntFrq(), 
 						checked ? isReadOnly("WIFFinanceMainDialog_gracePftFrq"):true);			
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
-
+				if(finStartDate.getValue()== null){
+					this.finStartDate.setValue(appStartDate);
+				}
 				if(this.allowGrace.isChecked()){
 					this.nextGrcPftDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftFrq.getValue(),1,
 							this.finStartDate.getValue(),"A",false).getNextFrequencyDate());
@@ -5040,7 +5045,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	public void onChange$finStartDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		changeFrequencies();
-		this.finReference.setFocus(true);
+		/*this.finReference.setFocus(true);*/
 		
 		//Fee charge Calculations
 		boolean isFeesModified = false;
@@ -5091,6 +5096,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 	
 	private void changeFrequencies(){
 		logger.debug("Entering");
+		if(finStartDate.getValue()== null){
+			this.finStartDate.setValue(appStartDate);
+		}
 		if(!StringUtils.trimToEmpty(this.depreciationFrq.getValue()).equals("")){
 			changeAutoFrequency(this.depreciationFrq,  this.cbDepreciationFrqCode, this.cbDepreciationFrqMth, 
 					this.cbDepreciationFrqDay,  isReadOnly("WIFFinanceMainDialog_depreciationFrq"));

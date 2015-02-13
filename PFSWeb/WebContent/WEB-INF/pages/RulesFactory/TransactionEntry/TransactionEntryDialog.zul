@@ -8,121 +8,101 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-<style>
-      .CodeMirror-line-numbers {
-        width: 2.2em;
-        color: #aaa;
-        background-color: #eee;
-        text-align: right;
-        padding-right: .3em;   
-        font-size: 10pt;
-        font-family: monospace;
-        padding-top: .4em;
-        line-height: normal;
-      }
-    </style>
-    
-	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
- 	<script type="text/javascript">
-	<![CDATA[     
-	function addStringContent(strContent) {				
- 			zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
-	}	
-	function validateJs(btn) {
-		try{	
-		var code;	
-  		jslint_options = {//json object
-							'passfail':false,	// Stop on first error
-							'white':false,		// Strict whitespace (enabled in "good parts")
-							'browser':false,	// Assume a browser
-							'devel':false,		// Assume console, alert,...
-							'widget':false,		// Assume Yahoo widget
-							'windows':false,	// Assume Windows
-							'rhino':false,		// Assume Rhino
-							'safe':false,		// Safe Subset
-							'adsafe':false,		// ADsafe					 
-							'debug':false,		// Tolerate debugger statements
-							'evil':false,		// Tolerate eval() statements
-							'laxbreak':false,	// Tolerate sloppy linebreaking
-							'forin':false,		// Tolerate unfiltered for in
-							'sub':false,		// Tolerate inefficient subscripting
-							'css':false,		// Tolerate CSS workarounds
-							'cap':false,		// Tolerate HTML case
-							'on':false,		    // Tolerate HTML event handlers
-							'fragment':false,	// Tolerate HTML fragments
-							'es5':false,		// Tolerate ES5 syntax					 
-							'onevar':false,		// Allow one var statement per function (enabled in "good parts")
-							'undef':false,		// Disallow undefined variables (enabled in "good parts")
-							'nomen':true,		// Disallow dangling _ in identifiers (enabled in "good parts")
-							'eqeqeq':false,		// Disallow == and != (enabled in "good parts")
-							'plusplus':true,	// Disallow ++ and -- (enabled in "good parts")
-							'bitwise':true,		// Disallow bitwise operators (enabled in "good parts")
-							'regexp':true,		// Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts")
-							'newcap':true,		// Require Initial Caps for constructors (enabled in "good parts")
-							'immed':true,		// Require parens around immediate invocations (enabled in "good parts")
-							'strict':false,		// Require "use strict";
-							'maxerr':10, 
-							'indent':4
-						};
-  		code=zk.Widget.$(jq('$amountRule'))._editor.getCode();  
-  		msgWidget = zk.Widget.$(jq('$btnValidate'));
-  		simWidget = zk.Widget.$(jq('$btnSimulate'));
-  		savWidget = zk.Widget.$(jq('$btnValidateSave'));
-  		
-  		if(code != ""){  			
-  					JSLINT(code, jslint_options); 			
-  					var data=[JSLINT.errors,JSLINT.data().implieds]; 
-  					if(btn==1){
-  					zAu.send(new zk.Event(msgWidget, 'onUser',data));  					
-  					}
-  					if(btn==2){
-  							zAu.send(new zk.Event(simWidget, 'onUser',data));  		
-  					}
-  		}			
-  					if(btn==3){
-  					
-  							zAu.send(new zk.Event(savWidget, 'onUser',data));  		
-  					}
-  		
-		}catch(err){
-			alert("Error on The Page"+err);
-		}
-	}
-	]]>
+	<style>
+		.CodeMirror-line-numbers { width: 2.2em; color: #aaa;
+		background-color: #eee; text-align: right; padding-right: .3em;
+		font-size: 10pt; font-family: monospace; padding-top: .4em;
+		line-height: normal; }
+	</style>
+
+	<script type="text/javascript" src="/ptjs/fulljslint.js" />
+	<script type="text/javascript">
+		
+		<![CDATA[ function addStringContent(strContent) {
+		zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
+		} function validateJs(btn) { try{ var code; jslint_options =
+		{//json object 'passfail':false, // Stop on first error
+		'white':false, // Strict whitespace (enabled in "good parts")
+		'browser':false, // Assume a browser 'devel':false, // Assume
+		console, alert,... 'widget':false, // Assume Yahoo widget
+		'windows':false, // Assume Windows 'rhino':false, // Assume
+		Rhino 'safe':false, // Safe Subset 'adsafe':false, // ADsafe
+		'debug':false, // Tolerate debugger statements 'evil':false, //
+		Tolerate eval() statements 'laxbreak':false, // Tolerate sloppy
+		linebreaking 'forin':false, // Tolerate unfiltered for in
+		'sub':false, // Tolerate inefficient subscripting 'css':false,
+		// Tolerate CSS workarounds 'cap':false, // Tolerate HTML case
+		'on':false, // Tolerate HTML event handlers 'fragment':false, //
+		Tolerate HTML fragments 'es5':false, // Tolerate ES5 syntax
+		'onevar':false, // Allow one var statement per function (enabled
+		in "good parts") 'undef':false, // Disallow undefined variables
+		(enabled in "good parts") 'nomen':true, // Disallow dangling _
+		in identifiers (enabled in "good parts") 'eqeqeq':false, //
+		Disallow == and != (enabled in "good parts") 'plusplus':true, //
+		Disallow ++ and -- (enabled in "good parts") 'bitwise':true, //
+		Disallow bitwise operators (enabled in "good parts")
+		'regexp':true, // Disallow insecure . and [^...] in /RegExp/
+		(enabled in "good parts") 'newcap':true, // Require Initial Caps
+		for constructors (enabled in "good parts") 'immed':true, //
+		Require parens around immediate invocations (enabled in "good
+		parts") 'strict':false, // Require "use strict"; 'maxerr':10,
+		'indent':4 };
+		code=zk.Widget.$(jq('$amountRule'))._editor.getCode(); msgWidget
+		= zk.Widget.$(jq('$btnValidate')); simWidget =
+		zk.Widget.$(jq('$btnSimulate')); savWidget =
+		zk.Widget.$(jq('$btnValidateSave'));
+
+		if(code != ""){ JSLINT(code, jslint_options); var
+		data=[JSLINT.errors,JSLINT.data().implieds]; if(btn==1){
+		zAu.send(new zk.Event(msgWidget, 'onUser',data)); } if(btn==2){
+		zAu.send(new zk.Event(simWidget, 'onUser',data)); } }
+		if(btn==3){
+
+		zAu.send(new zk.Event(savWidget, 'onUser',data)); }
+
+		}catch(err){ alert("Error on The Page"+err); } } ]]>
+		
 	</script>
-			  
-	<window>		  
+
+	<window>
 		<window id="window_TransactionEntryDialog" border="normal"
 			apply="${transactionEntryDialogCtrl}" width="100%" height="100%"
 			sizable="false">
-			
+
 			<borderlayout id="borderlayoutTransactionEntry">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch"
-							sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" 
+								<button id="btnNew"
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnEdit" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnDelete" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnSave" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave"
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
 									w:onClick="validateJs('3');"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnCancel" 
-									tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-								<button id="btnNotes" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnValidate"
 									tooltiptext="validate" label="${c:l('label_Validate')}"
 									w:onClick="validateJs('1');" sclass="z-toolbarbutton" />
@@ -145,13 +125,15 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" 
+								<button id="btnHelp"
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -260,42 +242,50 @@
 										<label
 											id="label_TransactionEntryDialog_AccountSubHeadRule"
 											value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
-												<extendedcombobox id="accountSubHeadRule" />
+										<extendedcombobox
+											id="accountSubHeadRule" />
 									</row>
 									<row visible="true">
 										<label
 											id="label_TransactionEntryDialog_AccountType"
 											value="${c:l('label_TransactionEntryDialog_AccountType.value')}" />
-												<extendedcombobox id="accountType" />
-												<extendedcombobox id="systemIntAccount" visible="false"/>
+										<hbox>
+											<extendedcombobox
+												id="accountType" />
+											<extendedcombobox
+												id="systemIntAccount" visible="false" />
+										</hbox>
 										<label
 											id="label_TransactionEntryDialog_AccountBranch"
 											value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
 										<hbox>
-											<extendedcombobox id="accountBranch" />
+											<extendedcombobox
+												id="accountBranch" />
 										</hbox>
 									</row>
 									<row visible="true">
 										<label
 											id="label_TransactionEntryDialog_TranscationCode"
 											value="${c:l('label_TransactionEntryDialog_TranscationCode.value')}" />
-												<extendedcombobox id="transcationCode" />
+										<extendedcombobox
+											id="transcationCode" />
 										<label
 											id="label_TransactionEntryDialog_RvsTransactionCode"
 											value="${c:l('label_TransactionEntryDialog_RvsTransactionCode.value')}" />
-												<extendedcombobox id="rvsTransactionCode" />
+										<extendedcombobox
+											id="rvsTransactionCode" />
 									</row>
 									<!-- <row>
 										<label
-											id="label_TransactionEntryDialog_RuleDecider"
-											value="${c:l('label_TransactionEntryDialog_RuleDecider.value')}" />
+										id="label_TransactionEntryDialog_RuleDecider"
+										value="${c:l('label_TransactionEntryDialog_RuleDecider.value')}" />
 										<hbox>
-											<space spacing="2px"
-												sclass="mandatory" />
-											<combobox id="ruleDecider"
-												readonly="true" />
+										<space spacing="2px"
+										sclass="mandatory" />
+										<combobox id="ruleDecider"
+										readonly="true" />
 										</hbox>
-									</row> -->
+										</row> -->
 									<row>
 										<label
 											id="label_TransactionEntryDialog_ChargeType"
@@ -344,15 +334,17 @@
 									<row>
 										<tabbox id="tb_Fields">
 											<tabs>
-												<tab label="Amount Codes" />
+												<tab
+													label="Amount Codes" />
 												<tab label="Fee Codes" />
 											</tabs>
 											<tabpanels>
 												<tabpanel
 													style="padding:0px;">
 													<listbox
-														id="amountCodeListbox" style="text-align:left;border:none;"
-														mold="default" width="100%"
+														id="amountCodeListbox"
+														style="text-align:left;border:none;" mold="default"
+														width="100%"
 														w:onDoubleClick="addStringContent(this.getSelectedItem().getLabel())">
 														<listhead>
 															<listheader
@@ -380,7 +372,7 @@
 												</tabpanel>
 											</tabpanels>
 										</tabbox>
-										
+
 										<!-- code mirrior -->
 										<codemirror id="amountRule"
 											syntax="js" config="lineNumbers:true" />
