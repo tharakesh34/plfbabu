@@ -522,7 +522,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				isRate = true;
 				showZeroEndBal = false;
-				if (aFinanceMain.getGraceBaseRate() != null && getFinanceScheduleDetail().getSpecifier().equals("G")) {
+				if (aFinanceMain.getGraceBaseRate() != null && getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.GRACE)) {
 					isGrcBaseRate = true;
 				}
 				if (aFinanceMain.getRepayBaseRate() != null) {
@@ -933,6 +933,46 @@ public class FinScheduleListItemRenderer implements Serializable{
 		// Append listitem to listbox
 		this.listBoxSchedule.appendChild(listitem);
 		logger.debug("Leaving");
+	}
+	
+	public void doFillDPSchedule(Listbox listBoxSchedule, FinanceScheduleDetail scheduleDetail, int formatter){
+		logger.debug("Entering");
+
+		listitem = new Listitem();
+		String strDate = PennantAppUtil.formateDate(scheduleDetail.getSchDate(), PennantConstants.dateFormate);
+
+		Listcell lc = new Listcell();
+		lc.setSclass("");
+		listitem.appendChild(lc);
+
+		lc = new Listcell(strDate);
+		lc.setStyle("font-weight:bold;cursor:default;");
+
+		listitem.appendChild(lc);
+
+		//Profit Schedule Amount
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getProfitSchd(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Schedule Principle Amount
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getPrincipalSchd(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		//Repay Installment Amount
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getRepayAmount(),formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Closing Balance Amount
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+		
+		listBoxSchedule.appendChild(listitem);
+		logger.debug("Leaving");
+
 	}
 
 	/**

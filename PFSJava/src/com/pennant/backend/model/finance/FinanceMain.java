@@ -49,6 +49,7 @@ public class FinanceMain implements java.io.Serializable {
     //===========================================
     
 	private String 		finReference;
+	private String 		linkedFinRef;
 	private String 		investmentRef = "";
 	private String 		finType;
 	private String 		lovDescFinTypeName;
@@ -2070,5 +2071,13 @@ public class FinanceMain implements java.io.Serializable {
 
 		this.errorDetails.add(errorDetail);
 	}
+
+	public String getLinkedFinRef() {
+	    return linkedFinRef;
+    }
+
+	public void setLinkedFinRef(String linkedFinRef) {
+	    this.linkedFinRef = linkedFinRef;
+    }
 
 }

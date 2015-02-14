@@ -4243,4 +4243,9 @@
 
 	</bean>
 	
+	<bean id="dpScheduleDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.DPScheduleDetailDialogCtrl"
+		parent="basisListCtrl" scope="prototype" >
+	</bean>
+	
 </beans>

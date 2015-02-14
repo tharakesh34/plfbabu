@@ -87,6 +87,10 @@
 									<label id="label_FinanceMainDialog_EffectiveRateOfReturn" />
 									<label id="effectiveRateOfReturn" style="font-weight:bold;color:#FF6600;" />
 								</row>
+								<row id="row_Murabaha" visible="false">
+									<label id="label_ScheduleDetailDialog_DownPaySchedule" />
+									<label id="label_ScheduleDetailDialog_DPScheduleLink" style="color: #0000ff; text-decoration: underline; cursor: pointer;" />
+								</row>
 								<row id = "row_Musharak" visible = "false">
 									<label id="label_ScheduleDetailDialog_BankShare" />
 									<label id="schdl_BankShare" style="font-weight:bold;"/>

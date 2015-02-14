@@ -68,6 +68,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -152,6 +153,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Label 		label_FinanceMainDialog_EffectiveRateOfReturn;
 	protected Label 		label_ScheduleDetailDialog_NonBankShare;
 	protected Label 		label_ScheduleDetailDialog_BankShare;
+	protected Label 		label_ScheduleDetailDialog_DownPaySchedule;
+	protected Label 		label_ScheduleDetailDialog_DPScheduleLink;
 	
 	
 	protected Button 		btnAddReviewRate; 						// autoWired
@@ -198,6 +201,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	private String defMethod = SystemParameterDetails.getSystemParameterValue("DEF_METHOD").toString();
 	protected Row  	row_istisna;
 	protected Row  	row_Musharak;
+	protected Row  	row_Murabaha;
 	protected Decimalbox	schdl_Repayprofit;
 	protected Decimalbox	schdl_Graceprofit;
 	protected Label label_ScheduleDetailDialog_Graceprofit;
@@ -462,30 +466,36 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				this.listHeader_vSProfit.setVisible(true);
 				this.listHeader_orgPrincipalDue.setVisible(true);
 			}
-			
+
 			String product = getFinScheduleData().getFinanceType().getFinCategory();
 			String productType = (product.substring(0, 1)).toUpperCase()+(product.substring(1)).toLowerCase();
 			listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_" + productType +"_CashFlowEffect"));
 			listHeader_vSProfit.setLabel(Labels.getLabel("listheader_" + productType +"_VsProfit"));
 			listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_" + productType +"_OrgPrincipalDue"));
-			
+
 		} else {
 			this.listHeader_cashFlowEffect.setVisible(false);
 			this.listHeader_vSProfit.setVisible(false);
 			this.listHeader_orgPrincipalDue.setVisible(false);
-		}  
-		
+		}
+		String productType = (getFinScheduleData().getFinanceType().getFinCategory().substring(0, 1)).toUpperCase()+(getFinScheduleData().getFinanceType().getFinCategory().substring(1)).toLowerCase();
+		if (productType.toUpperCase().equals(PennantConstants.FINANCE_PRODUCT_MURABAHA) && getFinScheduleData().getFinanceMain().getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)){
+			this.row_Murabaha.setVisible(true);
+			this.label_ScheduleDetailDialog_DownPaySchedule.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_DownPaySchedule.value"));
+			this.label_ScheduleDetailDialog_DPScheduleLink.setValue(getFinScheduleData().getFinanceMain().getFinReference()+"_DP");
+		}
+
 		if(getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) ||
 				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 			this.listheader_ScheduleDetailDialog_SchFee.setVisible(false);
 		}else{
 			this.listheader_ScheduleDetailDialog_SchFee.setVisible(true);
 		}
-		
+
 		setFinScheduleData(aFinSchData);
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		int ccyFormatter = financeMain.getLovDescFinFormatter();
-		
+
 		this.schdl_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_totalCost.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -503,20 +513,20 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
 		this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount().subtract(financeMain.getDownPayment()).add(
 				financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()), ccyFormatter));
-		
+
 		if(financeMain.getEffectiveRateOfReturn() == null){
 			financeMain.setEffectiveRateOfReturn(BigDecimal.ZERO);
 		}
 		this.effectiveRateOfReturn.setValue(PennantApplicationUtil.formatRate(financeMain.getEffectiveRateOfReturn().doubleValue(), 
 				PennantConstants.rateFormate)+"%");
-	
+
 		if (aFinSchData.getFinanceType().getLovDescProductCodeName().equals(PennantConstants.FINANCE_PRODUCT_ISTISNA)) {
-			
+
 			BigDecimal istisnaExp = BigDecimal.ZERO; 
 			BigDecimal totBillingAmt = BigDecimal.ZERO; 
 			BigDecimal conslFee = BigDecimal.ZERO; 
 			BigDecimal totIstisnaCost = BigDecimal.ZERO; 
-			
+
 			//Amounts Calculation
 			for (FinanceDisbursement disburse : aFinSchData.getDisbursementDetails()) {
 				if("B".equals(disburse.getDisbType())){
@@ -529,53 +539,53 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 
 				totIstisnaCost = totIstisnaCost.add(disburse.getDisbAmount());	
 			}
-			
+
 			this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(istisnaExp, ccyFormatter));
 			this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(totBillingAmt, ccyFormatter));
 			this.schdl_totalCost.setValue(PennantAppUtil.formateAmount(conslFee, ccyFormatter));
 			this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(totIstisnaCost, ccyFormatter));
-			
+
 			// finAmount-down payment + total profit
 			BigDecimal projectValue=financeMain.getFinAmount().subtract(financeMain.getDownPayment())
-									.add(aFinSchData.getFinanceMain().getTotalProfit());
+					.add(aFinSchData.getFinanceMain().getTotalProfit());
 			this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(projectValue, ccyFormatter));
 
 			this.schdl_Repayprofit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.schdl_Repayprofit.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit().subtract(financeMain.getTotalGracePft()),
 					ccyFormatter));
-			
+
 			this.schdl_Graceprofit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.schdl_Graceprofit.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGracePft(), ccyFormatter));
 		}
-		
+
 		if (aFinSchData.getFinanceType().getLovDescProductCodeName().equals(PennantConstants.FINANCE_PRODUCT_MUSHARAKA)) {
 			BigDecimal finAmount = financeMain.getFinAmount();
 			BigDecimal downPayment = financeMain.getDownPayment();
-			
+
 			BigDecimal nonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount,2,RoundingMode.HALF_DOWN);
 			BigDecimal bankShare = finAmount.subtract(downPayment).multiply(new BigDecimal(100)).divide(finAmount,2,RoundingMode.HALF_DOWN);
-			
+
 			this.schdl_NonBankShare.setValue(PennantApplicationUtil.formatRate(nonbankShare.doubleValue(), 
 					PennantConstants.rateFormate)+"%");
 			this.schdl_BankShare.setValue(PennantApplicationUtil.formatRate(bankShare.doubleValue(), 
 					PennantConstants.rateFormate)+"%");
 		}	
-		
+
 		//Fee Charges List Render For First Disbursement only/Existing
 		List<FeeRule> feeRuleList = aFinSchData.getFeeRules();
-		
+
 		//Get Finance Fee Details For Schedule Render Purpose In maintenance Stage
 		List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
 		if(!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType()) && !isWIF){
 			approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), isWIF);
 		}
-		
+
 		//Check Rights Based on Condition is EITHER WIF or MAIN
 		String dialogName = "FinanceMainDialog";
 		if(isWIF){
 			dialogName = "WIFFinanceMainDialog";
 		}
-		
+
 		//New Fee Rules for Schedule Maintenance/New
 		feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
 		Map<Date,ArrayList<FeeRule>> tempFeeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
@@ -594,7 +604,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				feeChargeList.add(fee);
 				feeChargesMap.put(fee.getSchDate(), feeChargeList);
 				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-				
+
 			}else{
 				ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
 				feeChargeList.add(fee);
@@ -602,7 +612,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
 			}
 		}
-		
+
 		//For Approved Fee Rule Details
 		for (FeeRule fee : approvedFeeRules) {
 			if(tempFeeChargesMap.containsKey(fee.getSchDate())){
@@ -618,19 +628,19 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				fee.setSeqNo(seqNo+1);
 				feeChargeList.add(fee);
 				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-				
+
 			}else{
 				ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
 				feeChargeList.add(fee);
 				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
 			}
 		}
-		
+
 		//Repayment & Penalty Details on Maintainance
 		Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 		Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = null;
 		if(!moduleDefiner.equals("")){
-			
+
 			aFinSchData = getFinanceDetailService().getFinMaintainenceDetails(aFinSchData);
 			// Find Out Finance Repayment Details on Schedule
 			if(aFinSchData.getRepayDetails() != null && aFinSchData.getRepayDetails().size() > 0){
@@ -648,7 +658,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 					}
 				}
 			}
-			
+
 			// Find Out Finance Repayment Details on Schedule
 			if(aFinSchData.getPenaltyDetails() != null && aFinSchData.getPenaltyDetails().size() > 0){
 				penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
@@ -679,16 +689,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			this.btnPrintSchedule.setVisible(true);
 
 			boolean allowRvwRate = getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddRvwRate");
-			
+
 			//Terms Rest On Screen, in Maintenance & and calculation by Maturity Date
 			int totGrcTerms = 0;
 			int totRepayTerms = 0;
 			Date grcEndDate = getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
-			
+
 			for (int i = 0; i < sdSize; i++) {
 				boolean showRate = false;
 				FinanceScheduleDetail aScheduleDetail = aFinSchData.getFinanceScheduleDetails().get(i);
-				
+
 				if(i != 0){
 					if(aScheduleDetail.getSchDate().compareTo(grcEndDate) <= 0){
 						if(aScheduleDetail.isPftOnSchDate()){
@@ -796,12 +806,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			//##########################################################################################
 			//Reset Schedule terms on Main Controller and Remove If CalTerms & NumberOf terms Differentiated
 			//##########################################################################################
-			
+
 			if (getFinanceMainDialogCtrl() != null) {
 				try {
-					
+
 					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
-					
+
 					@SuppressWarnings("rawtypes")
 					Class[] paramType = {FinScheduleData.class , Integer.class, Integer.class};
 					Object[] stringParameter = {aFinSchData, totGrcTerms, totRepayTerms};
@@ -813,9 +823,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 					logger.error(e);
 				}
 			}
-			
+
 		}
-		
+
 		if(!StringUtils.trimToEmpty(moduleDefiner).equals("")){
 			hideButtons();
 		}
@@ -1717,6 +1727,29 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			}
 		} 
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * when the "Linked Reference " Label is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$label_ScheduleDetailDialog_DPScheduleLink(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		try{
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("financeMainDialogCtrl", this);
+			map.put("financeDetail", getFinanceDetail());
+			map.put("profitDaysBasisList", profitDaysBasisList);
+
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DPScheduleDetailDialog.zul", window_ScheduleDetailDialog, map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -118,6 +118,10 @@ public class ScheduleCalculator {
 		return new ScheduleCalculator("procPlanDeferPft", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
+	public static FinScheduleData getDownPaySchd(FinScheduleData finScheduleData) {
+		return new ScheduleCalculator("procDownPaySchd", finScheduleData, BigDecimal.ZERO).getFinScheduleData();
+	}
+	
 	public static FinScheduleData changeRate(FinScheduleData finScheduleData, String baseRate,
 	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
 		return new ScheduleCalculator("procChangeRate", finScheduleData, baseRate, splRate,
@@ -193,7 +197,7 @@ public class ScheduleCalculator {
 	public static FinScheduleData getCalERR(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(finScheduleData, "calEffectiveRate").getFinScheduleData();
 	}
-
+	
 	// Constructors
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		logger.debug("Entering");
@@ -452,6 +456,10 @@ public class ScheduleCalculator {
 			setFinScheduleData(procPlanDeferPft(finScheduleData));
 		}
 		
+		if (method.equals("procDownPaySchd")) {
+			setFinScheduleData(procDownpaySchd(finScheduleData));
+		}
+		
 		if (method.equals("procChangeProfit")) {
 			setFinScheduleData(procChangeProfit(finScheduleData, desiredPftAmount));
 		}
@@ -516,6 +524,64 @@ public class ScheduleCalculator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+	
+	/**
+	 * Method for Processing Schedule calculation to get the Total Desired Profit by including Planned Deferment Terms
+	 * @param finScheduleData
+	 * @return
+	 */
+	private FinScheduleData procDownpaySchd(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+
+		Cloner cloner = new Cloner();
+		FinScheduleData dpScheduleData = cloner.deepClone(finScheduleData);
+		FinanceMain financeMain = dpScheduleData.getFinanceMain();
+		
+		financeMain.setFinReference(financeMain.getFinReference()+"_DP");
+		dpScheduleData.setFinReference(financeMain.getFinReference()+"_DP");
+		
+		financeMain.setFinAmount(financeMain.getDownPayBank());
+		financeMain.setFeeChargeAmt(BigDecimal.ZERO);
+		financeMain.setCalSchdFeeAmt(BigDecimal.ZERO);
+		financeMain.setDownPayBank(BigDecimal.ZERO);
+		financeMain.setDownPayment(BigDecimal.ZERO);
+		financeMain.setDownPaySupl(BigDecimal.ZERO);
+		
+		//Grace Period Details
+		financeMain.setGraceBaseRate("");
+		financeMain.setGraceSpecialRate("");
+		financeMain.setGrcPftRate(BigDecimal.ZERO);
+		
+		// Repay period Details
+		financeMain.setRepayBaseRate("");
+		financeMain.setRepaySpecialRate("");
+		financeMain.setRepayProfitRate(BigDecimal.ZERO);
+		financeMain.setScheduleMethod(CalculationConstants.EQUAL);
+		
+		//Step Details
+		financeMain.setStepFinance(false);
+		financeMain.setPlanDeferCount(0);
+		financeMain.setDefferments(0);
+		
+		//Child List Details
+		dpScheduleData.getDisbursementDetails().get(0).setDisbAmount(financeMain.getFinAmount());
+		dpScheduleData.getDisbursementDetails().get(0).setFeeChargeAmt(BigDecimal.ZERO);
+		dpScheduleData.getStepPolicyDetails().clear();
+		dpScheduleData.getRepayInstructions().clear();
+		
+		//Schedule Details
+		dpScheduleData.getFinanceScheduleDetails().get(0).setClosingBalance(financeMain.getFinAmount());
+		dpScheduleData.getFinanceScheduleDetails().get(0).setFeeChargeAmt(BigDecimal.ZERO);
+		dpScheduleData.getFinanceScheduleDetails().get(0).setDisbAmount(financeMain.getFinAmount());
+		dpScheduleData.getFinanceScheduleDetails().get(0).setDownPaymentAmount(BigDecimal.ZERO);
+		dpScheduleData.getFinanceScheduleDetails().get(0).setDownpaymentOnSchDate(false);
+		
+		//Schedule Calculation with New Setup Data for Down payment Program
+		dpScheduleData = getCalSchd(dpScheduleData, BigDecimal.ZERO);
+
+		logger.debug("Leaving");
+		return dpScheduleData;
 	}
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, String baseRate,
