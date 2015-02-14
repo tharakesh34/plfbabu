@@ -232,6 +232,7 @@ public class PennantConstants {
 	public static final String COMMIDITY = "COMIDITY";
 	public static final String SHARES = "SHARES";
 	public static final String GENGOODS = "GENGOODS";
+	public static final String FLEETVEH = "FLEETVEH";
 	
 	
 	//Finance Management Codes

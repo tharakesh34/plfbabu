@@ -1459,6 +1459,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				map.put("financedetail", getFinanceDetail());
 				zulFilePathName = "/WEB-INF/pages/LMTMasters/GenGoodsLoanDetail/FinGenGoodsLoanDetailList.zul";
 
+			}else if (assetCode.equalsIgnoreCase(PennantConstants.FLEETVEH)) {
+
+				tabLabel = Labels.getLabel("FleetVehicleLoanDetail");
+				map.put("financedetail", getFinanceDetail());
+				zulFilePathName = "/WEB-INF/pages/LMTMasters/FleetVehicleLoanDetail/FleetVehicleLoanDetailList.zul";
+
 			}else if (assetCode.equalsIgnoreCase(PennantConstants.COMMIDITY)) {
 
 				if(isReadOnly("FinanceMainDialog_CommidityLoanDetail")){
@@ -2454,6 +2460,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			dialogWindowName = "GoodsLoanDetailDialog";
 		}else if (assetCode.equalsIgnoreCase(PennantConstants.GENGOODS)) {
 			dialogWindowName = "GenGoodsLoanDetailDialog";
+		}else if (assetCode.equalsIgnoreCase(PennantConstants.FLEETVEH)) {
+			dialogWindowName = "CarLoanDetailDialog";
 		}else if (assetCode.equalsIgnoreCase(PennantConstants.COMMIDITY)) {
 			dialogWindowName = "CommidityLoanDetailDialog";
 		} else if (assetCode.equalsIgnoreCase(PennantConstants.SHARES)) {
@@ -5171,7 +5179,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if (getFinanceDetail().getGenGoodsLoanDetails() != null) {
 			aFinanceDetail.setGenGoodsLoanDetails(getFinanceDetail().getGenGoodsLoanDetails());
 		}
-
+		
+		if (getFinanceDetail().getVehicleLoanDetails() != null) {
+			aFinanceDetail.setVehicleLoanDetails(getFinanceDetail().getVehicleLoanDetails());
+		}
+		
 		if(getFinanceDetail().getCommidityLoanHeader() != null){
 			CommidityLoanHeader header = getFinanceDetail().getCommidityLoanHeader();
 			header.setLoanRefNumber(this.finReference.getValue());
@@ -5656,7 +5668,17 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}
 		}
 
-
+		List<CarLoanDetail> vehicleLoanDetailList = aFinanceDetail.getVehicleLoanDetails();		
+		if(vehicleLoanDetailList != null && !vehicleLoanDetailList.isEmpty()) {
+			for (CarLoanDetail vehicleLoanDetail : vehicleLoanDetailList) {
+				vehicleLoanDetail.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
+				vehicleLoanDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				vehicleLoanDetail.setUserDetails(getUserWorkspace().getLoginUserDetails());
+				if (isWorkFlowEnabled()) {
+					vehicleLoanDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				}
+			}
+		}
 
 		if (isWorkFlowEnabled()) {
 			if (aCarLoanDetail != null) {
@@ -7264,6 +7286,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	public void setGenGoodsLoanDetailList(List<GenGoodsLoanDetail> goodsLoanDetails) {
 		getFinanceDetail().setGenGoodsLoanDetails(goodsLoanDetails);
 	}
+	
+	public void setVehicleLoanDetailList(List<CarLoanDetail> vehicleLoanDetails) {
+		getFinanceDetail().setVehicleLoanDetails(vehicleLoanDetails);
+	}
+	
 	public void setCommidityLoanHeader(CommidityLoanHeader commidityLoanHeader) {
 		getFinanceDetail().setCommidityLoanHeader(commidityLoanHeader);
 	}

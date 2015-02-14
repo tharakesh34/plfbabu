@@ -43,6 +43,9 @@
 
 package com.pennant.backend.service.lmtmasters.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -334,6 +337,85 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 	}
 
 	@Override
+	public List<AuditDetail> validate(List<CarLoanDetail> vehicleLoanDetailList, long workflowId, String method, String auditTranType, String  usrLanguage){
+		return doValidation(vehicleLoanDetailList, workflowId, method, auditTranType, usrLanguage);
+	}
+	
+	public List<AuditDetail> doValidation(List<CarLoanDetail> vehicleLoanDetailList, long workflowId, String method, String auditTranType, String usrLanguage){
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = getAuditDetail(vehicleLoanDetailList, auditTranType, method, workflowId);
+
+		for (AuditDetail auditDetail : auditDetails) {
+			validate(auditDetail, method, usrLanguage); 
+		}
+
+		logger.debug("Leaving");
+		return auditDetails ;
+	}
+	
+	private List<AuditDetail> getAuditDetail(List<CarLoanDetail> vehicleLoanDetailList, String auditTranType, String method, long workflowId) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		CarLoanDetail object = new CarLoanDetail();
+		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
+
+		for (int i = 0; i < vehicleLoanDetailList.size(); i++) {
+
+			CarLoanDetail vehicleLoanDetail = vehicleLoanDetailList.get(i);
+			vehicleLoanDetail.setWorkflowId(workflowId);
+			boolean isRcdType = false;
+
+			if (vehicleLoanDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				vehicleLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (vehicleLoanDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				vehicleLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (vehicleLoanDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				vehicleLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				isRcdType = true;
+			}
+
+			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+				vehicleLoanDetail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (vehicleLoanDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (vehicleLoanDetail.getRecordType().equalsIgnoreCase(
+						PennantConstants.RECORD_TYPE_DEL)
+						|| vehicleLoanDetail.getRecordType().equalsIgnoreCase(
+								PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			if (!vehicleLoanDetail.getRecordType().equals("")) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], vehicleLoanDetail.getBefImage(), vehicleLoanDetail));
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
+	
+	@Override
+	public CarLoanDetail getVehicleLoanDetailById(String id) {
+		CarLoanDetail detail = new CarLoanDetail();
+		detail.setLoanRefNumber(id);
+		detail.setVehicleLoanDetailList(getCarLoanDetailDAO().getVehicleLoanDetailByFinRef(id, "_View"));
+		return detail;
+	}
+
+	
+	
+	@Override
 	public AuditDetail saveOrUpdate(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
 		logger.debug("Entering");
 		
@@ -350,6 +432,32 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
 
 	}
+	
+	
+	@Override
+	public List<AuditDetail> saveOrUpdate(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		for (CarLoanDetail vehicleLoanDetail : vehicleLoanDetailList) {
+			vehicleLoanDetail.setWorkflowId(0);
+
+			if (StringUtils.trimToEmpty(vehicleLoanDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				getCarLoanDetailDAO().delete(vehicleLoanDetail, tableType);
+			}else if(vehicleLoanDetail.isNewRecord()) {
+				getCarLoanDetailDAO().save(vehicleLoanDetail, tableType);
+			} else {
+				getCarLoanDetailDAO().update(vehicleLoanDetail, tableType);
+			}
+
+			String[] fields = PennantJavaUtil.getFieldDetails(vehicleLoanDetail, vehicleLoanDetail.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], vehicleLoanDetail.getBefImage(), vehicleLoanDetail));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
 	
 	@Override
 	public AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
@@ -370,6 +478,36 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 	}
 	
 	@Override
+	public List<AuditDetail> doApprove(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		for (CarLoanDetail vehicleLoanDetail : vehicleLoanDetailList) {
+			CarLoanDetail detail = new CarLoanDetail();
+			BeanUtils.copyProperties(vehicleLoanDetail, detail);
+
+			vehicleLoanDetail.setRoleCode("");
+			vehicleLoanDetail.setNextRoleCode("");
+			vehicleLoanDetail.setTaskId("");
+			vehicleLoanDetail.setNextTaskId("");
+			vehicleLoanDetail.setWorkflowId(0);
+
+			getCarLoanDetailDAO().save(vehicleLoanDetail, tableType);
+
+			String[] fields = PennantJavaUtil.getFieldDetails(vehicleLoanDetail, vehicleLoanDetail.getExcludeFields());
+
+			auditDetails.add(new  AuditDetail(PennantConstants.TRAN_WF, auditDetails.size()+1, fields[0], fields[1], detail.getBefImage(), detail));
+			auditDetails.add(new  AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], vehicleLoanDetail.getBefImage(), vehicleLoanDetail));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	
+	
+	@Override
 	public AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType) {
 		logger.debug("Entering");
 		
@@ -380,6 +518,24 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		logger.debug("Leaving");
 		return new  AuditDetail(auditTranType, 1, fields[0], fields[1], carLoanDetail.getBefImage(), carLoanDetail);
 	}
+	
+	@Override
+	public List<AuditDetail> delete(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		for (CarLoanDetail vehicleLoanDetail : vehicleLoanDetailList) {
+			getCarLoanDetailDAO().delete(vehicleLoanDetail, tableType);
+
+			String[] fields = PennantJavaUtil.getFieldDetails(vehicleLoanDetail, vehicleLoanDetail.getExcludeFields());
+			auditDetails.add(new  AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], vehicleLoanDetail.getBefImage(), vehicleLoanDetail));
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
 	
 	public AuditHeader doValidation(AuditHeader auditHeader, String method){
 		logger.debug("Entering");

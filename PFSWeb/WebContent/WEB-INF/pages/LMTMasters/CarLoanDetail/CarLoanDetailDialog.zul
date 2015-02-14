@@ -44,6 +44,14 @@
 									<textbox id="loanRefNumber" width="171px" maxlength="26" readonly="true" />
 								</hbox>
 							</row>
+							<row id="row_ItemNumber" visible="false">
+								<label id="label_ItemNumber"
+									value="${c:l('label_CarLoanDetailDialog_ItemNumber.value')}" />
+								<hbox>
+									<space id="space_ItemNumber" spacing="2px" />
+									<intbox id="itemNumber" width="171px" readonly="true" />
+								</hbox>
+							</row>
 							<row visible="false">
 								<label id="label_CarLoanDetailDialog_LoanRefType" value="${c:l('label_CarLoanDetailDialog_LoanRefType.value')}" />
 								<hbox>

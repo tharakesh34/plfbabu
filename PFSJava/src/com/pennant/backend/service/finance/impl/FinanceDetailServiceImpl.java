@@ -917,7 +917,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getGenGoodsLoanDetails() != null && !financeDetail.getGenGoodsLoanDetails().isEmpty()) {
 				auditDetails.addAll(getGenGoodsLoanDetailService().saveOrUpdate(financeDetail.getGenGoodsLoanDetails(), tableType, auditTranType));
 			}
-
+			// Save Fleet Vehicle Details
+			if (financeDetail.getVehicleLoanDetails() != null && !financeDetail.getVehicleLoanDetails().isEmpty()) {
+				auditDetails.addAll(getCarLoanDetailService().saveOrUpdate(financeDetail.getVehicleLoanDetails(), tableType, auditTranType));
+			}
+			
 			// Save Commidity Header & Details
 			CommidityLoanHeader commidityLoanHeader = financeDetail.getCommidityLoanHeader();
 			if (commidityLoanHeader != null) {
@@ -1339,6 +1343,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(getGenGoodsLoanDetailService().doApprove(financeDetail.getGenGoodsLoanDetails() , "", tranType));
 					}
 
+				// Fleet Vehicle Loan Details
+				if (financeDetail.getVehicleLoanDetails() != null && !financeDetail.getVehicleLoanDetails().isEmpty()) {
+					auditDetails.addAll(getCarLoanDetailService().doApprove(financeDetail.getVehicleLoanDetails() , "", tranType));
+				}
+				
 				// Commidity Header & Details
 				CommidityLoanHeader commidityLoanHeader = financeDetail.getCommidityLoanHeader();
 				if (commidityLoanHeader != null) {
@@ -1603,6 +1612,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(getGenGoodsLoanDetailService().validate(genGoodLoanDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
 				}
 
+				List<CarLoanDetail>  vehicleLoanDetailList = financeDetail.getVehicleLoanDetails();
+				if (vehicleLoanDetailList != null && !vehicleLoanDetailList.isEmpty()) {
+					auditDetails.addAll(getCarLoanDetailService().validate(vehicleLoanDetailList, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+				}
+				
 				List<CommidityLoanDetail>  commidityLoanDetails = financeDetail.getCommidityLoanDetails();
 				if (commidityLoanDetails != null && !commidityLoanDetails.isEmpty()) {
 					auditDetails.addAll(getCommidityLoanDetailService().validate(commidityLoanDetails, financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
@@ -3169,6 +3183,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			genGoodsLoanDetails = getGenGoodsLoanDetailService().getGenGoodsLoanDetailById(finReference).getGenGoodsLoanDetailList();
 			financeDetail.setGenGoodsLoanDetails(genGoodsLoanDetails);
 			break;
+		case FLEETVEH:
+			List<CarLoanDetail> vehicleLoanDetails;
+			vehicleLoanDetails =  getCarLoanDetailService().getVehicleLoanDetailById(finReference).getVehicleLoanDetailList();
+			financeDetail.setVehicleLoanDetails(vehicleLoanDetails);
+			break;	
 		case COMIDITY:
 			CommidityLoanHeader commidityLoanHeader = null; 
 			commidityLoanHeader = getCommidityLoanDetailService().getCommidityLoanHeaderById(finReference);

@@ -42,6 +42,8 @@
 */
 
 package com.pennant.backend.dao.lmtmasters;
+import java.util.List;
+
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
 
 /**
@@ -57,4 +59,5 @@ public interface CarLoanDetailDAO {
 	String save(CarLoanDetail carLoanDetail,String type);
 	void initialize(CarLoanDetail carLoanDetail);
 	void refresh(CarLoanDetail entity);
+	List<CarLoanDetail> getVehicleLoanDetailByFinRef(String id, String type);
 }

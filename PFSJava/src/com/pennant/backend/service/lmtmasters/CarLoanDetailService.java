@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.lmtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.lmtmasters.CarLoanDetail;
@@ -65,4 +67,10 @@ public interface CarLoanDetailService {
 	AuditDetail doApprove(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
 	AuditDetail validate(CarLoanDetail carLoanDetail, String method, String auditTranType, String  usrLanguage);
 	AuditDetail delete(CarLoanDetail carLoanDetail, String tableType, String auditTranType);
+	//Fleet Vehicle Finance 
+	CarLoanDetail getVehicleLoanDetailById(String id);
+	List<AuditDetail> saveOrUpdate(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType);
+	List<AuditDetail> validate(List<CarLoanDetail> vehicleLoanDetailList, long workflowId, String method, String auditTranType, String  usrLanguage);
+	List<AuditDetail> delete(List<CarLoanDetail> vehicleLoanDetailList, String tableType, String auditTranType);
 }

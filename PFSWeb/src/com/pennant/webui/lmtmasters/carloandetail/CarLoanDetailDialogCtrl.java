@@ -84,6 +84,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -99,6 +100,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.lmtmasters.CarLoanDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
@@ -107,6 +109,7 @@ import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.lmtmasters.fleetvehicleloandetail.FleetVehicleLoanDetailListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -180,9 +183,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Space    space_carDealer;
 	protected Space   space_dealerOrSellerAcc;
 	
-
-
-
 	// not auto wired vars
 	private CarLoanDetail carLoanDetail; // overhanded per param
 	private transient CarLoanDetailListCtrl carLoanDetailListCtrl; // overhanded
@@ -227,9 +227,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 
 	private transient BigDecimal 	oldVar_vehicleValue=BigDecimal.ZERO;;
 	
-	
-	
-	
 	private transient boolean validationOn;
 	private boolean notes_Entered = false;
 	private transient boolean newFinance;
@@ -259,6 +256,14 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	
 	private FinanceType financeType;
 	private transient AccountingSet accSet = new AccountingSet();
+	
+	private boolean isFleetVehicle = false;
+	private FleetVehicleLoanDetailListCtrl fleetVehicleLoanDetailListCtrl;
+	private List<CarLoanDetail> carLoanDetails;
+	private boolean newRecord=false;
+	protected Row row_ItemNumber;
+	protected Intbox itemNumber;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -302,12 +307,21 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			} else {
 				setCarLoanDetail(null);
 			}
+			if (args.containsKey("fleetVehicleLoanDetailListCtrl")) {
+				setFleetVehicleLoanDetailListCtrl((FleetVehicleLoanDetailListCtrl) args.get("fleetVehicleLoanDetailListCtrl"));
+				this.isFleetVehicle = true;
+			}
 			if (args.containsKey("financeMainDialogCtrl")) {
 				this.financeMainDialogCtrl = (Object) args.get("financeMainDialogCtrl");
 				try {
 					financeMainDialogCtrl.getClass().getMethod("setChildWindowDialogCtrl", Object.class).invoke(financeMainDialogCtrl, this);
 				} catch (Exception e) {
 					logger.error(e);
+				}
+				if(args.containsKey("newRecord")){
+					setNewRecord(true);
+				}else{
+					setNewRecord(false);
 				}
 				setNewFinance(true);
 				this.carLoanDetail.setWorkflowId(0);
@@ -722,9 +736,13 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		} else {
 			logger.debug("isDataChanged : false");
 		}
-		if (close) {
-			closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
-		}
+		if(isFleetVehicle){
+			this.window_CarLoanDetailDialog.onClose();
+		}else{
+			if (close) {
+				closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
+			}
+		}	
 		logger.debug("Leaving");
 	}
 
@@ -750,6 +768,11 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	public void doWriteBeanToComponents(CarLoanDetail aCarLoanDetail) {
 		logger.debug("Entering");
+		if(isFleetVehicle){
+			this.itemNumber.setValue(aCarLoanDetail.getItemNumber());
+		}else{
+			this.itemNumber.setValue(aCarLoanDetail.getItemNumber() == 0 ? 1 : aCarLoanDetail.getItemNumber());
+		}
 		this.loanRefNumber.setValue(aCarLoanDetail.getLoanRefNumber());
 		this.loanRefType.setChecked(aCarLoanDetail.isLoanRefType());
 		this.carLoanFor.setValue(String.valueOf(aCarLoanDetail.getCarLoanFor()));
@@ -822,12 +845,17 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
+			aCarLoanDetail.setItemNumber(this.itemNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			aCarLoanDetail.setLoanRefType(this.loanRefType.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aCarLoanDetail.setLovDescCarLoanForName(this.carLoanFor.getDescription());
+			aCarLoanDetail.setLovDescLoanForValue(this.carLoanFor.getDescription());
 			aCarLoanDetail.setCarLoanFor(Long.valueOf(this.carLoanFor.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -851,7 +879,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			aCarLoanDetail.setLovDescCarVersionName(this.carVersion.getDescription());
+			aCarLoanDetail.setLovDescVehicleVersionCode(this.carVersion.getDescription());
 			aCarLoanDetail.setCarVersion(Long.valueOf(this.carVersion.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1127,17 +1155,25 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
-			if (panel != null) {
-				this.toolbar.setVisible(false);
-				this.gb_statusDetails.setVisible(false);
-				this.groupboxWf.setVisible(false);
-				this.statusRow.setVisible(false);
-				this.window_CarLoanDetailDialog.setHeight(grid_carLoanDetails.getRows().getVisibleItemCount() * 20 + 100 + "px");
-				this.south.setHeight("0px");
-				// panel.setHeight(grid_carLoanDetails.getRows().getVisibleItemCount()*20+160+"px");
-				panel.appendChild(this.window_CarLoanDetailDialog);
-			} else {
-				setDialog(this.window_CarLoanDetailDialog);
+			if(isFleetVehicle){
+				this.row_ItemNumber.setVisible(true);
+				this.btnCancel.setVisible(false);
+				this.window_CarLoanDetailDialog.setHeight("90%");
+				this.window_CarLoanDetailDialog.setWidth("85%");
+				this.window_CarLoanDetailDialog.doModal();
+			}else{
+				if (panel != null) {
+					this.toolbar.setVisible(false);
+					this.gb_statusDetails.setVisible(false);
+					this.groupboxWf.setVisible(false);
+					this.statusRow.setVisible(false);
+					this.window_CarLoanDetailDialog.setHeight(grid_carLoanDetails.getRows().getVisibleItemCount() * 20 + 100 + "px");
+					this.south.setHeight("0px");
+					// panel.setHeight(grid_carLoanDetails.getRows().getVisibleItemCount()*20+160+"px");
+					panel.appendChild(this.window_CarLoanDetailDialog);
+				} else {
+					setDialog(this.window_CarLoanDetailDialog);
+				}
 			}
 		} catch (final Exception e) {
 			logger.error(e);
@@ -1536,9 +1572,20 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 				}
 			}
 			try {
-				if (doProcess(aCarLoanDetail, tranType)) {
-					refreshList();
-					closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
+				if(isFleetVehicle){
+					tranType=PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader =  newVehicleProcess(aCarLoanDetail,tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CarLoanDetailDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getFleetVehicleLoanDetailListCtrl().doFillVehicleLoanDetails(this.carLoanDetails);
+						this.window_CarLoanDetailDialog.onClose();
+					}
+				}else{
+					if (doProcess(aCarLoanDetail, tranType)) {
+						refreshList();
+						closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
+					}
 				}
 			} catch (DataAccessException e) {
 				logger.error("doDelete " + e);
@@ -1610,20 +1657,21 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.dealerOrSellerAcc.setReadonly(isReadOnly("CarLoanDetailDialog_dealerOrSellerAcc"));
 		this.vehicleItemNum.setReadonly(isReadOnly("CarLoanDetailDialog_vehicleItemNum"));
 		this.vehicleValue.setDisabled(isReadOnly("CarLoanDetailDialog_vehicleValue"));
-		
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(false);
-			}
-			if (this.carLoanDetail.isNewRecord()) {
-				this.btnCtrl.setBtnStatus_Edit();
-				btnCancel.setVisible(false);
+		if(!isFleetVehicle){
+			if (isWorkFlowEnabled()) {
+				for (int i = 0; i < userAction.getItemCount(); i++) {
+					userAction.getItemAtIndex(i).setDisabled(false);
+				}
+				if (this.carLoanDetail.isNewRecord()) {
+					this.btnCtrl.setBtnStatus_Edit();
+					btnCancel.setVisible(false);
+				} else {
+					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				}
 			} else {
-				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(true);
 			}
-		} else {
-			this.btnCtrl.setBtnStatus_Edit();
-			btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -1729,18 +1777,49 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 				}
 			}
 		} else {
-			aCarLoanDetail.setVersion(aCarLoanDetail.getVersion() + 1);
-			if (isNew) {
-				tranType = PennantConstants.TRAN_ADD;
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
+			if(isFleetVehicle){
+				if(isNewRecord()){
+					aCarLoanDetail.setVersion(1);
+					aCarLoanDetail.setRecordType(PennantConstants.RCD_ADD);
+				}else{
+					tranType = PennantConstants.TRAN_UPD;
+				}
+
+				if(StringUtils.trimToEmpty(aCarLoanDetail.getRecordType()).equals("")){
+					aCarLoanDetail.setVersion(aCarLoanDetail.getVersion()+1);
+					aCarLoanDetail.setRecordType(PennantConstants.RCD_UPD);
+				}
+
+				if(aCarLoanDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()){
+					tranType =PennantConstants.TRAN_ADD;
+				} else if(aCarLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+					tranType =PennantConstants.TRAN_UPD;
+				}
+			}else{
+				aCarLoanDetail.setVersion(aCarLoanDetail.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+				}
 			}
 		}
+
 		// save it to database
 		try {
-			if (doProcess(aCarLoanDetail, tranType)) {
-				refreshList();
-				closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
+			if(isFleetVehicle){
+				AuditHeader auditHeader =  newVehicleProcess(aCarLoanDetail,tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CarLoanDetailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					getFleetVehicleLoanDetailListCtrl().doFillVehicleLoanDetails(this.carLoanDetails);
+					this.window_CarLoanDetailDialog.onClose();
+				}
+			}else{
+				if (doProcess(aCarLoanDetail, tranType)) {
+					refreshList();
+					closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
+				}
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1749,6 +1828,72 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
+	
+	private AuditHeader newVehicleProcess(CarLoanDetail acarLoanDetail,String tranType){
+		boolean recordAdded=false;
+
+		AuditHeader auditHeader = getAuditHeader(acarLoanDetail, tranType);
+		carLoanDetails = new ArrayList<CarLoanDetail>();
+
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(acarLoanDetail.getLoanRefNumber());
+		valueParm[1] = String.valueOf(acarLoanDetail.getItemNumber());
+
+		errParm[0] = PennantJavaUtil.getLabel("label_LoanRefNumber") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_ItemNumber") + ":"+valueParm[1];
+
+		if(getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists()!=null && getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().size()>0){
+			for (int i = 0; i < getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().size(); i++) {
+				CarLoanDetail loanDetail = getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().get(i);
+
+				if(acarLoanDetail.getLoanRefNumber().equals(loanDetail.getLoanRefNumber()) && (acarLoanDetail.getItemNumber() == loanDetail.getItemNumber()) ){ // Both Current and Existing list rating same
+
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(acarLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							acarLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							carLoanDetails.add(acarLoanDetail);
+						}else if(acarLoanDetail.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(acarLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							acarLoanDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							carLoanDetails.add(acarLoanDetail);
+						}else if(acarLoanDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getFleetVehicleLoanDetailListCtrl().getFinancedetail().getVehicleLoanDetails().size(); j++) {
+								CarLoanDetail detail =  getFleetVehicleLoanDetailListCtrl().getFinancedetail().getVehicleLoanDetails().get(j);
+								if(detail.getLoanRefNumber() == acarLoanDetail.getLoanRefNumber() && detail.getItemNumber() == acarLoanDetail.getItemNumber()){
+									carLoanDetails.add(detail);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							carLoanDetails.add(loanDetail);
+						}
+					}
+				}else{
+					carLoanDetails.add(loanDetail);
+				}
+			}
+		}
+
+		if(!recordAdded){
+			carLoanDetails.add(acarLoanDetail);
+		}
+		return auditHeader;
+	} 
+
+	
+	
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -2174,4 +2319,20 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void setFinanceType(FinanceType financeType) {
 		this.financeType = financeType;
 	}
+	
+	public FleetVehicleLoanDetailListCtrl getFleetVehicleLoanDetailListCtrl() {
+		return fleetVehicleLoanDetailListCtrl;
+	}
+	public void setFleetVehicleLoanDetailListCtrl(
+			FleetVehicleLoanDetailListCtrl fleetVehicleLoanDetailListCtrl) {
+		this.fleetVehicleLoanDetailListCtrl = fleetVehicleLoanDetailListCtrl;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}	
+	
 }

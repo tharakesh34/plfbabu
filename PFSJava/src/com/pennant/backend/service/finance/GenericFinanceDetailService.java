@@ -170,6 +170,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		COMIDITY, 
 		SHARES,
 		GENGOODS,
+		FLEETVEH,
 		NOTAPP
 	}
 	
@@ -229,6 +230,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				genGoodsLoanDetails = getGenGoodsLoanDetailService().getGenGoodsLoanDetailById(finReference).getGenGoodsLoanDetailList();
 				financeDetail.setGenGoodsLoanDetails(genGoodsLoanDetails);
 				break;
+			case FLEETVEH:
+				List<CarLoanDetail> vehicleLoanDetails;
+				vehicleLoanDetails =  getCarLoanDetailService().getVehicleLoanDetailById(finReference).getVehicleLoanDetailList();
+				financeDetail.setVehicleLoanDetails(vehicleLoanDetails);
+				break;	
 			case COMIDITY:
 				CommidityLoanHeader commidityLoanHeader = null; 
 				commidityLoanHeader = getCommidityLoanDetailService().getCommidityLoanHeaderById(finReference);
@@ -264,6 +270,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		HomeLoanDetail homeLoanDetail = financeDetail.getHomeLoanDetail();
 		List<GoodsLoanDetail>  goodsLoanDetails = financeDetail.getGoodsLoanDetails();
 		List<GenGoodsLoanDetail>  genGoodsLoanDetails = financeDetail.getGenGoodsLoanDetails();
+		List<CarLoanDetail>  vehicleLoanDetails = financeDetail.getVehicleLoanDetails();
 		MortgageLoanDetail mortgageLoanDetail = financeDetail.getMortgageLoanDetail();
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
@@ -292,6 +299,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			auditDetailList.addAll(getGenGoodsLoanDetailService().delete(genGoodsLoanDetails, tableType, auditTranType));
 		}
 
+		if (vehicleLoanDetails != null && !vehicleLoanDetails.isEmpty()) {
+			auditDetailList.addAll(getCarLoanDetailService().delete(vehicleLoanDetails, tableType, auditTranType));
+		}
+		
 		//Commidity Loan Detail
 		CommidityLoanHeader commidityLoanHeader = financeDetail.getCommidityLoanHeader();
 		if (commidityLoanHeader != null) {

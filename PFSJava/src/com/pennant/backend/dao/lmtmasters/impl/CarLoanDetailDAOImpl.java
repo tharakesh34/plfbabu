@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -125,7 +127,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		carLoanDetail.setLoanRefNumber(loanRefNumber);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LoanRefNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
+		selectSql.append(" SELECT LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
 		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor,");
 		selectSql.append(" EngineNumber,InsuranceType,InsuranceDesc,PaymentMode, ManufacturerId, ");
 		selectSql.append(" PurchageOdrNumber,QuoationNbr,QuoationDate,DealerPhone,PurchaseDate,  VehicleModelId, ");
@@ -160,6 +162,42 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		return carLoanDetail;
 	}
 
+
+    @Override
+	public List<CarLoanDetail> getVehicleLoanDetailByFinRef(final String id, String type) {
+		logger.debug("Entering");
+		CarLoanDetail vehicleLoanDetail = new CarLoanDetail();
+		vehicleLoanDetail.setLoanRefNumber(id);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
+		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor,");
+		selectSql.append(" EngineNumber,InsuranceType,InsuranceDesc,PaymentMode, ManufacturerId, ");
+		selectSql.append(" PurchageOdrNumber,QuoationNbr,QuoationDate,DealerPhone,PurchaseDate,  VehicleModelId, ");
+		
+		if(type.contains("View")){
+			selectSql.append(" LovDescLoanForCodeName,LovDescLoanForCode,LovDescCarUsageCodeName,");
+			selectSql.append(" LovDescLoanForValue,LovDescCarUsageCode,LovDescCarUsageValue,");
+			selectSql.append(" LovDescManufacturerName, LovDescModelDesc, lovDescVehicleVersionCode, ");
+			selectSql.append(" LovDescCarDealerName,lovDescCarDealerPhone,lovDescCarDealerFax,");
+		}
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" ,ThirdPartyReg,ThirdPartyName,PassportNum,ThirdPartyNat,EmiratesRegNum,");
+		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue ");
+		selectSql.append(" FROM  LMTCarLoanDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where LoanRefNumber =:LoanRefNumber ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleLoanDetail);
+		RowMapper<CarLoanDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CarLoanDetail.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	
+	
 	/**
 	 * This method initialize the Record.
 	 * @param CarLoanDetail (carLoanDetail)
@@ -252,7 +290,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into LMTCarLoanDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append("(LoanRefNumber, LoanRefType, CarLoanFor, ");
+		insertSql.append("(LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, ");
 		insertSql.append(" CarUsage, CarVersion, CarMakeYear, CarCapacity, CarDealer, " );
 		insertSql.append(" CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor, ");
 		insertSql.append("	EngineNumber,InsuranceType,InsuranceDesc,PaymentMode,");
@@ -262,7 +300,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		insertSql.append(" ,ThirdPartyReg,ThirdPartyName,PassportNum,ThirdPartyNat,EmiratesRegNum,");
 		insertSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue)");
-		insertSql.append(" Values(:LoanRefNumber, :LoanRefType, :CarLoanFor, ");
+		insertSql.append(" Values(:LoanRefNumber, :ItemNumber, :LoanRefType, :CarLoanFor, ");
 		insertSql.append(" :CarUsage, :CarVersion, :CarMakeYear, :CarCapacity, :CarDealer,");
 		insertSql.append(" :CarCc, :CarChasisNo, :CarInsuranceNo, :CarRegNo, :CarColor, ");
 		insertSql.append(" :EngineNumber,:InsuranceType,:InsuranceDesc,:PaymentMode,");
@@ -303,7 +341,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		
 		StringBuilder updateSql = new StringBuilder("Update LMTCarLoanDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set LoanRefNumber = :LoanRefNumber, LoanRefType = :LoanRefType," );
+		updateSql.append(" Set LoanRefNumber = :LoanRefNumber, ItemNumber = :ItemNumber, LoanRefType = :LoanRefType," );
 		updateSql.append(" CarLoanFor = :CarLoanFor, CarUsage = :CarUsage, CarVersion = :CarVersion," );
 		updateSql.append(" CarMakeYear = :CarMakeYear, CarCapacity = :CarCapacity, CarDealer = :CarDealer,");
 		updateSql.append(" CarCc= :CarCc, CarChasisNo= :CarChasisNo, CarInsuranceNo= :CarInsuranceNo,");

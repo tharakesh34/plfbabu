@@ -91,6 +91,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private CustomerScoringCheck customerScoringCheck;
 
 	private CarLoanDetail carLoanDetail;
+	private List<CarLoanDetail> vehicleLoanDetails;
 	private EducationalLoan educationalLoan;
 	private HomeLoanDetail homeLoanDetail;
 	private MortgageLoanDetail mortgageLoanDetail;
@@ -626,4 +627,11 @@ public class FinanceDetail implements java.io.Serializable {
 	    this.premiumDetail = premiumDetail;
     }
 
+	public List<CarLoanDetail> getVehicleLoanDetails() {
+		return vehicleLoanDetails;
+	}
+	public void setVehicleLoanDetails(List<CarLoanDetail> vehicleLoanDetails) {
+		this.vehicleLoanDetails = vehicleLoanDetails;
+	}
+	
 }
