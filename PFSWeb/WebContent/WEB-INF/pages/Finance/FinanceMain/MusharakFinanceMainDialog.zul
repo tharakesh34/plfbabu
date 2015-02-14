@@ -22,28 +22,35 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start"
 								sclass="toolbar-start">
-								<button id="btnNew" 
+								<button id="btnNew"
 									tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
-								<button id="btnEdit" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
-								<button id="btnDelete" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
-								<button id="btnSave" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave"
 									tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
-								<button id="btnCancel" 
-									tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-								<button id="btnNotes" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
 									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
 								<button id="btnValidate" label="Verify"
-									tooltiptext="${c:l('btnValidate.tooltiptext')}" sclass="z-toolbarbutton"  />
+									tooltiptext="${c:l('btnValidate.tooltiptext')}"
+									sclass="z-toolbarbutton" />
 								<button id="btnBuildSchedule"
-									label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}" sclass="z-toolbarbutton"
-									 />
+									label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}"
+									sclass="z-toolbarbutton" />
 
 							</toolbar>
 
@@ -57,13 +64,15 @@
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" 
+								<button id="btnHelp"
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
-								<button id="btnClose" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -104,7 +113,7 @@
 															id="lovDescFinTypeName" width="250px" readonly="true" />
 														<button
 															id="btnSearchFinType" image="/images/icons/LOVSearch.png"
-															 disabled="true" visible="false" />
+															disabled="true" visible="false" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_FinReference"
@@ -120,7 +129,8 @@
 													<label
 														id="label_MusharakFinanceMainDialog_FinCcy"
 														value="${c:l('label_MusharakFinanceMainDialog_FinCcy.value')}" />
-													<extendedcombobox id="finCcy"/>
+													<extendedcombobox
+														id="finCcy" />
 													<label
 														id="label_MusharakFinanceMainDialog_ProfitDaysBasis"
 														value="${c:l('label_MusharakFinanceMainDialog_ProfitDaysBasis.value')}" />
@@ -136,23 +146,20 @@
 													<label
 														id="label_MusharakFinanceMainDialog_CustID"
 														value="${c:l('label_MusharakFinanceMainDialog_CustID.value')}" />
-																										<hbox>
+													<hbox>
 														<longbox
 															id="custID" width="171px" maxlength="26" visible="false" />
-														<hbox>
-															<uppercasebox
-																id="custCIF" width="150px" />
-															<button
-																id="btnSearchCustCIF"
-																tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
-																image="/images/icons/LOVSearch.png" />
-															<label
-																id="custShrtName" />
-														</hbox>
+														<uppercasebox
+															id="custCIF" width="150px" />
+														<button
+															id="btnSearchCustCIF"
+															tooltiptext="${c:l('label_MusharakFinanceMainDialog_btnSearchCustCIF.tooltiptext')}"
+															image="/images/icons/LOVSearch.png" />
+														<label
+															id="custShrtName" />
 														<button
 															id="viewCustInfo" image="/images/icons/more.png"
-															tooltiptext="${c:l('tooltip_Custinfo')}">
-														</button>
+															tooltiptext="${c:l('tooltip_Custinfo')}" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_FinBranch"
@@ -298,7 +305,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchCommitmentRef"
-															image="/images/icons/LOVSearch.png"  />
+															image="/images/icons/LOVSearch.png" />
 													</hbox>
 												</row>
 												<row visible="false">
@@ -385,20 +392,22 @@
 															id="cbbApproved" />
 													</hbox>
 												</row>
-												<row id="row_stepFinance" visible="true">
+												<row
+													id="row_stepFinance" visible="true">
 													<label
 														id="label_MusharakFinanceMainDialog_StepFinance"
 														value="${c:l('label_MusharakFinanceMainDialog_StepFinance.value')}" />
 													<hbox>
-														<space id="space_StepFinance"
-															spacing="2px" />
+														<space
+															id="space_StepFinance" spacing="2px" />
 														<checkbox
 															id="stepFinance" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_StepPolicy"
 														value="${c:l('label_MusharakFinanceMainDialog_StepPolicy.value')}" />
-													<extendedcombobox id="stepPolicy"/>
+													<extendedcombobox
+														id="stepPolicy" />
 												</row>
 												<row
 													id="row_manualSteps" visible="true">
@@ -406,8 +415,8 @@
 														id="label_MusharakFinanceMainDialog_ManualSteps"
 														value="${c:l('label_MusharakFinanceMainDialog_ManualSteps.value')}" />
 													<hbox>
-														<space id="space_alwManualSteps"
-															spacing="2px" />
+														<space
+															id="space_alwManualSteps" spacing="2px" />
 														<checkbox
 															id="alwManualSteps" />
 													</hbox>
@@ -416,8 +425,8 @@
 														value="${c:l('label_MusharakFinanceMainDialog_NumberOfSteps.value')}" />
 													<hbox
 														id="hbox_numberOfSteps">
-														<space id="space_noOfSteps"
-															spacing="2px" sclass="mandatory" />
+														<space
+															id="space_noOfSteps" spacing="2px" sclass="mandatory" />
 														<intbox
 															id="noOfSteps" width="90px" />
 													</hbox>
@@ -427,7 +436,8 @@
 													<label
 														value="${c:l('lable_Discrepancy1_status')}"
 														style="font-weight:bold" />
-													<vbox id="discrepancies"/>
+													<vbox
+														id="discrepancies" />
 												</row>
 											</rows>
 										</grid>
@@ -508,30 +518,33 @@
 														id="label_MusharakFinanceMainDialog_GraceBaseRate"
 														value="${c:l('label_MusharakFinanceMainDialog_GraceBaseRate.value')}" />
 													<hbox>
-														<extendedcombobox id="graceBaseRate"/>	
+														<extendedcombobox
+															id="graceBaseRate" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_GraceSpecialRate"
 														value="${c:l('label_MusharakFinanceMainDialog_GraceSpecialRate.value')}" />
 													<hbox>
-														<extendedcombobox id="graceSpecialRate"/>
+														<extendedcombobox
+															id="graceSpecialRate" />
 													</hbox>
 												</row>
 												<row>
-												   <label
+													<label
 														id="label_MusharakFinanceMainDialog_GraceProfitDaysBasis"
 														value="${c:l('label_MusharakFinanceMainDialog_GraceProfitDaysBasis.value')}" />
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
 														<combobox
-															id="grcPftDaysBasis" width="275px"
-															readonly="true" disabled="true" />
+															id="grcPftDaysBasis" width="275px" readonly="true"
+															disabled="true" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_GraceMargin"
 														value="${c:l('label_MusharakFinanceMainDialog_GraceMargin.value')}" />
-													<hbox id="hbox_grcMargin">
+													<hbox
+														id="hbox_grcMargin">
 														<space
 															spacing="2px" />
 														<decimalbox
@@ -564,8 +577,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchGrcIndBaseRate"
-															image="/images/icons/LOVSearch.png" tabindex="30"
-															 />
+															image="/images/icons/LOVSearch.png" tabindex="30" />
 													</hbox>
 												</row>
 												<row id="grcPftFrqRow"
@@ -770,13 +782,15 @@
 														id="label_MusharakFinanceMainDialog_RepayBaseRate"
 														value="${c:l('label_MusharakFinanceMainDialog_RepayBaseRate.value')}" />
 													<hbox>
-														<extendedcombobox id="repayBaseRate"/>
+														<extendedcombobox
+															id="repayBaseRate" />
 													</hbox>
 													<label
 														id="label_MusharakFinanceMainDialog_RepaySpecialRate"
 														value="${c:l('label_MusharakFinanceMainDialog_RepaySpecialRate.value')}" />
 													<hbox>
-														<extendedcombobox id="repaySpecialRate"/>
+														<extendedcombobox
+															id="repaySpecialRate" />
 													</hbox>
 												</row>
 												<row
@@ -831,7 +845,7 @@
 															readonly="true" tabindex="-1" />
 														<button
 															id="btnSearchRpyIndBaseRate"
-															image="/images/icons/LOVSearch.png"  />
+															image="/images/icons/LOVSearch.png" />
 													</hbox>
 												</row>
 												<row id="rpyPftFrqRow"

@@ -90,13 +90,13 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean 	finIsActive = false;
 	private String 		finRemarks;
 
-	private String		mobileNumber;
+	private String		lovdescMobileNumber;
 	private String 		lovdescFinProduct;
 	private String 		lovDescCustCRCPR;
 	private String		lovDescCustPassportNo;
 	private Date		lovDescCustDOB;
-	private String 		requestStage;
-	private String 		queuePriority;
+	private String 		lovDescRequestStage;
+	private String 		lovDescQueuePriority;
 	
 	//Commercial Workflow Purpose
 	private boolean 	securityCollateral;
@@ -2018,7 +2018,6 @@ public class FinanceMain implements java.io.Serializable {
 	public String getLovDescCustCRCPR() {
 		return lovDescCustCRCPR;
 	}
-
 	public void setLovDescCustCRCPR(String lovDescCustCRCPR) {
 		this.lovDescCustCRCPR = lovDescCustCRCPR;
 	}
@@ -2026,7 +2025,6 @@ public class FinanceMain implements java.io.Serializable {
 	public String getLovDescCustPassportNo() {
 		return lovDescCustPassportNo;
 	}
-
 	public void setLovDescCustPassportNo(String lovDescCustPassportNo) {
 		this.lovDescCustPassportNo = lovDescCustPassportNo;
 	}
@@ -2034,41 +2032,38 @@ public class FinanceMain implements java.io.Serializable {
 	public Date getLovDescCustDOB() {
 		return lovDescCustDOB;
 	}
-
 	public void setLovDescCustDOB(Date lovDescCustDOB) {
 		this.lovDescCustDOB = lovDescCustDOB;
 	}
 	
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
-
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-
-	public String getRequestStage() {
-		return requestStage;
-	}
-
-	public void setRequestStage(String requestStage) {
-		this.requestStage = requestStage;
-	}
-
-	public String getQueuePriority() {
-		return queuePriority;
-	}
-
-	public void setQueuePriority(String queuePriority) {
-		this.queuePriority = queuePriority;
-	}
+	
 	public String getLovdescFinProduct() {
 	    return lovdescFinProduct;
     }
-
 	public void setLovdescFinProduct(String lovdescFinProduct) {
 	    this.lovdescFinProduct = lovdescFinProduct;
     }
+	
+	public String getLovdescMobileNumber() {
+		return lovdescMobileNumber;
+	}
+	public void setLovdescMobileNumber(String lovdescMobileNumber) {
+		this.lovdescMobileNumber = lovdescMobileNumber;
+	}
+
+	public String getLovDescRequestStage() {
+		return lovDescRequestStage;
+	}
+	public void setLovDescRequestStage(String lovdescRequestStage) {
+		this.lovDescRequestStage = lovdescRequestStage;
+	}
+
+	public String getLovDescQueuePriority() {
+		return lovDescQueuePriority;
+	}
+	public void setLovDescQueuePriority(String lovDescQueuePriority) {
+		this.lovDescQueuePriority = lovDescQueuePriority;
+	}
 
 	// Overidden Equals method to handle the comparision
 	public boolean equals(FinanceMain financeMain) {

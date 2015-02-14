@@ -4037,13 +4037,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		try {
 			if (!this.custCIF.isReadonly()) {
-
-				aFinanceMain.setLovDescCustCIF(this.custCIF.getValue());
-				if(this.custID.longValue() == 0) {
+				if(this.custID.longValue() == 0 || this.custID.longValue() == Long.MIN_VALUE) {
 					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_CustID.value") }));
 				} else {
 					aFinanceMain.setCustID(this.custID.longValue());
-					//aFinanceMain.setLovDescCustShrtName(this.custCIF.getDescription());
+					aFinanceMain.setLovDescCustCIF(this.custCIF.getValue());
+					aFinanceMain.setLovDescCustShrtName(this.custShrtName.getValue());
 				}
 			}
 			if(!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")){

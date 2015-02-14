@@ -51,6 +51,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -59,17 +61,15 @@ import com.pennant.backend.model.customermasters.Customer;
 public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, Serializable {
 
 	private static final long serialVersionUID = 1552059797117039294L;
-	//Upgraded to ZK-6.5.1.1 Added an additional parameter of type count 	
 	@Override
 	public void render(Listitem item, Customer customer, int count) throws Exception {
 
-		//final Customer customer = (Customer) data;
 		Listcell lc;
 	  	lc = new Listcell(customer.getCustCIF());
 		lc.setParent(item);
 	  	lc = new Listcell(customer.getCustFName());
 		lc.setParent(item);
-	  	lc = new Listcell(customer.getCustDOB().toString());
+	  	lc = new Listcell(PennantApplicationUtil.formateDate(customer.getCustDOB(), PennantConstants.dateFormate));
 		lc.setParent(item);
 	  	lc = new Listcell(customer.getPhoneNumber());
 		lc.setParent(item);

@@ -3648,11 +3648,12 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	/**
 	 * Method for Reset Customer Data
 	 */
-	/*private void setCustomerData(){
+	private void setCustomerData(){
 		logger.debug("Entering");
 
 		this.custID.setValue(customer.getCustID());
-		this.custCIF.setValue(customer.getCustCIF(), customer.getCustShrtName());
+		this.custCIF.setValue(customer.getCustCIF());
+		this.custShrtName.setValue(customer.getCustShrtName());
 		this.disbAcctId.setCustCIF(customer.getCustCIF());
 		this.repayAcctId.setCustCIF(customer.getCustCIF());
 		this.downPayAccount.setCustCIF(customer.getCustCIF());
@@ -3735,7 +3736,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			setDiscrepancy(getFinanceDetail());
         }
 		logger.debug("Leaving");
-	}*/
+	}
 	
 
 	/**
@@ -4087,17 +4088,10 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
 		logger.debug("Entering");
-		
 		this.custCIF.clearErrorMessage();
-		final Customer aCustomer = (Customer) nCustomer;
-		this.custCIF.setValue(aCustomer.getCustCIF());
-		this.custID.setValue(aCustomer.getCustID());
-		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		setCustomer((Customer) nCustomer);
+		setCustomerData();
 		this.custCIFSearchObject = newSearchObject;
-		setCustomer(aCustomer);
-		
-		this.custCIFSearchObject = newSearchObject;
-		
 		logger.debug("Leaving ");
 	}
 	

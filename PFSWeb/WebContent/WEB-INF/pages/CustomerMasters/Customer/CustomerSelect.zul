@@ -12,35 +12,33 @@
 		sizable="false">
 
 		<div sclass="z-toolbar" style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="30%,40%,30%">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="30%,40%,30%">
 				<!-- COMMON BUTTONS   -->
-				<toolbar align="start"
-					sclass="toolbar-start" height="15px">
+				<toolbar align="start" sclass="toolbar-start"
+					height="15px">
 					<label value="${c:l('window_CustomerSelect.title')}"
 						style="font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
                             font-size: 11px;font-style: normal;font-weight:bold;"
 						width="auto" />
 				</toolbar>
 				<!--  SEARCH AREA  -->
-				<toolbar align="center"
-					sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center">
 				</toolbar>
 				<!-- CRUD BUTTONS  -->
-				<toolbar align="end"
-					sclass="toolbar-end">
-					<button id="btnHelp" 
-						label = "${c:l('label_Help')}"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
-					<button id="btnClose" 
-						label = "${c:l('label_Close')}"
-						tooltiptext="${c:l('btnClose.tooltiptext')}"  sclass="z-toolbarbutton" />
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnHelp" label="${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<button id="btnClose" label="${c:l('label_Close')}"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
 
 		<borderlayout id="borderLayout_CustomerSelect">
-			<north border="none" height="0px"/>
+			<north border="none" height="0px" />
 			<center border="none">
 				<vlayout>
 					<groupbox id="gb" mold="3d" width="100%">
@@ -66,21 +64,18 @@
 									<label
 										id="label_CustomerSearch_CustDOB"
 										value="${c:l('label_CustomerSearch_CustDOB.value')}" />
-									<listbox
-										id="sortOperator_custDob" width="43px" mold="select"
-										rows="1" />
-									<textbox id="custDob"
-										width="150px" maxlength="30" />
+									<listbox id="sortOperator_custDob"
+										width="43px" mold="select" rows="1" />
+									<datebox id="custDob" width="100px" format="dd/MM/yyyy"/>
 								</row>
 								<row>
 									<label
 										id="label_CustomerSearch_CustName"
 										value="${c:l('label_CustomerSearch_CustName.value')}" />
-									<listbox
-										id="sortOperator_custName" width="43px" mold="select"
-										rows="1" />
-									<textbox id="custName"
-										width="150px" maxlength="25" />
+									<listbox id="sortOperator_custName"
+										width="43px" mold="select" rows="1" />
+									<textbox id="custName" width="150px"
+										maxlength="25" />
 									<label
 										id="label_CustomerSearch_CustMobile"
 										value="${c:l('label_CustomerSearch_CustMobile.value')}" />
@@ -94,17 +89,16 @@
 									<label
 										id="label_CustomerSearch_CustEID"
 										value="${c:l('label_CustomerSearch_CustEID.value')}" />
-									<listbox
-										id="sortOperator_custEID" width="43px" mold="select"
-										rows="1" />
-									<textbox id="custEid"
-										width="150px" maxlength="20" />
+									<listbox id="sortOperator_custEID"
+										width="43px" mold="select" rows="1" />
+									<textbox id="custEid" width="150px"
+										maxlength="20" />
 									<label
 										id="label_CustomerSearch_CustPassport"
 										value="${c:l('label_CustomerSearch_CustPassport.value')}" />
 									<listbox
-										id="sortOperator_custPassport" width="43px"
-										mold="select" rows="1" />
+										id="sortOperator_custPassport" width="43px" mold="select"
+										rows="1" />
 									<textbox id="custPassport"
 										width="150px" maxlength="50" />
 								</row>
@@ -114,13 +108,14 @@
 										value="${c:l('label_CustomerSearch_CustType.value')}" />
 									<listbox id="sortOperator_custType"
 										width="43px" mold="select" rows="1" />
-									<textbox id="custType"
-										width="150px" maxlength="8" />
+									<textbox id="custType" width="150px"
+										maxlength="8" />
 									<label
 										id="label_CustomerSearch_CustNationality"
 										value="${c:l('label_CustomerSearch_CustNationality.value')}" />
-									<listbox id="sortOperator_custNationality"
-										width="43px" mold="select" rows="1" />
+									<listbox
+										id="sortOperator_custNationality" width="43px" mold="select"
+										rows="1" />
 									<textbox id="custNationality"
 										width="150px" maxlength="2" />
 								</row>
@@ -128,8 +123,9 @@
 									<label
 										id="label_CustomerSearch_CustSector"
 										value="${c:l('label_CustomerSearch_CustSector.value')}" />
-									<listbox id="sortOperator_custSector"
-										width="43px" mold="select" rows="1" />
+									<listbox
+										id="sortOperator_custSector" width="43px" mold="select"
+										rows="1" />
 									<textbox id="custSector"
 										width="150px" maxlength="8" />
 									<label
@@ -146,29 +142,27 @@
 					</groupbox>
 					<toolbar align="center" height="25px"
 						style="border-style: none;">
-						<button id="btnSearch" 
+						<button id="btnSearch"
 							label="${c:l('btnSearch.label')}"
-							tooltiptext="${c:l('btnSearch.tooltiptext')}"
-							/>
-						<button id="btnCloseWindow" 
+							tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+						<button id="btnCloseWindow"
 							label="${c:l('btnClose.label')}"
 							tooltiptext="${c:l('btnClose.tooltiptext')}" visible="false" />
-						<button id="btnClear" 
+						<button id="btnClear"
 							label="${c:l('btnClear.label')}"
-							tooltiptext="${c:l('btnClear.tooltiptext')}"
-							 />
+							tooltiptext="${c:l('btnClear.tooltiptext')}" />
 					</toolbar>
 					<listbox id="listBoxCustomer" vflex="true"
-					style="overflow:auto"
-						tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%"
-						height="100%" multiple="false" span="true" sizedByContent="true">
+						style="overflow:auto" tooltiptext="${c:l('listbox.tooltiptext1')}"
+						width="99.7%" height="100%" multiple="false" span="true"
+						sizedByContent="true">
 						<listhead sizable="true">
 							<listheader id="listheader_CustCIF"
 								label="${c:l('listheader_CustCIF.label')}" sort="false"
 								hflex="min" />
 							<listheader id="listheader_CustName"
 								label="${c:l('listheader_CustName.label')}" sort="false"
-								hflex="min" />	
+								hflex="min" />
 							<listheader id="listheader_CustDob"
 								label="${c:l('listheader_CustDOB.label')}" sort="false"
 								hflex="min" />
@@ -196,21 +190,21 @@
 							<listheader id="listheader_CustSubSector"
 								label="${c:l('listheader_CustSubSector.label')}" sort="false"
 								hflex="min" />
-								
+
 							<listheader id="listheader_CustCoreBank"
 								label="${c:l('listheader_CustCoreBank.label')}" sort="false"
-								hflex="min" visible="false"/>
+								hflex="min" visible="false" />
 							<listheader id="listheader_CustCtgCode"
 								label="${c:l('listheader_CustCtgCode.label')}" sort="false"
-								hflex="min" visible="false"/>
+								hflex="min" visible="false" />
 							<listheader
 								id="listheader_CustomerSearch_CustFName"
 								label="${c:l('label_CustomerSearch_CustFName.value')}"
-								sort="false" hflex="min" visible="false"/>
+								sort="false" hflex="min" visible="false" />
 							<listheader
 								id="listheader_CustomerSearch_CustLName"
 								label="${c:l('label_CustomerSearch_CustLName.value')}"
-								sort="false" hflex="min" visible="false"/>
+								sort="false" hflex="min" visible="false" />
 						</listhead>
 					</listbox>
 				</vlayout>

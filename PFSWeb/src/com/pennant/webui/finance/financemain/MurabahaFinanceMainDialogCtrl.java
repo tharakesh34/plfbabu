@@ -3536,7 +3536,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	/**
 	 * Method for Reset Customer Data
 	 */
-	/*private void setCustomerData(){
+	private void setCustomerData(){
 		logger.debug("Entering");
 
 		this.custID.setValue(customer.getCustID());
@@ -3625,7 +3625,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			setDiscrepancy(getFinanceDetail());
         }
 		logger.debug("Leaving");
-	}*/
+	}
 	
 
 	/**
@@ -3962,15 +3962,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering" + event.toString());
 		
 		this.custCIF.clearErrorMessage();
-		
 		Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);
-
 		if(customer == null) {	
 			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_EligibilityCheck_CustCIF.value") }));
 		} else {
 			doSetCustomer(customer, null);
 		}
-
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -3995,17 +3992,10 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
 		logger.debug("Entering");
-		
 		this.custCIF.clearErrorMessage();
-		final Customer aCustomer = (Customer) nCustomer;
-		this.custCIF.setValue(aCustomer.getCustCIF());
-		this.custID.setValue(aCustomer.getCustID());
-		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		setCustomer((Customer) nCustomer);
+		setCustomerData();
 		this.custCIFSearchObject = newSearchObject;
-		setCustomer(aCustomer);
-		
-		this.custCIFSearchObject = newSearchObject;
-		
 		logger.debug("Leaving ");
 	}
 	

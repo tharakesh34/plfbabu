@@ -149,26 +149,22 @@
 													<hbox>
 														<longbox
 															id="custID" width="171px" maxlength="26" visible="false" />
-														<hbox>
-															<uppercasebox
-																id="custCIF" width="150px" />
-															<button
-																id="btnSearchCustCIF"
-																tooltiptext="${c:l('label_EligibilityCheck_btnSearchCustCIF.tooltiptext')}"
-																image="/images/icons/LOVSearch.png" />
-															<label
-																id="custShrtName" />
-														</hbox>
+														<uppercasebox
+															id="custCIF" width="150px" />
+														<button
+															id="btnSearchCustCIF"
+															tooltiptext="${c:l('label_MurabahaFinanceMainDialog_btnSearchCustCIF.tooltiptext')}"
+															image="/images/icons/LOVSearch.png" />
+														<label
+															id="custShrtName" />
 														<button
 															id="viewCustInfo" image="/images/icons/more.png"
-															tooltiptext="${c:l('tooltip_Custinfo')}">
-														</button>
+															tooltiptext="${c:l('tooltip_Custinfo')}" />
 													</hbox>
 													<label
 														id="label_MurabahaFinanceMainDialog_FinBranch"
 														value="${c:l('label_MurabahaFinanceMainDialog_FinBranch.value')}" />
-													<extendedcombobox
-														id="finBranch" />
+													<extendedcombobox id="finBranch" />
 												</row>
 												<row>
 													<label

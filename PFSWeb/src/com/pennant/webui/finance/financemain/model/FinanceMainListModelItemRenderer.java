@@ -83,10 +83,19 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getFinReference());
 		lc.setParent(item);
-	  	lc = new Listcell(financeMain.getFinType());
-		lc.setParent(item);
-		lc = new Listcell(financeMain.getLovdescFinProduct());
-		lc.setParent(item);
+		
+		if(StringUtils.trimToEmpty(financeMain.getLovdescFinProduct()).equals("")){
+			lc = new Listcell(financeMain.getFinType());
+			lc.setParent(item);
+			lc = new Listcell("");
+			lc.setParent(item);
+		}else{
+			lc = new Listcell("");
+			lc.setParent(item);
+			lc = new Listcell(financeMain.getFinType());
+			lc.setParent(item);
+		}
+	  	
 	  	lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(financeMain.getNumberOfTerms()));
@@ -97,9 +106,9 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount().subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt() == null ?BigDecimal.ZERO : financeMain.getFeeChargeAmt()), financeMain.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(financeMain.getRequestStage());
+		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);
-		lc = new Listcell(financeMain.getQueuePriority());
+		lc = new Listcell(financeMain.getLovDescQueuePriority());
 		lc.setParent(item);
 	  	lc = new Listcell(financeMain.getRecordStatus());
 		lc.setParent(item);

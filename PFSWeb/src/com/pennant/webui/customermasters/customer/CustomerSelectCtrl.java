@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -62,12 +63,10 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.customermasters.customer.model.CustomerSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -94,22 +93,22 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 
 	protected Textbox custCIF; 							// autowired
 	protected Listbox sortOperator_custCIF; 			// autowired
-	protected Textbox custDob; 					// autowired
-	protected Listbox sortOperator_custDob; 		// autowired
+	protected Datebox custDob; 							// autowired
+	protected Listbox sortOperator_custDob; 			// autowired
 	protected Textbox custName; 						// autowired
-	protected Listbox sortOperator_custName; 		// autowired
-	protected Textbox custMobile; 					// autowired
-	protected Listbox sortOperator_custMobile; 		// autowired
-	protected Textbox custEid; 				// autowired
-	protected Listbox sortOperator_custEID; 	// autowired
-	protected Textbox custPassport; 						// autowired
-	protected Listbox sortOperator_custPassport; 			// autowired
+	protected Listbox sortOperator_custName; 			// autowired
+	protected Textbox custMobile; 						// autowired
+	protected Listbox sortOperator_custMobile; 			// autowired
+	protected Textbox custEid; 							// autowired
+	protected Listbox sortOperator_custEID; 			// autowired
+	protected Textbox custPassport; 					// autowired
+	protected Listbox sortOperator_custPassport; 		// autowired
 	protected Textbox custType; 						// autowired
 	protected Listbox sortOperator_custType; 			// autowired
-	protected Textbox custNationality; 						// autowired
-	protected Listbox sortOperator_custNationality;	 		// autowired
-	protected Textbox custSector; 					// autowired
-	protected Listbox sortOperator_custSector; 		// autowired
+	protected Textbox custNationality; 					// autowired
+	protected Listbox sortOperator_custNationality;	 	// autowired
+	protected Textbox custSector; 						// autowired
+	protected Listbox sortOperator_custSector; 			// autowired
 	protected Textbox custSubSector; 					// autowired
 	protected Listbox sortOperator_custSubSector; 		// autowired
 
@@ -131,10 +130,8 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 	protected Borderlayout borderLayout_CustomerSelect;
 	
 	// not auto wired vars
-	private transient CustomerService customerService;
 	private transient Object dialogCtrl = null;
 
-	private transient WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Customer");
 	private JdbcSearchObject<Customer> searchObj;
 	private List<Filter> filterList = new ArrayList<Filter>();
 	protected Button btnClear;
@@ -161,20 +158,12 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 	public void onCreate$window_CustomerSelect(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		if (workFlowDetails == null) {
-			setWorkFlowEnabled(false);
-		} else {
-			setWorkFlowEnabled(true);
-			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
-			setWorkFlowId(workFlowDetails.getId());
-		}
-
 		// +++++++++++++++++++++++ DropDown ListBox ++++++++++++++++++++++ //
 		List<SearchOperators> list = new SearchOperators().getStringOperators();
 		this.sortOperator_custCIF.setModel(new ListModelList<SearchOperators>(list));
 		this.sortOperator_custCIF.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(list));
+		this.sortOperator_custDob.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_custDob.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(list));
@@ -224,7 +213,6 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 		
-		
 		// +++++++++++++++++++++++ Stored search object and paging ++++++++++++++++++++++ //
 			
 		if (args.containsKey("searchObject")) {
@@ -251,29 +239,29 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 					this.custCIF.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCIF));
 				} else if (filter.getProperty().equals("custCoreBank")) {
 					SearchOperators.resetOperator(this.sortOperator_custDob, filter);
-					this.custDob.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custDob));
-				} else if (filter.getProperty().equals("custCtgCode")) {
+					this.custDob.setValue(DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.dateFormat));
+				} else if (filter.getProperty().equals("custFName")) {
 					SearchOperators.resetOperator(this.sortOperator_custName, filter);
 					this.custName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custName));
-				} else if (filter.getProperty().equals("custTypeCode")) {
+				} else if (filter.getProperty().equals("custMobile")) {
 					SearchOperators.resetOperator(this.sortOperator_custMobile, filter);
 					this.custMobile.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custMobile));
-				} else if (filter.getProperty().equals("custSalutationCode")) {
+				} else if (filter.getProperty().equals("custCRCPR")) {
 					SearchOperators.resetOperator(this.sortOperator_custEID, filter);
 					this.custEid.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custEID));
-				} else if (filter.getProperty().equals("custFName")) {
+				} else if (filter.getProperty().equals("custPassport")) {
 					SearchOperators.resetOperator(this.sortOperator_custPassport, filter);
 					this.custPassport.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custPassport));
-				} else if (filter.getProperty().equals("custMName")) {
+				} else if (filter.getProperty().equals("custType")) {
 					SearchOperators.resetOperator(this.sortOperator_custType, filter);
 					this.custType.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custType));
-				} else if (filter.getProperty().equals("custLName")) {
+				} else if (filter.getProperty().equals("custNationality")) {
 					SearchOperators.resetOperator(this.sortOperator_custNationality, filter);
 					this.custNationality.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custNationality));
-				} else if (filter.getProperty().equals("custShrtName")) {
+				} else if (filter.getProperty().equals("custSector")) {
 					SearchOperators.resetOperator(this.sortOperator_custSector, filter);
 					this.custSector.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custSector));
-				} else if (filter.getProperty().equals("custDftBranch")) {
+				} else if (filter.getProperty().equals("custSubSector")) {
 					SearchOperators.resetOperator(this.sortOperator_custSubSector, filter);
 					this.custSubSector.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custSubSector));
 				}
@@ -382,7 +370,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 
 		JdbcSearchObject<Customer> searchObject = getSearchObj();
 
-		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustCIF = this.sortOperator_custCIF.getSelectedItem();
@@ -399,16 +387,14 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custDob.getValue())) {
+		if (this.custDob.getValue() != null) {
 
 			// get the search operator
 			final Listitem itemCustCoreBank = this.sortOperator_custDob.getSelectedItem();
 			if (itemCustCoreBank != null) {
 				final int searchOpId = ((SearchOperators) itemCustCoreBank.getAttribute("data")).getSearchOperatorId();
 
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("CustDOB", "%" + this.custDob.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
+				if (searchOpId == -1) {
 					// do nothing
 				} else {
 					searchObject.addFilter(new Filter("CustDOB", this.custDob.getValue(), searchOpId));
@@ -416,7 +402,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 		
-		if (StringUtils.isNotEmpty(this.custName.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custName.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustDftBranch = this.sortOperator_custName.getSelectedItem();
@@ -433,7 +419,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custMobile.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custMobile.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustCtgCode = this.sortOperator_custMobile.getSelectedItem();
@@ -450,7 +436,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custEid.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custEid.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustTypeCode = this.sortOperator_custEID.getSelectedItem();
@@ -467,7 +453,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custPassport.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custPassport.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustSalutationCode = this.sortOperator_custPassport.getSelectedItem();
@@ -484,7 +470,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custType.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custType.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustFName = this.sortOperator_custType.getSelectedItem();
@@ -501,7 +487,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custNationality.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custNationality.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustMName = this.sortOperator_custNationality.getSelectedItem();
@@ -518,7 +504,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custSector.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custSector.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustLName = this.sortOperator_custSector.getSelectedItem();
@@ -535,7 +521,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 			}
 		}
 
-		if (StringUtils.isNotEmpty(this.custSubSector.getValue())) {
+		if (!StringUtils.trimToEmpty(this.custSubSector.getValue()).equals("")) {
 
 			// get the search operator
 			final Listitem itemCustShrtName = this.sortOperator_custSubSector.getSelectedItem();
@@ -618,7 +604,7 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 		if (this.searchObj!=null) {	
 			this.custCIF.setValue("");
 			this.sortOperator_custCIF.setSelectedIndex(0);
-			this.custDob.setValue("");
+			this.custDob.setText("");
 			this.sortOperator_custDob.setSelectedIndex(0);
 			this.custName.setValue("");
 			this.sortOperator_custName.setSelectedIndex(0);
@@ -647,14 +633,6 @@ public class CustomerSelectCtrl extends GFCBaseListCtrl<Customer> implements Ser
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void setCustomerService(CustomerService customerService) {
-		this.customerService = customerService;
-	}
-
-	public CustomerService getCustomerService() {
-		return this.customerService;
-	}
 
 	public JdbcSearchObject<Customer> getSearchObj() {
 	

@@ -8,60 +8,87 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<style>
-		.CodeMirror-line-numbers { width: 2.2em; color: #aaa;
-		background-color: #eee; text-align: right; padding-right: .3em;
-		font-size: 10pt; font-family: monospace; padding-top: .4em;
-		line-height: normal; }
-	</style>
-
-	<script type="text/javascript" src="/ptjs/fulljslint.js" />
-	<script type="text/javascript">
-		
-		<![CDATA[ function addStringContent(strContent) {
-		zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
-		} function validateJs(btn) { try{ var code; jslint_options =
-		{//json object 'passfail':false, // Stop on first error
-		'white':false, // Strict whitespace (enabled in "good parts")
-		'browser':false, // Assume a browser 'devel':false, // Assume
-		console, alert,... 'widget':false, // Assume Yahoo widget
-		'windows':false, // Assume Windows 'rhino':false, // Assume
-		Rhino 'safe':false, // Safe Subset 'adsafe':false, // ADsafe
-		'debug':false, // Tolerate debugger statements 'evil':false, //
-		Tolerate eval() statements 'laxbreak':false, // Tolerate sloppy
-		linebreaking 'forin':false, // Tolerate unfiltered for in
-		'sub':false, // Tolerate inefficient subscripting 'css':false,
-		// Tolerate CSS workarounds 'cap':false, // Tolerate HTML case
-		'on':false, // Tolerate HTML event handlers 'fragment':false, //
-		Tolerate HTML fragments 'es5':false, // Tolerate ES5 syntax
-		'onevar':false, // Allow one var statement per function (enabled
-		in "good parts") 'undef':false, // Disallow undefined variables
-		(enabled in "good parts") 'nomen':true, // Disallow dangling _
-		in identifiers (enabled in "good parts") 'eqeqeq':false, //
-		Disallow == and != (enabled in "good parts") 'plusplus':true, //
-		Disallow ++ and -- (enabled in "good parts") 'bitwise':true, //
-		Disallow bitwise operators (enabled in "good parts")
-		'regexp':true, // Disallow insecure . and [^...] in /RegExp/
-		(enabled in "good parts") 'newcap':true, // Require Initial Caps
-		for constructors (enabled in "good parts") 'immed':true, //
-		Require parens around immediate invocations (enabled in "good
-		parts") 'strict':false, // Require "use strict"; 'maxerr':10,
-		'indent':4 };
-		code=zk.Widget.$(jq('$amountRule'))._editor.getCode(); msgWidget
-		= zk.Widget.$(jq('$btnValidate')); simWidget =
-		zk.Widget.$(jq('$btnSimulate')); savWidget =
-		zk.Widget.$(jq('$btnValidateSave'));
-
-		if(code != ""){ JSLINT(code, jslint_options); var
-		data=[JSLINT.errors,JSLINT.data().implieds]; if(btn==1){
-		zAu.send(new zk.Event(msgWidget, 'onUser',data)); } if(btn==2){
-		zAu.send(new zk.Event(simWidget, 'onUser',data)); } }
-		if(btn==3){
-
-		zAu.send(new zk.Event(savWidget, 'onUser',data)); }
-
-		}catch(err){ alert("Error on The Page"+err); } } ]]>
-		
+<style>
+      .CodeMirror-line-numbers {
+        width: 2.2em;
+        color: #aaa;
+        background-color: #eee;
+        text-align: right;
+        padding-right: .3em;   
+        font-size: 10pt;
+        font-family: monospace;
+        padding-top: .4em;
+        line-height: normal;
+      }
+    </style>
+    
+	<script type="text/javascript" src="/ptjs/fulljslint.js" /> 
+ 	<script type="text/javascript">
+	<![CDATA[     
+	function addStringContent(strContent) {				
+ 			zk.Widget.$(jq('$amountRule'))._editor.replaceSelection(strContent);
+	}	
+	function validateJs(btn) {
+		try{	
+		var code;	
+  		jslint_options = {//json object
+							'passfail':false,	// Stop on first error
+							'white':false,		// Strict whitespace (enabled in "good parts")
+							'browser':false,	// Assume a browser
+							'devel':false,		// Assume console, alert,...
+							'widget':false,		// Assume Yahoo widget
+							'windows':false,	// Assume Windows
+							'rhino':false,		// Assume Rhino
+							'safe':false,		// Safe Subset
+							'adsafe':false,		// ADsafe					 
+							'debug':false,		// Tolerate debugger statements
+							'evil':false,		// Tolerate eval() statements
+							'laxbreak':false,	// Tolerate sloppy linebreaking
+							'forin':false,		// Tolerate unfiltered for in
+							'sub':false,		// Tolerate inefficient subscripting
+							'css':false,		// Tolerate CSS workarounds
+							'cap':false,		// Tolerate HTML case
+							'on':false,		    // Tolerate HTML event handlers
+							'fragment':false,	// Tolerate HTML fragments
+							'es5':false,		// Tolerate ES5 syntax					 
+							'onevar':false,		// Allow one var statement per function (enabled in "good parts")
+							'undef':false,		// Disallow undefined variables (enabled in "good parts")
+							'nomen':true,		// Disallow dangling _ in identifiers (enabled in "good parts")
+							'eqeqeq':false,		// Disallow == and != (enabled in "good parts")
+							'plusplus':true,	// Disallow ++ and -- (enabled in "good parts")
+							'bitwise':true,		// Disallow bitwise operators (enabled in "good parts")
+							'regexp':true,		// Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts")
+							'newcap':true,		// Require Initial Caps for constructors (enabled in "good parts")
+							'immed':true,		// Require parens around immediate invocations (enabled in "good parts")
+							'strict':false,		// Require "use strict";
+							'maxerr':10, 
+							'indent':4
+						};
+  		code=zk.Widget.$(jq('$amountRule'))._editor.getCode();  
+  		msgWidget = zk.Widget.$(jq('$btnValidate'));
+  		simWidget = zk.Widget.$(jq('$btnSimulate'));
+  		savWidget = zk.Widget.$(jq('$btnValidateSave'));
+  		
+  		if(code != ""){  			
+  					JSLINT(code, jslint_options); 			
+  					var data=[JSLINT.errors,JSLINT.data().implieds]; 
+  					if(btn==1){
+  					zAu.send(new zk.Event(msgWidget, 'onUser',data));  					
+  					}
+  					if(btn==2){
+  							zAu.send(new zk.Event(simWidget, 'onUser',data));  		
+  					}
+  		}			
+  					if(btn==3){
+  					
+  							zAu.send(new zk.Event(savWidget, 'onUser',data));  		
+  					}
+  		
+		}catch(err){
+			alert("Error on The Page"+err);
+		}
+	}
+	]]>
 	</script>
 
 	<window>
@@ -258,10 +285,8 @@
 										<label
 											id="label_TransactionEntryDialog_AccountBranch"
 											value="${c:l('label_TransactionEntryDialog_AccountBranch.value')}" />
-										<hbox>
-											<extendedcombobox
+										<extendedcombobox
 												id="accountBranch" />
-										</hbox>
 									</row>
 									<row visible="true">
 										<label
@@ -334,8 +359,7 @@
 									<row>
 										<tabbox id="tb_Fields">
 											<tabs>
-												<tab
-													label="Amount Codes" />
+												<tab label="Amount Codes" />
 												<tab label="Fee Codes" />
 											</tabs>
 											<tabpanels>

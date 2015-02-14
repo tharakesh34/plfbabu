@@ -1447,9 +1447,7 @@
 
 	<bean id="CustomerSelectctrl"
 		class="com.pennant.webui.customermasters.customer.CustomerSelectCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="customerService" ref="customerService" />
-	</bean>
+		parent="basisListCtrl" scope="prototype" />
 
 	<bean id="finCustomerDetailsEnqCtrl"
 		class="com.pennant.webui.customermasters.customer.FinCustomerDetailsEnqCtrl"
