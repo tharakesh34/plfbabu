@@ -2157,6 +2157,41 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
+
+<!--============ Takaful Provider Details ============== -->
+
+	<bean id="takafulProviderDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.TakafulProviderDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="takafulProviderService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="takafulProviderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="takafulProviderServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.TakafulProviderServiceImpl">
+		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+
+
 	<!-- ====================================================== -->
 	<!-- Accounts Details Configuration -->
 	<!-- ====================================================== -->

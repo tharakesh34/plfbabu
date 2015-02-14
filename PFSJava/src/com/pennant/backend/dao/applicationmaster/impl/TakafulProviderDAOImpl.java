@@ -1,0 +1,305 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  TakafulProviderDAOImpl.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  31-07-2013    														*
+ *                                                                  						*
+ * Modified Date    :  31-07-2013    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 31-07-2013       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
+
+package com.pennant.backend.dao.applicationmaster.impl;
+
+
+import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
+import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.TakafulProvider;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.WorkFlowUtil;
+
+/**
+ * DAO methods implementation for the <b>TakafulProvider model</b> class.<br>
+ * 
+ */
+
+public class TakafulProviderDAOImpl extends BasisCodeDAO<TakafulProvider> implements TakafulProviderDAO {
+
+	private static Logger logger = Logger.getLogger(TakafulProviderDAOImpl.class);
+	
+	// Spring Named JDBC Template
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
+	/**
+	 * This method set the Work Flow id based on the module name and return the new TakafulProvider 
+	 * @return TakafulProvider
+	 */
+
+	@Override
+	public TakafulProvider getTakafulProvider() {
+		logger.debug("Entering");
+		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("TakafulProvider");
+		TakafulProvider takafulProvider= new TakafulProvider();
+		if (workFlowDetails!=null){
+			takafulProvider.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		logger.debug("Leaving");
+		return takafulProvider;
+	}
+
+
+	/**
+	 * This method get the module from method getTakafulProvider() and set the new record flag as true and return TakafulProvider()   
+	 * @return TakafulProvider
+	 */
+
+
+	@Override
+	public TakafulProvider getNewTakafulProvider() {
+		logger.debug("Entering");
+		TakafulProvider takafulProvider = getTakafulProvider();
+		takafulProvider.setNewRecord(true);
+		logger.debug("Leaving");
+		return takafulProvider;
+	}
+
+	/**
+	 * Fetch the Record  Employer Detail details by key field
+	 * 
+	 * @param id (int)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return TakafulProvider
+	 */
+	@Override
+	public TakafulProvider getTakafulProviderById(final String id, String type) {
+		logger.debug("Entering");
+		TakafulProvider takafulProvider = new TakafulProvider();
+		takafulProvider.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder("Select TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate,");
+		selectSql.append(" EstablishedDate, Street, HouseNumber, AddrLine1, AddrLine2, Country, Province, City, ZipCode, Phone,");
+		selectSql.append(" Fax, EmailId, WebSite, ContactPerson, ContactPersonNo,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(",lovDescCountryDesc,lovDescProvinceDesc,lovDescCityDesc");
+		}
+		selectSql.append(" From TakafulProvider");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where TakafulCode = :TakafulCode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
+		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TakafulProvider.class);
+		
+		try{
+			takafulProvider = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			takafulProvider = null;
+		}
+		logger.debug("Leaving");
+		return takafulProvider;
+	}
+	
+	/**
+	 * This method initialise the Record.
+	 * @param TakafulProvider (takafulProvider)
+ 	 * @return TakafulProvider
+	 */
+	@Override
+	public void initialize(TakafulProvider takafulProvider) {
+		super.initialize(takafulProvider);
+	}
+	/**
+	 * This method refresh the Record.
+	 * @param TakafulProvider (takafulProvider)
+ 	 * @return void
+	 */
+	@Override
+	public void refresh(TakafulProvider takafulProvider) {
+		
+	}
+	
+	/**
+	 * To Set  dataSource
+	 * @param dataSource
+	 */
+	
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	/**
+	 * This method Deletes the Record from the TakafulProvider or TakafulProvider_Temp.
+	 * if Record not deleted then throws DataAccessException with  error  41003.
+	 * delete Employer Detail by key EmployerId
+	 * 
+	 * @param Employer Detail (takafulProvider)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public void delete(TakafulProvider takafulProvider,String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From TakafulProvider");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where TakafulCode = :TakafulCode");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
+		try{
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails= getError("41003",takafulProvider.getTakafulCode() ,takafulProvider.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {};
+			}
+		}catch(DataAccessException e){
+			logger.error(e);
+			ErrorDetails errorDetails= getError("41006",takafulProvider.getTakafulCode() ,takafulProvider.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method insert new Records into TakafulProvider or TakafulProvider_Temp.
+	 * it fetches the available Sequence form SeqTakafulProvider by using getNextidviewDAO().getNextId() method.  
+	 *
+	 * save Employer Detail 
+	 * 
+	 * @param Employer Detail (takafulProvider)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@Override
+	public void save(TakafulProvider takafulProvider,String type) {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql =new StringBuilder("Insert Into TakafulProvider");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (TakafulCode, TakafulName, TakafulType, AccountNumber, TakafulRate, EstablishedDate, Street,HouseNumber, AddrLine1, ");
+		insertSql.append("  AddrLine2, Country, Province, City, ZipCode, Phone, Fax, EmailId, WebSite, ContactPerson, ContactPersonNo, ");
+		insertSql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:TakafulCode, :TakafulName, :TakafulType, :AccountNumber, :TakafulRate, :EstablishedDate, :Street, :HouseNumber, :AddrLine1, ");
+		insertSql.append("  :AddrLine2, :Country, :Province, :City, :ZipCode, :Phone, :Fax, :EmailId, :WebSite, :ContactPerson, :ContactPersonNo, ");
+		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method updates the Record TakafulProvider or TakafulProvider_Temp.
+	 * if Record not updated then throws DataAccessException with  error  41004.
+	 * update Employer Detail by key EmployerId and Version
+	 * 
+	 * @param Employer Detail (takafulProvider)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@SuppressWarnings("serial")
+	@Override
+	public void update(TakafulProvider takafulProvider,String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update TakafulProvider");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		
+		updateSql.append(" Set TakafulName = :TakafulName, TakafulType = :TakafulType,");
+		updateSql.append(" AccountNumber = :AccountNumber , TakafulRate = :TakafulRate, EstablishedDate = :EstablishedDate,");
+		updateSql.append(" Street = :Street , HouseNumber = :HouseNumber, AddrLine1 = :AddrLine1, AddrLine2 = :AddrLine2,");
+		updateSql.append(" Country = :Country , Province = :Province, City = :City, ZipCode = :ZipCode, Phone = :Phone, Fax = :Fax,");
+		updateSql.append(" EmailId = :EmailId, WebSite = :WebSite, ContactPerson = :ContactPerson, ContactPersonNo = :ContactPersonNo,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where TakafulCode = :TakafulCode");
+		
+		if (!type.endsWith("_TEMP")){
+			updateSql.append("  AND Version= :Version-1");
+		}
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError("41004",takafulProvider.getTakafulCode() ,takafulProvider.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
+	private ErrorDetails  getError(String errorId, String takafulCode, String userLanguage){
+		String[][] parms= new String[2][1];
+		parms[1][0] = takafulCode;
+		parms[0][0] = PennantJavaUtil.getLabel("label_TakafulCode")+ ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+
+	
+}

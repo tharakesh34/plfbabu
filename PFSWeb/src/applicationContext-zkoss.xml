@@ -1182,6 +1182,22 @@
 		<property name="transactionCodeService" ref="transactionCodeService" />
 	</bean>
 
+    <!--============ Takaful Provider Detail ============== -->
+
+	<bean id="takafulProviderListCtrl"
+		class="com.pennant.webui.applicationmaster.takafulprovider.TakafulProviderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="takafulProviderService" ref="takafulProviderService" />
+	</bean>
+
+	<bean id="takafulProviderDialogCtrl"
+		class="com.pennant.webui.applicationmaster.takafulprovider.TakafulProviderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="pagedListService" ref="pagedListService" />
+		<property name="takafulProviderService" ref="takafulProviderService" />
+	</bean>
+
+
 	<!-- ====================================================== -->
 	<!-- Account Details Configuration -->
 	<!-- ====================================================== -->
@@ -3238,6 +3254,14 @@
 		class="com.pennant.webui.lmtmasters.enquiry.CarLoanDetailEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+
+	<!--============ Fleet Vehicle Finance Details ============== -->
+	
+	<bean id="fleetVehicleLoanDetailListCtrl" class="com.pennant.webui.lmtmasters.fleetvehicleloandetail.FleetVehicleLoanDetailListCtrl" 
+		parent="basisCtrl" scope="prototype">
+		<property name="carLoanDetailService" ref="carLoanDetailService" />
+	</bean>
+
 
 	<!--============ Educational Expense Details ============== -->
 

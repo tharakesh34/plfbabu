@@ -86,6 +86,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> remFeeSchdMethodList;
 	private static ArrayList<ValueLabel> takafulWaiverReasonList;
 	private static ArrayList<ValueLabel> queuePriority;
+	private static ArrayList<ValueLabel> takafulTypeList;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -1219,5 +1220,14 @@ public class PennantStaticListUtil {
 			queuePriority.add(new ValueLabel(PennantConstants.NORMAL, "Normal"));
 		}
 		return queuePriority;
+	}
+	
+	public static List<ValueLabel> getTakafulTypes() {
+		if(takafulTypeList == null){
+			takafulTypeList = new ArrayList<ValueLabel>(2);
+			takafulTypeList.add(new ValueLabel("G", Labels.getLabel("label_TakafulType_Group")));
+			takafulTypeList.add(new ValueLabel("O", Labels.getLabel("label_TakafulType_Others")));
+		}
+		return takafulTypeList;
 	}
 }

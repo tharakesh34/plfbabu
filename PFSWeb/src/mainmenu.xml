@@ -69,6 +69,7 @@
 		<menuItem id="menu_Item_SplRate" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRate/SplRateList.zul"  rightName="menuItem_ApplicationMaster_SplRate"/>
 		<menuItem id="menu_Item_SplRateCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul"  rightName="menuItem_ApplicationMaster_SplRateCode"/>
 		<menuItem id="menu_Item_TransactionCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul"  rightName="menuItem_ApplicationMaster_TransactionCode"/>
+		<menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" rightName="menuItem_ApplicationMaster_TakafulProvider"/>
 	</menu>
 
 	<!-- Account Menu Tree -->
