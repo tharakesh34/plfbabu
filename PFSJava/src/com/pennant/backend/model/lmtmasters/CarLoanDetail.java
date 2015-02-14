@@ -62,7 +62,7 @@ public class CarLoanDetail implements java.io.Serializable {
 	private static final long serialVersionUID = -6896226621927563737L;
 	
 	private String loanRefNumber;
-	private int itemNumber=1;
+	private int itemNumber;
 	private boolean loanRefType;
 	private long carLoanFor;
 	private String lovDescCarLoanForName;
