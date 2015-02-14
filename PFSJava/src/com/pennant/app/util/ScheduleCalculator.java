@@ -44,6 +44,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.model.ErrorDetails;
@@ -286,11 +287,11 @@ public class ScheduleCalculator {
 						
 						//Repayment's amount Calculation
 						if (financeMain.getScheduleMethod().equals(CalculationConstants.EQUAL)) {
-							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).add(totalDesiredProfit);
+							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment()).add(totalDesiredProfit);
 							repayAmount = (repayAmount.multiply(new BigDecimal(100))).divide(totalPercentage, 0, RoundingMode.HALF_DOWN);
 						} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
 								|| financeMain.getScheduleMethod().equals(CalculationConstants.PRI_PFT)) {
-							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt());
+							repayAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment());
 							repayAmount = (repayAmount.multiply(new BigDecimal(100))).divide(totalPercentage, 0, RoundingMode.HALF_DOWN);
 						}
 						
@@ -408,7 +409,11 @@ public class ScheduleCalculator {
 				finScheduleData.getFinanceMain().setEffectiveRateOfReturn(BigDecimal.ZERO);
 			}
 			
+			// Fee Schedule Calculation
 			finScheduleData = feeSchedulePreparation(finScheduleData);
+			
+			//Takaful Premium Calculation
+			finScheduleData = takafulPremiumCalculation(finScheduleData);
 
 			setFinScheduleData(finScheduleData);
 		}
@@ -4942,7 +4947,7 @@ public class ScheduleCalculator {
 				calRepayAmount = financeMain.getFinAmount().subtract(schdAmountFixed);
 			}
 			
-			calRepayAmount = calRepayAmount.add(financeMain.getFeeChargeAmt());
+			calRepayAmount = calRepayAmount.add(financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment());
 			if (termTobeAdjusted >0) {
 				calRepayAmount = calRepayAmount.divide(BigDecimal.valueOf(termTobeAdjusted), 0, RoundingMode.HALF_DOWN);
 			}
@@ -4971,6 +4976,7 @@ public class ScheduleCalculator {
 			orgFinanceAmount = financeMain.getFinAmount();
 		}
 		
+		orgFinanceAmount = orgFinanceAmount.subtract(financeMain.getDownPayment());
 		Date evtFromDate = financeMain.getFinStartDate();
 		if(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.PFT)){
 			evtFromDate = finScheduleData.getFinanceScheduleDetails().get(financeMain.getGraceTerms()+1).getSchDate();
@@ -5024,7 +5030,7 @@ public class ScheduleCalculator {
 					continue;
 				}
 				
-				if(i == size-1){
+				if(i == size-1 || instlFeeAmt.compareTo(totalCalFee) > 0){
 					curSchd.setFeeSchd(totalCalFee);
 					totalCalFee = BigDecimal.ZERO;
 				}else{
@@ -5035,6 +5041,64 @@ public class ScheduleCalculator {
 			
 		} 
 		
+		return finScheduleData;
+	}
+	
+	/**
+	 * Method for Calculate Takaful Premium Amount based on Takaful Details
+	 * @param finScheduleData
+	 * @return
+	 */
+	private FinScheduleData takafulPremiumCalculation(FinScheduleData finScheduleData){
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+		// Calculate Takaful Premium Amount to Schedule based on Takaful Frequency & rate applied 
+		if(financeMain.isTakafulRequired()){
+
+			//Calculate Takaful premium to each Schedule Installment
+			int size = finScheduleData.getFinanceScheduleDetails().size();
+			String productCode = finScheduleData.getFinanceType().getFinCategory();
+			
+			// Frequency Factor
+			int frqFactor = 1;
+			String takafulFrqCode = String.valueOf(financeMain.getTakafulFrq().charAt(0));
+			if(takafulFrqCode.equals(FrequencyCodeTypes.FRQ_MONTHLY)){
+				frqFactor = 12;
+			}else if(takafulFrqCode.equals(FrequencyCodeTypes.FRQ_QUARTERLY)){
+				frqFactor = 4;
+			}else if(takafulFrqCode.equals(FrequencyCodeTypes.FRQ_HALF_YEARLY)){
+				frqFactor = 2;
+			}
+			
+			for (int i = 0; i < size; i++) {
+
+				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(!curSchd.isRepayOnSchDate()){
+					continue;
+				}
+				
+				//Override for Same Month Schedule Payment Installment
+				if(DateUtility.getMonthStartDate(financeMain.getFinStartDate()).compareTo(
+						DateUtility.getMonthStartDate(curSchd.getSchDate())) == 0){
+					continue;
+				}
+				
+				BigDecimal takafulFeeSchd = BigDecimal.ZERO;
+				if(productCode.equals(PennantConstants.FINANCE_PRODUCT_MURABAHA)){
+					BigDecimal calOSAmt = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment());
+					takafulFeeSchd = calOSAmt.multiply(financeMain.getTakafulRate()).divide(new BigDecimal(frqFactor), 0, RoundingMode.HALF_DOWN);
+				}else{
+					takafulFeeSchd = curSchd.getClosingBalance().multiply(financeMain.getTakafulRate()).divide(new BigDecimal(frqFactor), 0, RoundingMode.HALF_DOWN);
+				}
+
+				curSchd.setTakafulFeeSchd(takafulFeeSchd);
+				
+				System.out.println("Schedule Date : -- "+curSchd.getSchDate()+"  --- Takaful Amount : "+takafulFeeSchd);
+			}
+
+		} 
+
 		return finScheduleData;
 	}
 	
