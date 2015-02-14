@@ -84,6 +84,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> custRelationList;
 	private static ArrayList<ValueLabel> importTablesList;
 	private static ArrayList<ValueLabel> remFeeSchdMethodList;
+	private static ArrayList<ValueLabel> queuePriority;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -1199,5 +1200,15 @@ public class PennantStaticListUtil {
 		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, Labels.getLabel("label_ScheduleToEntireTenor")));
 		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
 		return remFeeSchdMethodList;
+	}
+	public static ArrayList<ValueLabel> getQueuePriority() {
+
+		if(queuePriority == null){
+			queuePriority = new ArrayList<ValueLabel>(2);
+			queuePriority.add(new ValueLabel(PennantConstants.HIGH, "High"));
+			queuePriority.add(new ValueLabel(PennantConstants.MEDIUM, "Medium"));
+			queuePriority.add(new ValueLabel(PennantConstants.NORMAL, "Normal"));
+		}
+		return queuePriority;
 	}
 }

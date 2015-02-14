@@ -17,31 +17,36 @@
 				<label value="" />
 
 				<!-- SEARCH AREA -->
-				<toolbar align="center"  sclass="toolbar-center">
+				<toolbar align="center" sclass="toolbar-center">
 					<button
 						id="button_FinanceMainList_FinanceMainSearchDialog"
 						label="${c:l('label_Filter')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_FinanceMainList_FinanceMainSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('button_FinanceMainList_FinanceMainSearchDialog.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 					<button id="button_FinanceMainList_PrintList"
 						label="${c:l('label_Print')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_FinanceMainList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('button_FinanceMainList_PrintList.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
-				<toolbar align="end"  sclass="toolbar-end">
+				<toolbar align="end" sclass="toolbar-end">
 					<button id="button_FinanceMainList_NewFinanceMain"
 						label="${c:l('label_New')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
-						tooltiptext="${c:l('button_FinanceMainList_NewFinanceMain.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('button_FinanceMainList_NewFinanceMain.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 					<button id="btnRefresh"
 						label="${c:l('label_Refresh')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 					<button id="btnHelp" label="${c:l('label_Help')}"
 						autodisable="button_FinanceMainList_FinanceMainSearchDialog,button_FinanceMainList_PrintList,button_FinanceMainList_NewFinanceMain,btnRefresh,btnHelp"
-						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -71,18 +76,15 @@
 									value="${c:l('label_FinanceMainSearch_CustID.value')}" />
 								<listbox id="sortOperator_custID"
 									width="43px" mold="select" rows="1" />
-								<textbox id="custID" width="171px"
-									maxlength="19" />
-
-								<label
-									id="label_FinanceMainSearch_FinType"
-									value="${c:l('label_FinanceMainSearch_FinType.value')}" />
-								<listbox id="sortOperator_finType"
-									width="43px" mold="select" rows="1" />
-								<textbox id="finType" width="100px"
-									maxlength="8" />
-							</row>
-							<row>
+								<hbox>
+									<longbox id="custID" width="171px"
+										maxlength="26" visible="false" />
+									<textbox id="custCIF" />
+									<button id="viewCustInfo"
+										image="/images/icons/more.png"
+										tooltiptext="${c:l('tooltip_Custinfo')}">
+									</button>
+								</hbox>
 								<label
 									id="label_FinanceMainSearch_FinReference"
 									value="${c:l('label_FinanceMainSearch_FinReference.value')}" />
@@ -90,55 +92,90 @@
 									width="43px" mold="select" rows="1" />
 								<uppercasebox id="finReference"
 									width="180px" maxlength="20" />
-
-								<label
-									id="label_FinanceMainSearch_ScheduleMethod"
-									value="${c:l('label_FinanceMainSearch_ScheduleMethod.value')}" />
-								<listbox
-									id="sortOperator_scheduleMethod" width="43px" mold="select"
-									rows="1" />
-								<textbox id="scheduleMethod"
-									width="100px" maxlength="8" />
-							</row>
-							<row visible="false">
-								<label
-									id="label_FinanceMainSearch_ProfitDaysBasis"
-									value="${c:l('label_FinanceMainSearch_ProfitDaysBasis.value')}" />
-								<listbox id="sortOperator_profitDaysBasis" width="43px" mold="select" rows="1" />
-								<textbox id="profitDaysBasis" width="100px" maxlength="8" />
-								<label
-									id="label_FinanceMainSearch_FinStartDate"
-									value="${c:l('label_FinanceMainSearch_FinStartDate.value')}" />
-								<listbox id="sortOperator_finStartDate"
-									width="43px" mold="select" rows="1" />
-								<datebox id="finStartDate" width="100px"
-									format="dd/MM/yyyy" />
 							</row>
 							<row>
 								<label
-									id="label_FinanceMainSearch_FinAmount"
-									value="${c:l('label_FinanceMainSearch_FinAmount.value')}" />
-								<listbox id="sortOperator_finAmount"
+									id="label_FinanceMainSearch_CustName"
+									value="${c:l('label_FinanceMainSearch_CustName.value')}" />
+								<listbox id="sortOperator_custName"
 									width="43px" mold="select" rows="1" />
-								<decimalbox id="finAmount" width="162px"
-									maxlength="18" />
-								<label
-									id="label_FinanceMainSearch_FinCcy"
-									value="${c:l('label_FinanceMainSearch_FinCcy.value')}" />
-								<listbox id="sortOperator_finCcy"
-									width="43px" mold="select" rows="1" />
-								<textbox id="finCcy" width="50px"
-									maxlength="3" />
+								<textbox id="fincustName" width="171px"
+									maxlength="50" />
 
-							</row>
-							<row visible="false">
 								<label
-									id="label_FinanceMainSearch_FinIsActive"
-									value="${c:l('label_FinanceMainSearch_FinIsActive.value')}" />
-								<listbox id="sortOperator_finIsActive"
+									id="label_FinanceMainSearch_MobileNumber"
+									value="${c:l('label_FinanceMainSearch_MobileNumber.value')}" />
+								<listbox id="sortOperator_mobileNumber"
 									width="43px" mold="select" rows="1" />
-								<checkbox id="finIsActive"
-									checked="false" />
+								<textbox id="finMobileNumber"
+									maxlength="24" width="180px" />
+							</row>
+							<row>
+								<label
+									id="label_FinanceMainSearch_EIDNumber"
+									value="${c:l('label_FinanceMainSearch_EIDNumber.value')}" />
+								<listbox id="sortOperator_eidNumber"
+									width="43px" mold="select" rows="1" />
+								<textbox id="finEIDNumber"
+									width="100px" />
+								<label
+									id="label_FinanceMainSearch_Passport"
+									value="${c:l('label_FinanceMainSearch_Passport.value')}" />
+								<listbox id="sortOperator_passPort"
+									width="43px" mold="select" rows="1" />
+								<textbox id="finPassPort" width="100px" />
+							</row>
+							<row>
+								<label
+									id="label_FinanceMainSearch_FinDateofBirth"
+									value="${c:l('label_FinanceMainSearch_FinDateofBirth.value')}" />
+								<listbox
+									id="sortOperator_finDateofBirth" width="43px" mold="select"
+									rows="1" />
+								<datebox id="finDateofBirth"
+									width="100px" format="dd/MM/yyyy" />
+								<label
+									id="label_FinanceMainSearch_FinRequestDate"
+									value="${c:l('label_FinanceMainSearch_FinRequestDate.value')}" />
+								<listbox
+									id="sortOperator_finRequestDate" width="43px" mold="select"
+									rows="1" />
+								<datebox id="finRequestDate"
+									width="100px" format="dd/MM/yyyy" />
+							</row>
+							<row>
+								<label
+									id="label_FinanceMainSearch_FinType"
+									value="${c:l('label_FinanceMainSearch_FinType.value')}" />
+								<listbox id="sortOperator_finType"
+									width="43px" mold="select" rows="1" />
+								<textbox id="finType" width="100px"
+									maxlength="8" />
+								<label
+									id="label_FinanceMainSearch_FinPromotion"
+									value="${c:l('label_FinanceMainSearch_FinPromotion.value')}" />
+								<listbox id="sortOperator_finPromotion"
+									width="43px" mold="select" rows="1" />
+								<textbox id="finPromotion"
+									width="100px" />
+							</row>
+							<row>
+								<label
+									id="label_FinanceMainSearch_FinRequestStage"
+									value="${c:l('label_FinanceMainSearch_FinRequestStage.value')}" />
+								<listbox
+									id="sortOperator_finRequestStage" width="43px" mold="select"
+									rows="1" />
+								<textbox id="finRequestStage"
+									width="100px" />
+								<label
+									id="label_FinanceMainSearch_FinQueuePriority"
+									value="${c:l('label_FinanceMainSearch_FinQueuePriority.value')}" />
+								<listbox
+									id="sortOperator_finQueuePriority" width="43px" mold="select"
+									rows="1" />
+								<combobox id="finQueuePriority"
+									width="100px" />
 							</row>
 							<row id="row_AlwWorkflow" visible="false">
 								<label
@@ -161,7 +198,7 @@
 					<listbox id="listBoxFinanceMain" fixedLayout="true"
 						vflex="true" span="true"
 						emptyMessage="${c:l('listbox.emptyMessage')}"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						tooltiptext="${c:l('listbox.tooltiptext')}" 
 						height="100%" multiple="false">
 						<listhead sizable="true">
 							<listheader id="listheader_CustomerCIF"
@@ -173,23 +210,29 @@
 							<listheader id="listheader_FinReference"
 								label="${c:l('listheader_FinReference.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_ProductName"
-								label="${c:l('listheader_ProductName.label')}" sort="auto"
-								hflex="min" />
 							<listheader id="listheader_FinType"
 								label="${c:l('listheader_FinType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Promotion"
+								label="${c:l('listheader_FinanceMainSearch_Promotion.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_FinCcy"
 								label="${c:l('listheader_FinCcy.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_ScheduleMethod"
-								label="${c:l('listheader_ScheduleMethod.label')}" sort="auto"
+							<listheader id="listheader_Terms"
+								label="${c:l('listheader_FinanceMainSearch_Terms.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_FinAmount"
 								label="${c:l('listheader_Amount.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_FinancingAmount"
 								label="${c:l('listheader_FinancingAmount.label')}" sort="false"
+								hflex="min" />
+							<listheader id="listheader_RequestStage"
+								label="${c:l('listheader_FinanceMainSearch_RequestStage.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Priority"
+								label="${c:l('listheader_FinanceMainSearch_Priority.label')}" sort="false"
 								hflex="min" />
 							<listheader id="listheader_RecordStatus"
 								label="${c:l('listheader_RecordStatus.label')}" sort="auto"

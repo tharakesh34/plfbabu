@@ -623,5 +623,9 @@ public class PennantConstants {
 	public static final String CORP_CRDTRVW_RATIOS_FCF = "FCF";
 
 	public static final String REPAY_HIERARCHY_METHOD = "IPCS";
+	
+	public static final String HIGH = "HIGH";
+	public static final String MEDIUM = "MEDIUM";
+	public static final String NORMAL = "NORMAL";
 
 }
