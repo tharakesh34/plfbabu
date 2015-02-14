@@ -45,12 +45,11 @@ package com.pennant.backend.model.lmtmasters;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-
-
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
@@ -63,6 +62,7 @@ public class CarLoanDetail implements java.io.Serializable {
 	private static final long serialVersionUID = -6896226621927563737L;
 	
 	private String loanRefNumber;
+	private int itemNumber=1;
 	private boolean loanRefType;
 	private long carLoanFor;
 	private String lovDescCarLoanForName;
@@ -116,9 +116,6 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String sellerType;
 	private String vehicleItemNum;
 	private BigDecimal vehicleValue=BigDecimal.ZERO;
-	
-	
-	
 
 	private String recordStatus;
 	private String roleCode="";
@@ -129,6 +126,8 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String userAction = "Save";
 	private long workflowId = 0;
 
+	private List<CarLoanDetail> vehicleLoanDetailList = new ArrayList<CarLoanDetail>();
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -139,7 +138,7 @@ public class CarLoanDetail implements java.io.Serializable {
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+		excludeFields.add("vehicleLoanDetailList");
 		return excludeFields;
 	}
 
@@ -157,6 +156,13 @@ public class CarLoanDetail implements java.io.Serializable {
 	}
 	public void setLoanRefNumber(String loanRefNumber) {
 		this.loanRefNumber = loanRefNumber;
+	}
+
+	public int getItemNumber() {
+		return itemNumber;
+	}
+	public void setItemNumber(int itemNumber) {
+		this.itemNumber = itemNumber;
 	}
 
 	public boolean isLoanRefType() {
@@ -631,5 +637,11 @@ public class CarLoanDetail implements java.io.Serializable {
 	    this.emiratesRegNum = emiratesRegNum;
     }
 
-	
+	public List<CarLoanDetail> getVehicleLoanDetailList() {
+		return vehicleLoanDetailList;
+	}
+	public void setVehicleLoanDetailList(List<CarLoanDetail> vehicleLoanDetailList) {
+		this.vehicleLoanDetailList = vehicleLoanDetailList;
+	}
+
 }
