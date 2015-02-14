@@ -238,6 +238,7 @@ import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.model.systemmasters.EmploymentType;
+import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.systemmasters.Gender;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.GeneralDesignation;
@@ -327,6 +328,9 @@ public class PennantJavaUtil {
 			
 			put("EmployerDetail",new ModuleMapping(new EmployerDetail(0), new String[]{"EmployerDetail", "EmployerDetail_AView"}, 
 					new String[] {"EmployerId","EmpName"} , null, null,300));
+			
+			put("TakafulProvider",new ModuleMapping(new TakafulProvider(""), new String[]{"TakafulProvider", "TakafulProvider_AView"}, 
+					new String[] {"TakafulCode","TakafulName"} , null, null,300));
 
 			put("EmploymentType", new ModuleMapping(new EmploymentType(""), new String[] { "RMTEmpTypes", "RMTEmpTypes_AView" }, 
 					new String[] { "EmpType", "EmpTypeDesc" }, null, null, 300));
