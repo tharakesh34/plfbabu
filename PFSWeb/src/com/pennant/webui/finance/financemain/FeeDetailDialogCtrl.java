@@ -63,8 +63,10 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -72,12 +74,15 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -92,9 +97,11 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
@@ -127,11 +134,24 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	protected Label 		fee_finReference; 						// autoWired
 	protected Label 		fee_grcEndDate; 						// autoWired	
 	
-	//User Modified Fields
+	//User Modified Schdule Fee Fields
 	protected Combobox 		remFeeSchdMethod; 						// autoWired	
 	protected Intbox 		feeSchdTerms; 							// autoWired	
 	protected Label	 		label_FeeDetailDialog_FeeSchdTerms;		// autoWired	
 	protected Hbox	 		hbox_feeSchdTerms;						// autoWired	
+	
+	// Takaful Schedule Fee Details
+	protected Groupbox		gb_takafulDetails;
+	protected Row 			row_TakafulRef;							// autoWired	
+	protected Row 			row_TakafulFrq;							// autoWired	
+	protected Hbox 			hbox_WaiverReason;						// autoWired	
+	protected Label	 		label_FeeDetailDialog_WaiverReason;		// autoWired	
+	
+	protected Checkbox 		takafulRequired;						// autoWired	
+	protected Combobox 		waiverReason;							// autoWired	
+	protected Decimalbox 	takafulRate;							// autoWired	
+	protected Textbox 		takafulReference;						// autoWired	
+	protected Combobox 		takafulFrq;								// autoWired	
 
 	protected Button 		btnFeeCharges;							// autoWired
 	protected Label 		label_feeChargesSummaryVal; 			// autoWired
@@ -144,6 +164,11 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	//Old Variables
 	protected String 		oldVar_remFeeSchdMethod; 				// autoWired	
 	protected int 			oldVar_feeSchdTerms; 					// autoWired	
+	protected boolean		oldVar_takafulRequired; 				// autoWired	
+	protected String 		oldVar_waiverReason; 					// autoWired	
+	protected String 		oldVar_takafulFrq; 						// autoWired	
+	protected String 		oldVar_takafulReference; 				// autoWired	
+	protected BigDecimal 	oldVar_takafulRate; 					// autoWired	
 	 
 	private String 				eventCode = "";
 	private boolean 			feeChargesExecuted;
@@ -226,8 +251,40 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	
 	public void doEdit(){
+		
+		//Set Field Properties
+		this.takafulRate.setMaxlength(13);
+		this.takafulRate.setFormat(PennantConstants.rateFormate9);
+		this.takafulRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.takafulRate.setScale(9);
+		this.takafulReference.setMaxlength(20);
+		
 		this.remFeeSchdMethod.setDisabled(!isModify);
 		this.feeSchdTerms.setReadonly(!isModify);
+		if(getFinScheduleData().getFinanceType().isTakafulMandatory()){
+			this.takafulRequired.setDisabled(true);
+		}else{
+			this.takafulRequired.setDisabled(!isModify);
+		}
+		
+		if(!getFinScheduleData().getFinanceType().isTakafulMandatory() && !getFinScheduleData().getFinanceType().isTakafulReq()){
+			this.gb_takafulDetails.setVisible(false);
+		}
+		
+		if(this.gb_takafulDetails.isVisible()){
+			this.waiverReason.setDisabled(!isModify);
+			this.takafulReference.setReadonly(!isModify);
+			this.takafulFrq.setDisabled(!isModify);
+			this.takafulRate.setDisabled(!isModify);
+		}else{
+			this.waiverReason.setDisabled(true);
+			this.takafulReference.setReadonly(true);
+			this.takafulFrq.setDisabled(true);
+			this.takafulRate.setDisabled(true);
+		}
+		
+		//If User can Modify Frequency Remove below condition
+		this.takafulFrq.setDisabled(true);
 	}
 	
 	public boolean isDataChanged(){
@@ -238,16 +295,40 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 			return true;
 		}
 		
+		if (this.oldVar_takafulRequired != this.takafulRequired.isChecked()) {
+			return true;
+		}
+		/*if (this.oldVar_waiverReason != this.waiverReason.getSelectedItem().getValue().toString()) {
+			return true;
+		}
+		if (this.oldVar_takafulReference != this.takafulReference.getValue()) {
+			return true;
+		}*/
+		if (this.oldVar_takafulRate != this.takafulRate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_takafulFrq != this.takafulFrq.getSelectedItem().getValue().toString()) {
+			return true;
+		}
+		
 		return false;
 	}
 	
 	public void doStoreInitValues(){
 		this.oldVar_remFeeSchdMethod = this.remFeeSchdMethod.getSelectedItem().getValue().toString();
 		this.oldVar_feeSchdTerms = this.feeSchdTerms.intValue();
+		
+		this.oldVar_takafulRequired = this.takafulRequired.isChecked();
+		this.oldVar_waiverReason = this.waiverReason.getSelectedItem().getValue().toString();
+		this.oldVar_takafulReference = this.takafulReference.getValue();
+		this.oldVar_takafulRate = this.takafulRate.getValue();
+		this.oldVar_takafulFrq = this.takafulFrq.getSelectedItem().getValue().toString();
 	}
 	
-	public WrongValueException doValidate(){
-
+	public ArrayList<WrongValueException> doValidate(){
+		
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		
 		if(getFinScheduleData().getFinanceMain().getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
 			try {
 				isValidComboValue(this.remFeeSchdMethod, Labels.getLabel("label_FeeDetailDialog_RemFeeSchdMethod.value"));
@@ -260,10 +341,53 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 					}
 				}
 			} catch (WrongValueException we) {
-				return we;
+				wve.add(we);
 			}
 		}
-		return null;
+		
+		if(this.takafulRequired.isChecked()){
+			try {
+				if(this.takafulRate.getValue() == null || this.takafulRate.getValue().compareTo(BigDecimal.ZERO) <= 0){
+					throw new WrongValueException(this.takafulRate, Labels.getLabel("NUMBER_MINVALUE",
+							new String[] { Labels.getLabel("label_FeeDetailDialog_TakafulRate.value"), " 0 " }));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			try {
+				this.takafulReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeDetailDialog_TakafulReference.value"), 
+						PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
+				this.takafulReference.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}else{
+			try {
+				isValidComboValue(this.waiverReason, Labels.getLabel("label_FeeDetailDialog_WaiverReason.value"));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		
+		return wve;
+	}
+	
+	//Reset Constraints and Error Messages
+	public void doRemoveConstraints(){
+		this.remFeeSchdMethod.setConstraint("");
+		this.takafulReference.setConstraint("");
+		this.feeSchdTerms.setConstraint("");
+		this.takafulRate.setConstraint("");
+		this.waiverReason.setConstraint("");
+	}
+	
+	public void doClearErrorMessages(){
+		this.remFeeSchdMethod.setErrorMessage("");
+		this.takafulReference.setErrorMessage("");
+		this.feeSchdTerms.setErrorMessage("");
+		this.takafulRate.setErrorMessage("");
+		this.waiverReason.setErrorMessage("");
 	}
 	
 	/**
@@ -271,24 +395,50 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	 * @param finScheduleData
 	 * @throws ParseException
 	 */
-	public FinScheduleData doWriteComponentsToBean(FinScheduleData finScheduleData) { 
+	public FinScheduleData doWriteComponentsToBean(FinScheduleData finScheduleData, boolean istakaful) { 
 		logger.debug("Entering");
 		
-		if(finScheduleData.getFinanceMain().getFeeChargeAmt().compareTo(BigDecimal.ZERO) == 0){
-			this.remFeeSchdMethod.setSelectedIndex(0);
-			this.feeSchdTerms.setValue(0);
+		if(!istakaful){
+			if(finScheduleData.getFinanceMain().getFeeChargeAmt().compareTo(BigDecimal.ZERO) == 0){
+				this.remFeeSchdMethod.setSelectedIndex(0);
+				this.feeSchdTerms.setValue(0);
+			}
+
+			finScheduleData.getFinanceMain().setRemFeeSchdMethod(this.remFeeSchdMethod.getSelectedItem().getValue().toString());
+			doSetFeeSchdTerms();
+			finScheduleData.getFinanceMain().setFeeSchdTerms(this.feeSchdTerms.intValue());
+
+		}else{
+
+			finScheduleData.getFinanceMain().setTakafulRequired(this.takafulRequired.isChecked());
+			String mnthDay = "";
+			if(finScheduleData.getFinanceMain().isFinRepayPftOnFrq()){
+				mnthDay = finScheduleData.getFinanceMain().getRepayPftFrq().substring(1);
+			}else{
+				mnthDay = finScheduleData.getFinanceMain().getRepayFrq().substring(1);
+			}
+
+			finScheduleData.getFinanceMain().setTakafulFrq(this.takafulFrq.getSelectedItem().getValue().toString()+mnthDay);
+			finScheduleData.getFinanceMain().setTakafulRef(this.takafulReference.getValue());
+			finScheduleData.getFinanceMain().setWaiverReason(this.waiverReason.getSelectedItem().getValue().toString());
+			finScheduleData.getFinanceMain().setTakafulRate(this.takafulRate.getValue() == null ? BigDecimal.ZERO : this.takafulRate.getValue());
 		}
 		
-		finScheduleData.getFinanceMain().setRemFeeSchdMethod(this.remFeeSchdMethod.getSelectedItem().getValue().toString());
-		doSetFeeSchdTerms();
-		finScheduleData.getFinanceMain().setFeeSchdTerms(this.feeSchdTerms.intValue());
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
 	
 	public void onSelect$remFeeSchdMethod(Event event){
+		logger.debug("Entering "+event.toString());
 		this.feeSchdTerms.setValue(0);
 		doSetFeeSchdTerms();
+		logger.debug("Leaving "+event.toString());
+	}
+	
+	public void onCheck$takafulRequired(Event event){
+		logger.debug("Entering "+event.toString());
+		doSetTakafulDetail();
+		logger.debug("Leaving "+event.toString());
 	}
 	
 	private void doSetFeeSchdTerms(){
@@ -305,6 +455,27 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 				this.label_FeeDetailDialog_FeeSchdTerms.setVisible(true);
 				this.hbox_feeSchdTerms.setVisible(true);
 				this.feeSchdTerms.setReadonly(!isModify);
+			}
+		}
+	}
+	
+	private void doSetTakafulDetail(){
+		this.hbox_WaiverReason.setVisible(false);
+		this.label_FeeDetailDialog_WaiverReason.setVisible(false);
+		if(this.takafulRequired.isChecked()){
+			this.row_TakafulRef.setVisible(true);
+			this.row_TakafulFrq.setVisible(true);
+			this.waiverReason.setSelectedIndex(0);
+		}else{
+			this.row_TakafulRef.setVisible(false);
+			this.row_TakafulFrq.setVisible(false);	
+			this.takafulFrq.setSelectedIndex(0);
+			this.takafulReference.setValue("");
+			this.takafulRate.setValue(BigDecimal.ZERO);
+			
+			if(getFinScheduleData().getFinanceType().isTakafulReq()){
+				this.hbox_WaiverReason.setVisible(true);
+				this.label_FeeDetailDialog_WaiverReason.setVisible(true);
 			}
 		}
 	}
@@ -329,6 +500,13 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		fillComboBox(this.remFeeSchdMethod, getFinanceMain().getRemFeeSchdMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), "");
 		doSetFeeSchdTerms();
 		this.feeSchdTerms.setValue(getFinanceMain().getFeeSchdTerms());
+		this.takafulRequired.setChecked(getFinanceMain().isTakafulRequired());
+		this.takafulReference.setValue(getFinanceMain().getTakafulRef());
+		fillComboBox(this.takafulFrq, StringUtils.trimToEmpty(getFinanceMain().getTakafulFrq()).equals("#") ? String.valueOf(getFinanceMain().getRepayFrq().charAt(0)): 
+			String.valueOf(getFinanceMain().getTakafulFrq().charAt(0)), FrequencyUtil.getFrequency(), "");
+		fillComboBox(this.waiverReason, getFinanceMain().getWaiverReason(), PennantStaticListUtil.getTakafulWaiverReasonList(), "");
+		this.takafulRate.setValue(getFinanceMain().getTakafulRate());
+		doSetTakafulDetail();
 		doStoreInitValues();
 		
 		this.feeChargesExecuted = false;

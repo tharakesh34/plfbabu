@@ -59,8 +59,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
-import bsh.StringUtil;
-
 import com.pennant.backend.model.ModuleMapping;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;

@@ -84,6 +84,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> custRelationList;
 	private static ArrayList<ValueLabel> importTablesList;
 	private static ArrayList<ValueLabel> remFeeSchdMethodList;
+	private static ArrayList<ValueLabel> takafulWaiverReasonList;
 	private static ArrayList<ValueLabel> queuePriority;
 	
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -1201,6 +1202,14 @@ public class PennantStaticListUtil {
 		remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
 		return remFeeSchdMethodList;
 	}
+	
+	public static ArrayList<ValueLabel> getTakafulWaiverReasonList() {
+		takafulWaiverReasonList = new ArrayList<ValueLabel>(2);
+		takafulWaiverReasonList.add(new ValueLabel("PB" ,Labels.getLabel("label_TakafulWaiver_PaidbyBank")));
+		takafulWaiverReasonList.add(new ValueLabel("AC", Labels.getLabel("label_TakafulWaiver_ArrangedbyCustomer")));
+		return takafulWaiverReasonList;
+	}
+
 	public static ArrayList<ValueLabel> getQueuePriority() {
 
 		if(queuePriority == null){

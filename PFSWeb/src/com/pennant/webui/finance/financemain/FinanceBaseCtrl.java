@@ -158,7 +158,6 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -5003,24 +5002,27 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				}
 				
 				// Fee Details Validation
-				WrongValueException valueException = getFeeDetailDialogCtrl().doValidate();
-				if(valueException != null){
+				getFeeDetailDialogCtrl().doClearErrorMessages();
+				ArrayList<WrongValueException> valueException = getFeeDetailDialogCtrl().doValidate();
+				if(valueException != null && !valueException.isEmpty()){
 
-					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 					if(tabsIndexCenter.getFellowIfAny("feeDetailTab") != null){
 						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
-						wve.add(valueException);
-						showFeeErrorDetails(wve, tab);
+						getFeeDetailDialogCtrl().doRemoveConstraints();
+						showFeeErrorDetails(valueException, tab);
 					}
 				}
 				
-				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData);
+				//Fee Details Data set to Bean Object
+				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, false);
 			}
 			
 			if(!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
 					!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 				aFinanceSchData.getFinanceMain().setCalSchdFeeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
 				aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
+			}else{
+				aFinanceSchData.getFinanceMain().setCalSchdFeeAmt(BigDecimal.ZERO);
 			}
 
 			if(!isIstisnaProd){
@@ -5035,6 +5037,11 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
 			}
+		}
+		
+		//Fee Details Data set to Bean Object
+		if(getFeeDetailDialogCtrl() != null){
+			aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, true);
 		}
 		
 		if(!isIstisnaProd){

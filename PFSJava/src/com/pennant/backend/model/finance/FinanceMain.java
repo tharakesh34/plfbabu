@@ -182,13 +182,18 @@ public class FinanceMain implements java.io.Serializable {
 	
 	private String 		remFeeSchdMethod;
 	private int 		feeSchdTerms;
-	private BigDecimal 	calSchdFeeAmt;
+	private BigDecimal 	calSchdFeeAmt = BigDecimal.ZERO;
+	private boolean 	takafulRequired;
+	private String 		TakafulFrq;
+	private String 		WaiverReason;
+	private BigDecimal 	TakafulRate;
+	private String 		TakafulRef;
 	
 	//===========================================
     //=========Schedule Build Usage  ============
     //===========================================
 	
-	private BigDecimal 	feeChargeAmt;
+	private BigDecimal 	feeChargeAmt = BigDecimal.ZERO;
 	private BigDecimal 	curFeeChargeAmt;
 	private BigDecimal 	curDisbursementAmt;
 	private BigDecimal 	anualizedPercRate;
@@ -1918,6 +1923,41 @@ public class FinanceMain implements java.io.Serializable {
 	public void setCalSchdFeeAmt(BigDecimal calSchdFeeAmt) {
 	    this.calSchdFeeAmt = calSchdFeeAmt;
     }
+
+	public boolean isTakafulRequired() {
+	    return takafulRequired;
+    }
+	public void setTakafulRequired(boolean takafulRequired) {
+	    this.takafulRequired = takafulRequired;
+    }
+	
+	public String getTakafulFrq() {
+		return TakafulFrq;
+	}
+	public void setTakafulFrq(String takafulFrq) {
+		TakafulFrq = takafulFrq;
+	}
+
+	public String getWaiverReason() {
+		return WaiverReason;
+	}
+	public void setWaiverReason(String waiverReason) {
+		WaiverReason = waiverReason;
+	}
+
+	public BigDecimal getTakafulRate() {
+		return TakafulRate;
+	}
+	public void setTakafulRate(BigDecimal takafulRate) {
+		TakafulRate = takafulRate;
+	}
+
+	public String getTakafulRef() {
+		return TakafulRef;
+	}
+	public void setTakafulRef(String takafulRef) {
+		TakafulRef = takafulRef;
+	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();	

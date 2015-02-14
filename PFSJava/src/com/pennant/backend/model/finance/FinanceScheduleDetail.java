@@ -109,6 +109,8 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	private BigDecimal feeSchd = BigDecimal.ZERO;
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdFeeOS = BigDecimal.ZERO;
+	private BigDecimal takafulFeeSchd = BigDecimal.ZERO;
+	private BigDecimal schdTakafulFeePaid = BigDecimal.ZERO;
 	
 	private int version;
 	private long lastMntBy;
@@ -882,6 +884,20 @@ public class FinanceScheduleDetail implements java.io.Serializable {
 	}
 	public void setSchdFeeOS(BigDecimal schdFeeOS) {
 		this.schdFeeOS = schdFeeOS;
+	}
+
+	public BigDecimal getTakafulFeeSchd() {
+		return takafulFeeSchd;
+	}
+	public void setTakafulFeeSchd(BigDecimal takafulFeeSchd) {
+		this.takafulFeeSchd = takafulFeeSchd;
+	}
+
+	public BigDecimal getSchdTakafulFeePaid() {
+		return schdTakafulFeePaid;
+	}
+	public void setSchdTakafulFeePaid(BigDecimal schdTakafulFeePaid) {
+		this.schdTakafulFeePaid = schdTakafulFeePaid;
 	}
 
 }

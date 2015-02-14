@@ -2602,23 +2602,27 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				}
 
 				// Fee Details Validation
-				WrongValueException valueException = getFeeDetailDialogCtrl().doValidate();
-				if(valueException != null){
+				getFeeDetailDialogCtrl().doClearErrorMessages();
+				ArrayList<WrongValueException> valueException = getFeeDetailDialogCtrl().doValidate();
+				if(valueException != null && !valueException.isEmpty()){
 
 					if(tabsIndexCenter.getFellowIfAny("feeDetailTab") != null){
 						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
-						wve.add(valueException);
-						showErrorDetails(wve, tab);
+						getFeeDetailDialogCtrl().doRemoveConstraints();
+						showErrorDetails(valueException, tab);
 					}
 				}
 				
-				aFinanceDetail.setFinScheduleData(getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceDetail.getFinScheduleData()));
+				//Fee Details Data set to Bean Object
+				aFinanceDetail.setFinScheduleData(getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceDetail.getFinScheduleData(), false));
 			}
 			
 			if(!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
 					!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setCalSchdFeeAmt(aFinanceDetail.getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
+			}else{
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setCalSchdFeeAmt(BigDecimal.ZERO);
 			}
 
 			aFinanceDetail.getFinScheduleData().getDisbursementDetails().clear();	
@@ -2628,6 +2632,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			disbursementDetails.setFeeChargeAmt(aFinanceDetail.getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 			disbursementDetails.setDisbAccountId("");
 			aFinanceDetail.getFinScheduleData().getDisbursementDetails().add(disbursementDetails);
+		}
+		
+		//Fee Details Data set to Bean Object
+		if(getFeeDetailDialogCtrl() != null){
+			aFinanceDetail.setFinScheduleData(getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceDetail.getFinScheduleData(), true));
 		}
 		
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);

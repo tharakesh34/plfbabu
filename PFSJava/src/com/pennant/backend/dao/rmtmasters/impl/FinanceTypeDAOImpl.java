@@ -170,7 +170,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" FinCommitmentOvrride , FinCollateralOvrride ,FinInstDate ,FinRepayPftOnFrq, FinAEProgClaim , FinAEMaturity, FinPftUnChanged, ");
 		selectSql.append(" ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc,FinDivision, ");
 		selectSql.append(" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate,");
-		selectSql.append(" TakafulMandatory, TakafulReq, RemFeeSchdMethod,");
+		selectSql.append(" TakafulMandatory, TakafulReq, RemFeeSchdMethod,TakafulProvider,AllowDownpayPgm,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescFinCcyName,lovDescFinDaysCalTypeName, lovDescFinContingentAcTypeName,");
 			selectSql.append(" lovDescFinBankContingentAcTypeName, lovDescFinProvisionAcTypeName,lovDescFinSuspAcTypeName, lovDescFinAcTypeName,");
@@ -189,7 +189,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 			selectSql.append(" lovDescEVFinProvisionName,lovDescFinProvisionName,lovDescFinSchdChangeName,lovDescEVFinSchdChangeName, " );
 			selectSql.append(" lovDescFinAEProgClaimName,lovDescEVFinAEProgClaimName, lovDescFinAEMaturityName,lovDescEVFinAEMaturityName, ");
 			selectSql.append(" lovDescFInIndBaseRateName, lovDescFinGrcIndBaseRateName, lovDescFinDepreciationRuleName,lovDescEVFinDepreciationRuleName ," );
-			selectSql.append(" lovDescFinInstDateName,lovDescEVFinInstDateName,lovDescFinDivisionName,lovDescFinAEEarlySettleName,");
+			selectSql.append(" lovDescFinInstDateName,lovDescEVFinInstDateName,lovDescFinDivisionName,lovDescFinAEEarlySettleName,LovDescTakafulRate,lovDescTakafulProviderName,");
 		}
 
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
@@ -264,8 +264,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" FinAEEarlyPay, FinAEEarlySettle, FinLatePayRule, FinToAmz, FinAEToNoAmz, FinAERateChg, " );
 		selectSql.append(" FinAERepay, FinAEWriteOff, FinSchdChange, FinAECapitalize, FinProvision, " );
 		selectSql.append(" FinDepreciationRule, FinAEProgClaim, FinAEMaturity,FinAEMAmz, FinAEWriteOffBK, FinAEGraceEnd," );
-		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, StartDate, EndDate," );
-		selectSql.append(" TakafulMandatory, TakafulReq, RemFeeSchdMethod,");
+		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy  " );
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -392,7 +391,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append("  AllowRIAInvestment , AllowParllelFinance , OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinInstDate , FinRepayPftOnFrq, ");
 		insertSql.append("  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, FinDivision, ");
 		insertSql.append("  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate, ");
-		insertSql.append(" TakafulMandatory, TakafulReq, RemFeeSchdMethod)");
+		insertSql.append(" TakafulMandatory, TakafulReq, RemFeeSchdMethod ,TakafulProvider, AllowDownpayPgm)");
 
 		insertSql.append(" Values(:FinType, :Product, :FinCategory, :FinTypeDesc, :FinCcy, :FinDaysCalType, :FinAcType, ");
 		insertSql.append(" :FinContingentAcType, :FinBankContingentAcType, :FinProvisionAcType, :FinSuspAcType,");
@@ -418,7 +417,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		insertSql.append(" :AllowRIAInvestment , :AllowParllelFinance , :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride, :FinInstDate, :FinRepayPftOnFrq , ");
 		insertSql.append(" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :FinDivision , ");
 		insertSql.append(" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies , :DftStepPolicy, :StartDate, :EndDate, ");
-		insertSql.append(" :TakafulMandatory, :TakafulReq, :RemFeeSchdMethod)");
+		insertSql.append(" :TakafulMandatory, :TakafulReq, :RemFeeSchdMethod ,:TakafulProvider, :AllowDownpayPgm)");
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -491,7 +490,8 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		updateSql.append(" ApplyODPenalty =:ApplyODPenalty , ODIncGrcDays =:ODIncGrcDays, ODChargeType=:ODChargeType , ODGraceDays=:ODGraceDays , " );
 		updateSql.append(" ODChargeCalOn=:ODChargeCalOn , ODChargeAmtOrPerc=:ODChargeAmtOrPerc , ODAllowWaiver=:ODAllowWaiver , ODMaxWaiverPerc=:ODMaxWaiverPerc, FinDivision=:FinDivision, ");
 		updateSql.append(" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy,");
-		updateSql.append(" StartDate=:StartDate, EndDate=:EndDate, TakafulMandatory=:TakafulMandatory, TakafulReq=:TakafulReq, RemFeeSchdMethod=:RemFeeSchdMethod");
+		updateSql.append(" StartDate=:StartDate, EndDate=:EndDate, TakafulMandatory=:TakafulMandatory, TakafulReq=:TakafulReq, RemFeeSchdMethod=:RemFeeSchdMethod, TakafulProvider=:TakafulProvider,");
+		updateSql.append(" AllowDownpayPgm=:AllowDownpayPgm");
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_TEMP")) {

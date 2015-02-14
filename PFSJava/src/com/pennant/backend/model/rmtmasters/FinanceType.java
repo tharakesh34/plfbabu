@@ -166,9 +166,15 @@ public class FinanceType implements java.io.Serializable {
 	private boolean finPftUnChanged;
 	private Date startDate;
 	private Date endDate;
+	private boolean allowDownpayPgm;
+
+	//Fee Details
 	private boolean takafulMandatory;
 	private boolean takafulReq;
 	private String remFeeSchdMethod;
+	private String takafulProvider;
+	private String lovDescTakafulProviderName;
+	private BigDecimal lovDescTakafulRate = BigDecimal.ONE;
 	
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
@@ -2320,4 +2326,35 @@ public class FinanceType implements java.io.Serializable {
 	public void setRemFeeSchdMethod(String remFeeSchdMethod) {
 		this.remFeeSchdMethod = remFeeSchdMethod;
 	}
+
+	public String getTakafulProvider() {
+		return takafulProvider;
+	}
+	public void setTakafulProvider(String takafulProvider) {
+		this.takafulProvider = takafulProvider;
+	}
+
+	public BigDecimal getLovDescTakafulRate() {
+		return lovDescTakafulRate;
+	}
+	public void setLovDescTakafulRate(BigDecimal lovDescTakafulRate) {
+		this.lovDescTakafulRate = lovDescTakafulRate;
+	}
+
+	public String getLovDescTakafulProviderName() {
+	    return lovDescTakafulProviderName;
+    }
+
+	public void setLovDescTakafulProviderName(String lovDescTakafulProviderName) {
+	    this.lovDescTakafulProviderName = lovDescTakafulProviderName;
+    }
+
+	public boolean isAllowDownpayPgm() {
+	    return allowDownpayPgm;
+    }
+
+	public void setAllowDownpayPgm(boolean allowDownPayPgm) {
+	    this.allowDownpayPgm = allowDownPayPgm;
+    }
+	
 }

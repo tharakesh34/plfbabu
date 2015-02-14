@@ -104,10 +104,8 @@
 											<label
 												id="label_FinanceTypeDialog_Product"
 												value="${c:l('label_FinanceTypeDialog_Product.value')}" />
-											<hbox>
-												<extendedcombobox
-													id="product"  />
-											</hbox>
+											<extendedcombobox
+												id="product" />
 										</row>
 										<row visible="true">
 											<label
@@ -386,6 +384,16 @@
 												<space spacing="2px" />
 												<checkbox
 													id="finIsActive" checked="false" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												id="label_FinanceTypeDialog_AllowDownpayPgm"
+												value="${c:l('label_FinanceTypeDialog_AllowDownpayPgm.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="allowDownpayPgm" checked="false" />
 											</hbox>
 										</row>
 									</rows>
@@ -1615,6 +1623,15 @@
 													id="space_RemFeeSchdMethod" spacing="2px" sclass="" />
 												<combobox
 													id="remFeeSchdMethod" width="275px" readonly="true" />
+											</hbox>
+											<label
+												id="label_FinanceTypeDialog_TakafulProvider"
+												value="${c:l('label_FinanceTypeDialog_TakafulProvider.value')}" />
+											<hbox>
+												<space
+													id="space_TakafulProvider" spacing="2px" sclass="" />
+												<extendedcombobox
+													id="takafulProvider" />
 											</hbox>
 										</row>
 									</rows>

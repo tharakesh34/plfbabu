@@ -217,6 +217,9 @@ public class FinScheduleData {
 		
 		//Fee Details
 		this.financeMain.setRemFeeSchdMethod(financeType.getRemFeeSchdMethod());
+		this.financeMain.setTakafulRequired(financeType.isTakafulReq());
+		this.financeMain.setTakafulFrq(financeType.getFinRpyFrq() == null ? PennantConstants.List_Select : String.valueOf(financeType.getFinRpyFrq().charAt(0)));
+		this.financeMain.setTakafulRate(financeType.getLovDescTakafulRate());
 		
 		//Step Policy Details 
 		this.financeMain.setStepFinance(financeType.isStepFinance());

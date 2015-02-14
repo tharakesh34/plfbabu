@@ -199,6 +199,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Checkbox 				takafulRequired;					// autoWired
 	protected Combobox 				remFeeSchdMethod;	 				// autoWired
 	protected Space 				space_RemFeeSchdMethod;				// autoWired
+	protected ExtendedCombobox 		takafulProvider; 					// autoWired
+	protected Checkbox 				allowDownpayPgm;					// autoWired
 	
 	//Grace Period Schedule Details Tab  
 	protected Combobox 				cbfinGrcRateType; 					// autoWired
@@ -417,7 +419,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	private transient boolean 		oldVar_finIsActive;
 	private transient boolean 		oldVar_takafulMandatory;
 	private transient boolean 		oldVar_takafulRequired;
-	private transient int 			oldVar_takafulSchdMethod;
+	private transient int 			oldVar_remFeeSchdMethod;
+	private transient String 		oldVar_takafulProvider;
+	private transient String 		oldVar_takafulProviderName;
+	private transient boolean 		oldVar_allowDownpayPgm;
 
 	//Grace Period Details Tab  
 	private transient int 			oldVar_finGrcRateType;
@@ -969,7 +974,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAEEarlySettle.setDescColumn("AccountSetCode");
 		this.finAEEarlySettle.setValidateColumns(new String[] { "EventCode" });
 		this.finAEEarlySettle.setFilters(getFiltersByCheckingRIA("EventCode", "EARLYSTL", Filter.OP_EQUAL));
-
+		
+		this.takafulProvider.setMaxlength(8);
+		this.takafulProvider.setMandatoryStyle(true);
+		this.takafulProvider.setModuleName("TakafulProvider");
+		this.takafulProvider.setValueColumn("TakafulCode");
+		this.takafulProvider.setDescColumn("TakafulName");
+		this.takafulProvider.setValidateColumns(new String[] { "TakafulCode" });
 		
 		this.finContingentAcType.setMaxlength(8);
 		this.finBankContingentAcType.setMaxlength(8);
@@ -1271,14 +1282,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//this.allowParllelFinance.setChecked(aFinanceType.isAllowParllelFinance());
 		this.allowParllelFinance.setChecked(false); // FIXME
 		this.finIsActive.setChecked(aFinanceType.isFinIsActive());
+		this.allowDownpayPgm.setChecked(aFinanceType.isAllowDownpayPgm());
+		
+		//Fee Details
 		this.takafulMandatory.setChecked(aFinanceType.isTakafulMandatory());
 		this.takafulRequired.setChecked(aFinanceType.isTakafulReq());
 		fillComboBox(this.remFeeSchdMethod, aFinanceType.getRemFeeSchdMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), ",,");
+		this.takafulProvider.setValue(aFinanceType.getTakafulProvider(), aFinanceType.getLovDescTakafulProviderName());
+		doDisableTakafulProvider();
 
 		doCheckRIA(aFinanceType.getFinCategory());
 		//doCheckFinAEProgClaim(aFinanceType.getLovDescProductCodeName());
 		doCheckFinAEMaturity(aFinanceType.getFinCategory());
 		checkFinisDownPayreq();
+		
+		doDisableAllowDownPayPgm(aFinanceType.getFinCategory());
 		//================= Tab 2
 		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(), PennantStaticListUtil.getInterestRateType(true), ",C,");
 		this.finGrcIntRate.setValue(aFinanceType.getFinGrcIntRate());
@@ -1975,10 +1993,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			aFinanceType.setTakafulProvider(this.takafulProvider.getValue());
+			aFinanceType.setLovDescTakafulProviderName(this.takafulProvider.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		// To check finMaxAmount has higher value than the finMinAmount
 		try {
 			mustBeHigher(finMaxAmount, finMinAmount, "label_FinanceTypeDialog_FinMaxAmount.value", "label_FinanceTypeDialog_FinMinAmount.value");
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinanceType.setAllowDownpayPgm(this.allowDownpayPgm.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3262,7 +3293,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.oldVar_FinGrcAlwIndRate = this.finGrcAlwIndRate.isChecked();
 		this.oldVar_takafulMandatory = this.takafulMandatory.isChecked();
 		this.oldVar_takafulRequired = this.takafulRequired.isChecked();
-		this.oldVar_takafulSchdMethod = this.remFeeSchdMethod.getSelectedIndex();
+		this.oldVar_remFeeSchdMethod = this.remFeeSchdMethod.getSelectedIndex();
+		this.oldVar_takafulProvider = this.takafulProvider.getValue();
+		this.oldVar_takafulProviderName = this.takafulProvider.getDescription();
+		this.oldVar_allowDownpayPgm = this.allowDownpayPgm.isChecked();
 		
 		//Overdue Penalty Details
 		this.oldVar_applyODPenalty = this.applyODPenalty.isChecked();
@@ -3403,7 +3437,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finDepreciationFrq.setValue(this.oldVar_finDepreciationFrq);
 		this.takafulMandatory.setChecked(this.oldVar_takafulMandatory);
 		this.takafulRequired.setChecked(this.oldVar_takafulRequired);
-		this.remFeeSchdMethod.setSelectedIndex(this.oldVar_takafulSchdMethod);
+		this.remFeeSchdMethod.setSelectedIndex(this.oldVar_remFeeSchdMethod);
+		this.takafulProvider.setValue(this.oldVar_takafulProvider, this.oldVar_takafulProviderName);
+		this.allowDownpayPgm.setChecked(this.oldVar_allowDownpayPgm);
 		
 		//Overdue Penalty Details
 		this.applyODPenalty.setChecked(this.oldVar_applyODPenalty);
@@ -3724,7 +3760,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.oldVar_takafulRequired != this.takafulRequired.isChecked()){
 			return true;
 		}
-		if(this.oldVar_takafulSchdMethod != this.remFeeSchdMethod.getSelectedIndex()){
+		if(this.oldVar_remFeeSchdMethod != this.remFeeSchdMethod.getSelectedIndex()){
+			return true;
+		}
+		if(this.oldVar_takafulProvider != this.takafulProvider.getValue()){
+			return true;
+		}
+		if(this.oldVar_allowDownpayPgm != this.allowDownpayPgm.isChecked()){
 			return true;
 		}
 		// Fee Charges list comparison
@@ -3960,6 +4002,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finRpyFrq.setConstraint("");
 		this.finODRpyTries.setConstraint("");
 		this.remFeeSchdMethod.setConstraint("");
+		this.takafulProvider.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -4258,6 +4301,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.takafulMandatory.setDisabled(isReadOnly("FinanceTypeDialog_takafulMandatory"));
 		this.takafulRequired.setDisabled(isReadOnly("FinanceTypeDialog_takafulRequired"));
 		this.remFeeSchdMethod.setDisabled(isReadOnly("FinanceTypeDialog_remFeeSchdMethod"));
+		this.takafulProvider.setReadonly(isReadOnly("FinanceTypeDialog_takafulProvider"));
+		this.allowDownpayPgm.setDisabled(isReadOnly("FinanceTypeDialog_AllowDownpayPgm"));
 
 		//Hidden
 		this.pftPayAcType.setReadonly(isReadOnly("FinanceTypeDialog_pftPayAcType"));
@@ -4523,6 +4568,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.takafulMandatory.setDisabled(true);
 		this.takafulRequired.setDisabled(true);
 		this.remFeeSchdMethod.setDisabled(true);
+		this.remFeeSchdMethod.setReadonly(true);
+		this.allowDownpayPgm.setDisabled(true);
 		
 		this.finCollateralOvrride.setDisabled(true);
 		this.finCommitmentOvrride.setDisabled(true);
@@ -4698,6 +4745,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAEWriteOffBK.setDescription("");
 		this.finAEGraceEnd.setDescription("");
 		this.remFeeSchdMethod.setSelectedIndex(0);
+		this.takafulProvider.setValue("","");
 		
 		//Overdue Penalty Details
 		this.applyODPenalty.setChecked(false);
@@ -5956,6 +6004,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			doCheckRIA(cbfinProductType.getSelectedItem().getValue().toString());
 			//doCheckFinAEProgClaim(cbfinProductType.getSelectedItem().getValue().toString());
 			doCheckFinAEMaturity(cbfinProductType.getSelectedItem().getValue().toString());
+			doDisableAllowDownPayPgm(cbfinProductType.getSelectedItem().getValue().toString());
 		}
 	}
 
@@ -6166,6 +6215,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.takafulMandatory.isChecked()){
 			this.takafulRequired.setChecked(true);
 			this.takafulRequired.setDisabled(true);
+			this.takafulProvider.setReadonly(isReadOnly("FinanceTypeDialog_takafulProvider"));
+			this.takafulProvider.setMandatoryStyle(true);
+		}
+		logger.debug("Leaving");
+	}
+	
+	private void doDisableAllowDownPayPgm(String value){
+		logger.debug("Entering");
+		if(value.equals(PennantConstants.FINANCE_PRODUCT_MURABAHA)){
+			this.allowDownpayPgm.setDisabled(isReadOnly("FinanceTypeDialog_takafulProvider"));
+		}else{
+			this.allowDownpayPgm.setChecked(false);
+			this.allowDownpayPgm.setDisabled(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -6936,6 +6998,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.cbfinDftStmtFrqDays.clearErrorMessage();
 		this.cbfinSchdMthd.clearErrorMessage();
 		this.remFeeSchdMethod.clearErrorMessage();
+		this.takafulProvider.clearErrorMessage();
 		// Scheduling Tab
 		this.cbfinRateType.clearErrorMessage();
 		this.finBaseRate.clearErrorMessage();
@@ -7529,13 +7592,33 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if (this.takafulMandatory.isChecked()) {
 			this.takafulRequired.setChecked(true);
 			this.takafulRequired.setDisabled(true);
+			this.takafulProvider.setReadonly(isReadOnly("FinanceTypeDialog_takafulProvider"));
+			this.takafulProvider.setMandatoryStyle(true);
 		}else{
 			this.takafulRequired.setChecked(false);
 			this.takafulRequired.setDisabled(false);
+			this.takafulProvider.setReadonly(true);
+			this.takafulProvider.setMandatoryStyle(false);
+			this.takafulProvider.setValue("", "");
 		}
 		logger.debug("Leaving : " + event.toString());
 	}
 	
+	public void onCheck$takafulRequired(Event event) {
+		logger.debug("Entering : " + event.toString());
+		doDisableTakafulProvider();
+		logger.debug("Leaving : " + event.toString());
+	}
 	
+	private void doDisableTakafulProvider(){
+		if (this.takafulRequired.isChecked()) {
+			this.takafulProvider.setReadonly(isReadOnly("FinanceTypeDialog_takafulProvider"));
+			this.takafulProvider.setMandatoryStyle(true);
+		}else{
+			this.takafulProvider.setReadonly(true);
+			this.takafulProvider.setMandatoryStyle(false);
+			this.takafulProvider.setValue("", "");
+		}
+	}
 
 }
