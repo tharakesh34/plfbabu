@@ -8,187 +8,313 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
-		.decimalToString{ 
-			border:none; 
-			background-color:white; 
-			font-weight:bold;
-			font-style:none #FF6600 solid;
-		}
+		.decimalToString{ border:none; background-color:white;
+		font-weight:bold; font-style:none #FF6600 solid; }
 	</style>
-	
+
 	<window>
 		<window id="window_ScheduleDetailDialog" border="none"
-			apply="${scheduleDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+			apply="${scheduleDetailDialogCtrl}" width="100%" height="100%"
+			sizable="false">
 
 			<borderlayout id="borderlayoutScheduleDetail">
 				<center border="none" autoscroll="false">
-					<groupbox style="border:none;">
-						<grid id="grid_effRateOfReturn"
-							sclass="GridLayoutNoBorder" fixedLayout="true">
-							<columns>
-								<column width="200px" />
-								<column />
-								<column width="200px" />
-								<column />
-							</columns>
-							<rows>
-								<row>
-									<label id="label_ScheduleDetailDialog_FinType" />
-									<label id="schdl_finType" style="font-weight:bold;" />
-									<label id="label_ScheduleDetailDialog_FinReference" />
-									<label id="schdl_finReference" style="font-weight:bold;" />
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_FinCcy" />
-									<label id="schdl_finCcy" style="font-weight:bold;" />
-									<label id="label_ScheduleDetailDialog_ProfitDaysBasis" />
-									<label id="schdl_profitDaysBasis" style="font-weight:bold;" />
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_NoOfTerms" />
-									<label id="schdl_noOfTerms" style="font-weight:bold;" />
-									<label id="label_ScheduleDetailDialog_GrcEndDate" />
-									<label id="schdl_grcEndDate" style="font-weight:bold;" />
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_StartDate" />
-									<label id="schdl_startDate" style="font-weight:bold;" />
-									<label id="label_ScheduleDetailDialog_MaturityDate" />
-									<label id="schdl_maturityDate" style="font-weight:bold;" />
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_PurchasePrice" />
-									<decimalbox id="schdl_purchasePrice" tabindex="-1" 
-										disabled="true" sclass="decimalToString" />
-									<label id="label_ScheduleDetailDialog_OthExpenses" />
-									<decimalbox id="schdl_otherExp" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_TotalCost" />
-									<decimalbox id="schdl_totalCost" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
-									<label id="label_ScheduleDetailDialog_TotalPft" />
-									<decimalbox id="schdl_totalPft" tabindex="-1"
-										disabled="true" sclass="decimalToString"/>
-								</row>
-								<row id="row_istisna" visible="false">
-									<label id="label_ScheduleDetailDialog_Graceprofit" />
-									<decimalbox id="schdl_Graceprofit" tabindex="-1" 
-										disabled="true" sclass="decimalToString" />
-									<label id="label_ScheduleDetailDialog_Repayprofit" />
-									<decimalbox id="schdl_Repayprofit" tabindex="-1" 
-										disabled="true" sclass="decimalToString" />
-								</row>
-								<row>
-									<label id="label_ScheduleDetailDialog_ContractPrice" />
-									<decimalbox id="schdl_contractPrice" tabindex="-1"
-										disabled="true" sclass="decimalToString" />
-									<label id="label_FinanceMainDialog_EffectiveRateOfReturn" />
-									<label id="effectiveRateOfReturn" style="font-weight:bold;color:#FF6600;" />
-								</row>
-								<row id="row_Murabaha" visible="false">
-									<label id="label_ScheduleDetailDialog_DownPaySchedule" />
-									<label id="label_ScheduleDetailDialog_DPScheduleLink" style="color: #0000ff; text-decoration: underline; cursor: pointer;" />
-								</row>
-								<row id = "row_Musharak" visible = "false">
-									<label id="label_ScheduleDetailDialog_BankShare" />
-									<label id="schdl_BankShare" style="font-weight:bold;"/>
-									<label id="label_ScheduleDetailDialog_NonBankShare" />
-									<label id="schdl_NonBankShare" style="font-weight:bold;"/>
-								</row>
-							</rows>
-						</grid>
-						<div sclass="z-toolbar" style="padding:0">
-							<hbox pack="stretch"
-								sclass="hboxRemoveWhiteStrips" width="100%">
-								<toolbar align="start"
-									sclass="toolbar-start">
-									<button id="btnAddReviewRate"
-										label="${c:l('btnAddRateChange.label')}"
-										tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
-										 disabled="true" visible = "false"
-										sclass="z-toolbarbutton" autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" />
-									<button id="btnChangeRepay"
-										label="${c:l('btnChangeRepayment.label')}"
-										tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
-										 disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnAddDisbursement"
-										label="${c:l('btnAddDisbursement.label')}"
-										tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
-										 disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnAddDatedSchedule"
-										label="${c:l('btnAddDatedSchedule.label')}"
-										tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
-										 disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnAddDefferment"
-										label="${c:l('btnAddDefferment.label')}"
-										tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
-										 disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnRmvDefferment" 
-										label="${c:l('btnRmvDefferment.label')}"
-										tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
-										 disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnAddTerms" disabled="true" visible = "false"
-										label="${c:l('btnAddTerm.label')}"
-										tooltiptext="${c:l('btnAddTerms.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnRmvTerms" disabled="true" visible = "false"
-										label="${c:l('btnRmvTerm.label')}"
-										tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnReCalcualte" disabled="true" visible = "false"
-										label="${c:l('btnReCalcualte.label')}"
-										tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnSubSchedule" disabled="true" visible = "false"
-										label="${c:l('btnSubSchedule.label')}"
-										tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnChangeProfit" disabled="true" visible = "false"
-										label="${c:l('btnChangeProfit.label')}"
-										tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnChangeFrq" disabled="true" visible = "false"
-										label="${c:l('btnChangeFrq.label')}"
-										tooltiptext="${c:l('btnChangeFrq.tooltiptext')}"  
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton" />
-									<button id="btnPrintSchedule" 
-										 label="${c:l('label_Print')}"
-										tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
-										disabled="true" visible = "false"
-										autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" sclass="z-toolbarbutton"/>
-								</toolbar>
-							</hbox>
-						</div>
+					<div id="basicDetailTabDiv">
+						<groupbox style="border:none;">
+							<grid id="grid_effRateOfReturn"
+								sclass="GridLayoutNoBorder" fixedLayout="true">
+								<columns>
+									<column width="200px" />
+									<column />
+									<column width="200px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_FinType" />
+										<label id="schdl_finType"
+											style="font-weight:bold;" />
+										<label
+											id="label_ScheduleDetailDialog_FinReference" />
+										<label id="schdl_finReference"
+											style="font-weight:bold;" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_FinCcy" />
+										<label id="schdl_finCcy"
+											style="font-weight:bold;" />
+										<label
+											id="label_ScheduleDetailDialog_ProfitDaysBasis" />
+										<label
+											id="schdl_profitDaysBasis" style="font-weight:bold;" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_NoOfTerms" />
+										<label id="schdl_noOfTerms"
+											style="font-weight:bold;" />
+										<label
+											id="label_ScheduleDetailDialog_GrcEndDate" />
+										<label id="schdl_grcEndDate"
+											style="font-weight:bold;" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_StartDate" />
+										<label id="schdl_startDate"
+											style="font-weight:bold;" />
+										<label
+											id="label_ScheduleDetailDialog_MaturityDate" />
+										<label id="schdl_maturityDate"
+											style="font-weight:bold;" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_PurchasePrice" />
+										<decimalbox
+											id="schdl_purchasePrice" tabindex="-1" disabled="true"
+											sclass="decimalToString" />
+										<label
+											id="label_ScheduleDetailDialog_OthExpenses" />
+										<decimalbox id="schdl_otherExp"
+											tabindex="-1" disabled="true" sclass="decimalToString" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_TotalCost" />
+										<decimalbox id="schdl_totalCost"
+											tabindex="-1" disabled="true" sclass="decimalToString" />
+										<label
+											id="label_ScheduleDetailDialog_TotalPft" />
+										<decimalbox id="schdl_totalPft"
+											tabindex="-1" disabled="true" sclass="decimalToString" />
+									</row>
+									<row id="row_istisna"
+										visible="false">
+										<label
+											id="label_ScheduleDetailDialog_Graceprofit" />
+										<decimalbox
+											id="schdl_Graceprofit" tabindex="-1" disabled="true"
+											sclass="decimalToString" />
+										<label
+											id="label_ScheduleDetailDialog_Repayprofit" />
+										<decimalbox
+											id="schdl_Repayprofit" tabindex="-1" disabled="true"
+											sclass="decimalToString" />
+									</row>
+									<row>
+										<label
+											id="label_ScheduleDetailDialog_ContractPrice" />
+										<decimalbox
+											id="schdl_contractPrice" tabindex="-1" disabled="true"
+											sclass="decimalToString" />
+										<label
+											id="label_FinanceMainDialog_EffectiveRateOfReturn" />
+										<label
+											id="effectiveRateOfReturn"
+											style="font-weight:bold;color:#FF6600;" />
+									</row>
+									<row id="row_Murabaha"
+										visible="false">
+										<label
+											id="label_ScheduleDetailDialog_DownPaySchedule" />
+										<label
+											id="label_ScheduleDetailDialog_DPScheduleLink"
+											style="color: #0000ff; text-decoration: underline; cursor: pointer;" />
+									</row>
+									<row id="row_Musharak"
+										visible="false">
+										<label
+											id="label_ScheduleDetailDialog_BankShare" />
+										<label id="schdl_BankShare"
+											style="font-weight:bold;" />
+										<label
+											id="label_ScheduleDetailDialog_NonBankShare" />
+										<label id="schdl_NonBankShare"
+											style="font-weight:bold;" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<tabbox id="tabBoxIndexCenter" width="99%"
+							height="100%">
+							<tabs id="tabsIndexCenter">
+								<tab id="financeSchdDetailsTab"
+									label="${c:l('finSchdDetails')}" />
+								<tab id="financeTakafulSchdDetailsTab"
+									label="${c:l('takafulSchdDetails')}" />
+							</tabs>
+							<tabpanels id="tabpanelsBoxIndexCenter">
+								<tabpanel style="overflow:auto">
+									<div sclass="z-toolbar"
+										style="padding:0">
+										<hbox pack="stretch"
+											sclass="hboxRemoveWhiteStrips" width="100%">
+											<toolbar align="start"
+												sclass="toolbar-start">
+												<button
+													id="btnAddReviewRate"
+													label="${c:l('btnAddRateChange.label')}"
+													tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
+													disabled="true" visible="false" sclass="z-toolbarbutton"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq" />
+												<button
+													id="btnChangeRepay"
+													label="${c:l('btnChangeRepayment.label')}"
+													tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnAddDisbursement"
+													label="${c:l('btnAddDisbursement.label')}"
+													tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnAddDatedSchedule"
+													label="${c:l('btnAddDatedSchedule.label')}"
+													tooltiptext="${c:l('btnAddDisbursement.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnAddDefferment"
+													label="${c:l('btnAddDefferment.label')}"
+													tooltiptext="${c:l('btnAddDefferment.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnRmvDefferment"
+													label="${c:l('btnRmvDefferment.label')}"
+													tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button id="btnAddTerms"
+													disabled="true" visible="false"
+													label="${c:l('btnAddTerm.label')}"
+													tooltiptext="${c:l('btnAddTerms.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button id="btnRmvTerms"
+													disabled="true" visible="false"
+													label="${c:l('btnRmvTerm.label')}"
+													tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnReCalcualte" disabled="true" visible="false"
+													label="${c:l('btnReCalcualte.label')}"
+													tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnSubSchedule" disabled="true" visible="false"
+													label="${c:l('btnSubSchedule.label')}"
+													tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnChangeProfit" disabled="true" visible="false"
+													label="${c:l('btnChangeProfit.label')}"
+													tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnChangeFrq" disabled="true" visible="false"
+													label="${c:l('btnChangeFrq.label')}"
+													tooltiptext="${c:l('btnChangeFrq.tooltiptext')}"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+												<button
+													id="btnPrintSchedule" label="${c:l('label_Print')}"
+													tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+													sclass="z-toolbarbutton" />
+											</toolbar>
+										</hbox>
+									</div>
 
-						<listbox id="listBoxSchedule"
-								emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
-								width="100%" multiple="false">
-							<listhead sizable="false"
-								style="padding:0px;position:relative;">
-								<listheader   width="1%" />
-								<listheader  id= "listheader_ScheduleDetailDialog_Date"  hflex="min" value="" />
-								<listheader id = "listheader_ScheduleDetailDialog_ScheduleEvent"  hflex="min"  />
-								<listheader id = "listheader_ScheduleDetailDialog_CalProfit" hflex="min"  />
-								<listheader id = "listheader_ScheduleDetailDialog_SchFee" hflex="min"  />
-								<listheader id = "listheader_ScheduleDetailDialog_SchProfit"   hflex="min" />
-								<listheader id = "listheader_ScheduleDetailDialog_Principal"  hflex="min"  />
-								<listheader id = "listheader_ScheduleDetailDialog_Total"  hflex="min" />
-								<listheader id = "listheader_ScheduleDetailDialog_ScheduleEndBal"  hflex="min" />
-								<listheader id="listHeader_cashFlowEffect" hflex="min" />
-                                <listheader id="listHeader_vSProfit" hflex="min" />
-                                <listheader id="listHeader_orgPrincipalDue" hflex="min" />
-							</listhead>
-						</listbox>
-						
-						 
-					</groupbox>
+									<listbox id="listBoxSchedule"
+										emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+										width="100%" multiple="false">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader width="1%" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_Date" hflex="min"
+												value="" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_ScheduleEvent"
+												hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_SchFee" hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_Principal" hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_Total" hflex="min" />
+											<listheader
+												id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+												hflex="min" />
+											<listheader
+												id="listHeader_cashFlowEffect" hflex="min" />
+											<listheader
+												id="listHeader_vSProfit" hflex="min" />
+											<listheader
+												id="listHeader_orgPrincipalDue" hflex="min" />
+										</listhead>
+									</listbox>
+								</tabpanel>
+								<tabpanel style="overflow:auto"
+									id="takafulSchdTabPanel">
+									<div sclass="z-toolbar"
+										style="padding:0">
+									<hbox pack="stretch"
+										sclass="hboxRemoveWhiteStrips" width="100%">
+										<toolbar align="start"
+											sclass="toolbar-start">
+											<button
+												id="btnPrintTakafulSchedule" label="${c:l('label_Print')}"
+												tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+												disabled="true" visible="false"
+												autodisable="btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddDatedSchedule,btnAddDefferment,btnRmvDefferment,btnAddTerms,btnRmvTerms,btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq"
+												sclass="z-toolbarbutton" />
+										</toolbar>
+									</hbox>
+									</div>
+									<listbox id="listBoxTakafulSchedule"
+										emptyMessage="${c:l('listbox.emptyMessage')}" vflex="true"
+										width="100%" multiple="false">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader
+												id="listheader_TakafulScheduleDetailDialog_Date"
+												hflex="min" />
+											<listheader
+												id="listheader_TakafulScheduleDetailDialog_Rate"
+												hflex="min" />
+											<listheader
+												id="listheader_TakafulScheduleDetailDialog_FinOSBal"
+												hflex="min" />
+											<listheader
+												id="listheader_TakafulScheduleDetailDialog_Premium"
+												hflex="min" />
+										</listhead>
+									</listbox>
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
+					</div>
 				</center>
 			</borderlayout>
 

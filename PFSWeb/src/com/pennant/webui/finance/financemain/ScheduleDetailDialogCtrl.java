@@ -68,7 +68,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -114,6 +114,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	 */
 	protected Window 		window_ScheduleDetailDialog; 			// autoWired
 	protected Listbox 		listBoxSchedule; 						// autoWired
+	protected Listbox 		listBoxTakafulSchedule; 				// autoWired
+	protected Tab	 		financeTakafulSchdDetailsTab;			// autoWired
 	protected Borderlayout  borderlayoutScheduleDetail;				// autoWired
 	
 	//Finance Schedule Details Tab
@@ -170,6 +172,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Button 		btnChangeProfit; 						// autoWired
 	protected Button 		btnChangeFrq; 						    // autoWired
 	protected Button 		btnPrintSchedule; 						// autoWired
+	protected Button 		btnPrintTakafulSchedule;				// autoWired
 	
 	protected Listheader    listheader_ScheduleDetailDialog_Date;
 	protected Listheader    listheader_ScheduleDetailDialog_ScheduleEvent;
@@ -179,6 +182,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Listheader    listheader_ScheduleDetailDialog_Principal;
 	protected Listheader    listheader_ScheduleDetailDialog_Total;
 	protected Listheader    listheader_ScheduleDetailDialog_ScheduleEndBal;
+	
+	//Takaful Schedule Tab
+	protected Listheader    listheader_TakafulScheduleDetailDialog_Date;
+	protected Listheader    listheader_TakafulScheduleDetailDialog_Rate;
+	protected Listheader    listheader_TakafulScheduleDetailDialog_FinOSBal;
+	protected Listheader    listheader_TakafulScheduleDetailDialog_Premium;
+	
 	// Newly Added Headers
 	protected Listheader    listHeader_cashFlowEffect;
 	protected Listheader    listHeader_vSProfit;
@@ -330,6 +340,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		listHeader_vSProfit.setLabel(Labels.getLabel("listheader_" + productType +"_VsProfit"));
 		listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_" + productType +"_OrgPrincipalDue"));
 		
+		//Takaful Schedule Tab
+		listheader_TakafulScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Date"));
+		listheader_TakafulScheduleDetailDialog_Rate.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Rate"));
+		listheader_TakafulScheduleDetailDialog_FinOSBal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_OSPrinciple"));
+		listheader_TakafulScheduleDetailDialog_Premium.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_ScheduleEndBal"));
+		
 		if(!moduleDefiner.equals("")){
 			listHeader_cashFlowEffect.setVisible(false);
 			listHeader_vSProfit.setVisible(false);
@@ -431,10 +447,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 
 			getBorderLayoutHeight();
 			if(isWIF){
-				this.listBoxSchedule.setHeight(this.borderLayoutHeight- 230 +"px");
+				this.listBoxSchedule.setHeight(this.borderLayoutHeight- 275 +"px");
+				this.listBoxTakafulSchedule.setHeight(this.borderLayoutHeight- 280 +"px");
 				this.window_ScheduleDetailDialog.setHeight(this.borderLayoutHeight-30+"px");
 			}else{
 				this.listBoxSchedule.setHeight(this.borderLayoutHeight- 305 +"px");
+				this.listBoxTakafulSchedule.setHeight(this.borderLayoutHeight- 335 +"px");
 				this.window_ScheduleDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
 			}
 
@@ -682,11 +700,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		this.btnRmvDefferment.setVisible(false);
 		finRender = new FinScheduleListItemRenderer();
 		int sdSize = aFinSchData.getFinanceScheduleDetails().size();
+		boolean showTakafulTab = false;
 		if (aFinSchData != null && sdSize > 0) {
 			// Clear all the list items in list box
 			this.listBoxSchedule.getItems().clear();
+			this.listBoxTakafulSchedule.getItems().clear();
 			this.btnPrintSchedule.setDisabled(false);
 			this.btnPrintSchedule.setVisible(true);
+			
+			this.btnPrintTakafulSchedule.setDisabled(false);
+			this.btnPrintTakafulSchedule.setVisible(true);
 
 			boolean allowRvwRate = getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddRvwRate");
 
@@ -796,9 +819,22 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				map.put("window", this.window_ScheduleDetailDialog);
 
 				finRender.render( map, prvSchDetail, false, allowRvwRate, true, tempFeeChargesMap, showRate, moduleDefiner.equals(""));
+				
+				// Takaful premium Schedule
+				if(financeMain.isTakafulRequired() && aScheduleDetail.getTakafulFeeSchd().compareTo(BigDecimal.ZERO) > 0){
+					finRender.doFillTakafulSchedule(this.listBoxTakafulSchedule, aFinSchData.getFinanceMain().getTakafulRate(), 
+							aScheduleDetail, aFinSchData.getFinanceMain().getLovDescFinFormatter());
+					showTakafulTab = true;
+				}
 
 				if (i == sdSize - 1) {
 					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate, moduleDefiner.equals(""));
+					
+					// Takaful premium Schedule
+					if(financeMain.isTakafulRequired() && aScheduleDetail.getTakafulFeeSchd().compareTo(BigDecimal.ZERO) > 0){
+						finRender.doFillTakafulSchedule(this.listBoxTakafulSchedule, aFinSchData.getFinanceMain().getTakafulRate(), 
+								aScheduleDetail, aFinSchData.getFinanceMain().getLovDescFinFormatter());
+					}
 					break;
 				}
 			}
@@ -823,12 +859,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 					logger.error(e);
 				}
 			}
-
 		}
-
+		
 		if(!StringUtils.trimToEmpty(moduleDefiner).equals("")){
 			hideButtons();
 		}
+		
+		this.financeTakafulSchdDetailsTab.setVisible(showTakafulTab); 
 		logger.debug("Leaving");
 	}
 	

@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_SelectFinanceTypeDialog"
 		title="${c:l('window_SelectFinanceTypeDialog.title')}" border="normal"
-		apply="${selectFinanceTypeDialogCtrl}" width="50%" height="25%"
+		apply="${selectFinanceTypeDialogCtrl}" width="50%" height="30%"
 		sizable="false" closable="true">
 		<borderlayout id="borderlayoutFinanceMain">
 			<center border="none" autoscroll="true">

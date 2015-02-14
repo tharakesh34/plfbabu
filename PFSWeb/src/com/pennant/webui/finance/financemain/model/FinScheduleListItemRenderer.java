@@ -766,7 +766,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			lc = new Listcell(String.valueOf(amountlist[0].intValue()));
 			lc.setStyle("text-align:right;");
 			listitem.appendChild(lc);
-			lc = new Listcell("");
+			lc = new Listcell();
 			if(getFinScheduleData().getFinanceMain().isStepFinance() && showStepDetail) {
 				if(isSchdFee){
 					lc.setSpan(8);
@@ -939,13 +939,11 @@ public class FinScheduleListItemRenderer implements Serializable{
 		logger.debug("Entering");
 
 		listitem = new Listitem();
-		String strDate = PennantAppUtil.formateDate(scheduleDetail.getSchDate(), PennantConstants.dateFormate);
-
 		Listcell lc = new Listcell();
 		lc.setSclass("");
 		listitem.appendChild(lc);
 
-		lc = new Listcell(strDate);
+		lc = new Listcell(PennantAppUtil.formateDate(scheduleDetail.getSchDate(), PennantConstants.dateFormate));
 		lc.setStyle("font-weight:bold;cursor:default;");
 
 		listitem.appendChild(lc);
@@ -967,6 +965,36 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 		// Closing Balance Amount
 		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance(), formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+		
+		listBoxSchedule.appendChild(listitem);
+		logger.debug("Leaving");
+
+	}
+	
+	public void doFillTakafulSchedule(Listbox listBoxSchedule,BigDecimal rate, FinanceScheduleDetail scheduleDetail, int formatter){
+		logger.debug("Entering");
+
+		listitem = new Listitem();
+		Listcell lc = null;
+
+		lc = new Listcell(PennantAppUtil.formateDate(scheduleDetail.getSchDate(), PennantConstants.dateFormate));
+		lc.setStyle("font-weight:bold;cursor:default;");
+		listitem.appendChild(lc);
+
+		//Takaful Premium Rate
+		lc = new Listcell(PennantApplicationUtil.formatRate(rate.doubleValue(), PennantConstants.rateFormate) + "%");
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		//Outstanding Balance
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance() ,formatter));
+		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
+		listitem.appendChild(lc);
+
+		// Takaful Premium Schedule Fee
+		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getTakafulFeeSchd(), formatter));
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 		
