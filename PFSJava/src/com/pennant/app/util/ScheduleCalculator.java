@@ -4976,7 +4976,6 @@ public class ScheduleCalculator {
 			orgFinanceAmount = financeMain.getFinAmount();
 		}
 		
-		orgFinanceAmount = orgFinanceAmount.subtract(financeMain.getDownPayment());
 		Date evtFromDate = financeMain.getFinStartDate();
 		if(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.PFT)){
 			evtFromDate = finScheduleData.getFinanceScheduleDetails().get(financeMain.getGraceTerms()+1).getSchDate();
