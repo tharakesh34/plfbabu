@@ -919,6 +919,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");  
 		}else if(moduleDefiner.equals(PennantConstants.CHGFRQ)){
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
+		}else if(moduleDefiner.equals(PennantConstants.RESCHD)){
+			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
 		}else if(moduleDefiner.equals(PennantConstants.CHGGRC)){
 			whereClause.append(" AND (LovDescProductCodeName = '" + PennantConstants.FINANCE_PRODUCT_IJARAH +"') " );
 		}else if(moduleDefiner.equals(PennantConstants.DATEDSCHD)){
@@ -1859,6 +1861,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> implements S
 					moduleDefiner = PennantConstants.CHGFRQ;
 					eventCodeRef  = "SCDCHG";//TODO
 					workflowCode =  PennantConstants.CHGFRQ;
+				}else if(tab.getId().equals("tab_ReSchedule")) {
+					moduleDefiner = PennantConstants.RESCHD;
+					eventCodeRef  = "SCDCHG";//TODO
+					workflowCode =  PennantConstants.RESCHD;
 				}else if(tab.getId().equals("tab_ChangeGestation")) {
 					moduleDefiner = PennantConstants.CHGGRC;
 					eventCodeRef  = "SCDCHG";

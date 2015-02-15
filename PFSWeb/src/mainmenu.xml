@@ -256,6 +256,7 @@
 <!-- 	   <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_SubSchedule"/> -->	   
 	   <menuItem id="menu_Item_ChangeProfit" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeProfit"/>
 	   <menuItem id="menu_Item_ChangeFrequency" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeFrequency"/>
+	   <menuItem id="menu_Item_ReSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReSchedule"/>
 	   <menuItem id="menu_Item_ChangeGestation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeGestation"/>
 	   <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_DatedSchedule"/>
 	   <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FairValueRevaluation"/>

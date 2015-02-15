@@ -688,6 +688,9 @@ public class PennantJavaUtil {
 			put("ChangeFrequency", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
 					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
 			
+			put("ReSchedule", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
+					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+			
 			put("ChangeGestation", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
 					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
 			

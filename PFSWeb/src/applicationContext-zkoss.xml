@@ -3430,6 +3430,12 @@
 	<bean id="changeFrequencyDialogCtrl"
 		class="com.pennant.webui.finance.additional.ChangeFrequencyDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+		
+	<!--============ Re-Scheduling Finance Maintainance Details ============== -->
+
+	<bean id="reScheduleDialogCtrl"
+		class="com.pennant.webui.finance.additional.ReScheduleDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
 
 	<!--============ Add Disbursement Change Finance Maintainance Details ============== -->
 

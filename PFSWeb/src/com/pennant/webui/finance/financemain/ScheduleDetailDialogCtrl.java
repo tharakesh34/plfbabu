@@ -171,6 +171,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Button 		btnSubSchedule; 						// autoWired
 	protected Button 		btnChangeProfit; 						// autoWired
 	protected Button 		btnChangeFrq; 						    // autoWired
+	protected Button 		btnReschedule; 						    // autoWired
 	protected Button 		btnPrintSchedule; 						// autoWired
 	protected Button 		btnPrintTakafulSchedule;				// autoWired
 	
@@ -390,6 +391,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		this.btnSubSchedule.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnBuildSubSchd"));
 		this.btnChangeProfit.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeProfit"));
 		this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeFrq"));
+		this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnReschedule"));
 		
 		this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddRvwRate"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeRepay"));
@@ -403,6 +405,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		this.btnSubSchedule.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnBuildSubSchd"));
 		this.btnChangeProfit.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeProfit"));
 		this.btnChangeFrq.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeFrq"));
+		this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnReschedule"));
 		
 		logger.debug("Leaving");
 	}
@@ -960,324 +963,89 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			dialogName = "WIFFinanceMainDialog";
 		}
 		
+		this.btnReCalcualte.setVisible(false);
+		this.btnAddReviewRate.setVisible(false);
+		this.btnChangeRepay.setVisible(false);
+		this.btnAddDisbursement.setVisible(false);
+		this.btnAddDefferment.setVisible(false);
+		this.btnRmvDefferment.setVisible(false);
+		this.btnAddTerms.setVisible(false);
+		this.btnRmvTerms.setVisible(false);
+		this.btnSubSchedule.setVisible(false);
+		this.btnChangeProfit.setVisible(false);
+		this.btnChangeFrq.setVisible(false);
+		this.btnReschedule.setVisible(false);
+
+		this.btnAddReviewRate.setDisabled(true);
+		this.btnChangeRepay.setDisabled(true);
+		this.btnAddDisbursement.setDisabled(true);
+		this.btnAddDefferment.setDisabled(true);
+		this.btnRmvDefferment.setDisabled(true);
+		this.btnAddTerms.setDisabled(true);
+		this.btnRmvTerms.setDisabled(true);
+		this.btnReCalcualte.setDisabled(true);
+		this.btnSubSchedule.setDisabled(true);
+		this.btnChangeProfit.setDisabled(true);
+		this.btnChangeFrq.setDisabled(true);
+		this.btnReschedule.setDisabled(true);
+		
 		if (moduleDefiner.equals(PennantConstants.ADD_RATE_CHG)) {
 			this.btnAddReviewRate.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddRvwRate"));
-
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);			
-			this.btnReCalcualte.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-			
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddRvwRate"));
 
 		} else if (moduleDefiner.equals(PennantConstants.CHG_REPAY)) {
 			this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeRepay"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnReCalcualte.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeRepay"));
 
 		} else if (moduleDefiner.equals(PennantConstants.ADD_DISB)) {
 			this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDisb"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnReCalcualte.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDisb"));
 
 		} else if (moduleDefiner.equals(PennantConstants.ADD_DEFF)) {
 			this.btnAddDefferment.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDeferment"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);			
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnReCalcualte.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnAddDefferment.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDeferment"));
 
 		} else if (moduleDefiner.equals(PennantConstants.RMV_DEFF)) {
 			this.btnRmvDefferment.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvDeferment"));
+			this.btnRmvDefferment.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvDeferment"));
 
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnReCalcualte.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
-			
 		} else if (moduleDefiner.equals(PennantConstants.ADD_TERMS)) {
 			this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddTerms"));
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);			
-			this.btnRmvTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddTerms"));
+			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(PennantConstants.RMV_TERMS)) {
 			this.btnRmvTerms.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvTerms"));
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnRmvTerms.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRmvTerms"));
+			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(PennantConstants.RECALC)) {
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(PennantConstants.SUBSCH)) {
 			this.btnSubSchedule.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnBuildSubSchd"));
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
-
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnSubSchedule.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnBuildSubSchd"));
+			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(PennantConstants.CHGPFT)) {
 			this.btnChangeProfit.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeProfit"));
-
-			this.btnReCalcualte.setVisible(false);
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDatedSchedule.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDatedSchedule.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnChangeProfit.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeProfit"));
 			
 		} else if (moduleDefiner.equals(PennantConstants.DATEDSCHD)) {
 			this.btnAddDatedSchedule.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDatedSchd"));
-
-			this.btnReCalcualte.setVisible(false);
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-			this.btnChangeFrq.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
-			this.btnChangeFrq.setDisabled(true);
+			this.btnAddDatedSchedule.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnAddDatedSchd"));
 			
 		}  else if (moduleDefiner.equals(PennantConstants.CHGFRQ)) {
 			this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeFrq"));
-
-			this.btnReCalcualte.setVisible(false);
-			this.btnAddReviewRate.setVisible(false);
-			this.btnChangeRepay.setVisible(false);
-			this.btnAddDisbursement.setVisible(false);
-			this.btnAddDefferment.setVisible(false);
-			this.btnRmvDefferment.setVisible(false);
-			this.btnAddTerms.setVisible(false);
-			this.btnRmvTerms.setVisible(false);
-			this.btnSubSchedule.setVisible(false);
-			this.btnChangeProfit.setVisible(false);
-
-			this.btnAddReviewRate.setDisabled(true);
-			this.btnChangeRepay.setDisabled(true);
-			this.btnAddDisbursement.setDisabled(true);
-			this.btnAddDefferment.setDisabled(true);
-			this.btnRmvDefferment.setDisabled(true);
-			this.btnAddTerms.setDisabled(true);
-			this.btnRmvTerms.setDisabled(true);
-			this.btnReCalcualte.setDisabled(true);
-			this.btnSubSchedule.setDisabled(true);
-			this.btnChangeProfit.setDisabled(true);
+			this.btnChangeFrq.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeFrq"));
+			
+		}  else if (moduleDefiner.equals(PennantConstants.RESCHD)) {
+			this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnReschedule"));
+			this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_"+dialogName+"_btnReschedule"));
 			
 		} 
 		logger.debug("Leaving");
@@ -1464,7 +1232,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	}  
 
 	/**
-	 * when the button ChangeRepay button is clicked. <br>
+	 * when the button Change frequency button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -1475,10 +1243,32 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData",getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeFrequencyDialog.zul",window_ScheduleDetailDialog,map);
+		} catch (final Exception e) {
+			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
+			PTMessageUtils.showErrorMessage(e.toString());
+		}	
+		
+		logger.debug("Leaving" + event.toString());
+	}  
+	
+	/**
+	 * when the button Re Scheduling button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnReschedule(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData",getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ReScheduleDialog.zul",window_ScheduleDetailDialog,map);
 		} catch (final Exception e) {
 			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
 			PTMessageUtils.showErrorMessage(e.toString());
@@ -1761,6 +1551,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		} else if (moduleDefiner.equals(PennantConstants.CHGFRQ)) {
 			if(getUserWorkspace().isAllowed("button_"+dialogName+"_btnChangeFrq")){
 				Events.postEvent("onClick$btnChangeFrq", this.window_ScheduleDetailDialog, null);
+			}
+		} else if (moduleDefiner.equals(PennantConstants.RESCHD)) {
+			if(getUserWorkspace().isAllowed("button_"+dialogName+"_btnReschedule")){
+				Events.postEvent("onClick$btnReschedule", this.window_ScheduleDetailDialog, null);
 			}
 		} 
 		logger.debug("Leaving");
