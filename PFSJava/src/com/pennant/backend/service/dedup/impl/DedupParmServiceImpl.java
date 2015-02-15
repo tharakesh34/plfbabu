@@ -427,10 +427,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		DedupParm tempDedupParm = null;
 		if (dedupParm.isWorkflow()) {
 			tempDedupParm = getDedupParmDAO().getDedupParmByID(
-					dedupParm.getId(),dedupParm.getQueryModule(),dedupParm.getQuerySubCode(), "_Temp");
+					dedupParm.getQueryCode(),dedupParm.getQueryModule(),dedupParm.getQuerySubCode(), "_Temp");
 		}
 		DedupParm befDedupParm = getDedupParmDAO().getDedupParmByID(
-				dedupParm.getId(),dedupParm.getQueryModule(),dedupParm.getQuerySubCode(), "");
+				dedupParm.getQueryCode(),dedupParm.getQueryModule(),dedupParm.getQuerySubCode(), "");
 
 		DedupParm oldDedupParm = dedupParm.getBefImage();
 

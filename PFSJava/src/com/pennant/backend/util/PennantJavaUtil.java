@@ -572,7 +572,7 @@ public class PennantJavaUtil {
 			put("CustomerGroup", new ModuleMapping(new CustomerGroup(0), new String[] { "CustomerGroups", "CustomerGroups_AView" }, 
 					new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" }, new String[][] { { "CustGrpID", "1", "0" } }, "MSTGRP1", 300));
 			
-			put("DedupParm", new ModuleMapping(new DedupParm(""), new String[]{"DedupParams", "DedupParams_AView"}, 
+			put("DedupParm", new ModuleMapping(new DedupParm(0), new String[]{"DedupParams", "DedupParams_AView"}, 
 					new String[] { "QueryCode", "QueryModule" }, null, "MSTGRP1", 300)); 
 			
 			put("DedupFields", new ModuleMapping(new DedupFields(""), new String[]{"DedupFields", "DedupFields_AView"}, 

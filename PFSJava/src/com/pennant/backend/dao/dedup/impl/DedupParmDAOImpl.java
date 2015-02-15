@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -73,7 +73,7 @@ import com.pennant.backend.util.WorkFlowUtil;
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
  * 
  */
-public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupParmDAO {
+public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements DedupParmDAO {
 
 	private static Logger logger = Logger.getLogger(DedupParmDAOImpl.class);
 
@@ -127,7 +127,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		logger.debug("Entering");
 		
 		DedupParm dedupParm = new DedupParm();
-		dedupParm.setId(id);
+		dedupParm.setQueryCode(id);
 		dedupParm.setQuerySubCode(querySubCode);
 		dedupParm.setQueryModule(queryModule);
 		
@@ -223,13 +223,13 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails = getError("41003",
-						dedupParm.getId(), dedupParm.getUserDetails().getUsrLanguage());
+						dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) { };
 			}
 		}catch(DataAccessException e){
 			logger.error(e);
 			ErrorDetails errorDetails = getError("41006",
-					dedupParm.getId(), dedupParm.getUserDetails().getUsrLanguage());
+					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) { };
 		}
 		logger.debug("Leaving");
@@ -248,8 +248,13 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 	 * 
 	 */
 	@Override
-	public String save(DedupParm dedupParm,String type) {
+	public long save(DedupParm dedupParm,String type) {
 		logger.debug("Entering");
+		
+		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
+			dedupParm.setQueryId(getNextidviewDAO().getNextId("SeqDedupParams"));
+			logger.debug("get NextID:" + dedupParm.getQueryId());
+		}
 
 		StringBuilder insertSql =new StringBuilder(" Insert Into DedupParams");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -265,7 +270,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-		return dedupParm.getId();
+		return dedupParm.getQueryId();
 	}
 
 	/**
@@ -309,7 +314,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
 			ErrorDetails errorDetails = getError("41004",
-					dedupParm.getId(), dedupParm.getUserDetails().getUsrLanguage());
+					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {};
 		}
 		logger.debug("Leaving");

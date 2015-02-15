@@ -59,7 +59,7 @@ public interface DedupParmDAO {
 	DedupParm getDedupParmByID(String id,String queryModule,String querySubCode, String type);
 	void update(DedupParm dedupParm,String type);
 	void delete(DedupParm dedupParm,String type);
-	String save(DedupParm dedupParm,String type);
+	long save(DedupParm dedupParm,String type);
 	void initialize(DedupParm dedupParm);
 	void refresh(DedupParm entity);
 	@SuppressWarnings("rawtypes")

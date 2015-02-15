@@ -45,6 +45,7 @@ package com.pennant.backend.model.dedup;
 
 import java.sql.Timestamp;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
@@ -52,7 +53,7 @@ import com.pennant.backend.util.WorkFlowUtil;
  * Model class for the <b>DedupParm table</b>.<br>
  *
  */
-public class DedupParm implements java.io.Serializable {
+public class DedupParm implements java.io.Serializable ,Entity{
 
 	private static final long serialVersionUID = -5474091857496782851L;
 	
@@ -88,7 +89,7 @@ public class DedupParm implements java.io.Serializable {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("DedupParm");
 	}
 
-	public DedupParm(String id) {
+	public DedupParm(long id) {
 		super();
 		this.setId(id);
 	}
@@ -97,11 +98,11 @@ public class DedupParm implements java.io.Serializable {
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-	public String getId() {
-		return queryCode;
+	public long getId() {
+		return queryId;
 	}
-	public void setId (String id) {
-		this.queryCode = id;
+	public void setId (long id) {
+		this.queryId = id;
 	}
 	
 	public long getQueryId() {

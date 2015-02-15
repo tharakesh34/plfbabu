@@ -3001,7 +3001,7 @@
 	<!--============ Dedup Parameter Details ============== -->
 
 	<bean id="dedupParmDAO" class="com.pennant.backend.dao.dedup.impl.DedupParmDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 

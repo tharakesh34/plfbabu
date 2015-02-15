@@ -301,7 +301,7 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 			// CAST AND STORE THE SELECTED OBJECT
 			final DedupParm aDedupParm = (DedupParm) item.getAttribute("data");
 			final DedupParm dedupParm = getDedupParmService().getDedupParmById(
-					aDedupParm.getId(),aDedupParm.getQueryModule(),aDedupParm.getQuerySubCode());
+					aDedupParm.getQueryCode(),aDedupParm.getQueryModule(),aDedupParm.getQuerySubCode());
 
 			if (dedupParm == null) {
 				String[] valueParm = new String[3];
