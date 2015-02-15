@@ -177,6 +177,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	protected Button btnNew_FinanceAdvanceAccounting;
 	protected Listbox listBoxTemplates;
 	protected Button btnNew_FinanceMailTemplate;
+	protected Listbox listBoxDedupRules;
+	protected Button btnNew_FinanceDedupeLink;
 
 	private transient List<FinanceReferenceDetail> oldVar_CheckList;
 	private transient List<FinanceReferenceDetail> oldVar_Agreement;
@@ -185,6 +187,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	private transient List<FinanceReferenceDetail> oldVar_CorpScoringGroup;
 	private transient List<FinanceReferenceDetail> oldVar_AdvanceAccount;
 	private transient List<FinanceReferenceDetail> oldVar_MailTemplate;
+	private transient List<FinanceReferenceDetail> oldVar_FinanceDedupe;
 	
 	private String roles;
 	int listRows;
@@ -273,6 +276,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.listBoxCorpScoringGroup.setHeight(listboxHeight+"px");
 		this.listBoxAccounts.setHeight(listboxHeight+"px");
 		this.listBoxTemplates.setHeight(listboxHeight+"px");
+		this.listBoxDedupRules.setHeight(listboxHeight+"px");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -525,6 +529,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.oldVar_MailTemplate = aFinanceReference.getMailTemplateList();
 		dofillListbox(aFinanceReference.getMailTemplateList(), this.listBoxTemplates);
 		
+		this.oldVar_FinanceDedupe = aFinanceReference.getFinanceDedupeList();
+		dofillListbox(aFinanceReference.getFinanceDedupeList(), this.listBoxDedupRules);
+		
 		logger.debug("Leaving");
 	}
 
@@ -715,6 +722,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		if (this.oldVar_MailTemplate.size() != this.listBoxTemplates.getItemCount()) {
 			return true;
 		}
+		if (this.oldVar_FinanceDedupe.size() != this.listBoxDedupRules.getItemCount()) {
+			return true;
+		}
 		if (compare(this.oldVar_CheckList, this.listBoxFinanceCheckList)) {
 			return true;
 		} else if (compare(this.oldVar_Agreement, this.listboxFinanceAgreementLink)) {
@@ -728,6 +738,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		} else if (compare(this.oldVar_AdvanceAccount, this.listBoxAccounts)) {
 			return true;
 		} else if (compare(this.oldVar_MailTemplate, this.listBoxTemplates)) {
+			return true;
+		} else if (compare(this.oldVar_FinanceDedupe, this.listBoxDedupRules)) {
 			return true;
 		}
 
@@ -877,6 +889,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.btnNew_FinCorpScoringGroup.setDisabled(false);
 		this.btnNew_FinanceAdvanceAccounting.setDisabled(false);
 		this.btnNew_FinanceMailTemplate.setDisabled(false);
+		this.btnNew_FinanceDedupeLink.setDisabled(false);
 
 		enableOrDisablelistitems(this.listBoxFinanceCheckList, false);
 		enableOrDisablelistitems(this.listboxFinanceAgreementLink, false);
@@ -885,6 +898,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		enableOrDisablelistitems(this.listBoxCorpScoringGroup, false);
 		enableOrDisablelistitems(this.listBoxAccounts, false);
 		enableOrDisablelistitems(this.listBoxTemplates, false);
+		enableOrDisablelistitems(this.listBoxDedupRules, false);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -978,6 +992,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		items.addAll(this.listBoxCorpScoringGroup.getItems());
 		items.addAll(this.listBoxAccounts.getItems());
 		items.addAll(this.listBoxTemplates.getItems());
+		items.addAll(this.listBoxDedupRules.getItems());
 		
 		for (int i = 0; i < items.size(); i++) {
 			FinanceReferenceDetail lsFinanceReferenceDetail = (FinanceReferenceDetail) items.get(i).getAttribute("data");
@@ -1377,6 +1392,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	public void onClick$btnNew_FinanceMailTemplate(Event event) throws InterruptedException {
 		callLinakgeZul(financeReferenceDetail, PennantConstants.Template);
 	}
+	
+	public void onClick$btnNew_FinanceDedupeLink(Event event) throws InterruptedException {
+		callLinakgeZul(financeReferenceDetail, PennantConstants.FinanceDedupe);
+	}
 
 	public void onCheckListItemDoubleClicked(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -1402,6 +1421,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		logger.debug("Entering");
 		
 		financeReferenceDetail.setFinType(this.finType.getValue());
+		financeReferenceDetail.setNewRecord(true);
+		financeReferenceDetail.setLovDescNamelov("");
+		financeReferenceDetail.setLovDescRefDesc("");
 		financeReferenceDetail.setFinRefType(type);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCodeList", roles);

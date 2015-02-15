@@ -196,6 +196,8 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
 		} else if (StringUtils.trimToEmpty(type).equals("_ATView") || StringUtils.trimToEmpty(type).equals("_TTView")) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
+		} else if (StringUtils.trimToEmpty(type).equals("_AFDView") || StringUtils.trimToEmpty(type).equals("_TFDView")) {
+			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
 		}
 		
 		selectSql.append(" From LMTFinRefDetail");
@@ -405,10 +407,12 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update LMTFinRefDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set FinRefDetailId = :FinRefDetailId, FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
-		updateSql
-				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Set FinRefDetailId = :FinRefDetailId, FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, ");
+		updateSql.append(" IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, ");
+		updateSql.append(" AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
+		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
+		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinRefDetailId =:FinRefDetailId");
 
 		if (!type.endsWith("_TEMP")) {

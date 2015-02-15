@@ -56,6 +56,7 @@ public class DedupParm implements java.io.Serializable {
 
 	private static final long serialVersionUID = -5474091857496782851L;
 	
+	private long queryId = Long.MIN_VALUE;
 	private String queryCode = null;
 	private String queryDesc;
 	private String queryModule;
@@ -103,6 +104,13 @@ public class DedupParm implements java.io.Serializable {
 		this.queryCode = id;
 	}
 	
+	public long getQueryId() {
+	    return queryId;
+    }
+	public void setQueryId(long queryId) {
+	    this.queryId = queryId;
+    }
+
 	public String getQueryCode() {
 		return queryCode;
 	}

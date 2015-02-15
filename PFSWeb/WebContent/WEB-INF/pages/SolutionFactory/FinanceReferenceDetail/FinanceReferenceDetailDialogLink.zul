@@ -130,6 +130,9 @@
 										<button id="btnSearchTemplate"
 											image="/images/icons/LOVSearch.png" 
 											visible="false" />
+										<button id="btnSearchFinanceDedupe"
+											image="/images/icons/LOVSearch.png" 
+											visible="false" />
 									</hbox>
 								</row>
 								<row visible="true">

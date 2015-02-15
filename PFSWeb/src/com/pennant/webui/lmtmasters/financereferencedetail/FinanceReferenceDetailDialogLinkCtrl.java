@@ -79,6 +79,7 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
@@ -185,6 +186,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 	protected Button btnSearchCorpScoringGroup;
 	protected Button btnSearchAccounting;
 	protected Button btnSearchTemplate;
+	protected Button btnSearchFinanceDedupe;
 	
 	protected Label label_FinanceReferenceDetailDialog_FinRefId;
 	protected Row rowSingleListbox;
@@ -923,7 +925,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 		if (getFinanceReferenceDetail().getFinRefType() == PennantConstants.ScoringGroup ||
 				getFinanceReferenceDetail().getFinRefType() == PennantConstants.CorpScoringGroup ||
 				getFinanceReferenceDetail().getFinRefType() == PennantConstants.Accounting ||
-				getFinanceReferenceDetail().getFinRefType() == PennantConstants.Template) {
+				getFinanceReferenceDetail().getFinRefType() == PennantConstants.Template ||
+				getFinanceReferenceDetail().getFinRefType() == PennantConstants.FinanceDedupe) {
 			doToggleInReadOnlyMode(this.listboxmandInputInStage, isReadOnly("FinanceReferenceDetailDialog_isActive"));
 		} else {
 			doToggleInReadOnlyMode(this.listboxshowInStage, isReadOnly("FinanceReferenceDetailDialog_isActive"));
@@ -1260,6 +1263,26 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 				this.lovDescRefDesc.setValue(details.getTemplateCode() + "-" + details.getTemplateDesc());
 				getFinanceReferenceDetail().setLovDescNamelov(details.getTemplateDesc());
 				getFinanceReferenceDetail().setLovDescRefDesc(details.getTemplateDesc());
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void onClick$btnSearchFinanceDedupe(Event event) {
+		logger.debug("Entering");
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("QueryModule", PennantConstants.DedupFinance, Filter.OP_EQUAL);
+		
+		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "DedupParm", filters);
+		if (dataObject instanceof String) {
+			this.lovDescRefDesc.setValue("");
+		} else {
+			DedupParm details = (DedupParm) dataObject;
+			if (details != null) {
+				this.finRefId.setValue(details.getQueryId());
+				this.lovDescRefDesc.setValue(details.getQueryCode() + "-" + details.getQueryDesc());
+				getFinanceReferenceDetail().setLovDescNamelov(details.getQueryCode());
+				getFinanceReferenceDetail().setLovDescRefDesc(details.getQueryDesc());
 			}
 		}
 		logger.debug("Leaving");
@@ -1606,6 +1629,46 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			CheckOverride();
 			break;
 			
+		case PennantConstants.FinanceDedupe:
+			
+			// For validations
+			this.showInStage.setReadonly(true);// not required
+			this.allowInputInStage.setReadonly(true);// not required
+			this.mandInputInStage.setReadonly(false);
+			this.overRide.setDisabled(false);
+			this.overRideValue.setReadonly(false);
+			this.rowOverRide.setVisible(true);
+			this.overRideValue.setLeft(Labels.getLabel("label_FinanceReferenceDetailDialog_OverRideValue.value"));
+			
+			// error labels
+			this.showInStage.setLeft("");
+			this.allowInputInStage.setLeft("");
+			this.mandInputInStage.setLeft(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+			
+			// LOV List
+			this.btnSearchFinanceDedupe.setVisible(true);
+			
+			// LOV Label
+			this.label_FinanceReferenceDetailDialog_FinRefId.setValue(Labels.getLabel("label_FinRefDialogLink_FinanceDedupe.value"));
+			
+			// ROWS WITH LIST Boxes
+			this.rowSingleListbox.setVisible(true);// Show
+			
+			// labels of list boxes
+			this.label_FinanceReferenceDetailDialog_ShowInStage.setValue("");// not required
+			this.label_FinanceReferenceDetailDialog_AllowInputInStage.setValue("");// not required
+			this.label_FinanceReferenceDetailDialog_MandInputInStage.setValue(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+			
+			// List headers of list boxes
+			this.listheadShowInStage.setLabel("");// not required
+			this.listheadAllowInputInStage.setLabel("");// not required
+			this.listheadMandInputInStage.setLabel(Labels.getLabel("label_FinRefDialogLink_ExecuteInStage.value"));
+			
+			doEnableByChecked(this.listboxmandInputInStage);
+			this.label_FinanceReferenceDetailDialogLink.setValue(Labels.getLabel("label_Window_FinanceDedupeList.title"));			
+			CheckOverride();
+			break;
+			
 		default:
 			break;
 		}
@@ -1651,6 +1714,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			break;
 		case PennantConstants.Template:
 			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxTemplates);
+			break;
+		case PennantConstants.FinanceDedupe:
+			processAddOrUpdate(financeReferenceDetail, getFinanceReferenceDetailDialogCtrl().listBoxDedupRules);
 			break;
 		default:
 			break;
@@ -1724,6 +1790,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl implements
 			break;
 		case PennantConstants.Template:
 			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxTemplates);
+			break;
+		case PennantConstants.FinanceDedupe:
+			processDelet(finRefDetail, getFinanceReferenceDetailDialogCtrl().listBoxDedupRules);
 			break;
 		default:
 			break;

@@ -132,7 +132,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 		dedupParm.setQueryModule(queryModule);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, ");
+		selectSql.append(" Select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");	
 		selectSql.append(" From DedupParams");
@@ -253,10 +253,10 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 
 		StringBuilder insertSql =new StringBuilder(" Insert Into DedupParams");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (QueryCode, QueryModule,QueryDesc, SQLQuery, ActualBlock, QuerySubCode ,");
+		insertSql.append(" (QueryId , QueryCode, QueryModule,QueryDesc, SQLQuery, ActualBlock, QuerySubCode ,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:QueryCode, :QueryModule,:QueryDesc, :SQLQuery, :ActualBlock, :QuerySubCode,");
+		insertSql.append(" Values(:QueryId , :QueryCode, :QueryModule,:QueryDesc, :SQLQuery, :ActualBlock, :QuerySubCode,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -288,7 +288,7 @@ public class DedupParmDAOImpl extends BasisCodeDAO<DedupParm> implements DedupPa
 
 		StringBuilder	updateSql =new StringBuilder(" Update DedupParams");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QueryCode = :QueryCode, QueryModule = :QueryModule," );
+		updateSql.append(" Set QueryId = :QueryId , QueryCode = :QueryCode, QueryModule = :QueryModule," );
 		updateSql.append(" QuerySubCode=:QuerySubCode, QueryDesc=:QueryDesc,SQLQuery = :SQLQuery," );
 		updateSql.append(" ActualBlock = :ActualBlock, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");

@@ -206,6 +206,7 @@ public class PennantConstants {
 	public static final int Accounting=5;
 	public static final int Template=6;
 	public static final int CorpScoringGroup=7;
+	public static final int FinanceDedupe=8;
 	
 	//Process Editor Stage Conditions
 	public static final int ShowInStage=1;
