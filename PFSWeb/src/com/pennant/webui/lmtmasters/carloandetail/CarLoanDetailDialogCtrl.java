@@ -104,7 +104,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -151,7 +150,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected ExtendedCombobox cbCarColor; // autowired
 	protected Caption caption_carLoan;
 	protected Textbox engineNumber;
-	protected Combobox insuranceType;
+	//protected Combobox insuranceType;
  //The Below InsuranceDescription Field Is Changed To Sales Person Name (Only LableName and Purpose)
 	protected Textbox insuranceDesc;
 	protected Combobox paymentMode;
@@ -246,7 +245,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	// ServiceDAOs / Domain Classes
 	private transient CarLoanDetailService carLoanDetailService;
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-	private final List<ValueLabel> insurenceType =  PennantAppUtil.getInsurenceTypes();
+	//private final List<ValueLabel> insurenceType =  PennantAppUtil.getInsurenceTypes();
 	private final List<ValueLabel> paymentModes = PennantStaticListUtil.getPaymentModes();
 	private final List<ValueLabel> sellerTypeList = PennantStaticListUtil.getSellerTypeList();
 	private transient boolean recSave = false;
@@ -789,7 +788,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.carInsuranceNo.setValue(aCarLoanDetail.getCarInsuranceNo());
 		this.carRegNo.setValue(aCarLoanDetail.getCarRegNo());
 		this.cbCarColor.setValue(aCarLoanDetail.getCarColor());
-		fillComboBox(this.insuranceType, aCarLoanDetail.getInsuranceType(), insurenceType, "");
+		//fillComboBox(this.insuranceType, aCarLoanDetail.getInsuranceType(), insurenceType, "");
 		fillComboBox(this.paymentMode, aCarLoanDetail.getPaymentMode(), paymentModes, "");
 		this.engineNumber.setValue(aCarLoanDetail.getEngineNumber());
 		this.insuranceDesc.setValue(aCarLoanDetail.getInsuranceDesc());
@@ -925,13 +924,13 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
+		/*try {
 			if (this.insuranceType.getSelectedItem() != null && !StringUtils.trimToEmpty(this.insuranceType.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
 				aCarLoanDetail.setInsuranceType(this.insuranceType.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
-		}
+		}*/
 		try {
 			aCarLoanDetail.setInsuranceDesc(this.insuranceDesc.getValue());
 		} catch (WrongValueException we) {
@@ -1222,7 +1221,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_EmiratesRegNum = StringUtils.trimToEmpty(this.emiratesRegNum.getValue());
 		this.oldVar_SellerType = StringUtils.trimToEmpty(this.sellerType.getValue());
 		this.oldVar_DealerOrSellerAcc = this.dealerOrSellerAcc.getValue();
-		this.oldVar_VehicleItemNum = StringUtils.trimToEmpty(this.dealerOrSellerAcc.getValue());
+		this.oldVar_VehicleItemNum = StringUtils.trimToEmpty(this.vehicleItemNum.getValue());
 		
 		this.oldVar_vehicleValue = this.vehicleValue.getValue();
 		
@@ -1376,9 +1375,9 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		/*if (!this.engineNumber.isReadonly()) {
 			this.engineNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_engineNumber.value"),null,true));
 		}*/
-		if (!this.insuranceType.isDisabled()) {
+		/*if (!this.insuranceType.isDisabled()) {
 			this.insuranceType.setConstraint(new PTListValidator(Labels.getLabel("label_CarLoanDetailDialog_insuranceType.value"), insurenceType));
-		}
+		}*/
 		
 		// if (!this.insuranceDesc.isReadonly()){
 		// this.insuranceDesc.setConstraint("NO EMPTY:"+
@@ -1448,7 +1447,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.carCapacity.setConstraint("");
 		this.carCc.setConstraint("");
 		this.engineNumber.setConstraint("");
-		this.insuranceType.setConstraint("");
+		//this.insuranceType.setConstraint("");
 		this.insuranceDesc.setConstraint("");
 		this.paymentMode.setConstraint("");
 		this.purchageOdrNumber.setConstraint("");
@@ -1460,6 +1459,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.passportNum.setConstraint("");
 		this.thirdPartyNat.setConstraint("");
 		this.sellerType.setConstraint("");
+		this.vehicleValue.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1515,7 +1515,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.engineNumber.setErrorMessage("");
 		this.carChasisNo.setErrorMessage("");
 		this.carInsuranceNo.setErrorMessage("");
-		this.insuranceType.setErrorMessage("");
+		//this.insuranceType.setErrorMessage("");
 		this.insuranceDesc.setErrorMessage("");
 		this.purchageOdrNumber.setErrorMessage("");
 		this.purchaseDate.setErrorMessage("");
@@ -1638,7 +1638,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.carRegNo.setDisabled(isReadOnly("CarLoanDetailDialog_carRegNo"));
 		this.cbCarColor.setReadonly(isReadOnly("CarLoanDetailDialog_cbCarColor"));  
 		this.engineNumber.setDisabled(isReadOnly("CarLoanDetailDialog_engineNumber"));
-		this.insuranceType.setDisabled(isReadOnly("CarLoanDetailDialog_insuranceType"));
+		//this.insuranceType.setDisabled(isReadOnly("CarLoanDetailDialog_insuranceType"));
 		this.insuranceDesc.setDisabled(isReadOnly("CarLoanDetailDialog_insuranceDesc"));
 		this.paymentMode.setDisabled(isReadOnly("CarLoanDetailDialog_paymentMode"));
 		this.purchageOdrNumber.setDisabled(true);//isReadOnly("CarLoanDetailDialog_purchageOdrNumber")
