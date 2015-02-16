@@ -78,7 +78,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.util.WorkflowLoad;
 import com.pennant.webui.applicationmasters.takafulprovider.model.TakafulProviderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
@@ -288,8 +287,7 @@ public class TakafulProviderListCtrl extends GFCBaseListCtrl<TakafulProvider> im
 	 */
 	
 	public void onTakafulProviderItemDoubleClicked(Event event) throws Exception {
-		logger.debug(event.toString());
-
+		logger.debug("Entering" + event.toString());
 		// get the selected TakafulProvider object
 		final Listitem item = this.listBoxTakafulProvider.getSelectedItem();
 
@@ -298,35 +296,39 @@ public class TakafulProviderListCtrl extends GFCBaseListCtrl<TakafulProvider> im
 			final TakafulProvider aTakafulProvider = (TakafulProvider) item.getAttribute("data");
 			TakafulProvider takafulProvider = getTakafulProviderService().getTakafulProviderById(aTakafulProvider.getId());
 
-			if(takafulProvider==null){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=String.valueOf(aTakafulProvider.getId());
-				errParm[0]=PennantJavaUtil.getLabel("label_TakafulCode")+":"+valueParm[0];
+			if (takafulProvider == null) {
 
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				String[] valueParm = new String[2];
+				String[] errParm = new String[2];
+
+				valueParm[0] = aTakafulProvider.getTakafulCode();
+				valueParm[1] = aTakafulProvider.getTakafulName();
+
+				errParm[0] = PennantJavaUtil.getLabel("label_TakafulCode") + ":" + valueParm[0];
+				errParm[1] = PennantJavaUtil.getLabel("label_TakafulName") + ":" + valueParm[1];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, valueParm), getUserWorkspace().getUserLanguage());
 				PTMessageUtils.showErrorMessage(errorDetails.getErrorMessage());
-			}else{
-				if(isWorkFlowEnabled()){
+			} else {
+				String whereCond = " AND TakafulCode='" + takafulProvider.getTakafulCode()
+				+ "' AND version=" + takafulProvider.getVersion() + " ";
 
-					if(takafulProvider.getWorkflowId()==0){
-						takafulProvider.setWorkflowId(workFlowDetails.getWorkFlowId());
-					}
+				if (isWorkFlowEnabled()) {
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(), getUserWorkspace().getLoginUserDetails().getLoginUsrID(),
+							"TakafulProvider", whereCond, takafulProvider.getTaskId(), takafulProvider.getNextTaskId());
 
-					WorkflowLoad flowLoad= new WorkflowLoad(takafulProvider.getWorkflowId(), takafulProvider.getNextTaskId(), getUserWorkspace().getUserRoleSet());
-					
-					boolean userAcces =  validateUserAccess("TakafulProvider", new String[] {"TakafulCode"}, flowLoad.getRole(), getUserWorkspace().getLoginUserDetails().getLoginUsrID(), takafulProvider);
-					if (userAcces){
+					if (userAcces) {
 						showDetailView(takafulProvider);
-					}else{
+					} else {
 						PTMessageUtils.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
-				}else{
+				} else {
 					showDetailView(takafulProvider);
 				}
-			}	
+			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**

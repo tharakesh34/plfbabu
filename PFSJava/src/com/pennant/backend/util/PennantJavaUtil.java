@@ -330,7 +330,7 @@ public class PennantJavaUtil {
 					new String[] {"EmployerId","EmpName"} , null, null,300));
 			
 			put("TakafulProvider",new ModuleMapping(new TakafulProvider(""), new String[]{"TakafulProvider", "TakafulProvider_AView"}, 
-					new String[] {"TakafulCode","TakafulName"} , null, null,300));
+					new String[] {"TakafulCode","TakafulName"} , null, "MSTGRP1",300));
 
 			put("EmploymentType", new ModuleMapping(new EmploymentType(""), new String[] { "RMTEmpTypes", "RMTEmpTypes_AView" }, 
 					new String[] { "EmpType", "EmpTypeDesc" }, null, null, 300));

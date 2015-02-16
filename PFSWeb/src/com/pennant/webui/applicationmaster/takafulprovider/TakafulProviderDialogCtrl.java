@@ -166,6 +166,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 	private transient String  		oldVar_Province;
 	private transient String  		oldVar_City;
 	private transient String  		oldVar_Phone;
+	private transient String  		oldVar_ZIPCode;
 	private transient String  		oldVar_Fax;
 	private transient String  		oldVar_EmailId;
 	private transient String  		oldVar_WebSite;
@@ -600,6 +601,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.oldVar_City = this.city.getValue();
 		this.oldVar_LovDescCityName = this.city.getDescription();
 		this.oldVar_Phone = this.phone.getValue();
+		this.oldVar_ZIPCode = this.zipCode.getValue();
 		this.oldVar_Fax = this.fax.getValue();
 		this.oldVar_EmailId = this.emailId.getValue();
 		this.oldVar_WebSite = this.webSite.getValue();
@@ -634,6 +636,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.city.setValue(this.oldVar_City);
 		this.city.setDescription(this.oldVar_LovDescCityName);
 		this.phone.setValue(this.oldVar_Phone);
+		this.zipCode.setValue(this.oldVar_ZIPCode);
 		this.fax.setValue(this.oldVar_Fax);
 		this.emailId.setValue(this.oldVar_EmailId);
 		this.webSite.setValue(this.oldVar_WebSite);
@@ -674,7 +677,8 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.takafulCode.setValue(aTakafulProvider.getTakafulCode());
 		this.takafulName.setValue(aTakafulProvider.getTakafulName());
 		fillComboBox(this.takafulType, aTakafulProvider.getTakafulType(), PennantStaticListUtil.getTakafulTypes(),"");
-		this.takafulRate.setValue(aTakafulProvider.getTakafulRate());	
+		this.takafulRate.setValue(aTakafulProvider.getTakafulRate());
+		this.accountNumber.setValue(aTakafulProvider.getAccountNumber());
 		this.establishedDate.setValue(aTakafulProvider.getEstablishedDate());
 		this.houseNumber.setValue(aTakafulProvider.getHouseNumber());
 		this.street.setValue(aTakafulProvider.getStreet());
@@ -730,13 +734,15 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
 		try {
-			if (this.takafulRate.getValue() != null) {
-				aTakafulProvider.setTakafulRate(this.takafulRate.getValue());
-			} else {
-				aTakafulProvider.setTakafulRate(BigDecimal.ZERO);
+			if( getComboboxValue(this.takafulType).equals("#")) {
+				throw new WrongValueException(this.takafulType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_TakafulProviderDialog_TakafulType.value") }));
 			}
-		}catch (WrongValueException we ) {
+			aTakafulProvider.setTakafulType(getComboboxValue(this.takafulType));
+
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
@@ -759,27 +765,12 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		}
 
 		try {
-			String strTakafulType =null; 
-			if(this.takafulType.getSelectedItem()!=null){
-				strTakafulType = this.takafulType.getSelectedItem().getValue().toString();
-			}
-			if(PennantConstants.List_Select.equals(strTakafulType)){
-				//throw new WrongValueException(this.takafulType,Labels.getLabel("FIELD_IS_MAND",
-					//	new String[] {Labels.getLabel("label_TakafulProviderDialog_TakafulType.value")}));
-			}else{
-				aTakafulProvider.setTakafulType(strTakafulType);	
-			}
-		}catch (WrongValueException we ) {
-			wve.add(we);
-		}
-		
-		try {
 			if(this.establishedDate.getValue() != null){
-				if (!this.establishedDate.getValue().after(((Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DFT_START_DATE")))) {
-					throw new WrongValueException(this.establishedDate,Labels.getLabel("DATE_ALLOWED_AFTER",
+				if (this.establishedDate.getValue().after(((Date) SystemParameterDetails
+						.getSystemParameterValue("APP_DATE")))) {
+					throw new WrongValueException(this.establishedDate,Labels.getLabel("DATE_EMPTY_FUTURE",
 							new String[] {Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value"),
-							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+							SystemParameterDetails.getSystemParameterValue("APP_DATE").toString() }));
 				}
 				aTakafulProvider.setEstablishedDate(new Timestamp(this.establishedDate.getValue().getTime()));
 			}
@@ -945,6 +936,10 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 			return true;
 		}
 
+		if (!StringUtils.trimToEmpty(this.oldVar_ZIPCode).equals(StringUtils.trimToEmpty(this.zipCode.getValue()))) {
+			return true;
+		}
+		
 		if (!StringUtils.trimToEmpty(this.oldVar_Fax).equals(StringUtils.trimToEmpty(this.fax.getValue()))) {
 			return true;
 		}
@@ -986,11 +981,14 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.takafulName.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_TakafulName.value"), 
 				PennantRegularExpressions.REGEX_NAME, true));
 		if (!this.takafulRate.isReadonly()) {
-			this.takafulRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_TakafulProviderDialog_TakafulRate.value")));
-		}
+			this.takafulRate.setConstraint(new RateValidator(13, 9, Labels.getLabel("label_TakafulProviderDialog_TakafulRate.value"),false));
+		}	
+		this.accountNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_AccountNumber.value"),null,true));
 		this.establishedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TakafulProviderDialog_EstablishedDate.value"), true, null, new Date(), false));
 		this.addrLine1.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_AddrLine1.value"), PennantRegularExpressions.REGEX_ADDRESS, true));
 		this.addrLine2.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_AddrLine2.value"), PennantRegularExpressions.REGEX_ADDRESS, true));
+		this.zipCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TakafulProviderDialog_ZipCode.value"), 
+				PennantRegularExpressions.REGEX_ZIP, true));
 		this.phone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_TakafulProviderDialog_Phone.value"),true));
 		this.fax.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_TakafulProviderDialog_Fax.value"),true));
 		this.emailId.setConstraint(new PTEmailValidator(Labels.getLabel("label_TakafulProviderDialog_emailId.value"),true));
@@ -1052,7 +1050,9 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		logger.debug("Entering");
 		this.takafulCode.setErrorMessage("");
 		this.takafulName.setErrorMessage("");
+		this.takafulType.setErrorMessage("");
 		this.takafulRate.setErrorMessage("");
+		this.accountNumber.setErrorMessage("");
 		this.establishedDate.setErrorMessage("");
 		this.houseNumber.setErrorMessage("");
 		this.street.setErrorMessage("");
@@ -1062,6 +1062,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.province.setErrorMessage("");
 		this.city.setErrorMessage("");
 		this.phone.setErrorMessage("");
+		this.zipCode.setErrorMessage("");
 		this.fax.setErrorMessage("");
 		this.emailId.setErrorMessage("");
 		this.webSite.setErrorMessage("");
@@ -1193,7 +1194,9 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 
 		this.takafulName.setReadonly(isReadOnly("TakafulProviderDialog_takafulName"));
 		this.takafulType.setDisabled(isReadOnly("TakafulProviderDialog_takafulType"));
-		this.accountNumber.setReadonly(isReadOnly("TakafulProviderDialog_accountNumber"));
+		if(isReadOnly("TakafulProviderDialog_accountNumber")){
+			this.accountNumber.setReadonly(true);
+		}
 		this.takafulRate.setReadonly(isReadOnly("TakafulProviderDialog_takafulRate"));
 		this.establishedDate.setDisabled(isReadOnly("TakafulProviderDialog_establishedDate"));
 		this.street.setReadonly(isReadOnly("TakafulProviderDialog_street"));
@@ -1275,7 +1278,6 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 	public void doClear() {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
-
 		this.takafulCode.setValue("");
 		this.takafulName.setValue("");
 		this.takafulRate.setValue("");
@@ -1291,6 +1293,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl implements Serializab
 		this.city.setValue("");
 		this.city.setDescription("");
 		this.phone.setValue("");
+		this.zipCode.setValue("");
 		this.fax.setValue("");
 		this.emailId.setValue("");
 		this.webSite.setValue("");
