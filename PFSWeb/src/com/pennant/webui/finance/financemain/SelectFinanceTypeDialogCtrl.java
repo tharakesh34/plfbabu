@@ -57,6 +57,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -99,7 +100,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	protected Window       window_SelectFinanceTypeDialog;            // autoWired
 	protected ExtendedCombobox      finType;                                   // autoWired
 	protected ExtendedCombobox      wIfFinaceRef;                              // autoWired
+	protected ExtendedCombobox      promotionCode;
 	protected Button       btnProceed;                                // autoWired
+	protected Radio			newCust;
+	protected Radio			existingCust;
+	
 	protected FinanceMainListCtrl               financeMainListCtrl;  //over handed parameter
 	protected transient FinanceWorkFlow         financeWorkFlow;
 	private transient   WorkFlowDetails         workFlowDetails=null;
@@ -115,7 +120,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient   FinanceDetailService    financeDetailService;   
 	private transient StepPolicyService stepPolicyService;
 
-    private String tempFinType="";	
     private String menuItemRightName= null;	
 	/**
 	 * default constructor.<br>
@@ -206,16 +210,30 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 					filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
 				}*/
 		this.finType.setFilters(filters);
-
+		
+		this.promotionCode.setMaxlength(8);
+		this.promotionCode.setModuleName("PromotionWorkFlow");
+		this.promotionCode.setValueColumn("FinType");
+		this.promotionCode.setDescColumn("FinTypeDesc");
+		/*Label label_FinType = new Label();
+		label_FinType.setValue("PromotionCode");
+		this.promotionCode.setLabel(label_FinType);*/
+		this.promotionCode.setValidateColumns(new String[]{"FinType"});
+		Filter[] filter = new Filter[3];/*
+		filter[0] = new Filter("ModuleName","FINANCE",Filter.OP_NOT_EQUAL);*/
+		filter[0]= new Filter("ScreenCode", this.screenCode, Filter.OP_EQUAL);
+		filter[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		filter[2]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
+		this.promotionCode.setFilters(filter);
+		
 		this.wIfFinaceRef.setModuleName("WIFFinanceMain");
 		this.wIfFinaceRef.setValueColumn("FinReference");
-		//this.wIfFinaceRef.setDescColumn("FinAmount");
+		this.wIfFinaceRef.setDescColumn("FinAmount");
 		this.wIfFinaceRef.setValidateColumns(new String[] { "FinReference" });
 		Filter[] filters1 = new Filter[1];
 		filters1[0]= new Filter("RecordType", "", Filter.OP_EQUAL);
 		this.wIfFinaceRef.setFilters(filters1);
   
-
 		logger.debug("Leaving");
 	}
 	
@@ -227,6 +245,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * When user clicks on button "SearchFinType" button
 	 * @param event
 	 */
+	
 	public void onFulfill$finType(Event event){
 		logger.debug("Entering " + event.toString());
 		Object dataObject = this.finType.getObject();
@@ -243,10 +262,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				this.finType.setDescription(details.getLovDescFinTypeName());
 			}
 		}
-		if (!StringUtils.trimToEmpty(tempFinType).equals(this.finType.getValue())) {
-			this.wIfFinaceRef.setValue("");
-		}
-		tempFinType = this.finType.getValue();
+		this.promotionCode.setValue("","");
 		
 		Filter[] filters;
 		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
@@ -270,6 +286,47 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		this.wIfFinaceRef.setFilters(filters);
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	public void onFulfill$promotionCode(Event event){
+		logger.debug("Entering " + event.toString());
+		Object dataObject = this.promotionCode.getObject();
+		if (dataObject instanceof String){
+			this.promotionCode.setValue(dataObject.toString());
+			this.promotionCode.setDescription("");
+		}else{
+			FinanceWorkFlow details= (FinanceWorkFlow) dataObject;
+			/*Set FinanceWorkFloe object*/
+			setFinanceWorkFlow(details);
+			if (details != null) {
+				this.loanType = details.getLovDescProductCodeName();
+				this.promotionCode.setValue(details.getFinType());
+				this.promotionCode.setDescription(details.getLovDescFinTypeName());
+			}
+		}
+		this.finType.setValue("");
+		
+		Filter[] filters;
+		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+			filters = new Filter[3] ;
+		}else{
+			filters = new Filter[2] ;
+		}
+		if(!this.promotionCode.getValue().trim().equals("")){
+			filters[0]= new Filter("FinType", this.promotionCode.getValue(), Filter.OP_EQUAL);
+			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
+			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
+			}
+		}else{
+			filters[0]= new Filter("lovDescScreenCode", this.screenCode, Filter.OP_EQUAL);
+			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
+			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
+			}
+		}
+		this.wIfFinaceRef.setFilters(filters);
+		logger.debug("Leaving " + event.toString());
+	}
 	/**
 	 * When user clicks on button "btnSearchWIFFinaceRef" button
 	 * @param event
@@ -278,17 +335,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		logger.debug("Entering " + event.toString());
 		Object dataObject = this.wIfFinaceRef.getObject();
 		if (dataObject instanceof String){
-			this.finType.setValue(dataObject.toString());
-			this.finType.setDescription("");
+			this.wIfFinaceRef.setValue(dataObject.toString());
+			this.wIfFinaceRef.setDescription("");
 		}else{
 			FinanceMain details= (FinanceMain) dataObject;
 			if (details != null) {
 				this.loanType = details.getLovDescProductCodeName();
 				this.wIfFinaceRef.setValue(details.getFinReference());
-				if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
-					FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(details.getFinType());
-					setFinanceWorkFlow(financeWorkFlow);
-				}
+				FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(details.getFinType());
+				setFinanceWorkFlow(financeWorkFlow);
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -300,7 +355,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-		
 		
 		doFieldValidation();
 		this.window_SelectFinanceTypeDialog.onClose();
@@ -329,7 +383,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 
 		}else{
-			financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.finType.getValue().trim());
+			if(!StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
+				financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.finType.getValue().trim());
+			} else if(!StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")){
+				financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.promotionCode.getValue().trim());
+			}
 			financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
 			financeDetail.getFinScheduleData().setFinanceType(financeType);
 			
@@ -419,6 +477,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			map.put("financeMainListCtrl", 	this.financeMainListCtrl);
 			map.put("financeType", financeType);
 			map.put("menuItemRightName", menuItemRightName);
+			map.put("newCustomer", this.newCust.isChecked());
 			
 			// call the ZUL-file with the parameters packed in a map
 			try {
@@ -458,15 +517,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	private void doFieldValidation() {
 		logger.debug("Entering ");
-		if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")
-				&& StringUtils.trimToEmpty(this.wIfFinaceRef.getValue()).equals("")){
+		if((StringUtils.trimToEmpty(this.finType.getValue()).equals("") 
+				&& (StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")))){
 			throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
 					,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")
-							,Labels.getLabel("label_FinanceMainQDEDialog_WIFFinaceRef.value")})); 
+							,Labels.getLabel("label_SelectFinanceTypeDialog_PromotionCode.value")})); 
 		}
 		logger.debug("Leaving ");
 	}
-
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Getters and Setters ++++++++++++++++ //

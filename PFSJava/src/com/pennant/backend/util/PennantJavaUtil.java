@@ -597,7 +597,7 @@ public class PennantJavaUtil {
 					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, "MSTGRP1", 600));
 			
 			put("PromotionWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
-					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, "MSTGRP1", 600));
+					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","PROMOTION" } ,{"LovDescProductName","1",""}}, "MSTGRP1", 600));
 			
 			put("FacilityWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
 					new String[] {  "FinType", "lovDescFacilityTypeName" }, new String[][] { { "ModuleName", "0", "FACILITY" } }, "MSTGRP1", 600));
