@@ -635,11 +635,13 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//Removing Schedule Details from Selected Recalculation From Date
 		HashMap<Date, FinanceScheduleDetail> mapList = new HashMap<Date, FinanceScheduleDetail>();
 		BigDecimal unModifiedPft = BigDecimal.ZERO;
+		Date rateAppliedFromDate = null;
 		if (scheduleList != null) {
 			for (int i = 0; i < scheduleList.size(); i++) {
 				if(scheduleList.get(i).getSchDate().compareTo(fromDate) >= 0){
 					break;
 				}
+				rateAppliedFromDate = scheduleList.get(i).getSchDate();
 				mapList.put(scheduleList.get(i).getSchDate(), scheduleList.get(i));
 				unModifiedPft = unModifiedPft.add(scheduleList.get(i).getProfitSchd()).add(scheduleList.get(i).getDefProfitSchd());
 			}
@@ -741,6 +743,16 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 					}
 				}else{
 					curSchd.setCalculatedRate(repayCalRate);
+				}
+			}
+		}
+		
+		// Rate Modification for All Modified Schedules
+		for (int i = 0; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
+			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) >= 0) {
+				if (curSchd.getSchDate().compareTo(rateAppliedFromDate) >= 0) {
+					curSchd.setCalculatedRate(this.repayPftRate.getValue());
 				}
 			}
 		}

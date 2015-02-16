@@ -1211,10 +1211,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_dealerPhone = this.dealerPhone.getValue();
 		this.oldVar_purchaseDate = this.purchaseDate.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
-		//ThirdParty
-		if(this.thirdPartyReg.getValue()!=null){
-		this.oldVar_ThirdPartyReg = this.thirdPartyReg.getValue();
-		}
+		this.oldVar_ThirdPartyReg = this.thirdPartyReg.isChecked();
 		this.oldVar_ThirdPartyName = StringUtils.trimToEmpty(this.thirdPartyName.getValue());
 		this.oldVar_PassportNum = StringUtils.trimToEmpty(this.passportNum.getValue());
 		this.oldVar_ThirdPartyNat = StringUtils.trimToEmpty(this.thirdPartyNat.getValue());	
@@ -1224,8 +1221,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_VehicleItemNum = StringUtils.trimToEmpty(this.vehicleItemNum.getValue());
 		
 		this.oldVar_vehicleValue = this.vehicleValue.getValue();
-		
-		
 		
 		logger.debug("Leaving");
 	}
@@ -1256,7 +1251,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.purchaseDate.setValue(this.oldVar_purchaseDate);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		//ThirdParty
-		this.thirdPartyReg.setValue(String.valueOf(this.oldVar_ThirdPartyReg));
+		this.thirdPartyReg.setChecked(this.oldVar_ThirdPartyReg);
 		this.thirdPartyName.setValue(String.valueOf(this.oldVar_ThirdPartyName));
 		this.passportNum.setValue(this.oldVar_PassportNum);
 		this.thirdPartyNat.setValue(this.oldVar_ThirdPartyNat);
