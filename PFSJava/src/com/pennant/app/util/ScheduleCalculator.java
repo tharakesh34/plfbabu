@@ -124,9 +124,9 @@ public class ScheduleCalculator {
 	}
 	
 	public static FinScheduleData changeRate(FinScheduleData finScheduleData, String baseRate,
-	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
+	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, Date recalFromDate) {
 		return new ScheduleCalculator("procChangeRate", finScheduleData, baseRate, splRate,
-		        mrgRate, calculatedRate, isCalSchedule).getFinScheduleData();
+		        mrgRate, calculatedRate, isCalSchedule, recalFromDate).getFinScheduleData();
 	}
 
 	public static FinScheduleData changeRepay(FinScheduleData finScheduleData, BigDecimal amount,
@@ -590,13 +590,13 @@ public class ScheduleCalculator {
 	}
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, String baseRate,
-	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
+	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, Date recalFromDate) {
 		logger.debug("Entering");
 
 		if (method.equals("procChangeRate")) {
 
 			finScheduleData = procChangeRate(finScheduleData, baseRate, splRate, mrgRate,
-			        calculatedRate, isCalSchedule, false);
+			        calculatedRate, isCalSchedule, false, recalFromDate);
 
 			//Effective Rate Of Return Calculations
 			Cloner cloner = new Cloner();
@@ -1464,7 +1464,7 @@ public class ScheduleCalculator {
 	 */
 
 	private FinScheduleData procChangeRate(FinScheduleData finScheduleData, String baseRate,
-	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, boolean newSchdGeneratedNow) {
+	        String splRate, BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, boolean newSchdGeneratedNow, Date recalFromDate) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -1572,6 +1572,10 @@ public class ScheduleCalculator {
 		if (!isFirstAdjSet) {
 			recalStartDate = recalEndDate;
 			isFirstAdjSet = true;
+		}
+		
+		if(recalFromDate != null){
+			recalStartDate = recalFromDate;
 		}
 
 		finScheduleData.setFinanceMain(financeMain);
@@ -2385,7 +2389,7 @@ public class ScheduleCalculator {
 
 		finScheduleData = procChangeRate(finScheduleData, financeMain.getGraceBaseRate(),
 		        financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(),
-		        financeMain.getGrcPftRate(), false , true);
+		        financeMain.getGrcPftRate(), false , true, null);
 
 		// Reset to original isCalRepayFlag
 		financeMain.setCalculateRepay(tmpIsCalRepay);
@@ -2428,7 +2432,7 @@ public class ScheduleCalculator {
 
 		finScheduleData = procChangeRate(finScheduleData, financeMain.getRepayBaseRate(),
 		        financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),
-		        financeMain.getRepayProfitRate(), false , true);
+		        financeMain.getRepayProfitRate(), false , true, null);
 
 		// Reset to original isCalRepayFlag
 		financeMain.setCalculateRepay(tmpIsCalRepay);
@@ -4712,7 +4716,7 @@ public class ScheduleCalculator {
 
 			effRateofReturn = finScheduleData.getFinanceScheduleDetails().get(0).getCalculatedRate();
 			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
-					effRateofReturn, false , false);
+					effRateofReturn, false , false, null);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
 
@@ -4792,7 +4796,7 @@ public class ScheduleCalculator {
 					RoundingMode.HALF_DOWN);
 
 			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
-					effRateofReturn, false , false);
+					effRateofReturn, false , false, null);
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
@@ -4837,7 +4841,7 @@ public class ScheduleCalculator {
 
 			//Calculate Schedule Building process with Effective Rate
 			finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
-					effRateofReturn, false,  false);
+					effRateofReturn, false,  false, null);
 			finScheduleData = graceSchdCal(finScheduleData);
 			finScheduleData = repaySchdCal(finScheduleData, false);
 
@@ -4855,7 +4859,7 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData = procChangeRate(finScheduleData, "", "", BigDecimal.ZERO,
-				effRateofReturn, false , false);
+				effRateofReturn, false , false, null);
 
 		finScheduleData = graceSchdCal(finScheduleData);
 		finScheduleData = repaySchdCal(finScheduleData, false);
@@ -4998,6 +5002,7 @@ public class ScheduleCalculator {
 		
 		// Distribute Calculated Fee Amount only in case of Schedule Method other than Including Fee Amount to part of Schedule Calculation 
 		if(!financeMain.getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+				!financeMain.getRemFeeSchdMethod().equals("") && 
 				!financeMain.getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 			
 			BigDecimal totalCalFee = financeMain.getCalSchdFeeAmt();			
