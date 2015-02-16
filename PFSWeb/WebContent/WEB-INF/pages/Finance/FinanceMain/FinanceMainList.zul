@@ -239,7 +239,7 @@
 								hflex="min" />
 							<listheader id="listheader_RecordType"
 								label="${c:l('listheader_RecordType.label')}" sort="auto"
-								hflex="min" />
+								hflex="min" visible="false" />
 						</listhead>
 
 					</listbox>

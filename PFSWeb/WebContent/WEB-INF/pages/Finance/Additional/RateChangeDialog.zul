@@ -124,6 +124,17 @@
 									</combobox>
 								</hbox>
 							</row>
+							<row id="fromDateRow" visible="false">
+								<label
+									id="label_RateChangeDialog_RecalFromDate"
+									value="${c:l('label_RateChangeDialog_RecalFromDate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="space_RecalFromDate" />
+									<combobox id="cbRecalFromDate"
+										readonly="true" width="144px" />
+								</hbox>
+							</row>
 							<row id="tillDateRow" visible="false">
 								<label
 									id="label_RateChangeDialog_TillDate"

@@ -111,6 +111,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Decimalbox marginRate; 							// autowired
 	protected Datebox tillDate; 	 						    // autowired
 	protected Combobox cbReCalType; 							// autowired
+	protected Combobox cbRecalFromDate; 						// autowired
 	protected Decimalbox effectiveRate; 						//autowired
 	protected Button btnSearchWIBaseRate; 						// autoWire
 	protected Button btnSearchWISplRate; 						// autoWire
@@ -120,6 +121,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Row row_effectiveRate; 								// autoWire
 	protected Row rateAmountRow; 								// autoWire
 	protected Row tillDateRow; 									// autoWire
+	protected Row fromDateRow; 									// autoWire
 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 					// overhanded per param
@@ -623,6 +625,25 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}catch (WrongValueException we) {
 			wve.add(we);
 		}
+		if(this.fromDateRow.isVisible()){
+			try {
+				if(this.cbRecalFromDate.getSelectedIndex() <= 0) {
+					throw new WrongValueException(this.cbRecalFromDate, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_RateChangeDialog_RecalFromDate.value") }));
+				}
+				if(this.cbRateChangeFromDate.getSelectedIndex()>0 && ((Date) this.cbRecalFromDate.getSelectedItem().getValue())
+						.compareTo((Date) this.cbRateChangeFromDate.getSelectedItem().getValue()) < 0){
+					throw new WrongValueException(
+							this.cbRecalFromDate,Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[]{ Labels.getLabel("label_RateChangeDialog_RecalFromDate.value"),
+											PennantAppUtil.formateDate((Date)this.cbRateChangeToDate.getSelectedItem().getValue(),PennantConstants.dateFormate)
+									}));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		
 		if(this.tillDateRow.isVisible()){
 			try {
 				if(this.tillDate.getValue().compareTo(
@@ -651,9 +672,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			throw new WrongValuesException(wvea);
 		}
+		
+		Date recalFromDate = null;
+		if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT)){
+			recalFromDate = (Date)this.cbRecalFromDate.getSelectedItem().getValue();
+		}
+		
 		setFinScheduleData(ScheduleCalculator.changeRate(getFinScheduleData(),this.baseRate.getValue(),
 				this.splRate.getValue(), this.marginRate.getValue()==null? BigDecimal.ZERO:this.marginRate.getValue(),
-				this.rateChange.getValue()==null? BigDecimal.ZERO:this.rateChange.getValue(), true));
+				this.rateChange.getValue()==null? BigDecimal.ZERO:this.rateChange.getValue(), true, recalFromDate));
 		
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
@@ -910,11 +937,92 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.cbReCalType.getSelectedItem().getValue().toString()
 				.equals(CalculationConstants.RPYCHG_TILLDATE)){
 			this.tillDateRow.setVisible(true);
+			this.fromDateRow.setVisible(true);
+			
+			if(this.cbRateChangeFromDate.getSelectedIndex() > 0){
+				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), true);
+			}
+			
+		}else if(this.cbReCalType.getSelectedItem().getValue().toString()
+				.equals(CalculationConstants.RPYCHG_TILLMDT)){
+			this.tillDate.setText("");
+			this.tillDateRow.setVisible(false);
+			this.fromDateRow.setVisible(true);
+			
+			if(this.cbRateChangeFromDate.getSelectedIndex() > 0){
+				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), true);
+			}
 		}else {
 			this.tillDate.setText("");
 			this.tillDateRow.setVisible(false);
+			this.fromDateRow.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onChange$cbRepayToDate(Event event) {
+		logger.debug("Entering" + event.toString());
+		
+		this.cbRecalFromDate.getItems().clear();
+		if(this.cbReCalType.getSelectedIndex() <= 0)
+		
+		if((this.cbReCalType.getSelectedItem().getValue().toString()).equals(CalculationConstants.RPYCHG_TILLDATE)
+				|| (this.cbReCalType.getSelectedItem().getValue().toString()).equals(CalculationConstants.RPYCHG_TILLMDT)){
+			if(this.cbRateChangeFromDate.getSelectedIndex() > 0) {
+				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
+			}
+		} else {
+			if(this.cbRateChangeFromDate.getSelectedIndex() > 0) {
+				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
+						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
+			}else {
+				this.cbRecalFromDate.setSelectedIndex(0);
+			}
+		}
+		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void fillSchToDates(Combobox dateCombobox,
+			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter, boolean includeFromDate) {
+		logger.debug("Entering");
+		if(dateCombobox.getId().equals("cbRecalFromDate")) {
+			this.cbRecalFromDate.getItems().clear();
+		}
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		dateCombobox.appendChild(comboitem);
+		dateCombobox.setSelectedItem(comboitem);
+		if (financeScheduleDetails != null) {
+			for (int i = 0; i < financeScheduleDetails.size(); i++) {
+				
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				if ((curSchd.isRepayOnSchDate() || curSchd.isDeferedPay() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))  
+						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
+								(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
+					
+					comboitem = new Comboitem();
+					comboitem.setLabel(PennantAppUtil.formateDate(curSchd.getSchDate(), PennantConstants.dateFormate)+" "+curSchd.getSpecifier());
+					comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+					comboitem.setValue(curSchd.getSchDate());
+					if(includeFromDate && curSchd.getSchDate().compareTo(fillAfter) >= 0) {
+						if(i != financeScheduleDetails.size()-1){
+							dateCombobox.appendChild(comboitem);
+							if(getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
+								dateCombobox.setSelectedItem(comboitem);
+							}
+						}
+					} else if(!includeFromDate && curSchd.getSchDate().compareTo(fillAfter) > 0) {
+						dateCombobox.appendChild(comboitem);
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
 	}
 	
 	/** To calculate the effective rate value including margin rate.*/

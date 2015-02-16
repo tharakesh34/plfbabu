@@ -161,6 +161,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		}
 		
 		if(!getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+				!getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals("") && 
 				!getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 			isSchdFee = true;
 		}

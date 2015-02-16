@@ -2618,6 +2618,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			}
 			
 			if(!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+					!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals("") && 
 					!aFinanceDetail.getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setCalSchdFeeAmt(aFinanceDetail.getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);

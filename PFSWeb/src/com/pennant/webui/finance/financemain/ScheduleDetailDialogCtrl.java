@@ -506,7 +506,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			this.label_ScheduleDetailDialog_DPScheduleLink.setValue(getFinScheduleData().getFinanceMain().getFinReference()+"_DP");
 		}
 
-		if(getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) ||
+		if(getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals("") ||
+				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) ||
 				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 			this.listheader_ScheduleDetailDialog_SchFee.setVisible(false);
 		}else{

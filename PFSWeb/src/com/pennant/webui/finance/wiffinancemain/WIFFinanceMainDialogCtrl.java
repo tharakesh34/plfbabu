@@ -2231,6 +2231,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 			
 			if(!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) && 
+					!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals("") && 
 					!aFinanceSchData.getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 				aFinanceSchData.getFinanceMain().setCalSchdFeeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
 				aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);

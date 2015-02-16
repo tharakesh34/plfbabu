@@ -148,6 +148,8 @@
 														id="label_IstisnaFinanceMainDialog_CustID"
 														value="${c:l('label_IstisnaFinanceMainDialog_CustID.value')}" />
 													<hbox>
+														<space
+															spacing="2px" sclass="mandatory" />
 														<longbox
 															id="custID" width="171px" maxlength="26" visible="false" />
 														<uppercasebox

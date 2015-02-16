@@ -114,8 +114,8 @@
 							</row>
 							<row>
                                 <label
-                                    id="label_AddDeffermentDialog_PftIntact"
-                                    value="${c:l('label_PftIntact.value')}" />
+                                    id="label_ChangeRepaymentDialog_PftIntact"
+                                    value="${c:l('label_ChangeRepaymentDialog_PftIntact.value')}" />
                                 <hbox>
                                     <space spacing="2px" />
                                     <checkbox id="pftIntact" checked = "false" />
@@ -123,8 +123,8 @@
                             </row>
                            <row id="numOfTermsRow" visible="false">
 								<label
-									id="label_AddRmvTermsDialog_Terms"
-									value="${c:l('label_AddRmvTermsDialog_Terms.value')}" />
+									id="label_ChangeRepaymentDialog_Terms"
+									value="${c:l('label_ChangeRepaymentDialog_Terms.value')}" />
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />

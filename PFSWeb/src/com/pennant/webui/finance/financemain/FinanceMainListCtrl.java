@@ -213,10 +213,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.sortOperator_custName.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()) );
 		this.sortOperator_custName.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_mobileNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_mobileNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_mobileNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_eidNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
+		this.sortOperator_eidNumber.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()) );
@@ -622,23 +622,23 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		// CustId
 		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_custID.getSelectedItem(),this.custCIF.getValue(), "LovDescCustCIF");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custID.getSelectedItem(),this.custCIF.getValue().trim(), "LovDescCustCIF");
 		}
 		// FinReference
 		if (!StringUtils.trimToEmpty(this.finReference.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue(), "FinReference");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue().trim(), "FinReference");
 		}
 		if (!StringUtils.trimToEmpty(this.fincustName.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_custName.getSelectedItem(),this.fincustName.getValue(), "lovDescCustShrtName");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_custName.getSelectedItem(),this.fincustName.getValue().trim(), "lovDescCustShrtName");
 		}
 		// FinType
 		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue(), "FinType");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue().trim(), "FinType");
 			searchObj.addFilter(new Filter("lovdescFinProduct" , "" , Filter.OP_EQUAL));
 		}
 		//finPassport
 		if (!StringUtils.trimToEmpty(this.finPassPort.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_passPort.getSelectedItem(),this.finPassPort.getValue(), "lovDescCustPassportNo");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_passPort.getSelectedItem(),this.finPassPort.getValue().trim(), "lovDescCustPassportNo");
 		}
 		//finDOB
 		if (this.finDateofBirth.getValue()!=null) {
@@ -646,20 +646,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		}
 		//finEIDNumber
 		if (!StringUtils.trimToEmpty(this.finEIDNumber.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_eidNumber.getSelectedItem(),this.finEIDNumber.getValue(), "LovDescCustCRCPR");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_eidNumber.getSelectedItem(),this.finEIDNumber.getValue().trim(), "LovDescCustCRCPR");
 		}
 		//finMobileNumber
 		if (!StringUtils.trimToEmpty(this.finMobileNumber.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_mobileNumber.getSelectedItem(),this.finMobileNumber.getValue(), "");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_mobileNumber.getSelectedItem(),this.finMobileNumber.getValue().trim(), "");
 		}
 		//finPromotion
 		if (!StringUtils.trimToEmpty(this.finPromotion.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finPromotion.getSelectedItem(),this.finPromotion.getValue(), "FinType");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finPromotion.getSelectedItem(),this.finPromotion.getValue().trim(), "FinType");
 			searchObj.addFilter(new Filter("lovdescFinProduct" , "" , Filter.OP_NOT_EQUAL));
 		}
 		//finRequestStage
 		if (!StringUtils.trimToEmpty(this.finRequestStage.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finRequestStage.getSelectedItem(),this.finRequestStage.getValue(), "");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finRequestStage.getSelectedItem(),this.finRequestStage.getValue().trim(), "");
 		}
 		//finRequestDate
 		if (this.finRequestDate.getValue()!=null) {

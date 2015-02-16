@@ -104,7 +104,7 @@ public class ChangeRateTest {
 
 		schedule = ScheduleCalculator.changeRate(schedule,
 				BeanFactory.BASE_RATE, BeanFactory.SPECIAL_RATE,
-				BigDecimal.ONE, BigDecimal.ZERO, true);
+				BigDecimal.ONE, BigDecimal.ZERO, true, null);
 
 		return schedule;
 	}

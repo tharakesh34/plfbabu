@@ -1927,7 +1927,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Schedule Re-calculation based on Applied parameters
 			financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), "", "", BigDecimal.ZERO,
-					rateChange == null ? BigDecimal.ZERO : rateChange, true));
+					rateChange == null ? BigDecimal.ZERO : rateChange, true,null));
 
 			//Record proceed through WorkFlow defined Process
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(), financeDetail);

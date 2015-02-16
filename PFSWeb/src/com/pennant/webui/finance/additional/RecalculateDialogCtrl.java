@@ -55,6 +55,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Row;
@@ -90,6 +91,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 	protected Combobox cbFromDate; 							// autowired
 	protected Combobox cbReCalType; 						// autowired
 	protected Row tillDateRow;
+	protected Checkbox pftIntact; 							// autowired
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
@@ -359,6 +361,27 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 			}
 			throw new WrongValuesException(wvea);
 		}
+		
+		//Calculate Remaining Total Profit From Recalculation Event Date
+		BigDecimal adjustedPft = getFinScheduleData().getFinanceMain().getTotalProfit();
+		/*BigDecimal adjustedPft = BigDecimal.ZERO;
+		Date eventFromDate = getFinScheduleData().getFinanceMain().getFinStartDate();
+		for (FinanceScheduleDetail curSchd : getFinScheduleData().getFinanceScheduleDetails()) {
+			
+			if(curSchd.getSchDate().compareTo((Date)this.cbFromDate.getSelectedItem().getValue()) < 0){
+				eventFromDate = curSchd.getSchDate();
+			}
+			
+			if(this.tillDateRow.isVisible() && this.cbTillDate.getSelectedIndex() > 0){
+				if(curSchd.getSchDate().compareTo((Date)this.cbTillDate.getSelectedItem().getValue()) > 0){
+					break;
+				}
+			}
+			if(curSchd.getSchDate().compareTo((Date)this.cbFromDate.getSelectedItem().getValue()) >= 0){
+				adjustedPft = adjustedPft.add(curSchd.getProfitCalc());
+			}
+		}*/
+		
 		if(this.tillDateRow.isVisible() && this.cbTillDate.getSelectedIndex() > 0){
 			getFinScheduleData().getFinanceMain().setRecalToDate((Date)this.cbTillDate.getSelectedItem().getValue());
 			getFinScheduleData().getFinanceMain().setEventToDate((Date)this.cbTillDate.getSelectedItem().getValue());
@@ -366,6 +389,15 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl implements Serializable {
 		}else {
 			getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			setFinScheduleData(ScheduleCalculator.reCalSchd(getFinScheduleData()));
+		}
+		
+		//By Using Change Profit Method Reverse Calculate the total Profit Amount on Changing Rate Value
+		if(this.pftIntact.isChecked()){
+			
+			getFinScheduleData().getFinanceMain().setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
+			getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
+			
+			setFinScheduleData(ScheduleCalculator.changeProfit(getFinScheduleData(), adjustedPft));
 		}
 		
 		//Show Error Details in Schedule Maintenance
