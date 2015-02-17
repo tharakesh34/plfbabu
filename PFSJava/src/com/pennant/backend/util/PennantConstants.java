@@ -207,6 +207,7 @@ public class PennantConstants {
 	public static final int Template=6;
 	public static final int CorpScoringGroup=7;
 	public static final int FinanceDedupe=8;
+	public static final int BlackListDedupe=9;
 	
 	//Process Editor Stage Conditions
 	public static final int ShowInStage=1;
@@ -214,8 +215,9 @@ public class PennantConstants {
 	public static final int MandInputInStage=3;
 	
 	//Dedup Field SubCode Constants
-	public static final String DedupCust="Customer";
-	public static final String DedupFinance="Finance";
+	public static final String DedupCust = "Customer";
+	public static final String DedupFinance = "Finance";
+	public static final String DedupBlackList = "BlackList";
 	
 	//Account Formation Constants
 	public static int branchLength=4;

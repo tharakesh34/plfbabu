@@ -309,13 +309,15 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> implements Ser
 
 				valueParm[0] = aDedupParm.getQueryCode();
 				valueParm[1] = aDedupParm.getQueryModule();
-				if(aDedupParm.getQueryModule().equalsIgnoreCase("Customer")){
+				if(aDedupParm.getQueryModule().equalsIgnoreCase(PennantConstants.DedupCust) ||
+						aDedupParm.getQueryModule().equalsIgnoreCase(PennantConstants.DedupBlackList)){
 					valueParm[2] = PennantAppUtil.getlabelDesc(aDedupParm.getQuerySubCode(), PennantStaticListUtil.getCategoryType());
 				}
 				
 				errParm[0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + valueParm[0];
 				errParm[1] = PennantJavaUtil.getLabel("label_QueryModule") + ":" + valueParm[1];
-				if(aDedupParm.getQueryModule().equalsIgnoreCase("Customer")){
+				if(aDedupParm.getQueryModule().equalsIgnoreCase(PennantConstants.DedupCust) ||
+						aDedupParm.getQueryModule().equalsIgnoreCase(PennantConstants.DedupBlackList)){
 					errParm[2] = PennantJavaUtil.getLabel("label_QuerySubCode") + ":" + valueParm[2];
 				}
 

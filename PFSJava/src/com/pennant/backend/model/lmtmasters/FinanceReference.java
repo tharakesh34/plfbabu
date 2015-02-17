@@ -17,6 +17,7 @@ public class FinanceReference {
 	private List<FinanceReferenceDetail> accountingList;
 	private List<FinanceReferenceDetail> mailTemplateList;
 	private List<FinanceReferenceDetail> financeDedupeList;
+	private List<FinanceReferenceDetail> blackListDedupeList;
 	
 	private String workFlowType;
 	private String lovDescWorkFlowTypeName;
@@ -97,6 +98,13 @@ public class FinanceReference {
     }
 	public void setFinanceDedupeList(List<FinanceReferenceDetail> financeDedupeList) {
 	    this.financeDedupeList = financeDedupeList;
+    }
+	
+	public List<FinanceReferenceDetail> getBlackListDedupeList() {
+	    return blackListDedupeList;
+    }
+	public void setBlackListDedupeList(List<FinanceReferenceDetail> blackListDedupeList) {
+	    this.blackListDedupeList = blackListDedupeList;
     }
 
 	public String getWorkFlowType() {

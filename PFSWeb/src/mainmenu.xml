@@ -115,6 +115,7 @@
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >
 	    <menuItem id="menu_Item_AccountingSet" zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"  rightName="menuItem_RMTMasters_AccountingSet"/>
 		<menuItem id="menu_Item_AgrRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"   rightName="menuItem_RulesFactory_AgreementRules"/>
+		<menuItem id="menu_Item_BlackListDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/BlackListDedupParmList.zul"  rightName="menuItem_RulesFactory_BlackListDedupParm"/>
 	    <menuItem id="menu_Item_CheckList" zulNavigation="/WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul"  rightName="menuItem_RulesFactory_CheckList"/>
 		<menuItem id="menu_Item_CheckRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"   rightName="menuItem_RulesFactory_CheckRules"/>
 	    <menuItem id="menu_Item_DedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"  rightName="menuItem_SolutionFactory_CustDedupParm"/>

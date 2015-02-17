@@ -194,6 +194,9 @@
 								<tab
 									label="${c:l('label_FinanceDedupe.title')}"
 									id="tabFinanceDedupe" />
+								<tab
+									label="${c:l('label_CustBlackList.title')}"
+									id="tabCustBlackList" />
 							</tabs>
 							<tabpanels>
 								<tabpanel>
@@ -649,7 +652,7 @@
 													sclass="toolbar-end">
 													<button
 														id="btnNew_FinanceDedupeLink" label="${c:l('label_New')}"
-														tooltiptext="${c:l('button_NewFFinanceDedupeLink.tooltiptext')}" />
+														tooltiptext="${c:l('button_NewFinanceDedupeLink.tooltiptext')}" />
 												</toolbar>
 											</hbox>
 										</div>
@@ -683,7 +686,66 @@
 												<listheader
 													id="listheader_FDRecordType"
 													label="${c:l('listheader_RecordType.label')}" sort="auto"
-													hflex="min" width="10%" visible="false" />
+													hflex="min"  visible="false" />
+											</listhead>
+										</listbox>
+									</groupbox>
+								</tabpanel>
+								<tabpanel>
+									<groupbox id="gb_CustBlackListLink"
+										sclass="gb-dialog">
+										<div sclass="z-toolbar"
+											style="padding:0">
+											<hbox pack="stretch"
+												sclass="hboxRemoveWhiteStrips" width="100%"
+												style=" padding:0px;" widths="35%,30%,35%">
+												<toolbar align="start"
+													sclass="toolbar-start">
+													<label
+														value="${c:l('label_CustBlackList.title')}"
+														style="font-weight:bold; font-size: 11px;" />
+												</toolbar>
+												<toolbar align="center"
+													sclass="toolbar-center" />
+												<toolbar align="end"
+													sclass="toolbar-end">
+													<button
+														id="btnNew_CustBlackListLink" label="${c:l('label_New')}"
+														tooltiptext="${c:l('button_NewCustBlackListLink.tooltiptext')}" />
+												</toolbar>
+											</hbox>
+										</div>
+										<listbox id="listBoxBlackListRules"
+											emptyMessage="${c:l('listbox.emptyMessage')}"
+											fixedLayout="true" vflex="true" span="true"
+											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											height="100%" multiple="false">
+											<listhead sizable="true">
+												<listheader sort="auto" hflex="min" visible="false"/>
+												<listheader
+													id="listheader_BlackListOverride"
+													label="${c:l('listheader_BlackListOverride.label')}"
+													sort="auto" hflex="min" visible="false"/>
+												<listheader
+													id="listheader_BlackListRuleCode"
+													label="${c:l('listheader_BlackListRuleCode.label')}"
+													sort="auto" hflex="min" />
+												<listheader
+													id="listheader_BlackListRuleDesc"
+													label="${c:l('listheader_BlackListRuleDesc.label')}"
+													sort="auto" hflex="min" />
+												<listheader
+													id="listheader_BlackListActive"
+													label="${c:l('listheader_BlackListActive.label')}"
+													sort="auto" hflex="min" />
+												<listheader
+													id="listheader_BLRecordStatus"
+													label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+													hflex="min" visible="false" />
+												<listheader
+													id="listheader_BLRecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="auto"
+													hflex="min" visible="false" />
 											</listhead>
 										</listbox>
 									</groupbox>
