@@ -2225,6 +2225,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 						showErrorDetails(valueException, tab);
 					}
 				}
+				getFeeDetailDialogCtrl().doStoreInitValues();
 				
 				//Fee Details Data set to Bean Object
 				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, false);
@@ -5798,6 +5799,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		int months = DateUtility.getMonthsBetween(maturDate , this.finStartDate.getValue(), true);
 		if (months != this.oldVar_tenureInMonths) {
+			isFeeReExecute = true;
+		}
+		
+		if(getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isFeeReExecute()){
 			isFeeReExecute = true;
 		}
 

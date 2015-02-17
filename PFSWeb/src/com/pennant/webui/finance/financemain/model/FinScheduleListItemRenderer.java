@@ -974,7 +974,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 	}
 	
-	public void doFillTakafulSchedule(Listbox listBoxSchedule,BigDecimal rate, FinanceScheduleDetail scheduleDetail, int formatter){
+	public void doFillTakafulSchedule(Listbox listBoxSchedule,BigDecimal rate, FinanceScheduleDetail scheduleDetail, 
+			int formatter, String finCategory, BigDecimal actualFinAmount){
 		logger.debug("Entering");
 
 		listitem = new Listitem();
@@ -990,7 +991,11 @@ public class FinScheduleListItemRenderer implements Serializable{
 		listitem.appendChild(lc);
 
 		//Outstanding Balance
-		lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance() ,formatter));
+		if(finCategory.equals(PennantConstants.FINANCE_PRODUCT_MURABAHA)){
+			lc = new Listcell(PennantAppUtil.amountFormate(actualFinAmount ,formatter));
+		}else{
+			lc = new Listcell(PennantAppUtil.amountFormate(scheduleDetail.getClosingBalance() ,formatter));
+		}
 		lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 		listitem.appendChild(lc);
 

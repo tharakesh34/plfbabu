@@ -201,6 +201,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 	protected Row               row_manualSteps;
 	
 	protected Textbox finRemarks; // autoWired
+	protected Row row_LinkedFinRef; // autoWired
+	protected Textbox linkedFinRef;
+	
 	// Grace period Details
 	protected Datebox gracePeriodEndDate_two; // autoWired
 	protected Checkbox allowGrcRepay; // autoWired
@@ -887,6 +890,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 				this.rowDefferments.setVisible(false);
 			}
 
+		}
+		
+		if(getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+			this.row_LinkedFinRef.setVisible(true);
+			this.linkedFinRef.setValue(aFinanceMain.getLinkedFinRef());
 		}
 		
 		// FInance Summary Details

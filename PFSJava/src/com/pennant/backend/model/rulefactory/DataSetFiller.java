@@ -73,6 +73,7 @@ public class DataSetFiller implements Serializable {
 	private BigDecimal GRCPFTCH =BigDecimal.ZERO;
 	private BigDecimal GRCPFTTB =BigDecimal.ZERO;
 	private BigDecimal ADVDUE =BigDecimal.ZERO;
+	private boolean TAKAFULREQ =false;
 	
 	private int cPNoOfDays = 0;
 	private int cpDaysTill = 0;
@@ -828,6 +829,13 @@ public class DataSetFiller implements Serializable {
 	public void setFINISACTIVE(boolean fINISACTIVE) {
 		FINISACTIVE = fINISACTIVE;
 	}
+	
+	public boolean isTAKAFULREQ() {
+	    return TAKAFULREQ;
+    }
+	public void setTAKAFULREQ(boolean tAKAFULREQ) {
+	    TAKAFULREQ = tAKAFULREQ;
+    }
 	
 	//Set values into Map
 	public HashMap<String, Object> getDeclaredFieldValues() {

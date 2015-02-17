@@ -315,6 +315,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	}
 	
 	public void doStoreInitValues(){
+		doClearErrorMessages();
 		this.oldVar_remFeeSchdMethod = this.remFeeSchdMethod.getSelectedItem().getValue().toString();
 		this.oldVar_feeSchdTerms = this.feeSchdTerms.intValue();
 		
@@ -411,14 +412,25 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		}else{
 
 			finScheduleData.getFinanceMain().setTakafulRequired(this.takafulRequired.isChecked());
-			String mnthDay = "";
-			if(finScheduleData.getFinanceMain().isFinRepayPftOnFrq()){
-				mnthDay = finScheduleData.getFinanceMain().getRepayPftFrq().substring(1);
+			
+			if(StringUtils.trimToEmpty(this.takafulFrq.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select) ||
+					StringUtils.trimToEmpty(this.takafulFrq.getSelectedItem().getValue().toString()).equals("")){
+				
+				if(finScheduleData.getFinanceMain().isFinRepayPftOnFrq()){
+					finScheduleData.getFinanceMain().setTakafulFrq(finScheduleData.getFinanceMain().getRepayPftFrq());
+				}else{
+					finScheduleData.getFinanceMain().setTakafulFrq(finScheduleData.getFinanceMain().getRepayFrq());
+				}
 			}else{
-				mnthDay = finScheduleData.getFinanceMain().getRepayFrq().substring(1);
-			}
+				String mnthDay = "";
+				if(finScheduleData.getFinanceMain().isFinRepayPftOnFrq()){
+					mnthDay = finScheduleData.getFinanceMain().getRepayPftFrq().substring(1);
+				}else{
+					mnthDay = finScheduleData.getFinanceMain().getRepayFrq().substring(1);
+				}
 
-			finScheduleData.getFinanceMain().setTakafulFrq(this.takafulFrq.getSelectedItem().getValue().toString()+mnthDay);
+				finScheduleData.getFinanceMain().setTakafulFrq(this.takafulFrq.getSelectedItem().getValue().toString()+mnthDay);
+			}
 			finScheduleData.getFinanceMain().setTakafulRef(this.takafulReference.getValue());
 			finScheduleData.getFinanceMain().setWaiverReason(this.waiverReason.getSelectedItem().getValue().toString());
 			finScheduleData.getFinanceMain().setTakafulRate(this.takafulRate.getValue() == null ? BigDecimal.ZERO : this.takafulRate.getValue());
@@ -460,6 +472,8 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	}
 	
 	private void doSetTakafulDetail(){
+		doRemoveConstraints();
+		doClearErrorMessages();
 		this.hbox_WaiverReason.setVisible(false);
 		this.label_FeeDetailDialog_WaiverReason.setVisible(false);
 		if(this.takafulRequired.isChecked()){
@@ -478,6 +492,17 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 				this.label_FeeDetailDialog_WaiverReason.setVisible(true);
 			}
 		}
+	}
+	
+	/**
+	 * Method for Checking Fees Re-Execute or not Validation
+	 * @return
+	 */
+	public boolean isFeeReExecute(){
+		if(this.oldVar_takafulRequired != this.takafulRequired.isChecked()){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -548,6 +573,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 				dofillFeeCharges(getFinanceDetail().getFeeCharges(), false,false,false,getFinScheduleData());
  			}
 		}
+ 		doStoreInitValues();
 		logger.debug("Leaving");
 	}
 
@@ -1132,6 +1158,9 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(),finScheduleData.getFinanceScheduleDetails(),
 				new FinanceProfitDetail(), finScheduleData.getFinanceMain().getFinStartDate());
 		
+		//Fee Details takaful Calculation fields
+		amountCodes.setTakafulReq(this.takafulRequired.isChecked());
+		
 		if(finScheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE && finScheduleData.getFinanceMain().getCustID() != 0){
 			boolean jointCustExist = getCustomerService().isJointCustExist(finScheduleData.getFinanceMain().getCustID());
 			if(jointCustExist){
@@ -1199,7 +1228,6 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 			finScheduleData.getFeeRules().addAll(feeRules);
 		}
 		finScheduleData = dofillFeeCharges(finScheduleData.getFeeRules(), isSchdCal,renderSchdl, isReBuild,finScheduleData);
-		doStoreInitValues();
 		
 		logger.debug("Leaving");
 		return finScheduleData;

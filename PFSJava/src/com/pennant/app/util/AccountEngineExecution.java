@@ -1529,6 +1529,9 @@ public class AccountEngineExecution implements Serializable {
 		dataSetFiller.setODDays(aeAmountCodes.getODDays());
 		dataSetFiller.setODInst(aeAmountCodes.getODInst());
 		
+		//Fee Details
+		dataSetFiller.setTAKAFULREQ(aeAmountCodes.isTakafulReq());
+		
 		if(aeAmountCodes.getODInst() > 0){
 			dataSetFiller.setFinOverDueInPast(true);
 		}else{

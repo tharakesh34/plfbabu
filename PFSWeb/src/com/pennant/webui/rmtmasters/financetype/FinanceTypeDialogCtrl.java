@@ -1297,6 +1297,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		checkFinisDownPayreq();
 		
 		doDisableAllowDownPayPgm(aFinanceType.getFinCategory());
+		doDisableDownPayRequired();
 		//================= Tab 2
 		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(), PennantStaticListUtil.getInterestRateType(true), ",C,");
 		this.finGrcIntRate.setValue(aFinanceType.getFinGrcIntRate());
@@ -3911,6 +3912,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		
 		if (!this.finMinDownPayAmount.isDisabled() && this.finIsDwPayRequired.isChecked()) {
 			this.finMinDownPayAmount.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_FinMinDownPayAmount.value"), true));
+		}
+		
+		if (!this.finMinDownPayAmount.isDisabled() && this.allowDownpayPgm.isChecked()) {
+			this.finMinDownPayAmount.setConstraint(new PercentageValidator(5, 2, Labels.getLabel("label_FinanceTypeDialog_FinMinDownPayAmount.value"), false));
 		}
 		
 		/*
@@ -7618,6 +7623,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.takafulProvider.setReadonly(true);
 			this.takafulProvider.setMandatoryStyle(false);
 			this.takafulProvider.setValue("", "");
+		}
+	}
+	
+	public void onCheck$allowDownpayPgm(Event event) {
+		logger.debug("Entering : " + event.toString());
+		doDisableDownPayRequired();
+		logger.debug("Leaving : " + event.toString());
+	}
+	
+	private void doDisableDownPayRequired(){
+		if (this.allowDownpayPgm.isChecked()) {
+			this.finIsDwPayRequired.setChecked(true);
+			this.finIsDwPayRequired.setDisabled(true);
+			this.finMinDownPayAmount.setDisabled(false);
+			this.finMinDownPayAmount.setReadonly(isReadOnly("FinanceTypeDialog_finMinDownPayAmount"));
+		}else{
+			this.finIsDwPayRequired.setChecked(this.finIsDwPayRequired.isChecked());
+			this.finIsDwPayRequired.setDisabled(isReadOnly("FinanceTypeDialog_finIsDwPayRequired"));
 		}
 	}
 

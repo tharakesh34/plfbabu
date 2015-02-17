@@ -120,6 +120,9 @@ public class AEAmountCodes {
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
 	private boolean finisActive ;
 	
+	//Fee Details
+	private boolean takafulReq = false;
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -830,5 +833,12 @@ public class AEAmountCodes {
 	public void setFinisActive(boolean finisActive) {
 		this.finisActive = finisActive;
 	}
+	
+	public boolean isTakafulReq() {
+	    return takafulReq;
+    }
+	public void setTakafulReq(boolean takafulReq) {
+	    this.takafulReq = takafulReq;
+    }
 
 }

@@ -90,8 +90,8 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean 	finIsActive = false;
 	private String 		finRemarks;
 
-	private String		lovdescMobileNumber;
-	private String 		lovdescFinProduct;
+	private String		lovDescMobileNumber;
+	private String 		lovDescFinProduct;
 	private String 		lovDescCustCRCPR;
 	private String		lovDescCustPassportNo;
 	private Date		lovDescCustDOB;
@@ -2037,18 +2037,18 @@ public class FinanceMain implements java.io.Serializable {
 	}
 	
 	
-	public String getLovdescFinProduct() {
-	    return lovdescFinProduct;
+	public String getLovDescFinProduct() {
+	    return lovDescFinProduct;
     }
-	public void setLovdescFinProduct(String lovdescFinProduct) {
-	    this.lovdescFinProduct = lovdescFinProduct;
+	public void setLovDescFinProduct(String lovdescFinProduct) {
+	    this.lovDescFinProduct = lovdescFinProduct;
     }
 	
-	public String getLovdescMobileNumber() {
-		return lovdescMobileNumber;
+	public String getLovDescMobileNumber() {
+		return lovDescMobileNumber;
 	}
-	public void setLovdescMobileNumber(String lovdescMobileNumber) {
-		this.lovdescMobileNumber = lovdescMobileNumber;
+	public void setLovDescMobileNumber(String lovdescMobileNumber) {
+		this.lovDescMobileNumber = lovdescMobileNumber;
 	}
 
 	public String getLovDescRequestStage() {

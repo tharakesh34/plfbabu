@@ -500,7 +500,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 			this.listHeader_orgPrincipalDue.setVisible(false);
 		}
 		String productType = (getFinScheduleData().getFinanceType().getFinCategory().substring(0, 1)).toUpperCase()+(getFinScheduleData().getFinanceType().getFinCategory().substring(1)).toLowerCase();
-		if (productType.toUpperCase().equals(PennantConstants.FINANCE_PRODUCT_MURABAHA) && getFinScheduleData().getFinanceMain().getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)){
+		if (getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
 			this.row_Murabaha.setVisible(true);
 			this.label_ScheduleDetailDialog_DownPaySchedule.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_DownPaySchedule.value"));
 			this.label_ScheduleDetailDialog_DPScheduleLink.setValue(getFinScheduleData().getFinanceMain().getFinReference()+"_DP");
@@ -827,18 +827,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 				// Takaful premium Schedule
 				if(financeMain.isTakafulRequired() && aScheduleDetail.getTakafulFeeSchd().compareTo(BigDecimal.ZERO) > 0){
 					finRender.doFillTakafulSchedule(this.listBoxTakafulSchedule, aFinSchData.getFinanceMain().getTakafulRate(), 
-							aScheduleDetail, aFinSchData.getFinanceMain().getLovDescFinFormatter());
+							aScheduleDetail, aFinSchData.getFinanceMain().getLovDescFinFormatter(), aFinSchData.getFinanceType().getFinCategory(),
+							financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getDownPayment()));
 					showTakafulTab = true;
 				}
 
 				if (i == sdSize - 1) {
 					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate, moduleDefiner.equals(""));
-					
-					// Takaful premium Schedule
-					if(financeMain.isTakafulRequired() && aScheduleDetail.getTakafulFeeSchd().compareTo(BigDecimal.ZERO) > 0){
-						finRender.doFillTakafulSchedule(this.listBoxTakafulSchedule, aFinSchData.getFinanceMain().getTakafulRate(), 
-								aScheduleDetail, aFinSchData.getFinanceMain().getLovDescFinFormatter());
-					}
 					break;
 				}
 			}

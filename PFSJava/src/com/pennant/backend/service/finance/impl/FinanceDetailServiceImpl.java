@@ -1213,6 +1213,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				tranType = PennantConstants.TRAN_ADD;
 				financeMain.setRecordType("");
+				financeMain.setLinkedFinRef(financeMain.getFinReference()+"_DP");
 				getFinanceMainDAO().save(financeMain, "", isWIF);
 
 				//Schedule Details
@@ -1452,6 +1453,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
+		downpayFinApprove(aAuditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -3449,5 +3451,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinancePremiumDetailDAO(FinancePremiumDetailDAO financePremiumDetailDAO) {
 	    this.financePremiumDetailDAO = financePremiumDetailDAO;
     }
+	
+	public void downpayFinApprove(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+
+		Cloner cloner = new Cloner();
+		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		financeDetail.setFinScheduleData(ScheduleCalculator.getDownPaySchd(financeDetail.getFinScheduleData()));
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		financeMain.setRecordType("");
+		getFinanceMainDAO().save(financeMain, "", false);
+
+		//Schedule Details
+		//=======================================
+		listSave(financeDetail.getFinScheduleData(), "", false, 0);
+		
+		logger.debug("Leaving");
+	}
 	
 }

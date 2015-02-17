@@ -84,7 +84,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 	  	lc = new Listcell(financeMain.getFinReference());
 		lc.setParent(item);
 		
-		if(StringUtils.trimToEmpty(financeMain.getLovdescFinProduct()).equals("")){
+		if(StringUtils.trimToEmpty(financeMain.getLovDescFinProduct()).equals("")){
 			lc = new Listcell(financeMain.getFinType());
 			lc.setParent(item);
 			lc = new Listcell("");
