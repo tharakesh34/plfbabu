@@ -48,6 +48,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerScoringCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -141,6 +142,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
 	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
 	
+	private CustomerDetails customerDetails;
 	private WIFCustomer customer;
 	
 	private String accountingEventCode;
@@ -597,6 +599,13 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setSufficientScore(boolean sufficientScore) {
     	this.sufficientScore = sufficientScore;
     }
+
+	public CustomerDetails getCustomerDetails() {
+		return customerDetails;
+	}
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
+	}
 
 	public WIFCustomer getCustomer() {
     	return customer;
