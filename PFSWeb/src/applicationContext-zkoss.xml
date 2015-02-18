@@ -2031,6 +2031,8 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeTypeService" ref="financeTypeService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="pffCustomerPreparation" ref="pffCustomerPreparation" />
 	</bean>
 
     <bean id="finTypeAccountDialogCtrl"
