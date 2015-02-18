@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.impl.PFFCustomerPreparation;
+import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -134,7 +135,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private transient StepPolicyService stepPolicyService;
 
     private String menuItemRightName= null;	
-    private boolean isNewCustomer = false;
+    
 	/**
 	 * default constructor.<br>
 	 */
@@ -491,7 +492,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			}
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			financeDetail.setNewCustomer(isNewCustomer);
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", 	this.financeMainListCtrl);
 			map.put("financeType", financeType);
@@ -593,7 +593,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	public CustomerDetails fetchCustomerData() {
 		logger.debug("Entering");
 		
-		CustomerDetails customerDetails = null;
+		CustomerDetails customerDetails = new CustomerDetails();
 		// Get the data of Customer from Core Banking Customer
 		try {
 			this.custCIF.setConstraint("");
@@ -613,7 +613,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				
 				//Interface Core Banking System call
 				if (customer == null) {
-					isNewCustomer = true;
+					customerDetails.setNewRecord(true);
 					customerDetails = getPffCustomerPreparation().getCustomerByInterface(cif, "");
 					if (customerDetails == null) {
 						throw new CustomerNotFoundException();
@@ -625,17 +625,43 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				}
 				
 			}else if (this.newCust.isChecked()){
-				isNewCustomer = true;
+				customerDetails = getNewCustomerDetail();
 			}
 			
 		} catch (CustomerNotFoundException e) {
 			logger.error(e);
-			MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
+			MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
+					MultiLineMessageBox.OK, MultiLineMessageBox.INFORMATION);
+			customerDetails = getNewCustomerDetail();
 		}
 		logger.debug("Leaving");
 		return customerDetails;
 	}
 
+	
+	private CustomerDetails getNewCustomerDetail(){
+		
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setNewRecord(true);
+		Customer customer = new Customer();
+		customer.setLovDescCustCtgType(PennantConstants.CUST_CAT_INDIVIDUAL);
+		customer.setCustCtgCode(PennantConstants.PFF_CUSTCTG_INDIV);
+		customer.setLovDescCustCtgCodeName(PennantConstants.PFF_CUSTCTG_INDIV);
+		customer.setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
+		customer.setCustCRCPR("");
+		customer.setCustCOB(SystemParameterDetails.getSystemParameterValue("CURR_SYSTEM_COUNTRY").toString());
+		customer.setCustBaseCcy(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString());
+		customer.setCustLng(SystemParameterDetails.getSystemParameterValue("APP_LNG").toString());
+		customer.setCustParentCountry(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
+		customer.setCustResdCountry(SystemParameterDetails.getSystemParameterValue("CURR_SYSTEM_COUNTRY").toString());
+		customer.setCustRiskCountry(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
+		customer.setCustNationality(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
+		
+		customerDetails.setCustomer(customer);
+		return customerDetails;
+		
+	}
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 	// +++++++++++++++ Getters and Setters ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //

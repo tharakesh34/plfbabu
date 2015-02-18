@@ -142,7 +142,6 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
 	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
 	
-	private boolean newCustomer;
 	private CustomerDetails customerDetails;
 	private WIFCustomer customer;
 	
@@ -644,12 +643,4 @@ public class FinanceDetail implements java.io.Serializable {
 		this.vehicleLoanDetails = vehicleLoanDetails;
 	}
 
-	public boolean isNewCustomer() {
-	    return newCustomer;
-    }
-
-	public void setNewCustomer(boolean newCustomer) {
-	    this.newCustomer = newCustomer;
-    }
-	
 }
