@@ -261,6 +261,9 @@ public class ScheduleCalculator {
 					}
 					
 					totalDesiredProfit = desiredPftAmount;
+				}else if(finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isAllowDownpayPgm() 
+						&& desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+					totalDesiredProfit = desiredPftAmount;
 				}
 
 				if (financeMain.isEqualRepay()) {
@@ -480,49 +483,12 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		finScheduleData.getFinanceMain().setCpzAtGraceEnd(false);
-
-		//IF Repayments is Convert from Flat to Reducing and first time calculation.
-		Boolean isCalFlat = false;
-		if (finScheduleData.getFinanceMain().getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)) {
-			isCalFlat = true;
-		}
-
 		if (finScheduleData.getFinanceMain().getGrcProfitDaysBasis() == null) {
 			finScheduleData.getFinanceMain().setGrcProfitDaysBasis(finScheduleData.getFinanceMain().getProfitDaysBasis());
 		}
 
-		finScheduleData = procGetCalSchd(finScheduleData, isCalFlat);
-
-		//If Schedule Method is "Flat Converting to Reduce" Case
-		if (isCalFlat) {
-
-			BigDecimal totalDesiredProfit =   BigDecimal.ZERO;
-			String pftComparisionFor = null;
-			Date calStart = new Date();
-			finScheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-			FinanceMain financeMain = finScheduleData.getFinanceMain();
-
-			if (financeMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(financeMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
-			        && financeMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
-			        && StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
-				
-				calStart = financeMain.getFinStartDate();
-				pftComparisionFor = CalculationConstants.TOTAL;
-				totalDesiredProfit = financeMain.getTotalGrossPft();
-			
-			} else {
-				calStart = financeMain.getGrcPeriodEndDate();
-				pftComparisionFor = CalculationConstants.REPAY;
-				totalDesiredProfit = financeMain.getTotalGrossPft().subtract(financeMain.getTotalGrossGrcPft());
-			}				
-
-			finScheduleData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getFinStartDate());
-			finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());				
-
-			finScheduleData = calEffectiveRate(finScheduleData, pftComparisionFor, totalDesiredProfit, calStart, 
-					finScheduleData.getFinanceMain().getCalMaturity(), false);
-
-		}
+		//Schedule calculation
+		finScheduleData = procGetCalSchd(finScheduleData, true);
 		
 		//Set Total Amounts After Calculations
 		finScheduleData = setFinanceTotals(finScheduleData);
@@ -4976,6 +4942,9 @@ public class ScheduleCalculator {
 			orgFinanceAmount = financeMain.getFinAmount().add(financeMain.getTotalProfit());
 			
 			if(financeMain.getPlanDeferCount() > 0 && desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
+				orgFinanceAmount = financeMain.getFinAmount().add(totalDesiredProfit);
+			}else if(finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isAllowDownpayPgm() 
+					&& desiredPftAmount.compareTo(BigDecimal.ZERO) > 0){
 				orgFinanceAmount = financeMain.getFinAmount().add(totalDesiredProfit);
 			}
 		} else if (financeMain.getScheduleMethod().equals(CalculationConstants.PRI)
