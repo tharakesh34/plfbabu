@@ -892,7 +892,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceMain> imple
 
 		}
 		
-		if(getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+		if(!StringUtils.trimToEmpty(aFinanceMain.getLinkedFinRef()).equals("")){
 			this.row_LinkedFinRef.setVisible(true);
 			this.linkedFinRef.setValue(aFinanceMain.getLinkedFinRef());
 		}

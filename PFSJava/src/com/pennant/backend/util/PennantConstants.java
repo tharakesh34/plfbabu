@@ -632,5 +632,12 @@ public class PennantConstants {
 	public static final String HIGH = "HIGH";
 	public static final String MEDIUM = "MEDIUM";
 	public static final String NORMAL = "NORMAL";
+	
+	//Car Loan Details
+	public static final String AHBACCOUNT = "AHBACC";
+	public static final String FTS = "FTS";
+	public static final String PAYORDER = "PAYORDER";
+	public static final String DEALER = "DEALER";
+	public static final String PRIVATE = "PRIVATE";
 
 }

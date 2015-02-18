@@ -237,11 +237,16 @@
 													<textbox id="finRemarks" maxlength="50" width="250px" rows="2" />
 												</hbox>
 											</row>
-											<row id="row_LinkedFinRef" visible="false">
-											<label id="label_FinanceMainDialog_LinkedFinRef" value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}"/>
-												<hbox visible="false">
-													<space spacing="2px" />
-													<textbox id="linkedFinRef" maxlength="50" width="250px" rows="2" />
+											<row id="row_LinkedFinRef"
+												visible="false">
+												<label
+													id="label_FinanceMainDialog_LinkedFinRef"
+													value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="linkedFinRef" width="250px" readonly="true" />
 												</hbox>
 											</row>
 										</rows>
