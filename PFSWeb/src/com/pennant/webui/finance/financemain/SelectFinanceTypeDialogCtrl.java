@@ -55,27 +55,36 @@ import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.Interface.service.impl.PFFCustomerPreparation;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 /**
@@ -97,13 +106,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
-	protected Window       window_SelectFinanceTypeDialog;            // autoWired
+	protected Window       			window_SelectFinanceTypeDialog;            // autoWired
 	protected ExtendedCombobox      finType;                                   // autoWired
 	protected ExtendedCombobox      wIfFinaceRef;                              // autoWired
 	protected ExtendedCombobox      promotionCode;
-	protected Button       btnProceed;                                // autoWired
-	protected Radio			newCust;
-	protected Radio			existingCust;
+	protected Button       			btnProceed;                                // autoWired
+	protected Textbox				custCIF;
+	protected Radio					newCust;
+	protected Radio					existingCust;
+	protected Row					customerRow;
 	
 	protected FinanceMainListCtrl               financeMainListCtrl;  //over handed parameter
 	protected transient FinanceWorkFlow         financeWorkFlow;
@@ -115,12 +126,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private String screenCode =null;
 	private String loanType = "";
 	
-	private transient FinanceTypeService      financeTypeService;
+	private transient 	FinanceTypeService      financeTypeService;
 	private transient   FinanceWorkFlowService  financeWorkFlowService;
 	private transient   FinanceDetailService    financeDetailService;   
+	private transient   CustomerDetailsService  customerDetailsService;   
+	private transient 	PFFCustomerPreparation 	pffCustomerPreparation;
 	private transient StepPolicyService stepPolicyService;
 
     private String menuItemRightName= null;	
+    private boolean isNewCustomer = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -435,6 +449,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		if(getFinanceWorkFlow()!=null){
+			
+			//Customer Data Fetching
+			financeDetail.setCustomerDetails(fetchCustomerData());
+			
 			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			/*
 			 * if screen code is quick data entry (QDE) navigate to QDE screen
@@ -473,11 +491,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			}
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
+			financeDetail.setNewCustomer(isNewCustomer);
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", 	this.financeMainListCtrl);
 			map.put("financeType", financeType);
 			map.put("menuItemRightName", menuItemRightName);
-			map.put("newCustomer", this.newCust.isChecked());
 			
 			// call the ZUL-file with the parameters packed in a map
 			try {
@@ -517,13 +535,105 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	private void doFieldValidation() {
 		logger.debug("Entering ");
-		if((StringUtils.trimToEmpty(this.finType.getValue()).equals("") 
-				&& (StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")))){
-			throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
-					,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")
-							,Labels.getLabel("label_SelectFinanceTypeDialog_PromotionCode.value")})); 
+		
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		try {
+			if((StringUtils.trimToEmpty(this.finType.getValue()).equals("") 
+					&& (StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")))){
+				throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
+						,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")
+								,Labels.getLabel("label_SelectFinanceTypeDialog_PromotionCode.value")})); 
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
 		}
+		
+		try {
+			if (this.existingCust.isChecked()){
+				if (this.custCIF.getValue().equals("")) {
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+							new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
+				}
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+		if(wve.size() > 0){
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	
 		logger.debug("Leaving ");
+	}
+	
+	public void onCheck$existingCust(Event event){
+		logger.debug("Entering" + event.toString());
+		this.custCIF.setDisabled(false);
+		this.customerRow.setVisible(true);
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onCheck$newCust(Event event){
+		logger.debug("Entering" + event.toString());
+		this.custCIF.setValue("");
+		this.custCIF.setDisabled(true);
+		this.customerRow.setVisible(false);
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Call the Customer dialog with a new empty entry. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public CustomerDetails fetchCustomerData() {
+		logger.debug("Entering");
+		
+		CustomerDetails customerDetails = null;
+		// Get the data of Customer from Core Banking Customer
+		try {
+			this.custCIF.setConstraint("");
+			this.custCIF.setErrorMessage("");
+			this.custCIF.clearErrorMessage();
+			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
+			//If  customer exist is checked 
+			if (this.existingCust.isChecked()){
+				Customer customer = null;
+				if (cif.equals("")) {
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
+				}else{
+					
+					//check Customer Data in LOCAL PFF system
+					customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
+				}
+				
+				//Interface Core Banking System call
+				if (customer == null) {
+					isNewCustomer = true;
+					customerDetails = getPffCustomerPreparation().getCustomerByInterface(cif, "");
+					if (customerDetails == null) {
+						throw new CustomerNotFoundException();
+					}
+				}
+				
+				if (customer != null) {
+					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
+				}
+				
+			}else if (this.newCust.isChecked()){
+				isNewCustomer = true;
+			}
+			
+		} catch (CustomerNotFoundException e) {
+			logger.error(e);
+			MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
+		}
+		logger.debug("Leaving");
+		return customerDetails;
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -577,5 +687,21 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	}
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public PFFCustomerPreparation getPffCustomerPreparation() {
+		return pffCustomerPreparation;
+	}
+
+	public void setPffCustomerPreparation(PFFCustomerPreparation pffCustomerPreparation) {
+		this.pffCustomerPreparation = pffCustomerPreparation;
 	}
 }

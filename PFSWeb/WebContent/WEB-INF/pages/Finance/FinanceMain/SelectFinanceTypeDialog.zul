@@ -11,8 +11,8 @@
 		<window id="window_SelectFinanceTypeDialog"
 			title="${c:l('window_SelectFinanceTypeDialog.title')}"
 			border="normal" apply="${selectFinanceTypeDialogCtrl}" width="50%"
-			height="180px" sizable="false" closable="true">
-			
+			height="220px" sizable="false" closable="true">
+
 			<borderlayout id="borderlayoutFinanceMain">
 				<center border="none" autoscroll="true">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
@@ -24,8 +24,8 @@
 						<rows>
 							<row>
 								<label
-									id="label_SelectFinanceTypeDialog_CustCIF"
-									value="${c:l('label_SelectFinanceTypeDialog_CustCIF.value')}" />
+									id="label_SelectFinanceTypeDialog_Customer"
+									value="${c:l('label_SelectFinanceTypeDialog_Customer.value')}" />
 								<radiogroup>
 									<radio id="newCust"
 										label="${c:l('label_SelectFinanceTypeDialog_NewCust.value')}"
@@ -33,6 +33,16 @@
 									<radio id="existingCust"
 										label="${c:l('label_SelectFinanceTypeDialog_ExistingCust.value')}" />
 								</radiogroup>
+							</row>
+							<row id="customerRow" visible="false">
+								<label
+									id="label_SelectFinanceTypeDialog_CustCIF"
+									value="${c:l('label_SelectFinanceTypeDialog_CustCIF.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="custCIF" width="120px" />
+								</hbox>
 							</row>
 							<row id="finTypeRow" visible="true">
 								<label

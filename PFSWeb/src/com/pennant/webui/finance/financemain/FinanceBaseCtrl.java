@@ -620,7 +620,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		// Finance Basic Details Tab ---> 1. Basic Details
-		this.finReference.setMaxlength(20);
+		this.finReference.setMaxlength(17);
 		this.finType.setMaxlength(8);
 		
 		this.finCcy.setMaxlength(3);
@@ -2395,6 +2395,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		//onCheckDiffDisbCcy(false);
 		setRepayAccMandatory();
 		setStepCheckDetails();
+		setDownpayPgmDeails();
 		logger.debug("Leaving");
 	}	
 	
@@ -3318,8 +3319,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if(this.stepFinance.isChecked()){
 			setStepCheckDetails();
 		} else {
-			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
-			this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
+			if(!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+				fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
+				this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
+			}
 			fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(isReadOnly("FinanceMainDialog_scheduleMethod"));
 		}
@@ -5019,6 +5022,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 						showFeeErrorDetails(valueException, tab);
 					}
 				}
+				getFeeDetailDialogCtrl().doStoreInitValues();
 				
 				//Fee Details Data set to Bean Object
 				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, false);
@@ -6958,6 +6962,13 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			this.repayRateBasis.setDisabled(true);
 			fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
 			this.cbScheduleMethod.setDisabled(true);
+		} 
+	}
+	
+	protected void setDownpayPgmDeails(){
+		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+			fillComboBox(this.repayRateBasis,CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(true);
 		} 
 	}
 	

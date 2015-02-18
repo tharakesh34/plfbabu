@@ -37,8 +37,20 @@
 											style="font-weight:bold;" />
 										<label
 											id="label_ScheduleDetailDialog_FinReference" />
-										<label id="schdl_finReference"
-											style="font-weight:bold;" />
+										<hbox>
+											<label
+												id="schdl_finReference" style="font-weight:bold;" />
+											<hbox
+												id="hbox_LinkedDownPayRef" visible="false"
+												style="left-padding:20px;">
+												<label
+													id="label_ScheduleDetailDialog_DownPaySchedule" />
+												<label
+													id="label_ScheduleDetailDialog_DPScheduleLink"
+													style="color: #0000ff; text-decoration: underline; cursor: pointer;" />
+												<label value=")"/>
+											</hbox>
+										</hbox>
 									</row>
 									<row>
 										<label
@@ -115,14 +127,6 @@
 										<label
 											id="effectiveRateOfReturn"
 											style="font-weight:bold;color:#FF6600;" />
-									</row>
-									<row id="row_Murabaha"
-										visible="false">
-										<label
-											id="label_ScheduleDetailDialog_DownPaySchedule" />
-										<label
-											id="label_ScheduleDetailDialog_DPScheduleLink"
-											style="color: #0000ff; text-decoration: underline; cursor: pointer;" />
 									</row>
 									<row id="row_Musharak"
 										visible="false">

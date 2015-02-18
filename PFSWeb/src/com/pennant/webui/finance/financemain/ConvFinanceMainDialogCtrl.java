@@ -1106,6 +1106,10 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 		if (months != this.oldVar_tenureInMonths) {
 			isFeeReExecute = true;
 		}
+		
+		if(getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isFeeReExecute()){
+			isFeeReExecute = true;
+		}
 
 	}
 
@@ -3349,7 +3353,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
  			}
  			
  			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
- 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			BigDecimal totalDesiredPft = BigDecimal.ZERO;
  			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
  				
  				Cloner cloner = new Cloner();
@@ -3358,6 +3362,12 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 				//Terms Recalculation
 				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
 				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Check Down Payment Program Setup
+				if(planDeferSchdData.getFinanceType().isAllowDownpayPgm()){
+					planFinMain.setDownPayment(planFinMain.getDownPayment().subtract(planFinMain.getDownPayBank()));
+					planFinMain.setDownPayBank(BigDecimal.ZERO);
+				}
 				
 				//Maturity Date Recalculation using Number of Terms
 				List<Calendar> scheduleDateList = null;				
@@ -3382,8 +3392,41 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 				}			
 				
 				planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
-				plannedDeferPft = ScheduleCalculator.getPlanDeferPft(planDeferSchdData).getFinanceMain().getTotalGrossPft();
+				planDeferSchdData = ScheduleCalculator.getPlanDeferPft(planDeferSchdData);
 				
+				FinanceMain planDefFinMain = planDeferSchdData.getFinanceMain();
+				
+				if (planDefFinMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(planDefFinMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+				        && planDefFinMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+				        && StringUtils.trimToEmpty(planDefFinMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+					totalDesiredPft = planDefFinMain.getTotalGrossPft();
+				} else {
+					totalDesiredPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
+				}
+				
+			//Check Down Payment Program for Creating New Finance to Customer with Down payment Amount on 0% Interest Rate
+ 			}else if(validFinScheduleData.getFinanceType().isAllowDownpayPgm()){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData downpaySchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Down payment Reset to ZERO
+				FinanceMain downpayMain = downpaySchdData.getFinanceMain();
+				downpayMain.setDownPayment(downpayMain.getDownPayment().subtract(downpayMain.getDownPayBank()));
+				downpayMain.setDownPayBank(BigDecimal.ZERO);
+				
+				//Schedule Calculation Process
+				downpaySchdData = ScheduleGenerator.getNewSchd(downpaySchdData);
+				downpaySchdData = ScheduleCalculator.getPlanDeferPft(downpaySchdData);
+				
+				downpayMain = downpaySchdData.getFinanceMain();
+				if (downpayMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(downpayMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+				        && downpayMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+				        && StringUtils.trimToEmpty(downpayMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+					totalDesiredPft = downpayMain.getTotalGrossPft();
+				} else {
+					totalDesiredPft = downpayMain.getTotalGrossPft().subtract(downpayMain.getTotalGrossGrcPft());
+				}
  			}
 			
 			//Prepare Finance Schedule Generator Details List
@@ -3398,7 +3441,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
+						getFinanceDetail().getFinScheduleData(), totalDesiredPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 

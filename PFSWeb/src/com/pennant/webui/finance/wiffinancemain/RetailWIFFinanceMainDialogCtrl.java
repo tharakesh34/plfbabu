@@ -708,7 +708,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 		this.custEmpAloc.setValidateColumns(new String[] { "EmployerId" });
 		
 		// Finance Basic Details Tab ---> 1. Basic Details
-		this.finReference.setMaxlength(20);
+		this.finReference.setMaxlength(17);
 		this.finType.setMaxlength(8);
 		this.finCcy.setMaxlength(3);
 		this.finCcy.setMandatoryStyle(true);
@@ -2612,6 +2612,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 						showErrorDetails(valueException, tab);
 					}
 				}
+				getFeeDetailDialogCtrl().doStoreInitValues();
 				
 				//Fee Details Data set to Bean Object
 				aFinanceDetail.setFinScheduleData(getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceDetail.getFinScheduleData(), false));
@@ -2867,11 +2868,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				changeFrequencies();
 			}
 			doCheckElgRequired();
-			
+
 			if(!this.custCRCPR.getValue().equals("")){
 				this.custCRCPR.setReadonly(true);
 			}
-			
+
 			if(getFinanceDetail().getFinScheduleData().getFinanceType().getFinMinTerm() == 1 && 
 					getFinanceDetail().getFinScheduleData().getFinanceType().getFinMaxTerm() == 1){
 				if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinRepayPftOnFrq()){
@@ -2883,18 +2884,22 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 					this.rpyPftFrqRow.setVisible(false);
 					this.hbox_finRepayPftOnFrq.setVisible(true);
 				}
-			
+
 				this.rpyFrqRow.setVisible(false);
 				this.noOfTermsRow.setVisible(false);
 			}
 
-		  if(this.stepFinance.isChecked()){
-			 fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
-			 this.repayRateBasis.setDisabled(true);
-			 fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
-			 this.cbScheduleMethod.setDisabled(true);
-		  }
-			
+			//Set Default Values
+			if(this.stepFinance.isChecked()){
+				fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
+				this.repayRateBasis.setDisabled(true);
+				fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,GRCNDPAY,");
+				this.cbScheduleMethod.setDisabled(true);
+			}else if(getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+				fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_C, PennantStaticListUtil.getInterestRateType(true), "");
+				this.repayRateBasis.setDisabled(true);
+			}
+
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
@@ -6284,7 +6289,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
  			}
  			
  			//Calculation Process for Planned Deferment Profit in below Case by adding Terms & adjusting Maturity Date
- 			BigDecimal plannedDeferPft = BigDecimal.ZERO;
+ 			BigDecimal totalDesiredPft = BigDecimal.ZERO;
  			if(validFinScheduleData.getFinanceMain().getPlanDeferCount() > 0){
  				
  				Cloner cloner = new Cloner();
@@ -6293,6 +6298,12 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				//Terms Recalculation
 				FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
 				planFinMain.setNumberOfTerms(planFinMain.getNumberOfTerms() + planFinMain.getDefferments());
+				
+				//Check Down Payment Program Setup
+				if(planDeferSchdData.getFinanceType().isAllowDownpayPgm()){
+					planFinMain.setDownPayment(planFinMain.getDownPayment().subtract(planFinMain.getDownPayBank()));
+					planFinMain.setDownPayBank(BigDecimal.ZERO);
+				}
 				
 				//Maturity Date Recalculation using Number of Terms
 				List<Calendar> scheduleDateList = null;				
@@ -6324,11 +6335,34 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 				if (planDefFinMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(planDefFinMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
 				        && planDefFinMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
 				        && StringUtils.trimToEmpty(planDefFinMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
-					plannedDeferPft = planDefFinMain.getTotalGrossPft();
+					totalDesiredPft = planDefFinMain.getTotalGrossPft();
 				} else {
-					plannedDeferPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
+					totalDesiredPft = planDefFinMain.getTotalGrossPft().subtract(planDefFinMain.getTotalGrossGrcPft());
 				}
 				
+			//Check Down Payment Program for Creating New Finance to Customer with Down payment Amount on 0% Interest Rate
+ 			}else if(validFinScheduleData.getFinanceType().isAllowDownpayPgm()){
+ 				
+ 				Cloner cloner = new Cloner();
+				FinScheduleData downpaySchdData = cloner.deepClone(validFinScheduleData);
+				
+				//Down payment Reset to ZERO
+				FinanceMain downpayMain = downpaySchdData.getFinanceMain();
+				downpayMain.setDownPayment(downpayMain.getDownPayment().subtract(downpayMain.getDownPayBank()));
+				downpayMain.setDownPayBank(BigDecimal.ZERO);
+				
+				//Schedule Calculation Process
+				downpaySchdData = ScheduleGenerator.getNewSchd(downpaySchdData);
+				downpaySchdData = ScheduleCalculator.getPlanDeferPft(downpaySchdData);
+				
+				downpayMain = downpaySchdData.getFinanceMain();
+				if (downpayMain.isAllowGrcPeriod() && StringUtils.trimToEmpty(downpayMain.getGrcRateBasis()).equals(CalculationConstants.RATE_BASIS_R)
+				        && downpayMain.getRepayRateBasis().equals(CalculationConstants.RATE_BASIS_C)
+				        && StringUtils.trimToEmpty(downpayMain.getGrcSchdMthd()).equals(CalculationConstants.NOPAY)) {
+					totalDesiredPft = downpayMain.getTotalGrossPft();
+				} else {
+					totalDesiredPft = downpayMain.getTotalGrossPft().subtract(downpayMain.getTotalGrossGrcPft());
+				}
  			}
  			
 			//Prepare Finance Schedule Generator Details List
@@ -6340,7 +6374,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				getFinanceDetail().setFinScheduleData(ScheduleCalculator.getCalSchd(
-						getFinanceDetail().getFinScheduleData(), plannedDeferPft));
+						getFinanceDetail().getFinScheduleData(), totalDesiredPft));
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 				
 				
@@ -6571,6 +6605,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Seria
 
 		int months = DateUtility.getMonthsBetween(maturDate , this.finStartDate.getValue(), true);
 		if (months != this.oldVar_tenureInMonths) {
+			isFeeReExecute = true;
+		}
+		
+		if(getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isFeeReExecute()){
 			isFeeReExecute = true;
 		}
 
@@ -8270,8 +8308,10 @@ public void onCheck$stepFinance(Event event){
 		fillComboBox(this.cbScheduleMethod, CalculationConstants.EQUAL, schMethodList, ",NO_PAY,");
 		this.cbScheduleMethod.setDisabled(true);
 	} else {
-		fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
-		this.repayRateBasis.setDisabled(false);//--TODO : Apply right
+		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+			fillComboBox(this.repayRateBasis,getFinanceDetail().getFinScheduleData().getFinanceType().getFinRateType(), PennantStaticListUtil.getInterestRateType(true), "");
+			this.repayRateBasis.setDisabled(false);//--TODO : Apply right
+		}
 		fillComboBox(this.cbScheduleMethod, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd(), schMethodList, ",NO_PAY,");
 		this.cbScheduleMethod.setDisabled(false);//--TODO : Apply right
 	}

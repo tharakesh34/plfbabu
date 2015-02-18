@@ -63,6 +63,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -212,7 +213,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	private String defMethod = SystemParameterDetails.getSystemParameterValue("DEF_METHOD").toString();
 	protected Row  	row_istisna;
 	protected Row  	row_Musharak;
-	protected Row  	row_Murabaha;
+	protected Hbox  hbox_LinkedDownPayRef;
 	protected Decimalbox	schdl_Repayprofit;
 	protected Decimalbox	schdl_Graceprofit;
 	protected Label label_ScheduleDetailDialog_Graceprofit;
@@ -344,8 +345,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		//Takaful Schedule Tab
 		listheader_TakafulScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Date"));
 		listheader_TakafulScheduleDetailDialog_Rate.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_Rate"));
-		listheader_TakafulScheduleDetailDialog_FinOSBal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_OSPrinciple"));
-		listheader_TakafulScheduleDetailDialog_Premium.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_ScheduleEndBal"));
+		listheader_TakafulScheduleDetailDialog_FinOSBal.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_OSPrincipal"));
+		listheader_TakafulScheduleDetailDialog_Premium.setLabel(Labels.getLabel("listheader_" + productType +"_ScheduleDetailDialog_TakafulPremium"));
 		
 		if(!moduleDefiner.equals("")){
 			listHeader_cashFlowEffect.setVisible(false);
@@ -501,7 +502,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		}
 		String productType = (getFinScheduleData().getFinanceType().getFinCategory().substring(0, 1)).toUpperCase()+(getFinScheduleData().getFinanceType().getFinCategory().substring(1)).toLowerCase();
 		if (getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
-			this.row_Murabaha.setVisible(true);
+			this.hbox_LinkedDownPayRef.setVisible(true);
 			this.label_ScheduleDetailDialog_DownPaySchedule.setValue(Labels.getLabel("label_" + productType +"_ScheduleDetailDialog_DownPaySchedule.value"));
 			this.label_ScheduleDetailDialog_DPScheduleLink.setValue(getFinScheduleData().getFinanceMain().getFinReference()+"_DP");
 		}
