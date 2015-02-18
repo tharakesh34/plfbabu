@@ -128,20 +128,20 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
-		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor,");
-		selectSql.append(" EngineNumber,InsuranceType,InsuranceDesc,PaymentMode, ManufacturerId, ");
+		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarRegNo,CarColor,");
+		selectSql.append(" EngineNumber,PaymentMode, ManufacturerId, ");
 		selectSql.append(" PurchageOdrNumber,QuoationNbr,QuoationDate,DealerPhone,PurchaseDate,  VehicleModelId, ");
 		
 		if(type.contains("View")){
 			selectSql.append(" LovDescLoanForCodeName,LovDescLoanForCode,LovDescCarUsageCodeName,");
 			selectSql.append(" LovDescLoanForValue,LovDescCarUsageCode,LovDescCarUsageValue,");
 			selectSql.append(" LovDescManufacturerName, LovDescModelDesc, lovDescVehicleVersionCode, ");
-			selectSql.append(" LovDescCarDealerName,lovDescCarDealerPhone,lovDescCarDealerFax,");
+			selectSql.append(" LovDescCarDealerName,lovDescCarDealerPhone,lovDescCarDealerFax,LovDescThirdPartyNatName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" ,ThirdPartyReg,ThirdPartyName,PassportNum,ThirdPartyNat,EmiratesRegNum,");
-		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue ");
+		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue,PrivateDealerName,SalesPersonName");
 		selectSql.append(" FROM  LMTCarLoanDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LoanRefNumber =:LoanRefNumber ");
@@ -171,20 +171,20 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
-		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor,");
-		selectSql.append(" EngineNumber,InsuranceType,InsuranceDesc,PaymentMode, ManufacturerId, ");
+		selectSql.append(" CarMakeYear, CarCapacity, CarDealer,CarCc,CarChasisNo,CarRegNo,CarColor,");
+		selectSql.append(" EngineNumber,PaymentMode, ManufacturerId, ");
 		selectSql.append(" PurchageOdrNumber,QuoationNbr,QuoationDate,DealerPhone,PurchaseDate,  VehicleModelId, ");
 		
 		if(type.contains("View")){
 			selectSql.append(" LovDescLoanForCodeName,LovDescLoanForCode,LovDescCarUsageCodeName,");
 			selectSql.append(" LovDescLoanForValue,LovDescCarUsageCode,LovDescCarUsageValue,");
 			selectSql.append(" LovDescManufacturerName, LovDescModelDesc, lovDescVehicleVersionCode, ");
-			selectSql.append(" LovDescCarDealerName,lovDescCarDealerPhone,lovDescCarDealerFax,");
+			selectSql.append(" LovDescCarDealerName,lovDescCarDealerPhone,lovDescCarDealerFax,LovDescThirdPartyNatName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" ,ThirdPartyReg,ThirdPartyName,PassportNum,ThirdPartyNat,EmiratesRegNum,");
-		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue ");
+		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue,PrivateDealerName,SalesPersonName ");
 		selectSql.append(" FROM  LMTCarLoanDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LoanRefNumber =:LoanRefNumber ");
@@ -287,29 +287,28 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 	@Override
 	public String save(CarLoanDetail carLoanDetail,String type) {
 		logger.debug("Entering");
-		
 		StringBuilder insertSql = new StringBuilder("Insert Into LMTCarLoanDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append("(LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, ");
 		insertSql.append(" CarUsage, CarVersion, CarMakeYear, CarCapacity, CarDealer, " );
-		insertSql.append(" CarCc,CarChasisNo,CarInsuranceNo,CarRegNo,CarColor, ");
-		insertSql.append("	EngineNumber,InsuranceType,InsuranceDesc,PaymentMode,");
+		insertSql.append(" CarCc,CarChasisNo,CarRegNo,CarColor, ");
+		insertSql.append("	EngineNumber,PaymentMode,");
 		insertSql.append("	PurchageOdrNumber,QuoationNbr,QuoationDate,DealerPhone,PurchaseDate,");
 		insertSql.append("	ManufacturerId, VehicleModelId, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		insertSql.append(" ,ThirdPartyReg,ThirdPartyName,PassportNum,ThirdPartyNat,EmiratesRegNum,");
-		insertSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue)");
+		insertSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue,PrivateDealerName,SalesPersonName)");
 		insertSql.append(" Values(:LoanRefNumber, :ItemNumber, :LoanRefType, :CarLoanFor, ");
 		insertSql.append(" :CarUsage, :CarVersion, :CarMakeYear, :CarCapacity, :CarDealer,");
-		insertSql.append(" :CarCc, :CarChasisNo, :CarInsuranceNo, :CarRegNo, :CarColor, ");
-		insertSql.append(" :EngineNumber,:InsuranceType,:InsuranceDesc,:PaymentMode,");
+		insertSql.append(" :CarCc, :CarChasisNo,:CarRegNo, :CarColor, ");
+		insertSql.append(" :EngineNumber,:PaymentMode,");
 		insertSql.append(" :PurchageOdrNumber,:QuoationNbr,:QuoationDate,:DealerPhone,:PurchaseDate,");
 		insertSql.append("	:ManufacturerId, :VehicleModelId, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId,");
 		insertSql.append(" :ThirdPartyReg,:ThirdPartyName,:PassportNum,:ThirdPartyNat,:EmiratesRegNum,");
-		insertSql.append(" :SellerType,:DealerOrSellerAcc,:VehicleItemNum,:VehicleValue)");
+		insertSql.append(" :SellerType,:DealerOrSellerAcc,:VehicleItemNum,:VehicleValue,:PrivateDealerName,:SalesPersonName)");
 		
 		
 		logger.debug("insertSql: "+ insertSql.toString());
@@ -344,9 +343,9 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		updateSql.append(" Set LoanRefNumber = :LoanRefNumber, ItemNumber = :ItemNumber, LoanRefType = :LoanRefType," );
 		updateSql.append(" CarLoanFor = :CarLoanFor, CarUsage = :CarUsage, CarVersion = :CarVersion," );
 		updateSql.append(" CarMakeYear = :CarMakeYear, CarCapacity = :CarCapacity, CarDealer = :CarDealer,");
-		updateSql.append(" CarCc= :CarCc, CarChasisNo= :CarChasisNo, CarInsuranceNo= :CarInsuranceNo,");
+		updateSql.append(" CarCc= :CarCc, CarChasisNo= :CarChasisNo,");
 		updateSql.append(" CarRegNo= :CarRegNo, CarColor= :CarColor, ");
-		updateSql.append(" EngineNumber=:EngineNumber,InsuranceType=:InsuranceType,InsuranceDesc=:InsuranceDesc,PaymentMode=:PaymentMode,");
+		updateSql.append(" EngineNumber=:EngineNumber,PaymentMode=:PaymentMode,");
 		updateSql.append(" PurchageOdrNumber=:PurchageOdrNumber,QuoationNbr=:QuoationNbr,QuoationDate=:QuoationDate,DealerPhone=:DealerPhone,PurchaseDate=:PurchaseDate,");
 		updateSql.append(" ManufacturerId = :ManufacturerId, VehicleModelId = :VehicleModelId, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
@@ -356,7 +355,8 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		updateSql.append(" ThirdPartyReg = :ThirdPartyReg,ThirdPartyName = :ThirdPartyName, ");
 		updateSql.append(" PassportNum = :PassportNum, ThirdPartyNat = :ThirdPartyNat, EmiratesRegNum = :EmiratesRegNum, ");
 		updateSql.append(" SellerType = :SellerType,DealerOrSellerAcc = :DealerOrSellerAcc, ");
-		updateSql.append(" VehicleItemNum = :VehicleItemNum, VehicleValue = :VehicleValue");
+		updateSql.append(" VehicleItemNum = :VehicleItemNum, VehicleValue = :VehicleValue,");
+		updateSql.append(" PrivateDealerName = :PrivateDealerName,SalesPersonName = :SalesPersonName");
 		updateSql.append(" Where LoanRefNumber =:LoanRefNumber");
 
 		if (!type.endsWith("_TEMP")) {

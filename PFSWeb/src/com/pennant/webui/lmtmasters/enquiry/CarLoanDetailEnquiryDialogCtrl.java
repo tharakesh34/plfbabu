@@ -254,13 +254,13 @@ public class CarLoanDetailEnquiryDialogCtrl extends GFCBaseCtrl implements Seria
 		this.carCc.setValue(aCarLoanDetail.getCarCc());
 		this.dealerPhone.setValue(aCarLoanDetail.getDealerPhone());
 		this.carChasisNo.setValue(aCarLoanDetail.getCarChasisNo());
-		this.carInsuranceNo.setValue(aCarLoanDetail.getCarInsuranceNo());
+		//this.carInsuranceNo.setValue(aCarLoanDetail.getCarInsuranceNo());
 		this.carRegNo.setValue(aCarLoanDetail.getCarRegNo());
 		fillComboBox(this.cbCarColor, aCarLoanDetail.getCarColor(), carColors, "");
-		fillComboBox(this.insuranceType, aCarLoanDetail.getInsuranceType(), insurenceType, "");
+		//fillComboBox(this.insuranceType, aCarLoanDetail.getInsuranceType(), insurenceType, "");
 		fillComboBox(this.paymentMode, aCarLoanDetail.getPaymentMode(), paymentModes, "");
 		this.engineNumber.setValue(aCarLoanDetail.getEngineNumber());
-		this.insuranceDesc.setValue(aCarLoanDetail.getInsuranceDesc());
+		//this.insuranceDesc.setValue(aCarLoanDetail.getInsuranceDesc());
 		this.purchageOdrNumber.setValue(aCarLoanDetail.getPurchageOdrNumber());
 		this.quoationNbr.setValue(aCarLoanDetail.getQuoationNbr());
 		this.quoationDate.setValue(aCarLoanDetail.getQuoationDate());

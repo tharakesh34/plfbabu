@@ -85,7 +85,7 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String lovDescCarDealerFax;
 	private int carCc;
 	private String carChasisNo;
-	private String carInsuranceNo;
+
 	private String carRegNo;
 	private String carColor;
 	private String lovDescCarColorName;
@@ -98,14 +98,14 @@ public class CarLoanDetail implements java.io.Serializable {
 	private LoginUserDetails userDetails;
 	
 	private String engineNumber;
-	private String insuranceType;
-	private String insuranceDesc;
+	
 	private String paymentMode;
 	private String purchageOdrNumber;
 	private String quoationNbr;
 	private Date quoationDate;
 	private String dealerPhone;
 	private Date purchaseDate;
+	private String lovDescThirdPartyNatName;
 	
 	private boolean thirdPartyReg=false;
 	private String thirdPartyName;
@@ -116,7 +116,10 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String sellerType;
 	private String vehicleItemNum;
 	private BigDecimal vehicleValue=BigDecimal.ZERO;
-
+	private String privateDealerName;
+	private String salesPersonName;
+	
+	
 	private String recordStatus;
 	private String roleCode="";
 	private String nextRoleCode= "";
@@ -279,13 +282,7 @@ public class CarLoanDetail implements java.io.Serializable {
 		this.carChasisNo = carChasisNo;
 	}
 
-	public String getCarInsuranceNo() {
-		return carInsuranceNo;
-	}
-
-	public void setCarInsuranceNo(String carInsuranceNo) {
-		this.carInsuranceNo = carInsuranceNo;
-	}
+	
 
 	public String getCarRegNo() {
 		return carRegNo;
@@ -467,23 +464,6 @@ public class CarLoanDetail implements java.io.Serializable {
 	public void setEngineNumber(String engineNumber) {
     	this.engineNumber = engineNumber;
     }
-
-	public String getInsuranceType() {
-    	return insuranceType;
-    }
-
-	public void setInsuranceType(String insuranceType) {
-    	this.insuranceType = insuranceType;
-    }
-
-	public String getInsuranceDesc() {
-    	return insuranceDesc;
-    }
-
-	public void setInsuranceDesc(String insuranceDesc) {
-    	this.insuranceDesc = insuranceDesc;
-    }
-
 	public String getPaymentMode() {
     	return paymentMode;
     }
@@ -644,4 +624,31 @@ public class CarLoanDetail implements java.io.Serializable {
 		this.vehicleLoanDetailList = vehicleLoanDetailList;
 	}
 
+	public String getLovDescThirdPartyNatName() {
+	    return lovDescThirdPartyNatName;
+    }
+
+	public void setLovDescThirdPartyNatName(String lovDescThirdPartyNatName) {
+	    this.lovDescThirdPartyNatName = lovDescThirdPartyNatName;
+    }
+
+	public String getPrivateDealerName() {
+	    return privateDealerName;
+    }
+
+	public void setPrivateDealerName(String privateDealerName) {
+	    this.privateDealerName = privateDealerName;
+    }
+
+	public String getSalesPersonName() {
+	    return salesPersonName;
+    }
+
+	public void setSalesPersonName(String salesPersonName) {
+	    this.salesPersonName = salesPersonName;
+    }
+
+	
+
+	
 }

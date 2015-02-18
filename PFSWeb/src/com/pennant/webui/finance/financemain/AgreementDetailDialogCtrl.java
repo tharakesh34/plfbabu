@@ -1024,8 +1024,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseListCtrl<FinAgreementDetai
 				agreement.setCarChasisNo(carLoanDetail.getCarChasisNo());
 				agreement.setCarColor(carLoanDetail.getCarColor());
 				agreement.setCarCapacity(String.valueOf(carLoanDetail.getCarCapacity()));
-				agreement.setInsuranceType(carLoanDetail.getInsuranceType());
-				agreement.setInsuranceDesc(carLoanDetail.getInsuranceDesc());
+				//agreement.setInsuranceType(carLoanDetail.getInsuranceType());
+				//agreement.setInsuranceDesc(carLoanDetail.getInsuranceDesc());
 				agreement.setEngineNo(carLoanDetail.getEngineNumber());
 				agreement.setPurchaseOrder(carLoanDetail.getPurchageOdrNumber());
 				agreement.setPurchaseOrderDate(DateUtility.formatUtilDate(carLoanDetail.getPurchaseDate(), PennantConstants.dateFormate));
