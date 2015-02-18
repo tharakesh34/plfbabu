@@ -227,7 +227,6 @@ public class Customer implements java.io.Serializable,Entity {
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
 	private String custCRCPR;
-	private String maintModule="";
 	private boolean jointCust;
 	private String jointCustName;
 	private Date jointCustDob;
@@ -1406,14 +1405,6 @@ public class Customer implements java.io.Serializable,Entity {
 	    return custCRCPR;
     }
 	
-	
-	public String getMaintModule() {
-		return maintModule;
-	}
-	public void setMaintModule(String maintModule) {
-		this.maintModule = maintModule;
-	}
-
 	public void setLovDescCcyFormatter(int lovDescCcyFormatter) {
 	    this.lovDescCcyFormatter = lovDescCcyFormatter;
     }

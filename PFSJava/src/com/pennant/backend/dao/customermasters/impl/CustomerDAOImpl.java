@@ -175,10 +175,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			selectSql.append(" lovDescCustRejectedRsnName, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName, " );
 			selectSql.append(" lovDescCcyFormatter,");
 		}
-
-		if(!StringUtils.trimToEmpty(type).equalsIgnoreCase("")){
-			selectSql.append("maintModule, "); 
-		}
 			
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  Customers");
@@ -337,10 +333,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
         insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, " );
         
-        if(type.contains("Temp")){
-			insertSql.append(" MaintModule, "); 
-		}
-        
         insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
         insertSql.append(" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName," );
         insertSql.append(" :CustLName, :CustShrtName, :CustFNameLclLng, :CustMNameLclLng, :CustLNameLclLng, :CustShrtNameLclLng, :CustDftBranch," );
@@ -359,13 +351,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5," );
         insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR," );
         insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber," );
-
-        if(type.contains("Temp")){
-			insertSql.append(" :MaintModule, "); 
-		}
-        
         insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
 
         logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
