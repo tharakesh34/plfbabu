@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
@@ -59,6 +60,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -313,7 +315,7 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
 			if (this.listBoxVehicleLoanDetail.getItems() == null || this.listBoxVehicleLoanDetail.getItems().isEmpty()) {
-				throw new WrongValueException(this.listBoxVehicleLoanDetail, "Good Details Must Be Entered ");
+				throw new WrongValueException(this.listBoxVehicleLoanDetail, Labels.getLabel("NOEMPTY_FleetVehicleLoanDetails"));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
