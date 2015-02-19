@@ -65,6 +65,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -404,6 +405,33 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("Leaving");
 		return financeDedup;
     }
+	
+	/**
+	 * Method for Fetching List of Query Details based on Execution Stage & Finance Type
+	 */
+	@Override
+    public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
+		logger.debug("Entering");
+		
+		List<FinanceReferenceDetail> finRefDetail = null;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select lovDescNamelov, OverRide from LMTFinRefDetail");
+		selectSql.append(tableType);
+		selectSql.append(" Where MandInputInStage LIKE( :MandInputInStage) AND FinType = :FinType");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRefDetail);
+		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceReferenceDetail.class);
+
+		try{
+			finRefDetail = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		}catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+			finRefDetail = null;
+		}
+		logger.debug("Leaving");
+	    return finRefDetail;
+    }
+
 
 	/**
 	 * This method for getting the error details

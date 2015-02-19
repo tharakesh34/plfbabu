@@ -47,6 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 
 /**
  * DAO methods declaration for the <b>DedupParm model</b> class.<br>
@@ -67,4 +68,5 @@ public interface DedupParmDAO {
 	FinanceDedup getFinDedupByCustId(long custID);
 	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup,String sqlQuery);
 	List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery);
+	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType);
 }
