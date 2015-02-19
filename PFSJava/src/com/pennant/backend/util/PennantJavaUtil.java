@@ -81,6 +81,7 @@ import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.model.amtmasters.VehicleModel;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -98,6 +99,7 @@ import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
+import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -238,7 +240,6 @@ import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.model.systemmasters.EmploymentType;
-import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.systemmasters.Gender;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.GeneralDesignation;
@@ -403,6 +404,9 @@ public class PennantJavaUtil {
 			put("AgreementDefinition", new ModuleMapping(new AgreementDefinition(0), new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, 
 					new String[] { "AggId", "AggCode", "AggName" }, null, null, 450));
 
+			put("BankDetail", new ModuleMapping(new BankDetail(""), new String[] { "BMTBankDetail", "BMTBankDetail_AView" },
+					new String[] { "BankCode", "BankName" }, new String[][] { { "Active", "0", "1" } }, null, 300));
+			
 			put("BaseRate", new ModuleMapping(new BaseRate(""), new String[] { "RMTBaseRates", "RMTBaseRates_AView" }, 
 					new String[] { "BRType", "BREffDate" }, null, null, 300));
 

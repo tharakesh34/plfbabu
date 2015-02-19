@@ -836,6 +836,20 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
 	</bean>
+	
+	<!--============ Bank Details ============== -->
+
+	<bean id="bankDetailListCtrl"
+		class="com.pennant.webui.applicationmaster.bankdetail.BankDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
+
+	<bean id="bankDetailDialogCtrl"
+		class="com.pennant.webui.applicationmaster.bankdetail.BankDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
 
 	<!--============ Base Rate Details ============== -->
 

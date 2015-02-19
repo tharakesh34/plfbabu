@@ -51,6 +51,7 @@
 	
 	<menu id="menu_Category_ApplicationMaster"  rightName="menuCat_ApplicationMaster" >
 		<menuItem id="menu_Item_AgreementDefinition" zulNavigation="/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionList.zul"   rightName="menuItem_ApplicationMaster_AgreementDefinition"/>
+		<menuItem id="menu_Item_BankDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"  rightName="menuItem_ApplicationMaster_BankDetail"/>
 		<menuItem id="menu_Item_BaseRate" zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateList.zul"  rightName="menuItem_ApplicationMaster_BaseRate"/>
 		<menuItem id="menu_Item_BaseRateCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/BaseRateCode/BaseRateCodeList.zul"  rightName="menuItem_ApplicationMaster_BaseRateCode"/>
 		<menuItem id="menu_Item_Branch" zulNavigation="/WEB-INF/pages/ApplicationMaster/Branch/BranchList.zul"  rightName="menuItem_ApplicationMaster_Branch"/>

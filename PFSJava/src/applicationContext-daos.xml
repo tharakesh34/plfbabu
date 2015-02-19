@@ -1602,6 +1602,40 @@
 		<property name="agreementDefinitionDAO" ref="agreementDefinitionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<!--============ Bank Details ============== -->
+
+	<bean id="bankDetailDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.BankDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="bankDetailService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="bankDetailServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="bankDetailServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.BankDetailServiceImpl">
+		<property name="bankDetailDAO" ref="bankDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
 
 	<!--============ Base Rate Details ============== -->
 
