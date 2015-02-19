@@ -140,6 +140,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			financeReference.setMailTemplateList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_TTView"));
 			financeReference.setFinanceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_TFDView"));
 			financeReference.setBlackListDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_TBDView"));
+			financeReference.setPoliceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_TPCView"));
 		}
 
 		return financeReference;
@@ -175,6 +176,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			financeReference.setCorpScoringGroupList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType,"", "_ACSGView"));
 			financeReference.setFinanceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_AFDView"));
 			financeReference.setBlackListDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_ABDView"));
+			financeReference.setPoliceDedupeList(getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, "","_APCView"));
 
 		}
 

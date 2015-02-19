@@ -2089,7 +2089,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeDialog(this.window_MudarabaFinanceMainDialog, "FinanceMainDialog");
+					closeWindow();
 				}
 
 			} catch (DataAccessException e) {
@@ -2397,7 +2397,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
-				closeDialog(this.window_MudarabaFinanceMainDialog, "FinanceMainDialog");
+				closeWindow();
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}
@@ -2408,6 +2408,23 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			showErrorMessage(this.window_MudarabaFinanceMainDialog, e);
 		}
 		logger.debug("Leaving");
+	}
+	
+	private void closeWindow(){
+		//De Allocate rights for Asset Details Tab Dialog
+		if(childWindow != null){
+			String dialogWindowName = getAssetDialogName();
+			if(dialogWindowName != null){
+				closeDialog((Window)childWindow, dialogWindowName);
+			}
+		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+
+		closeDialog(this.window_MudarabaFinanceMainDialog, "FinanceMainDialog");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

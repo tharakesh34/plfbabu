@@ -509,6 +509,12 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 				closeDialog((Window)childWindow, dialogWindowName);
 			}
 		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+
 		closeDialog(this.window_ConvFinanceMainDialog, "FinanceMainDialog");
 	}
 

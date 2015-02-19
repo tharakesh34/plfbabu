@@ -566,6 +566,12 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 				closeDialog((Window)childWindow, dialogWindowName);
 			}
 		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+		
 		closeDialog(this.window_SukukFinanceMainDialog, "FinanceMainDialog");
 	}
 

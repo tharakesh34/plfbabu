@@ -276,7 +276,8 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 		// to it and can synchronize the shown data when we do insert, edit or
 		// delete dedupParm here.
 		if (args.containsKey("dedupParmListCtrl")) {
-			if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)) {
+			if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)
+					|| moduleName.equals(PennantConstants.DedupPolice)) {
 				this.rowCustCtgCode.setVisible(true);
 			}
 			if (moduleName.equals(PennantConstants.DedupFinance)) {
@@ -517,7 +518,8 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 	 */
 	public void doWriteBeanToComponents(DedupParm aDedupParm) {
 		logger.debug("Entering");
-		if(moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)){
+		if(moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)
+				|| moduleName.equals(PennantConstants.DedupPolice)){
 			this.queryModule.setValue(moduleName);
 			fillComboBox(this.custCtgCode,aDedupParm.getQuerySubCode(),PennantStaticListUtil.getCategoryType(),"");		
 		}else if(moduleName.equals(PennantConstants.DedupFinance)){
@@ -548,7 +550,8 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 			wve.add(we);
 		}
 		try {
-			if(moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)){
+			if(moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)
+					|| moduleName.equals(PennantConstants.DedupPolice)){
 				if(!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex()<1){
 					this.sQLQuery.setValue("");
 					this.tab_queryDesign.setSelected(true);
@@ -664,18 +667,11 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 				buildingTree(sqlQueryValueList, aDedupParm);
 			}
 			
-			if (aDedupParm.getQueryModule().equals(PennantConstants.DedupCust)) {
+			if (aDedupParm.getQueryModule().equals(PennantConstants.DedupCust) || aDedupParm.getQueryModule().equals(PennantConstants.DedupBlackList)
+					|| aDedupParm.getQueryModule().equals(PennantConstants.DedupPolice)) {
 				if(!aDedupParm.isNewRecord()){
 					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(PennantAppUtil.getlabelDesc(
-							this.custCtgCode.getSelectedItem().getValue().toString(), PennantStaticListUtil.getCategoryType())+PennantConstants.DedupCust);
-					// Method for Building tree with /Without existing params
-					buildingTree(sqlQueryValueList, aDedupParm);
-				}
-			} 
-			if (aDedupParm.getQueryModule().equals(PennantConstants.DedupBlackList)) {
-				if(!aDedupParm.isNewRecord()){
-					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(PennantAppUtil.getlabelDesc(
-							this.custCtgCode.getSelectedItem().getValue().toString(), PennantStaticListUtil.getCategoryType())+PennantConstants.DedupBlackList);
+							this.custCtgCode.getSelectedItem().getValue().toString(), PennantStaticListUtil.getCategoryType())+aDedupParm.getQueryModule());
 					// Method for Building tree with /Without existing params
 					buildingTree(sqlQueryValueList, aDedupParm);
 				}
@@ -1459,7 +1455,8 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 		readButtonClicked();// calling read button method for generating query
 
 		String resultQuery = "";
-		if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)) {
+		if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)
+				 || moduleName.equals(PennantConstants.DedupPolice)) {
 			resultQuery = "select "+ PennantConstants.CUST_DEDUP_LIST_FIELDS+" from CustomersDedup_View";	
 			if(!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex()<1){
 				throw new WrongValueException(custCtgCode, Labels.getLabel("STATIC_INVALID",
@@ -1480,7 +1477,8 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 		}
 		
 		
-		if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)) {
+		if (moduleName.equals(PennantConstants.DedupCust) || moduleName.equals(PennantConstants.DedupBlackList)
+				 || moduleName.equals(PennantConstants.DedupPolice)) {
 			resultQuery=resultQuery+" and lovDescCustCtgType='"+this.custCtgCode.getSelectedItem().getValue().toString()+"'";
 		}
 		

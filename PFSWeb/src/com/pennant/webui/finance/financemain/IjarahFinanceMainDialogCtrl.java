@@ -519,6 +519,12 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 				closeDialog((Window)childWindow, dialogWindowName);
 			}
 		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+
 		closeDialog(this.window_IjarahFinanceMainDialog, "FinanceMainDialog");
 	}
 	

@@ -508,6 +508,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				closeDialog((Window)childWindow, dialogWindowName);
 			}
 		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+		
 		closeDialog(this.window_MurabahaFinanceMainDialog, "FinanceMainDialog");
 	}
 

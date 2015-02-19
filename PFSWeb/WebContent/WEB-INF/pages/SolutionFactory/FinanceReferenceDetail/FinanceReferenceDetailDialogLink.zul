@@ -136,6 +136,9 @@
 										<button id="btnSearchBlackListDedupe"
 											image="/images/icons/LOVSearch.png" 
 											visible="false" />
+										<button id="btnSearchPoliceDedupe"
+											image="/images/icons/LOVSearch.png" 
+											visible="false" />
 									</hbox>
 								</row>
 								<row visible="true">

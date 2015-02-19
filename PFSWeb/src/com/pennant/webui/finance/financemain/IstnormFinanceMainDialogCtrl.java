@@ -506,6 +506,12 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				closeDialog((Window)childWindow, dialogWindowName);
 			}
 		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+
 		closeDialog(this.window_IstnormFinanceMainDialog, "FinanceMainDialog");
 	}
 

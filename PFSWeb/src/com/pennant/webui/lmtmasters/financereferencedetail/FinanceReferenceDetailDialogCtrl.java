@@ -181,6 +181,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	protected Button btnNew_FinanceDedupeLink;
 	protected Listbox listBoxBlackListRules;
 	protected Button btnNew_CustBlackListLink;
+	protected Listbox listBoxPoliceRules;
+	protected Button btnNew_CustPoliceLink;
 
 	private transient List<FinanceReferenceDetail> oldVar_CheckList;
 	private transient List<FinanceReferenceDetail> oldVar_Agreement;
@@ -191,6 +193,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	private transient List<FinanceReferenceDetail> oldVar_MailTemplate;
 	private transient List<FinanceReferenceDetail> oldVar_FinanceDedupe;
 	private transient List<FinanceReferenceDetail> oldVar_BlackListDedupe;
+	private transient List<FinanceReferenceDetail> oldVar_PoliceDedupe;
 	
 	private String roles;
 	int listRows;
@@ -281,6 +284,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.listBoxTemplates.setHeight(listboxHeight+"px");
 		this.listBoxDedupRules.setHeight(listboxHeight+"px");
 		this.listBoxBlackListRules.setHeight(listboxHeight+"px");
+		this.listBoxPoliceRules.setHeight(listboxHeight+"px");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -539,6 +543,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.oldVar_BlackListDedupe = aFinanceReference.getBlackListDedupeList();
 		dofillListbox(aFinanceReference.getBlackListDedupeList(), this.listBoxBlackListRules);
 		
+		this.oldVar_PoliceDedupe = aFinanceReference.getPoliceDedupeList();
+		dofillListbox(aFinanceReference.getPoliceDedupeList(), this.listBoxPoliceRules);
+		
 		logger.debug("Leaving");
 	}
 
@@ -735,6 +742,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		if (this.oldVar_BlackListDedupe.size() != this.listBoxBlackListRules.getItemCount()) {
 			return true;
 		}
+		if (this.oldVar_PoliceDedupe.size() != this.listBoxPoliceRules.getItemCount()) {
+			return true;
+		}
 		if (compare(this.oldVar_CheckList, this.listBoxFinanceCheckList)) {
 			return true;
 		} else if (compare(this.oldVar_Agreement, this.listboxFinanceAgreementLink)) {
@@ -752,6 +762,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		} else if (compare(this.oldVar_FinanceDedupe, this.listBoxDedupRules)) {
 			return true;
 		} else if (compare(this.oldVar_BlackListDedupe, this.listBoxBlackListRules)) {
+			return true;
+		} else if (compare(this.oldVar_PoliceDedupe, this.listBoxPoliceRules)) {
 			return true;
 		}
 
@@ -903,6 +915,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		this.btnNew_FinanceMailTemplate.setDisabled(false);
 		this.btnNew_FinanceDedupeLink.setDisabled(false);
 		this.btnNew_CustBlackListLink.setDisabled(false);
+		this.btnNew_CustPoliceLink.setDisabled(false);
 
 		enableOrDisablelistitems(this.listBoxFinanceCheckList, false);
 		enableOrDisablelistitems(this.listboxFinanceAgreementLink, false);
@@ -913,6 +926,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		enableOrDisablelistitems(this.listBoxTemplates, false);
 		enableOrDisablelistitems(this.listBoxDedupRules, false);
 		enableOrDisablelistitems(this.listBoxBlackListRules, false);
+		enableOrDisablelistitems(this.listBoxPoliceRules, false);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1008,6 +1022,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 		items.addAll(this.listBoxTemplates.getItems());
 		items.addAll(this.listBoxDedupRules.getItems());
 		items.addAll(this.listBoxBlackListRules.getItems());
+		items.addAll(this.listBoxPoliceRules.getItems());
 		
 		for (int i = 0; i < items.size(); i++) {
 			FinanceReferenceDetail lsFinanceReferenceDetail = (FinanceReferenceDetail) items.get(i).getAttribute("data");
@@ -1414,6 +1429,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseListCtrl<FinanceRef
 	
 	public void onClick$btnNew_CustBlackListLink(Event event) throws InterruptedException {
 		callLinakgeZul(financeReferenceDetail, PennantConstants.BlackListDedupe);
+	}
+	
+	public void onClick$btnNew_CustPoliceLink(Event event) throws InterruptedException {
+		callLinakgeZul(financeReferenceDetail, PennantConstants.PoliceDedupe);
 	}
 
 	public void onCheckListItemDoubleClicked(ForwardEvent event) throws Exception {

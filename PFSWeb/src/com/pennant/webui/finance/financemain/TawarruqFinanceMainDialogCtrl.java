@@ -2054,7 +2054,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 						refreshMaintainList();
 					}
 					
-					closeDialog(this.window_TawarruqFinanceMainDialog, "FinanceMainDialog");
+					closeWindow();
 				}
 
 			} catch (DataAccessException e) {
@@ -2362,7 +2362,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				
-				closeDialog(this.window_TawarruqFinanceMainDialog, "FinanceMainDialog");
+				closeWindow();
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}
@@ -2374,6 +2374,24 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 		logger.debug("Leaving");
 	}
+	
+	private void closeWindow(){
+		//De Allocate rights for Asset Details Tab Dialog
+		if(childWindow != null){
+			String dialogWindowName = getAssetDialogName();
+			if(dialogWindowName != null){
+				closeDialog((Window)childWindow, dialogWindowName);
+			}
+		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+
+		closeDialog(this.window_TawarruqFinanceMainDialog, "FinanceMainDialog");
+	}
+
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++ WorkFlow Creations ++++++++++++++++++//

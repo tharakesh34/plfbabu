@@ -113,16 +113,17 @@
 
 	<!-- Rules   Factory -->
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >
-	    <menuItem id="menu_Item_AccountingSet" zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"  rightName="menuItem_RMTMasters_AccountingSet"/>
+	    <menuItem id="menu_Item_AccountingSet" zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"  rightName="menuItem_RulesFactory_AccountingSet"/>
 		<menuItem id="menu_Item_AgrRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"   rightName="menuItem_RulesFactory_AgreementRules"/>
 		<menuItem id="menu_Item_BlackListDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/BlackListDedupParmList.zul"  rightName="menuItem_RulesFactory_BlackListDedupParm"/>
 	    <menuItem id="menu_Item_CheckList" zulNavigation="/WEB-INF/pages/ApplicationMaster/CheckList/CheckListList.zul"  rightName="menuItem_RulesFactory_CheckList"/>
 		<menuItem id="menu_Item_CheckRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"   rightName="menuItem_RulesFactory_CheckRules"/>
-	    <menuItem id="menu_Item_DedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"  rightName="menuItem_SolutionFactory_CustDedupParm"/>
+	    <menuItem id="menu_Item_DedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"  rightName="menuItem_RulesFactory_CustDedupParm"/>
 		<menuItem id="menu_Item_EligibilityRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"   rightName="menuItem_RulesFactory_EligibilityRules"/>
 		<menuItem id="menu_Item_FeeDetails" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"   rightName="menuItem_RulesFactory_FeeRules"/>
-		<menuItem id="menu_Item_LoanDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"  rightName="menuItem_SolutionFactory_LoanDedupParm"/>
+		<menuItem id="menu_Item_LoanDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"  rightName="menuItem_RulesFactory_LoanDedupParm"/>
 		<menuItem id="menu_Item_MailTemplate" zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
+		<menuItem id="menu_Item_PoliceDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"  rightName="menuItem_RulesFactory_PoliceDedupParm"/>
 		<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RuleFactory/OverdueCharge/OverdueChargeList.zul"  rightName="menuItem_RuleFactory_OverdueCharge"/> -->
 		<menuItem id="menu_Item_ProvisionRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"   rightName="menuItem_RulesFactory_ProvisionRules"/>
 		<!--<menuItem id="menu_Item_Rule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RuleList.zul"  rightName="menuItem_RulesFactory_Rule"/> -->
@@ -131,9 +132,9 @@
 		<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"   rightName="menuItem_RulesFactory_ScoringMetricRules"/>		
 		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_ScoringType"/> -->
 		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
-		<menuItem id="menu_Item_EMailRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EMailRuleDialog.zul"   rightName="menu_Item_EMailRule"/>
+		<menuItem id="menu_Item_EMailRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EMailRuleDialog.zul"   rightName="menuItem_RulesFactory_EMailRule"/>
 		<menuItem id="menu_Item_Notifications" zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul" />
-		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_ApplicationMaster_Query"/>
+		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_RulesFactory_Query"/>
 	</menu>
 	
 	<!-- Solution Factory -->
