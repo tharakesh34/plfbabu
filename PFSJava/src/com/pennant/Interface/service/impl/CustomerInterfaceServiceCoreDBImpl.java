@@ -1,11 +1,14 @@
 package com.pennant.Interface.service.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
@@ -117,6 +120,13 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
     }
 	public CustomerDataProcess getCustomerDataProcess() {
 	    return customerDataProcess;
+    }
+
+	@Override
+    public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers customer,
+            List<DedupParm> dedupParmList) {
+	    // TODO Auto-generated method stub
+	    return null;
     }
 
 

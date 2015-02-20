@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
+import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
 import com.pennant.coreinterface.model.CustomerCollateral;
@@ -20,4 +21,7 @@ public interface CustomerDataProcess {
 	String generateNewCIF(CoreBankNewCustomer customer)	throws CustomerNotFoundException;
 
 	CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws CustomerNotFoundException;
+
+	List<CoreBankBlackListCustomer> getBlackListedCustomers(CoreBankBlackListCustomer customer, String sqlQuery);
+
 }

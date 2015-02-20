@@ -13,6 +13,7 @@ import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
+import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
 import com.pennant.coreinterface.model.CustomerCollateral;
@@ -568,6 +569,57 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 		logger.debug("Leaving");
 		return coreCust;
 	}
+	
+	/**
+	 * Method for Fetching List of Black Listed Customers Based on Blacklisted Builded Query Object 
+	 */
+	@Override
+	public List<CoreBankBlackListCustomer> getBlackListedCustomers(CoreBankBlackListCustomer customer, String sqlQuery) {
+		logger.debug("Entering");
+		List<CoreBankBlackListCustomer> customerList = new ArrayList<CoreBankBlackListCustomer>();
+		
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1001));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1002));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1003));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1004));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1005));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1006));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1007));
+		
+		/*StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT * FROM Interface ");
+		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
+		selectSql.append(" AND CustCIF != :CustCIF ");
+
+		logger.debug("selectSql: " +  selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		ParameterizedBeanPropertyRowMapper<CoreBankBlackListCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(CoreBankBlackListCustomer.class);
+
+		try{
+			customerList = this.DAOObject().query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (EmptyResultDataAccessException e) {
+			e.printStackTrace();
+			logger.error(e);
+			customer = null;
+		}*/
+		logger.debug("Leaving");
+		return customerList;
+	}
+	private CoreBankBlackListCustomer setStaticBlackListData(CoreBankBlackListCustomer staticList, int count) {
+		staticList.setCustCIF("BL"+count);
+		staticList.setCustDOB(DateUtility.getUtilDate("01/01/1950", "dd/MM/yyyy"));
+		staticList.setCustFName(staticList.getCustCIF()+" First Name");
+		staticList.setCustLName(staticList.getCustCIF()+" Last Name");
+		staticList.setCustCRCPR("EID"+count);
+		staticList.setCustPassportNo("PPT"+count);
+		staticList.setPhoneNumber("9711234"+count);
+		staticList.setCustNationality("AE");
+		staticList.setEmployer("03");
+		return staticList;
+	}
+
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

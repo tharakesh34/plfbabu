@@ -4292,4 +4292,13 @@
 		parent="basisListCtrl" scope="prototype" >
 	</bean>
 	
+	<!-- Internal BlackLits Checking -->
+
+	<bean id="blackListCustomerctrl"
+		class="com.pennant.webui.systemmasters.blacklistCheck.BlackListCheckListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+	<bean name="fetchBlackListDetails"
+		class="com.pennant.webui.dedup.dedupparm.FetchBlackListDetails">
+		<property name="dedupParmService" ref="dedupParmService" />
+	</bean>
 </beans>

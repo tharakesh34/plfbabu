@@ -121,6 +121,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
+import com.pennant.webui.dedup.dedupparm.FetchBlackListDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -2512,6 +2513,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 					tFinanceDetail = FetchDedupDetails.getLoanDedup(getRole(),aFinanceDetail, this.window_MurabahaFinanceMainDialog);
+					
 					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isDedupFound()&& 
 							!tFinanceDetail.getFinScheduleData().getFinanceMain().isSkipDedup()) {
 						processCompleted = false;
@@ -2521,13 +2523,26 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doBlacklist)) {
-
+					
 					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					boolean isBlackListed = getFinanceDetailService().doCheckBlackListedCustomer(auditHeader);
-					tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(isBlackListed);
-					if (isBlackListed) {
-						processCompleted = false;
-						PTMessageUtils.showErrorMessage(Labels.getLabel("label_IsBlackListedCustomer"));
+					FinanceMain tFinanceMain = tFinanceDetail.getFinScheduleData().getFinanceMain();
+					
+					//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+					if(!StringUtils.trimToEmpty(tFinanceMain.getLovDescCustCoreBank()).equals("")){
+						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(
+								getFinanceDetailService().checkExistCustIsBlackListed(tFinanceMain.getCustID()));
+						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
+					}else{
+						tFinanceDetail = FetchBlackListDetails.getBlackListCustomers(tFinanceDetail ,
+								this.window_MurabahaFinanceMainDialog);
+					}
+					
+					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklisted()){
+						if(tFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklistOverride()) {
+							processCompleted = true;
+						}else{
+							processCompleted = false;
+						}
 					} else {
 						processCompleted = true;
 					}

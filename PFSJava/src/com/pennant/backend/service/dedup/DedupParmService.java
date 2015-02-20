@@ -46,6 +46,7 @@ package com.pennant.backend.service.dedup;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
@@ -72,5 +73,6 @@ public interface DedupParmService {
 	List<CustomerDedup> fetchCustomerDedupDetails(String userRole,CustomerDetails aCustomerDetails);
 	FinanceDedup getCustomerById(long custID);
 	List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup);
+	List<BlackListCustomers> fetchBlackListCustomers(String userRole,String finType,BlackListCustomers customer);
 	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail referenceDetail);
 }

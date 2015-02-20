@@ -140,7 +140,7 @@ public class IndexCtrl extends GFCBaseCtrl implements Serializable {
 		if (StringUtils.trimToEmpty(appName).contains("Loan")) {
 			this.imgsmallLogo.setSrc("/images/Pennant/PLFConvSmallLogo.png");
 		}
-
+        getRole();
 		/**
 		 * public Day(int day, int month, int year)Constructs a new one day time
 		 * period.

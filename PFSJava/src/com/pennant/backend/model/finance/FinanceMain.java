@@ -288,6 +288,7 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean 	skipDedup = false;
 	private boolean 	proceedDedup = false;
 	private boolean 	blacklisted = false;
+	private boolean 	blacklistOverride = false;
 	private boolean 	limitValid = false;
 	private boolean 	overrideLimit = false;
 	private BigDecimal 	amount;
@@ -2113,6 +2114,14 @@ public class FinanceMain implements java.io.Serializable {
 
 	public void setLinkedFinRef(String linkedFinRef) {
 	    this.linkedFinRef = linkedFinRef;
+    }
+
+	public boolean isBlacklistOverride() {
+	    return blacklistOverride;
+    }
+
+	public void setBlacklistOverride(boolean blacklistOverride) {
+	    this.blacklistOverride = blacklistOverride;
     }
 
 }

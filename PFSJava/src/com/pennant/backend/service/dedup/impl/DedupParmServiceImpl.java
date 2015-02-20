@@ -43,19 +43,23 @@
 
 package com.pennant.backend.service.dedup.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -76,6 +80,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private DedupParmDAO dedupParmDAO;
+	private CustomerInterfaceService customerInterfaceService;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -95,6 +100,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		this.dedupParmDAO = dedupParmDAO;
 	}
 
+	public CustomerInterfaceService getCustomerInterfaceService() {
+		return customerInterfaceService;
+	}
+	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
+		this.customerInterfaceService = customerInterfaceService;
+	}
+	
 	public DedupParm getDedupParm() {
 		return getDedupParmDAO().getDedupParm();
 	}
@@ -509,5 +521,77 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 		return auditDetail;
 	}
+
+	/**
+	 * Method for Fetch Black List Customer Details based on Rule conditions
+	 */
+	@Override
+	public List<BlackListCustomers> fetchBlackListCustomers(String userRole,String finType,
+			BlackListCustomers blCustData) {
+		logger.debug("Entering");
+		
+		List<BlackListCustomers> blackListCustomers = null;
+		
+		// Get QueryCode and override values from DB
+		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
+		financeRefDetail.setMandInputInStage(userRole + ",");
+		financeRefDetail.setFinType(finType);
+		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(
+				financeRefDetail,"_ABDView");
+		
+		if(queryCodeList != null && !queryCodeList.isEmpty()) {
+			String custCtgType = blCustData.getCustCtgType();
+
+			//Fetch Builded SQL Query based on Query Code  
+			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
+			for (FinanceReferenceDetail queryCode : queryCodeList) {
+				DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
+						PennantConstants.DedupBlackList, custCtgType);
+				dedupParmList.add(dedupParm);
+			}
+
+			//Using Queries Fetch Black Listed Customer Data either from Interface or 
+			//Existing Black Listed Table(Daily Download) Data
+			if (dedupParmList != null && !dedupParmList.isEmpty()) {
+				try {
+	                blackListCustomers = getCustomerInterfaceService().fetchBlackListedCustomers(blCustData, dedupParmList);
+                } catch (IllegalAccessException e) {
+	                e.printStackTrace();
+                } catch (InvocationTargetException e) {
+	                e.printStackTrace();
+                }
+				if (blackListCustomers != null) {
+					blackListCustomers = resetBlackListedCustData(blackListCustomers, queryCodeList);
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return blackListCustomers;
+	}
+
+
+	/**
+	 * Method for Resetting Override condition data
+	 * @param blackListCustomers
+	 * @param queryCodeList
+	 * @param dedupParmList 
+	 * @return
+	 */
+	private List<BlackListCustomers> resetBlackListedCustData(List<BlackListCustomers> blackListCustomers,List<FinanceReferenceDetail> queryCodeList) {
+		
+		//Check Override Condition based on Rule definitions on Process Editor
+		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
+			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());			
+        }
+		
+		//Reset Override COndition based on Query Code Executions
+		for (BlackListCustomers blackListCust : blackListCustomers) {
+	        if(queryOverrideMap.containsKey(blackListCust.getWatchListRule())){
+	        	blackListCust.setOverride(queryOverrideMap.get(blackListCust.getWatchListRule()));
+	        }
+        }
+		return blackListCustomers;
+    }
 	
 }

@@ -2645,20 +2645,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @return
 	 */
 	@Override
-	public boolean doCheckBlackListedCustomer(AuditHeader auditHeader){
+	public boolean checkExistCustIsBlackListed(long custId){
 		logger.debug("Entering");
 
-		FinanceDetail finDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		long custId = finDetail.getFinScheduleData().getFinanceMain().getCustID();
-
-		if(custId != Long.MIN_VALUE && custId != 0){
-			String custCRCPR = getCustomerDAO().getCustCRCPRById(custId,"");
-			if(!StringUtils.trimToEmpty(custCRCPR).equals("")){
-				Date blackListDate = getCustomerDAO().getCustBlackListedDate(custCRCPR, "");
-				if(blackListDate != null){
-					logger.debug("Leaving");
-					return true;
-				}
+		String custCRCPR = getCustomerDAO().getCustCRCPRById(custId,"");
+		if(!StringUtils.trimToEmpty(custCRCPR).equals("")){
+			Date blackListDate = getCustomerDAO().getCustBlackListedDate(custCRCPR, "");
+			if(blackListDate != null){
+				logger.debug("Leaving");
+				return true;
 			}
 		}
 		logger.debug("Leaving");

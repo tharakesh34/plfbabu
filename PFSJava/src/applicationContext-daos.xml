@@ -3061,6 +3061,7 @@
 	<bean name="dedupParmServiceTarget"
 		class="com.pennant.backend.service.dedup.impl.DedupParmServiceImpl">
 		<property name="dedupParmDAO" ref="dedupParmDAO" />
+		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	

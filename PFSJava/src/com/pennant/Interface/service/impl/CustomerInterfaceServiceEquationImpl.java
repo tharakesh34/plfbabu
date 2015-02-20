@@ -1,16 +1,20 @@
 package com.pennant.Interface.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.reports.AvailAccount;
 import com.pennant.backend.model.reports.AvailCollateral;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
@@ -19,6 +23,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankAvailCustomer;
+import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
 import com.pennant.coreinterface.model.CustomerLimit;
@@ -327,6 +332,42 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
         }
 		return list;
 	}
+
+	/**
+	 * Method for Fetching List of BlackListed Customer Data
+	 */
+	@Override
+    public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers customer,
+            List<DedupParm> dedupParmList) {
+
+		CoreBankBlackListCustomer coreBankBlackListCustomer = new CoreBankBlackListCustomer();
+		try {
+	        BeanUtils.copyProperties(coreBankBlackListCustomer, customer);
+        } catch (IllegalAccessException e) {
+	        e.printStackTrace();
+        } catch (InvocationTargetException e) {
+	        e.printStackTrace();
+        }
+		List<BlackListCustomers> blackListCustomerList = new ArrayList<BlackListCustomers>();
+		for (DedupParm dedupParm : dedupParmList) {
+			List<CoreBankBlackListCustomer> list = getCustomerDataProcess().getBlackListedCustomers(coreBankBlackListCustomer, dedupParm.getSQLQuery());
+			
+			for (int i = 0; i < list.size(); i++) {
+				CoreBankBlackListCustomer coreBankList = list.get(i);
+				BlackListCustomers blackListCustomer = new BlackListCustomers();
+				try {
+	                BeanUtils.copyProperties(blackListCustomer, coreBankList);
+                } catch (IllegalAccessException e) {
+	                e.printStackTrace();
+                } catch (InvocationTargetException e) {
+	                e.printStackTrace();
+                }
+				blackListCustomer.setWatchListRule(dedupParm.getQueryCode());
+				blackListCustomerList.add(blackListCustomer);
+            }
+        }
+		return blackListCustomerList;
+    }
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

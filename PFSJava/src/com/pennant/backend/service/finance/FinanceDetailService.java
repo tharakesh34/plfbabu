@@ -130,7 +130,7 @@ public interface FinanceDetailService {
 	List<CustomerIncome> prepareIncomeDetails();
 	CustomerEligibilityCheck getWIFCustEligibilityDetail(WIFCustomer customer, String productCode,
             String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal finAmount) throws IllegalAccessException, InvocationTargetException;
-	boolean doCheckBlackListedCustomer(AuditHeader auditHeader);
+	boolean checkExistCustIsBlackListed(long custID);
 	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
 	FinScheduleData getFinSchDataByFinRef(String finReference);
 	BigDecimal getCustRepayBankTotal(long custId);
