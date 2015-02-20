@@ -1463,7 +1463,7 @@ public class DedupParmDialogCtrl extends GFCBaseListCtrl<DedupParm>  implements 
 						new String[]{Labels.getLabel("label_DedupParmDialog_CustCtgCode.value")}));
 			}
 		}else if(moduleName.equals(PennantConstants.DedupFinance)){
-			resultQuery = "select * from FinanceMain_View ";	
+			resultQuery = "select * from FinanceDedup_View ";	
 		}
 		
 		resultQuery = resultQuery + "\n" + sQLQuery.getValue();

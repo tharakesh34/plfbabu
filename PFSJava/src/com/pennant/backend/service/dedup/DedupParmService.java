@@ -50,6 +50,7 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 
 /**
  * Service declaration for methods that depends on <b>DedupParm</b>.<br>
@@ -71,4 +72,5 @@ public interface DedupParmService {
 	List<CustomerDedup> fetchCustomerDedupDetails(String userRole,CustomerDetails aCustomerDetails);
 	FinanceDedup getCustomerById(long custID);
 	List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup);
+	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail referenceDetail);
 }

@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,62 @@ public class FinanceDedup {
 	private String custNationality;
 	private String custParentCountry;
 	private Date custDOB;
+	//new fields
+	private String mobileNumber;
+	private String chassisNumber;
+	private String engineNumber;
+	private BigDecimal financeAmount;
+	private BigDecimal profitAmount;
+	private String financeType;
+	private Date 	startDate;
+	private int 	formatter;
+	private String 	stage="";
+	private String 	dedupeRule;
+	private String custCRCPR="";
 	
+	
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getChassisNumber() {
+		return chassisNumber;
+	}
+
+	public void setChassisNumber(String chassisNumber) {
+		this.chassisNumber = chassisNumber;
+	}
+
+	public String getEngineNumber() {
+		return engineNumber;
+	}
+
+	public void setEngineNumber(String engineNumber) {
+		this.engineNumber = engineNumber;
+	}
+
+	
+	
+	public String getFinanceType() {
+		return financeType;
+	}
+
+	public void setFinanceType(String financeType) {
+		this.financeType = financeType;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
 	private String custPassportNo;
 	private String custCPRNo;
 	private String custCRNo;
@@ -190,5 +246,53 @@ public class FinanceDedup {
 		}
 		return changed;
 	}
+
+	public BigDecimal getFinanceAmount() {
+	    return financeAmount;
+    }
+
+	public void setFinanceAmount(BigDecimal financeAmount) {
+	    this.financeAmount = financeAmount;
+    }
+
+	public BigDecimal getProfitAmount() {
+	    return profitAmount;
+    }
+
+	public void setProfitAmount(BigDecimal profitAmount) {
+	    this.profitAmount = profitAmount;
+    }
+
+	public int getFormatter() {
+	    return formatter;
+    }
+
+	public void setFormatter(int formatter) {
+	    this.formatter = formatter;
+    }
+
+	public String getStage() {
+	    return stage;
+    }
+
+	public void setStage(String stage) {
+	    this.stage = stage;
+    }
+
+	public String getDedupeRule() {
+	    return dedupeRule;
+    }
+
+	public void setDedupeRule(String dedupeRule) {
+	    this.dedupeRule = dedupeRule;
+    }
+
+	public String getCustCRCPR() {
+	    return custCRCPR;
+    }
+
+	public void setCustCRCPR(String custCRCPR) {
+	    this.custCRCPR = custCRCPR;
+    }
 
 }

@@ -61,6 +61,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantConstants;
@@ -264,8 +265,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * Method for Fetching Dedup Finance List using Customer Dedup Details
 	 */
 	@Override	
-	public List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup){
-		DedupParm dedupParm = getApprovedDedupParmById(userRole, "Finance", "L");
+	public List<FinanceDedup> fetchFinDedupDetails(String queryCode, FinanceDedup aFinanceDedup){
+		DedupParm dedupParm = getApprovedDedupParmById(queryCode, PennantConstants.DedupFinance, "L");
 		
 		if(dedupParm!=null){
 			return getDedupParmDAO().fetchFinDedupDetails(aFinanceDedup ,dedupParm.getSQLQuery());	
@@ -273,6 +274,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return new ArrayList<FinanceDedup>();
 	}	
 	
+	@Override	
+	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail referenceDetail){
+		return getDedupParmDAO().getQueryCodeList(referenceDetail, "_AFDView");
+	}	
 	
 	/**
 	 * This method refresh the Record.

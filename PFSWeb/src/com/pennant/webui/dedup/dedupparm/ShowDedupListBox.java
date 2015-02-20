@@ -16,9 +16,14 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Column;
+import org.zkoss.zul.Columns;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.GroupsModelArray;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -29,13 +34,18 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.South;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ModuleMapping;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 
@@ -72,18 +82,19 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	public static Object show(Component parent, List<?> dedupList, String dedupFields) {
+	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup) {
 		isCustomerDedup = false;
-		return new ShowDedupListBox(parent, dedupList, dedupFields);
+		return new ShowDedupListBox(parent, dedupList, dedupFields, dedup);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Object show(Component parent, List<?> dedupList, String dedupFields, Object compareObject, List<?> listCompare, String[] listCompareFileds) {
+	public static Object show(Component parent, List<?> dedupList, String dedupFields, Object compareObject, 
+			List<?> listCompare, String[] listCompareFileds, FinanceDedup dedup) {
 		isCustomerDedup = true;
 		compObject = compareObject;
 		complist = (List<Object>) listCompare;
 		compListFileds = listCompareFileds;
-		return new ShowDedupListBox(parent, dedupList, dedupFields);
+		return new ShowDedupListBox(parent, dedupList, dedupFields, dedup);
 	}
 
 	/**
@@ -92,27 +103,109 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 * 
 	 * @param parent
 	 */
-	private ShowDedupListBox(Component parent, List<?> listCode, String dedupFields) {
+	private ShowDedupListBox(Component parent, List<?> listCode, String dedupFields, FinanceDedup dedup) {
 		super();
 		this.dedupListSize = (List<?>) listCode;
 		this.fieldString = dedupFields.split(",");
 		setParent(parent);
-		createBox();
+		createBox(dedup);
 	}
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	private void createBox() {
+	private void createBox(FinanceDedup dedup) {
 		logger.debug("Entering");
 		// Window
 		int borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight")).getValue().intValue() - PennantConstants.borderlayoutMainNorth;
 		int borderLayoutWidth = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopWidth")).getValue().intValue();
-		this.setWidth(((borderLayoutWidth * 3) / 5) + "px");
-		this.setHeight((borderLayoutHeight / 2) + 150 + "px");
-		int listRows = Math.round(borderLayoutHeight / 24) - 1;
+		this.setWidth((borderLayoutWidth -100) + "px");
+		this.setHeight((borderLayoutHeight -150) + "px");
+		
+		Div toolbardiv = new Div();
+		toolbardiv.setSclass("z-toolbar");
+		toolbardiv.setStyle("padding:0px;height:28px;");
+		Hbox hbox = new Hbox();
+		hbox.setPack("stretch");
+		hbox.setSclass("hboxRemoveWhiteStrips");
+		hbox.setWidth("100%");
+		hbox.setWidths("30%,40%,30%");
+		hbox.setParent(toolbardiv);
+		
+		Toolbar startToolbar = new Toolbar();
+		startToolbar.setAlign("start");
+		startToolbar.setSclass("toolbar-start");
+		
+		// Button Proceed
+		final Button btnProceed = new Button();
+		btnProceed.setSclass("z-toolbarbutton");
+		btnProceed.setLabel("NOT Duplicate");
+		btnProceed.addEventListener("onClick", new OnProceedListener());
+		btnProceed.setParent(startToolbar);
+		// Button Cancel
+		final Button btnCancel = new Button();
+		btnCancel.setSclass("z-toolbarbutton");
+		btnCancel.setLabel("Duplicate Record");
+		btnCancel.addEventListener("onClick", new OnCancelListener());
+		btnCancel.setParent(startToolbar);
+		
+		Toolbar centerToolbar = new Toolbar();
+		centerToolbar.setAlign("center");
+		centerToolbar.setSclass("toolbar-center");
+		
+		Label title = new Label("Finance Dedupe Alert");
+		centerToolbar.appendChild(title);
+		
+		Toolbar endToolbar = new Toolbar();
+		endToolbar.setAlign("end");
+		endToolbar.setSclass("toolbar-end");
+		
+		 // Button for Help
+		final Button btnHelp = new Button();
+		btnHelp.setSclass("z-toolbarbutton");
+		btnHelp.setLabel("Help");
+		btnHelp.setParent(endToolbar);
+		
+		hbox.appendChild(startToolbar);
+		hbox.appendChild(centerToolbar);
+		hbox.appendChild(endToolbar);
+		toolbardiv.appendChild(hbox);		
+		
+		// Grid Details for Checking Customer Details
+		Grid grid = new Grid();
+		Columns columns = new Columns();
+		Column column1 = new Column(); 
+		Column column2 = new Column(); 
+		Column column3 = new Column(); 
+		Column column4 = new Column(); 
+		column1.setWidth("15%");
+		column2.setWidth("35%");
+		column3.setWidth("15%");
+		column4.setWidth("35%");
+
+		columns.appendChild(column1);
+		columns.appendChild(column2);
+		columns.appendChild(column3);
+		columns.appendChild(column4);
+		grid.appendChild(columns);
+		
+		//Rows Preparation
+		Rows rows = new Rows();
+		grid.appendChild(rows);
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_CustCIF.value"), 
+				dedup.getCustCIF(), Labels.getLabel("label_FinanceDeDupList_mobileNumber.value"), 
+				dedup.getMobileNumber()));
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_chassisNumber.value"), 
+				dedup.getChassisNumber(), Labels.getLabel("label_FinanceDeDupList_engineNumber.value"), dedup.getEngineNumber()));
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_startDate.value"), 
+				DateUtility.formateDate(dedup.getStartDate(), PennantConstants.dateFormate),
+				Labels.getLabel("label_FinanceDeDupList_financeAmount.value"), PennantApplicationUtil.amountFormate(dedup.getFinanceAmount(), dedup.getFormatter())));
+		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_financeType.value"), 
+				dedup.getFinanceType(), Labels.getLabel("label_FinanceDeDupList_ProfitAmount.value"), PennantApplicationUtil.amountFormate(dedup.getProfitAmount(), dedup.getFormatter())));
+
+		int listRows = Math.round((borderLayoutHeight-300) / 25) - 2;
 		setPageSize(listRows);
 		this.setVisible(true);
 		this.setClosable(true);
-		this.setTitle("DeDup Details List");
+		
 		// BorderLayout
 		final Borderlayout bl = new Borderlayout();
 		bl.setHeight("100%");
@@ -122,38 +215,31 @@ public class ShowDedupListBox extends Window implements Serializable {
 		center.setBorder("none");
 		center.setFlex(true);
 		center.setParent(bl);
-		// BorderLayout
-		final Borderlayout bl2 = new Borderlayout();
-		bl2.setHeight("100%");
-		bl2.setWidth("100%");
-		bl2.setParent(center);
-		final North north2 = new North();
-		north2.setBorder("none");
-		north2.setHeight("35px");
-		north2.setParent(bl2);
-		// Paging
-		this._paging = new Paging();
-		this._paging.setDetailed(true);
-		this._paging.addEventListener("onPaging", new OnPagingEventListener());
-		this._paging.setPageSize(getPageSize());
-		this._paging.setParent(north2);
-		final Center center2 = new Center();
-		center2.setBorder("none");
-		center2.setFlex(true);
-		center2.setParent(bl2);
+		
+		final North north = new North();
+		north.setBorder("none");
+		north.setFlex(true);
+		north.setParent(bl);
+		toolbardiv.setParent(north);
+		
 		// DIV Center area
 		final Div divCenter2 = new Div();
 		divCenter2.setWidth("100%");
 		divCenter2.setHeight("100%");
-		divCenter2.setParent(center2);
+		divCenter2.setParent(center);
+		grid.setParent(divCenter2);
+		
 		// ListBox
 		this.listbox = new Listbox();
 		listbox.setStyle("border: none;");
-		this.listbox.setHeight(((borderLayoutHeight / 2)+40) + "px");
+		this.listbox.setHeight((borderLayoutHeight -300) + "px");
 		this.listbox.setVisible(true);
 		this.listbox.setSizedByContent(true);
 		this.listbox.setSpan("true");
 		this.listbox.setParent(divCenter2);
+		this.listbox.setMold("paging");
+		this.listbox.setPageSize(getPageSize());
+		
 		if (isCustomerDedup) {
 			this.listbox.setItemRenderer(new CustDedupBoxItemRenderer());
 		} else {
@@ -167,26 +253,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 			listheader.setHflex("min");
 			listheader.setParent(listhead);
 		}
-		final South south = new South();
-		south.setBorder("none");
-		south.setHeight("30px");
-		south.setParent(bl);
-		final Div divSouth = new Div();
-		divSouth.setWidth("100%");
-		divSouth.setHeight("100%");
-		divSouth.setParent(south);
-		// Button Proceed
-		final Button btnProceed = new Button();
-		btnProceed.setStyle("padding: 2px;font-weight:bold;");
-		btnProceed.setLabel("Proceed");
-		btnProceed.addEventListener("onClick", new OnProceedListener());
-		btnProceed.setParent(divSouth);
-		// Button Cancel
-		final Button btnCancel = new Button();
-		btnCancel.setStyle("padding: 2px;font-weight:bold;");
-		btnCancel.setLabel("Cancel");
-		btnCancel.addEventListener("onClick", new OnCancelListener());
-		btnCancel.setParent(divSouth);
+
 		setListModelList(new ListModelList(dedupListSize));
 		if (isCustomerDedup) {
 			this.listbox.setModel(new GroupsModelArray(dedupListSize.toArray(), new CompareCustomer()));
@@ -199,7 +266,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 			e.printStackTrace();
 			logger.fatal("", e);
 			this.detach();
-		}// Upgraded to ZK-6.5.1.1 Removed catch block for interrupted exception
+		}
 		logger.debug("Leaving");
 	}
 
@@ -250,14 +317,14 @@ public class ShowDedupListBox extends Window implements Serializable {
 				for (int j = 0; j < fieldString.length; j++) {
 					final Listcell lc;
 					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
-					if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(String.class)) {
-						fieldValue = (String) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+					if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+						fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(fieldValue);
-					} else if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(Date.class)) {
-						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+					} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
+						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(PennantAppUtil.formateDate(dateFieldValue, PennantConstants.dateFormat));
 					} else {
-						fieldValue = data.getClass().getMethod(fieldMethod, null).invoke(data, null).toString();
+						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
 					}
 					if (j == fieldString.length-1 || j == fieldString.length-2) {
@@ -278,14 +345,14 @@ public class ShowDedupListBox extends Window implements Serializable {
 				for (int j = 0; j < fieldString.length; j++) {
 					final Listcell lc;
 					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
-					if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(String.class)) {
-						fieldValue = (String) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+					if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+						fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(fieldValue);
-					} else if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(Date.class)) {
-						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+					} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
+						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 						lc = new Listcell(PennantAppUtil.formateDate(dateFieldValue, PennantConstants.dateFormat));
 					} else {
-						fieldValue = data.getClass().getMethod(fieldMethod, null).invoke(data, null).toString();
+						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
 					}
 					if (j != fieldString.length-1 && j != fieldString.length-2) {
@@ -311,14 +378,14 @@ public class ShowDedupListBox extends Window implements Serializable {
 			for (int j = 0; j < fieldString.length; j++) {
 				final Listcell lc;
 				String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
-				if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(String.class)) {
-					fieldValue = (String) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 					lc = new Listcell(fieldValue);
-				} else if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(Date.class)) {
-					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
+				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
+					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					lc = new Listcell(PennantAppUtil.formateDate(dateFieldValue, PennantConstants.dateFormat));
 				} else {
-					fieldValue = data.getClass().getMethod(fieldMethod, null).invoke(data, null).toString();
+					fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 					lc = new Listcell(fieldValue);
 				}
 				lc.setParent(item);
@@ -464,8 +531,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 					for (Object object : complist) {
 						boolean equal = false;
 						for (int i = 0; i < compListFileds.length; i++) {
-								String value1 = (String) object.getClass().getMethod("get" + compListFileds[i], null).invoke(object, null);
-								String value2 = (String) object1.getClass().getMethod("get" + compListFileds[i], null).invoke(object1, null);
+								String value1 = (String) object.getClass().getMethod("get" + compListFileds[i]).invoke(object);
+								String value2 = (String) object1.getClass().getMethod("get" + compListFileds[i]).invoke(object1);
 								if (StringUtils.trimToEmpty(value1).equals(StringUtils.trimToEmpty(value2))) {
 									equal = true;
 								} else {
@@ -478,9 +545,9 @@ public class ShowDedupListBox extends Window implements Serializable {
 					}
 				}
 			} else {
-				if (compObject.getClass().getMethod(filedMethod, null).getReturnType().equals(String.class)) {
-					String fieldValue1 = (String) object1.getClass().getMethod(filedMethod, null).invoke(object1, null);
-					String fieldValue2 = (String) compObject.getClass().getMethod(filedMethod, null).invoke(compObject, null);
+				if (compObject.getClass().getMethod(filedMethod).getReturnType().equals(String.class)) {
+					String fieldValue1 = (String) object1.getClass().getMethod(filedMethod).invoke(object1);
+					String fieldValue2 = (String) compObject.getClass().getMethod(filedMethod).invoke(compObject);
 					if (StringUtils.trimToEmpty(fieldValue1).equals(StringUtils.trimToEmpty(fieldValue2))) {
 						return true;
 					}
@@ -496,8 +563,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 		@Override
 		public int compare(Object o1, Object o2) {
 			try {
-				String fieldValue1 = (String) o1.getClass().getMethod("get" + fieldString[0], null).invoke(o1, null);
-				String fieldValue2 = (String) o2.getClass().getMethod("get" + fieldString[0], null).invoke(o2, null);
+				String fieldValue1 = (String) o1.getClass().getMethod("get" + fieldString[0]).invoke(o1);
+				String fieldValue2 = (String) o2.getClass().getMethod("get" + fieldString[0]).invoke(o2);
 				if (StringUtils.trimToEmpty(fieldValue1).equals(StringUtils.trimToEmpty(fieldValue2))) {
 					return 0;
 				} else {
@@ -509,44 +576,39 @@ public class ShowDedupListBox extends Window implements Serializable {
 			return 1;
 		}
 	}
-//	Grouping one type 1
-//	final class CustDedupBoxItemRenderer implements ListitemRenderer<Object> {
-//		@Override
-//		public void render(Listitem item, Object data, int count) throws Exception {
-//			if (item instanceof Listgroup) {
-//				final Listcell lc;
-//				String fieldValue = (String) data.getClass().getMethod("get" + fieldString[0], null).invoke(data, null);
-//				lc = new Listcell(fieldValue);
-//				lc.setSpan(fieldString.length);
-//				lc.setParent(item);
-//			} else {
-//				String fieldValue = "";
-//				Date dateFieldValue = new Date();
-//				for (int j = 0; j < fieldString.length; j++) {
-//					final Listcell lc;
-//					String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
-//					if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(String.class)) {
-//						fieldValue = (String) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
-//						lc = new Listcell(fieldValue);
-//					} else if (data.getClass().getMethod(fieldMethod, null).getReturnType().equals(Date.class)) {
-//						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod, null).invoke(data, null);
-//						lc = new Listcell(PennantAppUtil.formateDate(dateFieldValue, PennantConstants.dateFormat));
-//					} else {
-//						fieldValue = data.getClass().getMethod(fieldMethod, null).invoke(data, null).toString();
-//						lc = new Listcell(fieldValue);
-//					}
-//					if (j == 0) {
-//						lc.setLabel("");
-//					}
-//					if (compareObject(data, fieldMethod)) {
-//						lc.setStyle("color:red");
-//					}
-//					lc.setParent(item);
-//				}
-//			}
-//		}
-//	}
-	
-	
+
+	/**
+	 * Method for Preparation of Row Item
+	 * @param row
+	 * @param label1
+	 * @param value1
+	 * @param label2
+	 * @param value2
+	 * @return
+	 */
+	private Row prepareRow(Row row, String label1, String value1, String label2, String value2){
+		
+		Label label = new Label();
+		label.setValue(label1);
+		row.appendChild(label);
+		
+		Textbox textbox = new Textbox();
+		textbox.setWidth("150px");
+		textbox.setReadonly(true);
+		textbox.setValue(value1);
+		row.appendChild(textbox);
+		
+		label = new Label();
+		label.setValue(label2);
+		row.appendChild(label);
+		
+		textbox = new Textbox();
+		textbox.setWidth("150px");
+		textbox.setReadonly(true);
+		textbox.setValue(value2);
+		row.appendChild(textbox);
+		
+		return row;
+	}
 	
 }

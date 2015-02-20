@@ -1836,7 +1836,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl implements Serializable {
 			//Check Dedup
 			List<FacilityDetail> dedupList = getDedupList( getFacility().getCAFReference(), getFacility().getCustID());
 			if (dedupList!=null && !dedupList.isEmpty() && !getFacility().isSkipDedup()) {
-				Object dataObject =ShowDedupListBox.show(this.window_FacilityDialog, dedupList, "CAFReference,FacilityRef,FacilityType,FacilityFor,Revolving");
+				Object dataObject =ShowDedupListBox.show(this.window_FacilityDialog, dedupList, "CAFReference,FacilityRef,FacilityType,FacilityFor,Revolving",null);
 				ShowDedupListBox details= (ShowDedupListBox) dataObject;
 				int userAction= details.getUserAction();
 				if (userAction == -1) {
