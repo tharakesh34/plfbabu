@@ -57,8 +57,8 @@ public interface CarLoanDetailService {
 	CarLoanDetail getCarLoanDetail();
 	CarLoanDetail getNewCarLoanDetail();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	CarLoanDetail getCarLoanDetailById(String loanRef);
-	CarLoanDetail getApprovedCarLoanDetailById(String loanRef);
+	CarLoanDetail getCarLoanDetailById(String loanRef,int itemNumber);
+	CarLoanDetail getApprovedCarLoanDetailById(String loanRef,int ItemNumber);
 	CarLoanDetail refresh(CarLoanDetail carLoanDetail);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);

@@ -60,7 +60,6 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -335,7 +334,12 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 					logger.error(e);
 				}
 			}
-			
+			if (main != null && this.totVehicleValue.getValue() != null && main.getFinAmount() != null) {
+				BigDecimal finAmount = main.getFinAmount().subtract(main.getDownPayment());
+				if (finAmount.compareTo(this.totVehicleValue.getValue()) != 0) {
+					throw new WrongValueException(this.totVehicleValue, Labels.getLabel("MUST_BE_EQUAL", new String[] { Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value"), Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value") }));
+				}
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -455,7 +459,6 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 		this.totVehicleValue.setValue(String.valueOf(0));
 		if (vehicleLoanDetails != null) {
 			totCost = BigDecimal.ZERO;
-			this.numOfVehicle.setValue(String.valueOf(vehicleLoanDetails.size()));
 			setVehicleDetailLists(vehicleLoanDetails);
 			for (CarLoanDetail carLoanDetail : vehicleLoanDetails) {
 				Listitem item = new Listitem();
@@ -482,7 +485,8 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				lc.setParent(item);
 				lc = new Listcell(carLoanDetail.getCarChasisNo());
 				lc.setParent(item);
-				lc = new Listcell(String.valueOf(carLoanDetail.getVehicleValue()));
+				lc = new Listcell(String.valueOf(carLoanDetail.getVehicleValue()==null?
+						BigDecimal.ZERO:carLoanDetail.getVehicleValue()));
 				lc.setParent(item);
 				lc = new Listcell(carLoanDetail.getRecordStatus());
 				lc.setParent(item);
@@ -491,7 +495,25 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				item.setAttribute("data", carLoanDetail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onVehicleLoanDetailItemDoubleClicked");
 				this.listBoxVehicleLoanDetail.appendChild(item);
+				if(carLoanDetail.getVehicleValue() != null){
+					totCost = totCost.add(carLoanDetail.getVehicleValue());
+				}
 			}
+			this.numOfVehicle.setValue(String.valueOf(vehicleLoanDetails.size()));
+			this.totVehicleValue.setValue(totCost);
+			Listitem item = new Listitem();
+			Listcell lc;
+			lc = new Listcell(Labels.getLabel("label_FleetVehicleLoanDetailList_TotalAssetValue"));
+			lc.setParent(item);
+			lc.setStyle("font-weight:bold");
+			lc.setSpan(11);
+			lc = new Listcell(String.valueOf(totCost));
+			lc.setStyle("text-align:right");
+			lc.setParent(item);
+			lc = new Listcell();
+			lc.setSpan(2);
+			lc.setParent(item);
+			this.listBoxVehicleLoanDetail.appendChild(item);
 		}
 	}
 

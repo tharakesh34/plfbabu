@@ -53,7 +53,7 @@ public interface CarLoanDetailDAO {
 
 	CarLoanDetail getCarLoanDetail();
 	CarLoanDetail getNewCarLoanDetail();
-	CarLoanDetail getCarLoanDetailByID(String loanRef,String type);
+	CarLoanDetail getCarLoanDetailByID(String loanRef,int itemNumber,String type);
 	void update(CarLoanDetail carLoanDetail,String type);
 	void delete(CarLoanDetail carLoanDetail,String type);
 	String save(CarLoanDetail carLoanDetail,String type);

@@ -967,7 +967,7 @@ public class ManualPaymentDialogCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		String assetCode = aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescAssetCodeName();
 		if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
-			aFinanceDetail.setCarLoanDetail(getCarLoanDetailService().getCarLoanDetailById(financeMain.getFinReference()));
+			aFinanceDetail.setCarLoanDetail(getCarLoanDetailService().getCarLoanDetailById(financeMain.getFinReference(),PennantConstants.CarLoan_DefaultItemNumber));
 		}
 		
 		logger.debug("Leaving");

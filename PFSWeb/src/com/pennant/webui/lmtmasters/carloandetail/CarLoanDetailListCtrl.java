@@ -260,7 +260,7 @@ public class CarLoanDetailListCtrl extends GFCBaseListCtrl<CarLoanDetail> implem
 			// CAST AND STORE THE SELECTED OBJECT
 			final CarLoanDetail aCarLoanDetail = (CarLoanDetail) item.getAttribute("data");
 			final CarLoanDetail carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(
-					aCarLoanDetail.getLoanRefNumber());
+					aCarLoanDetail.getLoanRefNumber(),aCarLoanDetail.getItemNumber());
 
 			if(carLoanDetail==null){
 				String[] errParm= new String[1];

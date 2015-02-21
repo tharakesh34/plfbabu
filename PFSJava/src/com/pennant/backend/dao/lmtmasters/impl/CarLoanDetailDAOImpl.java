@@ -121,10 +121,11 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 	 * @return CarLoanDetail
 	 */
 	@Override
-	public CarLoanDetail getCarLoanDetailByID(final String loanRefNumber, String type) {
+	public CarLoanDetail getCarLoanDetailByID(final String loanRefNumber,int itemNumber, String type) {
 		logger.debug("Entering");
 		CarLoanDetail carLoanDetail = new CarLoanDetail();
 		carLoanDetail.setLoanRefNumber(loanRefNumber);
+		carLoanDetail.setItemNumber(itemNumber);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LoanRefNumber, ItemNumber, LoanRefType, CarLoanFor, CarUsage, CarVersion,");
@@ -144,7 +145,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		selectSql.append(" SellerType,DealerOrSellerAcc,VehicleItemNum,VehicleValue,PrivateDealerName,SalesPersonName");
 		selectSql.append(" FROM  LMTCarLoanDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LoanRefNumber =:LoanRefNumber ");
+		selectSql.append(" Where LoanRefNumber = :LoanRefNumber and ItemNumber = :ItemNumber");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(carLoanDetail);
@@ -248,7 +249,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		StringBuilder deleteSql = new StringBuilder();
 		deleteSql.append(" Delete From LMTCarLoanDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where LoanRefNumber =:LoanRefNumber");
+		deleteSql.append(" Where LoanRefNumber =:LoanRefNumber And ItemNumber = :ItemNumber");
 		
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(carLoanDetail);
@@ -357,7 +358,7 @@ public class CarLoanDetailDAOImpl extends BasisCodeDAO<CarLoanDetail>
 		updateSql.append(" SellerType = :SellerType,DealerOrSellerAcc = :DealerOrSellerAcc, ");
 		updateSql.append(" VehicleItemNum = :VehicleItemNum, VehicleValue = :VehicleValue,");
 		updateSql.append(" PrivateDealerName = :PrivateDealerName,SalesPersonName = :SalesPersonName");
-		updateSql.append(" Where LoanRefNumber =:LoanRefNumber");
+		updateSql.append(" Where LoanRefNumber =:LoanRefNumber And ItemNumber = :ItemNumber");
 
 		if (!type.endsWith("_TEMP")) {
 			updateSql.append(" AND Version= :Version-1");

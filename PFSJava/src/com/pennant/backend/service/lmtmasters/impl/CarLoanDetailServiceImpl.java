@@ -183,8 +183,8 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 	 * @return CarLoanDetail
 	 */
 	@Override
-	public CarLoanDetail getCarLoanDetailById(String id) {
-		return getCarLoanDetailDAO().getCarLoanDetailByID(id,"_View");
+	public CarLoanDetail getCarLoanDetailById(String id,int ItemNumber) {
+		return getCarLoanDetailDAO().getCarLoanDetailByID(id,ItemNumber,"_View");
 	}
 
 	/**
@@ -196,8 +196,8 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 	 *            (String)
 	 * @return CarLoanDetail
 	 */
-	public CarLoanDetail getApprovedCarLoanDetailById(String id) {
-		return getCarLoanDetailDAO().getCarLoanDetailByID(id,"_AView");
+	public CarLoanDetail getApprovedCarLoanDetailById(String id,int ItemNumber) {
+		return getCarLoanDetailDAO().getCarLoanDetailByID(id,ItemNumber,"_AView");
 	}	
 
 	/**
@@ -564,18 +564,19 @@ public class CarLoanDetailServiceImpl extends GenericService<CarLoanDetail> impl
 		
 		CarLoanDetail carLoanDetail= (CarLoanDetail) auditDetail.getModelData();
 		CarLoanDetail tempCarLoanDetail= null;
-		
 		if (carLoanDetail.isWorkflow()){
-			tempCarLoanDetail = getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(), "_Temp");
+			tempCarLoanDetail = getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(),carLoanDetail.getItemNumber(), "_Temp");
 		}
 		
-		CarLoanDetail befCarLoanDetail= getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(), "");
+		CarLoanDetail befCarLoanDetail= getCarLoanDetailDAO().getCarLoanDetailByID(carLoanDetail.getLoanRefNumber(),carLoanDetail.getItemNumber(), "");
 		CarLoanDetail oldCarLoanDetail= carLoanDetail.getBefImage();
 		
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
+		String[] errParm= new String[2];
+		String[] valueParm= new String[2];
 		valueParm[0]=carLoanDetail.getLoanRefNumber();
-		errParm[0]=PennantJavaUtil.getLabel("label_CarLoanRefNumber")+":"+valueParm[0];
+		valueParm[1]=String.valueOf(carLoanDetail.getItemNumber());
+		errParm[0]=PennantJavaUtil.getLabel("label_LoanRefNumber")+":"+valueParm[0];
+		errParm[1]=PennantJavaUtil.getLabel("label_ItemNumber")+":"+valueParm[1];
 		
 		if (carLoanDetail.isNew()) { // for New record or new record into work flow
 
