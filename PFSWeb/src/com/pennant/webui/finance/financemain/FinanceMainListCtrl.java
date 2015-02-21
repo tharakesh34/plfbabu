@@ -137,7 +137,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 	protected Listbox 		sortOperator_finPromotion;				// autowired
 	protected Textbox 		finPromotion;							// autowired
 	protected Listbox 		sortOperator_finRequestStage;			// autowired
-	protected Textbox 		finRequestStage;						// autowired	
+	protected Combobox 		finRequestStage;						// autowired	
 	protected Listbox 		sortOperator_finQueuePriority;			// autowired
 	protected Combobox 		finQueuePriority;						// autowired
 
@@ -232,6 +232,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.sortOperator_finPromotion.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_finRequestStage.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()) );
+		Filter[] filters = new Filter[3];
+		filters[0] = new Filter("RoleCategory", "Finance", Filter.OP_EQUAL);
+		filters[1] = new Filter("RoleCategory", "", Filter.OP_NOT_EQUAL);
+		filters[2] = Filter.in("RoleCd",getUserWorkspace().getUserRoles());
+		fillComboBox(this.finRequestStage,"",PennantAppUtil.getSecRolesList(filters),"");
 		this.sortOperator_finRequestStage.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_finQueuePriority.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()) );
@@ -266,26 +271,26 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.listheader_CustomerName.setSortDescending(new FieldComparator("LovDescCustShrtName", false));
 		this.listheader_CustomerName.setSortAscending(new FieldComparator("LovDescCustShrtName", true));
 
-		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
-		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));
+		this.listheader_FinReference.setSortAscending(new FieldComparator("FinReference", true));
+		this.listheader_FinReference.setSortDescending(new FieldComparator("FinReference", false));
 
-		this.listheader_FinType.setSortAscending(new FieldComparator("finType", true));
-		this.listheader_FinType.setSortDescending(new FieldComparator("finType", false));
+		this.listheader_FinType.setSortAscending(new FieldComparator("FinType", true));
+		this.listheader_FinType.setSortDescending(new FieldComparator("FinType", false));
 
-		this.listheader_Promotion.setSortAscending(new FieldComparator("lovdescFinProduct", true));
-		this.listheader_Promotion.setSortDescending(new FieldComparator("lovdescFinProduct", false));
+		this.listheader_Promotion.setSortAscending(new FieldComparator("LovDescFinProduct", true));
+		this.listheader_Promotion.setSortDescending(new FieldComparator("LovDescFinProduct", false));
 
-		this.listheader_FinCcy.setSortAscending(new FieldComparator("finCcy", true));
-		this.listheader_FinCcy.setSortDescending(new FieldComparator("finCcy", false));
+		this.listheader_FinCcy.setSortAscending(new FieldComparator("FinCcy", true));
+		this.listheader_FinCcy.setSortDescending(new FieldComparator("FinCcy", false));
 
-		this.listheader_Terms.setSortAscending(new FieldComparator("numberOfTerms", true));
-		this.listheader_Terms.setSortDescending(new FieldComparator("numberOfTerms", false));
+		this.listheader_Terms.setSortAscending(new FieldComparator("NumberOfTerms", true));
+		this.listheader_Terms.setSortDescending(new FieldComparator("NumberOfTerms", false));
 
-		this.listheader_FinAmount.setSortAscending(new FieldComparator("finAmount", true));
-		this.listheader_FinAmount.setSortDescending(new FieldComparator("finAmount", false));
+		this.listheader_FinAmount.setSortAscending(new FieldComparator("FinAmount", true));
+		this.listheader_FinAmount.setSortDescending(new FieldComparator("FinAmount", false));
 
-		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("finAmount", true));
-		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("finAmount", false));	
+		this.listheader_FinancingAmount.setSortAscending(new FieldComparator("FinAmount", true));
+		this.listheader_FinancingAmount.setSortDescending(new FieldComparator("FinAmount", false));	
 
 		/*this.listheader_RequestStage.setSortAscending(new FieldComparator("requestStage", true));
 		this.listheader_RequestStage.setSortDescending(new FieldComparator("requestStage", false));
@@ -307,7 +312,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.searchObj.addField("FinReference");
 		this.searchObj.addField("FinType");
 		this.searchObj.addField("FinCcy");
-		this.searchObj.addField("ScheduleMethod");
 		this.searchObj.addField("FinAmount");
 		this.searchObj.addField("DownPayment");
 		this.searchObj.addField("FeeChargeAmt");
@@ -317,15 +321,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.searchObj.addField("LovDescFinFormatter");
 		this.searchObj.addField("RecordStatus");
 		this.searchObj.addField("RecordType");
-		this.searchObj.addField("FinBranch");
-		this.searchObj.addField("lovdescfindivision");
-		this.searchObj.addField("LovDescPriKey");
-		this.searchObj.addField("LovDescCustCRCPR");
-		this.searchObj.addField("lovDescCustPassportNo");
-		this.searchObj.addField("LOvDescCustDOB");
-		this.searchObj.addField("FinContractDate");
 		this.searchObj.addField("NumberOfTerms");
-		this.searchObj.addField("lovdescFinProduct");
+		this.searchObj.addField("LovDescFinProduct");
+		this.searchObj.addField("NextRoleCode");
+		this.searchObj.addField("LovDescRequestStage");
 
 		/*	if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
 			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType.getValue().trim(), Filter.OP_EQUAL));
@@ -565,7 +564,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.sortOperator_finPromotion.setSelectedIndex(0);
 		this.finPromotion.setValue("");
 		this.sortOperator_finRequestStage.setSelectedIndex(0);
-		this.finRequestStage.setValue("");
+		this.finRequestStage.setSelectedIndex(0);
 		this.sortOperator_finQueuePriority.setSelectedIndex(0);
 		this.finQueuePriority.setSelectedIndex(0);
 		if (isWorkFlowEnabled()){
@@ -634,7 +633,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		// FinType
 		if (!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_finType.getSelectedItem(),this.finType.getValue().trim(), "FinType");
-			searchObj.addFilter(new Filter("lovdescFinProduct" , "" , Filter.OP_EQUAL));
+			searchObj.addFilter(new Filter("LovDescFinProduct" , "" , Filter.OP_EQUAL));
 		}
 		//finPassport
 		if (!StringUtils.trimToEmpty(this.finPassPort.getValue()).equals("")) {
@@ -655,18 +654,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		//finPromotion
 		if (!StringUtils.trimToEmpty(this.finPromotion.getValue()).equals("")) {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_finPromotion.getSelectedItem(),this.finPromotion.getValue().trim(), "FinType");
-			searchObj.addFilter(new Filter("lovdescFinProduct" , "" , Filter.OP_NOT_EQUAL));
+			searchObj.addFilter(new Filter("LovDescFinProduct" , "" , Filter.OP_NOT_EQUAL));
 		}
 		//finRequestStage
-		if (!StringUtils.trimToEmpty(this.finRequestStage.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finRequestStage.getSelectedItem(),this.finRequestStage.getValue().trim(), "");
+		if (this.finRequestStage.getSelectedIndex() > 0 && !PennantConstants.List_Select.equals(this.finRequestStage.getSelectedItem().getValue())) {
+			searchObj = getSearchFilter(searchObj,
+					this.sortOperator_finRequestStage.getSelectedItem(),
+					this.finRequestStage.getSelectedItem().getValue().toString(), "NextRoleCode");
 		}
 		//finRequestDate
 		if (this.finRequestDate.getValue()!=null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finRequestDate.getSelectedItem(), DateUtility.formatDate(this.finRequestDate.getValue(), PennantConstants.DBDateFormat), "FinContractDate");
 		}
 		//finQueuePriority
-		if (this.finQueuePriority.getValue()!= null && !PennantConstants.List_Select.equals(this.finQueuePriority.getSelectedItem().getValue())) {
+		if (this.finQueuePriority.getSelectedIndex() > 0  && !PennantConstants.List_Select.equals(this.finQueuePriority.getSelectedItem().getValue())) {
 			searchObj = getSearchFilter(searchObj,
 					this.sortOperator_finQueuePriority.getSelectedItem(),
 					this.finQueuePriority.getSelectedItem().getValue().toString(), "");

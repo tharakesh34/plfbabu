@@ -926,6 +926,27 @@ public class PennantAppUtil {
 		return securityRoles;
 	}
 	
+	public static ArrayList<ValueLabel> getSecRolesList(Filter[] filters) {
+		ArrayList<ValueLabel> securityRoles = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		
+		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
+		searchObject.addTabelName("SecRoles");
+		
+		if(filters != null && filters.length > 0){
+			for (int i = 0; i < filters.length; i++) {
+				searchObject.addFilter(filters[i]);
+			}
+		}
+		
+		List<SecurityRole> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel secRoleLabel = new ValueLabel(appList.get(i).getRoleCd(),appList.get(i).getRoleDesc());
+			securityRoles.add(secRoleLabel);
+		}
+		return securityRoles;
+	}
+	
 	public static ArrayList<ValueLabel> getAgreementDefinitionList() {
 		ArrayList<ValueLabel> aggList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");

@@ -9,7 +9,7 @@
 
 	<window>
 		<window id="window_SelectFinanceTypeDialog"
-			title="${c:l('window_SelectFinanceTypeDialog.title')}"
+			title="${c:l('window_SelectFinanceTypeDialog.title')}" style="align:start;"
 			border="normal" apply="${selectFinanceTypeDialogCtrl}" width="550px"
 			height="220px" sizable="false" closable="true">
 
@@ -19,10 +19,11 @@
 						style="border:0px">
 						<columns>
 							<column width="150px" />
+							<column width="60px" />
 							<column />
 						</columns>
 						<rows>
-							<row id="row_selectCustomer">
+							<row id="row_selectCustomer" spans="1,2">
 								<label
 									id="label_SelectFinanceTypeDialog_Customer"
 									value="${c:l('label_SelectFinanceTypeDialog_Customer.value')}" />
@@ -34,7 +35,8 @@
 										label="${c:l('label_SelectFinanceTypeDialog_ExistingCust.value')}" />
 								</radiogroup>
 							</row>
-							<row id="customerRow" visible="false">
+							<row id="customerRow" visible="false"
+								spans="1,2">
 								<label
 									id="label_SelectFinanceTypeDialog_CustCIF"
 									value="${c:l('label_SelectFinanceTypeDialog_CustCIF.value')}" />
@@ -44,42 +46,37 @@
 									<textbox id="custCIF" width="120px" />
 								</hbox>
 							</row>
-							<row id="finTypeRow" visible="true">
+							<row id="finTypeRow" visible="true"
+								spans="1,2">
 								<label
 									id="label_SelectFinanceTypeDialog_FinType"
 									value="${c:l('label_SelectFinanceTypeDialog_FinType.value')}" />
 								<extendedcombobox id="finType" />
 							</row>
-							<row id="promotionCodeRow" visible="true">
+							<row id="promotionCodeRow" visible="true"
+								spans="1,2">
 								<label
 									id="label_SelectFinanceTypeDialog_PromotionCode"
 									value="${c:l('label_SelectFinanceTypeDialog_PromotionCode.value')}" />
 								<extendedcombobox id="promotionCode" />
 							</row>
-							<row visible="true" >
-								<label  />
+							<row visible="true" spans="2,1">
+								<label />
 								<label value="OR"
-									style="font-weight:bold;float:center;font-color:orange;" />
+									style="font-weight:bold;color:#122975;" />
 							</row>
-							<row id="wIfReferenceRow" visible="true">
+							<row id="wIfReferenceRow" visible="true"
+								spans="1,2">
 								<label
 									id="label_SelectFinanceTypeDialog_WIFFinaceRef"
 									value="${c:l('label_SelectFinanceTypeDialog_WIFFinaceRef.value')}" />
 								<extendedcombobox id="wIfFinaceRef" />
 							</row>
-							<row visible="true">
-								<space spacing="200px" />
-								<hbox>
-									<space spacing="2px" />
-									<hbox>
-										<space spacing="10px" />
-										<button id="btnProceed"
-											label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
-											style="align:center"
-											tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
-										</button>
-									</hbox>
-								</hbox>
+							<row visible="true" spans="2,1">
+								<space />
+								<button id="btnProceed"
+									label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+									tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}" />
 							</row>
 						</rows>
 					</grid>
