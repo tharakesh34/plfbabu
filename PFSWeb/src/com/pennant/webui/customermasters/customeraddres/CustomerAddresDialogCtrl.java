@@ -92,6 +92,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerListCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -200,6 +201,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
     private transient String  mortgAddrCountryTemp;
     private transient String  mortgAddrProvinceTemp;
     private String userRole="";
+    private FinanceCustomerListCtrl financeCustomerListCtrl;
+	private boolean isFinanceCustomer = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -251,7 +254,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		
 		if(args.containsKey("customerDialogCtrl")){
-			
+			isFinanceCustomer = false; 
 			setCustomerDialogCtrl((CustomerDialogCtrl) args.get("customerDialogCtrl"));
 			setNewCustomer(true);
 			
@@ -265,6 +268,24 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
 				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerAddresDialog");
+			}
+		}
+		
+       if(args.containsKey("financeCustomerListCtrl")){
+			
+			isFinanceCustomer = true ;
+			setFinanceCustomerListCtrl((FinanceCustomerListCtrl) args.get("financeCustomerListCtrl"));
+			setNewCustomer(true);
+			
+			if(args.containsKey("newRecord")){
+				setNewRecord(true);
+			}else{
+				setNewRecord(false);
+			}
+			this.customerAddres.setWorkflowId(0);
+			if(args.containsKey("roleCode")){
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
 			}
 		}
 		
@@ -1059,20 +1080,31 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 			}
 
 			try {
-				if(isNewCustomer()){
+				if(isFinanceCustomer){
 					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerAddres,tranType);
+					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerAddres, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || 
-							retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerAddress(this.customerAddress);
-						// send the data back to customer
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getFinanceCustomerListCtrl().doFillCustomerAddressDetails(this.customerAddress);
+						this.window_CustomerAddresDialog.onClose();
+					}
+				}else{
+					if(isNewCustomer()){
+						tranType=PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader =  newCustomerProcess(aCustomerAddres,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || 
+								retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillCustomerAddress(this.customerAddress);
+							// send the data back to customer
+							closeWindow();
+						}	
+					}else if (doProcess(aCustomerAddres, tranType)) {
+						refreshList();
 						closeWindow();
-					}	
-				}else if (doProcess(aCustomerAddres, tranType)) {
-					refreshList();
-					closeWindow();
+					}
 				}
 			} catch (DataAccessException e) {
 				logger.error(e);
@@ -1306,19 +1338,29 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		// save it to database
 		try {
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCustomerProcess(aCustomerAddres,tranType);
+			if(isFinanceCustomer){
+				AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerAddres, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getCustomerDialogCtrl().doFillCustomerAddress(this.customerAddress);
-					// send the data back to customer
+					getFinanceCustomerListCtrl().doFillCustomerAddressDetails(this.customerAddress);
+					this.window_CustomerAddresDialog.onClose();
+				}
+			}else{
+				if(isNewCustomer()){
+					AuditHeader auditHeader =  newCustomerProcess(aCustomerAddres,tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getCustomerDialogCtrl().doFillCustomerAddress(this.customerAddress);
+						// send the data back to customer
+						closeWindow();
+					}
+				}else if (doProcess(aCustomerAddres, tranType)) {
+					refreshList();
+					// Close the Existing Dialog
 					closeWindow();
 				}
-			}else if (doProcess(aCustomerAddres, tranType)) {
-				refreshList();
-				// Close the Existing Dialog
-				closeWindow();
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1390,6 +1432,72 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 		return auditHeader;
 	} 
+	
+	
+	private AuditHeader newFinanceCustomerProcess(CustomerAddres aCustomerAddres,String tranType){
+		boolean recordAdded=false;
+		
+		AuditHeader auditHeader= getAuditHeader(aCustomerAddres, tranType);
+		customerAddress = new ArrayList<CustomerAddres>();
+		
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(aCustomerAddres.getId());
+		valueParm[1] = aCustomerAddres.getCustAddrType();
+
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + ":"+valueParm[1];
+		
+		if(getFinanceCustomerListCtrl().getCustomerAddressDetailList() !=null && getFinanceCustomerListCtrl().getCustomerAddressDetailList().size()>0){
+			for (int i = 0; i < getFinanceCustomerListCtrl().getCustomerAddressDetailList().size(); i++) {
+				CustomerAddres customerAddres = getFinanceCustomerListCtrl().getCustomerAddressDetailList().get(i);
+				
+				if(aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())){ // Both Current and Existing list addresses same
+					
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+					
+					
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							customerAddress.add(aCustomerAddres);
+						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							customerAddress.add(aCustomerAddres);
+						}else if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getFinanceCustomerListCtrl().getCustomerDetails().getAddressList().size(); j++) {
+								CustomerAddres address =  getFinanceCustomerListCtrl().getCustomerDetails().getAddressList().get(j);
+								if(address.getCustID() == aCustomerAddres.getCustID() && address.getCustAddrType().equals(aCustomerAddres.getCustAddrType())){
+									customerAddress.add(address);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							customerAddress.add(customerAddres);
+						}
+					}
+				}else{
+					customerAddress.add(customerAddres);
+				}
+			}
+		}
+		
+		if(!recordAdded){
+			customerAddress.add(aCustomerAddres);
+		}
+		return auditHeader;
+	} 
+	
 	
 	/**
 	 * Set the workFlow Details List to Object
@@ -1890,5 +1998,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		}
 
 		return value;
+	}
+
+	public FinanceCustomerListCtrl getFinanceCustomerListCtrl() {
+		return financeCustomerListCtrl;
+	}
+	public void setFinanceCustomerListCtrl(
+			FinanceCustomerListCtrl financeCustomerListCtrl) {
+		this.financeCustomerListCtrl = financeCustomerListCtrl;
 	}
 }

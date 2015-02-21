@@ -75,6 +75,7 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
+import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -164,7 +165,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, " );
 		selectSql.append(" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5," );
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
-		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber," );
+		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer," );
 		
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName, lovDescCustBaseCcyName, lovDescCustStsName,");
@@ -331,7 +332,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" CustAddlVar6, CustAddlVar7, CustAddlVar8, CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1," );
         insertSql.append(" CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5, CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4,CustAddlInt5 ," );
         insertSql.append(" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR," );
-        insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, " );
+        insertSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer," );
         
         insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
         insertSql.append(" Values(:CustID, :CustCIF, :CustCoreBank, :CustCtgCode, :CustTypeCode, :CustSalutationCode, :CustFName, :CustMName," );
@@ -350,7 +351,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
         insertSql.append(" :CustAddlVar8, :CustAddlVar9, :CustAddlVar10, :CustAddlVar11, :CustAddlDec1, :CustAddlDec2, :CustAddlDec3, :CustAddlDec4," );
         insertSql.append(" :CustAddlDec5, :CustAddlInt1, :CustAddlInt2, :CustAddlInt3, :CustAddlInt4, :CustAddlInt5," );
         insertSql.append(" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR," );
-        insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber," );
+        insertSql.append(" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer," );
         insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
         logger.debug("insertSql: "+ insertSql.toString());
@@ -415,7 +416,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		updateSql.append(" CustAddlInt5 = :CustAddlInt5,DedupFound=:DedupFound,SkipDedup=:SkipDedup,CustTotalExpense=:CustTotalExpense," );
 		updateSql.append(" CustBlackListDate = :CustBlackListDate, NoOfDependents=:NoOfDependents,CustCRCPR=:CustCRCPR," );
 		updateSql.append(" JointCust = :JointCust, JointCustName = :JointCustName, JointCustDob = :JointCustDob," );
-		updateSql.append(" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber," );
+		updateSql.append(" ContactPersonName = :ContactPersonName, EmailID = :EmailID, PhoneNumber = :PhoneNumber, SalariedCustomer = :SalariedCustomer," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where CustID =:CustID");
@@ -1115,6 +1116,33 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return customer;
 	}
 		
+	/**
+	 * Fetch the Customer Finance Details
+	 * 
+	 * @param curBD
+	 * @param nextBD
+	 * @return
+	 */
+	@Override
+	public List<AvailFinance> getCustomerFinanceDetailById(long custId) {
+		logger.debug("Entering");
+		AvailFinance availFinance = new AvailFinance();
+		availFinance.setCustId(custId);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference , FinCcy , FinAmount, DrawnPrinciple , OutStandingBal, FinStartDate, NoInst," );
+		selectSql.append(" CcySpotRate , LastRepay , MaturityDate , ProfitRate , RepayFrq , Status, CcyEditField, FinDivision , FinDivisionDesc"); 
+ 		selectSql.append(" from AvailFinance_View ");
+ 		selectSql.append(" Where CustId = :CustId");
+ 		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(availFinance);
+		RowMapper<AvailFinance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailFinance.class);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+	}
+	
+	
 	private ErrorDetails  getError(String errorId, String custCIF,String custCtgCode, String userLanguage){
 		String[][] parms= new String[2][2]; 
 

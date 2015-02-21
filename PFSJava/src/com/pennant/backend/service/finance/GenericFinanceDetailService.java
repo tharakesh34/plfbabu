@@ -89,6 +89,7 @@ import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
 import com.pennant.backend.service.finance.impl.FinanceDetailServiceImpl;
 import com.pennant.backend.service.lmtmasters.CarLoanDetailService;
@@ -160,6 +161,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private CommidityLoanDetailService commidityLoanDetailService;
 	private ContractorAssetDetailService contractorAssetDetailService;
 	private SharesDetailService sharesDetailService;
+	private CustomerDetailsService customerDetailsService;
 
 	public enum Assets {
 		VEHICLE,
@@ -204,7 +206,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		switch(assest) {
 			case VEHICLE:
 				CarLoanDetail  carLoanDetail;
-				carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(finReference);			
+				carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(finReference,PennantConstants.CarLoan_DefaultItemNumber);			
 				financeDetail.setCarLoanDetail(carLoanDetail);
 				break;
 			case EDUCATON:
@@ -2131,6 +2133,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
 	}
-	
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
 
 }

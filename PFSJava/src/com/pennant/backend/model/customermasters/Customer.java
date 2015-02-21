@@ -46,6 +46,8 @@ package com.pennant.backend.model.customermasters;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoginUserDetails;
@@ -204,6 +206,7 @@ public class Customer implements java.io.Serializable,Entity {
 	private int custAddlInt3;
 	private int custAddlInt4;
 	private int custAddlInt5;
+	private boolean salariedCustomer;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
@@ -244,6 +247,14 @@ public class Customer implements java.io.Serializable,Entity {
 		this.setId(id);
 	}
 
+	public Set<String> getExcludeFields(){
+		Set<String> excludeFields=new HashSet<String>();
+		excludeFields.add("proceedToDedup");
+		excludeFields.add("dedupFound");
+		excludeFields.add("skipDedup");
+		return excludeFields;
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1500,4 +1511,12 @@ public class Customer implements java.io.Serializable,Entity {
 	public void setPhoneNumber(String phoneNumber) {
 	    this.phoneNumber = phoneNumber;
     }
+
+	public boolean isSalariedCustomer() {
+		return salariedCustomer;
+	}
+	public void setSalariedCustomer(boolean salariedCustomer) {
+		this.salariedCustomer = salariedCustomer;
+	}
+	
 }

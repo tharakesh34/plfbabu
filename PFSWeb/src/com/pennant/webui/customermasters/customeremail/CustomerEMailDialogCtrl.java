@@ -90,6 +90,7 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -170,6 +171,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
+	private FinanceCustomerListCtrl financeCustomerListCtrl;
+	private boolean isFinanceCustomer = false;
 
 	/**
 	 * default constructor.<br>
@@ -222,7 +225,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 
 		if(args.containsKey("customerDialogCtrl")){
-
+			isFinanceCustomer = false; 
 			setCustomerDialogCtrl((CustomerDialogCtrl) args.get("customerDialogCtrl"));
 			setNewCustomer(true);
 
@@ -235,6 +238,23 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
 				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEMailDialog");
+			}
+		}
+      if(args.containsKey("financeCustomerListCtrl")){
+			
+			isFinanceCustomer = true ;
+			setFinanceCustomerListCtrl((FinanceCustomerListCtrl) args.get("financeCustomerListCtrl"));
+			setNewCustomer(true);
+			
+			if(args.containsKey("newRecord")){
+				setNewRecord(true);
+			}else{
+				setNewRecord(false);
+			}
+			this.customerEMail.setWorkflowId(0);
+			if(args.containsKey("roleCode")){
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerEMail.isWorkflow(),
@@ -810,19 +830,30 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			}
 
 			try {
-				if(isNewCustomer()){
+				if(isFinanceCustomer){
 					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerEMail,tranType);
+					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerEMail, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerEmail(this.customerEmails);
-						// send the data back to customer
+						getFinanceCustomerListCtrl().doFillCustomerEmailDetails(this.customerEmails);
+						this.window_CustomerEMailDialog.onClose();
+					}
+				}else{
+					if(isNewCustomer()){
+						tranType=PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader =  newCustomerProcess(aCustomerEMail,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillCustomerEmail(this.customerEmails);
+							// send the data back to customer
+							closeWindow();
+						}	
+					}else if(doProcess(aCustomerEMail, tranType)) {
+						refreshList();
 						closeWindow();
-					}	
-				}else if(doProcess(aCustomerEMail, tranType)) {
-					refreshList();
-					closeWindow();
+					}
 				}
 			} catch (DataAccessException e) {
 				logger.error(e);
@@ -1033,7 +1064,15 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 
 		// save it to database
 		try {
-
+			if(isFinanceCustomer){
+				AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerEMail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+					getFinanceCustomerListCtrl().doFillCustomerEmailDetails(this.customerEmails);
+					this.window_CustomerEMailDialog.onClose();
+				}
+			}else{
 			if(isNewCustomer()){
 				AuditHeader auditHeader =  newCustomerProcess(aCustomerEMail,tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
@@ -1047,6 +1086,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 				refreshList();
 				// Close the Existing Dialog
 				closeWindow();
+			}
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1117,6 +1157,76 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			}
 		}
 
+		if(!recordAdded){
+			customerEmails.add(aCustomerEMail);
+		}
+		logger.debug("Leaving");
+		return auditHeader;
+	} 
+	
+	
+	private AuditHeader newFinanceCustomerProcess(CustomerEMail aCustomerEMail,String tranType){
+		logger.debug("Entering");
+		boolean recordAdded=false;
+		
+		AuditHeader auditHeader= getAuditHeader(aCustomerEMail, tranType);
+		customerEmails = new ArrayList<CustomerEMail>();
+		
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+		
+		valueParm[0] = String.valueOf(aCustomerEMail.getId());
+		valueParm[1] = aCustomerEMail.getCustEMailTypeCode();
+		
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode")+ ":" + valueParm[1];
+		
+		if(getFinanceCustomerListCtrl().getCustomerEmailDetailList()!=null && getFinanceCustomerListCtrl().getCustomerEmailDetailList().size()>0){
+			for (int i = 0; i < getFinanceCustomerListCtrl().getCustomerEmailDetailList().size(); i++) {
+				CustomerEMail customerEMail = getFinanceCustomerListCtrl().getCustomerEmailDetailList().get(i);
+				
+				
+				if(aCustomerEMail.getCustEMailTypeCode().equals(customerEMail.getCustEMailTypeCode())){ // Both Current and Existing list rating same
+					
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD,"41001",
+										errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+					
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							customerEmails.add(aCustomerEMail);
+						}else if(aCustomerEMail.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							customerEmails.add(aCustomerEMail);
+						}else if(aCustomerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getFinanceCustomerListCtrl().getCustomerDetails().getCustomerEMailList().size(); j++) {
+								CustomerEMail email =  getFinanceCustomerListCtrl().getCustomerDetails().getCustomerEMailList().get(j);
+								if(email.getCustID() == aCustomerEMail.getCustID() && 
+										email.getCustEMailTypeCode().equals(aCustomerEMail.getCustEMailTypeCode())){
+									customerEmails.add(email);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							customerEmails.add(customerEMail);
+						}
+					}
+				}else{
+					customerEmails.add(customerEMail);
+				}
+			}
+		}
+		
 		if(!recordAdded){
 			customerEmails.add(aCustomerEMail);
 		}
@@ -1543,4 +1653,13 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 
 		return value;
 	}
+
+	public FinanceCustomerListCtrl getFinanceCustomerListCtrl() {
+		return financeCustomerListCtrl;
+	}
+	public void setFinanceCustomerListCtrl(
+			FinanceCustomerListCtrl financeCustomerListCtrl) {
+		this.financeCustomerListCtrl = financeCustomerListCtrl;
+	}
+	
 }

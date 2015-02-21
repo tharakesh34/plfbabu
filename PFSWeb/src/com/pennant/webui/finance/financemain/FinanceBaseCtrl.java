@@ -121,6 +121,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -158,6 +159,7 @@ import com.pennant.coreinterface.exception.AccountNotFoundException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -529,6 +531,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Tabpanels 	tabpanelsBoxIndexCenter;
 	protected Tab 			financeTypeDetailsTab;
 	protected Tab 			addlDetailTab;
+	protected Tab 			custDetailTab;
 	protected Rows 			additionalDetails;
 	
 	//External Fields usage for Individuals ---->  Schedule Details
@@ -554,6 +557,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private transient FinanceCheckListReferenceDialogCtrl  financeCheckListReferenceDialogCtrl = null; 
 	private transient Object childWindowDialogCtrl = null;
  	private transient StepDetailDialogCtrl stepDetailDialogCtrl = null;
+ 	private transient FinanceCustomerListCtrl financeCustomerListCtrl = null;
 
 
 	//Bean Setters  by application Context
@@ -1500,6 +1504,43 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			}else{
 				map = null;
 			}
+
+		} catch (Exception e) {
+			logger.error(e);
+			Messagebox.show(e.toString());
+		}
+		logger.debug("Leaving");
+	}
+	
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void appendCustomerDetailTab() throws InterruptedException {
+		logger.debug("Entering");
+
+		try {
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("roleCode", getRole());
+			map.put("financeMainDialogCtrl", this);
+			map.put("financedetail", getFinanceDetail());
+			String zulFilePathName = "/WEB-INF/pages/CustomerMasters/Customer/FinanceCustomerList.zul";
+
+			custDetailTab = new Tab( Labels.getLabel("Customer"));
+			custDetailTab.setId("custDetailTab");
+			tabsIndexCenter.appendChild(custDetailTab);
+
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setId("customerTabPanel");
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.setParent(tabpanelsBoxIndexCenter);
+			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
+
+			childWindow = Executions.createComponents(zulFilePathName, tabpanel, map);
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -7067,6 +7108,16 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 	}
 	
+	public void processCustomerByValidate() throws ParseException{
+		logger.debug("Entering");
+		if (getFinanceCustomerListCtrl() != null){
+			if(getFinanceCustomerListCtrl().getCustomerDetails() != null) {
+				getFinanceCustomerListCtrl().doSave_CustomerDetail(getFinanceDetail(),custDetailTab);
+			}
+		}
+		logger.debug("Leaviing");
+	}
+	
 	public CustomerEligibilityCheck prepareCustElgDetail(){
 		
 		//Current Finance Monthly Installment Calculation
@@ -7475,4 +7526,13 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
 	}
+
+	public FinanceCustomerListCtrl getFinanceCustomerListCtrl() {
+		return financeCustomerListCtrl;
+	}
+	public void setFinanceCustomerListCtrl(
+			FinanceCustomerListCtrl financeCustomerListCtrl) {
+		this.financeCustomerListCtrl = financeCustomerListCtrl;
+	}
+	
  }	

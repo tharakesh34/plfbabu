@@ -67,6 +67,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.impl.PFFCustomerPreparation;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -644,6 +645,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setNewRecord(true);
 		Customer customer = new Customer();
+		
 		customer.setLovDescCustCtgType(PennantConstants.CUST_CAT_INDIVIDUAL);
 		customer.setCustCtgCode(PennantConstants.PFF_CUSTCTG_INDIV);
 		customer.setLovDescCustCtgCodeName(PennantConstants.PFF_CUSTCTG_INDIV);
@@ -656,6 +658,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		customer.setCustResdCountry(SystemParameterDetails.getSystemParameterValue("CURR_SYSTEM_COUNTRY").toString());
 		customer.setCustRiskCountry(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
 		customer.setCustNationality(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
+		
+		CustEmployeeDetail detail = new CustEmployeeDetail();
+		detail.setNewRecord(true);
+		customerDetails.setCustEmployeeDetail(detail);
 		
 		customerDetails.setCustomer(customer);
 		return customerDetails;

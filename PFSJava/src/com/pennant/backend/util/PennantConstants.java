@@ -239,6 +239,7 @@ public class PennantConstants {
 	public static final String GENGOODS = "GENGOODS";
 	public static final String FLEETVEH = "FLEETVEH";
 	
+	public static final int CarLoan_DefaultItemNumber = 1;
 	
 	//Finance Management Codes
 	public static final String MNT_BASIC_DETAIL 	= "MaintainBasicDetail";

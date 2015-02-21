@@ -1,5 +1,5 @@
 /**
-\ * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerPhoneNumber.java                                                   * 	  
+ * FileName    		:  CustomerBankInfo.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
 
 package com.pennant.backend.model.customermasters;
 
@@ -51,31 +51,29 @@ import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
 /**
- * Model class for the <b>CustomerPhoneNumber table</b>.<br>
+ * Model class for the <b>CustomerBankInfo table</b>.<br>
  *
  */
-public class CustomerPhoneNumber implements java.io.Serializable {
-
-	private static final long serialVersionUID = 4143719150678156593L;
-
-	private long phoneCustID = Long.MIN_VALUE;
-	private String lovDescCustShrtName;
-	private String phoneTypeCode;
-	private String lovDescPhoneTypeCodeName;
-	private String phoneCountryCode;
-	private String lovDescPhoneCountryName;
-	private String phoneAreaCode;
-	private String phoneNumber;
+public class CustomerBankInfo implements java.io.Serializable {
+	
+	private static final long serialVersionUID = -3217987429162088120L;
+	
+	private long custID = Long.MIN_VALUE;
+	private String bankName;
+	private String lovDescBankName;
+	private String accountNumber;
+	private String accountType;
+	private String lovDescAccountType;
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord=false;
 	private String lovValue;
+	private CustomerBankInfo befImage;
+	private LoginUserDetails userDetails;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-
-	private CustomerPhoneNumber befImage;
-	private LoginUserDetails userDetails;
+	private String lovDescCustShrtName;
 
 	private String recordStatus;
 	private String roleCode="";
@@ -90,14 +88,13 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 		return isNewRecord();
 	}
 
-	public CustomerPhoneNumber() {
-		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerPhoneNumber");
+	public CustomerBankInfo() {
+		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerBankInfo");
 	}
 
-	public CustomerPhoneNumber(long id) {
+	public CustomerBankInfo(long id) {
 		this.setId(id);
 	}
-
 
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
@@ -107,61 +104,55 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
+	
 	public long getId() {
-		return phoneCustID;
+		return custID;
 	}
 	public void setId (long id) {
-		this.phoneCustID = id;
+		this.custID = id;
+	}
+	
+	public long getCustID() {
+		return custID;
+	}
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+	
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
 	}
 
-	public long getPhoneCustID() {
-		return phoneCustID;
+	public String getLovDescBankName() {
+		return lovDescBankName;
 	}
-	public void setPhoneCustID(long phoneCustID) {
-		this.phoneCustID = phoneCustID;
-	}
-
-	public String getLovDescCustShrtName() {
-		return lovDescCustShrtName;
-	}
-	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-		this.lovDescCustShrtName = lovDescCustShrtName;
+	public void setLovDescBankName(String lovDescBankName) {
+		this.lovDescBankName = lovDescBankName;
 	}
 
-	public String getPhoneTypeCode() {
-		return phoneTypeCode;
+	public String getAccountNumber() {
+		return accountNumber;
 	}
-	public void setPhoneTypeCode(String phoneTypeCode) {
-		this.phoneTypeCode = phoneTypeCode;
-	}
-
-	public String getLovDescPhoneTypeCodeName() {
-		return this.lovDescPhoneTypeCodeName;
-	}
-	public void setLovDescPhoneTypeCodeName(String lovDescPhoneTypeCodeName) {
-		this.lovDescPhoneTypeCodeName = lovDescPhoneTypeCodeName;
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 
-	public String getPhoneCountryCode() {
-		return phoneCountryCode;
-	}
-	public void setPhoneCountryCode(String phoneCountryCode) {
-		this.phoneCountryCode = phoneCountryCode;
+	public String getAccountType() {
+		return accountType;
 	}
 
-	public String getPhoneAreaCode() {
-		return phoneAreaCode;
-	}
-	public void setPhoneAreaCode(String phoneAreaCode) {
-		this.phoneAreaCode = phoneAreaCode;
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getLovDescAccountType() {
+		return lovDescAccountType;
 	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setLovDescAccountType(String lovDescAccountType) {
+		this.lovDescAccountType = lovDescAccountType;
 	}
 
 	public int getVersion() {
@@ -170,7 +161,7 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setVersion(int version) {
 		this.version = version;
 	}
-
+	
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
@@ -191,12 +182,26 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
+	
 	public String getLovValue() {
 		return lovValue;
 	}
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
+	}
+
+	public CustomerBankInfo getBefImage(){
+		return this.befImage;
+	}
+	public void setBefImage(CustomerBankInfo beforeImage){
+		this.befImage=beforeImage;
+	}
+
+	public LoginUserDetails getUserDetails() {
+		return userDetails;
+	}
+	public void setUserDetails(LoginUserDetails userDetails) {
+		this.userDetails = userDetails;
 	}
 
 	public String getLovDescCustRecordType() {
@@ -213,18 +218,11 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public CustomerPhoneNumber getBefImage(){
-		return this.befImage;
+	public String getLovDescCustShrtName() {
+		return lovDescCustShrtName;
 	}
-	public void setBefImage(CustomerPhoneNumber beforeImage){
-		this.befImage=beforeImage;
-	}
-
-	public LoginUserDetails getUserDetails() {
-		return userDetails;
-	}
-	public void setUserDetails(LoginUserDetails userDetails) {
-		this.userDetails = userDetails;
+	public void setLovDescCustShrtName(String lovDescCustShrtName) {
+		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
 	public String getRecordStatus() {
@@ -233,21 +231,21 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
-
+	
 	public String getRoleCode() {
 		return roleCode;
 	}
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
-
+	
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
-
+	
 	public String getTaskId() {
 		return taskId;
 	}
@@ -261,7 +259,7 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
-
+	
 	public String getRecordType() {
 		return recordType;
 	}
@@ -289,23 +287,17 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
-
+	
 	public void setLoginDetails(LoginUserDetails userDetails){
 		this.lastMntBy=userDetails.getLoginUsrID();
 		this.userDetails=userDetails;
-	}
-
-	public void setLovDescPhoneCountryName(String lovDescPhoneCountryName) {
-		this.lovDescPhoneCountryName = lovDescPhoneCountryName;
-	}
-	public String getLovDescPhoneCountryName() {
-		return lovDescPhoneCountryName;
+		
 	}
 
 	// Overridden Equals method to handle the comparison
-	public boolean equals(CustomerPhoneNumber customerPhoneNumber) {
-		if(getPhoneCustID()==customerPhoneNumber.getPhoneCustID() && 
-				getPhoneTypeCode()==customerPhoneNumber.getPhoneTypeCode()){
+	public boolean equals(CustomerBankInfo customerBankInfo) {
+		if(getCustID() == customerBankInfo.getCustID()
+				&& getBankName().equals(customerBankInfo.getBankName())){
 			return true;
 		}
 		return false;
@@ -322,11 +314,11 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 			return true;
 		}
 
-		if (obj instanceof CustomerPhoneNumber) {
-			CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) obj;
-			return equals(customerPhoneNumber);
+		if (obj instanceof CustomerBankInfo) {
+			CustomerBankInfo customerBankInfo = (CustomerBankInfo) obj;
+			return equals(customerBankInfo);
 		}
 		return false;
 	}
-
+	
 }

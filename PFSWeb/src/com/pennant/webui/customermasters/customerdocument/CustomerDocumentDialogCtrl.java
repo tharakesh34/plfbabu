@@ -117,6 +117,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -235,6 +236,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
 	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
+	private FinanceCustomerListCtrl financeCustomerListCtrl;
+	private boolean isFinanceCustomer = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -300,7 +303,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.isCheckList = (Boolean) args.get("isCheckList");
 		}else{
 			if(args.containsKey("customerDialogCtrl")){
-
+				isFinanceCustomer = false; 
 				setCustomerDialogCtrl((CustomerDialogCtrl) args.get("customerDialogCtrl"));
 				setNewCustomer(true);
 
@@ -318,6 +321,23 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 		}
 
+       if(args.containsKey("financeCustomerListCtrl")){
+			isFinanceCustomer = true ;
+			setFinanceCustomerListCtrl((FinanceCustomerListCtrl) args.get("financeCustomerListCtrl"));
+			setNewCustomer(true);
+			
+			if(args.containsKey("newRecord")){
+				setNewRecord(true);
+			}else{
+				setNewRecord(false);
+			}
+			this.customerDocument.setWorkflowId(0);
+			if(args.containsKey("roleCode")){
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerDocumentDialog");
+			}
+		}
+		
 		if (args.containsKey("moduleType")) {
 			this.moduleType = (String) args.get("moduleType");
 		}
@@ -1202,19 +1222,30 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			}
 
 			try {
-				if(isNewCustomer()){
+				if(isFinanceCustomer){
 					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerDocument,tranType);
+					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerDocument, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerDocuments(this.customerDocuments);
-						// send the data back to customer
+						getFinanceCustomerListCtrl().doFillDocumentDetails(this.customerDocuments);
 						closeWindow();
-					}	
-				}else if (doProcess(aCustomerDocument, tranType)) {
-					refreshList();
-					closeWindow();
+					}
+				}else{
+					if(isNewCustomer()){
+						tranType=PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader =  newCustomerProcess(aCustomerDocument,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillCustomerDocuments(this.customerDocuments);
+							// send the data back to customer
+							closeWindow();
+						}	
+					}else if (doProcess(aCustomerDocument, tranType)) {
+						refreshList();
+						closeWindow();
+					}
 				}
 			} catch (DataAccessException e) {
 				logger.error(e);
@@ -1463,19 +1494,29 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		try {
 			if(!isCheckList && creditApplicationReviewDialogCtrl == null){
 				// save it to database
-				if(isNewCustomer()){
-					AuditHeader auditHeader =  newCustomerProcess(aCustomerDocument,tranType);
+				if(isFinanceCustomer){
+					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerDocument, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerDocuments(this.customerDocuments);
-						// send the data back to customer
+						getFinanceCustomerListCtrl().doFillDocumentDetails(this.customerDocuments);
 						closeWindow();
 					}
-				}else if (doProcess(aCustomerDocument, tranType)) {
-					refreshList();
-					// Close the Existing Dialog
-					closeWindow();
+				}else{
+					if(isNewCustomer()){
+						AuditHeader auditHeader =  newCustomerProcess(aCustomerDocument,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillCustomerDocuments(this.customerDocuments);
+							// send the data back to customer
+							closeWindow();
+						}
+					}else if (doProcess(aCustomerDocument, tranType)) {
+						refreshList();
+						// Close the Existing Dialog
+						closeWindow();
+					}
 				}
 			}else{
 				DocumentDetails aDocumentDetails = new DocumentDetails();
@@ -1733,6 +1774,70 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		return auditHeader;
 	} 
 
+	
+	private AuditHeader newFinanceCustomerProcess(CustomerDocument aCustomerDocument,String tranType){
+		boolean recordAdded=false;
+
+		AuditHeader auditHeader= getAuditHeader(aCustomerDocument, tranType);
+		customerDocuments = new ArrayList<CustomerDocument>();
+
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(aCustomerDocument.getId());
+		valueParm[1] = aCustomerDocument.getCustDocCategory();
+
+		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustDocType") + ":"+valueParm[1];
+
+		if(getFinanceCustomerListCtrl().getCustomerDocumentDetailList()!=null && getFinanceCustomerListCtrl().getCustomerDocumentDetailList().size()>0){
+			for (int i = 0; i < getFinanceCustomerListCtrl().getCustomerDocumentDetailList().size(); i++) {
+				CustomerDocument customerDocument = getFinanceCustomerListCtrl().getCustomerDocumentDetailList().get(i);
+
+				if(customerDocument.getCustDocCategory().equals(aCustomerDocument.getCustDocCategory())){ // Both Current and Existing list documents same
+
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(aCustomerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							customerDocuments.add(aCustomerDocument);
+						}else if(aCustomerDocument.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(aCustomerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							customerDocuments.add(aCustomerDocument);
+						}else if(aCustomerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getFinanceCustomerListCtrl().getCustomerDetails().getCustomerDocumentsList().size(); j++) {
+								CustomerDocument document =  getFinanceCustomerListCtrl().getCustomerDetails().getCustomerDocumentsList().get(j);
+								if(document.getCustID() == aCustomerDocument.getCustID() && document.getCustDocCategory().equals(aCustomerDocument.getCustDocCategory())){
+									customerDocuments.add(document);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							customerDocuments.add(customerDocument);
+						}
+					}
+				}else{
+					customerDocuments.add(customerDocument);
+				}
+			}
+		}
+		if(!recordAdded){
+			customerDocuments.add(aCustomerDocument);
+		}
+		return auditHeader;
+	} 
+	
+	
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
@@ -2302,6 +2407,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 
 	public void setDocumentDetailDialogCtrl(Object documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
+	}
+
+	public FinanceCustomerListCtrl getFinanceCustomerListCtrl() {
+		return financeCustomerListCtrl;
+	}
+	public void setFinanceCustomerListCtrl(
+			FinanceCustomerListCtrl financeCustomerListCtrl) {
+		this.financeCustomerListCtrl = financeCustomerListCtrl;
 	}
 
 }

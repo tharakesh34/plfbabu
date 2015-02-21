@@ -1,74 +1,34 @@
-/**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
- * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
- */
-
-/**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *																							*
- * FileName    		:  CustomerEMail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
-*/
-
 package com.pennant.backend.model.customermasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
-/**
- * Model class for the <b>CustomerEMail table</b>.<br>
- *
- */
-public class CustomerEMail implements java.io.Serializable {
-	
-	private static final long serialVersionUID = -3217987429162088120L;
+public class CustomerExtLiability{
 	
 	private long custID = Long.MIN_VALUE;
-	private String custEMailTypeCode;
-	private String lovDescCustEMailTypeCode;
-	private int custEMailPriority;
-	private String custEMail;
+	private int liabilitySeq;
+	private Date   finDate;
+	private String finType;
+	private String bankName;
+	private String lovDescBankName;
+	private String lovDescFinType;
+	private BigDecimal 	originalAmount = BigDecimal.ZERO;
+	private BigDecimal 	instalmentAmount = BigDecimal.ZERO;
+	private BigDecimal 	outStandingBal = BigDecimal.ZERO;
+	private String FinStatus ="";
+
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord=false;
 	private String lovValue;
-	private CustomerEMail befImage;
+	private CustomerExtLiability befImage;
 	private LoginUserDetails userDetails;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
@@ -82,16 +42,17 @@ public class CustomerEMail implements java.io.Serializable {
 	private String recordType;
 	private String userAction = "Save";
 	private long workflowId = 0;
-
+	
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
 
-	public CustomerEMail() {
-		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerEMail");
+	public CustomerExtLiability() {
+		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerExtLiability");
 	}
 
-	public CustomerEMail(long id) {
+	public CustomerExtLiability(long id) {
 		this.setId(id);
 	}
 
@@ -104,6 +65,7 @@ public class CustomerEMail implements java.io.Serializable {
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
+	
 	public long getId() {
 		return custID;
 	}
@@ -111,41 +73,84 @@ public class CustomerEMail implements java.io.Serializable {
 		this.custID = id;
 	}
 	
+	
 	public long getCustID() {
 		return custID;
 	}
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
-	public String getCustEMailTypeCode() {
-		return custEMailTypeCode;
+
+	public int getLiabilitySeq() {
+		return liabilitySeq;
 	}
-	public void setCustEMailTypeCode(String custEMailTypeCode) {
-		this.custEMailTypeCode = custEMailTypeCode;
+	public void setLiabilitySeq(int liabilitySeq) {
+		this.liabilitySeq = liabilitySeq;
 	}
 
-	public String getLovDescCustEMailTypeCode() {
-		return this.lovDescCustEMailTypeCode;
+	public Date getFinDate() {
+		return finDate;
 	}
-	public void setLovDescCustEMailTypeCode(String lovDescCustEMailTypeCode) {
-		this.lovDescCustEMailTypeCode = lovDescCustEMailTypeCode;
+	public void setFinDate(Date finDate) {
+		this.finDate = finDate;
 	}
 
-	public int getCustEMailPriority() {
-		return custEMailPriority;
+	public String getFinType() {
+		return finType;
 	}
-	public void setCustEMailPriority(int custEMailPriority) {
-		this.custEMailPriority = custEMailPriority;
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
-	
-	public String getCustEMail() {
-		return custEMail;
+
+	public String getBankName() {
+		return bankName;
 	}
-	public void setCustEMail(String custEMail) {
-		this.custEMail = custEMail;
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
 	}
-	
+
+	public String getLovDescBankName() {
+		return lovDescBankName;
+	}
+	public void setLovDescBankName(String lovDescBankName) {
+		this.lovDescBankName = lovDescBankName;
+	}
+
+	public String getLovDescFinType() {
+		return lovDescFinType;
+	}
+	public void setLovDescFinType(String lovDescFinType) {
+		this.lovDescFinType = lovDescFinType;
+	}
+
+	public BigDecimal getOriginalAmount() {
+		return originalAmount;
+	}
+	public void setOriginalAmount(BigDecimal originalAmount) {
+		this.originalAmount = originalAmount;
+	}
+
+	public BigDecimal getInstalmentAmount() {
+		return instalmentAmount;
+	}
+	public void setInstalmentAmount(BigDecimal instalmentAmount) {
+		this.instalmentAmount = instalmentAmount;
+	}
+
+	public BigDecimal getOutStandingBal() {
+		return outStandingBal;
+	}
+	public void setOutStandingBal(BigDecimal outStandingBal) {
+		this.outStandingBal = outStandingBal;
+	}
+
+	public String getFinStatus() {
+		return FinStatus;
+	}
+	public void setFinStatus(String finStatus) {
+		FinStatus = finStatus;
+	}
+
 	public int getVersion() {
 		return version;
 	}
@@ -181,10 +186,10 @@ public class CustomerEMail implements java.io.Serializable {
 		this.lovValue = lovValue;
 	}
 
-	public CustomerEMail getBefImage(){
+	public CustomerExtLiability getBefImage(){
 		return this.befImage;
 	}
-	public void setBefImage(CustomerEMail beforeImage){
+	public void setBefImage(CustomerExtLiability beforeImage){
 		this.befImage=beforeImage;
 	}
 
@@ -286,9 +291,9 @@ public class CustomerEMail implements java.io.Serializable {
 	}
 
 	// Overridden Equals method to handle the comparison
-	public boolean equals(CustomerEMail customerEMail) {
-		if(getCustID() == customerEMail.getCustID()
-				&& getCustEMailTypeCode()==customerEMail.getCustEMailTypeCode()){
+	public boolean equals(CustomerExtLiability customerExtLiability) {
+		if(getCustID() == customerExtLiability.getCustID()
+				&& getLiabilitySeq() == customerExtLiability.getLiabilitySeq()){
 			return true;
 		}
 		return false;
@@ -305,11 +310,12 @@ public class CustomerEMail implements java.io.Serializable {
 			return true;
 		}
 
-		if (obj instanceof CustomerEMail) {
-			CustomerEMail customerEMail = (CustomerEMail) obj;
-			return equals(customerEMail);
+		if (obj instanceof CustomerExtLiability) {
+			CustomerExtLiability customerExtLiability = (CustomerExtLiability) obj;
+			return equals(customerExtLiability);
 		}
 		return false;
 	}
+	
 	
 }

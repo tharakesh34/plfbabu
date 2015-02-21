@@ -50,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.reports.AvailFinance;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -62,6 +63,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private boolean newRecord=false;
 
 	private Customer customer;
+	private CustEmployeeDetail custEmployeeDetail;
 	private List<CustomerRating> ratingsList;
 	private List<CustomerEmploymentDetail> employmentDetailsList;
 	private List<CustomerDocument> customerDocumentsList;//======Customer ID's
@@ -70,6 +72,10 @@ public class CustomerDetails implements java.io.Serializable {
 	private List<CustomerEMail> customerEMailList;
 	private List<CustomerIncome> customerIncomeList;
 	private List<DirectorDetail> customerDirectorList;
+	private List<CustomerBankInfo> customerBankInfoList;
+	private List<CustomerChequeInfo> customerChequeInfoList;
+	private List<CustomerExtLiability> customerExtLiabilityList;
+	private List<AvailFinance> custFinanceExposureList;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private CustomerDedup	custDedup;
 
@@ -104,6 +110,12 @@ public class CustomerDetails implements java.io.Serializable {
 		this.customer = customer;
 	}
 
+	public CustEmployeeDetail getCustEmployeeDetail() {
+		return custEmployeeDetail;
+	}
+	public void setCustEmployeeDetail(CustEmployeeDetail custEmployeeDetail) {
+		this.custEmployeeDetail = custEmployeeDetail;
+	}
 
 	public List<CustomerRating> getRatingsList() {
 		return ratingsList;
@@ -227,7 +239,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public List<CustomerEmploymentDetail> getEmploymentDetailsList() {
 	    return employmentDetailsList;
     }
-
+    
 	public List<DirectorDetail> getCustomerDirectorList() {
     	return customerDirectorList;
     }
@@ -235,5 +247,33 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setCustomerDirectorList(List<DirectorDetail> customerDirectorList) {
     	this.customerDirectorList = customerDirectorList;
     }
+
+	public List<CustomerBankInfo> getCustomerBankInfoList() {
+		return customerBankInfoList;
+	}
+	public void setCustomerBankInfoList(List<CustomerBankInfo> customerBankInfoList) {
+		this.customerBankInfoList = customerBankInfoList;
+	}
+
+	public List<CustomerChequeInfo> getCustomerChequeInfoList() {
+		return customerChequeInfoList;
+	}
+	public void setCustomerChequeInfoList(List<CustomerChequeInfo> customerChequeInfoList) {
+		this.customerChequeInfoList = customerChequeInfoList;
+	}
+
+	public List<CustomerExtLiability> getCustomerExtLiabilityList() {
+		return customerExtLiabilityList;
+	}
+	public void setCustomerExtLiabilityList(List<CustomerExtLiability> customerExtLiabilityList) {
+		this.customerExtLiabilityList = customerExtLiabilityList;
+	}
+
+	public List<AvailFinance> getCustFinanceExposureList() {
+		return custFinanceExposureList;
+	}
+	public void setCustFinanceExposureList(List<AvailFinance> custFinanceExposureList) {
+		this.custFinanceExposureList = custFinanceExposureList;
+	}
 
 }

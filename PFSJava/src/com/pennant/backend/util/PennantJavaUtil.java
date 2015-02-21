@@ -126,6 +126,10 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustEmployeeDetail;
+import com.pennant.backend.model.customermasters.CustomerChequeInfo;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
@@ -495,8 +499,11 @@ public class PennantJavaUtil {
 			put("CustomerEMail", new ModuleMapping(new CustomerEMail(0), new String[] { "CustomerEMails", "CustomerEMails_AView" }, 
 					new String[] { "CustID", "CustEMailPriority" }, null, null, 300));
 			
-			put("CustomerEmploymentDetail", new ModuleMapping(new CustomerEmploymentDetail(0), new String[] { "CustomerEmpDetails", "CustomerEmpDetails_AView" }, 
-					new String[] { "CustID", "CustEmpName" }, null, null, 300));
+			put("CustomerBankInfo", new ModuleMapping(new CustomerBankInfo(0), new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, 
+					new String[] { "CustID", "bankName" }, null, null, 300));
+			
+			put("CustEmployeeDetail", new ModuleMapping(new CustEmployeeDetail(0), new String[] { "CustEmployeeDetail", "CustEmployeeDetail_AView" }, 
+					new String[] { "CustID", "EmpStatus" }, null, null, 300));
 			
 			put("CustomerIncome", new ModuleMapping(new CustomerIncome(0), new String[] { "CustomerIncomes", "CustomerIncomes_AView" }, 
 					new String[] { "CustID", "CustIncome" }, null, null, 300));
@@ -512,6 +519,15 @@ public class PennantJavaUtil {
 			
 			put("CustomerRating", new ModuleMapping(new CustomerRating(0), new String[] { "CustomerRatings", "CustomerRatings_AView" },
 					new String[] { "CustID", "CustRatingCode" }, null, null, 300));
+			
+			put("CustomerChequeInfo", new ModuleMapping(new CustomerChequeInfo(0), new String[] { "CustomerChequeInfo", "CustomerChequeInfo_AView" }, 
+					new String[] { "CustID", "chequeSeq" }, null, null, 300));
+			
+			put("CustomerExtLiability", new ModuleMapping(new CustomerExtLiability(0), new String[] { "CustomerExtLiability", "CustomerExtLiability_AView" }, 
+					new String[] { "CustID", "liabilitySeq" }, null, null, 300));
+			
+			put("CustomerEmploymentDetail", new ModuleMapping(new CustomerEmploymentDetail(0), new String[] { "CustomerEmpDetails", "CustomerEmpDetails_AView" }, 
+					new String[] { "CustID", "CustEmpName" }, null, null, 300));
 			
 			put("CorporateCustomerDetail", new ModuleMapping(new CorporateCustomerDetail(0), new String[] { "CustomerCorporateDetail", "CustomerCorporateDetail_AView" },
 					new String[] { "CustId", "Name" }, null, "MSTGRP1", 300));

@@ -17,12 +17,16 @@ import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
 import com.pennant.backend.dao.customermasters.CorporateCustomerDetailDAO;
+import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerBalanceSheetDAO;
+import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
+import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
@@ -45,12 +49,16 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
+import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustomerChequeInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -68,10 +76,13 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.validation.CorporateCustomerValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerAddressValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerBalanceSheetValidation;
+import com.pennant.backend.service.customermasters.validation.CustomerBankInfoValidation;
+import com.pennant.backend.service.customermasters.validation.CustomerChequeInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerDirectorValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerEMailValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerEmploymentDetailValidation;
+import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerIncomeValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerPRelationValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
@@ -115,6 +126,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private RelationshipOfficerDAO relationshipOfficerDAO;
 	private RatingCodeDAO ratingCodeDAO;
 
+	private CustomerBankInfoDAO customerBankInfoDAO;
+	private CustomerChequeInfoDAO customerChequeInfoDAO;
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private CustEmployeeDetailDAO custEmployeeDetailDAO;
+
 	//Declaring Classes For validation for Lists
 	private CustomerRatingValidation customerRatingValidation;
 	private CustomerPhoneNumberValidation customerPhoneNumberValidation;
@@ -127,6 +143,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CorporateCustomerValidation corporateCustomerValidation;
 	private CustomerDirectorValidation customerDirectorValidation;
 	private CustomerBalanceSheetValidation customerBalanceSheetValidation;
+	private CustomerBankInfoValidation customerBankInfoValidation;
+	private CustomerChequeInfoValidation customerChequeInfoValidation;
+	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -259,6 +278,35 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setCountryDAO(CountryDAO countryDAO) {
 		this.countryDAO = countryDAO;
 	}
+	
+	
+	public CustomerBankInfoDAO getCustomerBankInfoDAO() {
+		return customerBankInfoDAO;
+	}
+	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
+		this.customerBankInfoDAO = customerBankInfoDAO;
+	}
+
+	public CustomerChequeInfoDAO getCustomerChequeInfoDAO() {
+		return customerChequeInfoDAO;
+	}
+	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
+		this.customerChequeInfoDAO = customerChequeInfoDAO;
+	}
+
+	public CustomerExtLiabilityDAO getCustomerExtLiabilityDAO() {
+		return customerExtLiabilityDAO;
+	}
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public CustEmployeeDetailDAO getCustEmployeeDetailDAO() {
+		return custEmployeeDetailDAO;
+	}
+	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
+		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
+	}
 
 	public CustomerInterfaceService getCustomerInterfaceService() {
 		return customerInterfaceService;
@@ -360,6 +408,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return this.customerBalanceSheetValidation;
 	}
 
+	public CustomerBankInfoValidation getCustomerBankInfoValidation() {
+
+		if (customerBankInfoValidation == null) {
+			this.customerBankInfoValidation = new CustomerBankInfoValidation(customerBankInfoDAO);
+		}
+		return this.customerBankInfoValidation;
+	}
+	
+	public CustomerChequeInfoValidation getCustomerChequeInfoValidation() {
+
+		if (customerChequeInfoValidation == null) {
+			this.customerChequeInfoValidation = new CustomerChequeInfoValidation(customerChequeInfoDAO);
+		}
+		return this.customerChequeInfoValidation;
+	}
+	
+	public CustomerExtLiabilityValidation getCustomerExtLiabilityValidation() {
+
+		if (customerExtLiabilityValidation == null) {
+			this.customerExtLiabilityValidation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
+		}
+		return this.customerExtLiabilityValidation;
+	}
+	
+	
 	/**
 	 * @return the customer
 	 */
@@ -431,6 +504,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
+	 * @return the customerDetails for the given customer id.
+	 * */
+	private CustomerDetails getCustomerDetailsbyID(long id, String type) {
+		logger.debug("Entering");
+
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustID(id);
+		
+		customerDetails.setCustEmployeeDetail(getCustEmployeeDetailDAO().getCustEmployeeDetailById(id, type));
+		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
+		customerDetails.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
+		customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
+		customerDetails.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
+		customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
+		customerDetails.setCustomerExtLiabilityList(customerExtLiabilityDAO.getExtLiabilityByCustomer(id, type));
+		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
+		
+		logger.debug("Leaving");
+		return customerDetails;
+	}
+	
+	
+	/**
 	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
 	 * 
 	 * @param id
@@ -443,6 +541,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return getCustomerById(id, "_View");
 	}
 
+	@Override
+	public CustomerDetails getCustomerDetailsById(long id,String type) {
+		return getCustomerDetailsbyID(id, type);
+	}
+	
 	@Override
 	public Customer getCustomerByCIF(String id) {
 		return getCustomerDAO().getCustomerByCIF(id, "");
@@ -573,7 +676,325 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditHeader;
 
 	}
+	
+	
+	@Override
+	public List<AuditDetail> saveOrUpdate(CustomerDetails customerDetails, String tableType) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String auditTranType;
+		Customer customer = customerDetails.getCustomer();
+		customer.setWorkflowId(0);
+		if(customer.isNewRecord()) {
+			auditTranType = PennantConstants.TRAN_ADD;
+			customerDAO.save(customer, tableType);
+		} else {
+			auditTranType = PennantConstants.TRAN_UPD;
+			customer.setVersion(customer.getVersion()+1);
+			customerDAO.update(customer, tableType);
+		}
+		
+		String[] fields = PennantJavaUtil.getFieldDetails(customer, customer.getExcludeFields());
+		auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customer.getBefImage(), customer));
+		
+		if(customerDetails.getCustEmployeeDetail() != null){
+			CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
+			custEmpDetail.setWorkflowId(0);
+			custEmpDetail.setCustID(customer.getCustID());
 
+			if(custEmpDetail.isNewRecord()) {
+				custEmployeeDetailDAO.save(custEmpDetail, tableType);
+			} else {
+				custEmpDetail.setVersion(custEmpDetail.getVersion()+1);
+				custEmployeeDetailDAO.update(custEmpDetail, tableType);
+			}
+
+			fields = PennantJavaUtil.getFieldDetails(custEmpDetail, custEmpDetail.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custEmpDetail.getBefImage(), custEmpDetail));
+		}
+		
+		if(customerDetails.getCustomerDocumentsList() != null){
+			for (CustomerDocument customerDocument : customerDetails.getCustomerDocumentsList()) {
+				customerDocument.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(customerDocument.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerDocumentDAO.delete(customerDocument, tableType);
+				}else if(customerDocument.isNewRecord()) {
+					customerDocumentDAO.save(customerDocument, tableType);
+				} else {
+					customerDocument.setVersion(customerDocument.getVersion()+1);
+					customerDocumentDAO.update(customerDocument, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(customerDocument, customerDocument.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerDocument.getBefImage(), customerDocument));
+			}
+		}
+		
+		if(customerDetails.getAddressList() != null){
+			for (CustomerAddres custaddress : customerDetails.getAddressList()) {
+				custaddress.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(custaddress.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerAddresDAO.delete(custaddress, tableType);
+				}else if(custaddress.isNewRecord()) {
+					customerAddresDAO.save(custaddress, tableType);
+				} else {
+					custaddress.setVersion(custaddress.getVersion()+1);
+					customerAddresDAO.update(custaddress, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(custaddress, custaddress.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custaddress.getBefImage(), custaddress));
+			}
+		}
+		
+		if(customerDetails.getCustomerPhoneNumList() != null){
+			for (CustomerPhoneNumber custPhoneNumber : customerDetails.getCustomerPhoneNumList()) {
+				custPhoneNumber.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(custPhoneNumber.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerPhoneNumberDAO.delete(custPhoneNumber, tableType);
+				}else if(custPhoneNumber.isNewRecord()) {
+					customerPhoneNumberDAO.save(custPhoneNumber, tableType);
+				} else {
+					custPhoneNumber.setVersion(custPhoneNumber.getVersion()+1);
+					customerPhoneNumberDAO.update(custPhoneNumber, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(custPhoneNumber, custPhoneNumber.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custPhoneNumber.getBefImage(), custPhoneNumber));
+			}
+		}
+		
+		if(customerDetails.getCustomerEMailList() != null){
+			for (CustomerEMail customerEMail : customerDetails.getCustomerEMailList()) {
+				customerEMail.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(customerEMail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerEMailDAO.delete(customerEMail, tableType);
+				}else if(customerEMail.isNewRecord()) {
+					customerEMailDAO.save(customerEMail, tableType);
+				} else {
+					customerEMail.setVersion(customerEMail.getVersion()+1);
+					customerEMailDAO.update(customerEMail, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(customerEMail, customerEMail.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerEMail.getBefImage(), customerEMail));
+			}
+		}
+		
+		if(customerDetails.getCustomerBankInfoList() != null){
+			for (CustomerBankInfo custBankInfo : customerDetails.getCustomerBankInfoList()) {
+				custBankInfo.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(custBankInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerBankInfoDAO.delete(custBankInfo, tableType);
+				}else if(custBankInfo.isNewRecord()) {
+					customerBankInfoDAO.save(custBankInfo, tableType);
+				} else {
+					custBankInfo.setVersion(custBankInfo.getVersion()+1);
+					customerBankInfoDAO.update(custBankInfo, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custBankInfo.getBefImage(), custBankInfo));
+			}
+		}
+		
+		if(customerDetails.getCustomerChequeInfoList() != null){
+			for (CustomerChequeInfo custChequeInfo : customerDetails.getCustomerChequeInfoList()) {
+				custChequeInfo.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(custChequeInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerChequeInfoDAO.delete(custChequeInfo, tableType);
+				}else if(custChequeInfo.isNewRecord()) {
+					customerChequeInfoDAO.save(custChequeInfo, tableType);
+				} else {
+					custChequeInfo.setVersion(custChequeInfo.getVersion()+1);
+					customerChequeInfoDAO.update(custChequeInfo, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(custChequeInfo, custChequeInfo.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custChequeInfo.getBefImage(), custChequeInfo));
+			}
+		}
+		
+		if(customerDetails.getCustomerExtLiabilityList() != null){
+			for (CustomerExtLiability custExtLiability : customerDetails.getCustomerExtLiabilityList()) {
+				custExtLiability.setWorkflowId(0);
+
+				if (StringUtils.trimToEmpty(custExtLiability.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					customerExtLiabilityDAO.delete(custExtLiability, tableType);
+				}else if(custExtLiability.isNewRecord()) {
+					customerExtLiabilityDAO.save(custExtLiability, tableType);
+				} else {
+					custExtLiability.setVersion(custExtLiability.getVersion()+1);
+					customerExtLiabilityDAO.update(custExtLiability, tableType);
+				}
+
+				fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custExtLiability.getBefImage(), custExtLiability));
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
+	
+	@Override
+	public List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method, String  usrLanguage){
+		return doValidation(customerDetails, workflowId, method, usrLanguage);
+	}
+	
+	public List<AuditDetail> doValidation(CustomerDetails customerDetails, long workflowId, 
+			String method, String usrLanguage) {
+		logger.debug("Entering");
+
+		String auditTranType;
+		if(customerDetails.getCustomer().isNewRecord()) {
+			auditTranType = PennantConstants.TRAN_ADD;
+		} else {
+			auditTranType = PennantConstants.TRAN_UPD;
+		}
+		List<AuditDetail> auditDetails = getAuditDetail(customerDetails, auditTranType, method, workflowId);
+
+		// Employment Validation
+		if (customerDetails.getEmploymentDetailsList() != null
+				&& customerDetails.getEmploymentDetailsList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Employment");
+			details = getEmploymentDetailValidation().employmentDetailListValidation(details,
+					method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		//PhoneNumber Validation
+		if (customerDetails.getCustomerPhoneNumList() != null
+				&& customerDetails.getCustomerPhoneNumList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("PhoneNumber");
+			details = getPhoneNumberValidation().phoneNumberListValidation(details, method,
+					usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		// Address Validation
+		if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Address");
+			details = getAddressValidation().addressListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		// Document Validation
+		if (customerDetails.getCustomerDocumentsList() != null
+				&& customerDetails.getCustomerDocumentsList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Document");
+			details = getDocumentValidation().documentListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		//Email Validation
+		if (customerDetails.getCustomerEMailList() != null
+				&& customerDetails.getCustomerEMailList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EMail");
+			details = getCustomerEMailValidation()
+					.emailListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		
+		//Customer Bank Information Validation
+		if (customerDetails.getCustomerBankInfoList() != null
+				&& customerDetails.getCustomerBankInfoList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerBankInfo");
+			details = getCustomerBankInfoValidation().bankInfoListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		//Customer Cheque Information Validation
+		if (customerDetails.getCustomerChequeInfoList() != null
+				&& customerDetails.getCustomerChequeInfoList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerChequeInfo");
+			details = getCustomerChequeInfoValidation().chequeInfoListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		//Customer Bank Information Validation
+		if (customerDetails.getCustomerExtLiabilityList() != null
+				&& customerDetails.getCustomerExtLiabilityList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerExtLiability");
+			details = getCustomerExtLiabilityValidation().extLiabilityListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	
+	private List<AuditDetail> getAuditDetail(CustomerDetails customerDetails, String auditTranType, String method, long workflowId) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		
+		if (customerDetails.getEmploymentDetailsList() != null
+		        && customerDetails.getEmploymentDetailsList().size() > 0) {
+			auditDetailMap.put("Employment",
+			        setCustomerEmploymentDetailAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("Employment"));
+		}
+
+		if (customerDetails.getCustomerPhoneNumList() != null
+		        && customerDetails.getCustomerPhoneNumList().size() > 0) {
+			auditDetailMap.put("PhoneNumber",
+			        setPhoneNumberAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("PhoneNumber"));
+		}
+
+
+		if (customerDetails.getCustomerEMailList() != null
+		        && customerDetails.getCustomerEMailList().size() > 0) {
+			auditDetailMap.put("EMail", setEMailAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("EMail"));
+		}
+
+		if (customerDetails.getCustomerDocumentsList() != null
+		        && customerDetails.getCustomerDocumentsList().size() > 0) {
+			auditDetailMap.put("Document",
+			        setDocumentAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("Document"));
+		}
+		
+		if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
+			auditDetailMap.put("Address",
+			        setAddressAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("Address"));
+		}
+
+		if (customerDetails.getCustomerBankInfoList() != null && customerDetails.getCustomerBankInfoList().size() > 0) {
+			auditDetailMap.put("CustomerBankInfo",
+					setBankInformationAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerBankInfo"));
+		}
+
+		if (customerDetails.getCustomerChequeInfoList() != null && customerDetails.getCustomerChequeInfoList().size() > 0) {
+			auditDetailMap.put("CustomerChequeInfo",
+					setChequeInformationAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerChequeInfo"));
+		}
+		
+
+		if (customerDetails.getCustomerExtLiabilityList() != null && customerDetails.getCustomerExtLiabilityList().size() > 0) {
+			auditDetailMap.put("CustomerExtLiability",
+					setExtLiabilityAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerExtLiability"));
+		}
+		
+		customerDetails.setAuditDetailMap(auditDetailMap);
+		
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+	
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
@@ -1999,6 +2420,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 
+		if (customerDetails.getCustomerBankInfoList() != null && customerDetails.getCustomerBankInfoList().size() > 0) {
+			auditDetailMap.put("CustomerBankInfo",
+					setBankInformationAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerBankInfo"));
+		}
+
+		if (customerDetails.getCustomerChequeInfoList() != null && customerDetails.getCustomerChequeInfoList().size() > 0) {
+			auditDetailMap.put("CustomerChequeInfo",
+					setChequeInformationAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerChequeInfo"));
+		}
+		
+
+		if (customerDetails.getCustomerExtLiabilityList() != null && customerDetails.getCustomerExtLiabilityList().size() > 0) {
+			auditDetailMap.put("CustomerExtLiability",
+					setExtLiabilityAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerExtLiability"));
+		}
 
 		customerDetails.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(customerDetails);
@@ -2518,6 +2957,208 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		return auditDetails;
 	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setBankInformationAuditData(CustomerDetails customerDetails,
+	        String auditTranType, String method) {
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new CustomerAddres());
+
+		for (int i = 0; i < customerDetails.getCustomerBankInfoList().size(); i++) {
+
+			CustomerBankInfo customerBankInfo = customerDetails.getCustomerBankInfoList().get(i);
+			customerBankInfo.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (customerBankInfo.getCustID() <= 0) {
+				customerBankInfo.setCustID(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+                }
+			} else if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+				customerBankInfo.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerBankInfo.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerBankInfo.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_DEL)
+				        || customerBankInfo.getRecordType().equalsIgnoreCase(
+				                PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			customerBankInfo.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			customerBankInfo.setLoginDetails(customerDetails.getUserDetails());
+			customerBankInfo.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			if (!customerBankInfo.getRecordType().equals("")) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+				        customerBankInfo.getBefImage(), customerBankInfo));
+			}
+		}
+
+		return auditDetails;
+	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setChequeInformationAuditData(CustomerDetails customerDetails,
+	        String auditTranType, String method) {
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new CustomerAddres());
+
+		for (int i = 0; i < customerDetails.getCustomerChequeInfoList().size(); i++) {
+
+			CustomerChequeInfo customerChequeInfo = customerDetails.getCustomerChequeInfoList().get(i);
+			customerChequeInfo.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (customerChequeInfo.getCustID() <= 0) {
+				customerChequeInfo.setCustID(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+                }
+			} else if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+				customerChequeInfo.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerChequeInfo.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerChequeInfo.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_DEL)
+				        || customerChequeInfo.getRecordType().equalsIgnoreCase(
+				                PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			customerChequeInfo.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			customerChequeInfo.setLoginDetails(customerDetails.getUserDetails());
+			customerChequeInfo.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			if (!customerChequeInfo.getRecordType().equals("")) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+				        customerChequeInfo.getBefImage(), customerChequeInfo));
+			}
+		}
+
+		return auditDetails;
+	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setExtLiabilityAuditData(CustomerDetails customerDetails,
+	        String auditTranType, String method) {
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new CustomerAddres());
+
+		for (int i = 0; i < customerDetails.getCustomerExtLiabilityList().size(); i++) {
+
+			CustomerExtLiability customerExtLiability = customerDetails.getCustomerExtLiabilityList().get(i);
+			customerExtLiability.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (customerExtLiability.getCustID() <= 0) {
+				customerExtLiability.setCustID(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+                }
+			} else if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (method.equals("saveOrUpdate") && (isRcdType == true)) {
+				customerExtLiability.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerExtLiability.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerExtLiability.getRecordType().equalsIgnoreCase(
+				        PennantConstants.RECORD_TYPE_DEL)
+				        || customerExtLiability.getRecordType().equalsIgnoreCase(
+				                PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			customerExtLiability.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			customerExtLiability.setLoginDetails(customerDetails.getUserDetails());
+			customerExtLiability.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			if (!customerExtLiability.getRecordType().equals("")) {
+				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+				        customerExtLiability.getBefImage(), customerExtLiability));
+			}
+		}
+
+		return auditDetails;
+	}
+	
 	
 	/**
 	 * Common Method for Customers list validation

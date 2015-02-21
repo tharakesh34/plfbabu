@@ -260,6 +260,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		if (!isWIF){
+			//Finance Customer Details			
+			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), "_View"));
+		}
+		
+		
 		if (!isWIF && financeMain != null) {
 
 			//Finance Reference Details List
@@ -785,6 +791,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getIndicativeTermDetailDAO().update(termDetail, tableType, true);
 				}
 			}
+		}else{
+			// set Customer Details Audit
+			if (financeDetail.getCustomerDetails() != null) {
+				auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail.getCustomerDetails(), ""));
+			}
 		}
 
 		// Finance Main Details Save And Update
@@ -962,7 +973,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 				auditDetails.addAll(getJointAccountDetailService().saveOrUpdate(financeDetail.getJountAccountDetailList(), tableType, auditTranType));
 			}
-
+			
 			//Additional Field Details Save / Update
 			doSaveAddlFieldDetails(financeDetail, tableType);
 
@@ -1581,6 +1592,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String rcdType = financeMain.getRecordType();
 			if (!isWIF && !financeDetail.isLovDescIsQDE() && rcdType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 
+				
+				//Customer Details Validation
+				if (financeDetail.getCustomerDetails() != null) {
+					financeDetail.getCustomerDetails().setUserDetails(financeDetail.getUserDetails());
+					auditDetails.addAll(getCustomerDetailsService().validate(financeDetail.getCustomerDetails(), financeMain.getWorkflowId(), method, usrLanguage));
+				}
+				
 				String assetCode = financeDetail.getFinScheduleData().getFinanceType().getLovDescAssetCodeName();
 
 				if (assetCode.equalsIgnoreCase(PennantConstants.CARLOAN)) {
@@ -3154,7 +3172,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		switch(assest) {
 		case VEHICLE:
 			CarLoanDetail  carLoanDetail;
-			carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(finReference);			
+			carLoanDetail = getCarLoanDetailService().getCarLoanDetailById(finReference,PennantConstants.CarLoan_DefaultItemNumber);			
 			financeDetail.setCarLoanDetail(carLoanDetail);
 			break;
 		case EDUCATON:

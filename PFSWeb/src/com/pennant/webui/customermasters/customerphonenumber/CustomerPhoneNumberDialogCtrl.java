@@ -89,6 +89,7 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -170,6 +171,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 	protected JdbcSearchObject<Customer> newSearchObject ;
 	private String moduleType="";
 	private String userRole="";
+	private FinanceCustomerListCtrl financeCustomerListCtrl;
+	private boolean isFinanceCustomer = false;
 	
 	/**
 	 * default constructor.<br>
@@ -222,7 +225,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 
 		if(args.containsKey("customerDialogCtrl")){
-
+			isFinanceCustomer = false; 
 			setCustomerDialogCtrl((CustomerDialogCtrl) args.get("customerDialogCtrl"));
 			setNewCustomer(true);
 
@@ -238,7 +241,23 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 
 		}
-
+        if(args.containsKey("financeCustomerListCtrl")){
+			
+			isFinanceCustomer = true ;
+			setFinanceCustomerListCtrl((FinanceCustomerListCtrl) args.get("financeCustomerListCtrl"));
+			setNewCustomer(true);
+			
+			if(args.containsKey("newRecord")){
+				setNewRecord(true);
+			}else{
+				setNewRecord(false);
+			}
+			this.customerPhoneNumber.setWorkflowId(0);
+			if(args.containsKey("roleCode")){
+				userRole = args.get("roleCode").toString();
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+			}
+		}
 		doLoadWorkFlow(this.customerPhoneNumber.isWorkflow(),this.customerPhoneNumber.getWorkflowId(),
 				this.customerPhoneNumber.getNextTaskId());
 		/* set components visible dependent of the users rights */
@@ -852,23 +871,34 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 
 			try {
-				if(isNewCustomer()){
+				if(isFinanceCustomer){
 					tranType=PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader =  newCusomerProcess(aCustomerPhoneNumber,tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog,
-							auditHeader);
+					AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerPhoneNumber, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
-					if (retValue==PennantConstants.porcessCONTINUE || 
-							retValue==PennantConstants.porcessOVERIDE){
-						getCustomerDialogCtrl().doFillCustomerPhoneNumbers(this.customerPhoneNumbers);
-						//true;
-						// send the data back to customer
-						closeWindow();
-					}	
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getFinanceCustomerListCtrl().doFillCustomerPhoneNumberDetails(this.customerPhoneNumbers);
+						this.window_CustomerPhoneNumberDialog.onClose();
+					}
+				}else{
+					if(isNewCustomer()){
+						tranType=PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader =  newCusomerProcess(aCustomerPhoneNumber,tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog,
+								auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue==PennantConstants.porcessCONTINUE || 
+								retValue==PennantConstants.porcessOVERIDE){
+							getCustomerDialogCtrl().doFillCustomerPhoneNumbers(this.customerPhoneNumbers);
+							//true;
+							// send the data back to customer
+							closeWindow();
+						}	
 
-				}else if(doProcess(aCustomerPhoneNumber,tranType)){
-					refreshList();
-					closeWindow();
+					}else if(doProcess(aCustomerPhoneNumber,tranType)){
+						refreshList();
+						closeWindow();
+					}
 				}
 			}catch (DataAccessException e){
 				logger.error(e);
@@ -1077,19 +1107,29 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 
 		// save it to database
 		try {
-			if(isNewCustomer()){
-				AuditHeader auditHeader =  newCusomerProcess(aCustomerPhoneNumber,tranType);
+			if(isFinanceCustomer){
+				AuditHeader auditHeader =  newFinanceCustomerProcess(aCustomerPhoneNumber, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
-					getCustomerDialogCtrl().doFillCustomerPhoneNumbers(this.customerPhoneNumbers);
-					// send the data back to customer
+					getFinanceCustomerListCtrl().doFillCustomerPhoneNumberDetails(this.customerPhoneNumbers);
+					this.window_CustomerPhoneNumberDialog.onClose();
+				}
+			}else{
+				if(isNewCustomer()){
+					AuditHeader auditHeader =  newCusomerProcess(aCustomerPhoneNumber,tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+						getCustomerDialogCtrl().doFillCustomerPhoneNumbers(this.customerPhoneNumbers);
+						// send the data back to customer
+						closeWindow();
+					}
+				}else if(doProcess(aCustomerPhoneNumber,tranType)){
+					refreshList();
+					// Close the Existing Dialog
 					closeWindow();
 				}
-			}else if(doProcess(aCustomerPhoneNumber,tranType)){
-				refreshList();
-				// Close the Existing Dialog
-				closeWindow();
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1158,6 +1198,71 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 			}
 		}
 
+		if(!recordAdded){
+			customerPhoneNumbers.add(aCustomerPhoneNumber);
+		}
+		return auditHeader;
+	} 
+	/**
+	 * Method for Creating list of Details
+	 */
+	private AuditHeader newFinanceCustomerProcess(CustomerPhoneNumber aCustomerPhoneNumber,String tranType){
+		boolean recordAdded=false;
+		
+		AuditHeader auditHeader= getAuditHeader(aCustomerPhoneNumber, tranType);
+		customerPhoneNumbers = new ArrayList<CustomerPhoneNumber>();
+		
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+		
+		valueParm[0] = String.valueOf(aCustomerPhoneNumber.getPhoneCustID());
+		valueParm[1] = aCustomerPhoneNumber.getPhoneTypeCode();
+		
+		errParm[0] = PennantJavaUtil.getLabel("label_PhoneCustID")+ ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode")+ ":"+ valueParm[1];
+		
+		if(getFinanceCustomerListCtrl().getCustomerPhoneNumberDetailList()!=null && getFinanceCustomerListCtrl().getCustomerPhoneNumberDetailList().size()>0){
+			for (int i = 0; i < getFinanceCustomerListCtrl().getCustomerPhoneNumberDetailList().size(); i++) {
+				CustomerPhoneNumber customerPhoneNumber = getFinanceCustomerListCtrl().getCustomerPhoneNumberDetailList().get(i);
+				
+				if(customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())){ // Both Current and Existing list PhoneNumber same
+					
+					if(isNewRecord()){
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+					
+					if(tranType==PennantConstants.TRAN_DEL){
+						if(aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+							aCustomerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+							recordAdded=true;
+							customerPhoneNumbers.add(aCustomerPhoneNumber);
+						}else if(aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RCD_ADD)){
+							recordAdded=true;
+						}else if(aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+							aCustomerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							recordAdded=true;
+							customerPhoneNumbers.add(aCustomerPhoneNumber);
+						}else if(aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)){
+							recordAdded=true;
+							for (int j = 0; j < getFinanceCustomerListCtrl().getCustomerDetails().getCustomerPhoneNumList().size(); j++) {
+								CustomerPhoneNumber phoneNumber =  getFinanceCustomerListCtrl().getCustomerDetails().getCustomerPhoneNumList().get(j);
+								if(phoneNumber.getPhoneCustID() == aCustomerPhoneNumber.getPhoneCustID() && phoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())){
+									customerPhoneNumbers.add(phoneNumber);
+								}
+							}
+						}
+					}else{
+						if(tranType!=PennantConstants.TRAN_UPD){
+							customerPhoneNumbers.add(customerPhoneNumber);
+						}
+					}
+				}else{
+					customerPhoneNumbers.add(customerPhoneNumber);
+				}
+			}
+		}
+		
 		if(!recordAdded){
 			customerPhoneNumbers.add(aCustomerPhoneNumber);
 		}
@@ -1587,6 +1692,14 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 		}
 
 		return value;
+	}
+
+	public FinanceCustomerListCtrl getFinanceCustomerListCtrl() {
+		return financeCustomerListCtrl;
+	}
+	public void setFinanceCustomerListCtrl(
+			FinanceCustomerListCtrl financeCustomerListCtrl) {
+		this.financeCustomerListCtrl = financeCustomerListCtrl;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -36,4 +37,8 @@ public interface CustomerDetailsService {
 	CustomerDetails setCustomerDetails(CustomerDetails customer);
 	DirectorDetail getNewDirectorDetail() ;
 	List<CustomerRating> getCustomerRatingByCustId(long id, String type);
+	//Finance Customer Details
+	public List<AuditDetail> saveOrUpdate(CustomerDetails customerDetails, String tableType);
+	public CustomerDetails getCustomerDetailsById(long id,String type);
+	public List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method, String  usrLanguage);
 }

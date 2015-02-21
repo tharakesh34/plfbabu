@@ -1,5 +1,5 @@
 /**
-\ * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerPhoneNumber.java                                                   * 	  
+ * FileName    		:  CustomerEmploymentDetail.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -39,11 +39,13 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
 
 package com.pennant.backend.model.customermasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,30 +53,43 @@ import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 
 /**
- * Model class for the <b>CustomerPhoneNumber table</b>.<br>
+ * Model class for the <b>CustomerEmploymentDetail table</b>.<br>
  *
  */
-public class CustomerPhoneNumber implements java.io.Serializable {
+public class CustEmployeeDetail implements java.io.Serializable {
 
-	private static final long serialVersionUID = 4143719150678156593L;
-
-	private long phoneCustID = Long.MIN_VALUE;
-	private String lovDescCustShrtName;
-	private String phoneTypeCode;
-	private String lovDescPhoneTypeCodeName;
-	private String phoneCountryCode;
-	private String lovDescPhoneCountryName;
-	private String phoneAreaCode;
-	private String phoneNumber;
+	private static final long serialVersionUID = -5317225672461108680L;
+	
+	private long custID;
+	private String empStatus;
+	private String lovDescEmpStatus;
+	private String empSector;
+	private String lovDescEmpSector;
+	private String profession;
+	private String lovDescProfession;
+	private long empName;
+	private String lovDescEmpName;
+	private String empNameForOthers;
+	private String empDesg;
+	private String lovDescEmpDesg;
+	private String empDept;
+	private String lovDescEmpDept;
+	private Date empFrom;
+	private BigDecimal 	monthlyIncome = BigDecimal.ZERO;
+	private String otherIncome;
+	private String lovDescOtherIncome;
+	private BigDecimal 	additionalIncome = BigDecimal.ZERO;
+	
 	private int version;
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private boolean newRecord=false;
 	private String lovValue;
+	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
-
-	private CustomerPhoneNumber befImage;
+	
+	private CustEmployeeDetail befImage;
 	private LoginUserDetails userDetails;
 
 	private String recordStatus;
@@ -90,14 +105,13 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 		return isNewRecord();
 	}
 
-	public CustomerPhoneNumber() {
-		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerPhoneNumber");
+	public CustEmployeeDetail() {
+		this.workflowId = WorkFlowUtil.getWorkFlowID("CustomerEmploymentDetail");
 	}
 
-	public CustomerPhoneNumber(long id) {
+	public CustEmployeeDetail(long id) {
 		this.setId(id);
 	}
-
 
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
@@ -107,61 +121,145 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
+	
 	public long getId() {
-		return phoneCustID;
+		return custID;
 	}
 	public void setId (long id) {
-		this.phoneCustID = id;
+		this.custID = id;
+	}
+	
+	public long getCustID() {
+		return custID;
+	}
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+	
+	public String getEmpStatus() {
+		return empStatus;
+	}
+	public void setEmpStatus(String empStatus) {
+		this.empStatus = empStatus;
 	}
 
-	public long getPhoneCustID() {
-		return phoneCustID;
+	public String getLovDescEmpStatus() {
+		return lovDescEmpStatus;
 	}
-	public void setPhoneCustID(long phoneCustID) {
-		this.phoneCustID = phoneCustID;
-	}
-
-	public String getLovDescCustShrtName() {
-		return lovDescCustShrtName;
-	}
-	public void setLovDescCustShrtName(String lovDescCustShrtName) {
-		this.lovDescCustShrtName = lovDescCustShrtName;
+	public void setLovDescEmpStatus(String lovDescEmpStatus) {
+		this.lovDescEmpStatus = lovDescEmpStatus;
 	}
 
-	public String getPhoneTypeCode() {
-		return phoneTypeCode;
+	public String getEmpSector() {
+		return empSector;
 	}
-	public void setPhoneTypeCode(String phoneTypeCode) {
-		this.phoneTypeCode = phoneTypeCode;
-	}
-
-	public String getLovDescPhoneTypeCodeName() {
-		return this.lovDescPhoneTypeCodeName;
-	}
-	public void setLovDescPhoneTypeCodeName(String lovDescPhoneTypeCodeName) {
-		this.lovDescPhoneTypeCodeName = lovDescPhoneTypeCodeName;
+	public void setEmpSector(String empSector) {
+		this.empSector = empSector;
 	}
 
-	public String getPhoneCountryCode() {
-		return phoneCountryCode;
+	public String getLovDescEmpSector() {
+		return lovDescEmpSector;
 	}
-	public void setPhoneCountryCode(String phoneCountryCode) {
-		this.phoneCountryCode = phoneCountryCode;
-	}
-
-	public String getPhoneAreaCode() {
-		return phoneAreaCode;
-	}
-	public void setPhoneAreaCode(String phoneAreaCode) {
-		this.phoneAreaCode = phoneAreaCode;
+	public void setLovDescEmpSector(String lovDescEmpSector) {
+		this.lovDescEmpSector = lovDescEmpSector;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getProfession() {
+		return profession;
 	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setProfession(String profession) {
+		this.profession = profession;
+	}
+
+	public String getLovDescProfession() {
+		return lovDescProfession;
+	}
+	public void setLovDescProfession(String lovDescProfession) {
+		this.lovDescProfession = lovDescProfession;
+	}
+
+	public long getEmpName() {
+		return empName;
+	}
+	public void setEmpName(long empName) {
+		this.empName = empName;
+	}
+
+	public String getLovDescEmpName() {
+		return lovDescEmpName;
+	}
+	public void setLovDescEmpName(String lovDescEmpName) {
+		this.lovDescEmpName = lovDescEmpName;
+	}
+
+	public String getEmpNameForOthers() {
+		return empNameForOthers;
+	}
+	public void setEmpNameForOthers(String empNameForOthers) {
+		this.empNameForOthers = empNameForOthers;
+	}
+
+	public String getEmpDesg() {
+		return empDesg;
+	}
+	public void setEmpDesg(String empDesg) {
+		this.empDesg = empDesg;
+	}
+
+	public String getLovDescEmpDesg() {
+		return lovDescEmpDesg;
+	}
+	public void setLovDescEmpDesg(String lovDescEmpDesg) {
+		this.lovDescEmpDesg = lovDescEmpDesg;
+	}
+
+	public String getEmpDept() {
+		return empDept;
+	}
+	public void setEmpDept(String empDept) {
+		this.empDept = empDept;
+	}
+
+	public String getLovDescEmpDept() {
+		return lovDescEmpDept;
+	}
+	public void setLovDescEmpDept(String lovDescEmpDept) {
+		this.lovDescEmpDept = lovDescEmpDept;
+	}
+
+	public Date getEmpFrom() {
+		return empFrom;
+	}
+	public void setEmpFrom(Date empFrom) {
+		this.empFrom = empFrom;
+	}
+
+	public BigDecimal getMonthlyIncome() {
+		return monthlyIncome;
+	}
+	public void setMonthlyIncome(BigDecimal monthlyIncome) {
+		this.monthlyIncome = monthlyIncome;
+	}
+
+	public String getOtherIncome() {
+		return otherIncome;
+	}
+	public void setOtherIncome(String otherIncome) {
+		this.otherIncome = otherIncome;
+	}
+
+	public String getLovDescOtherIncome() {
+		return lovDescOtherIncome;
+	}
+	public void setLovDescOtherIncome(String lovDescOtherIncome) {
+		this.lovDescOtherIncome = lovDescOtherIncome;
+	}
+
+	public BigDecimal getAdditionalIncome() {
+		return additionalIncome;
+	}
+	public void setAdditionalIncome(BigDecimal additionalIncome) {
+		this.additionalIncome = additionalIncome;
 	}
 
 	public int getVersion() {
@@ -170,7 +268,7 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setVersion(int version) {
 		this.version = version;
 	}
-
+	
 	public long getLastMntBy() {
 		return lastMntBy;
 	}
@@ -191,12 +289,19 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
+	
 	public String getLovValue() {
 		return lovValue;
 	}
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
+	}
+
+	public String getLovDescCustShrtName() {
+		return lovDescCustShrtName;
+	}
+	public void setLovDescCustShrtName(String lovDescCustShrtName) {
+		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
 
 	public String getLovDescCustRecordType() {
@@ -213,10 +318,10 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
 
-	public CustomerPhoneNumber getBefImage(){
+	public CustEmployeeDetail getBefImage(){
 		return this.befImage;
 	}
-	public void setBefImage(CustomerPhoneNumber beforeImage){
+	public void setBefImage(CustEmployeeDetail beforeImage){
 		this.befImage=beforeImage;
 	}
 
@@ -233,21 +338,21 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
-
+	
 	public String getRoleCode() {
 		return roleCode;
 	}
 	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
-
+	
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
 	public void setNextRoleCode(String nextRoleCode) {
 		this.nextRoleCode = nextRoleCode;
 	}
-
+	
 	public String getTaskId() {
 		return taskId;
 	}
@@ -261,7 +366,7 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setNextTaskId(String nextTaskId) {
 		this.nextTaskId = nextTaskId;
 	}
-
+	
 	public String getRecordType() {
 		return recordType;
 	}
@@ -289,26 +394,15 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 	public void setWorkflowId(long workflowId) {
 		this.workflowId = workflowId;
 	}
-
+	
 	public void setLoginDetails(LoginUserDetails userDetails){
 		this.lastMntBy=userDetails.getLoginUsrID();
 		this.userDetails=userDetails;
 	}
 
-	public void setLovDescPhoneCountryName(String lovDescPhoneCountryName) {
-		this.lovDescPhoneCountryName = lovDescPhoneCountryName;
-	}
-	public String getLovDescPhoneCountryName() {
-		return lovDescPhoneCountryName;
-	}
-
 	// Overridden Equals method to handle the comparison
-	public boolean equals(CustomerPhoneNumber customerPhoneNumber) {
-		if(getPhoneCustID()==customerPhoneNumber.getPhoneCustID() && 
-				getPhoneTypeCode()==customerPhoneNumber.getPhoneTypeCode()){
-			return true;
-		}
-		return false;
+	public boolean equals(CustEmployeeDetail customerEmploymentDetail) {
+		return getId() == customerEmploymentDetail.getId();
 	}
 
 	/**
@@ -322,11 +416,10 @@ public class CustomerPhoneNumber implements java.io.Serializable {
 			return true;
 		}
 
-		if (obj instanceof CustomerPhoneNumber) {
-			CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) obj;
-			return equals(customerPhoneNumber);
+		if (obj instanceof CustEmployeeDetail) {
+			CustEmployeeDetail customerEmploymentDetail = (CustEmployeeDetail) obj;
+			return equals(customerEmploymentDetail);
 		}
 		return false;
 	}
-
 }

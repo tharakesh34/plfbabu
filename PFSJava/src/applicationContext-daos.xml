@@ -2348,6 +2348,10 @@
 		<property name="relationshipOfficerDAO" ref="relationshipOfficerDAO" />
 		<property name="nationalityCodeDAO" ref="nationalityCodeDAO" />
 		<property name="ratingCodeDAO" ref="ratingCodeDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -2945,6 +2949,40 @@
 		<property name="customerRatingDAO" ref="customerRatingDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<!--============ Customer Employee Details ============== -->
+
+	<bean id="custEmployeeDetailDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustEmployeeDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+
+    <!--============ Customer Bank Info Details ============== -->
+
+	<bean id="customerBankInfoDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerBankInfoDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+    <!--============ Customer Cheque Info Details ============== -->
+
+	<bean id="customerChequeInfoDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerChequeInfoDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+     
+    <!--============ Customer external Liability Details ============== -->
+
+	<bean id="customerExtLiabilityDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+    
 
 	<!-- ====================================================== -->
 	<!-- Rule Factory Details Configuration -->
@@ -3819,6 +3857,7 @@
 		<property name="commidityLoanDetailService" ref="finCommidityLoanDetailService" />			
 		<property name="sharesDetailService" ref="finSharesDetailService" />			
 		<property name="contractorAssetDetailService" ref="finContractorAssetDetailService" />			
+		<property name="customerDetailsService" ref="customerDetailsService" />			
 	</bean>
 	
 	<!-- Eligibility Details-->

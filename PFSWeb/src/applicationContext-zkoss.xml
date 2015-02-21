@@ -1682,6 +1682,27 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
+
+
+	<!--============ Customer Bank Information Details ============== -->
+
+     <bean id="customerBankInfoDialogCtrl"
+		class="com.pennant.webui.customermasters.customer.CustomerBankInfoDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+
+
+     <bean id="customerChequeInfoDialogCtrl"
+		class="com.pennant.webui.customermasters.customer.CustomerChequeInfoDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	
+     <bean id="customerExtLiabilityDialogCtrl"
+		class="com.pennant.webui.customermasters.customer.CustomerExtLiabilityDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+
 	<!-- ====================================================== -->
 	<!-- Rule factory Details Configuration -->
 	<!-- ====================================================== -->
@@ -3276,6 +3297,12 @@
 	<bean id="fleetVehicleLoanDetailListCtrl" class="com.pennant.webui.lmtmasters.fleetvehicleloandetail.FleetVehicleLoanDetailListCtrl" 
 		parent="basisCtrl" scope="prototype">
 		<property name="carLoanDetailService" ref="carLoanDetailService" />
+	</bean>
+
+	<!--============ Finance Customer Details ============== -->
+	
+	<bean id="financeCustomerListCtrl" class="com.pennant.webui.customermasters.customer.FinanceCustomerListCtrl" 
+		parent="basisCtrl" scope="prototype">
 	</bean>
 
 

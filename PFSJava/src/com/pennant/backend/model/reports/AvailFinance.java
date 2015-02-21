@@ -1,9 +1,12 @@
 package com.pennant.backend.model.reports;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class AvailFinance{
 	
+	private long   CustId;
+	private Date   finStartDate;
 	private String finCommitmentRef ="";
 	private String finReference ="";
 	private String finCcy ="";
@@ -20,6 +23,7 @@ public class AvailFinance{
 	private int ccyEditField = 0;
 	private String finDivision = "";
 	private String finDivisionDesc = "";
+	private int    noInst = 0;
 	
 	public String getFinCommitmentRef() {
     	return finCommitmentRef;
@@ -117,5 +121,26 @@ public class AvailFinance{
 	public void setFinDivisionDesc(String finDivisionDesc) {
 	    this.finDivisionDesc = finDivisionDesc;
     }
+	
+	public Date getFinStartDate() {
+		return finStartDate;
+	}
+	public void setFinStartDate(Date finStartDate) {
+		this.finStartDate = finStartDate;
+	}
+	
+	public int getNoInst() {
+		return noInst;
+	}
+	public void setNoInst(int noInst) {
+		this.noInst = noInst;
+	}
+	
+	public long getCustId() {
+		return CustId;
+	}
+	public void setCustId(long custId) {
+		CustId = custId;
+	}
 	
 }

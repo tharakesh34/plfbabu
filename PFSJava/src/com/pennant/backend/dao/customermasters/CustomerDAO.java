@@ -51,6 +51,7 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
+import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.reports.AvailPastDue;
 
 public interface CustomerDAO {
@@ -87,4 +88,5 @@ public interface CustomerDAO {
 	 String getCustWorstStsDesc(long custID);
 	 String getCustWorstStsbyCurFinSts(long custID, String finReference, String curFinSts);
 	 Customer getCustomerByID(final long id);
+	 public List<AvailFinance> getCustomerFinanceDetailById(long custId);
 } 

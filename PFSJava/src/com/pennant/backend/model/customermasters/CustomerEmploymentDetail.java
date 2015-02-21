@@ -45,6 +45,8 @@ package com.pennant.backend.model.customermasters;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -102,6 +104,11 @@ public class CustomerEmploymentDetail implements java.io.Serializable {
 		this.setId(id);
 	}
 
+	public Set<String> getExcludeFields(){
+		Set<String> excludeFields=new HashSet<String>();
+		return excludeFields;
+	}
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
