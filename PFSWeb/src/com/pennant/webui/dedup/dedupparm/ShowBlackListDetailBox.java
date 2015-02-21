@@ -360,9 +360,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 						}else{
 							
 							BlackListCustomers customer = (BlackListCustomers) listitem.getAttribute("data");
-							customer.setOverride(true);
-							customer.setOverrideUser(curAccessedUser);
-							blackListData.add(customer);
+							if(customer.getOverrideUser() == 0){
+								customer.setOverride(true);
+								customer.setOverrideUser(curAccessedUser);
+								blackListData.add(customer);
+							}
 						}
 					}
 				}
@@ -401,6 +403,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 					long overrideUser = (Long) data.getClass().getMethod("getOverrideUser").invoke(data);
 					if(overrideUser != 0 && overrideUser != curAccessedUser){
 						chk.setDisabled(true);
+						chk.setChecked((Boolean)data.getClass().getMethod(fieldMethod).invoke(data));
 					}else if(!(Boolean)data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 					}

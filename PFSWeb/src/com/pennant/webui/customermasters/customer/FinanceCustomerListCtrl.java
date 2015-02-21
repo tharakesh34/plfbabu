@@ -1493,10 +1493,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	
 	private void doClearEmpDetails(){
 		logger.debug("Entering");
-		this.empStatus.setValue("","");
+		//this.empStatus.setValue("","");
 		this.empSector.setValue("","");
 		this.profession.setValue("","");
-		this.empStatus.setValue("","");
+		//this.empStatus.setValue("","");
 		this.empName.setValue("","");
 		this.empNameOther.setValue("");
 		this.empFrom.setText("");
@@ -2197,7 +2197,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			isNew = aCustomerDetails.isNewRecord();
 			aCustomer.setNewRecord(isNew);
 			if (StringUtils.trimToEmpty(aCustomer.getRecordType()).equals("")) {
-				aCustomer.setVersion(aCustomer.getVersion() + 1);
 				if (isNew) {
 					aCustomer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {

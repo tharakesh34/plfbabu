@@ -561,6 +561,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
 							PennantConstants.DedupBlackList, custCtgType);
 					dedupParmList.add(dedupParm);
+				}else{
+					blackListCustomers.addAll(list);
 				}
 			}
 

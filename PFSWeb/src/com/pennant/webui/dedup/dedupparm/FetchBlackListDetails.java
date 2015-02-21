@@ -80,6 +80,7 @@ public class FetchBlackListDetails {
 			if (userAction == 1) {
 				tFinanceDetail.setBlackListCustomerDetails(getBlackListCustomers());
 				tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(true);
+				tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(false);
 			} else {
 				tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
 			}

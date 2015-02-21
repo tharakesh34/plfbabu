@@ -363,6 +363,7 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 	                e.printStackTrace();
                 }
 				blackListCustomer.setWatchListRule(dedupParm.getQueryCode());
+				blackListCustomer.setFinReference(customer.getFinReference());
 				blackListCustomerList.add(blackListCustomer);
             }
         }
