@@ -117,6 +117,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	protected Radio					newCust;
 	protected Radio					existingCust;
 	protected Row					customerRow;
+	protected Row					row_selectCustomer;
 	
 	protected FinanceMainListCtrl               financeMainListCtrl;  //over handed parameter
 	protected transient FinanceWorkFlow         financeWorkFlow;
@@ -124,8 +125,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	private FinanceDetail financeDetail =null;
 	private FinanceType financeType =null;
 	private List<String> userRoleCodeList = new ArrayList<String>();
-	//private String userRoleCode =null;
-	private String screenCode =null;
 	private String loanType = "";
 	
 	private transient 	FinanceTypeService      financeTypeService;
@@ -190,13 +189,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		
 		if (args.containsKey("role")) {
 			userRoleCodeList = (ArrayList<String>) args.get("role");
-			//this.userRoleCode = userRoleCodeList.get(0);//FIXME--Temporary purpose
-			/*if(this.userRoleCode.startsWith("FINANCE_QDE_")){
-				this.screenCode = "QDE";
-			}else{
-				this.screenCode = "DDE";
-			}*/
-			this.screenCode = "DDE";
 		}
 		doSetFieldProperties();
 		showSelectFinanceTypeDialog();
@@ -209,6 +201,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
+		
 		// Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.finType.setMandatoryStyle(true);
@@ -216,39 +209,25 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("LovDescFinTypeName");
 		this.finType.setValidateColumns(new String[] { "FinType" });
-		Filter[] filters = new Filter[4];
-		filters[0]= new Filter("ScreenCode", this.screenCode, Filter.OP_EQUAL);
-		filters[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-		filters[2]= new Filter("WorkFlowType", "TSR_FIN_PROCESS", Filter.OP_NOT_EQUAL);
-		filters[3]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-		//filters[2]= new Filter("lovDescFinDivisionName", PennantConstants.FIN_DIVISION_TREASURY, Filter.OP_NOT_EQUAL);
-		/*		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-					filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
-				}*/
+		Filter[] filters = new Filter[3];
+		filters[0]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		filters[1]= new Filter("WorkFlowType", "TSR_FIN_PROCESS", Filter.OP_NOT_EQUAL);
+		filters[2]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
 		this.finType.setFilters(filters);
 		
 		this.promotionCode.setMaxlength(8);
 		this.promotionCode.setModuleName("PromotionWorkFlow");
 		this.promotionCode.setValueColumn("FinType");
 		this.promotionCode.setDescColumn("FinTypeDesc");
-		/*Label label_FinType = new Label();
-		label_FinType.setValue("PromotionCode");
-		this.promotionCode.setLabel(label_FinType);*/
 		this.promotionCode.setValidateColumns(new String[]{"FinType"});
-		Filter[] filter = new Filter[3];/*
-		filter[0] = new Filter("ModuleName","FINANCE",Filter.OP_NOT_EQUAL);*/
-		filter[0]= new Filter("ScreenCode", this.screenCode, Filter.OP_EQUAL);
-		filter[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-		filter[2]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-		this.promotionCode.setFilters(filter);
+		this.promotionCode.setReadonly(true);
 		
 		this.wIfFinaceRef.setModuleName("WIFFinanceMain");
 		this.wIfFinaceRef.setValueColumn("FinReference");
 		this.wIfFinaceRef.setDescColumn("FinAmount");
 		this.wIfFinaceRef.setValidateColumns(new String[] { "FinReference" });
-		Filter[] filters1 = new Filter[1];
-		filters1[0]= new Filter("RecordType", "", Filter.OP_EQUAL);
-		this.wIfFinaceRef.setFilters(filters1);
+		this.wIfFinaceRef.setReadonly(true);
+		this.wIfFinaceRef.setTextBoxWidth(120);
   
 		logger.debug("Leaving");
 	}
@@ -268,6 +247,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		if (dataObject instanceof String){
 			this.finType.setValue(dataObject.toString());
 			this.finType.setDescription("");
+			CheckScreenCode("");
 		}else{
 			FinanceWorkFlow details= (FinanceWorkFlow) dataObject;
 			/*Set FinanceWorkFloe object*/
@@ -276,90 +256,125 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				this.loanType = details.getLovDescProductCodeName();
 				this.finType.setValue(details.getFinType());
 				this.finType.setDescription(details.getLovDescFinTypeName());
+				CheckScreenCode(details.getScreenCode());
+				this.promotionCode.setReadonly(false);
 			}
 		}
 		this.promotionCode.setValue("","");
+		this.wIfFinaceRef.setValue("");
+		this.promotionCode.setReadonly(true);
+		this.wIfFinaceRef.setReadonly(true);
+		
+		Filter[] filters1;
+		if(!this.finType.getValue().trim().equals("")){
+			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+				filters1 = new Filter[4] ;
+			}else{
+				filters1 = new Filter[3] ;
+			}
+			filters1[0]= new Filter("LovDescProductName", this.finType.getValue(), Filter.OP_EQUAL);
+			filters1[1]= new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			filters1[2]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
+			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+				filters1[3]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
+			}
+			this.promotionCode.setFilters(filters1);
+			this.promotionCode.setReadonly(false);
+		}
 		
 		Filter[] filters;
-		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-			filters = new Filter[3] ;
-		}else{
-			filters = new Filter[2] ;
-		}
 		if(!this.finType.getValue().trim().equals("")){
+			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
+				filters = new Filter[3] ;
+			}else{
+				filters = new Filter[2] ;
+			}
 			filters[0]= new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
 			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
 			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
 				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
 			}
-		}else{
-			filters[0]= new Filter("lovDescScreenCode", this.screenCode, Filter.OP_EQUAL);
-			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
-			}
+			this.wIfFinaceRef.setFilters(filters);
+			this.wIfFinaceRef.setReadonly(false);
 		}
-		this.wIfFinaceRef.setFilters(filters);
 		logger.debug("Leaving " + event.toString());
 	}
 	
 	public void onFulfill$promotionCode(Event event){
 		logger.debug("Entering " + event.toString());
+		
 		Object dataObject = this.promotionCode.getObject();
 		if (dataObject instanceof String){
 			this.promotionCode.setValue(dataObject.toString());
 			this.promotionCode.setDescription("");
+			CheckScreenCode("");
+			this.wIfFinaceRef.setReadonly(false);
 		}else{
 			FinanceWorkFlow details= (FinanceWorkFlow) dataObject;
 			/*Set FinanceWorkFloe object*/
 			setFinanceWorkFlow(details);
 			if (details != null) {
+				
 				this.loanType = details.getLovDescProductCodeName();
 				this.promotionCode.setValue(details.getFinType());
 				this.promotionCode.setDescription(details.getLovDescFinTypeName());
+				CheckScreenCode(details.getScreenCode());
+				this.wIfFinaceRef.setReadonly(true);
+				this.wIfFinaceRef.setValue("");
 			}
 		}
-		this.finType.setValue("");
 		
-		Filter[] filters;
-		if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-			filters = new Filter[3] ;
-		}else{
-			filters = new Filter[2] ;
-		}
-		if(!this.promotionCode.getValue().trim().equals("")){
-			filters[0]= new Filter("FinType", this.promotionCode.getValue(), Filter.OP_EQUAL);
-			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
-			}
-		}else{
-			filters[0]= new Filter("lovDescScreenCode", this.screenCode, Filter.OP_EQUAL);
-			filters[1]= Filter.in("lovDescFirstTaskOwner", userRoleCodeList);
-			if(!StringUtils.trimToEmpty(this.loanType).equals("")){
-				filters[2]= new Filter("lovDescProductCodeName", this.loanType, Filter.OP_EQUAL);
-			}
-		}
-		this.wIfFinaceRef.setFilters(filters);
+		this.wIfFinaceRef.setValue("");
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	/**
+	 * Method for Checking Screen Code Object to avail Customer 
+	 */
+	private void CheckScreenCode(String screenCode){
+		
+		if(screenCode.equals("") || screenCode.equals("DDE")){
+			this.row_selectCustomer.setVisible(true);
+			if(this.existingCust.isChecked()){
+				this.customerRow.setVisible(true);
+				this.custCIF.setDisabled(false);
+			}else{
+				this.newCust.setSelected(true);
+				this.customerRow.setVisible(false);
+				this.custCIF.setDisabled(true);
+			}
+		}else if(screenCode.equals("QDE")){
+			this.row_selectCustomer.setVisible(false);
+			this.existingCust.setSelected(true);
+			this.customerRow.setVisible(false);
+			this.custCIF.setDisabled(true);
+			this.custCIF.setValue("");
+		}
+	}
+	
 	/**
 	 * When user clicks on button "btnSearchWIFFinaceRef" button
 	 * @param event
 	 */
 	public void onFulfill$wIfFinaceRef(Event event) {
 		logger.debug("Entering " + event.toString());
+		
 		Object dataObject = this.wIfFinaceRef.getObject();
 		if (dataObject instanceof String){
 			this.wIfFinaceRef.setValue(dataObject.toString());
 			this.wIfFinaceRef.setDescription("");
+			this.promotionCode.setReadonly(false);
 		}else{
 			FinanceMain details= (FinanceMain) dataObject;
 			if (details != null) {
+				
 				this.loanType = details.getLovDescProductCodeName();
-				this.wIfFinaceRef.setValue(details.getFinReference());
+				this.wIfFinaceRef.setValue(details.getFinReference(),"");
 				FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(details.getFinType());
 				setFinanceWorkFlow(financeWorkFlow);
+				CheckScreenCode(financeWorkFlow.getScreenCode());
+				this.promotionCode.setReadonly(true);
+				this.promotionCode.setValue("", "");
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -453,7 +468,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		if(getFinanceWorkFlow()!=null){
 			
 			//Customer Data Fetching
-			financeDetail.setCustomerDetails(fetchCustomerData());
+			if (!getFinanceWorkFlow().getScreenCode().trim().equals("QDE")) {
+				financeDetail.setCustomerDetails(fetchCustomerData());
+			}
 			
 			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			/*
@@ -539,21 +556,21 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
-			if((StringUtils.trimToEmpty(this.finType.getValue()).equals("") 
-					&& (StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")))){
-				throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY_IN_TWO"
-						,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")
-								,Labels.getLabel("label_SelectFinanceTypeDialog_PromotionCode.value")})); 
+			if(StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
+				throw new WrongValueException(this.finType,Labels.getLabel("CHECK_NO_EMPTY"
+						,new String[]{Labels.getLabel("label_SelectFinanceTypeDialog_FinType.value")})); 
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
 		}
 		
 		try {
-			if (this.existingCust.isChecked()){
-				if (this.custCIF.getValue().equals("")) {
-					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
-							new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
+			if (!getFinanceWorkFlow().getScreenCode().trim().equals("QDE")) {
+				if (this.existingCust.isChecked()){
+					if (this.custCIF.getValue().equals("")) {
+						throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+								new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
+					}
 				}
 			}
 		} catch (WrongValueException e) {
@@ -633,6 +650,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			logger.error(e);
 			MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
 					MultiLineMessageBox.OK, MultiLineMessageBox.INFORMATION);
+			
 			customerDetails = getNewCustomerDetail();
 		}
 		logger.debug("Leaving");

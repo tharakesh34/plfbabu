@@ -19,6 +19,9 @@ public class BlackListCustomers {
 	private String custCtgCode;
 	private String custCtgType;
 	private long CustIDList;
+	private long overrideUser = 0;
+	
+	private String finReference;
 
 	public String getCustCIF() {
 		return custCIF;
@@ -142,5 +145,21 @@ public class BlackListCustomers {
 
 	public void setCustCtgType(String custCtgType) {
 	    this.custCtgType = custCtgType;
+    }
+
+	public String getFinReference() {
+	    return finReference;
+    }
+
+	public void setFinReference(String finReference) {
+	    this.finReference = finReference;
+    }
+
+	public long getOverrideUser() {
+	    return overrideUser;
+    }
+
+	public void setOverrideUser(long overrideUser) {
+	    this.overrideUser = overrideUser;
     }
 }

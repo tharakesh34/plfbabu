@@ -27,6 +27,7 @@ import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.blacklist.BlackListCustomerDAO;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -133,6 +134,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private TransactionEntryDAO transactionEntryDAO;
 	private FinFeeChargesDAO finFeeChargesDAO;
 	private FinanceStepDetailDAO  financeStepDetailDAO;
+	private BlackListCustomerDAO  blackListCustomerDAO;
 
 	private AccountEngineExecution engineExecution;
 	private AccountEngineExecutionRIA engineExecutionRIA;
@@ -2132,6 +2134,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	public BlackListCustomerDAO getBlackListCustomerDAO() {
+		return blackListCustomerDAO;
+	}
+	public void setBlackListCustomerDAO(BlackListCustomerDAO blackListCustomerDAO) {
+		this.blackListCustomerDAO = blackListCustomerDAO;
 	}
 
 	public CustomerDetailsService getCustomerDetailsService() {

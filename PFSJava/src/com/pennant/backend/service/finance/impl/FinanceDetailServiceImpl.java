@@ -974,6 +974,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(getJointAccountDetailService().saveOrUpdate(financeDetail.getJountAccountDetailList(), tableType, auditTranType));
 			}
 			
+			// Save Black List Customer Data
+			if (financeDetail.getBlackListCustomerDetails() != null && !financeDetail.getBlackListCustomerDetails().isEmpty()) {
+				getBlackListCustomerDAO().saveList(financeDetail.getBlackListCustomerDetails());
+			}
+
 			//Additional Field Details Save / Update
 			doSaveAddlFieldDetails(financeDetail, tableType);
 

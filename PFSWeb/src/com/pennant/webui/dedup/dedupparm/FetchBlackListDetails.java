@@ -34,33 +34,39 @@ public class FetchBlackListDetails {
 	 * @param custCIF
 	 * @param parent
 	 */
+	@SuppressWarnings("unchecked")
 	private FetchBlackListDetails(FinanceDetail tFinanceDetail, Window parent) {
 		super();
         logger.debug("Entering");
         
-       // Customer customer = tFinanceDetail.getCustomerDetails().getCustomer();
-        //if(customer == null){
-        	Customer customer = (Customer) PennantAppUtil.getCustomerObject(
+        Customer customer = null;
+        if(tFinanceDetail.getCustomerDetails() == null || tFinanceDetail.getCustomerDetails().getCustomer() == null){
+        	customer = (Customer) PennantAppUtil.getCustomerObject(
         			tFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF(), null);
-        //}
+        }else{
+        	customer = tFinanceDetail.getCustomerDetails().getCustomer();
+        }
         
         String userRole = tFinanceDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
         String finType = tFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
+        long curUser = tFinanceDetail.getFinScheduleData().getFinanceMain().getLastMntBy();
         
-        BlackListCustomers blackListCustData = doSetCustDataToBlackList(new BlackListCustomers(), customer);
+        BlackListCustomers blackListCustData = doSetCustDataToBlackList(new BlackListCustomers(), customer, 
+        		tFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
         setBlackListCustomers(getDedupParmService().fetchBlackListCustomers(userRole, finType, blackListCustData));
 		
         ShowBlackListDetailBox details = null;
-		if(getBlackListCustomers().size() > 0) {
+		if(getBlackListCustomers()!= null && getBlackListCustomers().size() > 0) {
 			
 			Object dataObject = ShowBlackListDetailBox.show(parent, getBlackListCustomers(), 
-					Labels.getLabel("label_BlackListCustomerFields_label"), blackListCustData);
+					Labels.getLabel("label_BlackListCustomerFields_label"), blackListCustData, curUser);
 			details = (ShowBlackListDetailBox) dataObject;
 
 			if (details != null) {
 				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());	
 				logger.debug("The User Action is "+details.getUserAction());
 				userAction = details.getUserAction();
+				setBlackListCustomers((List<BlackListCustomers>)details.getObject());
 			}
 		}else {
 			userAction = -1;
@@ -72,6 +78,7 @@ public class FetchBlackListDetails {
 			tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(true);
 
 			if (userAction == 1) {
+				tFinanceDetail.setBlackListCustomerDetails(getBlackListCustomers());
 				tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(true);
 			} else {
 				tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
@@ -87,7 +94,7 @@ public class FetchBlackListDetails {
 	 * @param customer
 	 * @return
 	 */
-	private BlackListCustomers doSetCustDataToBlackList(BlackListCustomers blackListCustomer, Customer customer) {
+	private BlackListCustomers doSetCustDataToBlackList(BlackListCustomers blackListCustomer, Customer customer, String finReference) {
 		blackListCustomer.setCustCIF(customer.getCustCIF());
 		blackListCustomer.setCustShrtName(customer.getCustShrtName());
 		blackListCustomer.setCustFName(customer.getCustFName());
@@ -98,6 +105,7 @@ public class FetchBlackListDetails {
 		blackListCustomer.setCustNationality(customer.getCustNationality());
 		blackListCustomer.setCustDOB(customer.getCustDOB());
 		blackListCustomer.setCustCtgType(customer.getLovDescCustCtgType());
+		blackListCustomer.setFinReference(finReference);
 	    return blackListCustomer;
     }
 

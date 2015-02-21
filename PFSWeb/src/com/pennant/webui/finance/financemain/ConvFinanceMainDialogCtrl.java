@@ -2543,6 +2543,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 					}
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
+				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {
+
+					processCompleted = doSaveProcess(auditHeader, method);
+
+				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckExceptions)) {
+
+					auditHeader = getFinanceDetailService().doCheckExceptions(auditHeader);
+
 				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doSendNotification)) {
 				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doDiscrepancy)) {
 					

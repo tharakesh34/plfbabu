@@ -10,7 +10,7 @@
 	<window>
 		<window id="window_SelectFinanceTypeDialog"
 			title="${c:l('window_SelectFinanceTypeDialog.title')}"
-			border="normal" apply="${selectFinanceTypeDialogCtrl}" width="50%"
+			border="normal" apply="${selectFinanceTypeDialogCtrl}" width="550px"
 			height="220px" sizable="false" closable="true">
 
 			<borderlayout id="borderlayoutFinanceMain">
@@ -22,7 +22,7 @@
 							<column />
 						</columns>
 						<rows>
-							<row>
+							<row id="row_selectCustomer">
 								<label
 									id="label_SelectFinanceTypeDialog_Customer"
 									value="${c:l('label_SelectFinanceTypeDialog_Customer.value')}" />
@@ -56,9 +56,10 @@
 									value="${c:l('label_SelectFinanceTypeDialog_PromotionCode.value')}" />
 								<extendedcombobox id="promotionCode" />
 							</row>
-							<row visible="true" spans="2">
+							<row visible="true" >
+								<label  />
 								<label value="OR"
-									style="font-weight: bold;text-align:center;" />
+									style="font-weight:bold;float:center;font-color:orange;" />
 							</row>
 							<row id="wIfReferenceRow" visible="true">
 								<label

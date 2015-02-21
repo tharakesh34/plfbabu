@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	private Object objClass = null;
 	private int userAction = 0;
 	private String[] listHeaders;
+	private long curAccessedUser;
 
 	public ShowBlackListDetailBox() {
 		super();
@@ -82,9 +84,9 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 * @return a BeanObject from the listBox or null.
 	 */
 	public static Object show(Component parent, List<?> dedupList,
-			String dedupFields, BlackListCustomers blackListCustomers) {
+			String dedupFields, BlackListCustomers blackListCustomers, long curUser) {
 		return new ShowBlackListDetailBox(parent, dedupList, dedupFields,
-				blackListCustomers);
+				blackListCustomers, curUser);
 	}
 
 	/**
@@ -94,10 +96,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	 * @param parent
 	 */
 	private ShowBlackListDetailBox(Component parent, List<?> listCode,
-			String dedupFields, BlackListCustomers blackListCustomers) {
+			String dedupFields, BlackListCustomers blackListCustomers, long curUser) {
 		super();
 		this.customerBlackListSize = (List<?>) listCode;
 		this.fieldString = dedupFields.split(",");
+		curAccessedUser = curUser;
 		setParent(parent);
 		createBox(blackListCustomers);
 	}
@@ -331,7 +334,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
-			setObject(String.valueOf("0"));
+			setObject(null);
 			onClose();
 		}
 	}
@@ -344,23 +347,31 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		public void onEvent(Event event) throws Exception {
 
 			setUserAction(1);
+			List<BlackListCustomers> blackListData = new ArrayList<BlackListCustomers>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
-				for (int j = 0; j < listitem.getChildren().size(); j++) {
-					Component component = ((Listcell) listitem.getLastChild())
-							.getChildren().get(0);
+				List<Component> componentList = ((Listcell) listitem.getLastChild())
+						.getChildren();
+				if(componentList != null && componentList.size() > 0){
+					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
 						if (!((Checkbox) component).isChecked()) {
 							setUserAction(-1);
+						}else{
+							
+							BlackListCustomers customer = (BlackListCustomers) listitem.getAttribute("data");
+							customer.setOverride(true);
+							customer.setOverrideUser(curAccessedUser);
+							blackListData.add(customer);
 						}
 					}
 				}
 
 			}
-			setObject(String.valueOf(getUserAction()));
 			if(getUserAction() == -1){
 				PTMessageUtils.showErrorMessage("All BlackListed Data must be overriden to Proceed Further.");
 			}else{
+				setObject(blackListData);
 				onClose();
 			}
 		}
@@ -386,7 +397,11 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 					lc = new Listcell(PennantAppUtil.formateDate(dateFieldValue, PennantConstants.dateFormat));
 				} else if(data.getClass().getMethod(fieldMethod).getReturnType().toString().equals("boolean")) {
 					Checkbox chk = new Checkbox();
-					if(!(Boolean)data.getClass().getMethod(fieldMethod).invoke(data)) {
+					
+					long overrideUser = (Long) data.getClass().getMethod("getOverrideUser").invoke(data);
+					if(overrideUser != 0 && overrideUser != curAccessedUser){
+						chk.setDisabled(true);
+					}else if(!(Boolean)data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 					}
 					lc = new Listcell();
@@ -397,6 +412,8 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 				}
 				lc.setParent(item);
 			}
+			
+			item.setAttribute("data", data);
 		}
 	}
 

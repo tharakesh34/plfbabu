@@ -3099,6 +3099,7 @@
 	<bean name="dedupParmServiceTarget"
 		class="com.pennant.backend.service.dedup.impl.DedupParmServiceImpl">
 		<property name="dedupParmDAO" ref="dedupParmDAO" />
+		<property name="blackListCustomerDAO" ref="blackListCustomerDAO" />
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
@@ -6735,6 +6736,12 @@
 		class="com.pennant.backend.service.applicationmaster.impl.QueryServiceImpl">
 		<property name="queryDAO" ref="queryDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<!-- BlackListed Customer Finance Details -->
+	<bean id="blackListCustomerDAO"
+		class="com.pennant.backend.dao.blacklist.impl.BlackListCustomerDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
 </beans>

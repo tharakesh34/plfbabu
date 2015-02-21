@@ -55,6 +55,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.blacklist.BlackListCustomerDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -80,6 +81,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private DedupParmDAO dedupParmDAO;
+	private BlackListCustomerDAO blackListCustomerDAO;
 	private CustomerInterfaceService customerInterfaceService;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -100,6 +102,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		this.dedupParmDAO = dedupParmDAO;
 	}
 
+	public BlackListCustomerDAO getBlackListCustomerDAO() {
+		return blackListCustomerDAO;
+	}
+	public void setBlackListCustomerDAO(BlackListCustomerDAO blackListCustomerDAO) {
+		this.blackListCustomerDAO = blackListCustomerDAO;
+	}
+	
 	public CustomerInterfaceService getCustomerInterfaceService() {
 		return customerInterfaceService;
 	}
@@ -530,7 +539,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			BlackListCustomers blCustData) {
 		logger.debug("Entering");
 		
-		List<BlackListCustomers> blackListCustomers = null;
+		List<BlackListCustomers> blackListCustomers = new ArrayList<BlackListCustomers>();
 		
 		// Get QueryCode and override values from DB
 		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
@@ -545,9 +554,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			//Fetch Builded SQL Query based on Query Code  
 			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
 			for (FinanceReferenceDetail queryCode : queryCodeList) {
-				DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
-						PennantConstants.DedupBlackList, custCtgType);
-				dedupParmList.add(dedupParm);
+				
+				//Checking already processed BlackList Records exists or not at the same stage
+				List<BlackListCustomers> list = getBlackListCustomerDAO().fetchOverrideBlackListData(blCustData.getFinReference(), queryCode.getLovDescNamelov());
+				if(list == null || list.isEmpty()){
+					DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
+							PennantConstants.DedupBlackList, custCtgType);
+					dedupParmList.add(dedupParm);
+				}
 			}
 
 			//Using Queries Fetch Black Listed Customer Data either from Interface or 

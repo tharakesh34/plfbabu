@@ -60,12 +60,14 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
@@ -79,7 +81,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
@@ -146,6 +147,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Longbox      custID;                      // autoWired
 	protected Label        recordStatus;                // autoWired
 	protected Textbox      lovDescCustCIF;              // autoWired
+	protected Label        custShrtName;                // autoWired
 	protected Label        finTypeName;                 // autoWired
 	protected Textbox      lovDescFinCcyName;           // autoWired
 	protected Tab 		   financeElgreferenceTab;      // autoWired
@@ -168,11 +170,11 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 	protected Tabpanel     checkListTabPanel ;          // autoWired
 	protected Radiogroup   userAction;					// autoWired
 	protected Groupbox     groupboxWf;					// autoWired
-	protected Row          statusRow;					// autoWired
 	protected Div 		   basicDetailsDiv;				// autoWired
 	protected Div 		   checkListTabDiv;				// autoWired
 	protected Component    checkListChildWindow;		// autoWired
 	protected Tab 		   checkListTab;				// autoWired
+	protected Borderlayout borderlayoutFinanceMain;		// autoWired
 
 	// not auto wired variables
 	private FinanceDetail financeDetail;                       // over handed per parameters
@@ -276,6 +278,11 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		} else {
 			setFinanceMainListCtrl(null);
 		}
+		
+		this.borderLayoutHeight = ((Intbox) Path.getComponent("/outerIndexWindow/currentDesktopHeight"))
+				.getValue().intValue()- PennantConstants.borderlayoutMainNorth;
+		
+		this.borderlayoutFinanceMain.setHeight(this.borderLayoutHeight + "px");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -447,10 +454,8 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
-			this.statusRow.setVisible(true);
 		}else{
 			this.groupboxWf.setVisible(false);
-			this.statusRow.setVisible(false);
 		}
 
 		logger.debug("Leaving") ;
@@ -552,6 +557,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 				,aFinanceMain.getLovDescFinFormatter()));
 		this.custID.setValue(aFinanceMain.getCustID());
 		this.lovDescCustCIF.setValue(aFinanceMain.getLovDescCustCIF());
+		this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
 		this.finTypeName.setValue(aFinanceMain.getLovDescFinTypeName());
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
@@ -651,6 +657,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		try {
 			aFinanceMain.setCustID(this.custID.getValue());
 			aFinanceMain.setLovDescCustCIF(this.lovDescCustCIF.getValue());
+			aFinanceMain.setLovDescCustShrtName(this.custShrtName.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -795,7 +802,8 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		logger.debug("Entering"); 
 		final Customer aCustomer = (Customer)nCustomer; 		
 		this.custID.setValue(aCustomer.getCustID());
-		this.lovDescCustCIF.setValue(String.valueOf(aCustomer.getCustCIF()));
+		this.lovDescCustCIF.setValue(aCustomer.getCustCIF());
+		this.custShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject=newSearchObject;
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescCustFName(StringUtils.trimToEmpty(aCustomer.getCustFName()));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescCustLName(StringUtils.trimToEmpty(aCustomer.getCustLName()));

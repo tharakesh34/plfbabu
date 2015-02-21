@@ -48,6 +48,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.LoginUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerScoringCheck;
@@ -141,6 +142,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>(1);
 	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
 	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<ContractorAssetDetail>(1);
+	
+	// Dedupe Check List Details 
+	private List<BlackListCustomers> blackListCustomerDetails = null; 
 	
 	private CustomerDetails customerDetails;
 	private WIFCustomer customer;
@@ -642,5 +646,12 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setVehicleLoanDetails(List<CarLoanDetail> vehicleLoanDetails) {
 		this.vehicleLoanDetails = vehicleLoanDetails;
 	}
+
+	public List<BlackListCustomers> getBlackListCustomerDetails() {
+	    return blackListCustomerDetails;
+    }
+	public void setBlackListCustomerDetails(List<BlackListCustomers> blackListCustomerDetails) {
+	    this.blackListCustomerDetails = blackListCustomerDetails;
+    }
 
 }
