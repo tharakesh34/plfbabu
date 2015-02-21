@@ -3100,6 +3100,7 @@
 		class="com.pennant.backend.service.dedup.impl.DedupParmServiceImpl">
 		<property name="dedupParmDAO" ref="dedupParmDAO" />
 		<property name="blackListCustomerDAO" ref="blackListCustomerDAO" />
+		<property name="financeDedupeDAO" ref="financeDedupeDAO" />
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
@@ -3842,6 +3843,7 @@
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="blackListCustomerDAO" ref="blackListCustomerDAO" />
+		<property name="financeDedupeDAO" ref="financeDedupeDAO" />
 		
 		<!-- Services -->	
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />		
@@ -6742,6 +6744,12 @@
 	<!-- BlackListed Customer Finance Details -->
 	<bean id="blackListCustomerDAO"
 		class="com.pennant.backend.dao.blacklist.impl.BlackListCustomerDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- Finance Dedup Details -->
+	<bean id="financeDedupeDAO"
+		class="com.pennant.backend.dao.findedup.impl.FinanceDedupeDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	

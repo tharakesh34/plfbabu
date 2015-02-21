@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +71,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	private static String compListFileds[];
 	private static Object compObject;
 	static boolean isCustomerDedup = false;
+	private static long curAccessedUser;
 
 	public ShowDedupListBox() {
 		super();
@@ -82,8 +84,9 @@ public class ShowDedupListBox extends Window implements Serializable {
 	 *            The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
-	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup) {
+	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup, long curUser) {
 		isCustomerDedup = false;
+		curAccessedUser = curUser;
 		return new ShowDedupListBox(parent, dedupList, dedupFields, dedup);
 	}
 
@@ -288,7 +291,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
-			setObject(String.valueOf("0"));
+			setObject(null);
 			onClose();
 		}
 	}
@@ -300,7 +303,20 @@ public class ShowDedupListBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			setUserAction(1);
-			setObject(String.valueOf("1"));
+			if(!isCustomerDedup){
+				List<FinanceDedup> dedupList = new ArrayList<FinanceDedup>();
+				for (int i = 0; i < listbox.getItems().size(); i++) {
+					Listitem listitem = listbox.getItems().get(i);
+					FinanceDedup dedup = (FinanceDedup) listitem.getAttribute("data");
+					if(dedup.getOverrideUser() == 0){
+						dedup.setOverrideUser(curAccessedUser);
+						dedupList.add(dedup);
+					}
+				}
+				setObject(dedupList);
+			}else{
+				setObject(String.valueOf("1"));
+			}
 			onClose();
 		}
 	}
@@ -390,6 +406,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 				}
 				lc.setParent(item);
 			}
+			item.setAttribute("data", data);
 		}
 	}
 

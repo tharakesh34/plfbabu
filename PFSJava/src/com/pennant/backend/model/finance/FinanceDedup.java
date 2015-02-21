@@ -36,6 +36,7 @@ public class FinanceDedup {
 	private String 	stage="";
 	private String 	dedupeRule;
 	private String custCRCPR="";
+	private long overrideUser = 0;
 	
 	
 	public String getMobileNumber() {
@@ -293,6 +294,14 @@ public class FinanceDedup {
 
 	public void setCustCRCPR(String custCRCPR) {
 	    this.custCRCPR = custCRCPR;
+    }
+
+	public long getOverrideUser() {
+	    return overrideUser;
+    }
+
+	public void setOverrideUser(long overrideUser) {
+	    this.overrideUser = overrideUser;
     }
 
 }

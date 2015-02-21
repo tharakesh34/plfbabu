@@ -145,6 +145,8 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	// Dedupe Check List Details 
 	private List<BlackListCustomers> blackListCustomerDetails = null; 
+	private List<FinanceDedup> finDedupDetails = null; 
+	
 	
 	private CustomerDetails customerDetails;
 	private WIFCustomer customer;
@@ -653,5 +655,12 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setBlackListCustomerDetails(List<BlackListCustomers> blackListCustomerDetails) {
 	    this.blackListCustomerDetails = blackListCustomerDetails;
     }
+
+	public List<FinanceDedup> getFinDedupDetails() {
+		return finDedupDetails;
+	}
+	public void setFinDedupDetails(List<FinanceDedup> finDedupDetails) {
+		this.finDedupDetails = finDedupDetails;
+	}
 
 }

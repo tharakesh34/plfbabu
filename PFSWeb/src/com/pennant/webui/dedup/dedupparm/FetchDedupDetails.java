@@ -28,6 +28,7 @@ public class FetchDedupDetails {
 
 	private CustomerDetails customerDetails;
 	private FinanceDetail financeDetail;
+	private List<FinanceDedup> financeDedupList;
 	
 	public FetchDedupDetails(){
 		super();
@@ -93,6 +94,7 @@ public class FetchDedupDetails {
 	 * @param aFinanceDetail
 	 * @param parent
 	 */
+	@SuppressWarnings("unchecked")
 	private  FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail,Component parent){
 		super();
 		
@@ -159,13 +161,15 @@ public class FetchDedupDetails {
 		ShowDedupListBox details = null;
 		if(!loanDedup.isEmpty()) {
 
-			Object dataObject = ShowDedupListBox.show(parent,loanDedup,Labels.getLabel("label_FinDedupFields_label"),financeDedup);
+			Object dataObject = ShowDedupListBox.show(parent,loanDedup,Labels.getLabel("label_FinDedupFields_label"),
+					financeDedup, aFinanceMain.getLastMntBy());
 			details 	= (ShowDedupListBox) dataObject;
 
 			if (details != null) {
 				System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());		
 				logger.debug("The User Action is "+details.getUserAction());
 				userAction = details.getUserAction();
+				setFinanceDedupList((List<FinanceDedup>)details.getObject());
 			}
 		}else {
 			userAction = -1;
@@ -178,6 +182,7 @@ public class FetchDedupDetails {
 
 			if (userAction == 1) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
+				aFinanceDetail.setFinDedupDetails(getFinanceDedupList());
 			} else {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
 			}
@@ -216,6 +221,14 @@ public class FetchDedupDetails {
 	}
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public List<FinanceDedup> getFinanceDedupList() {
+		return financeDedupList;
+	}
+
+	public void setFinanceDedupList(List<FinanceDedup> financeDedupList) {
+		this.financeDedupList = financeDedupList;
 	}
 	
 }

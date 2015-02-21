@@ -47,6 +47,7 @@ import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
+import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
@@ -135,6 +136,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinFeeChargesDAO finFeeChargesDAO;
 	private FinanceStepDetailDAO  financeStepDetailDAO;
 	private BlackListCustomerDAO  blackListCustomerDAO;
+	private FinanceDedupeDAO  financeDedupeDAO;
 
 	private AccountEngineExecution engineExecution;
 	private AccountEngineExecutionRIA engineExecutionRIA;
@@ -2149,5 +2151,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
+	public FinanceDedupeDAO getFinanceDedupeDAO() {
+	    return financeDedupeDAO;
+    }
+	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
+	    this.financeDedupeDAO = financeDedupeDAO;
+    }
 
 }

@@ -978,6 +978,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getBlackListCustomerDetails() != null && !financeDetail.getBlackListCustomerDetails().isEmpty()) {
 				getBlackListCustomerDAO().saveList(financeDetail.getBlackListCustomerDetails());
 			}
+			
+			// Save Finance DeDup List Data
+			if (financeDetail.getFinDedupDetails() != null && !financeDetail.getFinDedupDetails().isEmpty()) {
+				getFinanceDedupeDAO().saveList(financeDetail.getFinDedupDetails());
+			}
 
 			//Additional Field Details Save / Update
 			doSaveAddlFieldDetails(financeDetail, tableType);

@@ -57,6 +57,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.blacklist.BlackListCustomerDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
+import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -82,6 +83,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private AuditHeaderDAO auditHeaderDAO;
 	private DedupParmDAO dedupParmDAO;
 	private BlackListCustomerDAO blackListCustomerDAO;
+	private FinanceDedupeDAO financeDedupeDAO;
 	private CustomerInterfaceService customerInterfaceService;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -107,6 +109,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 	public void setBlackListCustomerDAO(BlackListCustomerDAO blackListCustomerDAO) {
 		this.blackListCustomerDAO = blackListCustomerDAO;
+	}
+	
+	public FinanceDedupeDAO getFinanceDedupeDAO() {
+		return financeDedupeDAO;
+	}
+	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
+		this.financeDedupeDAO = financeDedupeDAO;
 	}
 	
 	public CustomerInterfaceService getCustomerInterfaceService() {
@@ -287,10 +296,15 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	@Override	
 	public List<FinanceDedup> fetchFinDedupDetails(String queryCode, FinanceDedup aFinanceDedup){
-		DedupParm dedupParm = getApprovedDedupParmById(queryCode, PennantConstants.DedupFinance, "L");
 		
-		if(dedupParm!=null){
-			return getDedupParmDAO().fetchFinDedupDetails(aFinanceDedup ,dedupParm.getSQLQuery());	
+		List<FinanceDedup> list = getFinanceDedupeDAO().fetchOverrideDedupData(aFinanceDedup.getFinReference(), queryCode);
+		if(list == null || list.isEmpty()){
+			DedupParm dedupParm = getApprovedDedupParmById(queryCode, PennantConstants.DedupFinance, "L");
+			if(dedupParm!=null){
+				return getDedupParmDAO().fetchFinDedupDetails(aFinanceDedup ,dedupParm.getSQLQuery());	
+			}
+		}else{
+			return list;
 		}
 		return new ArrayList<FinanceDedup>();
 	}	

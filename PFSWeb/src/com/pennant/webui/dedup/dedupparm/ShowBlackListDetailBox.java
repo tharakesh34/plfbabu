@@ -404,6 +404,8 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 					if(overrideUser != 0 && overrideUser != curAccessedUser){
 						chk.setDisabled(true);
 						chk.setChecked((Boolean)data.getClass().getMethod(fieldMethod).invoke(data));
+					}else if(overrideUser != 0 && overrideUser == curAccessedUser){
+						chk.setChecked((Boolean)data.getClass().getMethod(fieldMethod).invoke(data));
 					}else if(!(Boolean)data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
 					}
