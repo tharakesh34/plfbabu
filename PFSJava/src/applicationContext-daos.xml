@@ -3841,6 +3841,7 @@
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		<property name="blackListCustomerDAO" ref="blackListCustomerDAO" />
 		
 		<!-- Services -->	
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />		
