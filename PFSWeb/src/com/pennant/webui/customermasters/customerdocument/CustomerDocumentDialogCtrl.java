@@ -1362,6 +1362,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);
 		}

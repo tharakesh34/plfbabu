@@ -247,7 +247,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 			this.customerChequeInfo.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
-				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerChequeInfoDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerChequeInfo.isWorkflow(),
@@ -314,8 +314,6 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerChequeInfoDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerChequeInfoDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.btnSave.setVisible(true);
-		this.btnDelete.setVisible(true);
 		logger.debug("Leaving");
 	}
 
@@ -835,7 +833,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 			}else{
 				this.btnSearchPRCustid.setVisible(true);
 			}
-			this.monthYear.setReadonly(isReadOnly("CustomerChequeInfoDialog_ChequeName"));
+			this.monthYear.setReadonly(isReadOnly("CustomerChequeInfoDialog_monthYear"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
@@ -843,8 +841,11 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
-		this.totChequePayment.setReadonly(isReadOnly("CustomerChequeInfoDialog_AccountType"));
-		this.monthYear.setReadonly(isReadOnly("CustomerChequeInfoDialog_AccountNumber"));
+		this.totChequePayment.setReadonly(isReadOnly("CustomerChequeInfoDialog_totChequePayment"));
+		this.monthYear.setDisabled(isReadOnly("CustomerChequeInfoDialog_monthYear"));
+		this.salary.setReadonly(isReadOnly("CustomerChequeInfoDialog_salary"));
+		this.returnChequeAmt.setReadonly(isReadOnly("CustomerChequeInfoDialog_returnChequeAmt"));
+		this.returnChequeCount.setReadonly(isReadOnly("CustomerChequeInfoDialog_returnChequeCount"));
 
 
 		if (isWorkFlowEnabled()) {
@@ -882,6 +883,9 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);

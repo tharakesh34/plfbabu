@@ -100,7 +100,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, ReturnChequeAmt, ReturnChequeCount,");
 		if(type.contains("View")){
-			selectSql.append(" ");
+			selectSql.append(" lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -135,7 +135,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, ReturnChequeAmt, ReturnChequeCount,");
 		if(type.contains("View")){
-			selectSql.append("  ");
+			selectSql.append(" lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");

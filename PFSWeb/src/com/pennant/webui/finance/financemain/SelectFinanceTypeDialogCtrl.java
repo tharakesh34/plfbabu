@@ -639,7 +639,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				}
 				
 				if (customer != null) {
-					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
+					customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), "_View");
 				}
 				
 			}else if (this.newCust.isChecked()){

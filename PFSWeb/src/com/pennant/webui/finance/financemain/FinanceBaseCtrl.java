@@ -6386,6 +6386,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(isReadOnly("FinanceMainDialog_applyODPenalty"), this.applyODPenalty);
 
+		this.custCIF.setDisabled(true);
+		this.btnSearchCustCIF.setVisible(false);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -6497,7 +6500,8 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		logger.debug("Entering");
 
 		//FinanceMain Details Tab ---> 1. Basic Details
-
+		this.custCIF.setDisabled(true);
+		this.btnSearchCustCIF.setVisible(false);
 		this.finReference.setReadonly(true);
 		this.btnSearchFinType.setDisabled(true);
 		this.finRemarks.setReadonly(true);

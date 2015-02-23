@@ -254,7 +254,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.customerEMail.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
-				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEMailDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerEMail.isWorkflow(),
@@ -947,6 +947,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);

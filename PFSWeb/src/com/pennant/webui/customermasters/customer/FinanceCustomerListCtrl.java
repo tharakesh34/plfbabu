@@ -82,6 +82,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
@@ -95,6 +96,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -104,6 +106,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -141,21 +144,11 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	protected Combobox custGenderCode; 					// autowired
 	protected Intbox noOfDependents;                    // autowired
 	protected Combobox target; 					        // autowired
-	protected ExtendedCombobox custRO1; 				// autowired
 	protected ExtendedCombobox custCtgCode; 			// autowired
 	protected Checkbox salaryTransferred;               // autowired
 	protected ExtendedCombobox custDftBranch; 			// autowired
 	protected ExtendedCombobox custTypeCode; 			// autowired
 	protected ExtendedCombobox custBaseCcy; 			// autowired
-	protected ExtendedCombobox custSector; 				// autowired
-	protected ExtendedCombobox custSubSector; 			// autowired
-	protected ExtendedCombobox custEmpSts; 				// autowired
-	protected ExtendedCombobox custParentCountry;		// autowired
-	protected Row rowCustCRCPR;
-	protected Textbox custCPR; 							// autowired
-	protected Textbox custCR1; 							// autowired
-	protected Textbox custCR2; 							// autowired
-	protected Hbox hboxCustCR;							// autowired
 	protected Checkbox salariedCustomer;			    // autowired
 	protected Label label_FinanceCustomerList_CustDOB;
 
@@ -164,6 +157,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	protected ExtendedCombobox empSector;				// autowired
 	protected ExtendedCombobox profession;				// autowired
 	protected ExtendedCombobox empName;				    // autowired
+	protected Hbox hbox_empNameOther;				    // autowired
+	protected Label label_empNameOther;				    // autowired
 	protected Textbox empNameOther;				        // autowired
 	protected Datebox empFrom; 							// autowired
 	protected ExtendedCombobox empDesg;				    // autowired
@@ -220,7 +215,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 	private List<CustomerExtLiability> oldVar_customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 
-	private transient String oldVar_custCIF;
 	private transient String oldVar_custCoreBank;
 	private transient String oldVar_custShrtName;
 	private transient String oldVar_custFirstName;
@@ -230,18 +224,24 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private transient String oldVar_custCtgCode;
 	private transient String oldVar_custDftBranch;
 	private transient String oldVar_custTypeCode;
-	private transient long oldVar_custGroupID;
 	private transient String oldVar_custBaseCcy;
-	private transient String oldVar_custRO1;
-	private transient String oldVar_custSector;
-	private transient String oldVar_custSubSector;
-	private transient String oldVar_custEmpSts;
 	private transient String oldVar_custNationality;
-	private transient String oldVar_custParentCountry;
 	private transient Date oldVar_custDOB;
 	private transient String oldVar_custSalutationCode;
 	private transient String oldVar_custGenderCode;
 	private transient String oldVar_custMaritalSts;
+	
+	private transient String oldVar_empStatus;
+	private transient String oldVar_empSector;
+	private transient String oldVar_profession;
+	private transient String oldVar_empName;
+	private transient String oldVar_empNameOther;
+	private transient Date oldVar_empFrom;
+	private transient String oldVar_empDesg;
+	private transient String oldVar_empDept;
+	private transient BigDecimal oldVar_monthlyIncome;
+	private transient String oldVar_otherIncome;
+	private transient BigDecimal oldVar_additionalIncome;
 	
 	private CustomerDetails customerDetails; // overhanded per param
 
@@ -258,13 +258,15 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private transient boolean validationOn;
 	private boolean corpCustomer=false;
 	private boolean isCountryBehrain = false;
-	private String sCustSector;
 	private String sCustGender;
 	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
 	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	int finFormatter;
 	public static final String EmploymentStatus_BUSINESS = "BUSINESS";
 	public static final String EmploymentStatus_SELFEMP = "SELFEMP";
+	public static final String EmploymentName_OTHERS = "OTHERS";
+	private String empStatus_Temp = ""; 
+	private String empName_Temp = ""; 
 	/**
 	 * default constructor.<br>
 	 */
@@ -286,7 +288,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	public void onCreate$window_FinanceCustomerList(ForwardEvent event) throws Exception {
 		logger.debug("Entring" + event.toString());
 
-		doSetFieldProperties();
 
 		try {
 
@@ -316,6 +317,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				setFinancedetail((FinanceDetail) args.get("financedetail"));
 				if (getFinancedetail() != null) {
 					setCustomerDetails(getFinancedetail().getCustomerDetails());
+					FinanceMain financeMain = getFinancedetail().getFinScheduleData().getFinanceMain();
+					getFinancedetail().getCustomerDetails().getCustomer().setWorkflowId(financeMain.getWorkflowId());
 					finFormatter = getCustomerDetails().getCustomer().getLovDescCcyFormatter();
 					if(getCustomerDetails() != null && StringUtils.trimToEmpty(getCustomerDetails().getCustomer().getCustNationality()).equals(PennantConstants.COUNTRY_BEHRAIN)){
 						isCountryBehrain = true; 
@@ -337,11 +340,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 
 			doCheckRights();
+			doSetFieldProperties();
 			doStoreInitValues();
 			doShowDialog(getCustomerDetails());
-			if(!isCountryBehrain){
-				setCPRNumberNonBehrain();
-			}
 		} catch (Exception e) {
 			createException(window_FinanceCustomerList, e);
 			logger.error(e);
@@ -361,6 +362,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custLastName.setMaxlength(50);
 		this.custArabicName.setMaxlength(50);
 		this.custCtgCode.setMaxlength(8);
+		this.custCtgCode.getTextbox().setWidth("152px");
 		this.custCtgCode.setMandatoryStyle(true);
 		this.custCtgCode.setModuleName("CustomerCategory");
 		this.custCtgCode.setValueColumn("CustCtgCode");
@@ -382,62 +384,26 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custTypeCode.setValidateColumns(new String[] { "CustTypeCode" });
 
 		this.custBaseCcy.setMaxlength(3);
+		this.custBaseCcy.getTextbox().setWidth("121px");
 		this.custBaseCcy.setMandatoryStyle(true);
 		this.custBaseCcy.setModuleName("Currency");
 		this.custBaseCcy.setValueColumn("CcyCode");
 		this.custBaseCcy.setDescColumn("CcyDesc");
 		this.custBaseCcy.setValidateColumns(new String[] { "CcyCode" });
 
-		this.custRO1.setMaxlength(8);
-		this.custRO1.setMandatoryStyle(true);
-		this.custRO1.setModuleName("RelationshipOfficer");
-		this.custRO1.setValueColumn("ROfficerCode");
-		this.custRO1.setDescColumn("ROfficerDesc");
-		this.custRO1.setValidateColumns(new String[] { "ROfficerCode" });
-
-		this.custSector.setMaxlength(8);
-		this.custSector.setMandatoryStyle(true);
-		this.custSector.setModuleName("Sector");
-		this.custSector.setValueColumn("SectorCode");
-		this.custSector.setDescColumn("SectorDesc");
-		this.custSector.setValidateColumns(new String[] { "SectorCode" });
-
-		this.custSubSector.setMaxlength(8);
-		this.custSubSector.setMandatoryStyle(true);
-		this.custSubSector.setModuleName("SubSector");
-		this.custSubSector.setValueColumn("SubSectorCode");
-		this.custSubSector.setDescColumn("SubSectorDesc");
-		this.custSubSector.setValidateColumns(new String[] { "SubSectorCode" }); 
-
-		this.custEmpSts.setMaxlength(8);
-		this.custEmpSts.setMandatoryStyle(true);
-		this.custEmpSts.setModuleName("EmpStsCode");
-		this.custEmpSts.setValueColumn("EmpStsCode");
-		this.custEmpSts.setDescColumn("EmpStsDesc");
-		this.custEmpSts.setValidateColumns(new String[] { "EmpStsCode" });
-
 		this.custNationality.setMaxlength(2);
+		this.custNationality.getTextbox().setWidth("121px");
 		this.custNationality.setMandatoryStyle(true);
 		this.custNationality.setModuleName("NationalityCode");
 		this.custNationality.setValueColumn("NationalityCode");
 		this.custNationality.setDescColumn("NationalityDesc");
 		this.custNationality.setValidateColumns(new String[] { "NationalityCode" });
 
-		this.custParentCountry.setMaxlength(2);
-		this.custParentCountry.setMandatoryStyle(true);
-		this.custParentCountry.setModuleName("Country");
-		this.custParentCountry.setValueColumn("CountryCode");
-		this.custParentCountry.setDescColumn("CountryDesc");
-		this.custParentCountry.setValidateColumns(new String[] { "CountryCode" });
-
 		this.custDOB.setFormat(PennantConstants.dateFormat);
-
-		this.custCPR.setMaxlength(15);
-		this.custCR1.setMaxlength(5);
-		this.custCR2.setMaxlength(2);
 
 		//Customer Employee Field Properties
 		this.empStatus.setMaxlength(8);
+		this.empStatus.getTextbox().setWidth("121px");
 		this.empStatus.setMandatoryStyle(true);
 		this.empStatus.setModuleName("EmpStsCode");
 		this.empStatus.setValueColumn("EmpStsCode");
@@ -445,7 +411,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empStatus.setValidateColumns(new String[] { "EmpStsCode" });
 		
 		this.empSector.setMaxlength(8);
-		this.empSector.setMandatoryStyle(true);
+		this.empSector.getTextbox().setWidth("120px");
 		this.empSector.setModuleName("Sector");
 		this.empSector.setValueColumn("SectorCode");
 		this.empSector.setDescColumn("SectorDesc");
@@ -462,13 +428,14 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.monthlyIncome.setMaxlength(18);
 		this.monthlyIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 
-		this.additionalIncome.setMandatory(true);
 		this.additionalIncome.setMaxlength(18);
 		this.additionalIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		
 		this.empFrom.setFormat(PennantConstants.dateFormat);
 		
-		this.empName.setMaxlength(8);
+		this.empName.setInputAllowed(false);
+		this.empName.setDisplayStyle(3);
+		this.empName.getTextbox().setWidth("121px");
 		this.empName.setMandatoryStyle(true);
 		this.empName.setModuleName("EmployerDetail");
 		this.empName.setValueColumn("EmployerId");
@@ -476,6 +443,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empName.setValidateColumns(new String[] { "EmployerId" });
 
 		this.empDesg.setMaxlength(8);
+		this.empDesg.getTextbox().setWidth("121px");
 		this.empDesg.setMandatoryStyle(true);
 		this.empDesg.setModuleName("Designation");
 		this.empDesg.setValueColumn("DesgCode");
@@ -483,6 +451,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empDesg.setValidateColumns(new String[] { "DesgCode" });
 		
 		this.empDept.setMaxlength(8);
+		this.empDept.getTextbox().setWidth("121px");
 		this.empDept.setMandatoryStyle(true);
 		this.empDept.setModuleName("Department");
 		this.empDept.setValueColumn("DeptCode");
@@ -490,7 +459,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empDept.setValidateColumns(new String[] { "DeptCode" });
 		
 		this.otherIncome.setMaxlength(8);
-		this.otherIncome.setMandatoryStyle(true);
+		this.otherIncome.getTextbox().setWidth("121px");
 		this.otherIncome.setModuleName("IncomeType");
 		this.otherIncome.setValueColumn("IncomeTypeCode");
 		this.otherIncome.setDescColumn("IncomeTypeDesc");
@@ -498,8 +467,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		
 		logger.debug("Leaving");
 	}
-
-
+	
 
 	private void dowriteBeanToComponents(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
@@ -519,49 +487,24 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custDftBranch.setValue(aCustomer.getCustDftBranch());
 		this.custTypeCode.setValue(aCustomer.getCustTypeCode());
 		this.custBaseCcy.setValue(aCustomer.getCustBaseCcy());
-		this.custRO1.setValue(aCustomer.getCustRO1());
-		this.custSector.setValue(aCustomer.getCustSector());
-		this.custSubSector.setValue(aCustomer.getCustSubSector());
-		this.custEmpSts.setValue(aCustomer.getCustEmpSts());
 
 		String custCRCPR = StringUtils.trimToEmpty(aCustomer.getCustCRCPR());
-		if(!custCRCPR.equals("")){
+		if (custCRCPR.equals("") && aCustomerDetails.getCustomerDocumentsList()!=null && !aCustomerDetails.getCustomerDocumentsList().isEmpty()) {
 			if (corpCustomer && isCountryBehrain) {
-				String[] custCR = custCRCPR.split("-");
-				if (custCR.length == 2) {
-					this.custCR1.setValue(custCR[0]);
-					this.custCR2.setValue(custCR[1]);
-				}
-			} else {
-				this.custCPR.setValue(aCustomer.getCustCRCPR());
-			}
-
-		}else{
-			if (aCustomerDetails.getCustomerDocumentsList()!=null && !aCustomerDetails.getCustomerDocumentsList().isEmpty()) {
-				if (corpCustomer && isCountryBehrain) {
-					for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
-						if (customerDocument.getCustDocCategory().equals(PennantConstants.BAHRAINI_CR)) {
-							String cr=StringUtils.trimToEmpty(customerDocument.getCustDocTitle());
-							getCustomerDetails().getCustomer().setCustCRCPR(cr);
-							if (cr.contains("-")) {
-								String[] custCR = cr.split("-");
-								if (custCR.length == 2 && (custCR[0].length()<=5 && custCR[1].length()<=2)) {
-									this.custCR1.setValue(custCR[0]);
-									this.custCR2.setValue(custCR[1]);
-								}
-							}
-							break;
-						}
+				for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
+					if (customerDocument.getCustDocCategory().equals(PennantConstants.BAHRAINI_CR)) {
+						String cr=StringUtils.trimToEmpty(customerDocument.getCustDocTitle());
+						getCustomerDetails().getCustomer().setCustCRCPR(cr);
+						break;
 					}
-				}else{
-					for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
-						if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE) || 
-								customerDocument.getCustDocCategory().equals(PennantConstants.NON_BAHRAINI_INTERNATIONAL_CR) || 
-								customerDocument.getCustDocCategory().equals(PennantConstants.BAHRAINI_CR) ) {
-							this.custCPR.setValue(StringUtils.trimToEmpty(customerDocument.getCustDocTitle()));
-							getCustomerDetails().getCustomer().setCustCRCPR(StringUtils.trimToEmpty(customerDocument.getCustDocTitle()));
-							break;
-						}
+				}
+			}else{
+				for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
+					if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE) || 
+							customerDocument.getCustDocCategory().equals(PennantConstants.NON_BAHRAINI_INTERNATIONAL_CR) || 
+							customerDocument.getCustDocCategory().equals(PennantConstants.BAHRAINI_CR) ) {
+						getCustomerDetails().getCustomer().setCustCRCPR(StringUtils.trimToEmpty(customerDocument.getCustDocTitle()));
+						break;
 					}
 				}
 			}
@@ -574,22 +517,15 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custDftBranch.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustDftBranchName()).equals("") ? "" : aCustomer.getLovDescCustDftBranchName());
 		this.custTypeCode.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustTypeCodeName()).equals("") ? "" : aCustomer.getLovDescCustTypeCodeName());
 		this.custBaseCcy.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustBaseCcyName()).equals("") ? "" : aCustomer.getLovDescCustBaseCcyName());
-		this.custRO1.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustRO1Name()).equals("") ? "" : aCustomer.getLovDescCustRO1Name());
-		this.custSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSectorName()).equals("") ? "" : aCustomer.getLovDescCustSectorName());
-		this.custSubSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSectorName()).equals("") ? "" : aCustomer.getLovDescCustSubSectorName());
-		this.custEmpSts.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustEmpStsName()).equals("") ? "" : aCustomer.getLovDescCustEmpStsName());
 		this.custNationality.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()).equals("") ? "" : aCustomer.getLovDescCustNationalityName());
-		this.custParentCountry.setValue(StringUtils.trimToEmpty(aCustomer.getCustParentCountry()), StringUtils.trimToEmpty(aCustomer.getLovDescCustParentCountryName()));
 		this.salariedCustomer.setChecked(aCustomer.isSalariedCustomer());
 
 		doSetCustTypeFilters(aCustomer.getLovDescCustCtgType());
-		this.custSubSector.setFilters(new Filter[]{new Filter("SectorCode", this.custSector.getValue(), Filter.OP_EQUAL)});
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++
-		sCustSector = this.custSector.getValue();
-		doSetSubSectorProp();
 
 		//Set Customer Employee Details
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
+		empStatus_Temp = custEmployeeDetail.getEmpStatus();
 		this.empStatus.setValue(custEmployeeDetail.getEmpStatus());
 		this.empStatus.setDescription(custEmployeeDetail.getLovDescEmpStatus());
 		this.empSector.setValue(custEmployeeDetail.getEmpSector());
@@ -622,6 +558,14 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
 
+		if(StringUtils.trimToEmpty(this.empName.getDescription()).equalsIgnoreCase(EmploymentName_OTHERS)){
+			this.hbox_empNameOther.setVisible(true);
+			this.label_empNameOther.setVisible(true);
+		}else{
+			this.hbox_empNameOther.setVisible(false);
+			this.label_empNameOther.setVisible(false);
+		}
+		empName_Temp = this.empName.getValue();
 		logger.debug("Leaving");
 	}
 
@@ -701,61 +645,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			aCustomer.setLovDescCustRO1Name(this.custRO1.getDescription());
-			aCustomer.setCustRO1(StringUtils.trimToNull(this.custRO1.getValidatedValue()));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
-		try {
-			aCustomer.setLovDescCustSectorName(this.custSector.getDescription());
-			aCustomer.setCustSector(this.custSector.getValidatedValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCustomer.setLovDescCustSubSectorName(this.custSubSector.getDescription());
-			aCustomer.setCustSubSector(this.custSubSector.getValidatedValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aCustomer.setLovDescCustEmpStsName(this.custEmpSts.getDescription());
-			aCustomer.setCustEmpSts(StringUtils.trimToNull(this.custEmpSts.getValidatedValue()));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			if(corpCustomer && isCountryBehrain){
-				if(!this.custCR1.isReadonly() && !this.custCR1.isDisabled() && this.custCR1.getValue() == null){
-					throw new WrongValueException(this.custCR1, Labels.getLabel("Cust_CR1", 
-							new String[] { Labels.getLabel("label_CustomerDialog_CustCR.value") }));
-				}else if(!this.custCR2.isReadonly() && !this.custCR2.isDisabled()  && this.custCR2.getValue() == null){
-					throw new WrongValueException(this.custCR2, Labels.getLabel("Cust_CR2", 
-							new String[] { Labels.getLabel("label_CustomerDialog_CustCR.value") }));
-				}
-				String custCR = "";
-				if(!StringUtils.trim(this.custCR1.getValue()).equals("") && !StringUtils.trim(this.custCR2.getValue()).equals("")){
-					custCR = StringUtils.trimToEmpty(this.custCR1.getValue()+"-"+this.custCR2.getValue());
-				}
-				aCustomer.setCustCRCPR(custCR);
-			}else{
-				aCustomer.setCustCRCPR(StringUtils.trimToEmpty(this.custCPR.getValue()));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		try {
 			aCustomer.setLovDescCustNationalityName(this.custNationality.getDescription());
 			aCustomer.setCustNationality(this.custNationality.getValidatedValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aCustomer.setLovDescCustParentCountryName(this.custParentCountry.getDescription());
-			aCustomer.setCustParentCountry(this.custParentCountry.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -834,7 +727,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 
-		showErrorDetails(wve, custTab);
+		showErrorDetails(wve,custTab,basicDetails);
 		
 		//Set Customer Employee Details
 		
@@ -874,8 +767,26 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 		
 		try {
-			custEmployeeDetail.setEmpFrom(this.empFrom.getValue());
-		} catch (WrongValueException we) {
+			if(this.empFrom.getValue() != null){
+				if (!this.empFrom.getValue().after(((Date) SystemParameterDetails
+						.getSystemParameterValue("APP_DFT_START_DATE")))) {
+					throw new WrongValueException(this.empFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
+							new String[] {Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"),
+							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+				}
+				if (this.custDOB.getValue() != null && !this.empFrom.getValue().after(this.custDOB.getValue())) {
+					throw new WrongValueException(this.empFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
+							new String[] {Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"),
+							Labels.getLabel("label_FinanceCustomerList_CustDOB.value") }));
+				}
+				if (this.empFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) != -1) {
+					throw new WrongValueException(this.empFrom, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+				}
+				custEmployeeDetail.setEmpFrom(this.empFrom.getValue());
+			}else{
+				custEmployeeDetail.setEmpFrom(null);
+			}
+		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 
@@ -912,6 +823,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		
+		showErrorDetails(wve,custTab,tabkYCDetails);
+		
 		aCustomerDetails.setCustomer(aCustomer);
 		//Set KYC details
 		aCustomerDetails.setCustomerDocumentsList(this.customerDocumentDetailList);
@@ -930,12 +843,12 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab parentTab,Tab childTab) {
 		logger.debug("Entering");
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
-			tab.setSelected(true);
-			this.basicDetails.setSelected(true);
+			parentTab.setSelected(true);
+			childTab.setSelected(true);
 			doRemoveValidation();
 			doRemoveLOVValidation();
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -983,29 +896,16 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceCustomerList_CustDOB.value"),true,startDate,appStartDate,false));
 			}
 		}
-		if(this.rowCustCRCPR.isVisible()){
-			if (isCountryBehrain){
-				if(getCustomerDetails().getCustomer().getLovDescCustCtgType().equals(PennantConstants.CUST_CAT_INDIVIDUAL) && 
-						(!this.custCPR.isDisabled() && !this.custCPR.isReadonly())){
-					this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCPR.value"),
-							PennantRegularExpressions.REGEX_NUMERIC_FL9, true));
-				}else{
-					if(!this.custCR1.isDisabled() && !this.custCR1.isReadonly()){
-						this.custCR1.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCR.value"),PennantRegularExpressions.REGEX_CR1, true));
-						this.custCR2.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCR.value"),PennantRegularExpressions.REGEX_CR2, true));
-					}
-				}
-			}else{
-				if (!this.custCPR.isReadonly() && !this.custCPR.isDisabled()) {
-					if(corpCustomer){
-						this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCR.value"),null,true));
-					}else{
-						this.custCPR.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCPR.value"),null,true));
-					}
-				}
-			}
+		//Employee 
+		if (!this.empFrom.isReadonly()) {
+			this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), null, true));
 		}
-		//this.noOfDependents.setConstraint(new PTNumberValidator(Labels.getLabel("label_FinanceCustomerList_noOfDependents.value"), true, false));
+		if (!this.monthlyIncome.isDisabled()) {
+			this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_MonthlyIncome.value"), false));
+		}
+		if (!StringUtils.trimToEmpty(this.otherIncome.getValue()).equals("")  &&  !this.additionalIncome.isDisabled()) {
+			this.additionalIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_AdditionalIncome.value"), false));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1018,26 +918,42 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if(this.custCtgCode.isButtonVisible()){
 			this.custCtgCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustCtgCode.value"), null, true,true));
 		}
-		this.custDftBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustDftBranch.value"), null, true,true));
-		this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustTypeCode.value"), null, true,true));
-		this.custBaseCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustBaseCcy.value"), null, true,true));
-		this.custRO1.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustRO1.value"), null, true,true));
-		this.custSector.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustSector.value"), null, true,true));
-		if(this.custSubSector.getSpace().getSclass() != null && this.custSubSector.getSpace().getSclass().equals("mandatory")){
-			this.custSubSector.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustSubSector.value"), null, true,true));
+		if(!this.custDftBranch.isReadonly()){
+			this.custDftBranch.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustDftBranch.value"), null, true,true));
 		}
-		this.custNationality.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"), null, true,true));
-		this.custParentCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustParentCountry.value"), null, true,true));
-
+		if(!this.custTypeCode.isReadonly()){
+			this.custTypeCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustTypeCode.value"), null, true,true));
+		}
+		if(!this.custBaseCcy.isReadonly()){
+			this.custBaseCcy.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustBaseCcy.value"), null, true,true));
+		}
+		if(!this.custNationality.isReadonly()){
+			this.custNationality.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustNationality.value"), null, true,true));
+		}
 		if (!corpCustomer) {
 			if(!this.custSalutationCode.isReadonly()){
 				this.custSalutationCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustSalutationCode.value"), null, true));
 			}
-			this.custEmpSts.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustEmpSts.value"), null, true,true));
 			this.custGenderCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustGenderCode.value"), null, true));
 			this.custMaritalSts.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_CustMaritalSts.value"), null, true));
 		}
 
+		//Employee 
+		if(!this.empStatus.isReadonly()){
+			this.empStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpStatus.value"), null, true,true));
+		}
+		if(!this.empName.isReadonly()){
+			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
+		}
+		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
+			this.empNameOther.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpNameOther.value"), null, true,true));
+		}
+		if(!this.empDesg.isReadonly()){
+			this.empDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDesg.value"), null, true,true));
+		}
+		if(!this.empDept.isReadonly()){
+			this.empDept.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDept.value"), null, true,true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1066,16 +982,46 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.oldVar_customerExtLiabilityDetailList.addAll(getCustomerExtLiabilityDetailList());
 		}
 		this.oldVar_custShrtName = this.custShrtName.getValue();
+		this.oldVar_custCoreBank = this.custCoreBank.getValue();
+		this.oldVar_custFirstName = this.custFirstName.getValue();
+		this.oldVar_custMiddleName = this.custMiddleName.getValue();
+		this.oldVar_custLastName = this.custLastName.getValue();
+		this.oldVar_custArabicName = this.custArabicName.getValue();
+		this.oldVar_custCtgCode = this.custCtgCode.getValue();
+		this.oldVar_custDftBranch = this.custDftBranch.getValue();
+		this.oldVar_custTypeCode = this.custTypeCode.getValue();
+		this.oldVar_custBaseCcy = this.custBaseCcy.getValue();
+		this.oldVar_custNationality = this.custNationality.getValue();
+		this.oldVar_custDOB = this.custDOB.getValue();
+		this.oldVar_custSalutationCode = this.custSalutationCode.getValue();
+		this.oldVar_custGenderCode = this.custGenderCode.getValue();
+		this.oldVar_custMaritalSts = this.custMaritalSts.getValue();
+		//Employee Details
+		this.oldVar_empStatus = this.empStatus.getValue();
+		this.oldVar_empSector = this.empSector.getValue();
+		this.oldVar_profession = this.profession.getValue();
+		this.oldVar_empName = this.empName.getValue();
+		this.oldVar_empNameOther = this.empNameOther.getValue();
+		this.oldVar_empFrom = this.empFrom.getValue();
+		this.oldVar_empDesg = this.empDesg.getValue();
+		this.oldVar_empDept = this.empDept.getValue();
+		this.oldVar_monthlyIncome = this.monthlyIncome.getValue();
+		this.oldVar_otherIncome = this.otherIncome.getValue();
+		this.oldVar_additionalIncome = this.additionalIncome.getValue();
+		
 		logger.debug("leaving");
 	}
 
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FinanceCustomerList",roleCode);
-		this.btnNew_CustomerDocuments.setVisible(true);
-		this.btnNew_CustomerAddress.setVisible(true);
-		this.btnNew_CustomerPhoneNumber.setVisible(true);
-		this.btnNew_CustomerEmail.setVisible(true);
+		this.btnNew_CustomerDocuments.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerDocuments"));
+		this.btnNew_CustomerAddress.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerAddress"));
+		this.btnNew_CustomerPhoneNumber.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerPhoneNumber"));
+		this.btnNew_CustomerEmail.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerEmail"));
+		this.btnNew_BankInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_BankInformation"));
+		this.btnNew_ChequeInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_ChequeInformation"));
+		this.btnNew_ExternalLiability.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_ExternalLiability"));
 		logger.debug("leaving");
 	}
 
@@ -1118,8 +1064,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 		doEdit();
 		dowriteBeanToComponents(aCustomerDetails);
-		doCheckCustCRCPR();
-		doCheckSubSector();
 		doStoreInitValues();
 		doCheckEnquiry();
 
@@ -1146,32 +1090,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
-	private void doCheckCustCRCPR(){
-
-		if (corpCustomer){
-			this.label_FinanceCustomerList_CustDOB.setValue(Labels.getLabel("label_FinanceCustomerList_CustDOB.value"));
-			this.rowCustCRCPR.setVisible(true);
-			this.custCtgCode.setReadonly(true);
-			this.hboxCustCR.setVisible(true);
-			this.custCPR.setVisible(false);
-			if(isCountryBehrain){
-				if(StringUtils.trimToEmpty(this.custCR1.getValue()).equals("") || StringUtils.trimToEmpty(this.custCR2.getValue()).equals("")){
-					this.custCR1.setReadonly(isReadOnly("FinanceCustomerList_custCRCPR"));
-					this.custCR2.setReadonly(isReadOnly("FinanceCustomerList_custCRCPR"));
-				}
-			}else{
-				if(StringUtils.trimToEmpty(this.custCPR.getValue()).equals("")){
-					this.custCPR.setReadonly(isReadOnly("FinanceCustomerList_custCRCPR"));
-				}
-			}
-		}else{
-			this.hboxCustCR.setVisible(false);
-			this.custCPR.setVisible(true);
-			if(StringUtils.trimToEmpty(this.custCPR.getValue()).equals("")){
-				this.custCPR.setReadonly(isReadOnly("FinanceCustomerList_custCRCPR"));
-			}
-		}
-	}
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -1179,7 +1097,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private void doEdit() {
 		logger.debug("Entering");
 		this.custCoreBank.setReadonly(true);
-		/*
+		this.custCtgCode.setReadonly(true);
+		
 		this.custShrtName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custShrtName"));
 		this.custFirstName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custFirstName"));
 		this.custMiddleName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custMiddleName"));
@@ -1195,16 +1114,20 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custGenderCode.setDisabled(isReadOnly("FinanceCustomerListCtrl_custGenderCode"));
 		this.noOfDependents.setReadonly(isReadOnly("FinanceCustomerListCtrl_noOfDependents"));
 		this.target.setDisabled(isReadOnly("FinanceCustomerListCtrl_target"));
-		this.custEmpSts.setReadonly(isReadOnly("FinanceCustomerListCtrl_custEmpSts"));
-		this.custSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_custSector"));
-		this.custSubSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_custSubSector"));
-		this.custCR1.setReadonly(isReadOnly("FinanceCustomerListCtrl_idNumber"));
-		this.custCR2.setReadonly(isReadOnly("FinanceCustomerListCtrl_idNumber"));
-		this.custCPR.setReadonly(isReadOnly("FinanceCustomerListCtrl_idNumber"));
-		this.custRO1.setReadonly(isReadOnly("FinanceCustomerListCtrl_custRO1"));
-		this.custParentCountry.setReadonly(isReadOnly("FinanceCustomerListCtrl_custParentCountry"));
 		this.custCtgCode.setReadonly(true); //Not allowing user to modify this field
-		this.salariedCustomer.setDisabled(isReadOnly("FinanceCustomerListCtrl_salariedCustomer"));*/
+		this.salariedCustomer.setDisabled(isReadOnly("FinanceCustomerListCtrl_salariedCustomer"));
+        //Employee Details
+		this.empStatus.setReadonly(isReadOnly("FinanceCustomerListCtrl_empStatus"));
+		this.empSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_empSector"));
+		this.profession.setReadonly(isReadOnly("FinanceCustomerListCtrl_profession"));
+		this.empName.setReadonly(isReadOnly("FinanceCustomerListCtrl_empName"));
+		this.empNameOther.setReadonly(isReadOnly("FinanceCustomerListCtrl_empNameOther"));
+		this.empFrom.setDisabled(isReadOnly("FinanceCustomerListCtrl_empFrom"));
+		this.empDesg.setReadonly(isReadOnly("FinanceCustomerListCtrl_empDesg"));
+		this.empDept.setReadonly(isReadOnly("FinanceCustomerListCtrl_empDept"));
+		this.monthlyIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_monthlyIncome"));
+		this.otherIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_otherIncome"));
+		this.additionalIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_additionalIncome"));
 		
 	}
 
@@ -1239,14 +1162,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-	public void setCPRNumberNonBehrain(){
-		this.hboxCustCR.setVisible(false);
-		this.custCPR.setVisible(true);
-		if(!StringUtils.trimToEmpty(this.custCPR.getValue()).equals("")){
-			this.custCPR.setReadonly(true);
-		}
-	}
 
 	private boolean isDataChanged() {
 		
@@ -1299,6 +1214,99 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				}
 			}
 		}
+		if (this.oldVar_custCoreBank != this.custCoreBank.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custTypeCode != this.custTypeCode.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custDftBranch != this.custDftBranch.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custShrtName != this.custShrtName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custFirstName != this.custFirstName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custMiddleName != this.custMiddleName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custLastName != this.custLastName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custArabicName != this.custArabicName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custMaritalSts != this.custMaritalSts.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custBaseCcy != this.custBaseCcy.getValue()) {
+			return true;
+		}
+
+		if (this.oldVar_custGenderCode != this.custGenderCode.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custSalutationCode != this.custSalutationCode.getValue()) {
+			return true;
+		}
+		if (this.oldVar_custShrtName != this.custShrtName.getValue()) {
+			return true;
+		}
+		String oldCustDOB = "";
+		String newCustDOB = "";
+		if (this.oldVar_custDOB != null) {
+			oldCustDOB = DateUtility.formatDate(this.oldVar_custDOB, PennantConstants.dateFormat);
+		}
+		if (this.custDOB.getValue() != null) {
+			newCustDOB = DateUtility.formatDate(this.custDOB.getValue(), PennantConstants.dateFormat);
+		}
+		if (!StringUtils.trimToEmpty(oldCustDOB).equals(StringUtils.trimToEmpty(newCustDOB))) {
+			return true;
+		}
+		
+		if (this.oldVar_custCtgCode != this.custCtgCode.getValue()) {
+			return true;
+		}
+		
+		if (this.oldVar_custNationality != this.custNationality.getValue()) {
+			return true;
+		}
+		//Employee Details
+		if (this.oldVar_empStatus != this.empStatus.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empSector != this.empSector.getValue()) {
+			return true;
+		}
+		if (this.oldVar_profession != this.profession.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empName != this.empName.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empNameOther != this.empNameOther.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empFrom != this.empFrom.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empDesg != this.empDesg.getValue()) {
+			return true;
+		}
+		if (this.oldVar_empDept != this.empDept.getValue()) {
+			return true;
+		}
+		if (this.oldVar_monthlyIncome != this.monthlyIncome.getValue()) {
+			return true;
+		}
+		if (this.oldVar_otherIncome != this.otherIncome.getValue()) {
+			return true;
+		}
+		if (this.oldVar_additionalIncome != this.additionalIncome.getValue()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -1312,6 +1320,14 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custCoreBank.setConstraint("");
 		this.custShrtName.setConstraint("");
 		this.custDOB.setConstraint("");
+		this.empStatus.setConstraint("");
+		this.empName.setConstraint("");
+		this.empNameOther.setConstraint("");
+		this.empDesg.setConstraint("");
+		this.empDept.setConstraint("");
+		this.empFrom.setConstraint("");
+		this.monthlyIncome.setConstraint("");
+		this.additionalIncome.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1326,13 +1342,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custBaseCcy.setConstraint("");
 		this.custGenderCode.setConstraint("");
 		this.custSalutationCode.setConstraint("");
-		this.custEmpSts.setConstraint("");
 		this.custCtgCode.setConstraint("");
-		this.custSector.setConstraint("");
-		this.custSubSector.setConstraint("");
-		this.custCPR.setConstraint("");
 		this.custNationality.setConstraint("");
-		this.custRO1.setConstraint("");
 		this.custMaritalSts.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -1353,19 +1364,21 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custDftBranch.setErrorMessage("");
 		this.custGenderCode.setErrorMessage("");
 		this.custDOB.setErrorMessage("");
-		this.custRO1.setErrorMessage("");
-		this.custSector.setErrorMessage("");
-		this.custSubSector.setErrorMessage("");
-		this.custEmpSts.setErrorMessage("");
 		this.custBaseCcy.setErrorMessage("");
 		this.custNationality.setErrorMessage("");
 		this.custDftBranch.setErrorMessage("");
 		this.custSalutationCode.setErrorMessage("");
 		this.custCtgCode.setErrorMessage("");
-		this.custSector.setErrorMessage("");
-		this.custRO1.setErrorMessage("");
 		this.custMaritalSts.setErrorMessage("");
 		this.custMaritalSts.setErrorMessage("");
+		this.empStatus.setErrorMessage("");
+		this.empName.setErrorMessage("");
+		this.empNameOther.setErrorMessage("");
+		this.empDesg.setErrorMessage("");
+		this.empDept.setErrorMessage("");
+		this.empFrom.setErrorMessage("");
+		this.monthlyIncome.setErrorMessage("");
+		this.additionalIncome.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1388,35 +1401,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$custSector(Event event) {
-		logger.debug("Entering");
-		doSetSubSectorProp();
-		logger.debug("Leaving");
-	}
-
-	private void doSetSubSectorProp(){
-		if (!StringUtils.trimToEmpty(sCustSector).equals(this.custSector.getValue())) {
-			this.custSubSector.setValue("");
-			this.custSubSector.setDescription("");
-			this.custSubSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_custSubSector"));
-		}
-		sCustSector = this.custSector.getValue();
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("SectorCode", this.custSector.getValue(), Filter.OP_EQUAL);
-		custSubSector.setFilters(filters);
-		doCheckSubSector();
-	}
-
-	private void doCheckSubSector(){
-		if (this.custSector.getValue().equals("")) {
-			this.custSubSector.setReadonly(true);
-			this.custSubSector.setMandatoryStyle(false);
-		}else{
-			this.custSubSector.setReadonly(!isReadOnly("FinanceCustomerListCtrl_custSubSector"));
-			this.custSubSector.setMandatoryStyle(!isReadOnly("FinanceCustomerListCtrl_custSubSector"));
-		}
-	}
-
+	
 	public void onFulfill$custCtgCode(Event event) {
 		logger.debug("Entering");
 		Object dataObject = custCtgCode.getObject();
@@ -1431,6 +1416,21 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				getCustomerDetails().getCustomer().setLovDescCustCtgType(details.getCustCtgType());
 			}
 		}
+		logger.debug("Leaving");
+	}
+	public void onFulfill$empName(Event event) {
+		logger.debug("Entering");
+		if(StringUtils.trimToEmpty(this.empName.getDescription()).equalsIgnoreCase(EmploymentName_OTHERS)){
+			this.hbox_empNameOther.setVisible(true);
+			this.label_empNameOther.setVisible(true);
+		}else{
+			this.hbox_empNameOther.setVisible(false);
+			this.label_empNameOther.setVisible(false);
+		}
+		if(!StringUtils.trimToEmpty(this.empName.getValue()).equalsIgnoreCase(empName_Temp)){
+			this.empNameOther.setValue("");
+		}
+		empName_Temp = this.empName.getValue();
 		logger.debug("Leaving");
 	}
 	
@@ -1449,7 +1449,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				this.empStatus.setDescription(details.getEmpStsDesc());
 			}
 		}
-		doClearEmpDetails();
+		if(!StringUtils.trimToEmpty(this.empStatus.getValue()).equals(empStatus_Temp)){
+			doClearEmpDetails();
+		}
+		empStatus_Temp = this.empStatus.getValue();
 		doSetEmpStatusProperties(this.empStatus.getValue());
 		
 		logger.debug("Leaving");
@@ -1457,10 +1460,16 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	
 	private void doSetEmpStatusProperties(String status){
 		logger.debug("Entering");
+		this.empStatus.getTextbox().setWidth("121px");
+		this.empSector.getTextbox().setWidth("120px");
+		this.otherIncome.getTextbox().setWidth("121px");
+		this.empDept.getTextbox().setWidth("121px");
+		this.empDesg.getTextbox().setWidth("121px");
 		if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
 			//make profession visible true
 			this.label_FinanceCustomerList_EmpFrom.setValue(Labels.getLabel("label_FinanceCustomerList_ProfessionStartDate.value"));
 			this.label_FinanceCustomerList_MonthlyIncome.setValue(Labels.getLabel("label_FinanceCustomerList_MonthlyProfessionIncome.value"));
+			this.label_FinanceCustomerList_EmpSector.setValue(Labels.getLabel("label_FinanceCustomerList_Profession.value"));
 			this.label_FinanceCustomerList_EmpSector.setVisible(false);
 			this.empSector.setVisible(false);
 			this.label_FinanceCustomerList_Profession.setVisible(true);
@@ -1471,13 +1480,16 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		else if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_BUSINESS)){
 			this.label_FinanceCustomerList_EmpFrom.setValue(Labels.getLabel("label_FinanceCustomerList_BusinessStartDate.value"));
 			this.label_FinanceCustomerList_MonthlyIncome.setValue(Labels.getLabel("label_FinanceCustomerList_AvgMonthlyTurnover.value"));
+			this.label_FinanceCustomerList_EmpSector.setValue(Labels.getLabel("label_FinanceCustomerList_SMESector.value"));
 			this.label_FinanceCustomerList_EmpSector.setVisible(true);
 			this.empSector.setVisible(true);
+			this.profession.setVisible(false);
 			this.row_EmpName.setVisible(false);
 			this.row_DesgDept.setVisible(false);
 		}else{
 			this.label_FinanceCustomerList_EmpFrom.setValue(Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"));
 			this.label_FinanceCustomerList_MonthlyIncome.setValue(Labels.getLabel("label_FinanceCustomerList_MonthlyIncome.value"));
+			this.label_FinanceCustomerList_EmpSector.setValue(Labels.getLabel("label_FinanceCustomerList_EmpSector.value"));
 			this.label_FinanceCustomerList_Profession.setVisible(false);
 			this.label_FinanceCustomerList_EmpSector.setVisible(true);
 			this.empSector.setVisible(true);
@@ -1493,10 +1505,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	
 	private void doClearEmpDetails(){
 		logger.debug("Entering");
-		//this.empStatus.setValue("","");
 		this.empSector.setValue("","");
 		this.profession.setValue("","");
-		//this.empStatus.setValue("","");
 		this.empName.setValue("","");
 		this.empNameOther.setValue("");
 		this.empFrom.setText("");
@@ -1525,7 +1535,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("customerDocument", customerDocument);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1548,7 +1558,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerDocument", customerDocument);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode", roleCode);
 				map.put("moduleType","");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -1617,7 +1627,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("customerAddres", customerAddres);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1640,7 +1650,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerAddres", customerAddress);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode", roleCode);
 				map.put("moduleType", "");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -1693,7 +1703,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("customerPhoneNumber", customerPhoneNumber);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1716,7 +1726,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerPhoneNumber", customerPhoneNumber);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode",roleCode);
 				map.put("moduleType", "");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -1772,7 +1782,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("customerEMail", customerEMail);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1795,7 +1805,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerEMail", customerEmail);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode",roleCode);
 				map.put("moduleType","");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -1853,7 +1863,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("customerBankInfo", custBankInfo);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1876,7 +1886,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerBankInfo", custBankInfo);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode",roleCode);
 				map.put("moduleType","");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -1934,7 +1944,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("finFormatter", finFormatter);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerChequeInfoDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -1958,7 +1968,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				map.put("customerChequeInfo", custChequeInfo);
 				map.put("finFormatter",finFormatter);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode",roleCode);
 				map.put("moduleType","");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -2023,7 +2033,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		map.put("finFormatter",finFormatter);
 		map.put("financeCustomerListCtrl", this);
 		map.put("newRecord", "true");
-		map.put("roleCode", getRole());
+		map.put("roleCode",roleCode);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null, map);
 		} catch (final Exception e) {
@@ -2047,7 +2057,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				map.put("customerExtLiability", custExtLiability);
 				map.put("finFormatter",finFormatter);
 				map.put("financeCustomerListCtrl", this);
-				map.put("roleCode", getRole());
+				map.put("roleCode",roleCode);
 				map.put("moduleType","");
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -2140,8 +2150,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				lc.setParent(item);
 				lc = new Listcell(availFinance.getStatus());
 				lc.setParent(item);
-				item.setAttribute("data", availFinance);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerExtLiabilityItemDoubleClicked");
 				this.listBoxCustomerFinExposure.appendChild(item);
 
 			}
@@ -2188,6 +2196,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			BeanUtils.copyProperties(getCustomerDetails(), aCustomerDetails);
 			boolean isNew = false;
 			Customer aCustomer = aCustomerDetails.getCustomer();
+			aCustomer.setWorkflowId(0);
 			aCustomer.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
 			aCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			aCustomer.setUserDetails(getUserWorkspace().getLoginUserDetails());

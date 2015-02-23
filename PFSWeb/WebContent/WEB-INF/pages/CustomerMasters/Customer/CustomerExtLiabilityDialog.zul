@@ -98,7 +98,7 @@
 									id="label_CustomerExtLiabilityDialog_FinDate"
 									value="${c:l('label_CustomerExtLiabilityDialog_FinDate.value')}" />
 								<hbox>
-									<space spacing="2px"/>
+									<space spacing="2px" sclass="mandatory"/>
 									<datebox id="finDate" width="120px" />
 								</hbox>
 							</row>

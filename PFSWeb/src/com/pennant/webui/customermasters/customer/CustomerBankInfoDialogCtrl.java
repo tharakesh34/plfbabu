@@ -237,7 +237,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 			this.customerBankInfo.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
-				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerBankInfoDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerBankInfo.isWorkflow(),
@@ -309,8 +309,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerBankInfoDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.btnSave.setVisible(true);
-		this.btnDelete.setVisible(true);
 		logger.debug("Leaving");
 	}
 
@@ -861,6 +859,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);

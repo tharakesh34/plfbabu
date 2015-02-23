@@ -252,7 +252,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 			this.customerExtLiability.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
-				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerExtLiabilityDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerExtLiability.isWorkflow(),
@@ -335,8 +335,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerExtLiabilityDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		this.btnSave.setVisible(true);
-		this.btnDelete.setVisible(true);
 		logger.debug("Leaving");
 	}
 
@@ -751,6 +749,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
+		if (!this.finDate.isReadonly()) {
+			this.finDate.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinDate.value"), null, true));
+		}
 		if (!this.finStatus.isReadonly()) {
 			this.finStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinStatus.value"), null, true));
 		}
@@ -898,6 +899,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.bankName.setReadonly(isReadOnly("CustomerExtLiabilityDialog_BankName"));
+		this.finDate.setDisabled(isReadOnly("CustomerExtLiabilityDialog_finDate"));
 		this.finStatus.setReadonly(isReadOnly("CustomerExtLiabilityDialog_finStatus"));
 		this.finType.setReadonly(isReadOnly("CustomerExtLiabilityDialog_finType"));
 		this.originalAmount.setReadonly(isReadOnly("CustomerExtLiabilityDialog_originalAmount"));
@@ -940,6 +942,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);

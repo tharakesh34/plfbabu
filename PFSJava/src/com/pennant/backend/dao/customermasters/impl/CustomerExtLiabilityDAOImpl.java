@@ -101,7 +101,7 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
 		if(type.contains("View")){
-			selectSql.append(" ");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -137,7 +137,7 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
 		if(type.contains("View")){
-			selectSql.append(" ");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");

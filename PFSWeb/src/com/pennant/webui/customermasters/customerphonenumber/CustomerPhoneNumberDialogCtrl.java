@@ -255,7 +255,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 			this.customerPhoneNumber.setWorkflowId(0);
 			if(args.containsKey("roleCode")){
 				userRole = args.get("roleCode").toString();
-				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerEmploymentDetailDialog");
+				getUserWorkspace().alocateRoleAuthorities(userRole, "CustomerPhoneNumberDialog");
 			}
 		}
 		doLoadWorkFlow(this.customerPhoneNumber.isWorkflow(),this.customerPhoneNumber.getWorkflowId(),
@@ -989,6 +989,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 		boolean isCustomerWorkflow = false;
 		if(getCustomerDialogCtrl() != null){
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+		if(getFinanceCustomerListCtrl()!= null){
+			isCustomerWorkflow = getFinanceCustomerListCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 		if (isWorkFlowEnabled() || isCustomerWorkflow){
 			return getUserWorkspace().isReadOnly(componentName);

@@ -100,7 +100,7 @@ public class CustomerBankInfoDAOImpl extends BasisCodeDAO<CustomerBankInfo> impl
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, BankName, AccountNumber, AccountType,");
 		if(type.contains("View")){
-			//selectSql.append(" lovDescBankName,lovDescAccountType,");
+			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -134,7 +134,7 @@ public class CustomerBankInfoDAOImpl extends BasisCodeDAO<CustomerBankInfo> impl
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, BankName, AccountNumber, AccountType,");
 		if(type.contains("View")){
-			//selectSql.append(" lovDescBankName,lovDescAccountType, ");
+			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");

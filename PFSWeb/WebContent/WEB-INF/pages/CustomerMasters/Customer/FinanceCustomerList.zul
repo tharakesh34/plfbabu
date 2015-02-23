@@ -33,13 +33,13 @@
 											<hbox>
 												<space spacing="2px"
 													sclass="mandatory" />
-												<textbox id="custCIF" readonly="true" />
+												<textbox id="custCIF" readonly="true" width="157px"/>
 											</hbox>
 											<label
 												value="${c:l('label_FinanceCustomerList_CustCoreBank.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<uppercasebox id="custCoreBank" maxlength="50" width="250px"
+												<uppercasebox id="custCoreBank" maxlength="50" width="153px"
 													style="overflow: hidden;" />
 											</hbox>
 										</row>
@@ -103,6 +103,13 @@
 												<textbox id="custArabicName" maxlength="50" width="250px"
 													style="overflow: hidden;" />
 											</hbox>
+											<label
+												id="label_FinanceCustomerList_CustDOB"
+												value="${c:l('label_FinanceCustomerList_CustDOB.value')}" />
+											<hbox>
+												<space spacing="2px" sclass="mandatory" />
+												<datebox id="custDOB" width="155px"/>
+											</hbox>
 										</row>
 										<row>
 											<label
@@ -112,18 +119,8 @@
 												value="${c:l('label_FinanceCustomerList_CustMaritalSts.value')}" />
 											<hbox>
 												<space id="space_MaritalSts" spacing="2px" sclass="mandatory" />
-												<combobox id="custMaritalSts" />
+												<combobox id="custMaritalSts"  width="155px"/>
 											</hbox>
-										</row>
-										<row>
-											<label
-												id="label_FinanceCustomerList_CustDOB"
-												value="${c:l('label_FinanceCustomerList_CustDOB.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<datebox id="custDOB" />
-											</hbox>
-
 										</row>
 										<row>
 											<label
@@ -131,13 +128,13 @@
 											<hbox>
 												<space id="space_Gender"
 													spacing="2px" sclass="mandatory" />
-												<combobox id="custGenderCode" />
+												<combobox id="custGenderCode"   width="155px"/>
 											</hbox>
 											<label
 												value="${c:l('label_FinanceCustomerList_CustSalutationCode.value')}" />
 											<hbox>
 												<space id="space_Salutation" spacing="2px" sclass="mandatory" />
-												<combobox id="custSalutationCode" />
+												<combobox id="custSalutationCode" width="155px"/>
 											</hbox>
 										</row>
 										<row>
@@ -145,48 +142,16 @@
 												value="${c:l('label_FinanceCustomerList_noOfDependents.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<intbox id="noOfDependents" maxlength="3" />
+												<intbox id="noOfDependents" maxlength="3" width="156px"/>
 											</hbox>
 											<label
 												value="${c:l('label_FinanceCustomerList_Target.value')}" />
 											<hbox>
 												<space spacing="2px" sclass="mandatory" />
-												<combobox id="target" width="250px" readonly="true" />
+												<combobox id="target" readonly="true" width="155px"/>
 											</hbox>
 										</row>
-										<row>
-											<label
-												value="${c:l('label_FinanceCustomerList_CustRO1.value')}" />
-											<extendedcombobox id="custRO1" />
-											<label
-												value="${c:l('label_FinanceCustomerList_CustEmpSts.value')}" />
-											<extendedcombobox id="custEmpSts" />
-										</row>
-										<row id="rowCustCRCPR">
-											<label id="label_FinanceCustomerList_CustCRCPR"
-												value="${c:l('label_FinanceCustomerList_CustCRCPR.value')}" />
-											<hbox>
-												<space spacing="2px" sclass="mandatory" />
-												<textbox id="custCPR"
-													readonly="false" width="130px" />
-												<hbox id="hboxCustCR" visible="false">
-													<textbox id="custCR1" width="78px" />
-													<label value="-" />
-													<textbox id="custCR2" width="30px" />
-												</hbox>
-											</hbox>
-											<label
-												value="${c:l('label_FinanceCustomerList_CustParentCountry.value')}" />
-											<extendedcombobox id="custParentCountry" />
-										</row>
-										<row visible="true">
-											<label
-												value="${c:l('label_FinanceCustomerList_CustSector.value')}" />
-											<extendedcombobox id="custSector" />
-											<label
-												value="${c:l('label_FinanceCustomerList_CustSubSector.value')}" />
-											<extendedcombobox id="custSubSector" />
-										</row>
+										
 										<row>
 											<label
 												value="${c:l('label_FinanceCustomerList_SalaryTransfered.value')}" />
@@ -219,27 +184,26 @@
 													<label
 														value="${c:l('label_FinanceCustomerList_EmpStatus.value')}" />
 													<extendedcombobox id="empStatus" />
-													<hbox>
+													<hlayout spacing="0px">
 														<label id="label_FinanceCustomerList_EmpSector"
 															value="${c:l('label_FinanceCustomerList_EmpSector.value')}" />
 														<label id="label_FinanceCustomerList_Profession" visible="false"
 															value="${c:l('label_FinanceCustomerList_Profession.value')}" />
-													</hbox>
-													<hbox>
+													</hlayout>
+													<hlayout  spacing="0px">
 														<extendedcombobox id="empSector" />
 														<extendedcombobox id="profession" visible="false" />
-													</hbox>
-
+													</hlayout>
 												</row>
 												<row id="row_EmpName">
 													<label
 														value="${c:l('label_FinanceCustomerList_EmpName.value')}" />
 													<extendedcombobox id="empName" />
-													<label
+													<label id="label_empNameOther"
 														value="${c:l('label_FinanceCustomerList_EmpNameOther.value')}" />
-													<hbox>
+													<hbox id="hbox_empNameOther" visible="false">
 														<space spacing="2px" sclass="mandatory" />
-														<textbox id="empNameOther" />
+														<textbox id="empNameOther" width="154px"/>
 													</hbox>	
 												</row>
 												<row id="row_DesgDept">
@@ -254,9 +218,9 @@
 													<label id="label_FinanceCustomerList_EmpFrom"
 														value="${c:l('label_FinanceCustomerList_EmpFrom.value')}" />
 													<hbox>
-														<space spacing="2px" />
+														<space spacing="2px" sclass="mandatory" />
 														<datebox
-															id="empFrom" width="120px" constraint="no future:" />
+															id="empFrom" width="155px" constraint="no future:" />
 													</hbox>
 													<label id="label_FinanceCustomerList_MonthlyIncome"
 														value="${c:l('label_FinanceCustomerList_MonthlyIncome.value')}" />
@@ -309,32 +273,32 @@
 										  			sizable="true">
 										  			<listheader
 										  				id="listheader_CustDocType"
-										  				label="${c:l('listheader_CustDocType.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocType.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDocTitle"
-										  				label="${c:l('listheader_CustDocTitle.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocTitle.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDocIssuedCountry"
-										  				label="${c:l('listheader_CustDocIssuedCountry.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocIssuedCountry.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDocIssuedAuthority"
-										  				label="${c:l('listheader_CustDocIssuedAuthority.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocIssuedAuthority.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDocIssuedOn"
-										  				label="${c:l('listheader_CustDocIssuedOn.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocIssuedOn.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDocExpDate"
-										  				label="${c:l('listheader_CustDocExpDate.label')}"
+										  				label="${c:l('listheader_FinCustomer_CustDocExpDate.label')}"
 										  				sort="false" hflex="min" />
 										  			<listheader
 										  				id="listheader_CustDoc_RecordStatus"
 										  				label="${c:l('listheader_RecordStatus.label')}"
-										  				sort="false" hflex="min" />
+										  				sort="false" hflex="min" visible="false"/>
 										  			<listheader
 										  				id="listheader_CustDoc_RecordType"
 										  				label="${c:l('listheader_RecordType.label')}"
@@ -371,16 +335,16 @@
 														sizable="true">
 														<listheader
 															id="listheader_CustAddr_CustAddrType"
-															label="${c:l('listheader_CustAddrType.label')}"
+															label="${c:l('listheader_FinCustomer_CustAddrType.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustAddr_CustAddrCity"
-															label="${c:l('listheader_CustAddrCity.label')}"
+															label="${c:l('listheader_FinCustomer_CustAddrCity.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustAddr_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min" visible="false"/>
 														<listheader
 															id="listheader_CustAddr_RecordType"
 															label="${c:l('listheader_RecordType.label')}"
@@ -415,24 +379,24 @@
 														sizable="true">
 														<listheader
 															id="listheader_CustPhone_Type"
-															label="${c:l('listheader_PhoneTypeCode.label')}"
+															label="${c:l('listheader_FinCustomer_PhoneTypeCode.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustPhone_CountryCode"
-															label="${c:l('listheader_PhoneCountryCode.label')}"
+															label="${c:l('listheader_FinCustomer_PhoneCountryCode.label')}"
 															sort="false" hflex="min" visible="false" />
 														<listheader
 															id="listheader_CustPhone_AreaCode"
-															label="${c:l('listheader_PhoneAreaCode.label')}"
+															label="${c:l('listheader_FinCustomer_PhoneAreaCode.label')}"
 															sort="false" hflex="min" visible="false" />
 														<listheader
 															id="listheader_CustPhone_PhoneNumber"
-															label="${c:l('listheader_PhoneNumber.label')}"
+															label="${c:l('listheader_FinCustomer_PhoneNumber.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustPhone_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min"  visible="false"/>
 														<listheader
 															id="listheader_CustPhone_RecordType"
 															label="${c:l('listheader_RecordType.label')}"
@@ -470,20 +434,20 @@
 															hflex="min" visible="false" />
 														<listheader
 															id="listheader_CustEmail_Type"
-															label="${c:l('listheader_CustEMailTypeCode.label')}"
+															label="${c:l('listheader_FinCustomer_CustEMailTypeCode.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustEmail_Priority"
-															label="${c:l('listheader_CustEMailPriority.label')}"
+															label="${c:l('listheader_FinCustomer_CustEMailPriority.label')}"
 															sort="false" hflex="min" visible="false" />
 														<listheader
 															id="listheader_CustEmail_EmailID"
-															label="${c:l('listheader_CustomerEmail.label')}"
+															label="${c:l('listheader_FinCustomer_CustomerEmail.label')}"
 															sort="false" hflex="min" />
 														<listheader
 															id="listheader_CustEmail_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min" visible="false"/>
 														<listheader
 															id="listheader_CustEmail_RecordType"
 															label="${c:l('listheader_RecordType.label')}"
@@ -550,7 +514,7 @@
 														<listheader
 															id="listheader_BankInfo_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min" visible="false"/>
 														<listheader
 															id="listheader_BankInfo_RecordType"
 															label="${c:l('listheader_RecordType.label')}"
@@ -609,7 +573,7 @@
 														<listheader
 															id="listheader_CustomerChequeInfo_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min" visible="false"/>
 														<listheader
 															id="listheader_CustomerChequeInfo_RecordType"
 															label="${c:l('listheader_RecordType.label')}"
@@ -723,7 +687,7 @@
 														<listheader
 															id="listheader_ExternalLiability_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}"
-															sort="false" hflex="min" />
+															sort="false" hflex="min" visible="false"/>
 														<listheader
 															id="listheader_ExternalLiability_RecordType"
 															label="${c:l('listheader_RecordType.label')}"

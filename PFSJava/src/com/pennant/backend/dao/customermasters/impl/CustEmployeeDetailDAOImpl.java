@@ -99,7 +99,8 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 		selectSql.append(" SELECT CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg, ");
 		selectSql.append(" EmpDept, EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome, ");
 		if(type.contains("View")){
-			//selectSql.append(" lovDescBankName,lovDescAccountType,");
+			selectSql.append(" lovDescEmpStatus,lovDescEmpSector,lovDescProfession,lovDescEmpName,lovDescEmpDesg,");
+			selectSql.append(" lovDescEmpDept,lovDescOtherIncome,lovDescCustShrtName,lovDescCustCIF,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
