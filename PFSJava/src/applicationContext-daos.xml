@@ -240,6 +240,7 @@
 		<property name="securityUserRolesDAO" ref="securityUserRolesDAO" />
 		<property name="securityUserPasswordsDAO" ref="securityUserPasswordsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="queueAssignmentDAO" ref="queueAssignmentDAO"/>
 	</bean>
 
 	<!--================= Security Password Details ================ -->
@@ -3844,6 +3845,8 @@
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="blackListCustomerDAO" ref="blackListCustomerDAO" />
 		<property name="financeDedupeDAO" ref="financeDedupeDAO" />
+		<property name="queueAssignmentDAO" ref="queueAssignmentDAO" />
+		<property name="userActivityLogDAO" ref="userActivityLogDAO" />
 		
 		<!-- Services -->	
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />		
@@ -6740,7 +6743,7 @@
 		<property name="queryDAO" ref="queryDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
-	
+
 	<!-- BlackListed Customer Finance Details -->
 	<bean id="blackListCustomerDAO"
 		class="com.pennant.backend.dao.blacklist.impl.BlackListCustomerDAOImpl">
@@ -6753,4 +6756,14 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<!-- Queue Assignment Details -->
+	
+	<bean id="queueAssignmentDAO" class="com.pennant.backend.dao.impl.QueueAssignmentDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!-- User Activity Log Details -->
+	<bean id="userActivityLogDAO" class="com.pennant.backend.dao.impl.UserActivityLogDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 </beans>

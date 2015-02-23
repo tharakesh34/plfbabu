@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -45,6 +46,8 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.dao.NotesDAO;
+import com.pennant.backend.dao.QueueAssignmentDAO;
+import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
@@ -62,6 +65,8 @@ import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.QueueAssignment;
+import com.pennant.backend.model.UserActivityLog;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -144,6 +149,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private IndicativeTermDetailDAO indicativeTermDetailDAO;
 	private FinancePremiumDetailDAO financePremiumDetailDAO;
 	private NotesDAO notesDAO;
+	private QueueAssignmentDAO queueAssignmentDAO;
+	private UserActivityLogDAO userActivityLogDAO;
 	
 	@Override
 	public FinanceDetail getFinanceDetail(boolean isWIF) {
@@ -998,6 +1005,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
+		if(!financeMain.getRoleCode().equals(financeMain.getNextRoleCode())) {
+			if(financeMain.getLovDescNextUsersRolesMap() != null) {
+				List<UserActivityLog> logList = new ArrayList<UserActivityLog>();
+
+				for (Map.Entry<String, String> entry : financeMain.getLovDescNextUsersRolesMap().entrySet()) {
+					UserActivityLog userActivityLog = new UserActivityLog();
+					userActivityLog.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
+					userActivityLog.setReference(financeMain.getFinReference());
+					userActivityLog.setFromUser(financeMain.getLastMntBy());
+					userActivityLog.setRoleCode(financeMain.getRoleCode());
+					userActivityLog.setToUser(Long.valueOf(entry.getValue()));
+					userActivityLog.setNextRoleCode(entry.getKey());
+					userActivityLog.setLogTime(financeMain.getLastMntOn());
+					logList.add(userActivityLog);
+				}
+				getUserActivityLogDAO().save(logList);
+			}
+		}
+		
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -3311,6 +3337,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		return customerIncomes;
 	}
+	
+	public void downpayFinApprove(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+
+		Cloner cloner = new Cloner();
+		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		financeDetail.setFinScheduleData(ScheduleCalculator.getDownPaySchd(financeDetail.getFinScheduleData()));
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		financeMain.setRecordType("");
+		getFinanceMainDAO().save(financeMain, "", false);
+
+		//Schedule Details
+		//=======================================
+		listSave(financeDetail.getFinScheduleData(), "", false, 0);
+		
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId) {
@@ -3344,6 +3390,42 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType){
 		return getFinFeeChargesDAO().updateFeeChargesByFinRefAndFee(feeRule, tableType);
 	}
+	
+	@Override
+    public long getNewUserId(String module, String nextRoleCode, long userId) {
+	   return getQueueAssignmentDAO().getNewUserId(module, nextRoleCode, userId);
+    }
+	
+	@Override
+    public long getNextUserIdFromUserActivity(String module, String reference, String roleCode, boolean multipleRoles) {
+	   return getUserActivityLogDAO().getNextUserId(module, reference, roleCode, multipleRoles);
+    }
+	
+	@Override
+    public void updateFailedRecordCount(List<QueueAssignment> queueAssignmentList, QueueAssignment rollBackUser) {
+		getQueueAssignmentDAO().update(queueAssignmentList, rollBackUser);
+    }
+	
+	@Override
+    public void save(QueueAssignment queueAssignment) {
+		getQueueAssignmentDAO().save(queueAssignment);
+    }
+	
+	@Override
+    public void updateUserCounts(String module, String increaseRoleCode, long increaseUserId, String decreaseRoleCode, long decreaseUserId) {
+		getQueueAssignmentDAO().updateUserCounts(module,increaseRoleCode,increaseUserId, decreaseRoleCode,decreaseUserId);
+    }
+	
+	@Override
+    public void updateUserCounts(String module, String roleCode, long userId) {
+		getQueueAssignmentDAO().updateUserCounts(module,roleCode,userId);
+    }
+	
+	@Override
+    public void updateFinancePriority() {
+	   getFinanceMainDAO().updateFinancePriority();
+	    
+    }
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -3474,25 +3556,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinancePremiumDetailDAO(FinancePremiumDetailDAO financePremiumDetailDAO) {
 	    this.financePremiumDetailDAO = financePremiumDetailDAO;
     }
-	
-	public void downpayFinApprove(AuditHeader aAuditHeader) {
-		logger.debug("Entering");
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		financeDetail.setFinScheduleData(ScheduleCalculator.getDownPaySchd(financeDetail.getFinScheduleData()));
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
-		financeMain.setRecordType("");
-		getFinanceMainDAO().save(financeMain, "", false);
+	public QueueAssignmentDAO getQueueAssignmentDAO() {
+	    return queueAssignmentDAO;
+    }
 
-		//Schedule Details
-		//=======================================
-		listSave(financeDetail.getFinScheduleData(), "", false, 0);
-		
-		logger.debug("Leaving");
-	}
-	
+	public void setQueueAssignmentDAO(QueueAssignmentDAO queueAssignmentDAO) {
+	    this.queueAssignmentDAO = queueAssignmentDAO;
+    }
+
+	public UserActivityLogDAO getUserActivityLogDAO() {
+	    return userActivityLogDAO;
+    }
+
+	public void setUserActivityLogDAO(UserActivityLogDAO userActivityLogDAO) {
+	    this.userActivityLogDAO = userActivityLogDAO;
+    }
 }

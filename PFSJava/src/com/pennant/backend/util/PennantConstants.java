@@ -632,9 +632,10 @@ public class PennantConstants {
 
 	public static final String REPAY_HIERARCHY_METHOD = "IPCS";
 	
-	public static final String HIGH = "HIGH";
-	public static final String MEDIUM = "MEDIUM";
-	public static final String NORMAL = "NORMAL";
+	public static final String HIGH = "3";
+	public static final String MEDIUM = "2";
+	public static final String LOW = "1";
+	public static final String NORMAL = "0";
 	
 	//Car Loan Details
 	public static final String AHBACCOUNT = "AHBACC";

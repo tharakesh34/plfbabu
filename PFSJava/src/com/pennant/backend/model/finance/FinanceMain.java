@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.ErrorDetails;
@@ -96,7 +97,6 @@ public class FinanceMain implements java.io.Serializable {
 	private String		lovDescCustPassportNo;
 	private Date		lovDescCustDOB;
 	private String 		lovDescRequestStage;
-	private String 		lovDescQueuePriority;
 	
 	//Commercial Workflow Purpose
 	private boolean 	securityCollateral;
@@ -323,6 +323,8 @@ public class FinanceMain implements java.io.Serializable {
 	private String 		recordType;
 	private String 		userAction = "Save";
 	private long 		workflowId = 0;
+	private String 		nextUserId;
+	private int			priority;
 	
 	//Can be Deleted -- TODO
 	private int 		reqTerms;
@@ -337,6 +339,7 @@ public class FinanceMain implements java.io.Serializable {
 	private String 		lovDescFinDivision;
 	
 	private List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+	private Map<String, String> lovDescNextUsersRolesMap = null; 
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -2059,13 +2062,6 @@ public class FinanceMain implements java.io.Serializable {
 		this.lovDescRequestStage = lovdescRequestStage;
 	}
 
-	public String getLovDescQueuePriority() {
-		return lovDescQueuePriority;
-	}
-	public void setLovDescQueuePriority(String lovDescQueuePriority) {
-		this.lovDescQueuePriority = lovDescQueuePriority;
-	}
-
 	// Overidden Equals method to handle the comparision
 	public boolean equals(FinanceMain financeMain) {
 		return getId() == financeMain.getId();
@@ -2122,6 +2118,30 @@ public class FinanceMain implements java.io.Serializable {
 
 	public void setBlacklistOverride(boolean blacklistOverride) {
 	    this.blacklistOverride = blacklistOverride;
+    }
+	
+	public String getNextUserId() {
+	    return nextUserId;
+    }
+
+	public void setNextUserId(String nextUserId) {
+	    this.nextUserId = nextUserId;
+    }
+
+	public int getPriority() {
+	    return priority;
+    }
+
+	public void setPriority(int priority) {
+	    this.priority = priority;
+    }
+
+	public Map<String, String> getLovDescNextUsersRolesMap() {
+	    return lovDescNextUsersRolesMap;
+    }
+
+	public void setLovDescNextUsersRolesMap(Map<String, String> lovDescNextUsersRolesMap) {
+	    this.lovDescNextUsersRolesMap = lovDescNextUsersRolesMap;
     }
 
 }

@@ -116,12 +116,12 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -7141,6 +7141,84 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null));
 		
 		return getFinanceDetail().getCustomerEligibilityCheck();
+	}
+	
+	protected synchronized void getNextUserId(FinanceMain financeMain, String roleCode, String nextRoleCode, boolean onlyUpdate){
+		logger.debug("Entering");
+		String nextUsers="";
+		Map<String, String> nextUsersRolesMap = null;
+		if(!roleCode.equals(nextRoleCode)){
+			long userId = getUserWorkspace().getUserDetails().getUserId();
+			String nextRoleCodes[] = null;
+			if(nextRoleCode.contains(",")){
+				nextRoleCodes = nextRoleCode.split(",");
+			}else {
+				nextRoleCodes = new String[]{nextRoleCode};
+			}
+			long nextUserId = 0;
+			nextUsersRolesMap = new HashMap<String, String>();
+			for (int i = 0; i < nextRoleCodes.length; i++) {
+				if(onlyUpdate){
+					// Check the submitted user in useractivity table
+					nextUserId = getFinanceDetailService().getNextUserIdFromUserActivity(PennantConstants.WORFLOW_MODULE_FINANCE, financeMain.getFinReference(), nextRoleCodes[i], onlyUpdate);
+					getFinanceDetailService().updateUserCounts(PennantConstants.WORFLOW_MODULE_FINANCE, getRole(), userId);
+					
+				}else {
+					// Check the submitted user in useractivity table
+					nextUserId = getFinanceDetailService().getNextUserIdFromUserActivity(PennantConstants.WORFLOW_MODULE_FINANCE, financeMain.getFinReference(), nextRoleCodes[i], onlyUpdate);
+					// If not available then get new user with the required rolecode else assign the old user
+					if(nextUserId == 0){
+						nextUserId = getFinanceDetailService().getNewUserId(PennantConstants.WORFLOW_MODULE_FINANCE, nextRoleCodes[i], userId);
+					}else {
+						QueueAssignment queueAssignment = new QueueAssignment();
+						queueAssignment.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
+						queueAssignment.setUserId(nextUserId);
+						queueAssignment.setRoleCode(nextRoleCodes[i]);
+						queueAssignment.setAssignedRcdCount(0);
+						getFinanceDetailService().save(queueAssignment);
+					}
+					getFinanceDetailService().updateUserCounts(PennantConstants.WORFLOW_MODULE_FINANCE, nextRoleCodes[i], nextUserId, getRole(), userId);
+				}
+				
+				nextUsersRolesMap.put(nextRoleCodes[i], String.valueOf(nextUserId));
+				
+				if (nextUsers.equals("")) {
+					nextUsers = String.valueOf(nextUserId) ; 
+				}else{
+					nextUsers = nextUsers+","+String.valueOf(nextUserId) ; 
+				}
+			}
+		}else {
+			nextUsers = String.valueOf(financeMain.getLastMntBy()) ; 
+		}
+
+		logger.debug("Leaving");
+		financeMain.setLovDescNextUsersRolesMap(nextUsersRolesMap);
+		financeMain.setNextUserId(nextUsers);
+	}
+	
+	protected synchronized void updateFailedRecordCount(Map<String, String> nextUsersRolesMap, QueueAssignment rollBackUser){
+		logger.debug("Entering");
+		if(nextUsersRolesMap!=null) {
+			List<QueueAssignment> queueList = new ArrayList<QueueAssignment>(nextUsersRolesMap.size());
+			for (Map.Entry<String, String> entry : nextUsersRolesMap.entrySet()) {
+				QueueAssignment queueAssignment = new QueueAssignment();
+				queueAssignment.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
+				queueAssignment.setUserId(Long.valueOf(entry.getValue()));
+				queueAssignment.setRoleCode(entry.getKey());
+				queueList.add(queueAssignment);
+			}
+			getFinanceDetailService().updateFailedRecordCount(queueList, rollBackUser);
+		}
+		logger.debug("Leaving");
+	}
+	
+	protected void updateFailedRecordCount(Map<String, String> map){
+		QueueAssignment rollBackUser = new QueueAssignment();
+		rollBackUser.setUserId(getUserWorkspace().getUserDetails().getUserId());
+		rollBackUser.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
+		rollBackUser.setRoleCode(getRole());
+		updateFailedRecordCount(map, rollBackUser);
 	}
  
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

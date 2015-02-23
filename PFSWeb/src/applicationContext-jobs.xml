@@ -18,10 +18,19 @@
 	<!-- ******************************************************************************* -->
 
 	<bean id="hostStatusJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"
-		p:jobClass="com.pennant.app.util.HostStatusUtil" p:name="PFF">
+		p:jobClass="com.pennant.app.util.HostStatusUtil" p:name="HOSTSTATUS">
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="hostStatusEnquiryService" value-ref="hostStatusEnquiryService" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="financePriorityJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean"
+		p:jobClass="com.pennant.app.util.FinancePriorityUpdation" p:name="TASKPRIORITY">
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="financeDetailService" value-ref="financeDetailService" />
 			</map>
 		</property>
 	</bean>
@@ -33,6 +42,10 @@
 	<bean id="hostStatusJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
 		p:jobDetail-ref="hostStatusJobScheduler" p:startDelay="10000"
 		p:cronExpression="0 0/1 * * * ?" />
+		
+	<bean id="financePriorityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="financePriorityJobScheduler" p:startDelay="10000"
+		p:cronExpression="0 0/15 8-22 ? * *" />
 
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Scheduler Factory Bean Definition ********************** -->
@@ -43,6 +56,7 @@
 		<property name="triggers">
 			<list>
 				 <ref bean="hostStatusJobTrigger" />
+				 <ref bean="financePriorityJobTrigger" />
 			</list>
 		</property>
 
@@ -53,7 +67,7 @@
 				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
 				<prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
 				<prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
-				<prop key="org.quartz.threadPool.threadCount">2</prop>
+				<prop key="org.quartz.threadPool.threadCount">3</prop>
 				<prop key="org.quartz.jobStore.misfireThreshold">600000</prop>
 			</props>
 		</property>

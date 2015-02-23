@@ -1214,9 +1214,10 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getQueuePriority() {
 
 		if(queuePriority == null){
-			queuePriority = new ArrayList<ValueLabel>(2);
+			queuePriority = new ArrayList<ValueLabel>(4);
 			queuePriority.add(new ValueLabel(PennantConstants.HIGH, "High"));
 			queuePriority.add(new ValueLabel(PennantConstants.MEDIUM, "Medium"));
+			queuePriority.add(new ValueLabel(PennantConstants.LOW, "Low"));
 			queuePriority.add(new ValueLabel(PennantConstants.NORMAL, "Normal"));
 		}
 		return queuePriority;

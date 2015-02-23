@@ -54,6 +54,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 
@@ -108,8 +109,20 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);
-		lc = new Listcell(financeMain.getLovDescQueuePriority());
+		
+		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(financeMain.getPriority()), PennantStaticListUtil.getQueuePriority()));
+		switch (financeMain.getPriority()) {
+        case 0:  lc.setStyle("font-weight:bold;color:blue;");
+                 break;
+        case 1:  lc.setStyle("font-weight:bold;color:green;");
+                 break;
+        case 2:  lc.setStyle("font-weight:bold;color:yellow;");
+                 break;
+        case 3: lc.setStyle("font-weight:bold;color:red;");
+                 break;
+		}
 		lc.setParent(item);
+		
 	  	lc = new Listcell(financeMain.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(financeMain.getRecordType()));

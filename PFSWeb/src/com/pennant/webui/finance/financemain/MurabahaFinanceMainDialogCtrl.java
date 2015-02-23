@@ -172,7 +172,8 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 	protected transient BigDecimal 		oldVar_downPaySupl;
 	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
-
+	private String old_NextRoleCode = "";
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -210,6 +211,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData().getFinanceMain(), befImage);
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
 			setFinanceDetail(getFinanceDetail());
+			old_NextRoleCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
 		}
 
 		// READ OVERHANDED params !
@@ -2403,10 +2405,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}
+			} else{
+				updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			} 
-
 		} catch (final DataAccessException e) {
 			logger.error(e);
+			updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			showErrorMessage(this.window_MurabahaFinanceMainDialog, e);
 		}
 		logger.debug("Leaving");
@@ -2477,7 +2481,11 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		financeMain.setNextTaskId(nextTaskId);
 		financeMain.setRoleCode(getRole());
 		financeMain.setNextRoleCode(nextRoleCode);
-
+		
+		getNextUserId(financeMain, getRole(), nextRoleCode, old_NextRoleCode.contains(nextRoleCode));
+		if(!getRole().equals(nextRoleCode)){
+			financeMain.setPriority(0);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -2783,6 +2791,9 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			logger.error(e);
 			e.printStackTrace();
 		} catch (AccountNotFoundException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}

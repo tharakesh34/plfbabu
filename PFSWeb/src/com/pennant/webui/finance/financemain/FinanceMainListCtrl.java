@@ -325,6 +325,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.searchObj.addField("LovDescFinProduct");
 		this.searchObj.addField("NextRoleCode");
 		this.searchObj.addField("LovDescRequestStage");
+		this.searchObj.addField("Priority");
 
 		/*	if(!StringUtils.trimToEmpty(this.loanType.getValue()).equals("")){
 			this.searchObj.addFilter(new Filter("lovDescProductCodeName", this.loanType.getValue().trim(), Filter.OP_EQUAL));
@@ -576,9 +577,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 
 		//Clears all the filters
 		this.searchObj.clearFilters();
+		this.searchObj.clearSorts();
 		this.searchObj.addSort("LovDescProductCodeName",false);
 		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("NextUserId", "%"+String.valueOf(getUserWorkspace().getLoginUserDetails().getLoginUsrID())+"%", Filter.OP_LIKE));
+		this.searchObj.addSortDesc("Priority");
 
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceMain,this.pagingFinanceMainList);
@@ -614,10 +618,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		logger.debug("Entering");
 
 		this.searchObj.clearFilters();
-
+		this.searchObj.clearSorts();
+		
 		this.searchObj.addSort("LovDescProductCodeName",false);
 		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+		this.searchObj.addFilter(new Filter("NextUserId", "%"+String.valueOf(getUserWorkspace().getLoginUserDetails().getLoginUsrID())+"%", Filter.OP_LIKE));
+		this.searchObj.addSortDesc("Priority");
 
 		// CustId
 		if (!StringUtils.trimToEmpty(this.custCIF.getValue()).equals("")) {
@@ -670,7 +677,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		if (this.finQueuePriority.getSelectedIndex() > 0  && !PennantConstants.List_Select.equals(this.finQueuePriority.getSelectedItem().getValue())) {
 			searchObj = getSearchFilter(searchObj,
 					this.sortOperator_finQueuePriority.getSelectedItem(),
-					this.finQueuePriority.getSelectedItem().getValue().toString(), "");
+					this.finQueuePriority.getSelectedItem().getValue().toString(), "Priority");
 		}
 		// Record Status
 		if (!StringUtils.trimToEmpty(recordStatus.getValue()).equals("")) {

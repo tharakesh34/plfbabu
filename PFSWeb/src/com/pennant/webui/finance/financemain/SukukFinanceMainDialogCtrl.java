@@ -205,7 +205,8 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 	
 	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	Date endDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_END_DATE");
-
+	private String old_NextRoleCode = "";
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -243,6 +244,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData().getFinanceMain(), befImage);
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
 			setFinanceDetail(getFinanceDetail());
+			old_NextRoleCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
 		}
 
 		// READ OVERHANDED params !
@@ -2742,10 +2744,12 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}
+			} else{
+				updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			} 
-
 		} catch (final DataAccessException e) {
 			logger.error(e);
+			updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			showErrorMessage(this.window_SukukFinanceMainDialog, e);
 		}
 		logger.debug("Leaving");
@@ -2817,6 +2821,10 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		financeMain.setRoleCode(getRole());
 		financeMain.setNextRoleCode(nextRoleCode);
 
+		getNextUserId(financeMain, getRole(), nextRoleCode, old_NextRoleCode.contains(nextRoleCode));
+		if(!getRole().equals(nextRoleCode)){
+			financeMain.setPriority(0);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -3130,6 +3138,9 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 			logger.error(e);
 			e.printStackTrace();
 		} catch (AccountNotFoundException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}

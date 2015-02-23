@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -144,4 +145,12 @@ public interface FinanceDetailService {
 	boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType);
 	FinanceDetail getFinAssetDetails(String finReference, String type); 
 	
+	long getNewUserId(String module, String nextRoleCode, long userId);
+	long getNextUserIdFromUserActivity(String module, String reference, String roleCode, boolean multipleRoles);
+	void save(QueueAssignment queueAssignment);
+	void updateUserCounts(String module, String increaseRoleCode, long increaseUserId, String decreaseRoleCode, long decreaseUserId);
+	void updateUserCounts(String module, String roleCode, long UserId);
+	void updateFailedRecordCount(List<QueueAssignment> queueAssignmentList, QueueAssignment rollBackUser);
+	
+	void updateFinancePriority();
  }

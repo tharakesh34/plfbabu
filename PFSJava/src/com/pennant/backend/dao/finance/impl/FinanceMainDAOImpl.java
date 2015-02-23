@@ -201,7 +201,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			selectSql.append(" , InvestmentRef , DownPayAccount,  SecurityDeposit, RcdMaintainSts, FinRepayMethod, ");
 			selectSql.append(" SecurityCollateral , CustomerAcceptance , Approved , CbbApprovalRequired , CbbApproved , Discrepancy , LimitApproved, ");
 			selectSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, CustDSR,JointAccount,JointCustId,");
-			selectSql.append(" Blacklisted, FeeChargeAmt, LimitValid, OverrideLimit, FinPurpose,FinStatus, FinStsReason,Authorization1,Authorization2 ");
+			selectSql.append(" Blacklisted, FeeChargeAmt, LimitValid, OverrideLimit, FinPurpose,FinStatus, FinStsReason,Authorization1,Authorization2, NextUserId, Priority ");
 			selectSql.append(" From FinanceMain");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -508,7 +508,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated , Blacklisted ,");		
 		insertSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId)");
 		
 		insertSql.append(" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
 		insertSql.append(" :MaturityDate, :CustID, :RepayProfitRate , :TotalRepayAmt ,");
@@ -523,7 +523,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :Blacklisted,");
 		insertSql.append(" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :AlwManualSteps, :NoOfSteps, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
+		insertSql.append(" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
@@ -566,7 +566,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			insertSql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,Authorization1,Authorization2,");
 			insertSql.append(" FeeChargeAmt,LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason,");
 			insertSql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit, RcdMaintainSts,FinRepayMethod, ");
-			insertSql.append(" SecurityCollateral , CustomerAcceptance , Approved , CbbApprovalRequired , CbbApproved , Discrepancy , LimitApproved, ");
+			insertSql.append(" SecurityCollateral , CustomerAcceptance , Approved , CbbApprovalRequired , CbbApproved , Discrepancy , LimitApproved, NextUserId, Priority, ");
 		}
 		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -594,7 +594,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			insertSql.append("  :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR, :Authorization1, :Authorization2, ");
 			insertSql.append(" :FeeChargeAmt, :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason,");
 			insertSql.append(" :JointAccount,:JointCustId , :DownPayAccount,  :SecurityDeposit, :RcdMaintainSts,:FinRepayMethod, ");
-			insertSql.append(" :SecurityCollateral , :CustomerAcceptance , :Approved , :CbbApprovalRequired , :CbbApproved , :Discrepancy , :LimitApproved, ");
+			insertSql.append(" :SecurityCollateral , :CustomerAcceptance , :Approved , :CbbApprovalRequired , :CbbApproved , :Discrepancy , :LimitApproved, :NextUserId, :Priority, ");
 		}
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
@@ -699,7 +699,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_TEMP") ) {
 			updateSql.append("  AND Version= :Version-1");
@@ -790,7 +790,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			updateSql.append(" FinStatus=:FinStatus , FinStsReason=:FinStsReason, CustDSR=:CustDSR, Authorization1=:Authorization1,Authorization2=:Authorization2,");
 			updateSql.append(" JointAccount=:JointAccount, JointCustId=:JointCustId, DownPayAccount=:DownPayAccount,  SecurityDeposit = :SecurityDeposit, RcdMaintainSts=:RcdMaintainSts, ");
 			updateSql.append(" FinRepayMethod=:FinRepayMethod, SecurityCollateral=:SecurityCollateral , CustomerAcceptance=:CustomerAcceptance , Approved=:Approved, " );
-			updateSql.append(" CbbApprovalRequired=:CbbApprovalRequired , CbbApproved=:CbbApproved , Discrepancy=:Discrepancy , LimitApproved=:LimitApproved, ");
+			updateSql.append(" CbbApprovalRequired=:CbbApprovalRequired , CbbApproved=:CbbApproved , Discrepancy=:Discrepancy , LimitApproved=:LimitApproved, NextUserId=:NextUserId, Priority=:Priority, ");
 		}
 		
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
@@ -900,7 +900,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ");
 		updateSql.append(" RemFeeSchdMethod=:RemFeeSchdMethod, FeeSchdTerms=:FeeSchdTerms , CalSchdFeeAmt=:CalSchdFeeAmt, TakafulRequired=:TakafulRequired,LinkedFinRef=:LinkedFinRef,");
 		updateSql.append(" TakafulFrq=:TakafulFrq , WaiverReason=:WaiverReason, TakafulRate=:TakafulRate, TakafulRef=:TakafulRef , ");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, NextUserId=:NextUserId, Priority=:Priority, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -1444,6 +1444,18 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), finRefMap);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+    public void updateFinancePriority() {
+		logger.debug("Entering");
+		StringBuilder updateSql = new StringBuilder("update financemain_temp set Priority=Priority+1 ");
+		updateSql.append(" where Priority!=4 AND DATEDIFF(MINUTE,lastmnton,getdate()) > 30");
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(String.class);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
 	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
 		String[][] parms = new String[2][1];
@@ -1452,5 +1464,4 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 		        parms[0], parms[1]), userLanguage);
 	}
-
 }

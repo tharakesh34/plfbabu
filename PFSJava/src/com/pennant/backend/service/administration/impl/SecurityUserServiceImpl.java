@@ -55,6 +55,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
 import com.pennant.backend.dao.administration.SecurityUserRolesDAO;
@@ -80,6 +81,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private SecurityUserDAO securityUsersDAO;
 	private SecurityUserRolesDAO securityUserRolesDAO;
 	private SecurityUserPasswordsDAO securityUserPasswordsDAO;
+	private QueueAssignmentDAO queueAssignmentDAO;
 
 	private static Logger logger = Logger.getLogger(SecurityUserServiceImpl.class);
 
@@ -292,6 +294,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(securityUser);
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		// If any records exists in this user queue re-assign them to next available users
+		if(!securityUser.isUsrEnabled()) {
+			getQueueAssignmentDAO().executeStoredProcedure(securityUser.getUsrID());
+		}
+		
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
@@ -895,4 +903,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		logger.debug("Leaving ");
 		return list;	
 	}
+
+
+	public QueueAssignmentDAO getQueueAssignmentDAO() {
+	    return queueAssignmentDAO;
+    }
+
+
+	public void setQueueAssignmentDAO(QueueAssignmentDAO queueAssignmentDAO) {
+	    this.queueAssignmentDAO = queueAssignmentDAO;
+    }
 }

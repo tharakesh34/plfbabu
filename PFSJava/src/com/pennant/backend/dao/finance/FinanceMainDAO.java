@@ -92,4 +92,5 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainForRpyCancel(String id);
 	void updateFinAccounts(String finReference, String finAccount);
 	void updateActiveStatus(List<String> finRefList);
+	void updateFinancePriority();
 }

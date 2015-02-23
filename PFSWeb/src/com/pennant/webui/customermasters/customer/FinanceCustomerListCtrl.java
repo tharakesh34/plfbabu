@@ -1412,7 +1412,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.custSubSector.setReadonly(true);
 			this.custSubSector.setMandatoryStyle(false);
 		}else{
-			this.custSubSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_custSubSector"));
+			this.custSubSector.setReadonly(!isReadOnly("FinanceCustomerListCtrl_custSubSector"));
 			this.custSubSector.setMandatoryStyle(!isReadOnly("FinanceCustomerListCtrl_custSubSector"));
 		}
 	}

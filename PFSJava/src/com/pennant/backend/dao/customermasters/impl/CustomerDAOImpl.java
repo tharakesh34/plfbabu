@@ -432,8 +432,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
 			
-			ErrorDetails errorDetails= getError("41004", customer.getCustCIF(), customer.getCustCtgCode(), customer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			/*ErrorDetails errorDetails= getError("41004", customer.getCustCIF(), customer.getCustCtgCode(), customer.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};*/
 		}
 		logger.debug("Leaving");
 	}
