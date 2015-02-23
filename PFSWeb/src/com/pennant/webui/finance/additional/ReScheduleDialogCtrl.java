@@ -689,6 +689,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl implements Serializable {
 				startRepayCalDate = this.nextRepayDate.getValue();
 			}else{
 				startRepayCalDate = FrequencyUtil.getNextDate(frq, 1, tempStartDate, "A", false).getNextFrequencyDate();
+				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate, PennantConstants.DBDateFormat));
 			}
 			
 			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, this.numberOfTerms.intValue(), startRepayCalDate, "A", true).getScheduleList();

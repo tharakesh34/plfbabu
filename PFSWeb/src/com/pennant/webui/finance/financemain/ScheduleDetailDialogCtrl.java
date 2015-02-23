@@ -116,6 +116,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 	protected Window 		window_ScheduleDetailDialog; 			// autoWired
 	protected Listbox 		listBoxSchedule; 						// autoWired
 	protected Listbox 		listBoxTakafulSchedule; 				// autoWired
+	protected Tab	 		financeSchdDetailsTab;					// autoWired
 	protected Tab	 		financeTakafulSchdDetailsTab;			// autoWired
 	protected Borderlayout  borderlayoutScheduleDetail;				// autoWired
 	
@@ -866,6 +867,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDet
 		}
 		
 		this.financeTakafulSchdDetailsTab.setVisible(showTakafulTab); 
+		this.financeSchdDetailsTab.setSelected(true);
 		logger.debug("Leaving");
 	}
 	
