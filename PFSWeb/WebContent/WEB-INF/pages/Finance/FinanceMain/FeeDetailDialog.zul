@@ -139,7 +139,7 @@
 												id="takafulReference" width="160px" />
 										</hbox>
 									</row>
-									<row id="row_TakafulFrq">
+									<row id="row_TakafulFrq" visible="false">
 										<label
 											id="label_FeeDetailDialog_TakafulFrq"
 											value="${c:l('label_FeeDetailDialog_TakafulFrq.value')}" />
