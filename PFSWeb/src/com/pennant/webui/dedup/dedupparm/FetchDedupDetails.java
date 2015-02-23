@@ -143,7 +143,7 @@ public class FetchDedupDetails {
 		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
 		referenceDetail.setMandInputInStage(aFinanceMain.getNextRoleCode()+",");
 		referenceDetail.setFinType(aFinanceMain.getFinType());
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmService().getQueryCodeList(referenceDetail);
+		List<FinanceReferenceDetail> queryCodeList = getDedupParmService().getQueryCodeList(referenceDetail, "_AFDView");
 		
 		//For Existing Customer/ New Customer
 		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();

@@ -58,6 +58,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.blacklist.BlackListCustomerDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
+import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -68,6 +69,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantConstants;
@@ -85,6 +87,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private BlackListCustomerDAO blackListCustomerDAO;
 	private FinanceDedupeDAO financeDedupeDAO;
 	private CustomerInterfaceService customerInterfaceService;
+	private PoliceCaseDAO policeCaseDAO;
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
@@ -117,6 +120,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
 		this.financeDedupeDAO = financeDedupeDAO;
 	}
+	
+	public PoliceCaseDAO getPoliceCaseDAO() {
+	    return policeCaseDAO;
+    }
+	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
+	    this.policeCaseDAO = policeCaseDAO;
+    }
 	
 	public CustomerInterfaceService getCustomerInterfaceService() {
 		return customerInterfaceService;
@@ -307,11 +317,6 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			return list;
 		}
 		return new ArrayList<FinanceDedup>();
-	}	
-	
-	@Override	
-	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail referenceDetail){
-		return getDedupParmDAO().getQueryCodeList(referenceDetail, "_AFDView");
 	}	
 	
 	/**
@@ -548,7 +553,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	/**
 	 * Method for Fetch Black List Customer Details based on Rule conditions
 	 */
-	@Override
+	@SuppressWarnings("unused")
+    @Override
 	public List<BlackListCustomers> fetchBlackListCustomers(String userRole,String finType,
 			BlackListCustomers blCustData) {
 		logger.debug("Entering");
@@ -575,6 +581,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
 							PennantConstants.DedupBlackList, custCtgType);
 					dedupParmList.add(dedupParm);
+					
 				}else{
 					blackListCustomers.addAll(list);
 				}
@@ -582,9 +589,9 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 			//Using Queries Fetch Black Listed Customer Data either from Interface or 
 			//Existing Black Listed Table(Daily Download) Data
-			if (dedupParmList != null && !dedupParmList.isEmpty()) {
+			if (dedupParmList!= null && !dedupParmList.isEmpty() && !(dedupParmList.contains(null))) {
 				try {
-	                blackListCustomers = getCustomerInterfaceService().fetchBlackListedCustomers(blCustData, dedupParmList);
+	                blackListCustomers.addAll(getCustomerInterfaceService().fetchBlackListedCustomers(blCustData, dedupParmList));
                 } catch (IllegalAccessException e) {
 	                e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -622,6 +629,78 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	        }
         }
 		return blackListCustomers;
+    }
+	@Override
+    public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
+	    return getDedupParmDAO().getQueryCodeList(financeRefDetail, tableType);
+    }
+	
+	/**
+	 * Method for Fetching Police Case Details on Creation of Finance
+	 */
+	@Override
+	public List<PoliceCase> fetchPoliceCaseCustomers(String userRole, String finType,
+			PoliceCase policeCaseData) {
+		logger.debug("Entering");
+		
+		List<PoliceCase> policeCase = new ArrayList<PoliceCase>();
+		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
+		financeRefDetail.setMandInputInStage(userRole + ",");
+		financeRefDetail.setFinType(finType);
+		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail,"_ABDView");
+
+		if(queryCodeList!=null && !queryCodeList.isEmpty()) {
+			String custCtgType =policeCaseData.getCustCtgType();
+
+			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
+			for (FinanceReferenceDetail queryCode : queryCodeList) {
+				List<PoliceCase> list = getPoliceCaseDAO().fetchPoliceCase(policeCaseData.getFinReference(), queryCode.getLovDescNamelov());
+				if(list== null || list.isEmpty()){
+					DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
+							PennantConstants.DedupPolice, "I");
+					dedupParmList.add(dedupParm);
+				}else{
+					policeCase.addAll(list);}
+				
+			}
+
+			if (dedupParmList != null && !dedupParmList.isEmpty()) {
+				try {
+					policeCase.addAll(getCustomerInterfaceService().fetchPoliceCase(policeCaseData, dedupParmList));
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				if (policeCase != null) {
+					policeCase = resetPoliceCaseList(policeCase, queryCodeList);
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return policeCase;
+	}
+	
+	/**
+	 * Method for Resetting Override condition based on Process Editor Configuration
+	 * @param policeCase
+	 * @param queryCodeList
+	 * @return
+	 */
+	private List<PoliceCase> resetPoliceCaseList(List<PoliceCase> policeCase,
+            List<FinanceReferenceDetail> queryCodeList) {
+		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
+			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());			
+        }
+		
+		//Reset Override COndition based on Query Code Executions
+		for (PoliceCase policeCaseList : policeCase) {
+	        if(queryOverrideMap.containsKey(policeCaseList.getPoliceCaseRule())){
+	        	policeCaseList.setOverride(queryOverrideMap.get(policeCaseList.getPoliceCaseRule()));
+	        }
+        }
+		return policeCase;
     }
 	
 }

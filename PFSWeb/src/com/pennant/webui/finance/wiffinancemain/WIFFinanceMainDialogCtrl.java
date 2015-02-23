@@ -141,6 +141,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
+import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
 import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
@@ -4269,6 +4270,23 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl implements Serializabl
 					tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(false);
 					// FIXME Black List Integration
 					processCompleted = true;
+					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
+
+				}else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doPoliceCase)) {
+					
+					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					tFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(tFinanceDetail ,
+							this.window_WIFFinanceMainDialog);
+
+					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()){
+						if(tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
+							processCompleted = true;
+						}else{
+							processCompleted = false;
+						}
+					} else {
+						processCompleted = true;
+					}
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
 				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {

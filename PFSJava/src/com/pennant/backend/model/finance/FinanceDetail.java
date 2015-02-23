@@ -66,6 +66,7 @@ import com.pennant.backend.model.lmtmasters.GoodsLoanDetail;
 import com.pennant.backend.model.lmtmasters.HomeLoanDetail;
 import com.pennant.backend.model.lmtmasters.MortgageLoanDetail;
 import com.pennant.backend.model.lmtmasters.SharesDetail;
+import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -146,6 +147,7 @@ public class FinanceDetail implements java.io.Serializable {
 	// Dedupe Check List Details 
 	private List<BlackListCustomers> blackListCustomerDetails = null; 
 	private List<FinanceDedup> finDedupDetails = null; 
+	private List<PoliceCase> dedupPoliceCaseDetails = null;
 	
 	
 	private CustomerDetails customerDetails;
@@ -662,5 +664,12 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setFinDedupDetails(List<FinanceDedup> finDedupDetails) {
 		this.finDedupDetails = finDedupDetails;
 	}
+
+	public List<PoliceCase> getDedupPoliceCaseDetails() {
+	    return dedupPoliceCaseDetails;
+    }
+	public void setDedupPoliceCaseDetails(List<PoliceCase> dedupPoliceCaseDetails) {
+	    this.dedupPoliceCaseDetails = dedupPoliceCaseDetails;
+    }
 
 }

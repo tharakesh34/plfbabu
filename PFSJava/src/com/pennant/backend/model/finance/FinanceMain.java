@@ -97,6 +97,7 @@ public class FinanceMain implements java.io.Serializable {
 	private String		lovDescCustPassportNo;
 	private Date		lovDescCustDOB;
 	private String 		lovDescRequestStage;
+	private String 		lovDescQueuePriority;
 	
 	//Commercial Workflow Purpose
 	private boolean 	securityCollateral;
@@ -298,6 +299,8 @@ public class FinanceMain implements java.io.Serializable {
 	private BigDecimal  maturity = BigDecimal.ZERO;
 	private boolean 	fundsAvailConfirmed;
 	private boolean 	limitApproved;
+	private boolean 	policeCaseFound = false;
+	private boolean 	policeCaseOverride = false;
 	
 	//===========================================
     //=========Purpose to Other Modules==========
@@ -2062,6 +2065,13 @@ public class FinanceMain implements java.io.Serializable {
 		this.lovDescRequestStage = lovdescRequestStage;
 	}
 
+	public String getLovDescQueuePriority() {
+		return lovDescQueuePriority;
+	}
+	public void setLovDescQueuePriority(String lovDescQueuePriority) {
+		this.lovDescQueuePriority = lovDescQueuePriority;
+	}
+
 	// Overidden Equals method to handle the comparision
 	public boolean equals(FinanceMain financeMain) {
 		return getId() == financeMain.getId();
@@ -2107,7 +2117,6 @@ public class FinanceMain implements java.io.Serializable {
 	public String getLinkedFinRef() {
 	    return linkedFinRef;
     }
-
 	public void setLinkedFinRef(String linkedFinRef) {
 	    this.linkedFinRef = linkedFinRef;
     }
@@ -2115,7 +2124,6 @@ public class FinanceMain implements java.io.Serializable {
 	public boolean isBlacklistOverride() {
 	    return blacklistOverride;
     }
-
 	public void setBlacklistOverride(boolean blacklistOverride) {
 	    this.blacklistOverride = blacklistOverride;
     }
@@ -2143,5 +2151,19 @@ public class FinanceMain implements java.io.Serializable {
 	public void setLovDescNextUsersRolesMap(Map<String, String> lovDescNextUsersRolesMap) {
 	    this.lovDescNextUsersRolesMap = lovDescNextUsersRolesMap;
     }
+
+	public boolean isPoliceCaseFound() {
+		return policeCaseFound;
+	}
+	public void setPoliceCaseFound(boolean policeCaseFound) {
+		this.policeCaseFound = policeCaseFound;
+	}
+
+	public boolean isPoliceCaseOverride() {
+		return policeCaseOverride;
+	}
+	public void setPoliceCaseOverride(boolean policeCaseOverride) {
+		this.policeCaseOverride = policeCaseOverride;
+	}
 
 }

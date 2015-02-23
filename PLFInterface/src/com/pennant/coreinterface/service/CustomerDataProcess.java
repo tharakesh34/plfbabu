@@ -7,6 +7,7 @@ import com.pennant.coreinterface.model.CoreBankAvailCustomer;
 import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
 
@@ -23,5 +24,5 @@ public interface CustomerDataProcess {
 	CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws CustomerNotFoundException;
 
 	List<CoreBankBlackListCustomer> getBlackListedCustomers(CoreBankBlackListCustomer customer, String sqlQuery);
-
+	List<CorePoliceCase> fetchPoliceCustInformation(CorePoliceCase corePoliceCase,String sqlQuery);
 }

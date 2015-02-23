@@ -4320,12 +4320,15 @@
 	</bean>
 	
 	<!-- Internal BlackLits Checking -->
-
-	<bean id="blackListCustomerctrl"
-		class="com.pennant.webui.systemmasters.blacklistCheck.BlackListCheckListCtrl"
-		parent="basisListCtrl" scope="prototype" />
 	<bean name="fetchBlackListDetails"
 		class="com.pennant.webui.dedup.dedupparm.FetchBlackListDetails">
 		<property name="dedupParmService" ref="dedupParmService" />
 	</bean>
+	
+	<!-- Police & Court Case Checking -->
+	 <bean name="fetchPoliceCaseDetails"
+		class="com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails">
+		<property name="dedupParmService" ref="dedupParmService" />
+	</bean>
+	
 </beans>

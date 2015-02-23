@@ -1,17 +1,22 @@
 package com.pennant.Interface.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.service.CustomerDataProcess;
 
 public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceService{
@@ -128,6 +133,27 @@ public class CustomerInterfaceServiceCoreDBImpl implements CustomerInterfaceServ
 	    // TODO Auto-generated method stub
 	    return null;
     }
+
+	@Override
+	public List<PoliceCase> fetchPoliceCase(PoliceCase policeCase, List<DedupParm> dedupParmList)
+			throws IllegalAccessException, InvocationTargetException {
+		CorePoliceCase coreBankPoliceCase = new CorePoliceCase();
+		BeanUtils.copyProperties(coreBankPoliceCase, policeCase);
+		List<PoliceCase> policeCaseList = new ArrayList<PoliceCase>();
+		for (DedupParm dedupParm : dedupParmList) {
+			List<CorePoliceCase> list = getCustomerDataProcess().fetchPoliceCustInformation(coreBankPoliceCase, dedupParm.getSQLQuery());
+
+			for (int i = 0; i < list.size(); i++) {
+				CorePoliceCase coreBankList = list.get(i);
+				PoliceCase policeCaseData = new PoliceCase();
+				BeanUtils.copyProperties(policeCaseData, coreBankList);
+				policeCaseData.setPoliceCaseRule(dedupParm.getQueryCode());
+				policeCaseList.add(policeCaseData);
+			}
+		}
+
+		return  policeCaseList;
+	}
 
 
 }

@@ -16,6 +16,7 @@ import com.pennant.coreinterface.model.CoreBankAvailCustomer;
 import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
 import com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity;
@@ -629,6 +630,11 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	}
 	public void setHostConnection(HostConnection hostConnection) {
 		this.hostConnection = hostConnection;
+	}
+	@Override
+	public List<CorePoliceCase> fetchPoliceCustInformation(CorePoliceCase corePoliceCase, String sqlQuery) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

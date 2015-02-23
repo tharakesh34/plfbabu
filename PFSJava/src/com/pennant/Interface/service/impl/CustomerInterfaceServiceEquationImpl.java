@@ -15,6 +15,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.AvailAccount;
 import com.pennant.backend.model.reports.AvailCollateral;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
@@ -26,6 +27,7 @@ import com.pennant.coreinterface.model.CoreBankAvailCustomer;
 import com.pennant.coreinterface.model.CoreBankBlackListCustomer;
 import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.service.CustomerDataProcess;
 
@@ -381,4 +383,28 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 	    return customerDataProcess;
     }
 
+	
+	@Override
+	public List<PoliceCase> fetchPoliceCase(PoliceCase policeCase, List<DedupParm> dedupParmList)
+			throws IllegalAccessException, InvocationTargetException {
+		CorePoliceCase coreBankPoliceCase = new CorePoliceCase();
+		BeanUtils.copyProperties(coreBankPoliceCase, policeCase);
+		List<PoliceCase> policeCaseList = new ArrayList<PoliceCase>();
+		for (DedupParm dedupParm : dedupParmList) {
+			List<CorePoliceCase> list = getCustomerDataProcess().fetchPoliceCustInformation(coreBankPoliceCase, dedupParm.getSQLQuery());
+
+			for (int i = 0; i < list.size(); i++) {
+				CorePoliceCase coreBankList = list.get(i);
+				PoliceCase policeCaseData = new PoliceCase();
+				BeanUtils.copyProperties(policeCaseData, coreBankList);
+				policeCaseData.setPoliceCaseRule(dedupParm.getQueryCode());
+				policeCaseData.setFinReference(policeCase.getFinReference());
+				policeCaseList.add(policeCaseData);
+			}
+		}
+
+		return  policeCaseList;
+	}
+
+	
 }

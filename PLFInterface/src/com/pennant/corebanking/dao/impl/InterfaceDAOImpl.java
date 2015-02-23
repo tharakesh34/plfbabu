@@ -32,6 +32,7 @@ import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
 import com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity;
 import com.pennant.coreinterface.model.CustomerInterfaceData.CustomerRating;
@@ -634,7 +635,61 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 	public void disConnection() {
 		// TODO
 	}
-	
+
+
+	@Override
+	public List<CorePoliceCase> fetchPoliceCustInformation(CorePoliceCase corePoliceCase, String sqlQuery) {
+		List<CorePoliceCase> corePolice = new ArrayList<CorePoliceCase>();
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1001));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1002));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1003));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1004));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1005));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1006));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1007));
+		
+		/*StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT * FROM PoliceCase ");
+		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
+		selectSql.append(" AND CustCIF=:CustCIF ");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = null;
+		RowMapper<CorePoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper .newInstance(CorePoliceCase.class);
+		try{		
+			for(CorePoliceCase detail: corePolice) {
+				beanParameters = new BeanPropertySqlParameterSource(detail);
+				CorePoliceCase item = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+				detail.setCustCIF(item.getCustCIF());
+				detail.setCustDateofBirth(item.getCustDateofBirth());
+				detail.setCustEIDNumber(item.getCustEIDNumber());
+				detail.setCustFirstName(item.getCustFirstName());
+				detail.setCustLastName(item.getCustLastName());
+				detail.setCustMobileNumber(item.getCustMobileNumber());
+				detail.setCustNationality(item.getCustNationality());
+				detail.setCustPassPort(item.getCustPassPort());
+			}
+			
+		}catch (Exception e) {
+			logger.error(e);
+			logger.debug("Leaving");
+			e.printStackTrace();
+		}*/
+		logger.debug("Leaving");
+		return corePolice;
+		
+	}
+
+	private CorePoliceCase setStaticBlackListData(CorePoliceCase staticList, int count) {
+		staticList.setCustCIF("PC"+count);
+		staticList.setCustDOB(DateUtility.getUtilDate("01/01/1950", "dd/MM/yyyy"));
+		staticList.setCustFName(staticList.getCustCIF()+" First Name");
+		staticList.setCustLName(staticList.getCustCIF()+" Last Name");
+		staticList.setCustCRCPR("EID"+count);
+		staticList.setCustPassPort("PPT"+count);
+		staticList.setCustMobileNumber("9711234"+count);
+		staticList.setCustNationality("AE");
+		return staticList;
+	}
 }
 
 

@@ -142,6 +142,7 @@ public class PennantConstants {
 	public static final String method_doReject = "doReject";
 	public static final String method_doDedup = "doDedup";
 	public static final String method_doBlacklist = "doBlacklist";
+	public static final String method_doPoliceCase = "doPoliceCase";
 	public static final String method_CheckLimits = "CheckLimits";
 	public static final String method_doCheckExceptions = "doCheckExceptions";
 	public static final String method_doSendNotification = "doSendNotification";

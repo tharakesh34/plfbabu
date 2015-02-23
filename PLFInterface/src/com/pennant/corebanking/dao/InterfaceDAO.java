@@ -8,6 +8,7 @@ import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.model.CoreBankingCustomer;
+import com.pennant.coreinterface.model.CorePoliceCase;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
 
 public interface InterfaceDAO {
@@ -41,5 +42,7 @@ public interface InterfaceDAO {
 	String executeAccountForFin(int reqRefId, String createNow);
 
 	CustomerInterfaceData getCustDetails(String custCIF, String custLoc);
+	
+	List<CorePoliceCase> fetchPoliceCustInformation(CorePoliceCase corePoliceCase,String sqlQuery);
 
 }

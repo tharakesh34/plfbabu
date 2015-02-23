@@ -990,6 +990,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinDedupDetails() != null && !financeDetail.getFinDedupDetails().isEmpty()) {
 				getFinanceDedupeDAO().saveList(financeDetail.getFinDedupDetails());
 			}
+			
+			// Save Dedup PoliceCase Data
+			if(financeDetail.getDedupPoliceCaseDetails() != null && !financeDetail.getDedupPoliceCaseDetails().isEmpty()){
+				getPoliceCaseDAO().saveList(financeDetail.getDedupPoliceCaseDetails());
+			}
 
 			//Additional Field Details Save / Update
 			doSaveAddlFieldDetails(financeDetail, tableType);

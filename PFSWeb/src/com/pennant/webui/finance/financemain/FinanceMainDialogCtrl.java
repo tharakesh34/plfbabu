@@ -229,6 +229,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.util.Constraint.RateValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
+import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -6026,7 +6027,24 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 					processCompleted = true;
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
-				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doPoliceCase)) {
+					
+					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					tFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(tFinanceDetail ,
+							this.window_FinanceMainDialog);
+
+					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()){
+						if(tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
+							processCompleted = true;
+						}else{
+							processCompleted = false;
+						}
+					} else {
+						processCompleted = true;
+					}
+					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
+
+				}else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {
 
 					processCompleted = doSaveProcess(auditHeader, method);
 

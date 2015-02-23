@@ -48,6 +48,7 @@ import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
+import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
@@ -137,6 +138,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinanceStepDetailDAO  financeStepDetailDAO;
 	private BlackListCustomerDAO  blackListCustomerDAO;
 	private FinanceDedupeDAO  financeDedupeDAO;
+	private PoliceCaseDAO	policeCaseDAO;
 
 	private AccountEngineExecution engineExecution;
 	private AccountEngineExecutionRIA engineExecutionRIA;
@@ -192,7 +194,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			+ "mortgageLoanDetail,proceedDedup,actionSave, finRvwRateApplFor,finGrcRvwRateApplFor,curDisbursementAmt,amount,"
 			+ "exception,amountBD,amountUSD,maturity,availCommitAmount,guarantorIDTypeName,curFeeChargeAmt,"
 			+ "name,lovCustCIFName,primaryExposure,secondaryExposure,guarantorExposure,worstStatus,status,sumPrimaryDetails,sumSecondaryDetails,"
-			+ "sumGurantorDetails, isExtSource, commidityLoanDetails, limitStatus,fundsAvailConfirmed,pftIntact,adjTerms,blacklistOverride";
+			+ "sumGurantorDetails, isExtSource, commidityLoanDetails, limitStatus,fundsAvailConfirmed,pftIntact,adjTerms,blacklistOverride,policeCaseFound,policeCaseOverride";
 
 	/**
 	 * setFinanceAsset Set AssetDetail to FinanceDetail, based on the assetCode specified for the FinanceType
@@ -2157,6 +2159,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
     }
 	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
 	    this.financeDedupeDAO = financeDedupeDAO;
+    }
+
+	public PoliceCaseDAO getPoliceCaseDAO() {
+	    return policeCaseDAO;
+    }
+
+	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
+	    this.policeCaseDAO = policeCaseDAO;
     }
 
 }
