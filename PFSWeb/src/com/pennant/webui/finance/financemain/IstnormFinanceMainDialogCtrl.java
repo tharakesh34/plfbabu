@@ -587,6 +587,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		logger.debug("Entering");
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
+
+			//Customer Details   
+			appendCustomerDetailTab();
 			
 			//Step Policy Details
 			appendStepDetailTab(true);
@@ -886,6 +889,10 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			if (moduleDefiner.equals("")){
 				setDiscrepancy(getFinanceDetail());
 	        }
+			//Set Customer Data
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()){
+				doSetCustomer(getFinanceDetail().getCustomerDetails().getCustomer(),null);
+			}
 			setDialog(this.window_IstnormFinanceMainDialog);
 
 		} catch (final Exception e) {
@@ -2166,6 +2173,17 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		//Validation For Mandatory Recommendation
 		if(!doValidateRecommendation()){
 			return;
+		}
+
+		// Customer Details Tab ---> Customer Details 
+		if (getFinanceCustomerListCtrl() != null){
+			if (getFinanceCustomerListCtrl() != null){
+				if(getFinanceCustomerListCtrl().getCustomerDetails() != null) {
+					getFinanceCustomerListCtrl().doSave_CustomerDetail(aFinanceDetail,custDetailTab);
+				}
+			}
+		} else {
+			aFinanceDetail.setCustomerDetails(null);
 		}
 
 		String tempRecordStatus = aFinanceMain.getRecordType();
@@ -3658,8 +3676,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 	 * @return validfinanceDetail
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
+	 * @throws ParseException 
 	 * */
-	private FinanceDetail validate() throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private FinanceDetail validate() throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException {
 		logger.debug("Entering");
 
 		recSave = false;
@@ -3672,6 +3691,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
+		processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);
@@ -3810,7 +3830,9 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			}
 		}
 
-		getDocumentDetailDialogCtrl().doFillDocumentDetails(financeDetail.getDocumentDetailsList());
+		if(getDocumentDetailDialogCtrl() != null){
+			getDocumentDetailDialogCtrl().doFillDocumentDetails(financeDetail.getDocumentDetailsList());
+		}
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
 		if (moduleDefiner.equals("")){

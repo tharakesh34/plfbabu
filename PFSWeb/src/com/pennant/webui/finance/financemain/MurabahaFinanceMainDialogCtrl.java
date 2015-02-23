@@ -589,7 +589,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		logger.debug("Entering");
 		
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
-
+            //Customer Details   
 			appendCustomerDetailTab();
 			
 			//Step Policy Details

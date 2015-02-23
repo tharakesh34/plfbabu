@@ -601,6 +601,9 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
 			
+			//Customer Details   
+			appendCustomerDetailTab();
+			
 			//Step Policy Details
 			appendStepDetailTab(true);
 			
@@ -908,6 +911,10 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 			if (moduleDefiner.equals("")){
 				setDiscrepancy(getFinanceDetail());
 	        }
+			//Set Customer Data
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()){
+				doSetCustomer(getFinanceDetail().getCustomerDetails().getCustomer(),null);
+			}
 			setDialog(this.window_IjarahFinanceMainDialog);
 
 		} catch (final Exception e) {
@@ -2264,6 +2271,18 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		if(!doValidateRecommendation()){
 			return;
 		}
+
+		// Customer Details Tab ---> Customer Details 
+		if (getFinanceCustomerListCtrl() != null){
+			if (getFinanceCustomerListCtrl() != null){
+				if(getFinanceCustomerListCtrl().getCustomerDetails() != null) {
+					getFinanceCustomerListCtrl().doSave_CustomerDetail(aFinanceDetail,custDetailTab);
+				}
+			}
+		} else {
+			aFinanceDetail.setCustomerDetails(null);
+		}
+		
 		
 		String tempRecordStatus = aFinanceMain.getRecordType();
 		isNew = aFinanceDetail.isNew();
@@ -3808,8 +3827,9 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 	 * @return validfinanceDetail
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
+	 * @throws ParseException 
 	 * */
-	private FinanceDetail validate() throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private FinanceDetail validate() throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException {
 		logger.debug("Entering");
 
 		recSave = false;
@@ -3822,6 +3842,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
+		processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);
@@ -3968,7 +3989,9 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 			}
 		}
 		
-		getDocumentDetailDialogCtrl().doFillDocumentDetails(financeDetail.getDocumentDetailsList());
+		if(getDocumentDetailDialogCtrl() != null){
+			getDocumentDetailDialogCtrl().doFillDocumentDetails(financeDetail.getDocumentDetailsList());
+		}
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
 		if (moduleDefiner.equals("")){
