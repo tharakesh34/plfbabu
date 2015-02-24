@@ -551,6 +551,17 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.otherIncome.setDescription(custEmployeeDetail.getLovDescOtherIncome());
 		this.additionalIncome.setValue(PennantAppUtil.formateAmount(custEmployeeDetail.getAdditionalIncome(),finFormatter));
 		
+		doSetEmpStatusProperties(custEmployeeDetail.getEmpStatus());	
+		if(StringUtils.trimToEmpty(this.empName.getDescription()).equalsIgnoreCase(EmploymentName_OTHERS)){
+			this.hbox_empNameOther.setVisible(true);
+			this.label_empNameOther.setVisible(true);
+		}else{
+			this.hbox_empNameOther.setVisible(false);
+			this.label_empNameOther.setVisible(false);
+		}
+		empName_Temp = this.empName.getValue();
+		custBaseCcy_Temp = this.custBaseCcy.getValue();
+		
 		//Filling KYC Details
 		doFillDocumentDetails(aCustomerDetails.getCustomerDocumentsList());
 		doFillCustomerAddressDetails(aCustomerDetails.getAddressList());
@@ -562,15 +573,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
 
-		if(StringUtils.trimToEmpty(this.empName.getDescription()).equalsIgnoreCase(EmploymentName_OTHERS)){
-			this.hbox_empNameOther.setVisible(true);
-			this.label_empNameOther.setVisible(true);
-		}else{
-			this.hbox_empNameOther.setVisible(false);
-			this.label_empNameOther.setVisible(false);
-		}
-		empName_Temp = this.empName.getValue();
-		custBaseCcy_Temp = this.custBaseCcy.getValue();
+		
 		logger.debug("Leaving");
 	}
 
@@ -906,10 +909,22 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 		//Employee 
 		if (!this.empFrom.isReadonly()) {
-			this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), null, true));
+			if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
+				this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_ProfessionStartDate.value"), null, true));
+			}else if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_BUSINESS)){
+				this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_BusinessStartDate.value"), null, true));
+			}else{
+				this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), null, true));
+			}
 		}
 		if (!this.monthlyIncome.isDisabled()) {
-			this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_MonthlyIncome.value"), false));
+			if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
+				this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_MonthlyProfessionIncome.value"), false));
+			}else if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_BUSINESS)){
+				this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_AvgMonthlyTurnover.value"), false));
+			}else{
+				this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_MonthlyIncome.value"), false));
+			}
 		}
 		if (!StringUtils.trimToEmpty(this.otherIncome.getValue()).equals("")  &&  !this.additionalIncome.isDisabled()) {
 			this.additionalIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_AdditionalIncome.value"), false));
@@ -950,17 +965,19 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if(!this.empStatus.isReadonly()){
 			this.empStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpStatus.value"), null, true,true));
 		}
-		if(!this.empName.getButton().isDisabled()){
+		if(this.row_EmpName.isVisible() && !this.empName.getButton().isDisabled()){
 			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
 		}
 		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
 			this.empNameOther.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpNameOther.value"), null, true,false));
 		}
-		if(!this.empDesg.isReadonly()){
-			this.empDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDesg.value"), null, true,true));
-		}
-		if(!this.empDept.isReadonly()){
-			this.empDept.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDept.value"), null, true,true));
+		if(row_DesgDept.isVisible()){
+			if(!this.empDesg.isReadonly()){
+				this.empDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDesg.value"), null, true,true));
+			}
+			if(!this.empDept.isReadonly()){
+				this.empDept.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDept.value"), null, true,true));
+			}
 		}
 		if(this.profession.isVisible() && !this.profession.isReadonly()){
 			this.profession.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_Profession.value"), null, true,true));
