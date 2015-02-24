@@ -3877,6 +3877,10 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			}
 		}
 
+		if(getDocumentDetailDialogCtrl() != null){
+			getDocumentDetailDialogCtrl().doFillDocumentDetails(getFinanceDetail().getDocumentDetailsList());
+		}
+		
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
 		if (moduleDefiner.equals("")){

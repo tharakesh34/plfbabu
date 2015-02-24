@@ -4030,6 +4030,10 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 				setAccountingDetailTab(this.window_IstisnaFinanceMainDialog);
 			}
 		}
+		
+		if(getDocumentDetailDialogCtrl() != null){
+			getDocumentDetailDialogCtrl().doFillDocumentDetails(getFinanceDetail().getDocumentDetailsList());
+		}
 
 		//Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
