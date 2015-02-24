@@ -266,7 +266,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 		// Empty sent any required attributes
 		this.bankName.setMaxlength(8);
 		this.bankName.setMandatoryStyle(true);
-		this.bankName.getTextbox().setWidth("110px");
+		this.bankName.setTextBoxWidth(117);
 		this.bankName.setModuleName("BankDetail");
 		this.bankName.setValueColumn("BankCode");
 		this.bankName.setDescColumn("BankName");
@@ -274,7 +274,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 		
 		this.accountType.setMaxlength(8);
 		this.accountType.setMandatoryStyle(true);
-		this.accountType.getTextbox().setWidth("110px");
+		this.accountType.setTextBoxWidth(110);
 		this.accountType.setModuleName("AccountType");
 		this.accountType.setValueColumn("AcType");
 		this.accountType.setDescColumn("AcTypeDesc");

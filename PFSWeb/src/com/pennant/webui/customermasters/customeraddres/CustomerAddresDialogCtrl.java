@@ -328,6 +328,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		
 		// Empty sent any required attributes
 		this.custAddrType.setMaxlength(8);
+		this.custAddrType.setTextBoxWidth(121);
 		this.custAddrType.setMandatoryStyle(true);
 		this.custAddrType.setModuleName("AddressType");
 		this.custAddrType.setValueColumn("AddrTypeCode");
@@ -342,6 +343,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custPOBox.setMaxlength(8);
 		
 		this.custAddrCountry.setMaxlength(2);
+		this.custAddrCountry.setTextBoxWidth(121);
 		this.custAddrCountry.setMandatoryStyle(true);
 		this.custAddrCountry.setModuleName("Country");
 		this.custAddrCountry.setValueColumn("CountryCode");
@@ -349,6 +351,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custAddrCountry.setValidateColumns(new String[] { "CountryCode" });
 		
 		this.custAddrProvince.setMaxlength(8);
+		this.custAddrProvince.setTextBoxWidth(121);
 		this.custAddrProvince.setMandatoryStyle(true);
 		this.custAddrProvince.setModuleName("Province");
 		this.custAddrProvince.setValueColumn("CPProvince");
@@ -356,6 +359,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl implements Serializabl
 		this.custAddrProvince.setValidateColumns(new String[] { "CPProvince" });
 
 		this.custAddrCity.setMaxlength(8);
+		this.custAddrCity.setTextBoxWidth(121);
 		this.custAddrCity.setMandatoryStyle(true);
 		this.custAddrCity.setModuleName("City");
 		this.custAddrCity.setValueColumn("PCCity");

@@ -297,7 +297,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl implements Serializable
 		// Empty sent any required attributes
 		this.custEMailTypeCode.setMaxlength(8);
 		this.custEMailTypeCode.setMandatoryStyle(true);
-		this.custEMailTypeCode.getTextbox().setWidth("110px");
+		this.custEMailTypeCode.setTextBoxWidth(116);
 		this.custEMailTypeCode.setModuleName("EMailType");
 		this.custEMailTypeCode.setValueColumn("EmailTypeCode");
 		this.custEMailTypeCode.setDescColumn("EmailTypeDesc");

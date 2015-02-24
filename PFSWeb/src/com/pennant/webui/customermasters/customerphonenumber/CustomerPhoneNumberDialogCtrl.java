@@ -300,7 +300,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl implements Serial
 		//Empty sent any required attributes
 		this.phoneTypeCode.setMaxlength(8);
 		this.phoneTypeCode.setMandatoryStyle(true);
-		this.phoneTypeCode.getTextbox().setWidth("110px");
+		this.phoneTypeCode.setTextBoxWidth(121);
 		this.phoneTypeCode.setModuleName("PhoneType");
 		this.phoneTypeCode.setValueColumn("PhoneTypeCode");
 		this.phoneTypeCode.setDescColumn("PhoneTypeDesc");

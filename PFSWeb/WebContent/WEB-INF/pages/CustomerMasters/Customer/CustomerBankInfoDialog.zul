@@ -76,7 +76,7 @@
 									<space spacing="2px" />
 									<longbox id="custID" width="150px"
 										maxlength="26" visible="false" />
-									<textbox id="custCIF" width="150px" readonly="true"
+									<textbox id="custCIF" width="152px" readonly="true"
 										maxlength="50" style="overflow: hidden;" />
 
 									<button id="btnSearchPRCustid"
@@ -97,7 +97,7 @@
 									value="${c:l('label_CustomerBankInfoDialog_AccountNumber.value')}" />
 								<hbox>
 									<space spacing="2px"  sclass="mandatory" />
-									<textbox id="accountNumber"  width="200px" />
+									<textbox id="accountNumber"  width="152px" />
 								</hbox>
 							</row>
 							<row>

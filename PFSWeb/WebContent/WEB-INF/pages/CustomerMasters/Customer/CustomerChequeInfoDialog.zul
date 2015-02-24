@@ -76,7 +76,7 @@
 									<space spacing="2px" />
 									<longbox id="custID" width="150px"
 										maxlength="26" visible="false" />
-									<textbox id="custCIF" width="150px" readonly="true"
+									<textbox id="custCIF" width="148px" readonly="true"
 										maxlength="50" style="overflow: hidden;" />
 
 									<button id="btnSearchPRCustid"
@@ -90,7 +90,7 @@
 									value="${c:l('label_CustomerChequeInfoDialog_ChequeSeq.value')}" />
 								<hbox>
 									<space id="space_ItemNumber" spacing="2px" />
-									<intbox id="chequeSeq" width="171px" readonly="true" />
+									<intbox id="chequeSeq" width="149px" readonly="true" />
 								</hbox>
 							</row>
 							<row>
@@ -99,7 +99,7 @@
 									value="${c:l('label_CustomerChequeInfoDialog_MonthYear.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<datebox id="monthYear" width="120px" />
+									<datebox id="monthYear" width="150px" />
 								</hbox>
 							</row>
 							<row>
@@ -132,7 +132,7 @@
 									value="${c:l('label_CustomerChequeInfoDialog_ReturnChequeCount.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="returnChequeCount" width="90px" />
+									<intbox id="returnChequeCount" width="150px" />
 								</hbox>
 							</row>
 						</rows>

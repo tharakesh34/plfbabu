@@ -81,7 +81,7 @@
 									<longbox id="phoneCustID"
 										maxlength="19" width="165px" visible="false" />
 									<textbox id="custCIF" maxlength="19"
-										style="overflow: hidden;" width="165px" />
+										style="overflow: hidden;" width="154px" />
 									<button id="btnSearchPRCustid"
 										image="/images/icons/LOVSearch.png"  />
 									<label id="custShrtName"
@@ -119,7 +119,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="phoneNumber"
-										maxlength="12" width="250px" />
+										maxlength="12" width="155px" />
 								</hbox>
 							</row>
 

@@ -99,7 +99,7 @@
 								<hbox>
 									<space spacing="2px" />
 									<intbox id="custEMailPriority"
-										width="90px" maxlength="14" />
+										width="151px" maxlength="14" />
 								</hbox>
 							</row>
 							<row>
