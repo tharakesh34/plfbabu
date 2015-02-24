@@ -22,6 +22,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -188,7 +189,7 @@ public class MailUtil implements Serializable {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Prepare and send mail
 	 * */
@@ -215,6 +216,11 @@ public class MailUtil implements Serializable {
 				
 				if(vo instanceof InvestmentFinHeader){
 					templateData = getPrepareTreasuryInvestmentMailData(templateData, (InvestmentFinHeader)vo);
+				}
+				
+				if(vo instanceof TakafulProvider){
+					templateData = getPrepareTakafulProviderMailData(templateData, (TakafulProvider)vo);
+					mailTemplate.setLovDescMailId(new String[]{"siva.m@pennanttech.com"});
 				}
 				
 				parseMail(mailTemplate, templateData);
@@ -629,6 +635,24 @@ public class MailUtil implements Serializable {
 		data.setNextUsrRole(securityUsrRoles.get(0).getRoleDesc());
 		data.setPrevUsrRole(financeSuspHead.getLastMntBy());
 		data.setUsrRole(financeSuspHead.getRoleCode());
+		
+		return data;
+	}
+	
+	/**
+	 *  Method for Data Preparation
+	 * @param data
+	 * @param takafulProvider
+	 * @return
+	 */
+	public MailTemplateData getPrepareTakafulProviderMailData(MailTemplateData data, TakafulProvider takafulProvider) {
+		
+		//Takaful Data Preparation For Notifications
+		data.setTakafulCode(takafulProvider.getTakafulCode());
+		data.setTakafulName(takafulProvider.getTakafulName());
+		data.setTakafulType(takafulProvider.getTakafulType());
+		data.setEmailId(takafulProvider.getEmailId());
+		data.setFinReference("");
 		
 		return data;
 	}

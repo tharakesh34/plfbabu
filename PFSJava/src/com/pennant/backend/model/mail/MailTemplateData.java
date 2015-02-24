@@ -74,6 +74,12 @@ public class MailTemplateData {
 	private String finSuspAmt;
 	private String finCurSuspAmt;
 	
+	//Takaful Provider
+	private String takafulCode;
+	private String takafulName;
+	private String takafulType;
+	private String emailId;
+	
 	//External Usage
 	private String roleCode = "";
 	private long custId = 0;
@@ -476,11 +482,44 @@ public class MailTemplateData {
     }
 	
 	public String getFinCurSuspAmt() {
-    	return finCurSuspAmt;
-    }
+		return finCurSuspAmt;
+	}
+
 	public void setFinCurSuspAmt(String finCurSuspAmt) {
-    	this.finCurSuspAmt = finCurSuspAmt;
-    }
+		this.finCurSuspAmt = finCurSuspAmt;
+	}
+
+	public String getTakafulCode() {
+		return takafulCode;
+	}
+
+	public void setTakafulCode(String takafulCode) {
+		this.takafulCode = takafulCode;
+	}
+
+	public String getTakafulName() {
+		return takafulName;
+	}
+
+	public void setTakafulName(String takafulName) {
+		this.takafulName = takafulName;
+	}
+
+	public String getTakafulType() {
+		return takafulType;
+	}
+
+	public void setTakafulType(String takafulType) {
+		this.takafulType = takafulType;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
 	
 }
 	

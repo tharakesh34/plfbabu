@@ -137,6 +137,7 @@
 												sclass="mandatory" />
 											<uppercasebox
 												id="takafulReference" width="160px" />
+											<button id="button_takafulRef"/>
 										</hbox>
 									</row>
 									<row id="row_TakafulFrq" visible="false">

@@ -228,6 +228,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PercentageValidator;
 import com.pennant.util.Constraint.RateValidator;
+import com.pennant.webui.dedup.dedupparm.FetchBlackListDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -6022,9 +6023,27 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doBlacklist)) {
 
 					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(false);
-					// FIXME Black List Integration
-					processCompleted = true;
+					FinanceMain tFinanceMain = tFinanceDetail.getFinScheduleData().getFinanceMain();
+					
+					//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+					if(!StringUtils.trimToEmpty(tFinanceMain.getLovDescCustCoreBank()).equals("")){
+						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklisted(
+								getFinanceDetailService().checkExistCustIsBlackListed(tFinanceMain.getCustID()));
+						tFinanceDetail.getFinScheduleData().getFinanceMain().setBlacklistOverride(false);
+					}else{
+						tFinanceDetail = FetchBlackListDetails.getBlackListCustomers(tFinanceDetail ,
+								this.window_FinanceMainDialog);
+					}
+					
+					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklisted()){
+						if(tFinanceDetail.getFinScheduleData().getFinanceMain().isBlacklistOverride()) {
+							processCompleted = true;
+						}else{
+							processCompleted = false;
+						}
+					} else {
+						processCompleted = true;
+					}
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doPoliceCase)) {

@@ -83,8 +83,10 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -93,6 +95,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.applicationmaster.TakafulProviderService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -156,6 +159,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	protected Button 		btnFeeCharges;							// autoWired
 	protected Label 		label_feeChargesSummaryVal; 			// autoWired
 	protected Listbox 		listBoxFinFeeCharges;					// autoWired
+	protected Button		button_takafulRef;					// autowired
 	
 	private Map<String, BigDecimal> waiverPaidChargesMap = null;
 	private Map<String,FeeRule> feeRuleDetailsMap = null;
@@ -187,6 +191,8 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
  	private FinanceDetailService financeDetailService;
  	private List<ValueLabel> profitDaysBasisList = null;
 	private List<ValueLabel> schMethodList = null;
+	private TakafulProviderService takafulProviderService;
+	private MailUtil mailUtil;
 	
 	/**
 	 * default constructor.<br>
@@ -453,6 +459,20 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		logger.debug("Leaving "+event.toString());
 	}
 	
+	/**
+	 * Method for Sent information to Takaful Provider regarding takaful Schedule Confirmation
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$button_takafulRef(Event event) throws Exception{
+		logger.debug("Entering "+event.toString());
+		TakafulProvider takafulProvider = null;
+		String takafulCode = financeDetail.getFinScheduleData().getFinanceType().getTakafulProvider();
+		takafulProvider = getTakafulProviderService().getApprovedTakafulProviderById(takafulCode);
+		getMailUtil().sendMail(4,PennantConstants.TEMPLATE_FOR_AE, takafulProvider);
+		logger.debug("Leaving "+event.toString());
+	}
+	
 	private void doSetFeeSchdTerms(){
 		this.label_FeeDetailDialog_FeeSchdTerms.setVisible(false);
 		this.hbox_feeSchdTerms.setVisible(false);
@@ -594,6 +614,7 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 		/*this.btnFeeCharges.setDisabled(!isModify);
 		this.btnFeeCharges.setVisible(isModify);*/
 		
+		button_takafulRef.setImage("/images/icons/Right_Arrow.png");
 		try {
 			getFinanceMainDialogCtrl().getClass().getMethod("setFeeDetailDialogCtrl", 
 					this.getClass()).invoke(getFinanceMainDialogCtrl(), this);
@@ -1407,5 +1428,20 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
-	
+
+	public TakafulProviderService getTakafulProviderService() {
+		return takafulProviderService;
+	}
+
+	public void setTakafulProviderService(TakafulProviderService takafulProviderService) {
+		this.takafulProviderService = takafulProviderService;
+	}
+
+	public MailUtil getMailUtil() {
+		return mailUtil;
+	}
+
+	public void setMailUtil(MailUtil mailUtil) {
+		this.mailUtil = mailUtil;
+	}
 }
