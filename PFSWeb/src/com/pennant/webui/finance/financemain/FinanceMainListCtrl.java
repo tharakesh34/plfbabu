@@ -623,7 +623,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		this.searchObj.addSort("LovDescProductCodeName",false);
 		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		this.searchObj.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
-		this.searchObj.addFilter(new Filter("NextUserId", "%"+String.valueOf(getUserWorkspace().getLoginUserDetails().getLoginUsrID())+"%", Filter.OP_LIKE));
+		this.searchObj.addFilterOr(new Filter("NextUserId", "%"+String.valueOf(getUserWorkspace().getLoginUserDetails().getLoginUsrID())+"%", Filter.OP_LIKE),
+				Filter.isNull("NextUserId"));
+		
 		this.searchObj.addSortDesc("Priority");
 
 		// CustId

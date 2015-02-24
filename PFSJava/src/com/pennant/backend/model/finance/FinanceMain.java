@@ -326,7 +326,7 @@ public class FinanceMain implements java.io.Serializable {
 	private String 		recordType;
 	private String 		userAction = "Save";
 	private long 		workflowId = 0;
-	private String 		nextUserId;
+	private String 		nextUserId = null;
 	private int			priority;
 	
 	//Can be Deleted -- TODO

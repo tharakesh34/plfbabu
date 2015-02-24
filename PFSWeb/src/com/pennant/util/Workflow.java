@@ -113,7 +113,8 @@ public class Workflow {
 	private enum UserTask {
 		OWNER("potentialOwner/resourceAssignmentExpression/formalExpression"), SCOPE(
 				"extensionElements/onEntry-script/script/scope="), SHOW_TABS(
-				"extensionElements/onEntry-script/script/show_tabs");
+				"extensionElements/onEntry-script/script/show_tabs"),ASSIGNMENT(
+						"extensionElements/onExit-script/script/assignment");
 
 		private String element;
 
@@ -863,4 +864,46 @@ public class Workflow {
 		file = null;
 		return json.toString();
 	}
+	
+	public String getAssignmentMethod(String taskId) {
+		return getAssignmentMethod(getElementById(taskId));
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getAssignmentMethod(OMElement task) {
+		String[] elements = UserTask.ASSIGNMENT.getElement().split("/");
+
+		OMElement element = getElement(task, elements[0]);
+
+		if (null == element) {
+			return "";
+		}
+
+		Iterator<OMElement> iterator = element.getChildElements();
+		String result = "";
+		String value = "";
+
+		while (iterator.hasNext()) {
+			element = iterator.next();
+
+			if (elements[1].equalsIgnoreCase(element.getLocalName())) {
+				value = getElementContent(element, elements[2],
+						Namespace.DROOLS.getUri());
+
+				String[] actions = value.split("\\|");
+
+				for (String action : actions) {
+					String[] pair = action.split("=");
+
+					if (elements[3].equals(pair[0])) {
+						result = pair[1];
+						break;
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
 }

@@ -645,4 +645,6 @@ public class PennantConstants {
 	public static final String DEALER = "DEALER";
 	public static final String PRIVATE = "PRIVATE";
 
+	public static final String ASSIGNMETHOD = "Auto";
+
 }

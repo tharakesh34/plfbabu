@@ -2437,9 +2437,13 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		financeMain.setNextTaskId(nextTaskId);
 		financeMain.setRoleCode(getRole());
 		financeMain.setNextRoleCode(nextRoleCode);
-		getNextUserId(financeMain, getRole(), nextRoleCode, old_NextRoleCode.contains(nextRoleCode));
-		if(!getRole().equals(nextRoleCode)){
-			financeMain.setPriority(0);
+		
+		if (StringUtils.trimToEmpty(getWorkFlow().getAssignmentMethod(taskId)).equalsIgnoreCase(
+				PennantConstants.ASSIGNMETHOD)) {
+			getNextUserId(financeMain, getRole(), nextRoleCode, old_NextRoleCode.contains(nextRoleCode));
+			if(!getRole().equals(nextRoleCode)){
+				financeMain.setPriority(0);
+			}
 		}
 		
 		logger.debug("Leaving");
