@@ -498,29 +498,11 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_MurabahaFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
-
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-		
-		closeDialog(this.window_MurabahaFinanceMainDialog, "FinanceMainDialog");
-	}
-
 
 	/**
 	 * Cancel the actual operation. <br>
@@ -2083,7 +2065,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_MurabahaFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2402,7 +2384,7 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				
-				closeWindow();
+				closeWindow(this.window_MurabahaFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

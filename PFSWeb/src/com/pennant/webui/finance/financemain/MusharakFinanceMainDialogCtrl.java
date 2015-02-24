@@ -485,30 +485,12 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_MusharakFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
 	
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-		
-		closeDialog(this.window_MusharakFinanceMainDialog, "FinanceMainDialog");
-	}
-	
-
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -1965,7 +1947,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_MusharakFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2271,7 +2253,7 @@ public class MusharakFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				
-				closeWindow();
+				closeWindow(this.window_MusharakFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

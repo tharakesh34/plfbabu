@@ -509,27 +509,10 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_IjarahFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
-	}
-	
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-
-		closeDialog(this.window_IjarahFinanceMainDialog, "FinanceMainDialog");
 	}
 	
 	/**
@@ -2132,7 +2115,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_IjarahFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2473,7 +2456,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 					getMailUtil().sendMail("FIN", aFinanceDetail,this);
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
-				closeWindow();
+				closeWindow(this.window_IjarahFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

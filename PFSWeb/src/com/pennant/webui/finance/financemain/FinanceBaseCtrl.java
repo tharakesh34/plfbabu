@@ -541,6 +541,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
 	protected Component 	childWindow = null;
 	protected Component 	checkListChildWindow = null;
+	protected Component 	customerWindow = null;
 
 	
 	//Sub Window Child Details Dialog Controllers
@@ -1540,7 +1541,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			tabpanel.setParent(tabpanelsBoxIndexCenter);
 			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
 
-			childWindow = Executions.createComponents(zulFilePathName, tabpanel, map);
+			customerWindow = Executions.createComponents(zulFilePathName, tabpanel, map);
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -7034,6 +7035,30 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
 	}
+	
+	protected void closeWindow(Window parentWindow){
+		
+		//De Allocate rights for Asset Details Tab Dialog
+		if(childWindow != null){
+			String dialogWindowName = getAssetDialogName();
+			if(dialogWindowName != null){
+				closeDialog((Window)childWindow, dialogWindowName);
+			}
+		}
+		
+		//Closing Check List Details Window
+		if(checkListChildWindow != null){
+			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
+		}
+		
+		//Closing Customer Details Window
+		if(customerWindow != null){
+			closeDialog((Window)customerWindow, "FinanceCustomerList");
+		}
+		
+		closeDialog(parentWindow, "FinanceMainDialog");
+	}
+
 	
 	/**
 	 * Method for Reset Schedule Terms after Schedule Calculation

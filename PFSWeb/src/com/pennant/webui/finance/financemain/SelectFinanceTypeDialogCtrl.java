@@ -671,6 +671,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		customer.setCustCRCPR("");
 		customer.setCustCOB(SystemParameterDetails.getSystemParameterValue("CURR_SYSTEM_COUNTRY").toString());
 		customer.setCustBaseCcy(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString());
+		customer.setLovDescCcyFormatter(Integer.parseInt(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR_EDIT_FIELD").toString()));
 		customer.setCustLng(SystemParameterDetails.getSystemParameterValue("APP_LNG").toString());
 		customer.setCustParentCountry(SystemParameterDetails.getSystemParameterValue("APP_DFT_NATION").toString());
 		customer.setCustResdCountry(SystemParameterDetails.getSystemParameterValue("CURR_SYSTEM_COUNTRY").toString());

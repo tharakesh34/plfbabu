@@ -556,29 +556,11 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_SukukFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
-
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-		
-		closeDialog(this.window_SukukFinanceMainDialog, "FinanceMainDialog");
-	}
-
 
 	/**
 	 * Cancel the actual operation. <br>
@@ -2386,7 +2368,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_SukukFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2759,7 +2741,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
-				closeWindow();
+				closeWindow(this.window_SukukFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

@@ -496,29 +496,11 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_IstnormFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
-
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-
-		closeDialog(this.window_IstnormFinanceMainDialog, "FinanceMainDialog");
-	}
-
 
 	/**
 	 * Cancel the actual operation. <br>
@@ -2038,7 +2020,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_IstnormFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2357,7 +2339,7 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
-				closeWindow();
+				closeWindow(this.window_IstnormFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

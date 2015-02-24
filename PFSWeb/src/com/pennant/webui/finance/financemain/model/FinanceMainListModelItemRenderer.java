@@ -112,13 +112,13 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		
 		lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(financeMain.getPriority()), PennantStaticListUtil.getQueuePriority()));
 		switch (financeMain.getPriority()) {
-        case 0:  lc.setStyle("font-weight:bold;color:blue;");
+        case 0:  lc.setStyle("font-weight:bold;color:#00F566;");
                  break;
-        case 1:  lc.setStyle("font-weight:bold;color:green;");
+        case 1:  lc.setStyle("font-weight:bold;color:#00ABF5;");
                  break;
-        case 2:  lc.setStyle("font-weight:bold;color:yellow;");
+        case 2:  lc.setStyle("font-weight:bold;color:#E37114;");
                  break;
-        case 3: lc.setStyle("font-weight:bold;color:red;");
+        case 3: lc.setStyle("font-weight:bold;color:#F20C0C;");
                  break;
 		}
 		lc.setParent(item);

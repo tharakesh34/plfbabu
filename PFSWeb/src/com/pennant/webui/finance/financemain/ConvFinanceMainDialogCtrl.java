@@ -498,29 +498,11 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 		}
 
 		if (close) {
-			closeWindow();
+			closeWindow(this.window_ConvFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
-
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-
-		closeDialog(this.window_ConvFinanceMainDialog, "FinanceMainDialog");
-	}
-
 
 	/**
 	 * Cancel the actual operation. <br>
@@ -2080,7 +2062,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeWindow();
+					closeWindow(this.window_ConvFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2397,7 +2379,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				
-				closeWindow();
+				closeWindow(this.window_ConvFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
 				}

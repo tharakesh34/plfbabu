@@ -508,29 +508,12 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		}
 
 		if (close) {
-			closeDialog(this.window_IstisnaFinanceMainDialog, "FinanceMainDialog");
+			closeWindow(this.window_IstisnaFinanceMainDialog);
 		}
 
 		logger.debug("Leaving ");
 	}
 
-	private void closeWindow(){
-		//De Allocate rights for Asset Details Tab Dialog
-		if(childWindow != null){
-			String dialogWindowName = getAssetDialogName();
-			if(dialogWindowName != null){
-				closeDialog((Window)childWindow, dialogWindowName);
-			}
-		}
-		
-		//Closing Check List Details Window
-		if(checkListChildWindow != null){
-			closeDialog((Window)checkListChildWindow, "FinanceCheckListReferenceDialog");
-		}
-
-		closeDialog(this.window_IstisnaFinanceMainDialog, "FinanceMainDialog");
-	}
-	
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -2215,7 +2198,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					if (getFinanceSelectCtrl() != null) {
 						refreshMaintainList();
 					}
-					closeDialog(this.window_IstisnaFinanceMainDialog, "FinanceMainDialog");
+					closeWindow(this.window_IstisnaFinanceMainDialog);
 				}
 
 			} catch (DataAccessException e) {
@@ -2553,7 +2536,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					getMailUtil().sendMail("FIN", aFinanceDetail,this);
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
-				closeWindow();
+				closeWindow(this.window_IstisnaFinanceMainDialog);
 				//closeDialog(this.window_IstisnaFinanceMainDialog, "FinanceMainDialog");
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);

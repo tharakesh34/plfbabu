@@ -257,14 +257,14 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private boolean isEnquiry = false;
 	private transient boolean validationOn;
 	private boolean corpCustomer=false;
-	private boolean isCountryBehrain = false;
+	private boolean isLocalCountry = false;
 	private String sCustGender;
-	Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
-	Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 	int finFormatter;
+	
 	public static final String EmploymentStatus_BUSINESS = "BUSINESS";
 	public static final String EmploymentStatus_SELFEMP = "SELFEMP";
 	public static final String EmploymentName_OTHERS = "OTHERS";
+	
 	private String empStatus_Temp = ""; 
 	private String empName_Temp = ""; 
 	/**
@@ -305,7 +305,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 			if (args.containsKey("roleCode")) {
 				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "FinanceCustomerList");
-				getUserWorkspace().alocateAuthorities("FinanceCustomerList",(String) args.get("roleCode"));
 				roleCode = (String) args.get("roleCode");
 			}
 
@@ -321,7 +320,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					getFinancedetail().getCustomerDetails().getCustomer().setWorkflowId(financeMain.getWorkflowId());
 					finFormatter = getCustomerDetails().getCustomer().getLovDescCcyFormatter();
 					if(getCustomerDetails() != null && StringUtils.trimToEmpty(getCustomerDetails().getCustomer().getCustNationality()).equals(PennantConstants.COUNTRY_BEHRAIN)){
-						isCountryBehrain = true; 
+						isLocalCountry = true; 
 					}
 				}
 			}
@@ -490,7 +489,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 		String custCRCPR = StringUtils.trimToEmpty(aCustomer.getCustCRCPR());
 		if (custCRCPR.equals("") && aCustomerDetails.getCustomerDocumentsList()!=null && !aCustomerDetails.getCustomerDocumentsList().isEmpty()) {
-			if (corpCustomer && isCountryBehrain) {
+			if (corpCustomer && isLocalCountry) {
 				for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 					if (customerDocument.getCustDocCategory().equals(PennantConstants.BAHRAINI_CR)) {
 						String cr=StringUtils.trimToEmpty(customerDocument.getCustDocTitle());
@@ -873,6 +872,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
+		
+		Date appStartDate=(Date) SystemParameterDetails.getSystemParameterValue("APP_DATE");
+		Date startDate = (Date)SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE");
 
 		doClearErrorMessage();
 		setValidationOn(true);
@@ -946,7 +948,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
 		}
 		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
-			this.empNameOther.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpNameOther.value"), null, true,true));
+			this.empNameOther.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpNameOther.value"), null, true,false));
 		}
 		if(!this.empDesg.isReadonly()){
 			this.empDesg.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDesg.value"), null, true,true));
@@ -1015,13 +1017,13 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FinanceCustomerList",roleCode);
-		this.btnNew_CustomerDocuments.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerDocuments"));
-		this.btnNew_CustomerAddress.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerAddress"));
-		this.btnNew_CustomerPhoneNumber.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerPhoneNumber"));
-		this.btnNew_CustomerEmail.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_CustomerEmail"));
-		this.btnNew_BankInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_BankInformation"));
-		this.btnNew_ChequeInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_ChequeInformation"));
-		this.btnNew_ExternalLiability.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerListCtrl_btnNew_ExternalLiability"));
+		this.btnNew_CustomerDocuments.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_CustomerDocuments"));
+		this.btnNew_CustomerAddress.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_CustomerAddress"));
+		this.btnNew_CustomerPhoneNumber.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_CustomerPhoneNumber"));
+		this.btnNew_CustomerEmail.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_CustomerEmail"));
+		this.btnNew_BankInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_BankInformation"));
+		this.btnNew_ChequeInformation.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_ChequeInformation"));
+		this.btnNew_ExternalLiability.setVisible(getUserWorkspace().isAllowed("button_FinanceCustomerList_btnNew_ExternalLiability"));
 		logger.debug("leaving");
 	}
 
