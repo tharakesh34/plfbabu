@@ -74,6 +74,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -111,6 +112,7 @@ import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTMessageUtils;
 
 /**
@@ -1492,7 +1494,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 	
-	public void onFulfill$custBaseCcy(Event event) {
+	public void onFulfill$custBaseCcy(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		Object dataObject = custBaseCcy.getObject();
 		if (dataObject instanceof String) {
@@ -1507,7 +1509,11 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			}
 		}
 		if(!StringUtils.trimToEmpty(this.custBaseCcy.getValue()).equalsIgnoreCase(custBaseCcy_Temp)){
+			MultiLineMessageBox.doSetTemplate();
+			String infoMsg = "Currency change will effect customer child details";
+			MultiLineMessageBox.show(infoMsg, "Currency Confirmation", MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
 			doSetCurrencyFieldProperties();
+			
 		}
 		custBaseCcy_Temp = this.custBaseCcy.getValue();
 		logger.debug("Leaving");
