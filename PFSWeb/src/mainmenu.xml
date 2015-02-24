@@ -302,7 +302,7 @@
  -->        <menuItem id="menu_Item_CustomerEnquiry" zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"  rightName="menuItem_Enquiry_CustomerEnquiry"/>
         <menuItem id="menu_Item_CustomerAccount" zulNavigation="/WEB-INF/pages/Reports/CustomerAccountList.zul"  rightName="menuItem_Enquiry_CustomerAccountEnquiry"/>
         <menuItem id="menu_Item_FinanceEligibilityCheck" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul"  rightName="menuItem_Enquiry_FinEligibility" />
-        <menuItem id="menu_Item_CustomerEligibilityCheck" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CustomerEligibilityCheck.zul"  rightName="	" />
+        <menuItem id="menu_Item_CustomerEligibilityCheck" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CustomerEligibilityCheck.zul"  rightName="menuItem_Enquiry_CustEligibility" />
 		<menuItem id="menu_Item_CommitmentEnquiry" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentEnquiryList.zul"  rightName="menuItem_Enquiry_CommitmentEnquiry"/>
 		<menuItem id="menu_Item_EarlySettlementEnq" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_Enquiry_EarlySettlementEnquiry" />
 	</menu>

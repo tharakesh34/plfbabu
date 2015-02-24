@@ -617,6 +617,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> implements
 			
 			if(isPromotion){
 				this.searchObj.addFilterNotEqual("Product", "");
+			}else{
+				this.searchObj.addFilterEqual("Product", "");
 			}
 			
 			if(this.moduleType==null){

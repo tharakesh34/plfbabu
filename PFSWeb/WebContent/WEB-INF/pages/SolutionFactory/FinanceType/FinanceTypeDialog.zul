@@ -1608,7 +1608,7 @@
 												id="label_FinanceTypeDialog_TakafulRequired"
 												value="${c:l('label_FinanceTypeDialog_TakafulRequired.value')}" />
 											<hbox>
-												<space sclass=""
+												<space 
 													spacing="2px" />
 												<checkbox
 													id="takafulRequired" checked="false" />
@@ -1620,7 +1620,7 @@
 												value="${c:l('label_FinanceTypeDialog_RemFeeSchdMethod.value')}" />
 											<hbox>
 												<space
-													id="space_RemFeeSchdMethod" spacing="2px" sclass="" />
+													id="space_RemFeeSchdMethod" spacing="2px" />
 												<combobox
 													id="remFeeSchdMethod" width="275px" readonly="true" />
 											</hbox>
@@ -1629,7 +1629,7 @@
 												value="${c:l('label_FinanceTypeDialog_TakafulProvider.value')}" />
 											<hbox>
 												<space
-													id="space_TakafulProvider" spacing="2px" sclass="" />
+													id="space_TakafulProvider" spacing="2px"/>
 												<extendedcombobox
 													id="takafulProvider" />
 											</hbox>
