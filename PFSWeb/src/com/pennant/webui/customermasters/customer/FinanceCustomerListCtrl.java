@@ -483,7 +483,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custFirstName.setValue(aCustomer.getCustFName());
 		this.custMiddleName.setValue(aCustomer.getCustMName());
 		this.custLastName.setValue(aCustomer.getCustLName());
-		this.custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
+		this.custArabicName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtNameLclLng()));
 		this.custCtgCode.setValue(aCustomer.getCustCtgCode());
 		this.custDftBranch.setValue(aCustomer.getCustDftBranch());
 		this.custTypeCode.setValue(aCustomer.getCustTypeCode());
