@@ -3799,7 +3799,7 @@ public class IstisnaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
-		processCustomerByValidate();
+		//processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);

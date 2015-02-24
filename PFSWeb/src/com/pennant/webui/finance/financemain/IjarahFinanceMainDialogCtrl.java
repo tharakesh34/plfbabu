@@ -3829,7 +3829,7 @@ public class IjarahFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seri
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
-		processCustomerByValidate();
+		//processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);

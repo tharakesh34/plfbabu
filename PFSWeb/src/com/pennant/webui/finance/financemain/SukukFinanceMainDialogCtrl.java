@@ -4096,7 +4096,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceBaseCtrl implements Seria
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
-		processCustomerByValidate();
+		//processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);

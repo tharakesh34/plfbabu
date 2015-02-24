@@ -84,6 +84,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -440,7 +441,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empName.setValueColumn("EmployerId");
 		this.empName.setDescColumn("EmpName");
 		this.empName.setValidateColumns(new String[] { "EmployerId" });
-
+		
 		this.empDesg.setMaxlength(8);
 		this.empDesg.getTextbox().setWidth("121px");
 		this.empDesg.setMandatoryStyle(true);
@@ -463,6 +464,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.otherIncome.setValueColumn("IncomeTypeCode");
 		this.otherIncome.setDescColumn("IncomeTypeDesc");
 		this.otherIncome.setValidateColumns(new String[] { "IncomeTypeCode" });
+		this.otherIncome.setFilters(new Filter[]{new Filter("IncomeExpense",PennantConstants.INCOME,Filter.OP_EQUAL)});
 		
 		logger.debug("Leaving");
 	}
@@ -944,7 +946,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if(!this.empStatus.isReadonly()){
 			this.empStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpStatus.value"), null, true,true));
 		}
-		if(!this.empName.isReadonly()){
+		if(!this.empName.getButton().isDisabled()){
 			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
 		}
 		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
@@ -955,6 +957,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if(!this.empDept.isReadonly()){
 			this.empDept.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpDept.value"), null, true,true));
+		}
+		if(this.profession.isVisible() && !this.profession.isReadonly()){
+			this.profession.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_Profession.value"), null, true,true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1321,12 +1326,11 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custCIF.setConstraint("");
 		this.custCoreBank.setConstraint("");
 		this.custShrtName.setConstraint("");
+		this.custFirstName.setConstraint("");
+		this.custMiddleName.setConstraint("");
+		this.custLastName.setConstraint("");
+		this.custArabicName.setConstraint("");
 		this.custDOB.setConstraint("");
-		this.empStatus.setConstraint("");
-		this.empName.setConstraint("");
-		this.empNameOther.setConstraint("");
-		this.empDesg.setConstraint("");
-		this.empDept.setConstraint("");
 		this.empFrom.setConstraint("");
 		this.monthlyIncome.setConstraint("");
 		this.additionalIncome.setConstraint("");
@@ -1347,6 +1351,12 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custCtgCode.setConstraint("");
 		this.custNationality.setConstraint("");
 		this.custMaritalSts.setConstraint("");
+		this.empStatus.setConstraint("");
+		this.empName.setConstraint("");
+		this.empNameOther.setConstraint("");
+		this.empDesg.setConstraint("");
+		this.empDept.setConstraint("");
+		this.profession.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1381,6 +1391,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empFrom.setErrorMessage("");
 		this.monthlyIncome.setErrorMessage("");
 		this.additionalIncome.setErrorMessage("");
+		this.profession.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1459,6 +1470,50 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$custBaseCcy(Event event) {
+		logger.debug("Entering");
+		Object dataObject = custBaseCcy.getObject();
+		if (dataObject instanceof String) {
+			this.custBaseCcy.setValue(dataObject.toString());
+			this.custBaseCcy.setDescription("");
+		} else {
+			Currency details = (Currency) dataObject;
+			if (details != null) {
+				this.custBaseCcy.setValue(details.getCcyCode());
+				this.custBaseCcy.setDescription(details.getCcyDesc());
+				this.finFormatter = details.getCcyEditField();
+				doSetCurrencyFieldProperties();
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void onFulfill$otherIncome(Event event) {
+		logger.debug("Entering");
+		if(StringUtils.trimToEmpty(this.otherIncome.getValue()).equals("")){
+			this.additionalIncome.setMandatory(false);
+		}else{
+			this.additionalIncome.setMandatory(true);
+		}
+		logger.debug("Leaving");
+	}
+	
+	private void doSetCurrencyFieldProperties(){
+		logger.debug("Entering");
+		this.monthlyIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.additionalIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		if(getCustomerChequeInfoDetailList() != null && !getCustomerChequeInfoDetailList().isEmpty()){
+			for (CustomerChequeInfo customerChequeInfo : getCustomerChequeInfoDetailList()) {
+				customerChequeInfo.setSalary(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getSalary(),finFormatter),finFormatter));
+				customerChequeInfo.setReturnChequeAmt(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getReturnChequeAmt(),finFormatter),finFormatter));
+				customerChequeInfo.setTotChequePayment(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getTotChequePayment(),finFormatter),finFormatter));	
+			}
+			doFillCustomerChequeInfoDetails(getCustomerChequeInfoDetailList());
+		}
+		logger.debug("Leaving");
+	}
+	
 	
 	private void doSetEmpStatusProperties(String status){
 		logger.debug("Entering");

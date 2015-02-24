@@ -3573,7 +3573,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceBaseCtrl implements Serial
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
-		processCustomerByValidate();
+		//processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);

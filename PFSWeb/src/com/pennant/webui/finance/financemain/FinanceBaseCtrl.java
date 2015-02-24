@@ -185,9 +185,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	protected Textbox 		finReference; 							// autoWired
 	protected ExtendedCombobox finCcy;                              // autoWired
 	protected Combobox 		cbProfitDaysBasis; 						// autoWired
-	protected Longbox 	     custID; 						// autoWired
-	protected Textbox 	    custCIF; 						// autoWired
-	protected Label 		custShrtName; 					// autoWired
+	protected Longbox 	     custID; 						        // autoWired
+	protected Textbox 	    custCIF; 						        // autoWired
+	protected Label 		custShrtName; 					        // autoWired
+	protected Button 	    viewCustInfo; 						    // autoWired
 	protected ExtendedCombobox 		finBranch; 						// autoWired
 	protected Datebox 		finContractDate; 						// autoWired
 	protected CurrencyBox 	finAmount; 								// autoWired
@@ -6277,7 +6278,9 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		} else {
 			this.finReference.setReadonly(true);
 		}
-
+		if(StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescCustCoreBank()).equals("")){
+			this.viewCustInfo.setVisible(false);
+		}
 		this.btnSearchFinType.setDisabled(true);
 		this.finCcy.setReadonly(isReadOnly("FinanceMainDialog_finCcy"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_profitDaysBasis"), this.cbProfitDaysBasis);
@@ -6990,6 +6993,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(convAmount, getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
 		logger.debug("Leaving");
 	}*/
+
+	public void doCustomerValidation() throws ParseException{
+		logger.debug("Entering");
+		processCustomerByValidate();
+		logger.debug("Leaving");
+	}
 	
 	protected void setRepayAccMandatory(){
 		if(this.finRepayMethod.getSelectedIndex() != 0){

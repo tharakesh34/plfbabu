@@ -3706,7 +3706,7 @@ public class TawarruqFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		doCheckFeeReExecution();
 		doStoreInitValues();
 		doSetValidation();
-		processCustomerByValidate();
+		//processCustomerByValidate();
 
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);

@@ -239,6 +239,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 
 		if(!isWIF){
 			try {
+				getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation").invoke(getFinanceMainDialogCtrl());
 				setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail").invoke(getFinanceMainDialogCtrl()));
 			} catch (Exception e) {
 				if(e.getCause().getClass().equals(WrongValuesException.class)){
