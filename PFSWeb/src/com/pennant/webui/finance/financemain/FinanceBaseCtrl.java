@@ -2505,7 +2505,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}else if (assetCode.equalsIgnoreCase(PennantConstants.GENGOODS)) {
 			dialogWindowName = "GenGoodsLoanDetailDialog";
 		}else if (assetCode.equalsIgnoreCase(PennantConstants.FLEETVEH)) {
-			dialogWindowName = "CarLoanDetailDialog";
+			dialogWindowName = "FleetVehicleLoanDetailDialog";
 		}else if (assetCode.equalsIgnoreCase(PennantConstants.COMMIDITY)) {
 			dialogWindowName = "CommidityLoanDetailDialog";
 		} else if (assetCode.equalsIgnoreCase(PennantConstants.SHARES)) {
@@ -5229,6 +5229,10 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		}
 		
 		if (getFinanceDetail().getVehicleLoanDetails() != null) {
+			String finRef = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference();
+			for (CarLoanDetail carDetail : getFinanceDetail().getVehicleLoanDetails()) {
+				carDetail.setLoanRefNumber(finRef);
+			}
 			aFinanceDetail.setVehicleLoanDetails(getFinanceDetail().getVehicleLoanDetails());
 		}
 		

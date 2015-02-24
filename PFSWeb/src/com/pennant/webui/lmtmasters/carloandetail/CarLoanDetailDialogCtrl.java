@@ -104,6 +104,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.AmountValidator;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -263,6 +264,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	private boolean newRecord=false;
 	protected Row row_ItemNumber;
 	protected Intbox itemNumber;
+	private int ccyFormatter = 0;
 	
 	/**
 	 * default constructor.<br>
@@ -327,6 +329,9 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 				this.carLoanDetail.setWorkflowId(0);
 				this.window_CarLoanDetailDialog.setTitle("");
 				this.caption_carLoan.setVisible(true);
+			}
+			if (args.containsKey("ccyFormatter")) {
+				ccyFormatter = Integer.parseInt(args.get("ccyFormatter").toString());
 			}
 			if (args.containsKey("roleCode")) {
 				setRole((String) args.get("roleCode"));
@@ -452,6 +457,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.thirdPartyNat.setDescColumn("NationalityDesc");
 		this.thirdPartyNat.setValidateColumns(new String[] { "NationalityCode" });
 		
+		this.vehicleValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		
 		this.quoationDate.setFormat(PennantConstants.dateFormat);
 		this.purchaseDate.setFormat(PennantConstants.dateFormat);
@@ -866,7 +872,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		 
 		this.emiratesRegNum.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getEmiratesRegNum()));
 		this.vehicleItemNum.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getVehicleItemNum()));
-		this.vehicleValue.setValue(aCarLoanDetail.getVehicleValue());
+		this.vehicleValue.setValue(PennantAppUtil.formateAmount(aCarLoanDetail.getVehicleValue(),ccyFormatter));
 		this.thirdPartyNat.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescThirdPartyNatName()).equals("") ? "" : aCarLoanDetail.getLovDescThirdPartyNatName());
 		
 		if (aCarLoanDetail.isNewRecord()) {
@@ -1090,7 +1096,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			aCarLoanDetail.setVehicleValue(this.vehicleValue.getValue());
+			aCarLoanDetail.setVehicleValue(PennantAppUtil.unFormateAmount(this.vehicleValue.getValue(),ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

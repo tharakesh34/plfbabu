@@ -75,6 +75,7 @@ import com.pennant.backend.service.lmtmasters.CarLoanDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTMessageUtils;
 
@@ -159,7 +160,6 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 			
 			if (args.containsKey("roleCode")) {
 				getUserWorkspace().alocateRoleAuthorities((String) args.get("roleCode"), "FleetVehicleLoanDetailDialog");
-				getUserWorkspace().alocateAuthorities("FleetVehicleLoanDetailDialog",(String) args.get("roleCode"));
 				roleCode = (String) args.get("roleCode");
 			}
 			
@@ -220,6 +220,7 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 
 	private void doCheckRights() {
 		logger.debug("Entering");
+		getUserWorkspace().alocateAuthorities("FleetVehicleLoanDetailDialog",roleCode);
 		this.button_FleetVehicleLoanDetailList_NewVehicleLoanDetail.setVisible(getUserWorkspace().isAllowed("button_FleetVehicleLoanDetailDialog_NewFleetVehicleLoanDetail"));
 		logger.debug("leaving");
 	}
@@ -335,9 +336,9 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				}
 			}
 			if (main != null && this.totVehicleValue.getValue() != null && main.getFinAmount() != null) {
-				BigDecimal finAmount = main.getFinAmount().subtract(main.getDownPayment());
-				if (finAmount.compareTo(this.totVehicleValue.getValue()) != 0) {
-					throw new WrongValueException(this.totVehicleValue, Labels.getLabel("MUST_BE_EQUAL", new String[] { Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value"), Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value") }));
+				BigDecimal finAmount = main.getFinAmount().subtract(main.getDownPayment()).add(main.getFeeChargeAmt());
+				if (finAmount.compareTo(PennantAppUtil.unFormateAmount(this.totVehicleValue.getValue(),ccyFormat)) != 0) {
+					throw new WrongValueException(this.totVehicleValue, Labels.getLabel("MUST_BE_EQUAL", new String[] { Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value"), Labels.getLabel("label_FinanceMainDialog_FinAssetValue.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -485,8 +486,8 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				lc.setParent(item);
 				lc = new Listcell(carLoanDetail.getCarChasisNo());
 				lc.setParent(item);
-				lc = new Listcell(String.valueOf(carLoanDetail.getVehicleValue()==null?
-						BigDecimal.ZERO:carLoanDetail.getVehicleValue()));
+				lc = new Listcell(PennantAppUtil.amountFormate(carLoanDetail.getVehicleValue(),ccyFormat));
+				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(carLoanDetail.getRecordStatus());
 				lc.setParent(item);
@@ -500,14 +501,14 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				}
 			}
 			this.numOfVehicle.setValue(String.valueOf(vehicleLoanDetails.size()));
-			this.totVehicleValue.setValue(totCost);
+			this.totVehicleValue.setValue(PennantAppUtil.formateAmount(totCost,ccyFormat));
 			Listitem item = new Listitem();
 			Listcell lc;
 			lc = new Listcell(Labels.getLabel("label_FleetVehicleLoanDetailList_TotalAssetValue"));
 			lc.setParent(item);
 			lc.setStyle("font-weight:bold");
 			lc.setSpan(11);
-			lc = new Listcell(String.valueOf(totCost));
+			lc = new Listcell(PennantAppUtil.amountFormate(totCost,ccyFormat));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell();
@@ -542,7 +543,7 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 	}
 
 	private void doClearErrormessages() {
-		
+		this.totVehicleValue.setErrorMessage("");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
