@@ -588,6 +588,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	private boolean notes_Entered = false;
 	private transient boolean validationOn;
 	private transient Boolean assetDataChanged;
+	private transient Boolean customerDataChanged;
 	
 	// not auto wired variables
 	protected FinScheduleData 		validFinScheduleData;			// over handed per parameters
@@ -5317,6 +5318,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 
   
 		if (close) {
+			if (customerWindow != null) {
+				Events.sendEvent("onCustomerClose", customerWindow, null);
+				if (isCustomerDataChanged()) {
+					return true;
+				}
+			}
 			if (childWindow != null) {
 				Events.sendEvent("onAssetClose", childWindow, null);
 				if (isAssetDataChanged()) {
@@ -7408,6 +7415,13 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	}
 	public void setAssetDataChanged(Boolean assetDataChanged) {
 		this.assetDataChanged = assetDataChanged;
+	}
+
+	public boolean isCustomerDataChanged() {
+		return customerDataChanged;
+	}
+	public void setCustomerDataChanged(Boolean customerDataChanged) {
+		this.customerDataChanged = customerDataChanged;
 	}
 
 	public AccountsService getAccountsService() {

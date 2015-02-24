@@ -1179,12 +1179,12 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	 * @param event
 	 * @return
 	 * */
-	public void onAssetClose(Event event) {
+	public void onCustomerClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceMainDialogCtrl() != null) {
 			try {
 				doClearErrorMessage();
-				financeMainDialogCtrl.getClass().getMethod("setAssetDataChanged", Boolean.class).invoke(financeMainDialogCtrl, isDataChanged());
+				financeMainDialogCtrl.getClass().getMethod("setCustomerDataChanged", Boolean.class).invoke(financeMainDialogCtrl, isDataChanged());
 			} catch (Exception e) {
 				logger.error(e);
 			}
