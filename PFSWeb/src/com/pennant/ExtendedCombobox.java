@@ -137,6 +137,7 @@ public class ExtendedCombobox extends Hbox {
 		this.appendChild(hbox);
 		
 		label = new Label();
+		this.label.setStyle("display:inline-block;padding-top:6px;");
 		this.appendChild(label);
 
 		logger.debug("Leaving");
@@ -238,6 +239,7 @@ public class ExtendedCombobox extends Hbox {
 			}else if(getDisplayStyle() == 3){
 				this.textbox.setValue(desc);
 				this.label.setValue(selctedValue);
+				this.label.setStyle("valign:center;");
 				this.label.setVisible(false);
 			}
 			else {

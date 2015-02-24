@@ -190,6 +190,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 			selectSql.append(" lovDescFinAEProgClaimName,lovDescEVFinAEProgClaimName, lovDescFinAEMaturityName,lovDescEVFinAEMaturityName, ");
 			selectSql.append(" lovDescFInIndBaseRateName, lovDescFinGrcIndBaseRateName, lovDescFinDepreciationRuleName,lovDescEVFinDepreciationRuleName ," );
 			selectSql.append(" lovDescFinInstDateName,lovDescEVFinInstDateName,lovDescFinDivisionName,lovDescFinAEEarlySettleName,LovDescTakafulRate,lovDescTakafulProviderName,");
+			selectSql.append(" lovDescPromoFinTypeDesc,");
 		}
 
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");

@@ -296,6 +296,7 @@ public class FinanceType implements java.io.Serializable {
 	private String lovDescProductCodeName;
 	private String lovDescProductCodeDesc;
 	private String lovDescAssetCodeName;
+	private String lovDescPromoFinTypeDesc;
 	
 	private List<FinTypeAccount> finTypeAccounts=new ArrayList<FinTypeAccount>();
 	
@@ -2355,6 +2356,14 @@ public class FinanceType implements java.io.Serializable {
 
 	public void setAllowDownpayPgm(boolean allowDownPayPgm) {
 	    this.allowDownpayPgm = allowDownPayPgm;
+    }
+
+	public String getLovDescPromoFinTypeDesc() {
+	    return lovDescPromoFinTypeDesc;
+    }
+
+	public void setLovDescPromoFinTypeDesc(String lovDescPromoFinTypeDesc) {
+	    this.lovDescPromoFinTypeDesc = lovDescPromoFinTypeDesc;
     }
 	
 }

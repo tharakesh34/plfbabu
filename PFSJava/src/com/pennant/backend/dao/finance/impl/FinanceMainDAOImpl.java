@@ -1449,7 +1449,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
     public void updateFinancePriority() {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("update financemain_temp set Priority=Priority+1 ");
-		updateSql.append(" where Priority!=4 AND DATEDIFF(MINUTE,lastmnton,getdate()) > 30");
+		updateSql.append(" where Priority!=3 AND DATEDIFF(MINUTE,lastmnton,getdate()) > 30");
 		logger.debug("updateSql: " + updateSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(String.class);

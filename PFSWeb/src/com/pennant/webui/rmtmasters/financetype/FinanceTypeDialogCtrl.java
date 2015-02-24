@@ -1221,6 +1221,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		//================= Tab 1
 		if(isPromotion){
 			this.product.setValue(aFinanceType.getProduct());
+			this.product.setDescription(aFinanceType.getLovDescPromoFinTypeDesc());
 			this.startDate.setValue(aFinanceType.getStartDate());
 			this.endDate.setValue(aFinanceType.getEndDate());
 		}
@@ -1228,7 +1229,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 		this.finTypeDesc.setValue(aFinanceType.getFinTypeDesc());
 		this.finCcy.setValue(aFinanceType.getFinCcy());
 		if (aFinanceType.isNewRecord()) {
-			this.product.setDescription("");
 			this.finCcy.setDescription("");
 			this.finAcType.setDescription("");
 			this.finSuspAcType.setDescription("");
@@ -1236,7 +1236,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 			this.finProvisionAcType.setDescription("");
 			this.finDivision.setDescription("");
 		} else {
-			this.product.setDescription(aFinanceType.getFinTypeDesc());
 			this.finCcy.setDescription(aFinanceType.getLovDescFinCcyName());
 			this.finAcType.setDescription(aFinanceType.getLovDescFinAcTypeName());
 			this.finSuspAcType.setDescription(aFinanceType.getLovDescFinSuspAcTypeName());
@@ -5022,6 +5021,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializable {
 				ConvertUtils.register(dateConverter, Date.class);
 				sourceFin = getFinanceTypeService().getApprovedFinanceTypeById(details.getFinType());
 				sourceFin.setProduct(details.getFinType());
+				sourceFin.setLovDescPromoFinTypeDesc(details.getFinTypeDesc());
 				sourceFin.setFinType("");
 				sourceFin.setFinTypeDesc("");
 				sourceFin.setLastMntBy(Long.MIN_VALUE);
