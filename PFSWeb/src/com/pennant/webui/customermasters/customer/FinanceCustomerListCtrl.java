@@ -362,7 +362,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custLastName.setMaxlength(50);
 		this.custArabicName.setMaxlength(50);
 		this.custCtgCode.setMaxlength(8);
-		this.custCtgCode.getTextbox().setWidth("152px");
+		this.custCtgCode.setTextBoxWidth(152);
 		this.custCtgCode.setMandatoryStyle(true);
 		this.custCtgCode.setModuleName("CustomerCategory");
 		this.custCtgCode.setValueColumn("CustCtgCode");
@@ -384,7 +384,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custTypeCode.setValidateColumns(new String[] { "CustTypeCode" });
 
 		this.custBaseCcy.setMaxlength(3);
-		this.custBaseCcy.getTextbox().setWidth("121px");
+		this.custBaseCcy.setTextBoxWidth(121);
 		this.custBaseCcy.setMandatoryStyle(true);
 		this.custBaseCcy.setModuleName("Currency");
 		this.custBaseCcy.setValueColumn("CcyCode");
@@ -392,7 +392,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custBaseCcy.setValidateColumns(new String[] { "CcyCode" });
 
 		this.custNationality.setMaxlength(2);
-		this.custNationality.getTextbox().setWidth("121px");
+		this.custNationality.setTextBoxWidth(121);
 		this.custNationality.setMandatoryStyle(true);
 		this.custNationality.setModuleName("NationalityCode");
 		this.custNationality.setValueColumn("NationalityCode");
@@ -403,7 +403,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 		//Customer Employee Field Properties
 		this.empStatus.setMaxlength(8);
-		this.empStatus.getTextbox().setWidth("121px");
+		this.empStatus.setTextBoxWidth(121);
 		this.empStatus.setMandatoryStyle(true);
 		this.empStatus.setModuleName("EmpStsCode");
 		this.empStatus.setValueColumn("EmpStsCode");
@@ -411,7 +411,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empStatus.setValidateColumns(new String[] { "EmpStsCode" });
 		
 		this.empSector.setMaxlength(8);
-		this.empSector.getTextbox().setWidth("120px");
+		this.empSector.setTextBoxWidth(120);
 		this.empSector.setModuleName("Sector");
 		this.empSector.setValueColumn("SectorCode");
 		this.empSector.setDescColumn("SectorDesc");
@@ -435,7 +435,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		
 		this.empName.setInputAllowed(false);
 		this.empName.setDisplayStyle(3);
-		this.empName.getTextbox().setWidth("121px");
+		this.empName.setTextBoxWidth(121);
 		this.empName.setMandatoryStyle(true);
 		this.empName.setModuleName("EmployerDetail");
 		this.empName.setValueColumn("EmployerId");
@@ -443,7 +443,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empName.setValidateColumns(new String[] { "EmployerId" });
 		
 		this.empDesg.setMaxlength(8);
-		this.empDesg.getTextbox().setWidth("121px");
+		this.empDesg.setTextBoxWidth(121);
 		this.empDesg.setMandatoryStyle(true);
 		this.empDesg.setModuleName("Designation");
 		this.empDesg.setValueColumn("DesgCode");
@@ -451,7 +451,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empDesg.setValidateColumns(new String[] { "DesgCode" });
 		
 		this.empDept.setMaxlength(8);
-		this.empDept.getTextbox().setWidth("121px");
+		this.empDept.setTextBoxWidth(121);
 		this.empDept.setMandatoryStyle(true);
 		this.empDept.setModuleName("Department");
 		this.empDept.setValueColumn("DeptCode");
@@ -459,7 +459,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.empDept.setValidateColumns(new String[] { "DeptCode" });
 		
 		this.otherIncome.setMaxlength(8);
-		this.otherIncome.getTextbox().setWidth("121px");
+		this.otherIncome.setTextBoxWidth(121);
 		this.otherIncome.setModuleName("IncomeType");
 		this.otherIncome.setValueColumn("IncomeTypeCode");
 		this.otherIncome.setDescColumn("IncomeTypeDesc");
@@ -1106,35 +1106,35 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.custCoreBank.setReadonly(true);
 		this.custCtgCode.setReadonly(true);
 		
-		this.custShrtName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custShrtName"));
-		this.custFirstName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custFirstName"));
-		this.custMiddleName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custMiddleName"));
-		this.custLastName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custLastName"));
-		this.custArabicName.setReadonly(isReadOnly("FinanceCustomerListCtrl_custArabicName"));
-		this.custDftBranch.setReadonly(isReadOnly("FinanceCustomerListCtrl_custDftBranch"));
-		this.custBaseCcy.setReadonly(isReadOnly("FinanceCustomerListCtrl_custBaseCcy"));
-		this.custTypeCode.setReadonly(isReadOnly("FinanceCustomerListCtrl_custTypeCode"));
-		this.custNationality.setReadonly(isReadOnly("FinanceCustomerListCtrl_custNationality"));
-		this.custMaritalSts.setDisabled(isReadOnly("FinanceCustomerListCtrl_custMaritalSts"));
-		this.custSalutationCode.setDisabled(isReadOnly("FinanceCustomerListCtrl_custSalutationCode"));
-		this.custDOB.setDisabled(isReadOnly("FinanceCustomerListCtrl_custDOB"));
-		this.custGenderCode.setDisabled(isReadOnly("FinanceCustomerListCtrl_custGenderCode"));
-		this.noOfDependents.setReadonly(isReadOnly("FinanceCustomerListCtrl_noOfDependents"));
-		this.target.setDisabled(isReadOnly("FinanceCustomerListCtrl_target"));
+		this.custShrtName.setReadonly(isReadOnly("FinanceCustomerList_custShrtName"));
+		this.custFirstName.setReadonly(isReadOnly("FinanceCustomerList_custFirstName"));
+		this.custMiddleName.setReadonly(isReadOnly("FinanceCustomerList_custMiddleName"));
+		this.custLastName.setReadonly(isReadOnly("FinanceCustomerList_custLastName"));
+		this.custArabicName.setReadonly(isReadOnly("FinanceCustomerList_custArabicName"));
+		this.custDftBranch.setReadonly(isReadOnly("FinanceCustomerList_custDftBranch"));
+		this.custBaseCcy.setReadonly(isReadOnly("FinanceCustomerList_custBaseCcy"));
+		this.custTypeCode.setReadonly(isReadOnly("FinanceCustomerList_custTypeCode"));
+		this.custNationality.setReadonly(isReadOnly("FinanceCustomerList_custNationality"));
+		this.custMaritalSts.setDisabled(isReadOnly("FinanceCustomerList_custMaritalSts"));
+		this.custSalutationCode.setDisabled(isReadOnly("FinanceCustomerList_custSalutationCode"));
+		this.custDOB.setDisabled(isReadOnly("FinanceCustomerList_custDOB"));
+		this.custGenderCode.setDisabled(isReadOnly("FinanceCustomerList_custGenderCode"));
+		this.noOfDependents.setReadonly(isReadOnly("FinanceCustomerList_noOfDependents"));
+		this.target.setDisabled(isReadOnly("FinanceCustomerList_target"));
 		this.custCtgCode.setReadonly(true); //Not allowing user to modify this field
-		this.salariedCustomer.setDisabled(isReadOnly("FinanceCustomerListCtrl_salariedCustomer"));
+		this.salariedCustomer.setDisabled(isReadOnly("FinanceCustomerList_salariedCustomer"));
         //Employee Details
-		this.empStatus.setReadonly(isReadOnly("FinanceCustomerListCtrl_empStatus"));
-		this.empSector.setReadonly(isReadOnly("FinanceCustomerListCtrl_empSector"));
-		this.profession.setReadonly(isReadOnly("FinanceCustomerListCtrl_profession"));
-		this.empName.setReadonly(isReadOnly("FinanceCustomerListCtrl_empName"));
-		this.empNameOther.setReadonly(isReadOnly("FinanceCustomerListCtrl_empNameOther"));
-		this.empFrom.setDisabled(isReadOnly("FinanceCustomerListCtrl_empFrom"));
-		this.empDesg.setReadonly(isReadOnly("FinanceCustomerListCtrl_empDesg"));
-		this.empDept.setReadonly(isReadOnly("FinanceCustomerListCtrl_empDept"));
-		this.monthlyIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_monthlyIncome"));
-		this.otherIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_otherIncome"));
-		this.additionalIncome.setReadonly(isReadOnly("FinanceCustomerListCtrl_additionalIncome"));
+		this.empStatus.setReadonly(isReadOnly("FinanceCustomerList_empStatus"));
+		this.empSector.setReadonly(isReadOnly("FinanceCustomerList_empSector"));
+		this.profession.setReadonly(isReadOnly("FinanceCustomerList_profession"));
+		this.empName.setReadonly(isReadOnly("FinanceCustomerList_empName"));
+		this.empNameOther.setReadonly(isReadOnly("FinanceCustomerList_empNameOther"));
+		this.empFrom.setDisabled(isReadOnly("FinanceCustomerList_empFrom"));
+		this.empDesg.setReadonly(isReadOnly("FinanceCustomerList_empDesg"));
+		this.empDept.setReadonly(isReadOnly("FinanceCustomerList_empDept"));
+		this.monthlyIncome.setReadonly(isReadOnly("FinanceCustomerList_monthlyIncome"));
+		this.otherIncome.setReadonly(isReadOnly("FinanceCustomerList_otherIncome"));
+		this.additionalIncome.setReadonly(isReadOnly("FinanceCustomerList_additionalIncome"));
 		
 	}
 
@@ -1517,11 +1517,11 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	
 	private void doSetEmpStatusProperties(String status){
 		logger.debug("Entering");
-		this.empStatus.getTextbox().setWidth("121px");
-		this.empSector.getTextbox().setWidth("120px");
-		this.otherIncome.getTextbox().setWidth("121px");
-		this.empDept.getTextbox().setWidth("121px");
-		this.empDesg.getTextbox().setWidth("121px");
+		this.empStatus.setTextBoxWidth(121);
+		this.empSector.setTextBoxWidth(120);
+		this.otherIncome.setTextBoxWidth(121);
+		this.empDept.setTextBoxWidth(121);
+		this.empDesg.setTextBoxWidth(121);
 		if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
 			//make profession visible true
 			this.label_FinanceCustomerList_EmpFrom.setValue(Labels.getLabel("label_FinanceCustomerList_ProfessionStartDate.value"));
@@ -2070,6 +2070,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 			}
 			setCustomerChequeInfoDetailList(customerChequeInfoDetails);
+			this.listBoxCustomerChequeInformation.setHeight(((this.borderLayoutHeight - 80) / 2) - 130 + "px");
 		}
 	}
 
