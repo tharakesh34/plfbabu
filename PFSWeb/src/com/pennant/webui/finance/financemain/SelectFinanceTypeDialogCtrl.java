@@ -565,12 +565,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 		}
 		
 		try {
-			if (!getFinanceWorkFlow().getScreenCode().trim().equals("QDE")) {
-				if (this.existingCust.isChecked()){
-					if (this.custCIF.getValue().equals("")) {
-						throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
-								new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
-					}
+			if (this.existingCust.isChecked()){
+				if (this.custCIF.getValue().equals("")) {
+					throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+							new String[] { Labels.getLabel("label_SelectFinanceTypeDialog_CustCIF.value") }));
 				}
 			}
 		} catch (WrongValueException e) {
