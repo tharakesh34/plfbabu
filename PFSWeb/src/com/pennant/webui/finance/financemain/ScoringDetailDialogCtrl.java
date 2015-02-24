@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
@@ -241,10 +242,9 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 	 * 
 	 * @param aFinanceMain
 	 *            financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
-	public void doShowDialog() throws ParseException, InterruptedException {
+	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
 		
 		FinanceMain aFinanceMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -324,12 +324,20 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doExecuteScoring() throws InterruptedException{
+	public void doExecuteScoring() throws Exception{
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		
 		if (getFinanceDetail() != null) {
 			
 			if(!isWIF){
+				try {
+					getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation").invoke(getFinanceMainDialogCtrl());
+				} catch (Exception e) {
+					if(e.getCause().getClass().equals(WrongValuesException.class)){
+						throw e;	
+					}
+					logger.error(e);
+				}
 				if (getFinanceDetail().getCustomerEligibilityCheck() == null) {
 					long custId = 0;
 					Customer aCustomer = null;
