@@ -801,7 +801,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}else{
 			// set Customer Details Audit
 			if (financeDetail.getCustomerDetails() != null) {
-				auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail.getCustomerDetails(), ""));
+				auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
 			}
 		}
 

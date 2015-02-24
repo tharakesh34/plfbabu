@@ -10,6 +10,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 
@@ -38,7 +39,7 @@ public interface CustomerDetailsService {
 	DirectorDetail getNewDirectorDetail() ;
 	List<CustomerRating> getCustomerRatingByCustId(long id, String type);
 	//Finance Customer Details
-	public List<AuditDetail> saveOrUpdate(CustomerDetails customerDetails, String tableType);
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType);
 	public CustomerDetails getCustomerDetailsById(long id,String type);
 	public List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method, String  usrLanguage);
 }

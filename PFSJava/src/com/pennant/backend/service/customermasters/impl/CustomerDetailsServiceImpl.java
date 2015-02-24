@@ -64,6 +64,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.Country;
@@ -679,15 +680,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	
 	
 	@Override
-	public List<AuditDetail> saveOrUpdate(CustomerDetails customerDetails, String tableType) {
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering");
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String auditTranType;
 		Customer customer = customerDetails.getCustomer();
 		customer.setWorkflowId(0);
 		if(customer.isNewRecord()) {
 			auditTranType = PennantConstants.TRAN_ADD;
-			customerDAO.save(customer, tableType);
+			long custID = customerDAO.save(customer, tableType);
+			financeDetail.getFinScheduleData().getFinanceMain().setCustID(custID);
 		} else {
 			auditTranType = PennantConstants.TRAN_UPD;
 			customer.setVersion(customer.getVersion()+1);
