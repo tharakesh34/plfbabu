@@ -17,9 +17,9 @@
  			classpath:applicationContext-guiservices.xml,
  			classpath:customize-applicationContext.xml,
  			classpath:springSecurityContext.xml,
- 			classpath:applicationContext-core-interface.xml
+ 			classpath:applicationContext-core-interface.xml,
  			<!-- classpath:applicationContext-equation-interface.xml, -->
- 			<!-- classpath:applicationContext-jobs.xml -->
+ 			classpath:applicationContext-jobs.xml
 		</param-value>
 	</context-param>
 	<listener>
