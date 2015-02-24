@@ -260,6 +260,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private boolean corpCustomer=false;
 	private boolean isLocalCountry = false;
 	private String sCustGender;
+	int old_finFormatter;
 	int finFormatter;
 	
 	public static final String EmploymentStatus_BUSINESS = "BUSINESS";
@@ -268,6 +269,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	
 	private String empStatus_Temp = ""; 
 	private String empName_Temp = ""; 
+	private String custBaseCcy_Temp = ""; 
 	/**
 	 * default constructor.<br>
 	 */
@@ -320,6 +322,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					FinanceMain financeMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 					getFinancedetail().getCustomerDetails().getCustomer().setWorkflowId(financeMain.getWorkflowId());
 					finFormatter = getCustomerDetails().getCustomer().getLovDescCcyFormatter();
+					old_finFormatter = getCustomerDetails().getCustomer().getLovDescCcyFormatter();
 					if(getCustomerDetails() != null && StringUtils.trimToEmpty(getCustomerDetails().getCustomer().getCustNationality()).equals(PennantConstants.COUNTRY_BEHRAIN)){
 						isLocalCountry = true; 
 					}
@@ -426,10 +429,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		
 		this.monthlyIncome.setMandatory(true);
 		this.monthlyIncome.setMaxlength(18);
-		this.monthlyIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.monthlyIncome.setFormat(PennantApplicationUtil.getAmountFormate(old_finFormatter));
 
 		this.additionalIncome.setMaxlength(18);
-		this.additionalIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.additionalIncome.setFormat(PennantApplicationUtil.getAmountFormate(old_finFormatter));
 		
 		this.empFrom.setFormat(PennantConstants.dateFormat);
 		
@@ -567,6 +570,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.label_empNameOther.setVisible(false);
 		}
 		empName_Temp = this.empName.getValue();
+		custBaseCcy_Temp = this.custBaseCcy.getValue();
 		logger.debug("Leaving");
 	}
 
@@ -1483,9 +1487,12 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				this.custBaseCcy.setValue(details.getCcyCode());
 				this.custBaseCcy.setDescription(details.getCcyDesc());
 				this.finFormatter = details.getCcyEditField();
-				doSetCurrencyFieldProperties();
 			}
 		}
+		if(!StringUtils.trimToEmpty(this.custBaseCcy.getValue()).equalsIgnoreCase(custBaseCcy_Temp)){
+			doSetCurrencyFieldProperties();
+		}
+		custBaseCcy_Temp = this.custBaseCcy.getValue();
 		logger.debug("Leaving");
 	}
 	
@@ -1505,12 +1512,27 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.additionalIncome.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		if(getCustomerChequeInfoDetailList() != null && !getCustomerChequeInfoDetailList().isEmpty()){
 			for (CustomerChequeInfo customerChequeInfo : getCustomerChequeInfoDetailList()) {
-				customerChequeInfo.setSalary(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getSalary(),finFormatter),finFormatter));
-				customerChequeInfo.setReturnChequeAmt(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getReturnChequeAmt(),finFormatter),finFormatter));
-				customerChequeInfo.setTotChequePayment(PennantAppUtil.unFormateAmount(PennantAppUtil.formateAmount(customerChequeInfo.getTotChequePayment(),finFormatter),finFormatter));	
+				customerChequeInfo.setSalary(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerChequeInfo.getSalary(),old_finFormatter),finFormatter));
+				customerChequeInfo.setReturnChequeAmt(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerChequeInfo.getReturnChequeAmt(),old_finFormatter),finFormatter));
+				customerChequeInfo.setTotChequePayment(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerChequeInfo.getTotChequePayment(),old_finFormatter),finFormatter));	
 			}
 			doFillCustomerChequeInfoDetails(getCustomerChequeInfoDetailList());
 		}
+		if(getCustomerExtLiabilityDetailList() != null && !getCustomerExtLiabilityDetailList().isEmpty()){
+			for (CustomerExtLiability customerExtLiability : getCustomerExtLiabilityDetailList()) {
+				customerExtLiability.setOriginalAmount(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerExtLiability.getOriginalAmount(),old_finFormatter),finFormatter));
+				customerExtLiability.setInstalmentAmount(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerExtLiability.getInstalmentAmount(),old_finFormatter),finFormatter));
+				customerExtLiability.setOutStandingBal(PennantAppUtil.unFormateAmount(
+						PennantAppUtil.formateAmount(customerExtLiability.getOutStandingBal(),old_finFormatter),finFormatter));	
+			}
+			doFillCustomerExtLiabilityDetails(getCustomerExtLiabilityDetailList());
+		}
+		old_finFormatter = finFormatter;
 		logger.debug("Leaving");
 	}
 	
