@@ -21,7 +21,8 @@ public class CustomerExtLiability{
 	private BigDecimal 	originalAmount = BigDecimal.ZERO;
 	private BigDecimal 	instalmentAmount = BigDecimal.ZERO;
 	private BigDecimal 	outStandingBal = BigDecimal.ZERO;
-	private String FinStatus ="";
+	private String finStatus;
+	private String lovDescFinStatus;
 
 	private int version;
 	private long lastMntBy;
@@ -145,10 +146,17 @@ public class CustomerExtLiability{
 	}
 
 	public String getFinStatus() {
-		return FinStatus;
+		return finStatus;
 	}
 	public void setFinStatus(String finStatus) {
-		FinStatus = finStatus;
+		this.finStatus = finStatus;
+	}
+
+	public String getLovDescFinStatus() {
+		return lovDescFinStatus;
+	}
+	public void setLovDescFinStatus(String lovDescFinStatus) {
+		this.lovDescFinStatus = lovDescFinStatus;
 	}
 
 	public int getVersion() {

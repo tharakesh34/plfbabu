@@ -119,7 +119,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 	protected Label   	custShrtName;				// autoWired
 	protected Datebox 	finDate; 					// autoWired
 	protected ExtendedCombobox 	finType; 		    // autoWired
-	protected Textbox 	finStatus; 					// autoWired
+	protected ExtendedCombobox 	finStatus; 		    // autoWired
 	protected ExtendedCombobox 	bankName; 			// autoWired
 	protected CurrencyBox 	originalAmount; 		// autoWired
 	protected CurrencyBox 	installmentAmount; 		// autoWired
@@ -281,7 +281,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		// Empty sent any required attributes
 		this.bankName.setMaxlength(8);
 		this.bankName.setMandatoryStyle(true);
-		this.bankName.getTextbox().setWidth("110px");
+		this.bankName.setTextBoxWidth(116);
 		this.bankName.setModuleName("BankDetail");
 		this.bankName.setValueColumn("BankCode");
 		this.bankName.setDescColumn("BankName");
@@ -289,11 +289,19 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		
 		this.finType.setMaxlength(8);
 		this.finType.setMandatoryStyle(true);
-		this.finType.getTextbox().setWidth("110px");
+		this.finType.setTextBoxWidth(116);
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
+		
+		this.finStatus.setMaxlength(8);
+		this.finStatus.setMandatoryStyle(true);
+		this.finStatus.setTextBoxWidth(116);
+		this.finStatus.setModuleName("CustomerStatusCode");
+		this.finStatus.setValueColumn("CustStsCode");
+		this.finStatus.setDescColumn("CustStsDescription");
+		this.finStatus.setValidateColumns(new String[] { "CustStsCode" });
 		
 		this.finDate.setFormat(PennantConstants.dateFormat);
 
@@ -523,6 +531,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		this.finType.setValue(aCustomerExtLiability.getFinType());
 		this.finType.setDescription(StringUtils.trimToEmpty(aCustomerExtLiability.getLovDescFinType()));
 		this.finStatus.setValue(aCustomerExtLiability.getFinStatus());
+		this.finStatus.setDescription(StringUtils.trimToEmpty(aCustomerExtLiability.getLovDescFinStatus()));
 		this.originalAmount.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getOriginalAmount(),finFormatter));
 		this.installmentAmount.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getInstalmentAmount(),finFormatter));
 		this.outStandingBal.setValue(PennantAppUtil.formateAmount(aCustomerExtLiability.getOutStandingBal(),finFormatter));
@@ -600,7 +609,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		}
 		
 		try {
-			aCustomerExtLiability.setFinStatus(this.finStatus.getValue());
+			aCustomerExtLiability.setFinStatus(this.finStatus.getValidatedValue());
+			aCustomerExtLiability.setLovDescFinStatus(this.finStatus.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -753,7 +763,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 			this.finDate.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinDate.value"), null, true));
 		}
 		if (!this.finStatus.isReadonly()) {
-			this.finStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinStatus.value"), null, true));
+			this.finStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_FinStatus.value"), null, true, true));
 		}
 		if (!this.originalAmount.isDisabled()) {
 			this.originalAmount.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_CustomerExtLiabilityDialog_OriginalAmount.value"), false));

@@ -76,7 +76,7 @@
 									<space spacing="2px" />
 									<longbox id="custID" width="150px"
 										maxlength="26" visible="false" />
-									<textbox id="custCIF" width="150px" readonly="true"
+									<textbox id="custCIF" width="148px" readonly="true"
 										maxlength="50" style="overflow: hidden;" />
 
 									<button id="btnSearchPRCustid"
@@ -90,7 +90,7 @@
 									value="${c:l('label_CustomerExtLiabilityDialog_LiabilitySeq.value')}" />
 								<hbox>
 									<space id="space_ItemNumber" spacing="2px" />
-									<intbox id="liabilitySeq" width="171px" readonly="true" />
+									<intbox id="liabilitySeq" width="149px" readonly="true" />
 								</hbox>
 							</row>
 							<row>
@@ -99,7 +99,7 @@
 									value="${c:l('label_CustomerExtLiabilityDialog_FinDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory"/>
-									<datebox id="finDate" width="120px" />
+									<datebox id="finDate" width="150px" />
 								</hbox>
 							</row>
 							<row>
@@ -147,8 +147,7 @@
 									id="label_CustomerExtLiabilityDialog_FinStatus"
 									value="${c:l('label_CustomerExtLiabilityDialog_FinStatus.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="finStatus" />
+									<extendedcombobox id="finStatus" />
 								</hbox>
 							</row>
 						</rows>
