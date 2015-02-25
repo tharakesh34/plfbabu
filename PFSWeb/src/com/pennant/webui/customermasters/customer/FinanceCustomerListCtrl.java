@@ -674,7 +674,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			if(this.custSalutationCode.isVisible()){
+			if(this.custSalutationCode.isVisible()  && !this.custSalutationCode.isDisabled()){
 				if(getComboboxValue(this.custSalutationCode).equals("#")) {
 					throw new WrongValueException(this.custSalutationCode, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustSalutationCode.value") }));
@@ -688,7 +688,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 
 		try {
-			if(this.target.isVisible()){
+			if(this.target.isVisible() && !this.target.isDisabled()){
 				if(getComboboxValue(this.target).equals("#")) {
 					throw new WrongValueException(this.target, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_FinanceCustomerList_Target.value") }));
@@ -702,7 +702,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-			if(this.custGenderCode.isVisible()){
+			if(this.custGenderCode.isVisible() && !this.custGenderCode.isDisabled()){
 				if(getComboboxValue(this.custGenderCode).equals("#")) {
 					throw new WrongValueException(this.custGenderCode, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustGenderCode.value") }));
@@ -717,7 +717,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		}
 
 		try {
-			if(this.custMaritalSts.isVisible()){
+			if(this.custMaritalSts.isVisible() && !this.custMaritalSts.isDisabled()){
 				if(getComboboxValue(this.custMaritalSts).equals("#")) {
 					throw new WrongValueException(this.custMaritalSts, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustMaritalSts.value") }));
@@ -783,19 +783,22 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		
 		try {
 			if(this.empFrom.getValue() != null){
-				if (!this.empFrom.getValue().after(((Date) SystemParameterDetails
-						.getSystemParameterValue("APP_DFT_START_DATE")))) {
-					throw new WrongValueException(this.empFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] {Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"),
-							SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+				if(!this.empFrom.isDisabled()){
+					if (!this.empFrom.isDisabled() && !this.empFrom.getValue().after(((Date) SystemParameterDetails
+							.getSystemParameterValue("APP_DFT_START_DATE")))) {
+						throw new WrongValueException(this.empFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
+								new String[] {Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"),
+								SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+					}
+					if (this.empFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) != -1) {
+						throw new WrongValueException(this.empFrom, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
+					}
 				}
-				if (this.custDOB.getValue() != null && !this.empFrom.getValue().after(this.custDOB.getValue())) {
+				if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null && 
+						!this.empFrom.getValue().after(this.custDOB.getValue())) {
 					throw new WrongValueException(this.empFrom,Labels.getLabel("DATE_ALLOWED_AFTER",
 							new String[] {Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"),
 							Labels.getLabel("label_FinanceCustomerList_CustDOB.value") }));
-				}
-				if (this.empFrom.getValue().compareTo(((Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR))) != -1) {
-					throw new WrongValueException(this.empFrom, Labels.getLabel("DATE_FUTURE_TODAY", new String[] { Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE").toString() }));
 				}
 				custEmployeeDetail.setEmpFrom(this.empFrom.getValue());
 			}else{
@@ -915,7 +918,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			}
 		}
 		//Employee 
-		if (!this.empFrom.isReadonly()) {
+		if (!this.empFrom.isDisabled()) {
 			if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
 				this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_ProfessionStartDate.value"), null, true));
 			}else if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_BUSINESS)){
@@ -924,7 +927,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				this.empFrom.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpFrom.value"), null, true));
 			}
 		}
-		if (!this.monthlyIncome.isDisabled()) {
+		if (!this.monthlyIncome.isReadonly()) {
 			if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_SELFEMP)){
 				this.monthlyIncome.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_FinanceCustomerList_MonthlyProfessionIncome.value"), false));
 			}else if(StringUtils.trimToEmpty(this.empStatus.getValue()).equalsIgnoreCase(EmploymentStatus_BUSINESS)){
@@ -2321,17 +2324,11 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			}
 			
 			CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
+			custEmployeeDetail.setNewRecord(isNew);
+			custEmployeeDetail.setRecordType(aCustomer.getRecordType());
 			custEmployeeDetail.setLastMntBy(getUserWorkspace().getLoginUserDetails().getLoginUsrID());
 			custEmployeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			custEmployeeDetail.setUserDetails(getUserWorkspace().getLoginUserDetails());
-
-			if (StringUtils.trimToEmpty(custEmployeeDetail.getRecordType()).equals("")) {
-				custEmployeeDetail.setVersion(custEmployeeDetail.getVersion() + 1);
-				custEmployeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				custEmployeeDetail.setNewRecord(true);
-			}else{
-				custEmployeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			}
 			
 			doWriteComponentsToBean(getCustomerDetails(),tab);
 			aFinanceDetail.setCustomerDetails(getCustomerDetails());
