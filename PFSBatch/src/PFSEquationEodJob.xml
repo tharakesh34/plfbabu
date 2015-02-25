@@ -235,7 +235,19 @@
 	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl" >
    		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
    		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
-   	</bean> 
+   	    <property name="pFSParameterDAO" ref="pFSParameterDAO" />
+   		<property name="pffCustomerPreparation" ref="pffCustomerPreparation"/>
+   	</bean>  
+   	   	 	
+   	<bean id="pffCustomerPreparation" 
+		class="com.pennant.Interface.service.impl.PFFCustomerPreparation">
+		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
+	</bean>
+   
+   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="auditDatasource" ref="auditDatasource" />
+	</bean>
    	
    	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceEquationImpl" >
    		<property name="accountPostingProcess" ref="accountPostingProcess" />
@@ -1242,8 +1254,6 @@
 		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
 		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
-	
-	
 	
 	<!-- Remove Finance Maintenance Details  -->
 	<bean id="removeMaintenanceProcessTasklet"

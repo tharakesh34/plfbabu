@@ -3,6 +3,7 @@ package com.pennant.backend.endofday.dailydownload;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -15,6 +16,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SystemParameterDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
 public class DailyDownloadProcess implements Tasklet {
@@ -24,10 +26,13 @@ public class DailyDownloadProcess implements Tasklet {
 	
 	private Date dateValueDate = null;
 	private ExecutionContext stepExecutionContext;
+	private String allowedDailyDownloadList = SystemParameterDetails.getSystemParameterValue("DAILY_DOWNLOADS").toString();
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
-		
+
+		int downloadCount = 0;
+
 		dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_VALUE).toString());
 
 		logger.debug("START: Daily Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
@@ -36,46 +41,51 @@ public class DailyDownloadProcess implements Tasklet {
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		try {
-			
+
 			List<ValueLabel> tablesList = PennantStaticListUtil.getImportTablesList();
 			
+			BatchUtil.setExecution(context,  "TOTAL", String.valueOf(getDownloadCount(tablesList)));
+
 			for(ValueLabel tableName : tablesList){
-				
-				if(tableName.getValue().equalsIgnoreCase("Currencies")){
-					getDailyDownloadInterfaceService().processCurrencyDetails();
-				}else if(tableName.getValue().equalsIgnoreCase("RelationshipOfficer")){
-					getDailyDownloadInterfaceService().processRelationshipOfficerDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("CustomerType")){
-					getDailyDownloadInterfaceService().processCustomerTypeDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("Deparment")){
-					getDailyDownloadInterfaceService().processDepartmentDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("CustomerGroup")){
-					getDailyDownloadInterfaceService().processCustomerGroupDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("RMTAccountTypes")){
-					getDailyDownloadInterfaceService().processAccountTypeDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("CustomerRatings")){
-					getDailyDownloadInterfaceService().processCustomerRatingDetails(dateValueDate);
-				}else if(tableName.getValue().equalsIgnoreCase("EQNAbuserList")){
-					getDailyDownloadInterfaceService().processAbuserDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("Customers")){
-					getDailyDownloadInterfaceService().processCustomerDetails(dateValueDate);
-				}else if(tableName.getValue().equalsIgnoreCase("BMTCountries")){
-					getDailyDownloadInterfaceService().processCountryDetails();
-				}else if(tableName.getValue().equalsIgnoreCase("BMTCustStatusCodes")){
-					getDailyDownloadInterfaceService().processCustStatusCodeDetails();
-				}else if(tableName.getValue().equalsIgnoreCase("BMTIndustries")){
-					getDailyDownloadInterfaceService().processIndustryDetails();
-				}else if(tableName.getValue().equalsIgnoreCase("RMTBranches")){
-					getDailyDownloadInterfaceService().processBranchDetails();
-				}else if(tableName.getValue().equalsIgnoreCase("SystemInternalAccountDef")){
-					getDailyDownloadInterfaceService().processInternalAccDetails(dateValueDate);
-				} else if(tableName.getValue().equalsIgnoreCase("BMTTransactionCode")){
-					getDailyDownloadInterfaceService().processTransactionCodeDetails();
-				} else if(tableName.getValue().equalsIgnoreCase("BMTIdentityType")){
-					getDailyDownloadInterfaceService().processIdentityTypeDetails();
-				} 
+				if(allowForDownload(tableName.getValue())){
+					if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CURRENCY)){
+						getDailyDownloadInterfaceService().processCurrencyDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_RELATIONSHIPOFFICER)){
+						getDailyDownloadInterfaceService().processRelationshipOfficerDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTTYPE)){
+						getDailyDownloadInterfaceService().processCustomerTypeDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_DEPARMENT)){
+						getDailyDownloadInterfaceService().processDepartmentDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTGROUP)){
+						getDailyDownloadInterfaceService().processCustomerGroupDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ACCOUNTTYPE)){
+						getDailyDownloadInterfaceService().processAccountTypeDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTRATING)){
+						getDailyDownloadInterfaceService().processCustomerRatingDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_ABUSERS)){
+						getDailyDownloadInterfaceService().processAbuserDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTOMERS)){
+						getDailyDownloadInterfaceService().processCustomerDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_COUNTRY)){
+						getDailyDownloadInterfaceService().processCountryDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_CUSTSTATUSCODES)){
+						getDailyDownloadInterfaceService().processCustStatusCodeDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_INDUSTRY)){
+						getDailyDownloadInterfaceService().processIndustryDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_BRANCH)){
+						getDailyDownloadInterfaceService().processBranchDetails();
+					}else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_SYSINTACCOUNTDEF)){
+						getDailyDownloadInterfaceService().processInternalAccDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_TRANSACTIONCODE)){
+						getDailyDownloadInterfaceService().processTransactionCodeDetails();
+					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_IDENTITYTYPE)){
+						getDailyDownloadInterfaceService().processIdentityTypeDetails();
+					}
+					downloadCount++;
+					BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(downloadCount));
+				}
 			}
-		
+			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(downloadCount));
 		}catch (Exception e) {
 			logger.error(e);
 			throw e;
@@ -83,6 +93,26 @@ public class DailyDownloadProcess implements Tasklet {
 
 		logger.debug("COMPLETE: Daily Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
 		return RepeatStatus.FINISHED;
+	}
+	
+	private int getDownloadCount(List<ValueLabel> tablesList){
+		int count = 0;
+		for(ValueLabel tableName : tablesList){
+			if(allowForDownload(tableName.getValue())){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	private boolean allowForDownload(String code){
+		String[] dailyDownloads = allowedDailyDownloadList.split(",");
+		for (String downloadName : dailyDownloads) {
+			if(code.equalsIgnoreCase(StringUtils.trimToEmpty(downloadName))){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
