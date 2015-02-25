@@ -522,7 +522,7 @@
 													</listhead>
 												</listbox>
 											</groupbox>
-											<groupbox closable="true">
+											<groupbox id="gp_ChequeInformation" closable="true">
 												<caption
 													label="${c:l('gp_CustomerChequeInfoDetails')}">
 												</caption>
@@ -553,7 +553,7 @@
 														<listheader
 															id="listheader_CustomerChequeInfo_MonthYear"
 															label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}"
-															sort="false" hflex="min" />
+															sort="false" width="110px"/>
 														<listheader
 															id="listheader_CustomerChequeInfo_PaymentCheque"
 															label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}"
@@ -628,7 +628,7 @@
 											</groupbox>
 										</row>
 										<row spans="3">
-											<groupbox closable="true">
+											<groupbox id="gp_ExternalLiability" closable="true">
 												<caption
 													label="${c:l('gp_ExternalLiabilityDetails')}">
 												</caption>
@@ -659,7 +659,7 @@
 														<listheader
 															id="listheader_ExternalLiability_FinDate"
 															label="${c:l('listheader_ExternalLiability_FinDate.label')}"
-															sort="false" hflex="min" />
+															sort="false" width="110px"/>
 														<listheader
 															id="listheader_ExternalLiability_FinType"
 															label="${c:l('listheader_ExternalLiability_FinType.label')}"

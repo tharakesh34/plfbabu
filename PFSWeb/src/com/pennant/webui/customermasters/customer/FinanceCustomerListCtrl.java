@@ -68,6 +68,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -207,6 +208,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private List<CustomerBankInfo> oldVar_customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
 
 	protected Button btnNew_ChequeInformation;
+	protected Groupbox gp_ChequeInformation;
 	protected Listbox listBoxCustomerChequeInformation;
 	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
 	private List<CustomerChequeInfo> oldVar_customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
@@ -214,6 +216,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	protected Listbox listBoxCustomerFinExposure;
 
 	protected Button btnNew_ExternalLiability;
+	protected Groupbox gp_ExternalLiability;
 	protected Listbox listBoxCustomerExternalLiability;
 	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 	private List<CustomerExtLiability> oldVar_customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
@@ -340,8 +343,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - 145 + "px");
 			this.listBoxCustomerEmails.setHeight(borderlayoutHeights - 145 + "px");
 			this.listBoxCustomerBankInformation.setHeight(borderlayoutHeights - 130 + "px");
+			this.gp_ChequeInformation.setHeight(borderlayoutHeights - 42 + "px");
 			this.listBoxCustomerChequeInformation.setHeight(borderlayoutHeights - 130 + "px");
 			this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
+			this.gp_ExternalLiability.setHeight(borderlayoutHeights - 42 + "px");
 			this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 
 			doCheckRights();
@@ -1508,12 +1513,12 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 				this.finFormatter = details.getCcyEditField();
 			}
 		}
-		if(!StringUtils.trimToEmpty(this.custBaseCcy.getValue()).equalsIgnoreCase(custBaseCcy_Temp)){
+		if(!StringUtils.trimToEmpty(this.custBaseCcy.getValue()).equals("") &&  
+				!this.custBaseCcy.getValue().equalsIgnoreCase(custBaseCcy_Temp)){
 			MultiLineMessageBox.doSetTemplate();
 			String infoMsg = "Currency change will effect customer child details";
 			MultiLineMessageBox.show(infoMsg, "Currency Confirmation", MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
 			doSetCurrencyFieldProperties();
-			
 		}
 		custBaseCcy_Temp = this.custBaseCcy.getValue();
 		logger.debug("Leaving");
@@ -2115,7 +2120,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 			}
 			setCustomerChequeInfoDetailList(customerChequeInfoDetails);
-			this.listBoxCustomerChequeInformation.setHeight(((this.borderLayoutHeight - 80) / 2) - 130 + "px");
 		}
 	}
 
