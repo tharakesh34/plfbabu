@@ -874,25 +874,17 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.vehicleItemNum.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getVehicleItemNum()));
 		this.vehicleValue.setValue(PennantAppUtil.formateAmount(aCarLoanDetail.getVehicleValue(),ccyFormatter));
 		this.thirdPartyNat.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescThirdPartyNatName()).equals("") ? "" : aCarLoanDetail.getLovDescThirdPartyNatName());
-		
-		if (aCarLoanDetail.isNewRecord()) {
-			this.carLoanFor.setDescription("");
-			this.carUsage.setDescription("");
-			this.carManufacturer.setDescription("");
-			this.carModel.setDescription("");
-			this.carVersion.setDescription("");
-			this.carDealer.setDescription("");
-		} else {
-			this.carLoanFor.setDescription(aCarLoanDetail.getLovDescLoanForValue());
-			this.carUsage.setDescription(aCarLoanDetail.getLovDescCarUsageValue());
-			this.carManufacturer.setDescription(aCarLoanDetail.getLovDescManufacturerName());
-			this.carModel.setDescription(aCarLoanDetail.getLovDescModelDesc());
-			this.carVersion.setDescription(aCarLoanDetail.getLovDescVehicleVersionCode());
-			 if(StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.DEALER)){
-				 this.carDealer.setDescription(aCarLoanDetail.getLovDescCarDealerName());	
-			 }
-			this.cbCarColor.setDescription(aCarLoanDetail.getCarColor());
-		}
+
+		this.carLoanFor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescLoanForValue()));
+		this.carUsage.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarUsageValue()));
+		this.carManufacturer.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescManufacturerName()));
+		this.carModel.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescModelDesc()));
+		this.carVersion.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescVehicleVersionCode()));
+		 if(StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.DEALER)){
+			 this.carDealer.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarDealerName()));	
+		 }
+		this.cbCarColor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getCarColor()));
+	
 		this.recordStatus.setValue(aCarLoanDetail.getRecordStatus());
 		doSetVersionFilters();
 		logger.debug("Leaving");
@@ -1204,6 +1196,11 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aCarLoanDetail.isNew()) {
+			
+			if(isFleetVehicle){
+				copyVehicleProperties(aCarLoanDetail);
+			}
+
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1255,6 +1252,61 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
+	private void copyVehicleProperties(CarLoanDetail aCarLoanDetail){
+		logger.debug("Entering");
+		if(getFleetVehicleLoanDetailListCtrl() != null && getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists() != null && 
+				!getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().isEmpty()){
+			
+			CarLoanDetail	previousVehicle = getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().get(
+					getFleetVehicleLoanDetailListCtrl().getVehicleDetailLists().size()-1);
+			
+			aCarLoanDetail.setLoanRefNumber(previousVehicle.getLoanRefNumber());
+			aCarLoanDetail.setLoanRefType(previousVehicle.isLoanRefType());
+			aCarLoanDetail.setCarLoanFor(previousVehicle.getCarLoanFor());
+			aCarLoanDetail.setCarUsage(previousVehicle.getCarUsage());
+			aCarLoanDetail.setManufacturerId(previousVehicle.getManufacturerId());
+			aCarLoanDetail.setVehicleModelId(previousVehicle.getVehicleModelId());
+			aCarLoanDetail.setCarVersion(previousVehicle.getCarVersion());
+			aCarLoanDetail.setCarMakeYear(previousVehicle.getCarMakeYear());
+			aCarLoanDetail.setCarCapacity(previousVehicle.getCarCapacity());
+			aCarLoanDetail.setCarCc(previousVehicle.getCarCc());
+			aCarLoanDetail.setDealerPhone(previousVehicle.getDealerPhone());
+			//aCarLoanDetail.setCarChasisNo(previousVehicle.getCarChasisNo());
+			//aCarLoanDetail.setCarRegNo(previousVehicle.getCarRegNo());
+			aCarLoanDetail.setCarColor(previousVehicle.getCarColor());
+			aCarLoanDetail.setPaymentMode(previousVehicle.getPaymentMode());
+			//aCarLoanDetail.setEngineNumber(previousVehicle.getEngineNumber());
+			aCarLoanDetail.setSalesPersonName(previousVehicle.getSalesPersonName());
+			aCarLoanDetail.setPurchageOdrNumber(previousVehicle.getPurchageOdrNumber());
+			aCarLoanDetail.setQuoationNbr(previousVehicle.getQuoationNbr());
+			aCarLoanDetail.setQuoationDate(previousVehicle.getQuoationDate());
+			aCarLoanDetail.setPurchaseDate(previousVehicle.getPurchaseDate());
+			aCarLoanDetail.setSellerType(previousVehicle.getSellerType());
+			//ThirdParty
+			aCarLoanDetail.setThirdPartyReg(previousVehicle.isThirdPartyReg());
+			aCarLoanDetail.setThirdPartyName(previousVehicle.getThirdPartyName());
+			aCarLoanDetail.setPassportNum(previousVehicle.getPassportNum());	
+			aCarLoanDetail.setThirdPartyNat(previousVehicle.getThirdPartyNat());
+			aCarLoanDetail.setSellerType(previousVehicle.getSellerType());
+			aCarLoanDetail.setPrivateDealerName(previousVehicle.getPrivateDealerName());
+			aCarLoanDetail.setCarDealer(previousVehicle.getCarDealer());
+			aCarLoanDetail.setDealerOrSellerAcc(previousVehicle.getDealerOrSellerAcc());
+			aCarLoanDetail.setEmiratesRegNum(previousVehicle.getEmiratesRegNum());
+			aCarLoanDetail.setVehicleItemNum(previousVehicle.getVehicleItemNum());
+			aCarLoanDetail.setVehicleValue(previousVehicle.getVehicleValue());
+		
+			aCarLoanDetail.setLovDescThirdPartyNatName(previousVehicle.getLovDescThirdPartyNatName());
+			aCarLoanDetail.setLovDescLoanForValue(previousVehicle.getLovDescLoanForValue());
+			aCarLoanDetail.setLovDescCarUsageValue(previousVehicle.getLovDescCarUsageValue());
+			aCarLoanDetail.setLovDescManufacturerName(previousVehicle.getLovDescManufacturerName());
+			aCarLoanDetail.setLovDescModelDesc(previousVehicle.getLovDescModelDesc());
+			aCarLoanDetail.setLovDescVehicleVersionCode(previousVehicle.getLovDescVehicleVersionCode());
+		    aCarLoanDetail.setLovDescCarDealerName(previousVehicle.getLovDescCarDealerName());	
+			
+		}
+		logger.debug("Leaving");
+	}
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
