@@ -1485,6 +1485,14 @@
 				<property name="pagedListService" ref="pagedListService" />
 	</bean>
 
+   <bean id="updateCoreCustomerDialogCtrl"
+		class="com.pennant.webui.customermasters.customer.UpdateCoreCustomerDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="pffCustomerPreparation" ref="pffCustomerPreparation" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+	</bean>
+
 
 	<!--============ Customer Document Detail ============== -->
 

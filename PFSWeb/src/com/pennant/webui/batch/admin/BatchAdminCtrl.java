@@ -83,6 +83,7 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 	private boolean islock = false;
 
 	protected ProcessExecution databaseBackupBeforeEod;
+	protected ProcessExecution dailyDownload;
 	protected ProcessExecution refreshRateChanges;
 	protected ProcessExecution amortizationCalculation;
 	protected ProcessExecution amortizationPostings;
@@ -102,6 +103,7 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 	
 	public enum PFSBatchProcessess {
 		databaseBackupBeforEod,
+		dailyDownload,
 		refreshRateChanges,
 		amortizationCalculation, 
 		amortizationPostings, 
@@ -431,6 +433,13 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 					setRunningProcess(this.databaseBackupBeforeEod);
 				} 
 				break;
+			case dailyDownload:
+				this.dailyDownload.setProcess(status);
+				this.dailyDownload.render();
+				if("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.dailyDownload);
+				} 
+				break;
 			case refreshRateChanges:
 				this.refreshRateChanges.setProcess(status);
 				this.refreshRateChanges.render();
@@ -547,6 +556,9 @@ public class BatchAdminCtrl  extends GFCBaseCtrl {
 	
 	private void resetPanels() {
 
+		if (dailyDownload.getChildren() != null) {
+			dailyDownload.getChildren().clear();
+		}
 		if (refreshRateChanges.getChildren() != null) {
 			refreshRateChanges.getChildren().clear();
 		}

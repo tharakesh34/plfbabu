@@ -63,4 +63,6 @@ public interface PFSParameterDAO {
 	void refresh(PFSParameter entity);
 	List<PFSParameter> getAllPFSParameter(); 
 	List<GlobalVariable> getGlobaVariables();
+	void updateParmValue(PFSParameter pFSParameter);
+
 }

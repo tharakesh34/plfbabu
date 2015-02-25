@@ -304,6 +304,30 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	}
 
 	/**
+	 * Method for Updating Parameter Value
+	 */
+	@SuppressWarnings("serial")
+    public void updateParmValue(PFSParameter pFSParameter) {
+		int recordCount = 0;
+		logger.debug("Entering ");
+		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
+		updateSql.append(" Set SysParmValue = :SysParmValue Where SysParmCode =:SysParmCode " );
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004",pFSParameter.getSysParmCode(), 
+					pFSParameter.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving ");
+	}
+
+	
+	
+	/**
 	 * Method for getting the List of Static PFSParameters list
 	 */
 	public List<PFSParameter> getAllPFSParameter() {

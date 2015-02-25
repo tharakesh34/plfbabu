@@ -806,3 +806,122 @@ Result = ''1300'' ; return ;
 /**** End : SQL Scripts For New Workflows(Commercial and Corporate) ****/
 
   /**** End : SQL Scripts for New Workflows of Credit Review ****/
+ 
+ 
+
+ /**** Start :  Release 1.5.6  Scripts ****/ 
+
+
+CREATE TABLE [dbo].[EqtnMasterMissedDetails](
+[Module] [nvarchar](50) NOT NULL,
+[FieldName] [nvarchar](50) NOT NULL,
+[Description] [nvarchar](200) NOT NULL,
+[LastMntOn] [datetime] NOT NULL
+) ON [PRIMARY]
+
+GO
+
+ALTER VIEW [dbo].[CustomerAddresses_View]
+AS
+SELECT     T1.CustID, T6.CustCIF AS lovDescCustCIF, T6.CustShrtName AS lovDescCustShrtName, T1.CustAddrType, T2.AddrTypeDesc AS lovDescCustAddrTypeName, 
+                      T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, T1.CustAddrCity, 
+                      T3.PCCityName AS lovDescCustAddrCityName, T1.CustAddrProvince, T4.CPProvinceName AS lovDescCustAddrProvinceName, T1.CustAddrCountry, 
+                      T5.CountryDesc AS lovDescCustAddrCountryName, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T6.RecordType AS lovDescCustRecordType
+FROM         dbo.CustomerAddresses_Temp AS T1 INNER JOIN
+                      dbo.BMTAddressTypes AS T2 ON T1.CustAddrType = T2.AddrTypeCode LEFT OUTER JOIN
+                      dbo.RMTProvinceVsCity AS T3 ON T1.CustAddrCountry = T3.PCCountry AND T1.CustAddrProvince = T3.PCProvince AND T1.CustAddrCity = T3.PCCity LEFT OUTER JOIN
+                      dbo.RMTCountryVsProvince AS T4 ON T1.CustAddrCountry = T4.CPCountry AND T1.CustAddrProvince = T4.CPProvince LEFT OUTER JOIN
+                      dbo.BMTCountries AS T5 ON T1.CustAddrCountry = T5.CountryCode INNER JOIN
+                      dbo.Customers_View AS T6 ON T1.CustID = T6.CustID
+UNION ALL
+SELECT     T1.CustID, T6.CustCIF AS lovDescCustCIF, T6.CustShrtName AS lovDescCustShrtName, T1.CustAddrType, T2.AddrTypeDesc AS lovDescCustAddrTypeName, 
+                      T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, T1.CustAddrCity, 
+                      T3.PCCityName AS lovDescCustAddrCityName, T1.CustAddrProvince, T4.CPProvinceName AS lovDescCustAddrProvinceName, T1.CustAddrCountry, 
+                      T5.CountryDesc AS lovDescCustAddrCountryName, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T6.RecordType AS lovDescCustRecordType
+FROM         dbo.CustomerAddresses AS T1 INNER JOIN
+                      dbo.BMTAddressTypes AS T2 ON T1.CustAddrType = T2.AddrTypeCode LEFT OUTER JOIN
+                      dbo.RMTProvinceVsCity AS T3 ON T1.CustAddrCountry = T3.PCCountry AND T1.CustAddrProvince = T3.PCProvince AND T1.CustAddrCity = T3.PCCity LEFT OUTER JOIN
+                      dbo.RMTCountryVsProvince AS T4 ON T1.CustAddrCountry = T4.CPCountry AND T1.CustAddrProvince = T4.CPProvince LEFT OUTER JOIN
+                      dbo.BMTCountries AS T5 ON T1.CustAddrCountry = T5.CountryCode INNER JOIN
+                      dbo.Customers_AView AS T6 ON T1.CustID = T6.CustID
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerAddresses_Temp
+                            WHERE      CustID = T1.CustID AND CustAddrType = T1.CustAddrType);
+ GO
+                         
+               
+Delete from CustomerAddresses where CustAddrType = 'MIGR'
+ 
+INSERT INTO AccountTypeNatures(AcType) SELECT AcType FROM RMTAccountTypes Where AcType not in (
+Select AcType from AccountTypeNatures);
+
+INSERT [dbo].[SMTparameters] ([SysParmCode], [SysParmDesc], [SysParmType], [SysParmMaint], [SysParmValue], [SysParmLength], 
+[SysParmDec], [SysParmList], [SysParmValdMod], [SysParmDescription], [Version], [LastMntBy], [LastMntOn]) VALUES 
+(N'DAILY_DOWNLOADS', N'Daily Download Details', N'String', N'1', N'CCY,ROF,CTY,DPT,CUG,ATY,CUR,ABS,CUS,COU,IND,BRN,SIA,TXC,IDT', 200, 0, NULL, NULL, N'Daily Download Details', 1, 1000, 
+CAST(0x0000A38401080E04 AS DateTime));
+
+INSERT [dbo].[SMTparameters] ([SysParmCode], [SysParmDesc], [SysParmType], [SysParmMaint], [SysParmValue], [SysParmLength], 
+[SysParmDec], [SysParmList], [SysParmValdMod], [SysParmDescription], [Version], [LastMntBy], [LastMntOn]) VALUES 
+(N'DAILY_DOWNLOADS_DATE', N'Daily Download Date', N'Date', N'1', N'2013-01-06', 200, 0, NULL, NULL, N'Daily Download 
+Date', 1, 1000, CAST(0x0000A38401080E04 AS DateTime));
+
+UPDATE SeqSecRights set seqno= (Select MAX(RightID) From SecRights);
+INSERT INTO SecRights SELECT (SELECT (SeqNo + 1) FROM  SeqSecRights), 0, 'menuItem_CustomerMasters_UpdateCoreCustomer',0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;    
+UPDATE SeqSecRights set seqno= (Select MAX(RightID) From SecRights);
+
+UPDATE SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID) From SecGroupRights);
+ 
+INSERT INTO SecGroupRights values((SELECT (SeqNo+1) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values((SELECT (SeqNo+2) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='CUSTOMER_VERIFIER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values((SELECT (SeqNo+3) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='CUSTOMER_APPROVER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);
+
+INSERT INTO SecGroupRights values((SELECT (SeqNo+4) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='CUSTOMER_DDE_MAKER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);
+
+INSERT INTO SecGroupRights values((SELECT (SeqNo+5) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='CUSTOMER_DDE_APPROVER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);
+
+INSERT INTO SecGroupRights values((SELECT (SeqNo+6) FROM SeqSecGroupRights), (Select GrpId  From SecGroups Where GrpCode='PROSPECTCUSTOMER_VERIFIER') , 
+(SELECT RightID FROM SecRights where RightName='menuItem_CustomerMasters_UpdateCoreCustomer')
+, 1, 0,1000,GETDATE(),' ',' ',' ',' ',' ',' ',0);   
+   
+UPDATE SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID) From SecGroupRights); 
+     
+USE PFFLIVAUDIT
+Alter Table AdtSMTparameters Alter Column SysParmValue nvarchar(200);
+Alter Table AdtSMTparameters Alter Column SysParmDesc nvarchar(200);
+
+ /**** End :  Release 1.5.6  Scripts ****/ 
+
+ 
+ 
+ 
+   
+ 
+ 
+ /** Data Import Excepotions Report */ 
+ 
+INSERT [dbo].[REPORTCONFIGURATION] ([REPORTID], [REPORTNAME], [REPORTHEADING], [PROMPTREQUIRED],
+ [REPORTJASPERNAME], [DATASOURCENAME], [SHOWTEMPLIBRARY], [MENUITEMCODE], [VERSION],
+  [LASTMNTBY], [RECORDSTATUS], [ROLECODE], [NEXTROLECODE], [TASKID], [NEXTTASKID], [RECORDTYPE],
+   [WORKFLOWID], [LastMntOn]) VALUES
+    ((Select MAX(REPORTID)+1 from REPORTCONFIGURATION), N'Data Import Exceptions', N'Data Import Exceptions', N'1', N'DataDownloadExceptions', N'pfsDatasource', N'1',
+     N'menu_Item_DataDownloadExceptions', 2, 1000, N'', N'', N'', N'', N'', N'', 0,
+      CAST(0x0000A13F00EDA67D AS DateTime))
+
+INSERT [dbo].[REPORTFILTERFIELDS] ([REPORTID], [FIELDID], [FIELDNAME], [FIELDTYPE], [FIELDLABEL], [FIELDDBNAME], [APPUTILMETHODNAME], [MODULENAME], [LOVHIDDENFIELDMETHOD], [LOVTEXTFIELDMETHOD], [MULTISELECTSEARCH], [FIELDLENGTH], [FIELDMAXVALUE], [FIELDMINVALUE], [SEQORDER], [MANDATORY], [FIELDCONSTRAINT], [FIELDERRORMESSAGE], [WHERECONDITION], [STATICVALUE], [FIELDWIDTH], [FILTERREQUIRED], [DEFAULTFILTER], [VERSION], [LASTMNTBY], [RECORDSTATUS], [ROLECODE], [NEXTROLECODE], [TASKID], [NEXTTASKID], 
+[RECORDTYPE], [WORKFLOWID], [LastMntOn]) VALUES 
+((Select REPORTID from REPORTCONFIGURATION where REPORTNAME='Data Import Exceptions'), 1, N'Execution Date', N'DATE', N'Execution Date', N'LastMnton', N'', N'---Select----', N'', N'', N'0',
+ 0, 0, 0, 10, N'0', N'No Empty', NULL, N'', N'', 150, N'0', N'=', 2, 1000, N'Approved', N'', N'', N'', N'',
+  N'', 0, CAST(0x0000A12D00FA3560 AS DateTime))

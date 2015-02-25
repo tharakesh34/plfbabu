@@ -236,6 +236,14 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return null;
 	}
 	
+	@Override
+	public void processCustomerNumbers(List<String> existingCustomers)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

@@ -6318,19 +6318,26 @@
 		class="com.pennant.Interface.service.impl.PFFCustomerPreparation">
 		<property name="customerDataProcess" ref="customerDataProcess" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
 	</bean>
 	
 	<bean name="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl">
 		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
 		<property name="dailyDownloadProcess" ref="dailyDownloadProcess" />
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+		<property name="pffCustomerPreparation" ref="pffCustomerPreparation" />
 	</bean>
 	
 	<bean name="hostStatusEnquiryService" class="com.pennant.Interface.service.impl.HostStatusEnquiryServiceImpl">
 		<property name="hostStatusEnquiryProcess" ref="hostStatusEnquiryProcess" />
+		<!-- <property name="pFSParameterDAO" ref="pFSParameterDAO" />
+		<property name="pffCustomerPreparation" ref="pffCustomerPreparation"/> -->
 	</bean>
 	
   	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl" >
 		<property name="dataSource" ref="pfsDatasource" />
+		<property name="auditDatasource" ref="auditDatasource" />
+		
 	</bean>
 
 	<!-- CoreBanking Interface Services -->

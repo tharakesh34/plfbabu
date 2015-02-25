@@ -24,5 +24,6 @@ public interface CustomerDataProcess {
 	CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws CustomerNotFoundException;
 
 	List<CoreBankBlackListCustomer> getBlackListedCustomers(CoreBankBlackListCustomer customer, String sqlQuery);
+	
 	List<CorePoliceCase> fetchPoliceCustInformation(CorePoliceCase corePoliceCase,String sqlQuery);
 }

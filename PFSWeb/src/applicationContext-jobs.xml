@@ -55,7 +55,7 @@
 		p:waitForJobsToCompleteOnShutdown="false" p:autoStartup="true">
 		<property name="triggers">
 			<list>
-				<!--  <ref bean="hostStatusJobTrigger" /> -->
+				  <ref bean="hostStatusJobTrigger" />
 				 <ref bean="financePriorityJobTrigger" />
 			</list>
 		</property>

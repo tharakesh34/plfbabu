@@ -1,5 +1,7 @@
 package com.pennant.equation.dao.impl;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -22,8 +24,10 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.AccountType;
+import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.systemmasters.AddressType;
@@ -52,16 +56,20 @@ import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 
-public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
+public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 	private static Logger logger = Logger.getLogger(CoreInterfaceDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate auditNamedParameterJdbcTemplate;
+
 
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
+	public void setAuditDatasource(DataSource dataSource) {
+		this.auditNamedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
 	/**
 	 *  Method for fetching Currency Details
 	 */
@@ -93,7 +101,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationRelationshipOfficer  relationshipOfficer = new EquationRelationshipOfficer();
-		StringBuilder selectSql = new StringBuilder("Select * From RelationshipOfficers");
+		StringBuilder selectSql = new StringBuilder("Select ROfficerCode From RelationshipOfficers");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
@@ -117,7 +125,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationCustomerType  customerType = new EquationCustomerType();
-		StringBuilder selectSql = new StringBuilder("Select * From RMTCustTypes");
+		StringBuilder selectSql = new StringBuilder("Select CustTypeCode From RMTCustTypes");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
@@ -141,7 +149,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationDepartment  department = new EquationDepartment();
-		StringBuilder selectSql = new StringBuilder("Select * From BMTDepartments");
+		StringBuilder selectSql = new StringBuilder("Select DeptCode From BMTDepartments");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
@@ -164,7 +172,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationCustomerGroup  customerGroup = new EquationCustomerGroup();
-		StringBuilder selectSql = new StringBuilder("Select * From CustomerGroups");
+		StringBuilder selectSql = new StringBuilder("Select CustGrpCode From CustomerGroups");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
@@ -187,7 +195,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationAccountType  accountType = new EquationAccountType();
-		StringBuilder selectSql = new StringBuilder("Select * From RMTAccountTypes");
+		StringBuilder selectSql = new StringBuilder("Select AcType From RMTAccountTypes");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
@@ -210,7 +218,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationCustomerRating  customerRating = new EquationCustomerRating();
-		StringBuilder selectSql = new StringBuilder("Select * From CustomerRatings");
+		StringBuilder selectSql = new StringBuilder("Select CustID,CustRatingType From CustomerRatings");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
@@ -233,7 +241,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationCountry  country = new EquationCountry();
-		StringBuilder selectSql = new StringBuilder("Select CountryCode from BMTCountries");
+		StringBuilder selectSql = new StringBuilder("Select CountryCode  from BMTCountries");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
@@ -257,7 +265,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationCustStatusCode  statusCode = new EquationCustStatusCode();
-		StringBuilder selectSql = new StringBuilder("Select CustStsCode from BMTCustStatusCodes");
+		StringBuilder selectSql = new StringBuilder("Select CustStsCode  from BMTCustStatusCodes");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statusCode);
@@ -280,7 +288,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationIndustry  industry = new EquationIndustry();
-		StringBuilder selectSql = new StringBuilder("Select  IndustryCode from BMTIndustries");
+		StringBuilder selectSql = new StringBuilder("Select  IndustryCode  from BMTIndustries");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(industry);
@@ -303,7 +311,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationBranch  branch = new EquationBranch();
-		StringBuilder selectSql = new StringBuilder("Select  BranchCode from RMTBranches");
+		StringBuilder selectSql = new StringBuilder("Select  BranchCode  from RMTBranches");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
@@ -327,7 +335,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationInternalAccount  internalAccount = new EquationInternalAccount();
-		StringBuilder selectSql = new StringBuilder("Select  SIACode from SystemInternalAccountDef");
+		StringBuilder selectSql = new StringBuilder("Select  SIACode  from SystemInternalAccountDef");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(internalAccount);
@@ -350,7 +358,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationTransactionCode  transactionCode = new EquationTransactionCode();
-		StringBuilder selectSql = new StringBuilder("Select * From BMTTransactionCode");
+		StringBuilder selectSql = new StringBuilder("Select TranCode From BMTTransactionCode");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionCode);
@@ -373,7 +381,7 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		EquationIdentityType  identityType = new EquationIdentityType();
-		StringBuilder selectSql = new StringBuilder("Select * From BMTIdentityType");
+		StringBuilder selectSql = new StringBuilder("Select IdentityType From BMTIdentityType");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityType);
@@ -391,9 +399,10 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 	
 	/**
 	 *  Method for saving Currency Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCurrecnyDetails(List<EquationCurrency> currencyList){
+	public void saveCurrecnyDetails(List<EquationCurrency> currencyList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCurrencies" );
@@ -419,14 +428,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving RelationshipOfficer Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList){
+	public void saveRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RelationshipOfficers");
@@ -445,14 +457,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving CustomerType Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCustomerTypeDetails(List<EquationCustomerType> customerTypes){
+	public void saveCustomerTypeDetails(List<EquationCustomerType> customerTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCustTypes");
@@ -471,14 +486,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Departments Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveDepartmentDetails(List<EquationDepartment> departments){
+	public void saveDepartmentDetails(List<EquationDepartment> departments) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql  = new StringBuilder("Insert Into BMTDepartments");
@@ -497,14 +515,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Departments Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCustomerGroupDetails(List<EquationCustomerGroup> customerGroups){
+	public void saveCustomerGroupDetails(List<EquationCustomerGroup> customerGroups) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into CustomerGroups");
@@ -523,14 +544,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Account Type  Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveAccountTypeDetails(List<EquationAccountType> accountTypes){
+	public void saveAccountTypeDetails(List<EquationAccountType> accountTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountTypes" );
@@ -551,13 +575,16 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	/**
 	 *  Method for saving Account Type Nature Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveAccountTypeNatureDetails(List<EquationAccountType> accountTypes){
+	public void saveAccountTypeNatureDetails(List<EquationAccountType> accountTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder(" Insert Into AccountTypeNatures");
@@ -574,13 +601,16 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	/**
 	 *  Method for saving Customer Rating Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCustomerRatingDetails(List<EquationCustomerRating> customerRatings){
+	public void saveCustomerRatingDetails(List<EquationCustomerRating> customerRatings) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder();
@@ -600,15 +630,18 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 
 	
 	/**
 	 *  Method for saving Country Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCountryDetails(List<EquationCountry> countryList){
+	public void saveCountryDetails(List<EquationCountry> countryList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTCountries" );
@@ -626,14 +659,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Country Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveCustStatusCodeDetails(List<EquationCustStatusCode> custStsList){
+	public void saveCustStatusCodeDetails(List<EquationCustStatusCode> custStsList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTCustStatusCodes" );
@@ -651,14 +687,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Country Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveIndustryDetails(List<EquationIndustry> industryList){
+	public void saveIndustryDetails(List<EquationIndustry> industryList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTIndustries" );
@@ -676,15 +715,18 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 *  Method for saving Branch Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveBranchDetails(List<EquationBranch> branchList){
+	public void saveBranchDetails(List<EquationBranch> branchList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTBranches" );
@@ -706,14 +748,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Internal Account Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveInternalAccDetails(List<EquationInternalAccount> branchList){
+	public void saveInternalAccDetails(List<EquationInternalAccount> branchList) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into SystemInternalAccountDef" );
@@ -731,15 +776,18 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 *  Method for updating Currency Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCurrecnyDetails(List<EquationCurrency> currencyList){
+	public void updateCurrecnyDetails(List<EquationCurrency> currencyList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies" );
@@ -754,14 +802,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating RelationshipOfficer Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList){
+	public void updateRelationShipOfficerDetails(List<EquationRelationshipOfficer> relationshipOfficerList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update RelationshipOfficers" );
@@ -775,14 +826,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		 this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating CustomerType Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCustomerTypeDetails(List<EquationCustomerType> customerTypes){
+	public void updateCustomerTypeDetails(List<EquationCustomerType> customerTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTCustTypes");
@@ -797,14 +851,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 
 	/**
 	 *  Method for updating Departments Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateDepartmentDetails(List<EquationDepartment> departments){
+	public void updateDepartmentDetails(List<EquationDepartment> departments) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql  = new StringBuilder("Update BMTDepartments");
@@ -818,14 +875,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 
 	/**
 	 *  Method for updating Departments Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCustomerGroupDetails(List<EquationCustomerGroup> customerGroups){
+	public void updateCustomerGroupDetails(List<EquationCustomerGroup> customerGroups) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder();
@@ -841,14 +901,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Account Type  Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateAccountTypeDetails(List<EquationAccountType> accountTypes){
+	public void updateAccountTypeDetails(List<EquationAccountType> accountTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
@@ -864,14 +927,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Account Type Nature Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypes){
+	public void updateAccountTypeNatureDetails(List<EquationAccountType> accountTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update AccountTypeNatures");
@@ -888,13 +954,16 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	/**
 	 *  Method for updating CustomerRating Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings){
+	public void updateCustomerRatingDetails(List<EquationCustomerRating> customerRatings) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder();
@@ -910,14 +979,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Country Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCountryDetails(List<EquationCountry> countryList){
+	public void updateCountryDetails(List<EquationCountry> countryList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update BMTCountries" );
@@ -931,14 +1003,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Customer Status Code Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateCustStatusCodeDetails(List<EquationCustStatusCode> custStsList){
+	public void updateCustStatusCodeDetails(List<EquationCustStatusCode> custStsList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update BMTCustStatusCodes" );
@@ -952,15 +1027,18 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 *  Method for updating Industry Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateIndustryDetails(List<EquationIndustry> industryList){
+	public void updateIndustryDetails(List<EquationIndustry> industryList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update BMTIndustries" );
@@ -974,20 +1052,23 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 *  Method for updating Branch Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateBranchDetails(List<EquationBranch> branchList){
+	public void updateBranchDetails(List<EquationBranch> branchList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update RMTBranches" );
 		updateSql.append(" Set BranchDesc = :BranchDesc, BranchAddrLine1 = :BranchAddrLine1,");
-		updateSql.append(" BranchAddrLine2 = :BranchAddrLine2, BranchPOBox = :BranchPOBox, BranchFax = :BranchFax,");
+		updateSql.append(" BranchAddrLine2 = :BranchAddrLine2, BranchFax = :BranchFax,");
 		updateSql.append(" BranchTel = :BranchTel, BranchSwiftBankCde = :BranchSwiftBankCde,");
 		updateSql.append(" BranchSwiftCountry = :BranchSwiftCountry, BranchSwiftLocCode = :BranchSwiftLocCode,");
 		updateSql.append(" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchSortCode = :BranchSortCode");
@@ -1000,14 +1081,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Internal Account Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateInternalAccDetails(List<EquationInternalAccount> intAccList){
+	public void updateInternalAccDetails(List<EquationInternalAccount> intAccList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update SystemInternalAccountDef" );
@@ -1022,15 +1106,18 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	
 	/**
 	 *  Method for saving Abuse Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveAbuserDetails(List<EquationAbuser> abuserList){
+	public void saveAbuserDetails(List<EquationAbuser> abuserList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into EQNAbuserList" );
@@ -1049,11 +1136,40 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 
+	
 	/**
-	 *  Method for Saving Master Fields Missing Details
+	 *  Method for Saving Master Fields Missing And Exceptional Detail
+	 * @throws Exception 
+	 */
+	@Override
+	public void saveMasterValueMissedDetail(EquationMasterMissedDetail masterMissedDetails){
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into EqtnMasterMissedDetails");
+		insertSql.append(" (Module, FieldName, Description, LastMntOn)");
+		insertSql.append(" Values(:Module, :FieldName, :Description, :LastMntOn)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterMissedDetails);
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+		}
+	}
+	
+	
+	
+	/**
+	 *  Method for Saving Master Fields Missing And Exceptional Details
+	 * @throws Exception 
 	 */
 	@Override
 	public void saveMasterValueMissedDetails(List<EquationMasterMissedDetail> masterMissedDetails){
@@ -1071,14 +1187,16 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 	
 	/**
 	 *  Method for saving Transaction Codes
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveTransactionCodeDetails(List<EquationTransactionCode> transactionCodes){
+	public void saveTransactionCodeDetails(List<EquationTransactionCode> transactionCodes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTTransactionCode");
@@ -1097,14 +1215,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for saving Identity Types
+	 * @throws Exception 
 	 */
 	@Override
-	public void saveIdentityTypeDetails(List<EquationIdentityType> identityTypes){
+	public void saveIdentityTypeDetails(List<EquationIdentityType> identityTypes) throws Exception{
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTIdentityType");
@@ -1123,6 +1244,8 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -1130,9 +1253,10 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 	
 	/**
 	 *  Method for deleting abuser Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void deleteAbuserDetails() {
+	public void deleteAbuserDetails() throws Exception {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder(" Delete From EQNAbuserList " );
 		logger.debug("deleteSql: "+ deleteSql.toString());
@@ -1141,7 +1265,8 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		try{	
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -1157,6 +1282,49 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	/**
+	 *  Method for fetching Branch Codes
+	 */
+	@Override
+	public List<String> fetchExistingCustomers(Date valuedate) {
+		logger.debug("Entering");
+		Customer  customer = new Customer();
+		customer.setLastMntOn(new Timestamp(valuedate.getTime()));
+		StringBuilder selectSql = new StringBuilder(" Select Distinct AuditReference From AuditHeader ");
+		selectSql.append(" Where AuditModule='CustomerDetails' And AuditTranType='A'  And  LEN(AuditReference) <= 6  ");
+		selectSql.append(" And AuditDate>= :LastMntOn ");
+		logger.debug("selectSql: " + selectSql.toString());
+ 		logger.debug("Leaving");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.debug("Leaving");
+		try {
+			return this.auditNamedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	/**
+	 *  Method for fetching Branch Codes
+	 */
+	@Override
+	public List<String> fetchExistingOldCustomers() {
+		logger.debug("Entering");
+		Customer  customer = new Customer();
+		StringBuilder selectSql = new StringBuilder(" Select Distinct CustCIF From Customers ");
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		logger.debug("Leaving");
 		try {
 			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
@@ -1342,6 +1510,27 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 	}
 	
 	/**
+	 *  Method for fetching CustTypeCodes
+	 */
+	@Override
+	public List<String> fetchCustTypeCodes() {
+		logger.debug("Entering");
+		
+		CustomerType  customerType = new CustomerType();
+		StringBuilder selectSql = new StringBuilder("Select Distinct CustTypeCode from RMTCustTypes");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters,String.class);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	/**
 	 *  Method for fetching Address Types
 	 */
 	@Override
@@ -1433,34 +1622,31 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 	public void updateCustomerDetails(List<Customer> customerList){
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update Customers " );
-		updateSql.append("  Set CustCIF = (CASE WHEN ISNULL(:CustCIF,'')=''  THEN CustCIF ELSE :CustCIF END)," );
-		updateSql.append(" CustFName = (CASE WHEN ISNULL(:CustFName,'')=''  THEN CustFName ELSE :CustFName END)," );
-		updateSql.append(" CustIsClosed = (CASE WHEN ISNULL(:CustIsClosed,'')=''  THEN CustIsClosed ELSE :CustIsClosed END)," );
-		updateSql.append(" CustIsActive = (CASE WHEN ISNULL(:CustIsActive,'')=''  THEN CustIsActive ELSE :CustIsActive END)," );
-		updateSql.append(" CustDftBranch = (CASE WHEN ISNULL(:CustDftBranch,'')=''  THEN CustDftBranch ELSE :CustDftBranch END)," );
-		updateSql.append(" CustGroupID = (CASE WHEN :CustGroupID = 0  THEN CustGroupID ELSE :CustGroupID END)," );
-		updateSql.append(" CustParentCountry = (CASE WHEN ISNULL(:CustParentCountry,'')=''  THEN CustParentCountry ELSE :CustParentCountry END)," );
-		updateSql.append(" CustRiskCountry = (CASE WHEN ISNULL(:CustRiskCountry,'')=''  THEN CustRiskCountry ELSE :CustRiskCountry END)," );
-		updateSql.append(" CustSalutationCode = (CASE WHEN ISNULL(:CustSalutationCode,'')=''  THEN CustSalutationCode ELSE :CustSalutationCode END)," );
-		updateSql.append(" CustPassportNo = (CASE WHEN ISNULL(:CustPassportNo,'')=''  THEN CustPassportNo ELSE :CustPassportNo END)," );
-		updateSql.append(" CustPassportExpiry = (CASE WHEN ISNULL(:CustPassportExpiry,'')=''  THEN CustPassportExpiry ELSE :CustPassportExpiry END)," );
-		updateSql.append(" CustShrtName = (CASE WHEN ISNULL(:CustShrtName,'')=''  THEN CustShrtName ELSE :CustShrtName END), " );
-		updateSql.append(" CustFNameLclLng = (CASE WHEN ISNULL(:CustFNameLclLng,'')=''  THEN CustFNameLclLng ELSE :CustFNameLclLng END)," );
-		updateSql.append(" CustShrtNameLclLng = (CASE WHEN ISNULL(:CustShrtNameLclLng,'')=''  THEN CustShrtNameLclLng ELSE :CustShrtNameLclLng END)," );
-		updateSql.append(" CustRO1 = (CASE WHEN ISNULL(:CustRO1,'')=''  THEN CustRO1 ELSE :CustRO1 END)," );
-		updateSql.append(" CustIsBlocked = (CASE WHEN ISNULL(:CustIsBlocked,'')=''  THEN CustIsBlocked ELSE :CustIsBlocked END)," );
-		updateSql.append(" CustIsDecease = (CASE WHEN ISNULL(:CustIsDecease,'')=''  THEN CustIsDecease ELSE :CustIsDecease END)," );
-		updateSql.append(" CustIsTradeFinCust = (CASE WHEN ISNULL(:CustIsTradeFinCust,'')=''  THEN CustIsTradeFinCust ELSE :CustIsTradeFinCust END)," );
-		updateSql.append(" CustSector = (CASE WHEN ISNULL(:CustSector,'')='' or ISNULL(:CustSubSector,'')='' THEN CustSector ELSE :CustSector END)," );
-		updateSql.append(" CustSubSector = (CASE WHEN ISNULL(:CustSector,'')='' or ISNULL(:CustSubSector,'')=''  THEN CustSubSector ELSE :CustSubSector END)," );
-		updateSql.append(" CustMaritalSts = (CASE WHEN ISNULL(:CustMaritalSts,'')=''  THEN CustMaritalSts ELSE :CustMaritalSts END)," );
-		updateSql.append(" CustEmpSts = (CASE WHEN ISNULL(:CustEmpSts,'')=''  THEN CustEmpSts ELSE :CustEmpSts END)," );
-		updateSql.append(" CustBaseCcy = (CASE WHEN ISNULL(:CustBaseCcy,'')=''  THEN CustBaseCcy ELSE :CustBaseCcy END)," );
-		updateSql.append(" CustResdCountry = (CASE WHEN ISNULL(:CustResdCountry,'')=''  THEN CustResdCountry ELSE :CustResdCountry END), " );
-		updateSql.append(" CustClosedOn = (CASE WHEN ISNULL(:CustClosedOn,'')=''  THEN CustClosedOn ELSE :CustClosedOn END)," );
-		updateSql.append(" CustFirstBusinessDate = (CASE WHEN ISNULL(:CustFirstBusinessDate,'')=''  THEN CustFirstBusinessDate ELSE :CustFirstBusinessDate END)," );
-		updateSql.append(" CustRelation = (CASE WHEN ISNULL(:CustRelation,'')=''  THEN CustRelation ELSE :CustRelation  END)" );
-		updateSql.append(" Where CustID =:CustID");
+		updateSql.append("  Set  CustFName = :CustFName ," );
+		updateSql.append(" CustIsClosed = :CustIsClosed, CustIsActive = :CustIsActive, CustIsMinor = :CustIsMinor, CustDOB = :CustDOB, " );
+		updateSql.append(" CustGenderCode = :CustGenderCode, CustPOB = :CustPOB, CustCoreBank = :CustCoreBank, CustTotalIncome = :CustTotalIncome, " );
+		updateSql.append(" CustPassportNo = :CustPassportNo, CustPassportExpiry = :CustPassportExpiry, CustShrtName = :CustShrtName, " );
+		updateSql.append(" CustFNameLclLng = :CustFNameLclLng, CustShrtNameLclLng = :CustShrtNameLclLng, CustIsBlocked = :CustIsBlocked," );
+		updateSql.append(" CustIsDecease = :CustIsDecease, CustIsTradeFinCust = :CustIsTradeFinCust, CustClosedOn = :CustClosedOn," );
+		updateSql.append(" CustFirstBusinessDate = :CustFirstBusinessDate, CustRelation = :CustRelation," );
+		updateSql.append(" CustDftBranch = (CASE WHEN :CustDftBranch=''  THEN CustDftBranch ELSE :CustDftBranch END)," );
+		updateSql.append(" CustGroupID = (CASE WHEN :CustGroupID = -1  THEN CustGroupID ELSE :CustGroupID END)," );
+		updateSql.append(" CustTypeCode = (CASE WHEN :CustTypeCode=''  THEN CustTypeCode ELSE :CustTypeCode END)," );
+		updateSql.append(" CustCtgCode = (CASE WHEN :CustCtgCode=''  THEN CustCtgCode ELSE :CustCtgCode END)," );
+		updateSql.append(" CustCOB = (CASE WHEN :CustCOB='' THEN CustCOB ELSE :CustCOB END)," );
+		updateSql.append(" CustParentCountry = (CASE WHEN :CustParentCountry='' THEN CustParentCountry ELSE :CustParentCountry END)," );
+		updateSql.append(" CustRiskCountry = (CASE WHEN :CustRiskCountry=''  THEN CustRiskCountry ELSE :CustRiskCountry END)," );
+		updateSql.append(" CustSalutationCode = (CASE WHEN :CustSalutationCode=''  THEN CustSalutationCode ELSE :CustSalutationCode END)," );
+		updateSql.append(" CustRO1 = (CASE WHEN :CustRO1=''  THEN CustRO1 ELSE :CustRO1 END)," );
+		 // commented below CustSector and CustSubSector due to miss match of Subsector codes in Equation and PFF 
+		//updateSql.append(" CustSector = (CASE WHEN :CustSector='' THEN CustSector ELSE :CustSector END)," );
+		//updateSql.append(" CustSubSector = (CASE WHEN :CustSubSector=''  THEN CustSubSector ELSE :CustSubSector END)," );
+		updateSql.append(" CustMaritalSts = (CASE WHEN :CustMaritalSts=''  THEN CustMaritalSts ELSE :CustMaritalSts END)," );
+		updateSql.append(" CustEmpSts = (CASE WHEN :CustEmpSts=''  THEN CustEmpSts ELSE :CustEmpSts END)," );
+		updateSql.append(" CustBaseCcy = (CASE WHEN :CustBaseCcy=''  THEN CustBaseCcy ELSE :CustBaseCcy END)," );
+		updateSql.append(" CustResdCountry = (CASE WHEN :CustResdCountry=''  THEN CustResdCountry ELSE :CustResdCountry END),  " );
+		updateSql.append(" CustNationality = (CASE WHEN :CustNationality=''  THEN CustNationality ELSE :CustNationality END)  " );
+		updateSql.append(" Where CustID = :CustID");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerList.toArray());
 
@@ -1474,17 +1660,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 	
 	/**
 	 *  Method for updating Customer Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateAddressDetails(List<CustomerAddres> customerList){
+	public void updateAddressDetails(List<CustomerAddres> customerList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustomerAddresses ");
-		updateSql.append(" Set CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
+		updateSql.append(" Set CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr, CustPOBox = :CustPOBox," );
 		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1," );
-		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustAddrZIP = :CustAddrZIP," );
-		updateSql.append(" CustAddrPhone = :CustAddrPhone");
+		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustAddrZIP = :CustAddrZIP, CustAddrPhone = :CustAddrPhone " );
 		updateSql.append(" Where CustID =:CustID AND CustAddrType =:custAddrType");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerList.toArray());
@@ -1494,14 +1680,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Customer Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updatePhoneNumberDetails(List<CustomerPhoneNumber> customerList){
+	public void updatePhoneNumberDetails(List<CustomerPhoneNumber> customerList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder();
@@ -1517,14 +1706,17 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
 	/**
 	 *  Method for updating Customer Details
+	 * @throws Exception 
 	 */
 	@Override
-	public void updateEMailDetails(List<CustomerEMail> emailList){
+	public void updateEMailDetails(List<CustomerEMail> emailList) throws Exception{
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder(" Update CustomerEMails " );
@@ -1538,6 +1730,8 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		   this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		}catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -1690,8 +1884,9 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		logger.debug("Entering");
 		
 		FinanceType  financeType = new FinanceType();
-		StringBuilder selectSql = new StringBuilder("Select * From RMTFinanceTypes");
-
+		StringBuilder selectSql = new StringBuilder("SELECT  FinType, FinCategory, FinDivision,");
+		selectSql.append(" FinCcy, FinAcType, FinAEAmzNorm  From  RMTFinanceTypes");
+		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
@@ -1714,7 +1909,10 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		
 		TransactionEntry  transactionEntry = new TransactionEntry();
 		transactionEntry.setAccountSetid(accountSetID);
-		StringBuilder selectSql = new StringBuilder("Select * From RMTTransactionEntry Where AccountSetid = :AccountSetid and Debitcredit='C'");
+		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc," );
+		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType, AccountBranch, AccountSubHeadRule,");
+		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule, FeeCode, ChargeType, EntryByInvestment,  ");
+		selectSql.append(" OpenNewFinAc  From RMTTransactionEntry Where AccountSetid = :AccountSetid and Debitcredit='C' ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
@@ -1753,5 +1951,192 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO {
 		}
     }
 	
+	
+	/**
+	 *  Method for fetching Address Types
+	 */
+	@Override
+	public List<CustomerAddres> fetchExisitingCustomerAddress() {
+		logger.debug("Entering");
+		
+		CustomerAddres  customerAddres = new CustomerAddres();
+		StringBuilder selectSql = new StringBuilder("Select CustID,CustAddrType From CustomerAddresses");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
+		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	/**
+	 *  Method for fetching CustomerPhoneNumbers
+	 */
+	@Override
+	public List<CustomerPhoneNumber> fetchExisitingCustPhoneNumbers() {
+		logger.debug("Entering");
+		
+		CustomerPhoneNumber  customerPhoneNumber = new CustomerPhoneNumber();
+		StringBuilder selectSql = new StringBuilder("Select PhoneCustID,PhoneTypeCode From CustomerPhoneNumbers");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	/**
+	 *  Method for fetching CustomerEMails
+	 */
+	@Override
+	public List<CustomerEMail> fetchExisitingCustEmails() {
+		logger.debug("Entering");
+		
+		CustomerEMail  customerEMail = new CustomerEMail();
+		StringBuilder selectSql = new StringBuilder("Select CustID,CustEMailTypeCode From CustomerEMails");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
+		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		}catch (DataAccessException e) {
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+     ////++++++++++++++++++ Single Customer Download  +++++++++++++++++++//
+	
+	@Override
+	public void saveCustomerAddresses(List<CustomerAddres> customerAddres) throws Exception {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append("Insert Into CustomerAddresses");
+		insertSql.append(" (CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet," );
+		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCountry, CustAddrProvince," );
+		insertSql.append(" CustAddrCity, CustAddrZIP, CustAddrPhone,CustAddrFrom,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId," );
+		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CustID, :CustAddrType, :CustAddrHNbr, :CustFlatNbr, :CustAddrStreet,");
+		insertSql.append(" :CustAddrLine1, :CustAddrLine2, :CustPOBox, :CustAddrCountry, :CustAddrProvince,");
+		insertSql.append(" :CustAddrCity, :CustAddrZIP, :CustAddrPhone, :CustAddrFrom,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerAddres.toArray());
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw e;
+		}
+	}
+
+	
+	@Override
+	public void saveCustomerPhoneNumbers(List<CustomerPhoneNumber> customerPhoneNumbers) throws Exception {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into CustomerPhoneNumbers");
+		insertSql.append(" (PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" Values(:PhoneCustID, :PhoneTypeCode, :PhoneCountryCode,:PhoneAreaCode,:PhoneNumber,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerPhoneNumbers.toArray());
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	@Override
+	public void saveCustomerEmails(List<CustomerEMail> customerEMails) throws Exception {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into CustomerEMails");
+		insertSql.append(" (CustID, CustEMailTypeCode, CustEMailPriority, CustEMail," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:CustID, :CustEMailTypeCode, :CustEMailPriority, :CustEMail,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerEMails.toArray());
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			throw e;
+		}
+	}
+	
+	@Override
+	public void saveRatingDetails(List<CustomerRating> customerRatings) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into CustomerRatings" );
+		insertSql.append(" (CustID, CustRatingType, CustRatingCode, CustRating, ValueType," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" Values(:CustID, :CustRatingType, :CustRatingCode, :CustRating, :ValueType, " );
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerRatings.toArray());
+		logger.debug("Leaving");
+		try{	
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void updateObjectDetails(String updateQuery,Object object) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		logger.debug("updateSql: "+ updateQuery.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(object);
+		recordCount = this.namedParameterJdbcTemplate.update(updateQuery, beanParameters);
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :"+recordCount);
+		}
+		logger.debug("Leaving");
+	}
 	
 }

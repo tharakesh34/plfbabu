@@ -22,11 +22,14 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
+import com.pennant.coreinterface.model.EquationMasterMissedDetail;
 import com.pennant.coreinterface.service.CustomerDataProcess;
+import com.pennant.equation.dao.CoreInterfaceDAO;
 
 public class PFFCustomerPreparation {
 	private static final String DEFAULT_CCY 		 = "BHD";
@@ -41,6 +44,10 @@ public class PFFCustomerPreparation {
 
 	private CustomerDataProcess customerDataProcess;
 	private CustomerDetailsService customerDetailsService;
+	private CoreInterfaceDAO coreInterfaceDAO;
+	
+	List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+	
 	private final static Logger logger = Logger.getLogger(PFFCustomerPreparation.class);
 
 	public CustomerDetails getCustomerByInterface(String custCIF, String custLoc) throws CustomerNotFoundException {
@@ -51,8 +58,31 @@ public class PFFCustomerPreparation {
 		CustomerInterfaceData customerInterfaceData = getCustomerDataProcess().getCustomerFullDetails(custCIF, custLoc);
 		logger.debug("After Customer Data Process Call ");
 		if (customerInterfaceData != null) {
+			CustomerDetails cDetails = processCustomerDetails(customerInterfaceData);
+			if(cDetails != null){
+				setCustomerStatus(cDetails);
+			}
+			return cDetails;
+		}
+		}catch (Exception e) {
+			logger.debug(e);
+			throw new CustomerNotFoundException(e.getMessage());
+		}
+		return null;
+	}
 
+	
+	/**Processing Customer Data and its child data 
+	 * @param customerInterfaceData
+	 * @return
+	 */
+	public CustomerDetails processCustomerDetails(CustomerInterfaceData customerInterfaceData){
+		logger.debug("Entering");
+		if (customerInterfaceData != null) {
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setNewRecord(true);
 			//+++++++++++++++ Customer ++++++++++++++++
+			String custCIF = customerInterfaceData.getCustCIF();
 			Long custid=Long.parseLong(custCIF);
 			Customer customer = new Customer();
 			customer.setNewRecord(true);
@@ -153,7 +183,7 @@ public class PFFCustomerPreparation {
 				customerAddres.setCustAddrStreet(customerInterfaceData.getCustAddrStreet());
 				customerAddres.setCustAddrLine1(customerInterfaceData.getCustAddrLine1());
 				customerAddres.setCustAddrLine2(customerInterfaceData.getCustAddrLine2());
-				//Length Mismatch from Equation//customerAddres.setCustPOBox(customerInterfaceData.getCustPOBox());
+				customerAddres.setCustPOBox(customerInterfaceData.getCustPOBox());
 				//Length Mismatch from Equation//customerAddres.setCustAddrCity(StringUtils.trimToNull(customerInterfaceData.getCustAddrCity()));
 				//Length Mismatch from Equation//customerAddres.setLovDescCustAddrCityName(customerInterfaceData.getCustAddrCity());
 				//Length Mismatch from Equation//customerAddres.setCustAddrProvince(StringUtils.trimToNull(customerInterfaceData.getCustAddrProvince()));
@@ -249,7 +279,6 @@ public class PFFCustomerPreparation {
 			//		<!-- customer ratings-->	
 			
 			customerDetails.setRatingsList(new ArrayList<CustomerRating>());
-			List<CustomerRating> customerRatings = new ArrayList<CustomerRating>();
 			for (com.pennant.coreinterface.model.CustomerInterfaceData.CustomerRating custRating : customerInterfaceData.getCustomerRatinglist()) {
 				CustomerRating customerRating = new CustomerRating();
 				customerRating.setRecordType(PennantConstants.RCD_ADD);
@@ -259,42 +288,35 @@ public class PFFCustomerPreparation {
 				customerRating.setLovDescCustRatingTypeName(custRating.getCustRatingType());
 				customerRating.setCustRatingCode(custRating.getCustLongRate());
 				customerRating.setCustRating(custRating.getCustShortRate());
-				customerRatings.add(customerRating);
+				customerDetails.getRatingsList().add(customerRating);
 			}
-			customerDetails.getRatingsList().addAll(customerRatings);
 
 			//++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			
 			//		<!-- customer Documents-->	
 			
 			customerDetails.setCustomerDocumentsList(new ArrayList<CustomerDocument>());
-			List<CustomerDocument> customerDocuments = new ArrayList<CustomerDocument>();
-			for (com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity custRating : customerInterfaceData.getCustomerIdentitylist()) {
+			for (com.pennant.coreinterface.model.CustomerInterfaceData.CustomerIdentity custIdentity : customerInterfaceData.getCustomerIdentitylist()) {
 				CustomerDocument document = new CustomerDocument();
 				document.setRecordType(PennantConstants.RCD_ADD);
 				document.setCustID(custid);
 				document.setLovDescCustCIF(custCIF);
-				document.setCustDocCategory(custRating.getCustIDType());
-				document.setCustDocType(custRating.getCustIDType());
-				document.setLovDescCustDocCategory(custRating.getCustIDType());
-				document.setCustDocTitle(custRating.getCustIDNumber());
+				document.setCustDocCategory(custIdentity.getCustIDType());
+				document.setCustDocType(custIdentity.getCustIDType());
+				document.setLovDescCustDocCategory(custIdentity.getCustIDType());
+				document.setCustDocTitle(custIdentity.getCustIDNumber());
 				//Length Mismatch from Equation//document.setCustDocIssuedCountry(custRating.getCustIDCountry());
 				//Length Mismatch from Equation//document.setLovDescCustDocIssuedCountry(custRating.getCustIDCountry());
-				document.setCustDocIssuedOn(formatCYMDDate(custRating.getCustIDIssueDate().toString()));
-				document.setCustDocExpDate(formatCYMDDate(custRating.getCustIDExpDate().toString()));
-				customerDocuments.add(document);
+				document.setCustDocIssuedOn(formatCYMDDate(custIdentity.getCustIDIssueDate().toString()));
+				document.setCustDocExpDate(formatCYMDDate(custIdentity.getCustIDExpDate().toString()));
+				customerDetails.getCustomerDocumentsList().add(document);
 			}
-			customerDetails.getCustomerDocumentsList().addAll(customerDocuments);
-			
-			//++++++++++++++++++++++++++++++++++++++++++++++++++++++
-			
 			
 			//++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			
 			//		<!-- ShareHolder Details-->	
 			
 			customerDetails.setCustomerDirectorList(new ArrayList<DirectorDetail>());
-			List<DirectorDetail> directorDetailList = new ArrayList<DirectorDetail>();
 			for (com.pennant.coreinterface.model.CustomerInterfaceData.ShareHolder shareHolder : customerInterfaceData.getShareHolderlist()) {
 				DirectorDetail directorDetail = getCustomerDetailsService().getNewDirectorDetail();
 				directorDetail.setRecordType(PennantConstants.RCD_ADD);
@@ -312,10 +334,8 @@ public class PFFCustomerPreparation {
 				directorDetail.setCustAddrCountry(shareHolder.getShareHolderRisk());
 				directorDetail.setLovDescCustAddrCountryName(shareHolder.getShareHolderRisk());
 				directorDetail.setDob(formatCYMDDate(shareHolder.getShareHolderDOB().toString()));
-				directorDetailList.add(directorDetail);
+				customerDetails.getCustomerDirectorList().add(directorDetail);
 			}
-			customerDetails.getCustomerDirectorList().addAll(directorDetailList);
-			
 			
 			//<!-- Employee Details-->
 			
@@ -349,18 +369,256 @@ public class PFFCustomerPreparation {
 			//++++++++++++++++++++++++++++++++
 		
 			customerDetails.setEmploymentDetailsList(new ArrayList<CustomerEmploymentDetail>());
-			setCustomerStatus(customerDetails);
+			logger.debug("Leaving");
 			return customerDetails;
 		}
-		}catch (Exception e) {
-			logger.debug(e);
-			throw new CustomerNotFoundException(e.getMessage());
-		}
+		logger.debug("Leaving");
 		return null;
+	}
+	
+	
+	/**This method will validate whether the customer fields exists in their respective 
+	 * master tables or not
+	 * @param customerDetails
+	 * @param dateValueDate
+	 * @return
+	 */
+	public List<CustomerDetails> validateMasterFieldDetails(List<CustomerDetails> customerDetails,Date dateValueDate){
+		logger.debug("Entering");
+		
+		masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+		
+		List<CustomerDetails> saveCustomerDetailsList = new ArrayList<CustomerDetails>();
+		CustomerDetails saveCustomerDetail;
+	    EquationMasterMissedDetail masterMissedDetail;
+	  
+	    List<Long> exisitingCustomerList = getCoreInterfaceDAO().fetchCustomerIdDetails();
+	    
+	    //Fetching customer related Master details
+	    List<String> branchCodeMasterList = fetchBranchCodes();
+	    List<Long> custGrpCodeMasterList = fetchCustomerGroupCodes();
+		List<String> countryCodeMasterList = fetchCountryCodes();
+		List<String> salutationCodeMasterList = fetchSalutationCodes();
+		List<String> rShipOfficerCodeMasterList = fetchRelationshipOfficerCodes();
+		List<SubSector> subSectorCodeMasterList = fetchSubSectorCodes();
+		List<String> maritalStatusCodeMasterList = fetchMaritalStatusCodes();
+		List<String> custEmpStsCodeMasterList = fetchEmpStsCodes();
+		List<String> currencyCodeMasterList = fetchCurrencyCodes();
+		List<String> custTypeCodeMasterList = fetchCustTypeCodes();
+		
+		List<String> addressTypeMasterList = getCoreInterfaceDAO().fetchAddressTypes();
+		List<String> emailTypeMasterList = getCoreInterfaceDAO().fetchEMailTypes();
+		
+		for (CustomerDetails cDetails : customerDetails) {
+			saveCustomerDetail = new CustomerDetails();
+			saveCustomerDetail.setCustomer(cDetails.getCustomer());
+			saveCustomerDetail.setCustomerPhoneNumList(cDetails.getCustomerPhoneNumList());
+			Customer customer = cDetails.getCustomer();
+			if(customer != null){
+				masterMissedDetail = new EquationMasterMissedDetail();
+				masterMissedDetail.setModule("Customers");
+				masterMissedDetail.setLastMntOn(dateValueDate);
+				if(customer.getCustDftBranch().equals("")){
+					customer.setCustDftBranch(null);
+				}else if(!valueExistInMaster(customer.getCustDftBranch(),branchCodeMasterList)){
+					masterMissedDetail.setFieldName("CustDftBranch");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustDftBranch()+"' Value Does Not Exist In Master RMTBranches Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustDftBranch(""); //Making it empty to ignore the empty field updates in query while updating the record 
+				}
+				if(customer.getCustTypeCode().equals("")){
+					customer.setCustTypeCode(null);
+				}else if(!valueExistInMaster(customer.getCustTypeCode(),custTypeCodeMasterList)){
+					masterMissedDetail.setFieldName("CustTypeCode");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustTypeCode()+"' Value Does Not Exist In Master RMTCustTypes Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustTypeCode(""); 
+				}
+				if(customer.getCustGroupID() != 0 && !valueExistInMaster(customer.getCustGroupID(),custGrpCodeMasterList)){
+					masterMissedDetail.setFieldName("CustGroupID");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustGroupID()+"' Value Does Not Exist In Master CustomerGroups Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustGroupID(-1);
+				}
+				if(customer.getCustCOB().equals("")){
+					customer.setCustCOB(null); 
+				}else if(!valueExistInMaster(customer.getCustCOB(),countryCodeMasterList)){
+					masterMissedDetail.setFieldName("CustCOB");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustCOB()+"' Value Does Not Exist In Master BMTCountries Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustCOB("");
+				}
+				if(customer.getCustParentCountry().equals("")){
+					customer.setCustParentCountry(null);
+				}else if(!valueExistInMaster(customer.getCustParentCountry(),countryCodeMasterList)){
+					masterMissedDetail.setFieldName("CustParentCountry");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustParentCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustParentCountry("");
+				}
+				if(customer.getCustRiskCountry().equals("")){
+					customer.setCustRiskCountry(null);
+				}else if(!valueExistInMaster(customer.getCustRiskCountry(),countryCodeMasterList)){
+					masterMissedDetail.setFieldName("CustRiskCountry");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRiskCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustRiskCountry("");
+				}
+				if(customer.getCustResdCountry().equals("")){
+					customer.setCustResdCountry(null);
+				}else if(!valueExistInMaster(customer.getCustResdCountry(),countryCodeMasterList)){
+					masterMissedDetail.setFieldName("CustResdCountry");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustResdCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustResdCountry("");
+				}
+				if(customer.getCustNationality().equals("")){
+					customer.setCustNationality(null);
+				}else if(!valueExistInMaster(customer.getCustNationality(),countryCodeMasterList)){
+					masterMissedDetail.setFieldName("CustNationality");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustNationality()+"' Value Does Not Exist In Master BMTCountries Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustNationality("");
+				}
+				if(customer.getCustSalutationCode().equals("")){
+					customer.setCustSalutationCode(null);
+				}else if(!valueExistInMaster(customer.getCustSalutationCode(),salutationCodeMasterList)){
+					masterMissedDetail.setFieldName("CustSalutationCode");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustSalutationCode()+"' Value Does Not Exist In Master BMTSalutations Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustSalutationCode("");
+				}
+				if(customer.getCustRO1().equals("")){
+					customer.setCustRO1(null);
+				}else if(!valueExistInMaster(customer.getCustRO1(),rShipOfficerCodeMasterList)){
+					masterMissedDetail.setFieldName("CustRO1");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRO1()+"' Value Does Not Exist In Master RelationshipOfficers Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustRO1("");
+				}
+				if(customer.getCustSector().equals("")  ||
+						customer.getCustSubSector().equals("")){
+					customer.setCustSector(null);
+					customer.setCustSubSector(null);
+				}else if(!valueExistInMaster(customer,subSectorCodeMasterList)){
+					masterMissedDetail.setFieldName("CustSector/CustSubSector");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , CustSector:'"+customer.getCustSector()+
+							"' and CustSubSector:'"+customer.getCustSubSector()+"' Values Does Not Exist In Master BMTSubSectors Table ");
+					masterValueMissedDetails.add(masterMissedDetail);
+					customer.setCustSector("");
+					customer.setCustSubSector("");
+				}
+				if(customer.getCustMaritalSts().equals("")){
+					customer.setCustMaritalSts(null);
+				}else if(!valueExistInMaster(customer.getCustMaritalSts(),maritalStatusCodeMasterList)){
+					masterMissedDetail.setFieldName("CustMaritalSts");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustMaritalSts()+"' Value Does Not Exist In Master BMTMaritalStatusCodes Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustMaritalSts("");
+				}
+				if(customer.getCustEmpSts().equals("")){
+					customer.setCustEmpSts(null);
+				}else if(!valueExistInMaster(customer.getCustEmpSts(),custEmpStsCodeMasterList)){
+					masterMissedDetail.setFieldName("CustEmpSts");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustEmpSts()+"' Value Does Not Exist In Master BMTEmpStsCodes Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustEmpSts("");
+				}
+				if(customer.getCustBaseCcy().equals("")){
+					customer.setCustBaseCcy(null);
+				}else if(!valueExistInMaster(customer.getCustBaseCcy(),currencyCodeMasterList)){
+					masterMissedDetail.setFieldName("CustBaseCcy");
+					masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustBaseCcy()+"' Value Does Not Exist In Master RMTCurrencies Table ");
+					masterValueMissedDetails.add(masterMissedDetail);	
+					customer.setCustBaseCcy("");
+				}
+			}
+			
+			if(cDetails.getAddressList() != null && !cDetails.getAddressList().isEmpty()){
+				List<CustomerAddres> saveCustomerAddressList = new ArrayList<CustomerAddres>();
+				for (CustomerAddres customerAddres : cDetails.getAddressList()) {
+					if(!valueExistInMaster(customerAddres.getCustID(),exisitingCustomerList)){
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("AddressDetails");
+						masterMissedDetail.setLastMntOn(dateValueDate);
+						masterMissedDetail.setFieldName("CustID");
+						masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" Value Does Not Exist In Customers Table ");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}else if(!valueExistInMaster(customerAddres.getCustAddrType(),addressTypeMasterList)){
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("AddressDetails");
+						masterMissedDetail.setLastMntOn(dateValueDate);
+						masterMissedDetail.setFieldName("CustAddrType");
+						masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customerAddres.getCustAddrType()+"' Value Does Not Exist In Master BMTAddressTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}else{
+						saveCustomerAddressList.add(customerAddres);
+					}
+				}
+				saveCustomerDetail.setAddressList(saveCustomerAddressList);
+			}
+			
+			if(cDetails.getCustomerEMailList() != null && !cDetails.getCustomerEMailList().isEmpty()){
+				List<CustomerEMail> saveCustomerEMailList = new ArrayList<CustomerEMail>();
+				for (CustomerEMail customerEMail : cDetails.getCustomerEMailList()) {
+					if(!valueExistInMaster(customerEMail.getCustID(),exisitingCustomerList)){
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("EmailDetails");
+						masterMissedDetail.setLastMntOn(dateValueDate);
+						masterMissedDetail.setFieldName("CustID");
+						masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" Value Does Not Exist In Customers Table ");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}else if(!valueExistInMaster(customerEMail.getCustEMailTypeCode(),emailTypeMasterList)){
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("EmailDetails");
+						masterMissedDetail.setLastMntOn(dateValueDate);
+						masterMissedDetail.setFieldName("CustEMailTypeCode");
+						masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customerEMail.getCustEMailTypeCode()+"' Value Does Not Exist In Master BMTEMailTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);
+					}else{
+						saveCustomerEMailList.add(customerEMail);
+					}
+				}
+				saveCustomerDetail.setCustomerEMailList(saveCustomerEMailList);
+			}
+			saveCustomerDetailsList.add(saveCustomerDetail);
+        }
+		logger.debug("Leaving");
+		return saveCustomerDetailsList;
+	}
+	
+	
+	private boolean valueExistInMaster(String field,List<String> list){
+		for (String value : list) {
+	        if(StringUtils.trimToEmpty(field).equalsIgnoreCase(value.toString())){
+	        	return true;
+	        }
+        }
+		return false;
+	}
+	
+	private boolean valueExistInMaster(long field,List<Long> list){
+		for (Long value : list) {
+	        if(field == value){
+	        	return true;
+	        }
+        }
+		return false;
+	}
+	
+
+	private boolean valueExistInMaster(Customer customer ,List<SubSector> list){
+		for (SubSector subSector : list) {
+	        if(StringUtils.trimToEmpty(customer.getCustSector()).equalsIgnoreCase(subSector.getSectorCode()) && 
+	        		StringUtils.trimToEmpty(customer.getCustSubSector()).equalsIgnoreCase(subSector.getSubSectorCode())){
+	        	return true;
+	        }
+        }
+		return false;
 	}
 
 	private boolean getBoolean(String string) {
-		if (StringUtils.trimToEmpty(string).equals("Y")) {
+		if (StringUtils.trimToEmpty(string).equalsIgnoreCase("Y") || StringUtils.trimToEmpty(string).equals("1")) {
 			return true;
 		} else {
 			return false;
@@ -527,11 +785,49 @@ public class PFFCustomerPreparation {
 			logger.debug("Customer Status by Min Due Days " + e);
 		}
 	}
-
+	
+	public List<String> fetchBranchCodes() {
+    	return  getCoreInterfaceDAO().fetchBranchCodes();
+    }
+	public List<Long> fetchCustomerGroupCodes() {
+    	return  getCoreInterfaceDAO().fetchCustomerGroupCodes();
+    }
+	public List<String> fetchCountryCodes() {
+    	return  getCoreInterfaceDAO().fetchCountryCodes();
+    }
+	public List<String> fetchSalutationCodes() {
+    	return  getCoreInterfaceDAO().fetchSalutationCodes();
+    }
+	public List<String> fetchRelationshipOfficerCodes() {
+    	return  getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
+    }
+	public List<String> fetchMaritalStatusCodes() {
+    	return  getCoreInterfaceDAO().fetchMaritalStatusCodes();
+    }
+	public List<SubSector> fetchSubSectorCodes() {
+    	return  getCoreInterfaceDAO().fetchSubSectorCodes();
+    }
+	public List<String> fetchEmpStsCodes() {
+    	return  getCoreInterfaceDAO().fetchEmpStsCodes();
+    }
+	public List<String> fetchCurrencyCodes() {
+    	return  getCoreInterfaceDAO().fetchCurrencyCodes();
+    }
+	public List<String> fetchCustTypeCodes() {
+    	return  getCoreInterfaceDAO().fetchCustTypeCodes();
+    }
+	
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
+	public List<EquationMasterMissedDetail> getMasterMissedDetails(){
+		return this.masterValueMissedDetails;
+	}
+	
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 	    this.customerDetailsService = customerDetailsService;
     }
-
 	public CustomerDetailsService getCustomerDetailsService() {
 	    return customerDetailsService;
     }
@@ -543,4 +839,11 @@ public class PFFCustomerPreparation {
 		this.customerDataProcess = customerDataProcess;
 	}
 
+	public CoreInterfaceDAO getCoreInterfaceDAO() {
+		return coreInterfaceDAO;
+	}
+	public void setCoreInterfaceDAO(CoreInterfaceDAO coreInterfaceDAO) {
+		this.coreInterfaceDAO = coreInterfaceDAO;
+	}
+	
 }

@@ -647,4 +647,22 @@ public class PennantConstants {
 
 	public static final String ASSIGNMETHOD = "Auto";
 
+	//Daily Download Details
+	public static final String   DAILYDOWNLOAD_CURRENCY = "CCY";
+	public static final String   DAILYDOWNLOAD_RELATIONSHIPOFFICER = "ROF";
+	public static final String   DAILYDOWNLOAD_CUSTTYPE = "CTY";
+	public static final String   DAILYDOWNLOAD_DEPARMENT = "DPT";
+	public static final String   DAILYDOWNLOAD_CUSTGROUP = "CUG";
+	public static final String   DAILYDOWNLOAD_ACCOUNTTYPE = "ATY";
+	public static final String   DAILYDOWNLOAD_CUSTRATING = "CUR";
+	public static final String   DAILYDOWNLOAD_ABUSERS = "ABS";
+	public static final String   DAILYDOWNLOAD_CUSTOMERS = "CUS";
+	public static final String   DAILYDOWNLOAD_COUNTRY = "COU";
+	public static final String   DAILYDOWNLOAD_CUSTSTATUSCODES = "CSC";
+	public static final String   DAILYDOWNLOAD_INDUSTRY = "IND";
+	public static final String   DAILYDOWNLOAD_BRANCH = "BRN";
+	public static final String   DAILYDOWNLOAD_SYSINTACCOUNTDEF = "SIA";
+	public static final String   DAILYDOWNLOAD_TRANSACTIONCODE = "TXC";
+	public static final String   DAILYDOWNLOAD_IDENTITYTYPE = "IDT";
+
 }

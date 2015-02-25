@@ -1153,23 +1153,23 @@ public class PennantStaticListUtil {
 	
 	public static List<ValueLabel> getImportTablesList(){
 		importTablesList = new ArrayList<ValueLabel>();
-		importTablesList.add(new ValueLabel("Currencies", Labels.getLabel("label_ImportData_Currencies.value")));
-		importTablesList.add(new ValueLabel("RelationshipOfficer", Labels.getLabel("label_ImportData_RelationshipOfficers.value")));
-		importTablesList.add(new ValueLabel("CustomerType", Labels.getLabel("label_ImportData_CustomerType.value")));
-		importTablesList.add(new ValueLabel("Deparment", Labels.getLabel("label_ImportData_Department.value")));
-		importTablesList.add(new ValueLabel("CustomerGroup", Labels.getLabel("label_ImportData_CustomerGroup.value")));
-		//importTablesList.add(new ValueLabel("RMTAccountTypes", Labels.getLabel("label_ImportData_AccountType.value")));
-		//importTablesList.add(new ValueLabel("CustomerRatings", Labels.getLabel("label_ImportData_CustomerRating.value")));
-		//importTablesList.add(new ValueLabel("EQNAbuserList", Labels.getLabel("label_ImportData_AbuserDetails.value")));
-		//importTablesList.add(new ValueLabel("Customers", Labels.getLabel("label_ImportData_CustomerDetails.value")));
-		//importTablesList.add(new ValueLabel("BMTCountries", Labels.getLabel("label_ImportData_CountryDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CURRENCY, Labels.getLabel("label_ImportData_Currencies.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_RELATIONSHIPOFFICER, Labels.getLabel("label_ImportData_RelationshipOfficers.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CUSTTYPE, Labels.getLabel("label_ImportData_CustomerType.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_DEPARMENT, Labels.getLabel("label_ImportData_Department.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CUSTGROUP, Labels.getLabel("label_ImportData_CustomerGroup.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_ACCOUNTTYPE, Labels.getLabel("label_ImportData_AccountType.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_ABUSERS, Labels.getLabel("label_ImportData_AbuserDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CUSTOMERS, Labels.getLabel("label_ImportData_CustomerDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CUSTRATING, Labels.getLabel("label_ImportData_CustomerRating.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_COUNTRY, Labels.getLabel("label_ImportData_CountryDetails.value")));
+		//Below BMTCustStatusCodes download commented because of improper data from core system(duedays are 0 for all statuscodes named with 'M') 
 		//importTablesList.add(new ValueLabel("BMTCustStatusCodes", Labels.getLabel("label_ImportData_CustStatusCodeDetails.value")));
-		//importTablesList.add(new ValueLabel("BMTIndustries", Labels.getLabel("label_ImportData_IndustryDetails.value")));
-		//importTablesList.add(new ValueLabel("RMTBranches", Labels.getLabel("label_ImportData_BranchDetails.value")));
-		//importTablesList.add(new ValueLabel("SystemInternalAccountDef", Labels.getLabel("label_ImportData_InternalAccDetails.value")));
-		//importTablesList.add(new ValueLabel("BMTTransactionCode", Labels.getLabel("label_ImportData_TransactionCodes.value")));
-		//importTablesList.add(new ValueLabel("BMTIdentityType", Labels.getLabel("label_ImportData_IdentityTypes.value")));
-		
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_INDUSTRY, Labels.getLabel("label_ImportData_IndustryDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_BRANCH, Labels.getLabel("label_ImportData_BranchDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_SYSINTACCOUNTDEF, Labels.getLabel("label_ImportData_InternalAccDetails.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_TRANSACTIONCODE, Labels.getLabel("label_ImportData_TransactionCodes.value")));
+		importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_IDENTITYTYPE, Labels.getLabel("label_ImportData_IdentityTypes.value")));
 		return importTablesList;
 	}
 	

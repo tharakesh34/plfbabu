@@ -91,6 +91,7 @@
 		<menuItem id="menu_Item_CreditApplicationReviewMaintinence" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewMaintinenceList.zul" rightName="menuItem_CreditApplicationReviewMaintinence"/>
 		<menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul"  rightName="menuItem_CustomerMasters_ProspectCustomer" />								
 		<menuItem id="menu_Item_CustomerGroup" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupList.zul"  rightName="menuItem_CustomerMasters_CustomerGroup"/>
+		<menuItem id="menu_Item_UpdateCoreCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/UpdateCoreCustomer/UpdateCoreCustomerDialog.zul"  rightName="menuItem_CustomerMasters_UpdateCoreCustomer"/>
 		
 <!-- 		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
  -->		
@@ -326,6 +327,7 @@
 	<menu id="menu_Category_Reports" rightName="menuCat_Reports" >
 		<menuItem id="menu_Item_AuditReports" zulNavigation="/WEB-INF/pages/Reports/auditReport.zul"  rightName="menuItem_Reports_AuditReports"/>
 		<menuItem id="menu_Item_Postings" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_Reports_Postings"/>
+		<menuItem id="menu_Item_DataDownloadExceptions" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_BatchAdmin_BatchAdmin"/>
 		<menuItem id="menu_Item_ReportList" zulNavigation="/WEB-INF/pages/Reports/ReportList/ReportListList.zul"  rightName="menuItem_Reports_ReportList"/>
 		<menuItem id="menu_Item_Install_Due_Today" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Reports_DueToDayReports" />
 		<menuItem id="menu_Item_Finances_Opened_Today" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Reports_OpenToDayReports" />

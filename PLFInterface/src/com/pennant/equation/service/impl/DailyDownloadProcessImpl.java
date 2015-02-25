@@ -806,6 +806,35 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 		return abuserList;
 	}
 	
+	@Override
+	public  void processCustomerNumbers(List<String> existingCustomers) throws Exception{
+		logger.debug("Entering");
+		AS400 as400 = null;
+		ProgramCallDocument pcmlDoc = null;
+		String pcml = "PTPFFCUSR"; 		            // Upload Currency Details
+		int[] indices = new int[1]; 	    // Indices for access array value
+		try {
+			as400 = this.hostConnection.getConnection();
+			pcmlDoc = new ProgramCallDocument(as400, pcml);
+			pcmlDoc.setValue(pcml + ".@REQDTA.@NOREQ", existingCustomers.size());// Account Number
+			for (indices[0] = 0; indices[0] < existingCustomers.size(); indices[0]++){
+				pcmlDoc.setValue(pcml + ".@REQDTA.DEFDTA.DSReqCPNC",indices, StringUtils.leftPad(existingCustomers.get(indices[0]),6,"0"));// Account Number
+			}
+			pcmlDoc.setValue(pcml + ".@ERCOD", "0000"); 	
+			pcmlDoc.setValue(pcml + ".@ERPRM", ""); 	
+			logger.debug(" Before PCML Call");
+			getHostConnection().callAPI(pcmlDoc, pcml);
+			logger.debug(" After PCML Call");
+		}catch (Exception e) {
+			logger.error("Exception " + e);
+			throw e;
+		}  finally {
+			getHostConnection().closeConnection(as400);
+			pcmlDoc  =  null;
+			as400    =  null;
+		}
+		logger.debug("Leaving");
+	}
 	
 	/**
 	 * Method for Importing Customer Details
@@ -841,6 +870,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 						customerInterfaceData.setCustCIF(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCpnc",indices).toString());
 						customerInterfaceData.setCustFName((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCun",indices).toString());
 						customerInterfaceData.setDefaultAccountSName((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspDas",indices).toString());//not using it
+						customerInterfaceData.setCustTypeCode((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCtp",indices).toString());
 						customerInterfaceData.setCustIsClosed((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCuc",indices).toString());
 						customerInterfaceData.setCustIsActive((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCuZ",indices).toString());
 						customerInterfaceData.setCustDftBranch((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspBrnm",indices).toString());
@@ -848,12 +878,23 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 						customerInterfaceData.setDSRSPPDAT(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPdat",indices).toString()));//not using it
 						customerInterfaceData.setCustParentCountry((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCnap",indices).toString());
 						customerInterfaceData.setCustRiskCountry((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCnar",indices).toString());
+						customerInterfaceData.setCustDOB(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspDob",indices).toString()));
 						customerInterfaceData.setCustSalutationCode((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspSalu",indices).toString());
+						customerInterfaceData.setCustGenderCode((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspGend",indices).toString());
+						customerInterfaceData.setCustPOB((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPob",indices).toString());
 						customerInterfaceData.setCustPassportNo((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPPN",indices).toString());
 						customerInterfaceData.setCustPassportExpiry(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspPPE",indices).toString()));
+						customerInterfaceData.setCustIsMinor((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspMinor",indices).toString());
+						customerInterfaceData.setTradeLicensenumber((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspTln",indices).toString());
+						customerInterfaceData.setTradeLicenseExpiry(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspTle",indices).toString()));
+						customerInterfaceData.setVisaNumber((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspVisaN",indices).toString());
+						customerInterfaceData.setVisaExpirydate(String.valueOf(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspVisaE",indices).toString()));
+						customerInterfaceData.setCustCoreBank((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCCId",indices).toString());
+						customerInterfaceData.setCustCtgCode((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCCod",indices).toString());
 						customerInterfaceData.setCustShrtName((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCShn",indices).toString());
 						customerInterfaceData.setCustFNameLclLng((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspLFNam",indices).toString());
 						customerInterfaceData.setCustShrtNameLclLng((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspLSNam",indices).toString());
+						customerInterfaceData.setCustCOB((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCOB",indices).toString());
 						customerInterfaceData.setCustRO1((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspACO",indices).toString());
 						customerInterfaceData.setCustIsBlocked((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCUB",indices).toString());
 						customerInterfaceData.setCustIsDecease((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCUD",indices).toString());
@@ -862,6 +903,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 						customerInterfaceData.setCustSubSector((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspSAC",indices).toString());
 						customerInterfaceData.setCustProfession((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspProf",indices).toString());
 						customerInterfaceData.setCustIncomeType((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspITyp",indices).toString());
+						customerInterfaceData.setCustTotalIncome((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspTInc",indices).toString());
 						customerInterfaceData.setCustMaritalSts((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspMSta",indices).toString());
 						customerInterfaceData.setCustEmpSts((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspESta",indices).toString());
 						customerInterfaceData.setCustBaseCcy((String)pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspCCcy",indices).toString());
@@ -895,10 +937,10 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 						customerInterfaceData.setCustEMail1(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEM01",indices).toString());
 						customerInterfaceData.setCustEMailTypeCode2(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEC02",indices).toString());
 						customerInterfaceData.setCustEMail2(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEM02",indices).toString());
-						//<!-- Employee Details-->
+						/*//<!-- Employee Details-->
 						customerInterfaceData.setCustEmpName(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEName",indices).toString());
 						customerInterfaceData.setCustEmpFrom(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEDOJ",indices).toString());
-						customerInterfaceData.setCustEmpDesg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEDesg",indices).toString());
+						customerInterfaceData.setCustEmpDesg(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.dsRspEDesg",indices).toString());*/
 						
 						customerList.add(customerInterfaceData);
 					}
@@ -1001,7 +1043,8 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 					
 					for (indices[0] = 0; indices[0] < dsRspCount; indices[0]++){
 						identityType = new EquationIdentityType();
-						identityType.setIdentityType(StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.DSRSPCVAL",indices).toString()));
+						String idType = StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.DSRSPCVAL",indices).toString());
+						identityType.setIdentityType(idType.length() > 8 ? idType.substring(0,8) : idType);
 						identityType.setIdentityDesc(StringUtils.trimToEmpty(pcmlDoc.getValue(pcml + ".@RSPDTA.DETDTA.DSRSPDSC",indices).toString()));
 						identityTypeList.add(identityType);
 					}

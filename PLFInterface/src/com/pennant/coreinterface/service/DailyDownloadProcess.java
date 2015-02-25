@@ -82,4 +82,6 @@ public interface DailyDownloadProcess {
 	 List<EquationIdentityType> importIdentityTypeDetails() throws Exception;
 	 List<IncomeAccountTransaction> importIncomeAccTransactions(
 			List<IncomeAccountTransaction> finIncomeAccounts) throws Exception;
+	void processCustomerNumbers(List<String> existingCustomers)
+			throws Exception;
 }

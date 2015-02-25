@@ -109,9 +109,8 @@
 					<rows>
 					<row>
 						<hbox>
-							<exePannel id="databaseBackupBeforeEod"
-								border="normal" title="${c:l('label_databaseBackupBeforeEod')}"
-								width="320px" />
+							<exePannel id="databaseBackupBeforeEod" border="normal"  title="${c:l('label_databaseBackupBeforeEod')}" width="320px" />
+							<exePannel id="dailyDownload" border="normal"  title="${c:l('label_dailyDownload')}" width="320px" imgSrc="/images/icons/send.gif" />
 						</hbox>
 					</row>
 					<row>

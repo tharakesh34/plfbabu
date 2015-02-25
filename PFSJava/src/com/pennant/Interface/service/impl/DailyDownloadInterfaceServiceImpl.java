@@ -11,15 +11,20 @@ import org.apache.log4j.Logger;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.coreinterface.exception.CustomerNotFoundException;
 import com.pennant.coreinterface.model.CustomerInterfaceData;
 import com.pennant.coreinterface.model.EquationAbuser;
 import com.pennant.coreinterface.model.EquationAccountType;
@@ -47,15 +52,13 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	
 	private DailyDownloadProcess dailyDownloadProcess;
 	private CoreInterfaceDAO coreInterfaceDAO;
+	private PFSParameterDAO pFSParameterDAO;
+	private PFFCustomerPreparation pffCustomerPreparation;
 	
-	private static final String DEFAULT_CCY 		 = "BHD";
-	private static final String DEFAULT_COUNTRY 	 = "BH";
-	private static final String PHONE_TYEP_MOBILE 	 = "MOBILE";
-	private static final String PHONE_TYEP_OFFICE 	 = "OFFICE";
-	private static final String PHONE_TYEP_RESIDENCE = "WORK";
-	private static final String PHONE_TYEP_OTHER 	 = "GENERAL";
-
-
+	private EquationMasterMissedDetail masterMissedDetail;
+	
+	private Date dateValueDate = DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("APP_VALUEDATE").toString());
+	
 	/**
 	 * Method for Processing Currency Details
 	 */
@@ -128,6 +131,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Currency","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -203,6 +207,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("RelationshipOfficer","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -273,6 +278,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("CustomerType","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -330,6 +336,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Department","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -402,6 +409,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("CustomerGroup","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -476,6 +484,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("AccountType","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -484,7 +493,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Customer Rating  Details
 	 */
 	@Override
-	public boolean processCustomerRatingDetails(Date valuedate){
+	public boolean processCustomerRatingDetails(){
 		logger.debug("Entering");
 
 		boolean isExecuted = false;
@@ -507,7 +516,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 					if(!valueExistInMaster(customerRating.getCustID(),customerIdList)){
 						masterMissedDetail = new EquationMasterMissedDetail();
 						masterMissedDetail.setModule("CustomerRatings");
-						masterMissedDetail.setLastMntOn(valuedate);
+						masterMissedDetail.setLastMntOn(dateValueDate);
 						masterMissedDetail.setFieldName("CustID");
 						masterMissedDetail.setDescription("CustID : '"+customerRating.getCustID()+"',CustRatingType : '"+customerRating.getCustRatingType()+"'.CustID Does Not Exist In Customers Table");
 						masterValueMissedDetails.add(masterMissedDetail);	
@@ -563,6 +572,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("CustomerRating","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -647,6 +657,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Country","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -727,6 +738,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("CustStatusCode","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -744,7 +756,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		try{
 			
 			//Fetch Existing Industry Details
-			List<EquationIndustry> existingCustStatsuCodes = getCoreInterfaceDAO().fetchIndustryDetails();
+			List<EquationIndustry> existingIndustryCodes = getCoreInterfaceDAO().fetchIndustryDetails();
 			
 			//Import Industry Details
 			List<EquationIndustry> industryList = getDailyDownloadProcess().importIndustryDetails();
@@ -752,9 +764,9 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 			List<EquationIndustry> saveIndustryList = new ArrayList<EquationIndustry>();
 			List<EquationIndustry> updateIndustryList = new ArrayList<EquationIndustry>();
 			
-			if (existingCustStatsuCodes != null && !existingCustStatsuCodes.isEmpty()) {
+			if (existingIndustryCodes != null && !existingIndustryCodes.isEmpty()) {
 				for (EquationIndustry eqtnIndustry : industryList) {
-					if (checkIndustryExist(eqtnIndustry, existingCustStatsuCodes)) {
+					if (checkIndustryExist(eqtnIndustry, existingIndustryCodes)) {
 						updateIndustryList.add(eqtnIndustry);
 					} else {
 					    eqtnIndustry.setSubSectorCode(eqtnIndustry.getIndustryCode());
@@ -808,6 +820,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Industry","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -891,6 +904,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Branch","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -901,7 +915,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Internal Account  Details
 	 */
 	@Override
-	public boolean processInternalAccDetails(Date valuedate){
+	public boolean processInternalAccDetails(){
 		logger.debug("Entering");
 		
 		boolean isExecuted = false;
@@ -944,30 +958,37 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 						}
 					}else{
 						masterMissedDetail = new EquationMasterMissedDetail();
-						masterMissedDetail.setModule("System Internal Accounts");
-						masterMissedDetail.setLastMntOn(valuedate);
+						masterMissedDetail.setModule("SystemInternalAccounts");
+						masterMissedDetail.setLastMntOn(dateValueDate);
 						masterMissedDetail.setFieldName("sIAAcType");
 						masterMissedDetail.setDescription("SIACode : "+eqtnIntAcc.getsIACode()+" , '"+eqtnIntAcc.getsIAAcType()+"' Value Does Not Exist In Master RMTAccountTypes Table ");
 						masterValueMissedDetails.add(masterMissedDetail);	
 					}
 				}
 			} else {
-				
 				for (EquationInternalAccount eqtnIntAcc : internalAccList) {
-	                
-					eqtnIntAcc.setVersion(1);
-					eqtnIntAcc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					eqtnIntAcc.setRecordType("");
-					eqtnIntAcc.setLastMntBy(1000);
-					eqtnIntAcc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					eqtnIntAcc.setRoleCode("");
-					eqtnIntAcc.setNextRoleCode("");
-					eqtnIntAcc.setTaskId("");
-					eqtnIntAcc.setNextTaskId("");
-					eqtnIntAcc.setWorkflowId(0);
-					
-                }
-				saveInternalAccList.addAll(internalAccList);
+					if(valueExistInMaster(eqtnIntAcc.getsIAAcType(), masterAccountTypesList)){
+						eqtnIntAcc.setVersion(1);
+						eqtnIntAcc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						eqtnIntAcc.setRecordType("");
+						eqtnIntAcc.setLastMntBy(1000);
+						eqtnIntAcc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						eqtnIntAcc.setRoleCode("");
+						eqtnIntAcc.setNextRoleCode("");
+						eqtnIntAcc.setTaskId("");
+						eqtnIntAcc.setNextTaskId("");
+						eqtnIntAcc.setWorkflowId(0);
+						
+						saveInternalAccList.add(eqtnIntAcc);
+					}else{
+						masterMissedDetail = new EquationMasterMissedDetail();
+						masterMissedDetail.setModule("SystemInternalAccounts");
+						masterMissedDetail.setLastMntOn(dateValueDate);
+						masterMissedDetail.setFieldName("sIAAcType");
+						masterMissedDetail.setDescription("SIACode : "+eqtnIntAcc.getsIACode()+" , '"+eqtnIntAcc.getsIAAcType()+"' Value Does Not Exist In Master RMTAccountTypes Table ");
+						masterValueMissedDetails.add(masterMissedDetail);	
+					}
+				}
 			}
 
 			if(updateInternalAccList != null && !updateInternalAccList.isEmpty()){
@@ -985,6 +1006,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("SystemInternalAccount","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -1032,6 +1054,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Abusers","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -1042,336 +1065,213 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	 * Method for Processing Customer Details
 	 */
 	@Override
-	public boolean processCustomerDetails(Date valuedate){
+	public boolean processCustomerDetails(){
 		logger.debug("Entering");
-		
+
 		boolean isExecuted = false;
-		
+
 		try{
-			
-			//Import Currency Details
-			List<CustomerInterfaceData> cutomersList = getDailyDownloadProcess().importCustomerDetails();
-			
-			if (cutomersList != null && !cutomersList.isEmpty()) {
-				List<Customer> customerList = new ArrayList<Customer>();
-				List<CustomerAddres> addressList = new ArrayList<CustomerAddres>();
-				List<CustomerPhoneNumber> phoneNumeberList = new ArrayList<CustomerPhoneNumber>();
-				List<CustomerEMail> emailList = new ArrayList<CustomerEMail>();
-				List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
-				CustomerEMail customerEMail = null; 
-				CustomerPhoneNumber customerPhoneNumber = null;
-				EquationMasterMissedDetail masterMissedDetail;
-				
-				List<String> addressTypeMasterList = getCoreInterfaceDAO().fetchAddressTypes();
-				List<String> emailTypeMasterList = getCoreInterfaceDAO().fetchEMailTypes();
-				
-				for (CustomerInterfaceData customerInterfaceData : cutomersList) {
+			Date dailyDownloadDate =   DateUtility.getDBDate(SystemParameterDetails.getSystemParameterValue("DAILY_DOWNLOADS_DATE").toString());
 
-					//+++++++++++++++ Customer ++++++++++++++++
-					String custCIF = customerInterfaceData.getCustCIF();
-					Long custid=Long.parseLong(custCIF);
-					Customer customer = new Customer();
-					customer.setNewRecord(true);
-					customer.setCustID(custid);
-					customer.setCustCIF(custCIF);
-					customer.setCustFName(customerInterfaceData.getCustFName());
-					customer.setCustIsBlocked(getBoolean(customerInterfaceData.getCustIsBlocked()));
-					customer.setCustIsActive(getBoolean(customerInterfaceData.getCustIsActive())); 
-					customer.setCustDftBranch(customerInterfaceData.getCustDftBranch());
-					customer.setCustGroupID(StringUtils.trimToEmpty(customerInterfaceData.getGroupName()).equals("") ? 0 : Long.parseLong(customerInterfaceData.getGroupName()));
-					customer.setCustParentCountry(customerInterfaceData.getCustParentCountry());
-					customer.setCustRiskCountry(customerInterfaceData.getCustRiskCountry());
-					customer.setCustSalutationCode(customerInterfaceData.getCustSalutationCode()); 
-					customer.setLovDescCustSalutationCodeName(customerInterfaceData.getCustSalutationCode()); 
-					customer.setCustPassportNo(customerInterfaceData.getCustPassportNo());
-					customer.setCustPassportExpiry(formatCYMDDate(customerInterfaceData.getCustPassportExpiry()));
-					
-					customer.setCustShrtName(customerInterfaceData.getCustShrtName());
-					customer.setCustFNameLclLng(customerInterfaceData.getCustFNameLclLng());
-					customer.setCustShrtNameLclLng(customerInterfaceData.getCustShrtNameLclLng());
-					customer.setCustCOB(customerInterfaceData.getCustCOB());
-					customer.setCustRO1(customerInterfaceData.getCustRO1()); 
-					customer.setCustIsClosed(getBoolean(customerInterfaceData.getCustIsClosed()));
-					customer.setCustIsDecease(getBoolean(customerInterfaceData.getCustIsDecease()));
-					customer.setCustIsTradeFinCust(getBoolean(customerInterfaceData.getCustIsTradeFinCust()));
-					customer.setCustSector(customerInterfaceData.getCustSector()); 
-					customer.setCustSubSector(customerInterfaceData.getCustSubSector()); 
-					customer.setCustMaritalSts(customerInterfaceData.getCustMaritalSts());
-					customer.setCustEmpSts(customerInterfaceData.getCustEmpSts());
-					customer.setCustBaseCcy(StringUtils.trimToEmpty(customerInterfaceData.getCustBaseCcy()).equals("") ? DEFAULT_CCY : customerInterfaceData.getCustBaseCcy());
-					customer.setLovDescCustBaseCcyName(customer.getCustBaseCcy());//lov
-					customer.setCustResdCountry(customerInterfaceData.getCustResdCountry());
-					customer.setCustNationality(customerInterfaceData.getCustResdCountry());
-					customer.setCustClosedOn(formatCYMDDate(customerInterfaceData.getCustClosedOn().toString())); 
-					customer.setCustFirstBusinessDate(new Timestamp(formatCYMDDate(customerInterfaceData.getCustFirstBusinessDate().toString()).getTime()));
-					customer.setCustRelation(customerInterfaceData.getCustRelation());
-					customerList.add(customer);
-
-					//<!-- Address Details--> 
-					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustAddrType()).equals("")) {
-						if(valueExistInMaster(customerInterfaceData.getCustAddrType(),addressTypeMasterList)){
-							CustomerAddres customerAddres = new CustomerAddres();
-							customerAddres.setRecordType(PennantConstants.RCD_ADD);
-							customerAddres.setCustID(custid);
-							customerAddres.setLovDescCustCIF(custCIF);
-							customerAddres.setCustAddrType(customerInterfaceData.getCustAddrType());
-							customerAddres.setLovDescCustAddrTypeName(customerInterfaceData.getCustAddrType());
-							customerAddres.setCustAddrHNbr(customerInterfaceData.getCustAddrHNbr());
-							customerAddres.setCustFlatNbr(customerInterfaceData.getCustFlatNbr());
-							customerAddres.setCustAddrStreet(customerInterfaceData.getCustAddrStreet());
-							customerAddres.setCustAddrLine1(customerInterfaceData.getCustAddrLine1());
-							customerAddres.setCustAddrLine2(customerInterfaceData.getCustAddrLine2());
-							customerAddres.setCustAddrZIP(customerInterfaceData.getCustAddrZIP());
-							customerAddres.setCustAddrPhone(customerInterfaceData.getCustAddrPhone());
-							addressList.add(customerAddres);
-						}else{
-							masterMissedDetail = new EquationMasterMissedDetail();
-							masterMissedDetail.setModule("Address Details");
-							masterMissedDetail.setLastMntOn(valuedate);
-							masterMissedDetail.setFieldName("CustAddrType");
-							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustAddrType()+"' Value Does Not Exist In Master BMTAddressTypes Table ");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-					}
-
-					//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-					//<!-- customer phone numbers  1,2,3,4-->	
-					String custOfficePhone=StringUtils.trimToEmpty(customerInterfaceData.getCustOfficePhone());
-					//Length Mismatch from Equation
-					if (!custOfficePhone.equals("") && custOfficePhone.length()<12) {
-						customerPhoneNumber = new CustomerPhoneNumber();
-						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-						customerPhoneNumber.setPhoneCustID(custid);
-						customerPhoneNumber.setLovDescCustCIF(custCIF);
-						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_OFFICE);
-						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneNumber(custOfficePhone);
-						phoneNumeberList.add(customerPhoneNumber);
-					}
-					String custMobile=StringUtils.trimToEmpty(customerInterfaceData.getCustMobile());
-					//Length Mismatch from Equation
-					if (!custMobile.equals("") && custMobile.length()<12) {
-						customerPhoneNumber = new CustomerPhoneNumber();
-						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-						customerPhoneNumber.setPhoneCustID(custid);
-						customerPhoneNumber.setLovDescCustCIF(custCIF);
-						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_MOBILE);
-						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneNumber(custMobile);
-						phoneNumeberList.add(customerPhoneNumber);
-					}
-					String custResPhone=StringUtils.trimToEmpty(customerInterfaceData.getCustResPhone());
-					//Length Mismatch from Equation
-					if (!custResPhone.equals("") && custResPhone.length()<12) {
-						customerPhoneNumber = new CustomerPhoneNumber();
-						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-						customerPhoneNumber.setPhoneCustID(custid);
-						customerPhoneNumber.setLovDescCustCIF(custCIF);
-						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_RESIDENCE);
-						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneNumber(custResPhone);
-						phoneNumeberList.add(customerPhoneNumber);
-					}
-					String custOtherPhone=StringUtils.trimToEmpty(customerInterfaceData.getCustOtherPhone());
-					//Length Mismatch from Equation
-					if (!custOtherPhone.equals("") && custOtherPhone.length()<12) {
-						customerPhoneNumber = new CustomerPhoneNumber();
-						customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
-						customerPhoneNumber.setPhoneCustID(custid);
-						customerPhoneNumber.setLovDescCustCIF(custCIF);
-						customerPhoneNumber.setPhoneTypeCode(PHONE_TYEP_OTHER);
-						customerPhoneNumber.setPhoneCountryCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneAreaCode(DEFAULT_COUNTRY);
-						customerPhoneNumber.setPhoneNumber(custOtherPhone);
-						phoneNumeberList.add(customerPhoneNumber);
-					}
-					//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-					//<!-- Email Details 1 and 2-->
-					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail1()).equals("") && 
-							!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode1()).equals("")) {
-						if(valueExistInMaster(customerInterfaceData.getCustEMailTypeCode1(),emailTypeMasterList)){
-							customerEMail = new CustomerEMail();
-							customerEMail.setRecordType(PennantConstants.RCD_ADD);
-							customerEMail.setCustID(custid);
-							customerEMail.setLovDescCustCIF(custCIF);
-							customerEMail.setLovDescCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode1());
-							customerEMail.setCustEMailPriority(1);
-							customerEMail.setCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode1());
-							customerEMail.setCustEMail(customerInterfaceData.getCustEMail1());
-							emailList.add(customerEMail);
-						}else{
-							masterMissedDetail = new EquationMasterMissedDetail();
-							masterMissedDetail.setModule("Email Details");
-							masterMissedDetail.setLastMntOn(valuedate);
-							masterMissedDetail.setFieldName("CustEMailTypeCode");
-							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustEMailTypeCode1()+"' Value Does Not Exist In Master BMTEMailTypes Table ");
-							masterValueMissedDetails.add(masterMissedDetail);
-						}
-					}
-					if (!StringUtils.trimToEmpty(customerInterfaceData.getCustEMail2()).equals("") && 
-							!StringUtils.trimToEmpty(customerInterfaceData.getCustEMailTypeCode2()).equals("")) {
-						if(valueExistInMaster(customerInterfaceData.getCustEMailTypeCode2(),emailTypeMasterList)){
-							customerEMail = new CustomerEMail();
-							customerEMail.setRecordType(PennantConstants.RCD_ADD);
-							customerEMail.setCustID(custid);
-							customerEMail.setLovDescCustCIF(custCIF);
-							customerEMail.setLovDescCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode2());
-							customerEMail.setCustEMailPriority(2);
-							customerEMail.setCustEMailTypeCode(customerInterfaceData.getCustEMailTypeCode2());
-							customerEMail.setCustEMail(customerInterfaceData.getCustEMail2());
-							emailList.add(customerEMail);
-						}else{
-							masterMissedDetail = new EquationMasterMissedDetail();
-							masterMissedDetail.setModule("Email Details");
-							masterMissedDetail.setLastMntOn(valuedate);
-							masterMissedDetail.setFieldName("CustEMailTypeCode");
-							masterMissedDetail.setDescription("Customer : "+customerInterfaceData.getCustCIF()+" , '"+customerInterfaceData.getCustEMailTypeCode2()+"' Value Does Not Exist In Master BMTEMailTypes Table ");
-							masterValueMissedDetails.add(masterMissedDetail);
-						}
-					}
-
-					//<!-- Employee Details-->
-                  /* if(!StringUtils.trimToEmpty(customerInterfaceData.getCustEmpName()).equals("")){
-					customerEmploymentDetail = new CustomerEmploymentDetail();
-					customerEmploymentDetail.setCustID(custid);
-					customerEmploymentDetail.setCustEmpName(Long.valueOf(customerInterfaceData.getCustEmpName()));
-					customerEmploymentDetail.setCustEmpFrom(formatCYMDDate(customerInterfaceData.getCustEmpFrom().toString()));
-					customerEmploymentDetail.setCustEmpDesg(customerInterfaceData.getCustEmpDesg());
-					emplomentList.add(customerEmploymentDetail);
-                   }*/
-					//+++++++++++++++++++++++++++++++++++++++++++++++++
-				}
-				
-				if(customerList != null && !customerList.isEmpty()){
-				
-					//Fetching customer related Master details
-					List<String> branchCodeMasterList = getCoreInterfaceDAO().fetchBranchCodes();
-					List<Long> custGrpCodeMasterList = getCoreInterfaceDAO().fetchCustomerGroupCodes();
-					List<String> countryCodeMasterList = getCoreInterfaceDAO().fetchCountryCodes();
-					List<String> salutationCodeMasterList = getCoreInterfaceDAO().fetchSalutationCodes();
-					List<String> rShipOfficerCodeMasterList = getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
-					List<SubSector> subSectorCodeMasterList = getCoreInterfaceDAO().fetchSubSectorCodes();
-					List<String> maritalStatusCodeMasterList = getCoreInterfaceDAO().fetchMaritalStatusCodes();
-					List<String> custEmpStsCodeMasterList = getCoreInterfaceDAO().fetchEmpStsCodes();
-					List<String> currencyCodeMasterList = getCoreInterfaceDAO().fetchCurrencyCodes();
-					
-					for (Customer customer : customerList) {
-						masterMissedDetail = new EquationMasterMissedDetail();
-						masterMissedDetail.setModule("Customers");
-						masterMissedDetail.setLastMntOn(valuedate);
-						if(!StringUtils.trimToEmpty(customer.getCustDftBranch()).equals("") && 
-								!valueExistInMaster(customer.getCustDftBranch(),branchCodeMasterList)){
-							masterMissedDetail.setFieldName("CustDftBranch");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustDftBranch()+"' Value Does Not Exist In Master RMTBranches Table ");
-							customer.setCustDftBranch(""); //Making it empty to ignore the empty field updates in query while updating the record 
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(customer.getCustGroupID() != 0 && !valueExistInMaster(customer.getCustGroupID(),custGrpCodeMasterList)){
-							masterMissedDetail.setFieldName("CustGroupID");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustGroupID()+"' Value Does Not Exist In Master CustomerGroups Table ");
-							customer.setCustGroupID(0);
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustParentCountry()).equals("") && 
-								!valueExistInMaster(customer.getCustParentCountry(),countryCodeMasterList)){
-							masterMissedDetail.setFieldName("CustParentCountry");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustParentCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
-							customer.setCustParentCountry("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustRiskCountry()).equals("") && 
-								!valueExistInMaster(customer.getCustRiskCountry(),countryCodeMasterList)){
-							masterMissedDetail.setFieldName("CustRiskCountry");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRiskCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
-							customer.setCustRiskCountry("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustResdCountry()).equals("") &&
-								!valueExistInMaster(customer.getCustResdCountry(),countryCodeMasterList)){
-							masterMissedDetail.setFieldName("CustResdCountry");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustResdCountry()+"' Value Does Not Exist In Master BMTCountries Table ");
-							customer.setCustResdCountry("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustSalutationCode()).equals("") &&
-								!valueExistInMaster(customer.getCustSalutationCode(),salutationCodeMasterList)){
-							masterMissedDetail.setFieldName("CustSalutationCode");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustSalutationCode()+"' Value Does Not Exist In Master BMTSalutations Table ");
-							customer.setCustSalutationCode("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustRO1()).equals("") &&
-								!valueExistInMaster(customer.getCustRO1(),rShipOfficerCodeMasterList)){
-							masterMissedDetail.setFieldName("CustRO1");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustRO1()+"' Value Does Not Exist In Master RelationshipOfficers Table ");
-							customer.setCustRO1("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustSector()).equals("")  && 
-								!StringUtils.trimToEmpty(customer.getCustSubSector()).equals("")  &&
-								!valueExistInMaster(customer,subSectorCodeMasterList)){
-							masterMissedDetail.setFieldName("CustSector/CustSubSector");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , CustSector:'"+customer.getCustSector()+
-									"' and CustSubSector:'"+customer.getCustSubSector()+"' Values Does Not Exist In Master BMTSubSectors Table ");
-							customer.setCustSector("");
-							masterValueMissedDetails.add(masterMissedDetail);
-						}
-						
-						if(!StringUtils.trimToEmpty(customer.getCustMaritalSts()).equals("") &&
-								!valueExistInMaster(customer.getCustMaritalSts(),maritalStatusCodeMasterList)){
-							masterMissedDetail.setFieldName("CustMaritalSts");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustMaritalSts()+"' Value Does Not Exist In Master BMTMaritalStatusCodes Table ");
-							customer.setCustMaritalSts("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustEmpSts()).equals("") &&
-								!valueExistInMaster(customer.getCustEmpSts(),custEmpStsCodeMasterList)){
-							masterMissedDetail.setFieldName("CustEmpSts");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustEmpSts()+"' Value Does Not Exist In Master BMTEmpStsCodes Table ");
-							customer.setCustEmpSts("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						if(!StringUtils.trimToEmpty(customer.getCustBaseCcy()).equals("") &&
-								!valueExistInMaster(customer.getCustBaseCcy(),currencyCodeMasterList)){
-							masterMissedDetail.setFieldName("CustBaseCcy");
-							masterMissedDetail.setDescription("Customer : "+customer.getCustCIF()+" , '"+customer.getCustBaseCcy()+"' Value Does Not Exist In Master RMTCurrencies Table ");
-							customer.setCustBaseCcy("");
-							masterValueMissedDetails.add(masterMissedDetail);	
-						}
-						
-                    }
-					getCoreInterfaceDAO().updateCustomerDetails(customerList);
-					getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
-					isExecuted = true;
-				}
-				if(addressList != null && !addressList.isEmpty()){
-					isExecuted = false;
-					getCoreInterfaceDAO().updateAddressDetails(addressList);
-					isExecuted = true;
-				}
-				if(phoneNumeberList != null && !phoneNumeberList.isEmpty()){
-					isExecuted = false;
-					getCoreInterfaceDAO().updatePhoneNumberDetails(phoneNumeberList);
-					isExecuted = true;
-				}
-				if(emailList != null && !emailList.isEmpty()){
-					isExecuted = false;
-					getCoreInterfaceDAO().updateEMailDetails(emailList);
-					isExecuted = true;
-				}
-				/*if(emplomentList != null && !emplomentList.isEmpty()){
-					getCoreInterfaceDAO().updateEmploymentDetails(emplomentList);
-					isExecuted = true;
-				}*/
+			List<String> existingCustomers;
+			//Below condition fetches the customers who are newly created on the current date,so to fetch 
+			//all old customers for the first time we have hard coded the below date
+			if(dailyDownloadDate.compareTo(DateUtility.getDBDate("2014-04-04")) > 0){
+				existingCustomers = getCoreInterfaceDAO().fetchExistingCustomers(dailyDownloadDate);
+			}else{
+				existingCustomers = getCoreInterfaceDAO().fetchExistingOldCustomers();
 			}
-			
+
+			//Process Customer Numbers
+			if(existingCustomers != null && !existingCustomers.isEmpty()){
+				getDailyDownloadProcess().processCustomerNumbers(existingCustomers);
+			}
+
+			//Import Customer Details
+			List<CustomerInterfaceData> cutomersList = getDailyDownloadProcess().importCustomerDetails();
+
+			if (cutomersList != null && !cutomersList.isEmpty()) {
+				List<Customer> updateCustomerList = new ArrayList<Customer>();
+				List<CustomerAddres> saveAddressList = new ArrayList<CustomerAddres>(); 
+				List<CustomerAddres> updateAddressList = new ArrayList<CustomerAddres>(); 
+				List<CustomerPhoneNumber> savePhoneNumeberList = new ArrayList<CustomerPhoneNumber>();
+				List<CustomerPhoneNumber> updatePhoneNumeberList = new ArrayList<CustomerPhoneNumber>();
+				List<CustomerEMail> saveEmailList = new ArrayList<CustomerEMail>();
+				List<CustomerEMail> updateEmailList = new ArrayList<CustomerEMail>();
+				List<EquationMasterMissedDetail> masterValueMissedDetails = new ArrayList<EquationMasterMissedDetail>();
+
+				List<CustomerAddres> existingCustomerAddress = getCoreInterfaceDAO().fetchExisitingCustomerAddress();
+				List<CustomerPhoneNumber> existingCustPhoneNumbers = getCoreInterfaceDAO().fetchExisitingCustPhoneNumbers();
+				List<CustomerEMail> existingCustEmails = getCoreInterfaceDAO().fetchExisitingCustEmails();
+				List<CustomerDetails> customerDetails = new ArrayList<CustomerDetails>();
+
+				for (CustomerInterfaceData customerInterfaceData : cutomersList) {
+					CustomerDetails customerDetail	= getPffCustomerPreparation().processCustomerDetails(customerInterfaceData);
+					if(customerDetail != null){
+						customerDetails.add(customerDetail);
+					}
+				}
+
+				List<CustomerDetails> customerDetailsList = getPffCustomerPreparation().validateMasterFieldDetails(customerDetails, dateValueDate);
+
+				for (CustomerDetails cDetails : customerDetailsList) {
+					if(cDetails != null){
+
+						//+++++++++++++++ Customer ++++++++++++++++
+						updateCustomerList.add(cDetails.getCustomer());
+
+						//+++++++++++++++ Address Details ++++++++++++++++
+						if(cDetails.getAddressList() != null && !cDetails.getAddressList().isEmpty()){
+							for (CustomerAddres customerAddres : cDetails.getAddressList()) {
+								if(customerAddressAlreadyExist(customerAddres, existingCustomerAddress)){
+									updateAddressList.add(customerAddres);
+								}else{
+									customerAddres.setVersion(1);
+									customerAddres.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+									customerAddres.setRecordType("");
+									customerAddres.setLastMntBy(1000);
+									customerAddres.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+									customerAddres.setRoleCode("");
+									customerAddres.setNextRoleCode("");
+									customerAddres.setTaskId("");
+									customerAddres.setNextTaskId("");
+									customerAddres.setWorkflowId(0);
+									saveAddressList.add(customerAddres);
+								}
+							}
+						}
+
+						//+++++++++++++++ Phone Number Details ++++++++++++++++
+						if(cDetails.getCustomerPhoneNumList() != null && !cDetails.getCustomerPhoneNumList().isEmpty()){
+							for (CustomerPhoneNumber customerPhoneNumber : cDetails.getCustomerPhoneNumList()) {
+								if(customerPhoneNumAlreadyExist(customerPhoneNumber, existingCustPhoneNumbers)){
+									updatePhoneNumeberList.add(customerPhoneNumber);
+								}else{
+									customerPhoneNumber.setVersion(1);
+									customerPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+									customerPhoneNumber.setRecordType("");
+									customerPhoneNumber.setLastMntBy(1000);
+									customerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+									customerPhoneNumber.setRoleCode("");
+									customerPhoneNumber.setNextRoleCode("");
+									customerPhoneNumber.setTaskId("");
+									customerPhoneNumber.setNextTaskId("");
+									customerPhoneNumber.setWorkflowId(0);
+									savePhoneNumeberList.add(customerPhoneNumber);
+								}
+							}
+						}
+
+						//+++++++++++++++ Email Details ++++++++++++++++
+						if(cDetails.getCustomerEMailList() != null && !cDetails.getCustomerEMailList().isEmpty()){
+							for (CustomerEMail customerEMail : cDetails.getCustomerEMailList()) {
+								if(!StringUtils.trimToEmpty(customerEMail.getCustEMailTypeCode()).equals("")){
+									if(customerEmailAlreadyExist(customerEMail, existingCustEmails)){
+										updateEmailList.add(customerEMail);
+									}else{
+										customerEMail.setVersion(1);
+										customerEMail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+										customerEMail.setRecordType("");
+										customerEMail.setLastMntBy(1000);
+										customerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										customerEMail.setRoleCode("");
+										customerEMail.setNextRoleCode("");
+										customerEMail.setTaskId("");
+										customerEMail.setNextTaskId("");
+										customerEMail.setWorkflowId(0);
+										saveEmailList.add(customerEMail);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				masterValueMissedDetails.addAll(getPffCustomerPreparation().getMasterMissedDetails());
+
+				if(updateCustomerList != null && !updateCustomerList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().updateCustomerDetails(updateCustomerList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("Customers", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(saveAddressList != null && !saveAddressList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().saveCustomerAddresses(saveAddressList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "SavingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(updateAddressList != null && !updateAddressList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().updateAddressDetails(updateAddressList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerAddresses", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(savePhoneNumeberList != null && !savePhoneNumeberList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().saveCustomerPhoneNumbers(savePhoneNumeberList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "SavingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(updatePhoneNumeberList != null && !updatePhoneNumeberList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().updatePhoneNumberDetails(updatePhoneNumeberList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerPhoneNumbers", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(saveEmailList != null && !saveEmailList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().saveCustomerEmails(saveEmailList);
+						isExecuted = true;
+					}catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "SavingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(updateEmailList != null && !updateEmailList.isEmpty()){
+					try{
+						isExecuted = false;
+						getCoreInterfaceDAO().updateEMailDetails(updateEmailList);
+						isExecuted = true;
+					}
+					catch(Exception e){
+						masterValueMissedDetails.add(getMasterMissedDetail("CustomerEmails", "UpdatingError", getExceptionDetails(e), dateValueDate));	
+					}
+				}
+				if(!masterValueMissedDetails.isEmpty()){
+					getCoreInterfaceDAO().saveMasterValueMissedDetails(masterValueMissedDetails);
+				}
+				for (EquationMasterMissedDetail eMasterMissedDetail : masterValueMissedDetails) {
+					if(eMasterMissedDetail.getFieldName().equalsIgnoreCase("SavingError")  || 
+							eMasterMissedDetail.getFieldName().equalsIgnoreCase("UpdatingError")){
+						isExecuted = false;
+						break;
+					}
+				}
+			}
+
+			updateDailyDownloadDate(dateValueDate);
+
 		}catch(Exception e){
 			logger.error(e);
 			e.printStackTrace();
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("Customers","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -1445,6 +1345,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("TransactionCode","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
@@ -1513,11 +1414,63 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		}catch(Exception e){
 			logger.error(e);
 			isExecuted = false;
+			saveErrorDetail(getMasterMissedDetail("IdentityType","ProcessingError",getExceptionDetails(e),dateValueDate));
 		}
 		logger.debug("Leaving");
 		return isExecuted;
 	}
 
+	
+	private void updateDailyDownloadDate(Date valuedate){
+		logger.debug("Entering");
+		PFSParameter pFSParameter = new PFSParameter();
+		pFSParameter.setSysParmValue(DateUtility.addDays(valuedate,1).toString());
+		pFSParameter.setSysParmCode("DAILY_DOWNLOADS_DATE");
+		getpFSParameterDAO().updateParmValue(pFSParameter);
+		SystemParameterDetails.setParmDetails("DAILY_DOWNLOADS_DATE",pFSParameter.getSysParmValue());
+		logger.debug("Leaving");
+	}
+	
+	private void saveErrorDetail(EquationMasterMissedDetail equationMasterMissedDetail){
+		logger.debug("Entering");
+		getCoreInterfaceDAO().saveMasterValueMissedDetail(equationMasterMissedDetail);
+		logger.debug("Leaving");
+	}
+	
+	private EquationMasterMissedDetail getMasterMissedDetail(String module,String fieldDetail,String Description,Date valuedate){
+		logger.debug("Entering");
+		masterMissedDetail = new EquationMasterMissedDetail();
+		masterMissedDetail.setModule(module);
+		masterMissedDetail.setFieldName(fieldDetail);
+		masterMissedDetail.setDescription(Description);
+		masterMissedDetail.setLastMntOn(valuedate);
+		logger.debug("Leaving");
+		return masterMissedDetail;
+	}
+	
+	private String getExceptionDetails(Exception e){
+		logger.debug("Entering");
+		String errMsg = "";
+		if(e.getCause() == null){
+			errMsg = "NullPointerException";
+		}else{
+			if(e.getCause().getMessage() != null){
+				errMsg = e.getCause().getMessage().length() > 198 ? e.getCause().getMessage().substring(0,197) :
+					e.getCause().getMessage();
+			}
+			else if(e.getLocalizedMessage() != null){
+				errMsg =  e.getLocalizedMessage().length() > 198 ? e.getLocalizedMessage().substring(0,197) :
+					e.getLocalizedMessage();
+			}else if(e.getMessage() != null){
+				errMsg =  e.getMessage().length() > 198 ? e.getMessage().substring(0,197) :
+					e.getMessage();
+			}
+		}
+		logger.debug("Leaving");
+		return errMsg;
+	}
+	
+	
 
 	private boolean valueExistInMaster(String field,List<String> list){
 		for (String value : list) {
@@ -1537,36 +1490,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 	
-	private boolean valueExistInMaster(Customer customer ,List<SubSector> list){
-		for (SubSector subSector : list) {
-	        if(StringUtils.trimToEmpty(customer.getCustSector()).equalsIgnoreCase(subSector.getSectorCode()) && 
-	        		StringUtils.trimToEmpty(customer.getCustSubSector()).equalsIgnoreCase(subSector.getSubSectorCode())){
-	        	return true;
-	        }
-        }
-		return false;
-	}
-	
-	
-	private boolean getBoolean(String string) {
-		if (StringUtils.trimToEmpty(string).equals("Y") || StringUtils.trimToEmpty(string).equals("1")) {
-			return true;
-		} else {
-			return false;
-		}
 
-	}
-	
-
-	private Date formatCYMDDate(String date) {
-		try {
-			return 	DateUtility.convertDateFromAS400(new BigDecimal(date));
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-	
 	private boolean checkAccIntExist(EquationInternalAccount eqtnIntAcc,List<EquationInternalAccount> existingIntAccs){
 		for (EquationInternalAccount intAcc : existingIntAccs) {
 			if (StringUtils.trimToEmpty(eqtnIntAcc.getsIACode()).equals(intAcc.getsIACode())) {
@@ -1739,6 +1663,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 				List<IncomeAccountTransaction> incomeAccounts = getCoreInterfaceDAO().fetchIncomeAccountDetails();
 
 				if(incomeAccounts!= null ) {
+
 					//Import Income Account Transactions From Core System
 					for (IncomeAccountTransaction incomeAccount : incomeAccounts) {
 						incomeAccount.setLastMntOn(prvMnthStartDate);
@@ -1769,7 +1694,104 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	public void updateFinProfitIncomeAccounts(List<FinanceProfitDetail> accounts){
 		getCoreInterfaceDAO().updateFinProfitIncomeAccounts(accounts);
 	}
-
+	
+	private boolean customerAddressAlreadyExist(CustomerAddres customerAddres,List<CustomerAddres> list){
+		for (CustomerAddres cAddres : list) {
+			if(customerAddres.getCustID() == cAddres.getCustID() && 
+					StringUtils.trimToEmpty(customerAddres.getCustAddrType()).equalsIgnoreCase(cAddres.getCustAddrType())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean customerPhoneNumAlreadyExist(CustomerPhoneNumber customerPhoneNumber,List<CustomerPhoneNumber> list){
+		for (CustomerPhoneNumber cPhoneNumber : list) {
+			if(customerPhoneNumber.getPhoneCustID() == cPhoneNumber.getPhoneCustID() && 
+					StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()).equalsIgnoreCase(cPhoneNumber.getPhoneTypeCode())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean customerEmailAlreadyExist(CustomerEMail customerEMail,List<CustomerEMail> list){
+		for (CustomerEMail cEMail : list) {
+			if(customerEMail.getCustID() == cEMail.getCustID() && 
+					StringUtils.trimToEmpty(customerEMail.getCustEMailTypeCode()).equalsIgnoreCase(cEMail.getCustEMailTypeCode())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// ++++++++++++++++++ Single Customer Download+++++++++++++++++++//
+	
+	/**
+	 * 
+	 * @param customer
+	 * @return
+	 * @throws Exception 
+	 * @throws CustomerNotFoundException 
+	 */
+	@Override
+	public void saveCustomerDetails(CustomerDetails customerDetails) throws Exception{
+		logger.debug("Entering");
+		if(customerDetails.getAddressList() != null && !customerDetails.getAddressList().isEmpty()){
+				getCoreInterfaceDAO().saveCustomerAddresses(customerDetails.getAddressList());
+		}
+		if(customerDetails.getCustomerPhoneNumList() != null && !customerDetails.getCustomerPhoneNumList().isEmpty()){
+			getCoreInterfaceDAO().saveCustomerPhoneNumbers(customerDetails.getCustomerPhoneNumList());
+		}
+		if(customerDetails.getCustomerEMailList() != null && !customerDetails.getCustomerEMailList().isEmpty()){
+			getCoreInterfaceDAO().saveCustomerEmails(customerDetails.getCustomerEMailList());
+		}
+		if(customerDetails.getRatingsList() != null && !customerDetails.getRatingsList().isEmpty()){
+			getCoreInterfaceDAO().saveRatingDetails(customerDetails.getRatingsList());
+		}
+		logger.debug("Leaving");
+	}
+	
+	
+	public void saveMasterValueMissedDetails(List<EquationMasterMissedDetail> masterMissedDetails){
+		getCoreInterfaceDAO().saveMasterValueMissedDetails(masterMissedDetails);
+	}
+	
+	public void updateObjectDetails(String updateQuery,Object object){
+		getCoreInterfaceDAO().updateObjectDetails(updateQuery, object);
+	}
+	
+	public List<String> fetchBranchCodes() {
+    	return  getCoreInterfaceDAO().fetchBranchCodes();
+    }
+	public List<Long> fetchCustomerGroupCodes() {
+    	return  getCoreInterfaceDAO().fetchCustomerGroupCodes();
+    }
+	public List<String> fetchCountryCodes() {
+    	return  getCoreInterfaceDAO().fetchCountryCodes();
+    }
+	public List<String> fetchSalutationCodes() {
+    	return  getCoreInterfaceDAO().fetchSalutationCodes();
+    }
+	public List<String> fetchRelationshipOfficerCodes() {
+    	return  getCoreInterfaceDAO().fetchRelationshipOfficerCodes();
+    }
+	public List<String> fetchMaritalStatusCodes() {
+    	return  getCoreInterfaceDAO().fetchMaritalStatusCodes();
+    }
+	public List<SubSector> fetchSubSectorCodes() {
+    	return  getCoreInterfaceDAO().fetchSubSectorCodes();
+    }
+	public List<String> fetchEmpStsCodes() {
+    	return  getCoreInterfaceDAO().fetchEmpStsCodes();
+    }
+	public List<String> fetchCurrencyCodes() {
+    	return  getCoreInterfaceDAO().fetchCurrencyCodes();
+    }
+	public List<String> fetchCustTypeCodes() {
+    	return  getCoreInterfaceDAO().fetchCustTypeCodes();
+    }
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -1780,12 +1802,26 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	public void setDailyDownloadProcess(DailyDownloadProcess dailyDownloadProcess) {
 		this.dailyDownloadProcess = dailyDownloadProcess;
 	}
-	
+
 	public CoreInterfaceDAO getCoreInterfaceDAO() {
     	return coreInterfaceDAO;
-    }
+	}	
 	public void setCoreInterfaceDAO(CoreInterfaceDAO coreInterfaceDAO) {
     	this.coreInterfaceDAO = coreInterfaceDAO;
     }
 
+	public PFSParameterDAO getpFSParameterDAO() {
+		return pFSParameterDAO;
+	}
+	public void setpFSParameterDAO(PFSParameterDAO pFSParameterDAO) {
+		this.pFSParameterDAO = pFSParameterDAO;
+	}
+
+	public PFFCustomerPreparation getPffCustomerPreparation() {
+		return pffCustomerPreparation;
+	}
+	public void setPffCustomerPreparation(PFFCustomerPreparation pffCustomerPreparation) {
+		this.pffCustomerPreparation = pffCustomerPreparation;
+	}
+	
 }
