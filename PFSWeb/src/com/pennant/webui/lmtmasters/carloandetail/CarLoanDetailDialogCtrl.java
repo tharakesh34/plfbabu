@@ -898,7 +898,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		 if(StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.DEALER)){
 			 this.carDealer.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarDealerName()));	
 		 }
-		this.cbCarColor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarColorName()));
+		this.cbCarColor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getCarColor()));
 	
 		this.recordStatus.setValue(aCarLoanDetail.getRecordStatus());
 		doSetVersionFilters();
@@ -1130,7 +1130,8 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		try {
-				aCarLoanDetail.setCarColor(this.cbCarColor.getValue());
+			aCarLoanDetail.setCarColor(this.cbCarColor.getValue());
+			aCarLoanDetail.setLovDescCarColorName(this.cbCarColor.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

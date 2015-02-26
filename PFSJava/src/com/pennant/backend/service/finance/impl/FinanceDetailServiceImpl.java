@@ -3356,7 +3356,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setFinScheduleData(ScheduleCalculator.getDownPaySchd(financeDetail.getFinScheduleData()));
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
+		
 		financeMain.setRecordType("");
+		financeMain.setFinApprovedDate(curBussDate);
+		financeMain.setRoleCode("");
+		financeMain.setNextRoleCode("");
+		financeMain.setTaskId("");
+		financeMain.setNextTaskId("");
+		financeMain.setWorkflowId(0);
 		getFinanceMainDAO().save(financeMain, "", false);
 
 		//Schedule Details
