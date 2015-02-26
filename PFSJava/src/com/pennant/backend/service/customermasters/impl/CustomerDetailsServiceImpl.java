@@ -745,9 +745,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerDocumentDAO.update(customerDocument, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(customerDocument, customerDocument.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerDocument.getBefImage(), customerDocument));
 				}
-				fields = PennantJavaUtil.getFieldDetails(customerDocument, customerDocument.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerDocument.getBefImage(), customerDocument));
 			}
 		}
 		
@@ -771,9 +771,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerAddresDAO.update(custaddress, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(custaddress, custaddress.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custaddress.getBefImage(), custaddress));
 				}
-				fields = PennantJavaUtil.getFieldDetails(custaddress, custaddress.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custaddress.getBefImage(), custaddress));
 			}
 		}
 		
@@ -797,9 +797,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerPhoneNumberDAO.update(custPhoneNumber, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(custPhoneNumber, custPhoneNumber.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custPhoneNumber.getBefImage(), custPhoneNumber));
 				}
-				fields = PennantJavaUtil.getFieldDetails(custPhoneNumber, custPhoneNumber.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custPhoneNumber.getBefImage(), custPhoneNumber));
 			}
 		}
 		
@@ -823,9 +823,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerEMailDAO.update(customerEMail, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(customerEMail, customerEMail.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerEMail.getBefImage(), customerEMail));
 				}
-				fields = PennantJavaUtil.getFieldDetails(customerEMail, customerEMail.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerEMail.getBefImage(), customerEMail));
 			}
 		}
 		
@@ -849,9 +849,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerBankInfoDAO.update(custBankInfo, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custBankInfo.getBefImage(), custBankInfo));
 				}
-				fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custBankInfo.getBefImage(), custBankInfo));
 			}
 		}
 		
@@ -875,9 +875,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerChequeInfoDAO.update(custChequeInfo, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(custChequeInfo, custChequeInfo.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custChequeInfo.getBefImage(), custChequeInfo));
 				}
-				fields = PennantJavaUtil.getFieldDetails(custChequeInfo, custChequeInfo.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custChequeInfo.getBefImage(), custChequeInfo));
 			}
 		}
 		
@@ -901,9 +901,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditTranType = PennantConstants.TRAN_UPD;
 						customerExtLiabilityDAO.update(custExtLiability, tableType);
 					}
+					fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custExtLiability.getBefImage(), custExtLiability));
 				}
-				fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custExtLiability.getBefImage(), custExtLiability));
 			}
 		}
 
