@@ -900,7 +900,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		 if(StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.DEALER)){
 			 this.carDealer.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarDealerName()));	
 		 }
-		this.cbCarColor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getCarColor()));
+		this.cbCarColor.setDescription(StringUtils.trimToEmpty(aCarLoanDetail.getLovDescCarColorName()));
 	
 		this.recordStatus.setValue(aCarLoanDetail.getRecordStatus());
 		doSetVersionFilters();
@@ -1532,7 +1532,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.engineNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_engineNumber.value"),null,false));
 		}
 		
-		if (this.paymentMode.isReadonly()) {
+		if (!this.paymentMode.isDisabled()) {
 			this.paymentMode.setConstraint(new PTListValidator(Labels.getLabel("label_CarLoanDetailDialog_paymentMode.value"), paymentModes,true));
 		}
 		
@@ -1542,10 +1542,10 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (!this.quoationNbr.isReadonly()) {
 			this.quoationNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_quoationNbr.value"),null,true));
 		}
-		if (!this.quoationDate.isReadonly()) {
+		if (!this.quoationDate.isDisabled()) {
 			this.quoationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CarLoanDetailDialog_quoationDate.value"),true));
 		}
-		if (this.sellerType.isReadonly()) {
+		if (!this.sellerType.isDisabled()) {
 			this.sellerType.setConstraint(new PTListValidator(Labels.getLabel("label_CarLoanDetailDialog_SellerType.value"), sellerTypeList,true));
 		}
 		if (!this.emiratesRegNum.isReadonly()) {
@@ -1562,10 +1562,8 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 				this.thirdPartyNat.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_NationalityPassNum.value"),null,true));
 			}
 		}
-		if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)){
-			if (!recSave && this.dealerOrSellerAcc.getSclass().equals("mandatory")) {
-				this.dealerOrSellerAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"),null,true));
-			}
+		if (!this.dealerOrSellerAcc.isReadonly()) {
+			this.dealerOrSellerAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"),null,true));
 		}
 		if (!this.iBANnumber.isReadonly()) {
 			this.iBANnumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_IBANNumber.value"),null,true));
