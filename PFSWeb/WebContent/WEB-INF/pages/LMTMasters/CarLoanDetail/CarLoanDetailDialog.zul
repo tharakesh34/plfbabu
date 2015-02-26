@@ -2,7 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_CarLoanDetailDialog" title="${c:l('window_CarLoanDetailDialog.title')}" border="none" apply="${carLoanDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+	<window id="window_CarLoanDetailDialog"  border="none" apply="${carLoanDetailDialogCtrl}" width="100%" height="100%" sizable="false">
 		<div id="toolbar" sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 				<!-- COMMON BUTTONS -->
@@ -16,7 +16,8 @@
 				</toolbar>
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
-					<hbox align="center" style="padding: 2px"></hbox>
+					<label value="${c:l('window_CarLoanDetailDialog.title')}"
+						sclass="label-heading" />
 				</toolbar>
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
@@ -83,7 +84,7 @@
 							<row visible="true">
 								<label id="label_CarLoanDetailDialog_CarCapacity" value="${c:l('label_CarLoanDetailDialog_CarCapacity.value')}" />
 								<hbox>
-									<space spacing="2px"  />
+									<space spacing="2px"  sclass="mandatory"/>
 									<intbox id="carCapacity" width="195px" maxlength="2" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_CarCc" value="${c:l('label_CarLoanDetailDialog_CarCc.value')}" />
@@ -160,7 +161,7 @@
 									</hbox>	
 							<label id="label_CarLoanDetailDialog_engineNumber" value="${c:l('label_CarLoanDetailDialog_engineNumber.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory"/>
 									<textbox id="engineNumber" width="195px" />
 								</hbox>
 							</row>
@@ -172,7 +173,7 @@
 								</hbox>
 								<label id="label_CarLoanDetailDialog_salesPersonName" value="${c:l('label_CarLoanDetailDialog_salesPersonName.value')}" />
 								<hbox>
-									<space spacing="2px"  />
+									<space spacing="2px"  sclass="mandatory" />
 									<textbox id="salesPersonName" width="195px" />
 								</hbox>
 							</row>
@@ -222,17 +223,9 @@
 									<space spacing="2px"  />
 									<datebox id="purchaseDate" width="195px" />
 								</hbox>
-								<label id="label_CarLoanDetailDialog_VehicleItemNum" value="${c:l('label_CarLoanDetailDialog_VehicleItemNum.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<textbox id="vehicleItemNum" width="250px" />
-								</hbox>
-							</row>
-							<row visible="true">
 								<label id="label_CarLoanDetailDialog_VehicleValue" value="${c:l('label_CarLoanDetailDialog_VehicleValue.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory"/>
-									<decimalbox id="vehicleValue" width="195px" />
+									<currencyBox id="vehicleValue" width="195px" />
 								</hbox>
 							</row>
 							<row spans="2">

@@ -114,7 +114,6 @@ public class CarLoanDetail implements java.io.Serializable {
 	private String emiratesRegNum;
 	private String dealerOrSellerAcc;
 	private String sellerType;
-	private String vehicleItemNum;
 	private BigDecimal vehicleValue=BigDecimal.ZERO;
 	private String privateDealerName;
 	private String salesPersonName;
@@ -591,14 +590,6 @@ public class CarLoanDetail implements java.io.Serializable {
 
 	public void setSellerType(String sellerType) {
 		this.sellerType = sellerType;
-	}
-
-	public String getVehicleItemNum() {
-		return vehicleItemNum;
-	}
-
-	public void setVehicleItemNum(String vehicleItemNum) {
-		this.vehicleItemNum = vehicleItemNum;
 	}
 
 	public BigDecimal getVehicleValue() {
