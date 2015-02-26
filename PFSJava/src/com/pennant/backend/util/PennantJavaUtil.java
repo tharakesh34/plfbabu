@@ -252,8 +252,7 @@ public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
 	
 	private static String masterWF 				= "MSTGRP1";
-	private static String custQDEWF 			= "TEST_WF_CUSTQDE";
-	private static String custDetailWF	 		= "CUSTOMERWF";
+	private static String custDetailWF	 		= "CUSTOMER_MSTGRP";
 	private static String facilityWF 			= "FACILITY_TERM_SHEET";
 	private static String retailWF	 			= "AUTO_FIN_PROCESS";
 	private static String treasuryWF	 		= "TSR_FIN_PROCESS";
@@ -480,7 +479,7 @@ public class PennantJavaUtil {
 					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, null, 700));
 			
 			put("CustomerQDE", new ModuleMapping(new Customer(0), new String[] { "Customers", "Customers_AView" }, 
-					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, custQDEWF, 700));
+					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, null, 700));
 			
 			put("CustomerDetails", new ModuleMapping(new Customer(0), new String[] { "Customers", "Customers_AView" },
 					new String[] { "CustID", "CustCIF" }, null, custDetailWF, 300));
