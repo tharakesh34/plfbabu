@@ -165,6 +165,8 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	protected Groupbox groupboxWf;
 	protected Row statusRow;
 	// new fields added for Third Party
+	protected Row row_thirdPartyDetails; // autowired
+	protected Label label_ThirdPartyReg; // autowired
 	protected Checkbox thirdPartyReg; // autowired
 	protected Textbox thirdPartyName; // autowired
 	protected Textbox passportNum; // autowired
@@ -262,7 +264,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	private FleetVehicleLoanDetailListCtrl fleetVehicleLoanDetailListCtrl;
 	private List<CarLoanDetail> carLoanDetails;
 	private boolean newRecord=false;
-	protected Row row_ItemNumber;
 	protected Intbox itemNumber;
 	private int ccyFormatter = 0;
 	
@@ -382,6 +383,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		
 		this.carUsage.setInputAllowed(false);
 		this.carUsage.setDisplayStyle(3);
+		this.carUsage.setMandatoryStyle(true);
 		this.carUsage.setModuleName("CarUsage");
 		this.carUsage.setValueColumn("FieldCodeValue");
 		this.carUsage.setDescColumn("ValueDesc");
@@ -449,8 +451,9 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.vehicleItemNum.setMaxlength(20);
 		this.iBANnumber.setMaxlength(23);
 		this.dealerOrSellerAcc.setMandatoryStyle(true);
-		
+		this.dealerOrSellerAcc.setTextBoxWidth(161);
 		this.thirdPartyNat.setMaxlength(2);
+		this.thirdPartyNat.setTextBoxWidth(161);
 		this.thirdPartyNat.setModuleName("NationalityCode");
 		this.thirdPartyNat.setValueColumn("NationalityCode");
 		this.thirdPartyNat.setDescColumn("NationalityDesc");
@@ -502,15 +505,17 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	private void checkThirdPartyReg() {
 		logger.debug("Entering");
 		if(this.thirdPartyReg.isChecked()){
-			//this.space_thirdPartyName.setVisible(true);
+			this.row_thirdPartyDetails.setVisible(true);
 			this.thirdPartyNat.setMandatoryStyle(true);
 			this.space_thirdPartyName.setSclass("mandatory");
 			this.space_passportNum.setSclass("mandatory");
 		}else{
-			//this.space_thirdPartyName.setVisible(false);
+			this.row_thirdPartyDetails.setVisible(false);
 			this.thirdPartyNat.setMandatoryStyle(false);
 			this.space_thirdPartyName.setSclass("");
 			this.space_passportNum.setSclass("");
+			this.thirdPartyName.setValue("");
+			this.thirdPartyNat.setValue("","");
 		}
 		logger.debug("Leaving");
 	}
@@ -588,7 +593,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.privateDealerName.setReadonly(isReadOnly("CarLoanDetailDialog_privateDealerName"));
 			this.carDealer.setVisible(false);
 			this.privateDealerName.setVisible(true);	
-			this.carDealer.setValue("");
+			this.carDealer.setValue("","");
 			this.space_carDealer.setSclass("mandatory");
 			this.carDealer.setMandatoryStyle(false);
 			this.dealerPhone.setReadonly(true);
@@ -603,7 +608,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.space_dealerPhone.setSclass("");
 			this.dealerPhone.setValue("");
 			this.dealerPhone.setReadonly(true);
-			this.carDealer.setValue("");
+			this.carDealer.setValue("","");
 			this.privateDealerName.setValue("");
 			this.carDealer.setValue("", "");
 		}	
@@ -863,7 +868,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		fillComboBox(this.sellerType, aCarLoanDetail.getSellerType(), sellerTypeList, "");
 
 		this.thirdPartyReg.setChecked(aCarLoanDetail.isThirdPartyReg());
-		this.thirdPartyName.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getPassportNum()));
+		this.thirdPartyName.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getThirdPartyName()));
 		this.passportNum.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getPassportNum()));	
 		this.thirdPartyNat.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getThirdPartyNat()));
 		 if (StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.PRIVATE)) {
@@ -1242,13 +1247,20 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			// during user action.
 			doStoreInitValues();
 			if(isFleetVehicle){
-				this.row_ItemNumber.setVisible(true);
+				this.label_ThirdPartyReg.setVisible(false);
+				this.thirdPartyReg.setVisible(false);
+				this.row_thirdPartyDetails.setVisible(false);
 				this.btnCancel.setVisible(false);
 				this.window_CarLoanDetailDialog.setHeight("90%");
 				this.window_CarLoanDetailDialog.setWidth("85%");
 				this.window_CarLoanDetailDialog.doModal();
 			}else{
 				if (panel != null) {
+					if(this.thirdPartyReg.isChecked()){
+						this.row_thirdPartyDetails.setVisible(true);
+					}else{
+						this.row_thirdPartyDetails.setVisible(false);
+					}
 					this.toolbar.setVisible(false);
 					this.gb_statusDetails.setVisible(false);
 					this.groupboxWf.setVisible(false);
@@ -1571,6 +1583,9 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (!this.privateDealerName.isReadonly()) {
 			this.privateDealerName.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarDealer.value"),null,true));
 		}
+		if (!this.carMakeYear.isReadonly()) {
+			this.carMakeYear.setConstraint(new PTNumberValidator(Labels.getLabel("label_CarLoanDetailDialog_CarMakeYear.value"), true, false, 2, 8));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1607,6 +1622,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		this.carLoanFor.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarLoanFor.value"),null,true,true));
+		this.carUsage.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarUsage.value"),null,true,true));
 		this.carManufacturer.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarManufacturer.value"),null,true,true));
 		this.carModel.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarModel.value"),null,true,true));
 		this.carDealer.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarDealer.value"),null,true,true));

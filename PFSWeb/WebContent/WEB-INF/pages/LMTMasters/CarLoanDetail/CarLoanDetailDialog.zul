@@ -44,12 +44,12 @@
 									<textbox id="loanRefNumber" width="171px" maxlength="26" readonly="true" />
 								</hbox>
 							</row>
-							<row id="row_ItemNumber" visible="false">
+							<row id="row_ItemNumber">
 								<label id="label_ItemNumber"
 									value="${c:l('label_CarLoanDetailDialog_ItemNumber.value')}" />
 								<hbox>
 									<space id="space_ItemNumber" spacing="2px" />
-									<intbox id="itemNumber" width="171px" readonly="true" />
+									<intbox id="itemNumber" width="195px" readonly="true" />
 								</hbox>
 							</row>
 							<row visible="false">
@@ -77,19 +77,19 @@
 								<label id="label_CarLoanDetailDialog_CarMakeYear" value="${c:l('label_CarLoanDetailDialog_CarMakeYear.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="carMakeYear" width="90px" maxlength="4" />
+									<intbox id="carMakeYear" width="195px" maxlength="4" />
 								</hbox>
 							</row>
 							<row visible="true">
 								<label id="label_CarLoanDetailDialog_CarCapacity" value="${c:l('label_CarLoanDetailDialog_CarCapacity.value')}" />
 								<hbox>
 									<space spacing="2px"  />
-									<intbox id="carCapacity" width="90px" maxlength="2" />
+									<intbox id="carCapacity" width="195px" maxlength="2" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_CarCc" value="${c:l('label_CarLoanDetailDialog_CarCc.value')}" />
 								<hbox>
-									<space spacing="2px" />
-									<intbox id="carCc" width="90px" maxlength="5" />
+									<space spacing="2px" sclass="mandatory"/>
+									<intbox id="carCc" width="195px" maxlength="5" />
 								</hbox>
 							</row>
 							<row visible="true">					
@@ -97,17 +97,17 @@
 								<hbox>
 								<extendedcombobox id="cbCarColor"/>	
 								</hbox>
-								<label id="label_CarLoanDetailDialog_ThirdPartyReg" value="${c:l('label_CarLoanDetailDialog_ThirdPartyReg.value')}" />									
+								<label id="label_ThirdPartyReg" value="${c:l('label_CarLoanDetailDialog_ThirdPartyReg.value')}" />									
 									<hbox>
 									<space spacing="2px" />														
 										<checkbox id="thirdPartyReg" checked="false" />
 										</hbox>									
 							</row>
-							<row visible="true">
+							<row id="row_thirdPartyDetails" visible="false">
 								<label id="label_CarLoanDetailDialog_TpName" value="${c:l('label_CarLoanDetailDialog_TpName.value')}" />
 								<hbox>
 									<space id="space_thirdPartyName" spacing="2px"/>
-									<textbox id="thirdPartyName" width="171px" maxlength="26"/>
+									<textbox id="thirdPartyName" width="195px" maxlength="26"/>
 								</hbox>
 								<label id="label_CarLoanDetailDialog_NationalityandPassNum" value="${c:l('label_CarLoanDetailDialog_NationalityPassNum.value')}" />
 									<hbox>
@@ -118,24 +118,24 @@
 							<label id="label_CarLoanDetailDialog_passportNum" value="${c:l('label_CarLoanDetailDialog_passportNum.value')}" />
 								<hbox>
 										<space id="space_passportNum" spacing="2px"/>
-										<textbox id="passportNum" width="150px" maxlength="20" />
+										<textbox id="passportNum" width="195px" maxlength="20" />
 									</hbox>	
 							<label id="label_CarLoanDetailDialog_EmiratesReg" value="${c:l('label_CarLoanDetailDialog_EmiratesReg.value')}" />		
 									<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="emiratesRegNum" width="171px" maxlength="20" />
+									<textbox id="emiratesRegNum" width="195px" maxlength="20" />
 									</hbox> 
 									</row>
 							<row visible="true">
 								<label id="label_CarLoanDetailDialog_CarRegNo" value="${c:l('label_CarLoanDetailDialog_CarRegNo.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<textbox id="carRegNo" width="171px" />
+									<textbox id="carRegNo" width="195px" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_SellerType" value="${c:l('label_CarLoanDetailDialog_SellerType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory"/>
-									<combobox id="sellerType" width="171px"/>
+									<combobox id="sellerType" width="195px"/>
 								</hbox>
 							</row>
 							<row visible="true">	
@@ -143,12 +143,12 @@
 								<hbox>
 									<extendedcombobox id="carDealer" visible="false"/>
 									<space id="space_carDealer" spacing="2px"/>
-									<textbox id="privateDealerName" width="171px" visible="true" readonly="true"/>
+									<textbox id="privateDealerName" width="195px" visible="true" readonly="true"/>
 								</hbox>
 								<label id="label_CarLoanDetailDialog_paymentMode" value="${c:l('label_CarLoanDetailDialog_paymentMode.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="paymentMode" width="171px" readonly="true" />
+									<combobox id="paymentMode" width="195px" readonly="true" />
 								</hbox>	
 							</row>
 							<row visible="true">											
@@ -156,24 +156,24 @@
 									<hbox>	
 										<accountSelectionBox id="dealerOrSellerAcc" visible="false"/>	
 										<space id="space_dealerOrSellerAcc" spacing="2px"/>
-										<textbox id="iBANnumber" width="171px" maxlength="23"/>				
+										<textbox id="iBANnumber" width="195px" maxlength="23"/>				
 									</hbox>	
 							<label id="label_CarLoanDetailDialog_engineNumber" value="${c:l('label_CarLoanDetailDialog_engineNumber.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<textbox id="engineNumber" width="171px" />
+									<textbox id="engineNumber" width="195px" />
 								</hbox>
 							</row>
 							<row visible="true">	
 								<label id="label_CarLoanDetailDialog_CarChasisNo" value="${c:l('label_CarLoanDetailDialog_CarChasisNo.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="carChasisNo" width="171px" />
+									<textbox id="carChasisNo" width="195px" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_salesPersonName" value="${c:l('label_CarLoanDetailDialog_salesPersonName.value')}" />
 								<hbox>
 									<space spacing="2px"  />
-									<textbox id="salesPersonName" width="171px" />
+									<textbox id="salesPersonName" width="195px" />
 								</hbox>
 							</row>
 							<!-- <row visible="false">
@@ -188,12 +188,12 @@
 								<label id="label_CarLoanDetailDialog_dealerPhone" value="${c:l('label_CarLoanDetailDialog_dealerPhone.value')}" />
 								<hbox>
 									<space id="space_dealerPhone" spacing="2px"/>
-									<textbox id="dealerPhone" maxlength="15" width="171px"/>
+									<textbox id="dealerPhone" maxlength="15" width="195px"/>
 								</hbox>
 								<label id="label_CarLoanDetailDialog_quoationNbr" value="${c:l('label_CarLoanDetailDialog_quoationNbr.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="quoationNbr" width="171px" />
+									<textbox id="quoationNbr" width="195px" />
 								</hbox>
 							</row>
 							<!-- <row visible="false">
@@ -208,7 +208,7 @@
 								<label id="label_CarLoanDetailDialog_quoationDate" value="${c:l('label_CarLoanDetailDialog_quoationDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<datebox id="quoationDate" width="179px" />
+									<datebox id="quoationDate" width="195px" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_purchageOdrNumber" value="${c:l('label_CarLoanDetailDialog_purchageOdrNumber.value')}" />
 								<hbox>
@@ -220,7 +220,7 @@
 								<label id="label_CarLoanDetailDialog_purchaseDate" value="${c:l('label_CarLoanDetailDialog_purchaseDate.value')}" />
 								<hbox>
 									<space spacing="2px"  />
-									<datebox id="purchaseDate" width="179px" />
+									<datebox id="purchaseDate" width="195px" />
 								</hbox>
 								<label id="label_CarLoanDetailDialog_VehicleItemNum" value="${c:l('label_CarLoanDetailDialog_VehicleItemNum.value')}" />
 								<hbox>
@@ -232,7 +232,7 @@
 								<label id="label_CarLoanDetailDialog_VehicleValue" value="${c:l('label_CarLoanDetailDialog_VehicleValue.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory"/>
-									<decimalbox id="vehicleValue" width="179px" />
+									<decimalbox id="vehicleValue" width="195px" />
 								</hbox>
 							</row>
 							<row spans="2">
