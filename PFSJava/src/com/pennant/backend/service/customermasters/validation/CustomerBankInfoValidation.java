@@ -72,7 +72,7 @@ public class CustomerBankInfoValidation {
 		valueParm[1] = customerBankInfo.getBankName();
 
         errParm[0] = PennantJavaUtil.getLabel("CustomerBankInfo") +" , " + PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0]+ " and ";
-        errParm[1] = PennantJavaUtil.getLabel("label_BankName") + "-" + valueParm[1];
+        errParm[1] = PennantJavaUtil.getLabel("label_CustBank") + "-" + valueParm[1];
 
 		if (customerBankInfo.isNew()){ // for New record or new record into work flow
 

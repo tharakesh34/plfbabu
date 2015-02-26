@@ -301,7 +301,7 @@ public class CustomerBankInfoDAOImpl extends BasisCodeDAO<CustomerBankInfo> impl
 		parms[1][1] = bankName;
 
 		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_BankName")+ ":" + parms[1][1];
+		parms[0][1] = PennantJavaUtil.getLabel("label_CustBank")+ ":" + parms[1][1];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 				errorId, parms[0],parms[1]), userLanguage);
 	}

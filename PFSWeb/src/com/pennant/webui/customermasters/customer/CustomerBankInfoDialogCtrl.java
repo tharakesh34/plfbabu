@@ -1009,7 +1009,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl implements Serializa
 		valueParm[1] = aCustomerBankInfo.getBankName();
 		
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_BankName")+ ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_CustBank")+ ":" + valueParm[1];
 		
 		if(getFinanceCustomerListCtrl().getCustomerBankInfoDetailList()!=null && getFinanceCustomerListCtrl().getCustomerBankInfoDetailList().size()>0){
 			for (int i = 0; i < getFinanceCustomerListCtrl().getCustomerBankInfoDetailList().size(); i++) {
