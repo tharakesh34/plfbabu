@@ -88,11 +88,11 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 		
 		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1001));
 		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1002));
-		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1003));
+		/*customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1003));
 		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1004));
 		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1005));
 		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1006));
-		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1007));
+		customerList.add(setStaticBlackListData(new CoreBankBlackListCustomer(), 1007));*/
 		
 		logger.debug("Leaving");
 		return customerList;

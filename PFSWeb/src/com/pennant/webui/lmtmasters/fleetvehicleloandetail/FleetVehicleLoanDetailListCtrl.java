@@ -221,7 +221,7 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().alocateAuthorities("FleetVehicleLoanDetailDialog",roleCode);
-		this.button_FleetVehicleLoanDetailList_NewVehicleLoanDetail.setVisible(getUserWorkspace().isAllowed("button_FleetVehicleLoanDetailDialog_NewFleetVehicleLoanDetail"));
+		this.button_FleetVehicleLoanDetailList_NewVehicleLoanDetail.setVisible(getUserWorkspace().isAllowed("button_FleetVehicleLoanDetailDialog_New"));
 		logger.debug("leaving");
 	}
 

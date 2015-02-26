@@ -235,13 +235,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 			if(getFinScheduleData().getFinanceMain().isAllowGrcPeriod()){
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("listcell_totalGrcDays.label", ""),
 						new BigDecimal(grcDays),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-						BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",1, null,false);
+						BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",15, null,false);
 			}
 			
 			doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("listcell_totalDays.label", ""),
 					new BigDecimal(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
 							getFinScheduleData().getFinanceMain().getMaturityDate())),BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-					BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",1, null,false);
+					BigDecimal.ZERO, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",15, null,false);
 
 		} else {
 			if (getFinanceScheduleDetail().isPftOnSchDate() && !(getFinanceScheduleDetail().isRepayOnSchDate() || getFinanceScheduleDetail().isDeferedPay() ||
@@ -830,14 +830,20 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 						}
 					} else {
-						lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], 
-								getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
-						if(!bgColor.equals("")) {
+						if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && fillType == 15){
+							lc = new Listcell("");
+							lc.setStyle("text-align:right;"); 
+						} else if(fillType == 15){
+							lc = new Listcell(String.valueOf(amountlist[i].intValue()));
+						} else {
+							lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], 
+									getFinScheduleData().getFinanceMain().getLovDescFinFormatter()));
+						} if(!bgColor.equals("")) {
 							lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";");
 							if(!isEditable) {
 								lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";cursor:default;");
 							}
-						}else {
+						} else {
 							lc.setStyle("text-align:right;");
 							if(!isEditable) {
 								lc.setStyle("text-align:right;cursor:default;");

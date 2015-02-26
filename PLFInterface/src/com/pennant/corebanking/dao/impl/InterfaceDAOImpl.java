@@ -642,11 +642,11 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		List<CorePoliceCase> corePolice = new ArrayList<CorePoliceCase>();
 		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1001));
 		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1002));
-		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1003));
+		/*corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1003));
 		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1004));
 		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1005));
 		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1006));
-		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1007));
+		corePolice.add(setStaticBlackListData(new CorePoliceCase(), 1007));*/
 		
 		/*StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT * FROM PoliceCase ");
