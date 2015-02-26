@@ -975,7 +975,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if(!this.empStatus.isReadonly()){
 			this.empStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpStatus.value"), null, true,true));
 		}
-		if(this.row_EmpName.isVisible() && !this.empName.getButton().isDisabled()){
+		if(this.row_EmpName.isVisible() && !this.empName.isReadonly()){
 			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
 		}
 		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
