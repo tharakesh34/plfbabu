@@ -529,11 +529,22 @@ public class ScheduleCalculator {
 		financeMain.setRepaySpecialRate("");
 		financeMain.setRepayProfitRate(BigDecimal.ZERO);
 		financeMain.setScheduleMethod(CalculationConstants.EQUAL);
+		financeMain.setEqualRepay(true);
+		financeMain.setCalculateRepay(true);
 		
 		//Step Details
 		financeMain.setStepFinance(false);
+		financeMain.setStepPolicy("");
+		financeMain.setNoOfSteps(0);
+		financeMain.setAlwManualSteps(false);
 		financeMain.setPlanDeferCount(0);
 		financeMain.setDefferments(0);
+		
+		//Takaful Details
+		financeMain.setTakafulRequired(false);
+		financeMain.setTakafulRate(BigDecimal.ZERO);
+		financeMain.setTakafulFrq("");
+		financeMain.setTakafulRef("");
 		
 		//Child List Details
 		dpScheduleData.getDisbursementDetails().get(0).setDisbAmount(financeMain.getFinAmount());
@@ -4979,41 +4990,43 @@ public class ScheduleCalculator {
 			
 			BigDecimal totalCalFee = financeMain.getCalSchdFeeAmt();			
 			
-			if(financeMain.getFeeSchdTerms() == 0){
-				finScheduleData.setErrorDetail(new ErrorDetails("SCH40",
-						"Calculate Fee Schedule Term with Mentioned Remaining Schedule method is not matched", new String[] { " " }));
-				return finScheduleData;
+			if(totalCalFee.compareTo(BigDecimal.ZERO) > 0){
+				if(financeMain.getFeeSchdTerms() == 0){
+					finScheduleData.setErrorDetail(new ErrorDetails("SCH40",
+							"Calculate Fee Schedule Term with Mentioned Remaining Schedule method is not matched", new String[] { " " }));
+					return finScheduleData;
+				}
+				//Equal Distribution of Calculated Fee Amount by Number of Terms.
+				BigDecimal instlFeeAmt = totalCalFee.divide(new BigDecimal(financeMain.getFeeSchdTerms()), 0, RoundingMode.HALF_DOWN);
+
+				//Distribute Fee Amount to each Schedule Installment
+				int size = finScheduleData.getFinanceScheduleDetails().size();
+				for (int i = 0; i < size; i++) {
+
+					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+					curSchd.setSchdFeeOS(totalCalFee);
+
+					if(totalCalFee.compareTo(BigDecimal.ZERO) <= 0){
+						break;
+					}
+
+					if(curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0){
+						continue;
+					}
+
+					if(!curSchd.isRepayOnSchDate()){
+						continue;
+					}
+
+					if(i == size-1 || instlFeeAmt.compareTo(totalCalFee) > 0){
+						curSchd.setFeeSchd(totalCalFee);
+						totalCalFee = BigDecimal.ZERO;
+					}else{
+						curSchd.setFeeSchd(instlFeeAmt);
+						totalCalFee = totalCalFee.subtract(instlFeeAmt);
+					}
+				}
 			}
-			//Equal Distribution of Calculated Fee Amount by Number of Terms.
-			BigDecimal instlFeeAmt = totalCalFee.divide(new BigDecimal(financeMain.getFeeSchdTerms()), 0, RoundingMode.HALF_DOWN);
-			
-			//Distribute Fee Amount to each Schedule Installment
-			int size = finScheduleData.getFinanceScheduleDetails().size();
-			for (int i = 0; i < size; i++) {
-				
-				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				curSchd.setSchdFeeOS(totalCalFee);
-				
-				if(totalCalFee.compareTo(BigDecimal.ZERO) <= 0){
-					break;
-				}
-				
-				if(curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0){
-					continue;
-				}
-				
-				if(!curSchd.isRepayOnSchDate()){
-					continue;
-				}
-				
-				if(i == size-1 || instlFeeAmt.compareTo(totalCalFee) > 0){
-					curSchd.setFeeSchd(totalCalFee);
-					totalCalFee = BigDecimal.ZERO;
-				}else{
-					curSchd.setFeeSchd(instlFeeAmt);
-					totalCalFee = totalCalFee.subtract(instlFeeAmt);
-				}
-            }
 			
 		} 
 		
@@ -5069,8 +5082,6 @@ public class ScheduleCalculator {
 				}
 
 				curSchd.setTakafulFeeSchd(takafulFeeSchd);
-				
-				System.out.println("Schedule Date : -- "+curSchd.getSchDate()+"  --- Takaful Amount : "+takafulFeeSchd);
 			}
 
 		} 
