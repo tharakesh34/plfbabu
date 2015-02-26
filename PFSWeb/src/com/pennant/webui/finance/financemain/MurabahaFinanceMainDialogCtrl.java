@@ -2385,6 +2385,12 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 				
+				// If Next Role doesn't have Queue Assignment
+				if (aFinanceMain.getNextUserId() == null) {
+					getFinanceDetailService().updateUserCounts(PennantConstants.WORFLOW_MODULE_FINANCE, 
+							getRole(), getUserWorkspace().getUserDetails().getUserId());
+				}
+				
 				closeWindow(this.window_MurabahaFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
@@ -2466,7 +2472,10 @@ public class MurabahaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 		financeMain.setRoleCode(getRole());
 		financeMain.setNextRoleCode(nextRoleCode);
 		
-		if (StringUtils.trimToEmpty(getWorkFlow().getAssignmentMethod(taskId)).equalsIgnoreCase(
+		//If Assignment Method is empty then Set next user ID default to Empty
+		if (StringUtils.trimToEmpty(getWorkFlow().getAssignmentMethod(taskId)).equals("")) {
+			financeMain.setNextUserId(null);
+		}else if (StringUtils.trimToEmpty(getWorkFlow().getAssignmentMethod(taskId)).equalsIgnoreCase(
 				PennantConstants.ASSIGNMETHOD)) {
 			getNextUserId(financeMain, getRole(), nextRoleCode, old_NextRoleCode.contains(nextRoleCode));
 			if(!getRole().equals(nextRoleCode)){

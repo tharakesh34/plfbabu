@@ -1505,7 +1505,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
-		downpayFinApprove(aAuditHeader);
+		if(financeDetail.getFinScheduleData().getFinanceType() != null && 
+				financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm()){
+			downpayFinApprove(aAuditHeader);
+		}
 		logger.debug("Leaving");
 		return auditHeader;
 

@@ -651,7 +651,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		}
 		//finDOB
 		if (this.finDateofBirth.getValue()!=null) {
-			searchObj = getSearchFilter(searchObj, this.sortOperator_finDateofBirth.getSelectedItem(), DateUtility.formatDate(this.finDateofBirth.getValue(), PennantConstants.DBDateFormat), "LOvDescCustDOB");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_finDateofBirth.getSelectedItem(), DateUtility.formatDate(this.finDateofBirth.getValue(), PennantConstants.DBDateFormat), "LovDescCustDOB");
 		}
 		//finEIDNumber
 		if (!StringUtils.trimToEmpty(this.finEIDNumber.getValue()).equals("")) {
@@ -659,7 +659,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> implements
 		}
 		//finMobileNumber
 		if (!StringUtils.trimToEmpty(this.finMobileNumber.getValue()).equals("")) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_mobileNumber.getSelectedItem(),this.finMobileNumber.getValue().trim(), "");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_mobileNumber.getSelectedItem(),this.finMobileNumber.getValue().trim(), "PhoneNumber");
 		}
 		//finPromotion
 		if (!StringUtils.trimToEmpty(this.finPromotion.getValue()).equals("")) {

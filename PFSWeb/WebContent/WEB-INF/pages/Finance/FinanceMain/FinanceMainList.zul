@@ -136,7 +136,7 @@
 									id="sortOperator_finDateofBirth" width="43px" mold="select"
 									rows="1" />
 								<datebox id="finDateofBirth"
-									width="180px" format="dd/MM/yyyy" />
+									width="180px" format="dd/MM/yyyy" readonly="true"/>
 								<label
 									id="label_FinanceMainSearch_FinRequestDate"
 									value="${c:l('label_FinanceMainSearch_FinRequestDate.value')}" />
@@ -144,7 +144,7 @@
 									id="sortOperator_finRequestDate" width="43px" mold="select"
 									rows="1" />
 								<datebox id="finRequestDate"
-									width="180px" format="dd/MM/yyyy" />
+									width="180px" format="dd/MM/yyyy" readonly="true" />
 							</row>
 							<row>
 								<label

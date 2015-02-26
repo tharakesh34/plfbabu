@@ -300,8 +300,10 @@ public class ShowDedupPoliceBox extends Window implements Serializable {
 			List<PoliceCase>policeCaseList = new ArrayList<PoliceCase>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
-				for (int j = 0; j < listitem.getChildren().size(); j++) {
-					Component component = ((Listcell) listitem.getLastChild()).getChildren().get(0);
+				List<Component> componentList = ((Listcell) listitem.getLastChild())
+						.getChildren();
+				if(componentList != null && componentList.size() > 0){
+					Component component = componentList.get(0);
 					if (component instanceof Checkbox) {
 						if (!((Checkbox) component).isChecked()) {
 							setUserAction(-1);

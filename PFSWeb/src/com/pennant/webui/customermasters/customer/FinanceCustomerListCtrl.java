@@ -351,7 +351,6 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 			doCheckRights();
 			doSetFieldProperties();
-			doStoreInitValues();
 			doShowDialog(getCustomerDetails());
 		} catch (Exception e) {
 			createException(window_FinanceCustomerList, e);
@@ -679,10 +678,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					throw new WrongValueException(this.custSalutationCode, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustSalutationCode.value") }));
 				}
-				aCustomer.setCustSalutationCode(getComboboxValue(this.custSalutationCode));
-			}else{
-				aCustomer.setCustSalutationCode(null);
 			}
+			aCustomer.setCustSalutationCode(getComboboxValue(this.custSalutationCode));
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -693,11 +690,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					throw new WrongValueException(this.target, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_FinanceCustomerList_Target.value") }));
 				}
-				aCustomer.setCustAddlVar82(getComboboxValue(this.target));
-			}else{
-				aCustomer.setCustAddlVar82(null);
-
 			}
+			aCustomer.setCustAddlVar82(getComboboxValue(this.target));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -707,11 +701,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					throw new WrongValueException(this.custGenderCode, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustGenderCode.value") }));
 				}
-				aCustomer.setCustGenderCode(getComboboxValue(this.custGenderCode));
-			}else{
-				aCustomer.setCustGenderCode(null);
-
 			}
+			aCustomer.setCustGenderCode(getComboboxValue(this.custGenderCode));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -722,10 +713,8 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 					throw new WrongValueException(this.custMaritalSts, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_CustomerDialog_CustMaritalSts.value") }));
 				}
-				aCustomer.setCustMaritalSts(getComboboxValue(this.custMaritalSts));
-			}else{
-				aCustomer.setCustMaritalSts(null);
 			}
+			aCustomer.setCustMaritalSts(getComboboxValue(this.custMaritalSts));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1012,26 +1001,26 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 
 	private void doStoreInitValues() {
 		logger.debug("Entering");
-		if (getCustomerDocumentDetailList()!= null) {
-			this.oldVar_customerDocumentDetailList.addAll(getCustomerDocumentDetailList());
+		if (getCustomerDetails().getCustomerDocumentsList()!= null) {
+			this.oldVar_customerDocumentDetailList = getCustomerDetails().getCustomerDocumentsList();
 		}
-		if (getCustomerAddressDetailList()!= null) {
-			this.oldVar_customerAddressDetailList.addAll(getCustomerAddressDetailList());
+		if (getCustomerDetails().getAddressList()!= null) {
+			this.oldVar_customerAddressDetailList = getCustomerDetails().getAddressList();
 		}
-		if (getCustomerPhoneNumberDetailList()!= null) {
-			this.oldVar_customerPhoneNumberDetailList.addAll(getCustomerPhoneNumberDetailList());
+		if (getCustomerDetails().getCustomerPhoneNumList()!= null) {
+			this.oldVar_customerPhoneNumberDetailList = getCustomerDetails().getCustomerPhoneNumList();
 		}
-		if (getCustomerEmailDetailList()!= null) {
-			this.oldVar_customerEmailDetailList.addAll(getCustomerEmailDetailList());
+		if (getCustomerDetails().getCustomerEMailList() != null) {
+			this.oldVar_customerEmailDetailList = getCustomerDetails().getCustomerEMailList() ;
 		}
-		if (getCustomerBankInfoDetailList()!= null) {
-			this.oldVar_customerBankInfoDetailList.addAll(getCustomerBankInfoDetailList());
+		if (getCustomerDetails().getCustomerBankInfoList()!= null) {
+			this.oldVar_customerBankInfoDetailList = getCustomerDetails().getCustomerBankInfoList();
 		}
-		if (getCustomerChequeInfoDetailList()!= null) {
-			this.oldVar_customerChequeInfoDetailList.addAll(getCustomerChequeInfoDetailList());
+		if (getCustomerDetails().getCustomerChequeInfoList()!= null) {
+			this.oldVar_customerChequeInfoDetailList = getCustomerDetails().getCustomerChequeInfoList();
 		}
-		if (getCustomerExtLiabilityDetailList()!= null) {
-			this.oldVar_customerExtLiabilityDetailList.addAll(getCustomerExtLiabilityDetailList());
+		if (getCustomerDetails().getCustomerExtLiabilityList()!= null) {
+			this.oldVar_customerExtLiabilityDetailList= getCustomerDetails().getCustomerExtLiabilityList();
 		}
 		this.oldVar_custShrtName = this.custShrtName.getValue();
 		this.oldVar_custCoreBank = this.custCoreBank.getValue();

@@ -2340,6 +2340,12 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
+				// If Next Role doesn't have Queue Assignment
+				if (aFinanceMain.getNextUserId() == null) {
+					getFinanceDetailService().updateUserCounts(PennantConstants.WORFLOW_MODULE_FINANCE, 
+							getRole(), getUserWorkspace().getUserDetails().getUserId());
+				}
+				
 				closeWindow(this.window_IstnormFinanceMainDialog);
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);

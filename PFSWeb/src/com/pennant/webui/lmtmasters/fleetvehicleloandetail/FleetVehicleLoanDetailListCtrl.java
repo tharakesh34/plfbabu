@@ -213,8 +213,8 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 	}
 
 	private void doStoreInitValues() {
-		if (getVehicleDetailLists()!= null) {
-			this.old_vehicleDetailLists.addAll(getVehicleDetailLists());
+		if (getVehicleDetailLists() != null) {
+			this.old_vehicleDetailLists = getVehicleDetailLists();
 		}
 	}
 

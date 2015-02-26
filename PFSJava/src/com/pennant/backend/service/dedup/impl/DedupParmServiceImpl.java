@@ -647,7 +647,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
 		financeRefDetail.setMandInputInStage(userRole + ",");
 		financeRefDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail,"_ABDView");
+		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail,"_APCView");
 
 		if(queryCodeList!=null && !queryCodeList.isEmpty()) {
 			String custCtgType =policeCaseData.getCustCtgType();
@@ -657,7 +657,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				List<PoliceCase> list = getPoliceCaseDAO().fetchPoliceCase(policeCaseData.getFinReference(), queryCode.getLovDescNamelov());
 				if(list== null || list.isEmpty()){
 					DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
-							PennantConstants.DedupPolice, "I");
+							PennantConstants.DedupPolice, custCtgType);
 					dedupParmList.add(dedupParm);
 				}else{
 					policeCase.addAll(list);}
