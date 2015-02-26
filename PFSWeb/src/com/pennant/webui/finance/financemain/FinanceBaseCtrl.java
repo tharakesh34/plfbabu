@@ -1393,7 +1393,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 						carLoanDetail = getFinanceDetail().getCarLoanDetail();
 					}
 				}
-
+				carLoanDetail.setVehicleValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount());  
 				map.put("carLoanDetail", carLoanDetail);
 				zulFilePathName = "/WEB-INF/pages/LMTMasters/CarLoanDetail/CarLoanDetailDialog.zul";
 
