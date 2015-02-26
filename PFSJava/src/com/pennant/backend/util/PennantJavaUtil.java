@@ -104,14 +104,11 @@ import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.CheckList;
-import com.pennant.backend.model.bmtmasters.CustRiskType;
 import com.pennant.backend.model.bmtmasters.EntityCodes;
 import com.pennant.backend.model.bmtmasters.Product;
-import com.pennant.backend.model.bmtmasters.Question;
 import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.bmtmasters.RatingType;
 import com.pennant.backend.model.bmtmasters.SICCodes;
-import com.pennant.backend.model.bmtmasters.ScoringType;
 import com.pennant.backend.model.collateral.Collateral;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.model.commitment.Commitment;
@@ -120,17 +117,17 @@ import com.pennant.backend.model.coremasters.CollateralLocation;
 import com.pennant.backend.model.coremasters.CollateralType;
 import com.pennant.backend.model.coremasters.Collateralitem;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
+import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustomerChequeInfo;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.customermasters.CustomerBankInfo;
-import com.pennant.backend.model.customermasters.CustEmployeeDetail;
-import com.pennant.backend.model.customermasters.CustomerChequeInfo;
-import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -141,30 +138,24 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.model.dedup.DedupParm;
-import com.pennant.backend.model.diarynotes.DiaryNotes;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.model.finance.CAFFacilityType;
-import com.pennant.backend.model.finance.DefermentDetail;
-import com.pennant.backend.model.finance.DefermentHeader;
 import com.pennant.backend.model.finance.FacilityType;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinBillingDetail;
 import com.pennant.backend.model.finance.FinBillingHeader;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
-import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -195,18 +186,12 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportList;
-import com.pennant.backend.model.rmtmasters.AccountEngineRule;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
-import com.pennant.backend.model.rmtmasters.BasicFinanceType;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
-import com.pennant.backend.model.rmtmasters.FinanceMarginSlab;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rmtmasters.Penalty;
-import com.pennant.backend.model.rmtmasters.PenaltyCode;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
-import com.pennant.backend.model.rmtmasters.ProductFinanceType;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
@@ -214,13 +199,11 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.CorpScoreGroupDetail;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
 import com.pennant.backend.model.rulefactory.Notifications;
-import com.pennant.backend.model.rulefactory.OverdueCharge;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.solutionfactory.FinanceCampaign;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
@@ -267,6 +250,18 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 public class PennantJavaUtil {
 
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
+	
+	private static String masterWF 				= "MSTGRP1";
+	private static String custQDEWF 			= "TEST_WF_CUSTQDE";
+	private static String custDetailWF	 		= "CUSTOMERWF";
+	private static String facilityWF 			= "FACILITY_TERM_SHEET";
+	private static String retailWF	 			= "AUTO_FIN_PROCESS";
+	private static String treasuryWF	 		= "TSR_FIN_PROCESS";
+	private static String finMaintainWF 		= "FIN_RATECHANGE";
+	private static String securityWF 			= "SECURITY_USERS";
+	private static String crReviewCommWF 		= "CREDIT_REVIEW_COMMERCIAL";
+	private static String crReviewCorpWF 		= "CREDIT_REVIEW_CORPORATE";
+	private static String facilityCommitWF 		= "FACILITY_COMMITMENT";
 
 	public static String dbTimeStamp(Timestamp timestamp, String formate) {
 
@@ -335,7 +330,7 @@ public class PennantJavaUtil {
 					new String[] {"EmployerId","EmpName"} , null, null,300));
 			
 			put("TakafulProvider",new ModuleMapping(new TakafulProvider(""), new String[]{"TakafulProvider", "TakafulProvider_AView"}, 
-					new String[] {"TakafulCode","TakafulName"} , null, "MSTGRP1",300));
+					new String[] {"TakafulCode","TakafulName"} , null, null,300));
 
 			put("EmploymentType", new ModuleMapping(new EmploymentType(""), new String[] { "RMTEmpTypes", "RMTEmpTypes_AView" }, 
 					new String[] { "EmpType", "EmpTypeDesc" }, null, null, 300));
@@ -421,7 +416,7 @@ public class PennantJavaUtil {
 					new String[] { "BranchCode", "BranchDesc" }, new String[][] { { "BranchIsActive", "0", "1" } }, null, 300));
 
 			put("CheckList", new ModuleMapping(new CheckList(0), new String[] { "BMTCheckList", "BMTCheckList_AView" }, 
-					new String[] { "CheckListId", "CheckListDesc" }, null, "MSTGRP1", 500));
+					new String[] { "CheckListId", "CheckListDesc" }, null, null, 500));
 
 			put("CheckListDetail", new ModuleMapping(new CheckListDetail(0), new String[] { "RMTCheckListDetails", "RMTCheckListDetails_AView" }, 
 					new String[] { "CheckListId", "AnsDesc" }, null, null, 300));
@@ -464,14 +459,20 @@ public class PennantJavaUtil {
 
 			put("TransactionCode", new ModuleMapping(new TransactionCode(""), new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" },
 					new String[] { "TranCode", "TranDesc" }, null, null, 300));
+			
+			put("CommodityBrokerDetail", new ModuleMapping(new CommodityBrokerDetail(""), new String[] { "FCMTBrokerDetail", "FCMTBrokerDetail_AView" }, 
+					new String[] { "BrokerCode", "BrokerCustID", "lovDescBrokerShortName" }, null, masterWF, 600));
+			
+			put("CommodityDetail", new ModuleMapping(new CommodityDetail(""), new String[] { "FCMTCommodityDetail", "FCMTCommodityDetail_AView" }, 
+					new String[] { "CommodityCode", "CommodityName" }, null, masterWF, 300));
 
 			/*---------- Accounts ---------*/
 			
 			put("Accounts",new ModuleMapping(new Accounts(""), new String[]{"Accounts", "Accounts_AView"}, 
-					new String[] {"AccountId","AcShortName","AcType", "AcCcy"} , null, "MSTGRP1",500));
+					new String[] {"AccountId","AcShortName","AcType", "AcCcy"} , null, masterWF,500));
 			
 			put("SystemInternalAccountDefinition", new ModuleMapping(new SystemInternalAccountDefinition(""), new String[] { "SystemInternalAccountDef", "SystemInternalAccountDef_AView" }, 
-					new String[] { "SIACode", "SIAName" }, null, "MSTGRP1", 300));
+					new String[] { "SIACode", "SIAName" }, null, masterWF, 300));
 
 			/*---------- Customer Masters ---------*/
 
@@ -479,19 +480,19 @@ public class PennantJavaUtil {
 					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, null, 700));
 			
 			put("CustomerQDE", new ModuleMapping(new Customer(0), new String[] { "Customers", "Customers_AView" }, 
-					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, "TEST_WF_CUSTQDE", 700));//TODO
+					new String[] { "CustCIF" ,"CustShrtName" ,"CustCtgCode", "CustFName", "CustLName"}, null, custQDEWF, 700));
 			
 			put("CustomerDetails", new ModuleMapping(new Customer(0), new String[] { "Customers", "Customers_AView" },
-					new String[] { "CustID", "CustCIF" }, null, "CUSTOMERWF", 300));
+					new String[] { "CustID", "CustCIF" }, null, custDetailWF, 300));
 			
 			put("CustomerMaintence", new ModuleMapping(new Customer(0), new String[] { "Customers", "Customers_AView" }, 
-					new String[] { "CustID", "CustCIF", "CustShrtName" }, null, "MSTGRP1", 300));
+					new String[] { "CustID", "CustCIF", "CustShrtName" }, null, masterWF, 300));
 			 
 			put("CustomerAddres", new ModuleMapping(new CustomerAddres(0), new String[] { "CustomerAddresses", "CustomerAddresses_AView" },
 					new String[] { "CustID", "CustAddrHNbr" }, null, null, 300));
 			
 			put("CustomerAdditionalDetail", new ModuleMapping(new CustomerAdditionalDetail(0), new String[] { "CustAdditionalDetails", "CustAdditionalDetails_AView" },
-					new String[] { "CustID", "CustRefCustID" }, null, "MSTGRP1", 300));
+					new String[] { "CustID", "CustRefCustID" }, null, null, 300));
 			
 			put("CustomerDocument", new ModuleMapping(new CustomerDocument(0), new String[] { "CustomerDocuments", "CustomerDocuments_AView" }, 
 					new String[] { "CustID", "CustDocTitle" }, null, null, 300));
@@ -509,13 +510,13 @@ public class PennantJavaUtil {
 					new String[] { "CustID", "CustIncome" }, null, null, 300));
 			
 			put("CustomerIdentity", new ModuleMapping(new CustomerIdentity(0), new String[] { "CustIdentities", "CustIdentities_AView" }, 
-					new String[] { "IdCustID", "IdIssuedBy" }, null, "MSTGRP1", 300));
+					new String[] { "IdCustID", "IdIssuedBy" }, null, null, 300));
 			
 			put("CustomerPhoneNumber", new ModuleMapping(new CustomerPhoneNumber(0), new String[] { "CustomerPhoneNumbers", "CustomerPhoneNumbers_AView" }, 
 					new String[] { "PhoneCustID", "PhoneTypeCode" }, null, null, 300));
 			
 			put("CustomerPRelation", new ModuleMapping(new CustomerPRelation(0), new String[] { "CustomersPRelations", "CustomersPRelations_AView" },
-					new String[] { "PRCustID", "PRRelationCode" }, null, "MSTGRP1", 300));
+					new String[] { "PRCustID", "PRRelationCode" }, null, null, 300));
 			
 			put("CustomerRating", new ModuleMapping(new CustomerRating(0), new String[] { "CustomerRatings", "CustomerRatings_AView" },
 					new String[] { "CustID", "CustRatingCode" }, null, null, 300));
@@ -530,24 +531,24 @@ public class PennantJavaUtil {
 					new String[] { "CustID", "CustEmpName" }, null, null, 300));
 			
 			put("CorporateCustomerDetail", new ModuleMapping(new CorporateCustomerDetail(0), new String[] { "CustomerCorporateDetail", "CustomerCorporateDetail_AView" },
-					new String[] { "CustId", "Name" }, null, "MSTGRP1", 300));
+					new String[] { "CustId", "Name" }, null, null, 300));
 			
 			put("DirectorDetail", new ModuleMapping(new DirectorDetail(0), new String[] { "CustomerDirectorDetail", "CustomerDirectorDetail_AView" }, 
 					new String[] { "DirectorId", "FirstName" }, null, null, 300));
 			
 			put("CustomerBalanceSheet", new ModuleMapping(new CustomerBalanceSheet(""), new String[] { "CustomerBalanceSheet", "CustomerBalanceSheet_AView" }, 
-					new String[] { "CustId", "TotalAssets" }, null, "MSTGRP1", 300));
+					new String[] { "CustId", "TotalAssets" }, null, null, 300));
 
 			/*----------- Rules Factory -----------*/
 			
 			put("AccountingSet", new ModuleMapping(new AccountingSet(0), new String[] { "RMTAccountingSet", "RMTAccountingSet_AView" },
-					new String[] { "EventCode" , "AccountSetCode", "AccountSetCodeName" }, null, "MSTGRP1", 600));
+					new String[] { "EventCode" , "AccountSetCode", "AccountSetCodeName" }, null, masterWF, 600));
 			
 			put("TransactionEntry", new ModuleMapping(new TransactionEntry(0), new String[] { "RMTTransactionEntry", "RMTTransactionEntry_AView" }, 
-					new String[] { "AccountSetid", "TransDesc" }, null, "MSTGRP1", 300));
+					new String[] { "AccountSetid", "TransDesc" }, null, masterWF, 300));
 			
 			put("Rule",new ModuleMapping(new Rule(""),new String[] {  "Rules","Rules_AView" }, 
-					new String[] {"RuleId","RuleCode","RuleCodeDesc"} , null, "MSTGRP1",400));
+					new String[] {"RuleId","RuleCode","RuleCodeDesc"} , null, masterWF,400));
 			
 			put("CorpScoreGroupDetail", new ModuleMapping(new CorpScoreGroupDetail(0), new String[] { "CorpScoringGroupDetail", "CorpScoringGroupDetail" },
 					new String[] { "GroupId", "GroupDesc", "GroupSeq" }, null, null, 300));
@@ -556,56 +557,45 @@ public class PennantJavaUtil {
 					new String[] { "GroupId", "NFRuleDesc", "MaxScore" }, null, null, 300));
 			
 			put("ScoringGroup", new ModuleMapping(new ScoringGroup(0), new String[] { "RMTScoringGroup", "RMTScoringGroup_AView" },
-					new String[] { "ScoreGroupId", "ScoreGroupName" }, null, "MSTGRP1", 350));
+					new String[] { "ScoreGroupId", "ScoreGroupName" }, null, masterWF, 350));
 			
 			put("ScoringSlab", new ModuleMapping(new ScoringSlab(0), new String[] { "RMTScoringSlab", "RMTScoringSlab_AView" }, 
-					new String[] { "ScoreGroupId", "CreditWorthness" }, null, "MSTGRP1", 300));
+					new String[] { "ScoreGroupId", "CreditWorthness" }, null, masterWF, 300));
 			
 			put("ScoringMetrics", new ModuleMapping(new ScoringMetrics(0), new String[] { "RMTScoringMetrics", "RMTScoringMetrics_AView" },
-					new String[] { "ScoreGroupId", "ScoringId" }, null, "MSTGRP1", 300));
-			
-			put("OverdueCharge",new ModuleMapping(new OverdueCharge(""), new String[]{"FinODCHeader", "FinODCHeader_AView"}, 
-					new String[] {"ODCRuleCode","ODCPLAccount"} , null, "MSTGRP1",300));
+					new String[] { "ScoreGroupId", "ScoringId" }, null, masterWF, 300));
 
- 			put("OverdueChargeDetail",new ModuleMapping(new OverdueCharge(""), new String[]{"FinODCDetails", "FinODCDetails_AView"}, 
- 					new String[] {"ODCRuleCode","ODCCustCtg"} , null, "MSTGRP1",300));
- 			
- 			put("MailTemplate",new ModuleMapping(new MailTemplate(0), new String[]{"Templates", "Templates_AView"}, 
- 					new String[] {"TemplateCode","TemplateDesc"} , new String[][] { { "Active", "0", "1" } }, "MSTGRP1",300));
+			put("MailTemplate",new ModuleMapping(new MailTemplate(0), new String[]{"Templates", "Templates_AView"}, 
+ 					new String[] {"TemplateCode","TemplateDesc"} , new String[][] { { "Active", "0", "1" } }, masterWF,300));
  			
  			put("Notifications", new ModuleMapping(new Notifications(""), new String[] { "Notifications", "Notifications_AView" }, 
-					new String[] { "RuleCode", "RuleModule", "RuleCodeDesc" }, null, "MSTGRP1", 600));
+					new String[] { "RuleCode", "RuleModule", "RuleCodeDesc" }, null, masterWF, 600));
 			
- 			put("Query",new ModuleMapping(new Query(""), new String[]{"Queries", "Queries_AView"}, new String[] {"QueryCode","QueryDesc"} , null, "MSTGRP1",300));
+ 			put("Query",new ModuleMapping(new Query(""), new String[]{"Queries", "Queries_AView"}, new String[] {"QueryCode","QueryDesc"} , null, masterWF,300));
  			
 			/*---------- Solution Factory ---------*/
 
 			put("AccountType", new ModuleMapping(new AccountType(""), new String[] { "RMTAccountTypes", "RMTAccountTypes_AView" },
-					new String[] { "AcType", "AcTypeDesc" }, null, "MSTGRP1", 400));
+					new String[] { "AcType", "AcTypeDesc" }, null, masterWF, 400));
 			
 			put("CommodityFinanceType", new ModuleMapping(new FinanceType(), new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" },
-					new String[] { "FinType", "FinTypeDesc" }, new String[][] { { "FinCategory", "0", "CF" } }, "MSTGRP1", 300));
+					new String[] { "FinType", "FinTypeDesc" }, new String[][] { { "FinCategory", "0", "CF" } }, masterWF, 300));
 			
 			put("CustomerType", new ModuleMapping(new CustomerType(""), new String[] { "RMTCustTypes", "RMTCustTypes_AView" }, 
-					new String[] { "CustTypeCode", "CustTypeDesc" }, new String[][] { { "CustTypeIsActive", "0", "1" }, { "CustTypeCode", "1", PennantConstants.NONE } }, "MSTGRP1", 500));
+					new String[] { "CustTypeCode", "CustTypeDesc" }, new String[][] { { "CustTypeIsActive", "0", "1" }, { "CustTypeCode", "1", PennantConstants.NONE } }, 
+					masterWF, 500));
 			
 			put("CustomerGroup", new ModuleMapping(new CustomerGroup(0), new String[] { "CustomerGroups", "CustomerGroups_AView" }, 
-					new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" }, new String[][] { { "CustGrpID", "1", "0" } }, "MSTGRP1", 300));
+					new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" }, new String[][] { { "CustGrpID", "1", "0" } }, masterWF, 300));
 			
 			put("DedupParm", new ModuleMapping(new DedupParm(0), new String[]{"DedupParams", "DedupParams_AView"}, 
-					new String[] { "QueryCode", "QueryModule" }, null, "MSTGRP1", 300)); 
+					new String[] { "QueryCode", "QueryModule" }, null, masterWF, 300)); 
 			
-			put("DedupFields", new ModuleMapping(new DedupFields(""), new String[]{"DedupFields", "DedupFields_AView"}, 
-					new String[] { "FieldName", "FieldControl" }, null, "MSTGRP1", 300));
-			
-			put("DiaryNotes", new ModuleMapping(new DiaryNotes(0), new String[] { "DiaryNotes", "DiaryNotes_AView" }, 
-					new String[] { "DnType", "DnCreatedNo", "FrqCode" }, new String[][] { { "RecordDeleted", "0", "0" } }, "MSTGRP1", 450));
+			put("DedupFields", new ModuleMapping(new DedupFields(""), new String[]{"DedupFields", "DedupFields_View"}, 
+					new String[] { "FieldName", "FieldControl" }, null, null, 300));
 			
 			put("ExtendedFieldDetail",new ModuleMapping(new ExtendedFieldDetail(0), new String[]{"ExtendedFieldDetail", "ExtendedFieldDetail_AView"}, 
-					new String[] {"ModuleId","FieldType"} , null, "MSTGRP1",300));
-			
-			put("FinanceCampaign",new ModuleMapping(new FinanceCampaign(""), new String[]{"FinanceCampaign", "FinanceCampaign_AView"}, 
-					new String[] {"FCCode","FCDesc"} , null, "MSTGRP1",300));
+					new String[] {"ModuleId","FieldType"} , null, masterWF,300));
 			
 			put("FinanceReferenceDetail", new ModuleMapping(new FinanceReferenceDetail(0), new String[] { "LMTFinRefDetail", "LMTFinRefDetail_AView" }, 
 					new String[] { "FinRefDetailId", "IsActive" }, null, null, 300));
@@ -614,222 +604,276 @@ public class PennantJavaUtil {
 					new String[] { "FinRefDetailId", "IsActive" }, null, null, 300));
 			
 			put("FinanceWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
-					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, "MSTGRP1", 600));
+					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","FINANCE" } }, masterWF, 600));
 			
 			put("PromotionWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
-					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","PROMOTION" } ,{"LovDescProductName","1",""}}, "MSTGRP1", 600));
+					new String[] { "LovDescProductCodeName", "FinType", "LovDescFinTypeName" }, new String[][] { { "ModuleName", "0","PROMOTION" } ,{"LovDescProductName","1",""}},
+					masterWF, 600));
 			
 			put("FacilityWorkFlow", new ModuleMapping(new FinanceWorkFlow(""), new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, 
-					new String[] {  "FinType", "lovDescFacilityTypeName" }, new String[][] { { "ModuleName", "0", "FACILITY" } }, "MSTGRP1", 600));
+					new String[] {  "FinType", "lovDescFacilityTypeName" }, new String[][] { { "ModuleName", "0", "FACILITY" } }, masterWF, 600));
 			
 			put("FinanceType", new ModuleMapping(new FinanceType(), new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, 
-					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "0", "" } }, "MSTGRP1", 600));
+					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "0", "" } }, 
+					masterWF, 600));
 			
 			put("PromotionCode", new ModuleMapping(new FinanceType(), new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, 
-					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "1", "" } }, "MSTGRP1", 600));
+					new String[] { "FinType","LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" }, { "Product", "1", "" } },
+					masterWF, 600));
+			
+			put("FinTypeAccount",new ModuleMapping(new FinTypeAccount(""), new String[]{"FinTypeAccount"},new String[] {"FinCcy","Event"} ,null , null,300));
 			
 			put("HolidayMaster", new ModuleMapping(new HolidayMaster(""), new String[] { "SMTHolidayMaster", "SMTHolidayMaster_AView" },
 					new String[] { "HolidayCode", "HolidayType" }, null, null, 300));
 			
 			put("Product", new ModuleMapping(new Product(""), new String[] { "BMTProduct", "BMTProduct_AView" }, 
-					new String[] { "ProductCode", "ProductDesc" }, null, "MSTGRP1", 300));
+					new String[] { "ProductCode", "ProductDesc" }, null, masterWF, 300));
 			
 			put("ProductAsset", new ModuleMapping(new ProductAsset(0), new String[] { "RMTProductAssets", "RMTProductAssets_AView" },
-					new String[] { "AssetCode", "AssetDesc" }, null, "MSTGRP1", 300));
+					new String[] { "AssetCode", "AssetDesc" }, null, masterWF, 300));
 
 			put("WeekendMaster", new ModuleMapping(new WeekendMaster(""), new String[] { "SMTWeekendMaster", "SMTWeekendMaster_AView" },
 					new String[] { "WeekendCode", "WeekendDesc" }, null, null, 300));
 			
-			put("CustRiskType", new ModuleMapping(new CustRiskType(""), new String[] { "CustRiskTypes","CustRiskTypes"}, 
-					new String[] { "RiskCode", "RiskDesc" }, null, "MSTGRP1", 300));
-			
 			put("SICCodes", new ModuleMapping(new SICCodes(""), new String[] { "SICCodes","SICCodes"}, 
-					new String[] { "SicCode", "SicDesc" }, null, "MSTGRP1", 300));
+					new String[] { "SicCode", "SicDesc" }, null, masterWF, 300));
+			
 			put("EntityCodes", new ModuleMapping(new EntityCodes(""), new String[] { "EntityCodes","EntityCodes"}, 
-					new String[] { "EntityCode", "EntityDesc" }, null, "MSTGRP1", 300));
+					new String[] { "EntityCode", "EntityDesc" }, null, masterWF, 300));
 			
 			put("StepPolicyHeader", new ModuleMapping(new StepPolicyHeader(""), new String[] { "StepPolicyHeader", "StepPolicyHeader_AView" }, 
- 					new String[] { "PolicyCode", "PolicyDesc" }, null, "MSTGRP1", 300));
+ 					new String[] { "PolicyCode", "PolicyDesc" }, null, masterWF, 300));
 			
-			put("StepPolicyDetail",new ModuleMapping(new StepPolicyDetail(""), new String[]{ "StepPolicyDetail", "StepPolicyDetail_AView" },new String[] {"StepNumber","TenorSplitPerc"} ,null , null,300));
+			put("StepPolicyDetail",new ModuleMapping(new StepPolicyDetail(""), new String[]{ "StepPolicyDetail", "StepPolicyDetail_AView" },
+					new String[] {"StepNumber","TenorSplitPerc"} ,null , null,300));
 			
 			/*---------- Finance ---------*/
 			
 			put("WIFFinanceMain", new ModuleMapping(new FinanceMain(""), new String[] { "WIFFinanceMain", "WIFFinanceMain_View" },
-					new String[] { "FinReference","FinType", "FinStartDate" }, null, "FACILITY_TERM_SHEET", 700));
-			
-			put("WIFFinanceDisbursement", new ModuleMapping(new FinanceDisbursement(""), new String[] { "WIFFinDisbursementDetails", "WIFFinDisbursementDetails_AView" },
-					new String[] { "FinReference", "DisbDesc" }, null, null, 300));
-			
-			put("WIFFinanceScheduleDetail", new ModuleMapping(new FinanceScheduleDetail(""), new String[] { "WIFFinScheduleDetails", "WIFFinScheduleDetails_AView" }, 
-					new String[] { "FinReference", "PftOnSchDate" }, null, null, 300));
+					new String[] { "FinReference","FinType", "FinStartDate" }, null, facilityWF, 700));
 			
 			put("FinanceMain", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "FinType" }, null, "AUTO_FIN_PROCESS", 350));
+					new String[] { "FinReference", "FinType" }, null, retailWF, 350));
 			
 			put("FinanceDetail", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "FinType" }, null, "AUTO_FIN_PROCESS", 350));
+					new String[] { "FinReference", "FinType" }, null, retailWF, 350));
+			
+			put("InvestmentFinHeader",new ModuleMapping(new InvestmentFinHeader(""), new String[]{"InvestmentFinHeader", "InvestmentFinHeader_AView"},
+					new String[] {"InvestmentRef", "TotPrinAmt"} , null, treasuryWF,300));
+			
+			put("IndicativeTermDetail", new ModuleMapping(new IndicativeTermDetail(""), new String[] { "WIFIndicativeTermDetail", "WIFIndicativeTermDetail_View" },
+					new String[] { "FinReference", "FacilityType", "RpsnName" }, null, masterWF, 600));
+			
+			/*---------- Facility Related Module Details -----------*/
+			
+			put("CAFFacilityType",new ModuleMapping(new CAFFacilityType(""), new String[]{"CAFFacilityTypes", "CAFFacilityTypes"}, 
+					new String[] {"FacilityType", "FacilityDesc"} , null, null,300));
+			
+			put("Facility",new ModuleMapping(new Facility(""), new String[]{"FacilityHeader", "FacilityHeader_AView"}, 
+					new String[] {"CAFReference","CustID"} , null, masterWF,300));
+			
+			put("Collateral",new ModuleMapping(new Collateral(""), new String[]{"Collateral", "Collateral_AView"}, 
+					new String[] {"CAFReference","Currency"} , null, masterWF,300));
+			
+			put("FacilityDetail",new ModuleMapping(new FacilityDetail(""), new String[]{"FacilityDetails", "FacilityDetails_AView"},
+					new String[] {"FacilityRef","FacilityType"} , null, masterWF,300));
+			
+			/*---------- Credit Review Details -----------*/
+			
+			put("CommCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, crReviewCommWF, 600));
+			
+			put("FinCreditReviewDetails", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, null, 600));
+			
+			put("CorpCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
+					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, crReviewCorpWF, 600));
+			
+			put("FinCreditReviewSummary", new ModuleMapping(new FinCreditReviewSummary(), new String[] { "FinCreditReviewSummary" },
+					new String[] { "SummaryId" , "SubCategoryId", "ItemValue" }, null, null, 600));
+			
+			put("FinCreditRevSubCategory", new ModuleMapping(new FinCreditRevSubCategory(), new String[] { "FinCreditRevSubCategory" },
+					new String[] { "SubCategoryCode" , "SubCategoryDesc", "ItemRule" }, null, null, 600));
+			
+			/*---------- Commitment -----------*/
+			
+			put("Commitment",new ModuleMapping(new Commitment(""), new String[]{"Commitments", "Commitments_AView"},
+					new String[] {"CmtReference","custID","CustShrtName","CmtTitle","CmtExpDate"} , null, facilityCommitWF,800));
+			
+			put("CommitmentMovement",new ModuleMapping(new CommitmentMovement(""), new String[]{"CommitmentMovements", ""},
+					new String[] {"CmtReference","FinReference"} , null, null,300));
+			 
+			/*---------- JV Postings  -----------*/
+			
+			put("JVPosting",new ModuleMapping(new JVPosting(""), new String[]{"JVPostings", "JVPostings_AView"}, new String[] {"BatchReference","Batch"} ,
+					null, finMaintainWF,300));
+			
+			put("JVPostingEntry",new ModuleMapping(new JVPostingEntry(""), new String[]{"JVPostingEntry", "JVPostingEntry_AView"}, 
+					new String[] {"BatchReference","Account"} , null, null ,300));
 			
 			/*---------- Finance Maintenance Details ---------*/
 			
 			put("AddRateChange", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("ChangeRepay", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("AddDisbursement", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("AddDatedSchedule", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("AddDefferment", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("RmvDefferment", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("AddTerms", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("RmvTerms", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("Recalculate", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("SubSchedule", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("ChangeProfit", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("ChangeFrequency", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("ReSchedule", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("ChangeGestation", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("FairValueRevaluation", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("SchdlRepayment", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("EarlySettlement", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("WriteOff", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
 			put("Provision",new ModuleMapping(new Provision(""), new String[]{"FinProvisions", "FinProvisions_AView"}, 
-					new String[] {"FinReference","FinBranch"} , null, "FIN_RATECHANGE",300));
+					new String[] {"FinReference","FinBranch"} , null, finMaintainWF,300));
 			
 			put("FinanceSuspHead",new ModuleMapping(new FinanceSuspHead(""), new String[]{"FinanceSuspHead", "FinanceSuspHead_AView"}, 
-					new String[] {"FinReference","FinBranch"} , null, "FIN_RATECHANGE",300));
+					new String[] {"FinReference","FinBranch"} , null, finMaintainWF,300));
 			
 			put("CancelFinance", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 
 			put("MaintainBasicDetail", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_MAINTAINBASIC", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 
 			put("CancelRepay", new ModuleMapping(new FinanceMain(""), new String[] { "FinanceMain", "FinanceMain_AView" }, 
-					new String[] { "FinReference", "NumberOfTerms" }, null,"FIN_RATECHANGE", 300));
+					new String[] { "FinReference", "NumberOfTerms" }, null,finMaintainWF, 300));
 			
-			//----------------
+			/*---------- Finance Related Module Details  ---------*/
 			
 			put("FinContributorHeader", new ModuleMapping(new FinContributorHeader(""), new String[] { "FinContributorHeader", "FinContributorHeader_AView" }, 
-					new String[] { "FinReference", "CurBankInvestment " }, null,"MSTGRP1", 300));
+					new String[] { "FinReference", "CurBankInvestment " }, null,null, 300));
 			
 			put("FinContributorDetail", new ModuleMapping(new FinContributorDetail(""), new String[] { "FinContributorDetail", "FinContributorDetail_AView" }, 
-					new String[] { "FinReference", "ContributorInvest" }, null,"MSTGRP1", 300));
+					new String[] { "FinReference", "ContributorInvest" }, null,null, 300));
 			
 			put("FinanceStepPolicyDetail", new ModuleMapping(new FinContributorDetail(""), new String[] { "FinanceStepPolicyDetail", "FinanceStepPolicyDetail_Temp" }, 
-					new String[] { "FinReference", "StepNo" }, null,"MSTGRP1", 300));
+					new String[] { "FinReference", "StepNo" }, null, null , 300));
 
 			put("FinBillingHeader", new ModuleMapping(new FinBillingHeader(""), new String[] { "FinBillingHeader", "FinBillingHeader_AView" }, 
-					new String[] { "FinReference"}, null,"MSTGRP1", 300));
+					new String[] { "FinReference"}, null, null , 300));
 			
 			put("FinBillingDetail", new ModuleMapping(new FinBillingDetail(""), new String[] { "FinBillingDetail", "FinBillingDetail_AView" }, 
-					new String[] { "ProgClaimDate", "ProgClaimAmount" }, null,"MSTGRP1", 300));
+					new String[] { "ProgClaimDate", "ProgClaimAmount" }, null, null , 300));
 
-			put("FinanceDisbursement", new ModuleMapping(new FinanceDisbursement(""), new String[] { "FinDisbursementDetails", "FinDisbursementDetails_AView" }, 
-					new String[] { "FinReference", "DisbDesc" }, null, "MSTGRP1", 300));
+			/*put("FinanceDisbursement", new ModuleMapping(new FinanceDisbursement(""), new String[] { "FinDisbursementDetails", "FinDisbursementDetails_AView" }, 
+					new String[] { "FinReference", "DisbDesc" }, null, null , 300));
 			
 			put("FinanceScheduleDetail", new ModuleMapping(new FinanceScheduleDetail(""), new String[] { "FinScheduleDetails", "FinScheduleDetails_AView" },
 					new String[] { "FinReference", "PftOnSchDate" }, null, null, 300));
 			
 			put("DefermentDetail", new ModuleMapping(new DefermentDetail(""), new String[] { "FinDefermentDetail", "FinDefermentDetail_AView" },
-					new String[] { "FinReference", "DefSChdPrincipal" }, null, "MSTGRP1", 300));
+					new String[] { "FinReference", "DefSChdPrincipal" }, null,  null , 300));
 			
 			put("DefermentHeader", new ModuleMapping(new DefermentHeader(""), new String[] { "FinDefermentHeader", "FinDefermentHeader_AView" },
-					new String[] { "FinReference", "DefSchdProfit" }, null, "MSTGRP1", 300));
+					new String[] { "FinReference", "DefSchdProfit" }, null, null , 300));
 			
 			put("RepayInstruction", new ModuleMapping(new RepayInstruction(""), new String[] { "FinRepayInstruction", "FinRepayInstruction_AView" },
-					new String[] { "FinReference", "RepayAmount" }, null, "MSTGRP1", 300));
+					new String[] { "FinReference", "RepayAmount" }, null, null , 300));*/
 			
 			put("FinanceCheckListReference", new ModuleMapping(new FinanceCheckListReference(""), new String[] { "FinanceCheckListRef", "FinanceCheckListRef_AView" }, 
-					new String[] { "FinReference", "Answer" }, null, "MSTGRP1", 300));
+					new String[] { "FinReference", "Answer" }, null, null , 300));
 			
 			put("FinAgreementDetail", new ModuleMapping(new FinAgreementDetail(""), new String[] { "FinAgreementDetail", "FinAgreementDetail_AView" }, 
-					new String[] { "FinReference", "AgrName" }, null, "MSTGRP1", 300));
+					new String[] { "FinReference", "AgrName" }, null, null , 300));
 
 			put("FinanceRepayPriority",new ModuleMapping(new FinanceRepayPriority(""), new String[]{"FinRpyPriority", "FinRpyPriority_AView"}, 
-					new String[] {"FinType","FinPriority"} , null, "MSTGRP1",300));
+					new String[] {"FinType","FinPriority"} , null, masterWF ,300));
 			
-			// Commodity
-			
-			put("CommodityBrokerDetail", new ModuleMapping(new CommodityBrokerDetail(""), new String[] { "FCMTBrokerDetail", "FCMTBrokerDetail_AView" }, 
-					new String[] { "BrokerCode", "BrokerCustID", "lovDescBrokerShortName" }, null, "MSTGRP1", 600));
-			
-			put("CommodityDetail", new ModuleMapping(new CommodityDetail(""), new String[] { "FCMTCommodityDetail", "FCMTCommodityDetail_AView" }, 
-					new String[] { "CommodityCode", "CommodityName" }, null, "MSTGRP1", 300));
+ 			put("OverdueChargeRecovery",new ModuleMapping(new OverdueChargeRecovery(""), new String[]{"FinODCRecovery", "FinODCRecovery_AView"}, 
+ 					new String[] {"FinReference","FinBrnm"} , null, null,300));
 
- 			put("OverdueChargeRecovery",new ModuleMapping(new OverdueChargeRecovery(""), new String[]{"FinODCRecovery", "FinODCRecovery_AView"}, new String[] {"FinReference","FinBrnm"} , null, null,300));
-
- 			put("ProvisionMovement",new ModuleMapping(new ProvisionMovement(""), new String[]{"FinProvMovements", "FinProvMovements_AView"}, new String[] {"FinReference","ProvCalDate"} , null, null,300));
+ 			put("ProvisionMovement",new ModuleMapping(new ProvisionMovement(""), new String[]{"FinProvMovements", "FinProvMovements_AView"}, 
+ 					new String[] {"FinReference","ProvCalDate"} , null, null,300));
  			
- 			put("GuarantorDetail",new ModuleMapping(new GuarantorDetail(0), new String[]{"FinGuarantorsDetails", "FinGuarantorsDetails_AView"}, new String[] {"GuarantorId","BankCustomer"} , null, "MSTGRP1",300));
- 			put("JointAccountDetail",new ModuleMapping(new JointAccountDetail(0), new String[]{"FinJointAccountDetails", "FinJointAccountDetails_AView"}, new String[] {"JointAccountId","CustCIF"} , null, "MSTGRP1",300));
- 			put("BulkProcessHeader",new ModuleMapping(new BulkProcessHeader(0), new String[]{"BulkProcessHeader", "BulkProcessDetails"}, new String[] {"BulkProcessID","FromDate"} , null, "FIN_RATECHANGE",300));
- 			put("BulkProcessDetails",new ModuleMapping(new BulkProcessDetails(0), new String[]{"BulkProcessDetails", "BulkProcessHeader"}, new String[] {"BulkProcessID","FinReference"} , null, "FIN_RATECHANGE",300));
+ 			put("GuarantorDetail",new ModuleMapping(new GuarantorDetail(0), new String[]{"FinGuarantorsDetails", "FinGuarantorsDetails_AView"}, 
+ 					new String[] {"GuarantorId","BankCustomer"} , null, masterWF,300));
+ 			
+ 			put("JointAccountDetail",new ModuleMapping(new JointAccountDetail(0), new String[]{"FinJointAccountDetails", "FinJointAccountDetails_AView"}, 
+ 					new String[] {"JointAccountId","CustCIF"} , null, masterWF,300));
+ 			
+ 			put("BulkProcessHeader",new ModuleMapping(new BulkProcessHeader(0), new String[]{"BulkProcessHeader", "BulkProcessDetails"}, 
+ 					new String[] {"BulkProcessID","FromDate"} , null, finMaintainWF,300));
+ 			
+ 			put("BulkProcessDetails",new ModuleMapping(new BulkProcessDetails(0), new String[]{"BulkProcessDetails", "BulkProcessHeader"}, 
+ 					new String[] {"BulkProcessID","FinReference"} , null, finMaintainWF,300));
 
  			
 			/*---------- Static Parameters ---------*/
 			
-			put("InterestRateBasisCode", new ModuleMapping(new InterestRateBasisCode(""), new String[] { "BMTIntRateBasisCodes", "BMTIntRateBasisCodes_AView" }, new String[] {"IntRateBasisCode", "IntRateBasisDesc" }, 
-					new String[][] { { "IntRateBasisIsActive", "0", "1" } }, "MSTGRP1", 300));
+			put("InterestRateBasisCode", new ModuleMapping(new InterestRateBasisCode(""), new String[] { "BMTIntRateBasisCodes", "BMTIntRateBasisCodes_AView" }, 
+					new String[] {"IntRateBasisCode", "IntRateBasisDesc" }, new String[][] { { "IntRateBasisIsActive", "0", "1" } }, null, 300));
 			
 			put("ExtendedFieldHeader",new ModuleMapping(new ExtendedFieldHeader(0), new String[]{"ExtendedFieldHeader", "ExtendedFieldHeader_AView"},
 					new String[] {"ModuleId","TabHeading"} , null, null,300));
 			
 			put("Frequency", new ModuleMapping(new Frequency(""), new String[] { "BMTFrequencies", "BMTFrequencies_AView" }, 
-					new String[] { "FrqCode", "FrqDesc" }, new String[][] { { "FrqIsActive", "0", "1" } }, "MSTGRP1", 300));		
+					new String[] { "FrqCode", "FrqDesc" }, new String[][] { { "FrqIsActive", "0", "1" } }, null , 300));		
 			
 			put("Language", new ModuleMapping(new Language(""), new String[] { "BMTLanguage", "BMTLanguage_AView" }, 
-					new String[] { "LngCode", "LngDesc" }, null, "MSTGRP1", 300)); 
+					new String[] { "LngCode", "LngDesc" }, null, null, 300)); 
 			
 			put("LovFieldCode", new ModuleMapping(new LovFieldCode(""), new String[] { "BMTLovFieldCode", "BMTLovFieldCode_AView" }, 
-					new String[] { "FieldCode", "FieldCodeDesc" },null, "MSTGRP1", 300));
+					new String[] { "FieldCode", "FieldCodeDesc" },null, null, 300));
 			
 			put("RepaymentMethod", new ModuleMapping(new RepaymentMethod(""), new String[] { "BMTRepayMethod", "BMTRepayMethod_AView" }, 
-					new String[] { "RepayMethod","RepayMethodDesc" }, null, "MSTGRP1", 300));
+					new String[] { "RepayMethod","RepayMethodDesc" }, null, null, 300));
 
 			put("ScheduleMethod", new ModuleMapping(new ScheduleMethod(""), new String[] { "BMTSchdMethod", "BMTSchdMethod_AView" }, 
-					new String[] { "SchdMethod", "SchdMethodDesc" },null, "MSTGRP1", 300));
+					new String[] { "SchdMethod", "SchdMethodDesc" },null, null, 300));
 			
 			/*---------- Administration ---------*/
 			
-			put("SecurityUser", new ModuleMapping(new SecurityUser(0),  new String[] { "SecUsers", "SecUsers" }, new String[] { "UsrID", "UsrLogin","UsrFName" }, null, "SECURITY_USERS", 600));
+			put("SecurityUser", new ModuleMapping(new SecurityUser(0),  new String[] { "SecUsers", "SecUsers" }, 
+					new String[] { "UsrID", "UsrLogin","UsrFName" }, null, securityWF, 600));
 			
-			put("SecurityUserDivBranch", new ModuleMapping(new SecurityUserDivBranch(0), new String[] { "SecurityUserDivBranch","SecurityUserDivBranch"  }, null, null, null, 300));
+			put("SecurityUserDivBranch", new ModuleMapping(new SecurityUserDivBranch(0), new String[] { "SecurityUserDivBranch","SecurityUserDivBranch"  },
+					null, null, null, 300));
 			
-			put("SecurityUsers",new ModuleMapping(SecurityUser.class, "SecUsers",  new String[] {"UsrLogin","UsrFName","UsrMName","UsrLName"}, null, "SECURITY_USERS",600));
+			put("SecurityUsers",new ModuleMapping(SecurityUser.class, "SecUsers",  new String[] {"UsrLogin","UsrFName","UsrMName","UsrLName"}, null, securityWF,600));
 
 			put("SecurityRole", new ModuleMapping(new SecurityRole(0), new String[] { "SecRoles", "SecRoles" }, 
 					new String[] { "RoleID", "RoleCd" }, null, null, 300));
@@ -840,7 +884,7 @@ public class PennantJavaUtil {
 			put("SecurityRight", new ModuleMapping(new SecurityRight(0),  new String[] { "SecRights", "SecRights" }, 
 					new String[] { "RightID", "RightName" }, null, null, 300));
 
-			put("SecurityUserRoles", new ModuleMapping(new SecurityUserRoles(0), new String[] { "Secuserroles", "Secuserroles" }, null, null, "SECURITY_USERS", 300));
+			put("SecurityUserRoles", new ModuleMapping(new SecurityUserRoles(0), new String[] { "Secuserroles", "Secuserroles" }, null, null, securityWF, 300));
 
 			put("SecurityRoleGroups", new ModuleMapping(new SecurityRoleGroups(0), new String[] { "SecRoleGroups", "SecRoleGroups" }, 
 					null, null, null, 300));
@@ -854,21 +898,10 @@ public class PennantJavaUtil {
 					new String[] { "AEEventCode", "AEEventCodeDesc" }, new String[][] { { "Active", "0", "1" } }, null, 600));
 
 			put("RatingCode", new ModuleMapping(new RatingCode(""), new String[] { "BMTRatingCodes", "BMTRatingCodes_AView" }, 
-					new String[] { "RatingCode", "RatingCodeDesc", "RatingType" }, new String[][] { { "RatingIsActive", "0", "1" } }, "MSTGRP1", 300));
+					new String[] { "RatingCode", "RatingCodeDesc", "RatingType" }, new String[][] { { "RatingIsActive", "0", "1" } }, masterWF, 300));
 
 			put("RatingType", new ModuleMapping(new RatingType(""), new String[] { "BMTRatingTypes", "BMTRatingTypes_AView" }, 
-					new String[] { "RatingType", "RatingTypeDesc" }, new String[][] { { "RatingIsActive", "0", "1" } }, "MSTGRP1", 300));
-
-			put("PenaltyCode", new ModuleMapping(new PenaltyCode(""), new String[] { "RMTPenaltyCodes", "RMTPenaltyCodes_AView" },
-					new String[] { "PenaltyType", "PenaltyDesc" }, null, "MSTGRP1", 300));
-			
-			put("Penalty", new ModuleMapping(new Penalty(""), new String[] { "RMTPenalties", "RMTPenalties_AView" },
-					new String[] { "PenaltyType", "PenaltyEffDate" }, new String[][] { { "penaltyIsActive", "0", "1" } }, "MSTGRP1", 300));
-			
-			put("ProductFinanceType", new ModuleMapping(new ProductFinanceType(0), new String[] { "RMTProductFinanceTypes", "RMTProductFinanceTypes_AView" }, 
-					new String[] { "PrdFinId", "FinType" }, null, "MSTGRP1", 300));
-			
-			//-----------------------------------------------
+					new String[] { "RatingType", "RatingTypeDesc" }, new String[][] { { "RatingIsActive", "0", "1" } }, masterWF, 300));
 
 			put("PFSParameter", new ModuleMapping(new PFSParameter(""), new String[] { "SMTparameters", "SMTparameters_AView" }, 
 					new String[] { "SysParmCode", "SysParmDesc" }, null, null, 300));
@@ -881,7 +914,7 @@ public class PennantJavaUtil {
 			put("Notes", new ModuleMapping(new Notes(0), new String[] { "Notes", "Notes" }, null, null, null, 300));
 			
 			put("WorkFlowDetails", new ModuleMapping(new WorkFlowDetails(0), new String[] { "WorkFlowDetails", "WorkFlowDetails" },
-					new String[] { "WorkFlowType", "WorkFlowDesc" }, new String[][] { { "WorkFlowActive", "0", "1" } }, "MSTGRP1", 500));
+					new String[] { "WorkFlowType", "WorkFlowDesc" }, new String[][] { { "WorkFlowActive", "0", "1" } }, masterWF, 500));
 
 			/*---------- AMT Masters ---------*/
 
@@ -944,123 +977,79 @@ public class PennantJavaUtil {
 			/*---------- LMT Masters ---------*/
 			
 			put("CarLoanDetail", new ModuleMapping(new CarLoanDetail(""), new String[] { "LMTCarLoanDetail", "LMTCarLoanDetail_AView" }, 
-					new String[] { "CarLoanId", "CarLoanFor" }, null, "MSTGRP1", 300));
+					new String[] { "CarLoanId", "CarLoanFor" }, null, masterWF, 300));
 			
 			put("EducationalExpense", new ModuleMapping(new EducationalExpense(0), new String[] { "LMTEduExpenseDetail", "LMTEduExpenseDetail_AView" }, 
-					new String[] { "EduExpDetailId", "EduExpDetail" }, null, "MSTGRP1", 300));
+					new String[] { "EduExpDetailId", "EduExpDetail" }, null, masterWF, 300));
 			
 			put("EducationalLoan", new ModuleMapping(new EducationalLoan(""), new String[] { "LMTEducationLoanDetail", "LMTEducationLoanDetail_AView" }, 
-					new String[] { "EduLoanId", "EduCourse" }, null, "MSTGRP1", 300));
+					new String[] { "EduLoanId", "EduCourse" }, null, masterWF, 300));
 
 			put("HomeLoanDetail", new ModuleMapping(new HomeLoanDetail(""), new String[] { "LMTHomeLoanDetail", "LMTHomeLoanDetail_AView" },
-					new String[] { "HomeLoanId", "HomeDetails" }, null, "MSTGRP1", 300));
+					new String[] { "HomeLoanId", "HomeDetails" }, null, masterWF, 300));
 			
 			put("MortgageLoanDetail", new ModuleMapping(new MortgageLoanDetail(""), new String[] { "LMTMortgageLoanDetail", "LMTMortgageLoanDetail_AView" }, 
-					new String[] { "MortgLoanId", "MortgProperty" }, null, "MSTGRP1", 300));
+					new String[] { "MortgLoanId", "MortgProperty" }, null, masterWF, 300));
 			
 			put("GoodsLoanDetail",new ModuleMapping(new GoodsLoanDetail(""), new String[]{"LMTGoodsLoanDetail", "LMTGoodsLoanDetail_AView"},
-					new String[] {"LoanRefNumber","ItemNumber"} , null, "MSTGRP1",300));
+					new String[] {"LoanRefNumber","ItemNumber"} , null, masterWF,300));
 			
 			put("GenGoodsLoanDetail",new ModuleMapping(new GenGoodsLoanDetail(""), new String[]{"LMTGenGoodsLoanDetail", "LMTGenGoodsLoanDetail_AView"},
-					new String[] {"LoanRefNumber","ItemNumber"} , null, "MSTGRP1",300));
+					new String[] {"LoanRefNumber","ItemNumber"} , null, masterWF,300));
 			
 			put("CommidityLoanHeader",new ModuleMapping(new CommidityLoanHeader(""), new String[]{"LMTCommidityLoanHeader", "LMTCommidityLoanHeader_AView"},
-					new String[] {"LoanRefNumber","BrokerName"} , null, "MSTGRP1",300));
+					new String[] {"LoanRefNumber","BrokerName"} , null, masterWF,300));
 			
 			put("CommidityLoanDetail",new ModuleMapping(new CommidityLoanDetail(""), new String[]{"LMTCommidityLoanDetail", "LMTCommidityLoanDetail_AView"},
-					new String[] {"LoanRefNumber","ItemType"} , null, "MSTGRP1",300));
+					new String[] {"LoanRefNumber","ItemType"} , null, masterWF,300));
+			
+			put("SharesDetail", new ModuleMapping(new SharesDetail(""), new String[] { "LMTSharesDetail", "LMTSharesDetail_AView" },  
+					new String[] { "loanRefNumber", "companyName" }, null, masterWF, 300));
+			
+			put("ContractorAssetDetail", new ModuleMapping(new ContractorAssetDetail(""), new String[] { "FinContractorAssetDetails", "FinContractorAssetDetails_AView" },
+					new String[] { "FinReference", "ContractorId" }, null, masterWF, 300));
 
-			/*---------- Reports ---------*/
+			/*---------- Miscelinious ---------*/
 
-			put("ReportList",new ModuleMapping(new ReportList(""), new String[]{"ReportList", "ReportList_AView"},
-					new String[] {"Module","FieldLables"} , null, "MSTGRP1",300));
-		
-			
-//<!--//APPEND AFTER THIS//-->
-			// FIXME BELOW ITEMS SHOULD BE DELETED after code checking
-			
-			put("Question", new ModuleMapping(new Question(0), new String[] { "BMTQuestion", "BMTQuestion_AView" }, 
-					new String[] { "QuestionId", "QuestionDesc" }, null, "MSTGRP1",300));
-			
 			put("CRBaseRateCode", new ModuleMapping(new BaseRateCode(""), new String[] { "RMTBaseRateCodes", "RMTBaseRateCodes_AView" }, 
-					new String[] { "BRType", "BRTypeDesc" },new String[][] { { "BRType", "1", "MBR00" } }, "MSTGRP1", 300));
+					new String[] { "BRType", "BRTypeDesc" },new String[][] { { "BRType", "1", "MBR00" } }, null, 300));
 			
 			put("DRBaseRateCode", new ModuleMapping(new BaseRateCode(""), new String[] { "RMTBaseRateCodes", "RMTBaseRateCodes_AView" }, 
-					new String[] { "BRType", "BRTypeDesc" },new String[][] { { "BRType", "1", "MBR00" } }, "MSTGRP1", 300));
+					new String[] { "BRType", "BRTypeDesc" },new String[][] { { "BRType", "1", "MBR00" } }, null, 300));
 			
 			put("SystemInternalAccountType", new ModuleMapping(new AccountType(""), new String[] { "RMTAccountTypes", "RMTAccountTypes_AView" }, 
-					new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "InternalAc", "0", "1" } }, "MSTGRP1", 300));
+					new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "InternalAc", "0", "1" } }, null, 300));
 			
 			put("CustomerInternalAccountType", new ModuleMapping(new AccountType(""), new String[] { "RMTAccountTypes", "RMTAccountTypes_AView" }, 
-					new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "CustSysAc", "0", "1" } }, "MSTGRP1", 300));
-			
-			put("FinanceMarginSlab", new ModuleMapping(new FinanceMarginSlab(""), new String[] { "FCMTFinanceMarginSlab", "FCMTFinanceMarginSlab_AView" }, 
-					new String[] { "FinType", "SlabMargin" }, null, "MSTGRP1", 300));
-			
-			put("ScoringType", new ModuleMapping(new ScoringType(""), new String[] { "BMTScoringType", "BMTScoringType_AView" }, 
-					new String[] { "ScoType", "ScoDesc" }, null,"MSTGRP1", 300));//check in Rule factory-commented
+					new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "CustSysAc", "0", "1" } }, null, 300));
 			
 			put("Collateralitem",new ModuleMapping(new Collateralitem(""), new String[]{"HYPF", "HYPF_AView"}, 
-					new String[] {"HYCUS","HYCLC"} , null, "MSTGRP1",300));
+					new String[] {"HYCUS","HYCLC"} , null, masterWF,300));
 			
 			put("CollateralType",new ModuleMapping(new CollateralType(""), new String[]{"HWPF", "HWPF_AView"}, 
-					new String[] {"HWCLP","HWCPD"} , null, "MSTGRP1",300));
+					new String[] {"HWCLP","HWCPD"} , null, masterWF,300));
 			
 			put("CollateralLocation",new ModuleMapping(new CollateralLocation(""), new String[]{"HZPF", "HZPF_AView"}, 
-					new String[] {"HZCLO","HZCLC"} , null, "MSTGRP1",400));
+					new String[] {"HZCLO","HZCLC"} , null, masterWF,400));
 			
 			put("DocumentDetails",new ModuleMapping(new DocumentDetails(), new String[]{"DocumentDetails"}, 
 					new String[] {"DocModule","DocCategory"} ,null , null,300));
 			
-			
-			//delete
-			put("AccountEngineRule", new ModuleMapping(new AccountEngineRule(""), new String[] { "RMTAERules", "RMTAERules_AView" },
-					new String[] { "AEEvent", "AERule", "AERuleDesc" }, null, "MSTGRP1", 350));
-			
 			put("DashboardConfiguration", new ModuleMapping(new DashboardConfiguration(""), new String[] { "DashboardConfiguration", "DashboardConfiguration_AView" }, 
-					new String[] { "BRType", "BRTypeDesc" } ,new String[][] { { "BRType", "1", "MBR00" } }, null, 300));
-			
-			put("BasicFinanceType", new ModuleMapping(new BasicFinanceType(""), new String[] { "RMTBasicFinanceTypes", "RMTBasicFinanceTypes" }, 
-					new String[] { "FinBasicType", "FinBasicDesc" }, null, "MSTGRP1", 300));
+					new String[] { "DashboardCode", "DashboardDesc" } ,null, null, 300));
 			
 			put("GlobalVariable", new ModuleMapping(new GlobalVariable(0), new String[] { "GlobalVariable", "GlobalVariable" }, 
 					new String[] { "VarCode", "VarName" }, null, null, 300));
 			
 			/*---------- Reports -----------*/
+			
+			put("ReportList",new ModuleMapping(new ReportList(""), new String[]{"ReportList", "ReportList_AView"},
+					new String[] {"Module","FieldLables"} , null, masterWF,300));
+			
 			put("ReportFilterFields",new ModuleMapping(ReportFilterFields.class, "ReportFilterFields", new String[] {"fieldName","fieldType"} , null,null,350));	
+			
 			put("ReportConfiguration",new ModuleMapping(ReportConfiguration.class, "ReportConfiguration", new String[] {"reportName","reportName"} , null,null,350));
 
-			
-			put("CommCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
-					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, "CREDIT_REVIEW_COMMERCIAL", 600));
-			
-			put("FinCreditReviewDetails", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
-					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, null, 600));
-			
-			put("CorpCreditAppReview", new ModuleMapping(new FinCreditReviewDetails(), new String[] { "FinCreditReviewDetails" },
-					new String[] { "DetailId" , "BankName", "AuditedYear" }, null, "CREDIT_REVIEW_CORPORATE", 600));
-			
-			
-			put("FinCreditReviewSummary", new ModuleMapping(new FinCreditReviewSummary(), new String[] { "FinCreditReviewSummary" },
-					new String[] { "SummaryId" , "SubCategoryId", "ItemValue" }, null, "MSTGRP1", 600));
-			
-			put("FinCreditRevSubCategory", new ModuleMapping(new FinCreditRevSubCategory(), new String[] { "FinCreditRevSubCategory" },
-					new String[] { "SubCategoryCode" , "SubCategoryDesc", "ItemRule" }, null, "MSTGRP1", 600));
-			
-			put("Commitment",new ModuleMapping(new Commitment(""), new String[]{"Commitments", "Commitments_AView"}, new String[] {"CmtReference","custID","CustShrtName","CmtTitle","CmtExpDate"} , null, "FACILITY_COMMITMENT",800));
-			put("CommitmentMovement",new ModuleMapping(new CommitmentMovement(""), new String[]{"CommitmentMovements", ""}, new String[] {"CmtReference","FinReference"} , null, "MSTGRP1",300));
-			 
-			put("JVPosting",new ModuleMapping(new JVPosting(""), new String[]{"JVPostings", "JVPostings_AView"}, new String[] {"BatchReference","Batch"} , null, "FIN_RATECHANGE",300));
-			put("JVPostingEntry",new ModuleMapping(new JVPostingEntry(""), new String[]{"JVPostingEntry", "JVPostingEntry_AView"}, new String[] {"BatchReference","Account"} , null, "FIN_RATECHANGE",300));
-			put("SharesDetail", new ModuleMapping(new SharesDetail(""), new String[] { "LMTSharesDetail", "LMTSharesDetail_AView" },  new String[] { "loanRefNumber", "companyName" }, null, "MSTGRP1", 300));
-			put("ContractorAssetDetail", new ModuleMapping(new ContractorAssetDetail(""), new String[] { "FinContractorAssetDetails", "FinContractorAssetDetails_AView" },  new String[] { "FinReference", "ContractorId" }, null, "MSTGRP1", 300));
-			put("InvestmentFinHeader",new ModuleMapping(new InvestmentFinHeader(""), new String[]{"InvestmentFinHeader", "InvestmentFinHeader_AView"}, new String[] {"InvestmentRef", "TotPrinAmt"} , null, "TSR_FIN_PROCESS",300));
-			put("CAFFacilityType",new ModuleMapping(new CAFFacilityType(""), new String[]{"CAFFacilityTypes", "CAFFacilityTypes"}, new String[] {"FacilityType", "FacilityDesc"} , null, null,300));
-			put("Facility",new ModuleMapping(new Facility(""), new String[]{"FacilityHeader", "FacilityHeader_AView"}, new String[] {"CAFReference","CustID"} , null, "MSTGRP1",300));
-			put("Collateral",new ModuleMapping(new Collateral(""), new String[]{"Collateral", "Collateral_AView"}, new String[] {"CAFReference","Currency"} , null, "MSTGRP1",300));
-			put("FacilityDetail",new ModuleMapping(new FacilityDetail(""), new String[]{"FacilityDetails", "FacilityDetails_AView"}, new String[] {"FacilityRef","FacilityType"} , null, "MSTGRP1",300));
-			put("IndicativeTermDetail", new ModuleMapping(new IndicativeTermDetail(""), new String[] { "WIFIndicativeTermDetail", "WIFIndicativeTermDetail_View" },new String[] { "FinReference", "FacilityType", "RpsnName" }, null, "MSTGRP1", 600));
-			put("FinTypeAccount",new ModuleMapping(new FinTypeAccount(""), new String[]{"FinTypeAccount"},new String[] {"FinCcy","Event"} ,null , null,300));
 		}
 	};
 
