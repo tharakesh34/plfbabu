@@ -44,7 +44,6 @@ package com.pennant.webui.finance.financemain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1252,6 +1251,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 		setFinanceDetail(aFinanceDetail);
 		getFinanceDetail().getScoreDetailListMap().clear();
 		List<FinanceScoreHeader> scoreHeaderList = null;
+		BigDecimal totalCheckScore = BigDecimal.ZERO;
 		
 		List<FinanceScoreHeader>  finScoreHeaderList = getFinanceDetail().getFinScoreHeaderList();
 		FinanceScoreHeader header = null;
@@ -1294,6 +1294,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 							execScore = finExecScoreMap.get(key);
 						}
 						
+						totalCheckScore = totalCheckScore.add(execScore);						
 						scoreDetail.setExecScore(execScore);
 						scoreDetails.add(scoreDetail);
 					}
@@ -1365,6 +1366,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 							if(finExecScoreMap != null && finExecScoreMap.containsKey(key)){
 								execScore = finExecScoreMap.get(key);
 							}
+							totalCheckScore = totalCheckScore.add(execScore);
 							scoreDetail.setExecScore(execScore);
 							scoreDetails.add(scoreDetail);
 						}
@@ -1392,7 +1394,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 								if(finExecScoreMap != null && finExecScoreMap.containsKey(key)){
 									execScore = finExecScoreMap.get(key);
 								}
-
+								totalCheckScore = totalCheckScore.add(execScore);
 								scoreDetail.setExecScore(execScore);
 								scoreDetails.add(scoreDetail);
 							}
@@ -1408,6 +1410,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 		
 		aFinanceDetail.setFinScoreHeaderList(scoreHeaderList);
 		aFinanceDetail.setSufficientScore(sufficientScore);
+		aFinanceDetail.setScore(totalCheckScore);
 
 		logger.debug("Leaving ");
 

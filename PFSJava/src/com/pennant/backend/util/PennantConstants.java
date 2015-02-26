@@ -153,6 +153,7 @@ public class PennantConstants {
 	public static final String method_doClearQueues = "doClearQueues";
 	public static final String method_doFundsAvailConfirmed = "doFundsAvailConfirmed";
 	public static final String method_doCheckProspectCustomer = "doCheckProspectCustomer";
+	public static final String method_doCheckScore = "doCheckScore";
 	public static final String WF_Audit_Notes = "Notes;";
 	public static final String WF_DiscrepancyCheck = "Discrepancy";
 	

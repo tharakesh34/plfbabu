@@ -441,7 +441,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.purchageOdrNumber.setMaxlength(50);
 		this.carCc.setMaxlength(5);
 		this.carChasisNo.setMaxlength(19);
-		//this.carInsuranceNo.setMaxlength(19);
 		this.carRegNo.setMaxlength(19);
 		this.carCapacity.setMaxlength(2);
 		this.engineNumber.setMaxlength(50);
@@ -449,9 +448,9 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.passportNum.setMaxlength(20);
 		this.vehicleItemNum.setMaxlength(20);
 		this.iBANnumber.setMaxlength(23);
-		this.thirdPartyNat.setMaxlength(20);
-		this.thirdPartyNat.setMaxlength(2);
 		this.dealerOrSellerAcc.setMandatoryStyle(true);
+		
+		this.thirdPartyNat.setMaxlength(2);
 		this.thirdPartyNat.setModuleName("NationalityCode");
 		this.thirdPartyNat.setValueColumn("NationalityCode");
 		this.thirdPartyNat.setDescColumn("NationalityDesc");
@@ -496,12 +495,12 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	
 	public void onCheck$thirdPartyReg(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		issthirdPartyRegvalue();
+		checkThirdPartyReg();
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	private void issthirdPartyRegvalue() {
-		// TODO Auto-generated method stub
+	private void checkThirdPartyReg() {
+		logger.debug("Entering");
 		if(this.thirdPartyReg.isChecked()){
 			//this.space_thirdPartyName.setVisible(true);
 			this.thirdPartyNat.setMandatoryStyle(true);
@@ -513,18 +512,18 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.space_thirdPartyName.setSclass("");
 			this.space_passportNum.setSclass("");
 		}
-		
+		logger.debug("Leaving");
 	}
 
 	public void onSelect$paymentMode(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		isPaymentMode();
+		checkPaymentMode();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void isPaymentMode() {
+	private void checkPaymentMode() {
 		logger.debug("Entering");
-		// TODO Auto-generated method stub
+		
 		if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)){
 			this.iBANnumber.setVisible(false);
 			this.dealerOrSellerAcc.setVisible(true);
@@ -532,17 +531,17 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.dealerOrSellerAcc.setMandatoryStyle(true);	
 			this.label_DealerOrSellerAcc.setValue(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"));
 			this.iBANnumber.setValue("");
-		}
-		else if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)){
+			
+		}else if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)){
 			this.dealerOrSellerAcc.setVisible(false);
 			this.iBANnumber.setVisible(true);
-			this.iBANnumber.setReadonly(false);
+			this.iBANnumber.setReadonly(isReadOnly("CarLoanDetailDialog_iBANnumber"));
 			this.space_dealerOrSellerAcc.setSclass("mandatory");
 			this.dealerOrSellerAcc.setMandatoryStyle(false);
 			this.label_DealerOrSellerAcc.setValue(Labels.getLabel("label_CarLoanDetailDialog_IBANNumber.value"));
 			this.dealerOrSellerAcc.setValue("");
-		}
-		else if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.PAYORDER)){
+			
+		}else if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.PAYORDER)){
 			this.dealerOrSellerAcc.setVisible(false);
 			this.space_dealerOrSellerAcc.setSclass("");
 			this.iBANnumber.setVisible(true);
@@ -551,8 +550,8 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.iBANnumber.setReadonly(true);
 			this.label_DealerOrSellerAcc.setValue(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"));
 			this.dealerOrSellerAcc.setMandatoryStyle(false);
-			}
-		else{
+			
+		}else{
 			this.dealerOrSellerAcc.setVisible(false);
 			this.space_dealerOrSellerAcc.setSclass("");
 			this.iBANnumber.setVisible(true);
@@ -566,16 +565,16 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			
 		logger.debug("Leaving");
 	}
+	
 	public void onSelect$sellerType(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		isSellerType();
-		
+		checkSellerType();
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	private void isSellerType() {
+	private void checkSellerType() {
 		logger.debug("Entering");
-		// TODO Auto-generated method stub
+		
 		if(this.sellerType.getSelectedItem().getValue().toString().equals(PennantConstants.DEALER)){	
 			this.carDealer.setVisible(true);
 			this.carDealer.setMandatoryStyle(true);
@@ -584,19 +583,19 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			this.space_dealerPhone.setSclass("");
 			this.space_carDealer.setSclass("");
 			this.privateDealerName.setValue("");
-		}
-		else if(this.sellerType.getSelectedItem().getValue().toString().equals(PennantConstants.PRIVATE)){
-			this.privateDealerName.setReadonly(false);
+			
+		}else if(this.sellerType.getSelectedItem().getValue().toString().equals(PennantConstants.PRIVATE)){
+			this.privateDealerName.setReadonly(isReadOnly("CarLoanDetailDialog_privateDealerName"));
 			this.carDealer.setVisible(false);
 			this.privateDealerName.setVisible(true);	
 			this.carDealer.setValue("");
 			this.space_carDealer.setSclass("mandatory");
 			this.carDealer.setMandatoryStyle(false);
-			this.dealerPhone.setReadonly(false);
+			this.dealerPhone.setReadonly(true);
 			this.space_dealerPhone.setSclass("mandatory");
 			this.carDealer.setValue("","");
-		}
-		else{	
+			
+		}else{	
 			this.space_carDealer.setSclass("");
 			this.carDealer.setVisible(false);
 			this.privateDealerName.setReadonly(true);
@@ -759,7 +758,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 * @param event
 	 * @return
 	 * */
-	
 	public void onAssetClose(Event event) {
 		logger.debug("Entering" + event.toString());
 			try {
@@ -803,7 +801,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 			logger.debug("isDataChanged : false");
 		}
 		if(isFleetVehicle){
-			this.window_CarLoanDetailDialog.onClose();
+			closePopUpWindow(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
 		}else{
 			if (close) {
 				closeDialog(this.window_CarLoanDetailDialog, "CarLoanDetailDialog");
@@ -834,6 +832,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	 */
 	public void doWriteBeanToComponents(CarLoanDetail aCarLoanDetail) {
 		logger.debug("Entering");
+		
 		if(isFleetVehicle){
 			this.itemNumber.setValue(aCarLoanDetail.getItemNumber());
 		}else{
@@ -863,7 +862,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.purchaseDate.setValue(aCarLoanDetail.getPurchaseDate());
 		fillComboBox(this.sellerType, aCarLoanDetail.getSellerType(), sellerTypeList, "");
 
-		//ThirdParty
 		this.thirdPartyReg.setChecked(aCarLoanDetail.isThirdPartyReg());
 		this.thirdPartyName.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getPassportNum()));
 		this.passportNum.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getPassportNum()));	
@@ -873,10 +871,10 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		 } else if (StringUtils.equals(aCarLoanDetail.getSellerType(),PennantConstants.DEALER)) {
 			 this.carDealer.setValue(String.valueOf(aCarLoanDetail.getCarDealer()));
 		 }
-		 isSellerType();
-		 isPaymentMode();
-		 issthirdPartyRegvalue();
-		 isSellerType();
+		 checkSellerType();
+		 checkPaymentMode();
+		 checkThirdPartyReg();
+		 checkSellerType();
 		 
 		 if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)){
 			 this.dealerOrSellerAcc.setValue(StringUtils.trimToEmpty(aCarLoanDetail.getDealerOrSellerAcc()));
@@ -1345,11 +1343,10 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_carMakeYear = this.carMakeYear.intValue();
 		this.oldVar_carCapacity = this.carCapacity.intValue();
 		if(!this.carDealer.getValue().equals("")){
-		this.oldVar_carDealer = Long.valueOf(this.carDealer.getValue());
-		this.oldVar_lovDescCarDealerName = this.carDealer.getDescription();
+			this.oldVar_carDealer = Long.valueOf(this.carDealer.getValue());
+			this.oldVar_lovDescCarDealerName = this.carDealer.getDescription();
 		}
 		this.oldVar_carCc = this.carCc.getValue();
-		//this.oldVar_carInsuranceNo = this.carInsuranceNo.getValue();
 		this.oldVar_carRegNo = this.carRegNo.getValue();
 		this.oldVar_carChasisNo = this.carChasisNo.getValue();
 		this.oldVar_carColor = this.cbCarColor.getValue();
@@ -1367,8 +1364,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_VehicleItemNum = StringUtils.trimToEmpty(this.vehicleItemNum.getValue());
 		this.oldVar_DealerOrSeller=StringUtils.trimToEmpty(this.privateDealerName.getValue());
 		this.oldVar_salesPersonName=StringUtils.trimToEmpty(this.salesPersonName.getValue());
-		
-		
 		this.oldVar_vehicleValue = this.vehicleValue.getValue();
 		
 		logger.debug("Leaving");
@@ -1392,7 +1387,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.carDealer.setValue(String.valueOf(this.oldVar_carDealer));
 		this.carDealer.setDescription(this.oldVar_lovDescCarDealerName);
 		this.carCc.setValue(this.oldVar_carCc);
-		//this.carInsuranceNo.setValue(this.oldVar_carInsuranceNo);
 		this.carRegNo.setValue(this.oldVar_carRegNo);
 		this.carChasisNo.setValue(this.oldVar_carChasisNo);
 		this.cbCarColor.setValue(this.oldVar_carColor);
@@ -1400,7 +1394,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.purchaseDate.setValue(this.oldVar_purchaseDate);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 		
-		//ThirdParty
 		this.thirdPartyReg.setChecked(this.oldVar_ThirdPartyReg);
 		this.thirdPartyName.setValue(String.valueOf(this.oldVar_ThirdPartyName));
 		this.passportNum.setValue(this.oldVar_PassportNum);
@@ -1458,9 +1451,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (this.oldVar_carCc != this.carCc.intValue()) {
 			return true;
 		}
-		/*if (this.oldVar_carInsuranceNo != this.carInsuranceNo.getValue()) {
-			return true;
-		}*/
 		if (this.oldVar_carRegNo != this.carRegNo.getValue()) {
 			return true;
 		}
@@ -1495,7 +1485,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (this.oldVar_salesPersonName != this.salesPersonName.getValue()) {
 			return true;
 		}
-		
 		if (this.oldVar_SellerType != this.sellerType.getValue()) {
 			return true;
 		}
@@ -1541,9 +1530,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (!this.carChasisNo.isReadonly()) {
 			this.carChasisNo.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarChasisNo.value"),null,true));
 		}
-/*		if (!this.purchageOdrNumber.isReadonly()) {
-			this.purchageOdrNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_purchageOdrNumber.value"),null,true));
-		}*/
 		if (!this.quoationNbr.isReadonly()) {
 			this.quoationNbr.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_quoationNbr.value"),null,true));
 		}
@@ -1569,16 +1555,15 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 		if(this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)){
 			if (!recSave && this.dealerOrSellerAcc.getSclass().equals("mandatory")) {
-			this.dealerOrSellerAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"),null,true));
-		}
+				this.dealerOrSellerAcc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_DealerOrSellerAcc.value"),null,true));
+			}
 		}
 		if (!this.iBANnumber.isReadonly()) {
 			this.iBANnumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_IBANNumber.value"),null,true));
 		}
 		
 		if (!this.vehicleValue.isDisabled()) {
-			this.vehicleValue.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_CarLoanDetailDialog_VehicleValue.value"), true));
+			this.vehicleValue.setConstraint(new AmountValidator(18,0,Labels.getLabel("label_CarLoanDetailDialog_VehicleValue.value"), true));
 		}
 		if (!this.dealerPhone.isReadonly()) {
 			this.dealerPhone.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_dealerPhone.value"),null,true));
@@ -1665,8 +1650,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.engineNumber.setErrorMessage("");
 		this.carChasisNo.setErrorMessage("");
 		this.paymentMode.setErrorMessage("");
-		//this.carInsuranceNo.setErrorMessage("");
-		//this.insuranceType.setErrorMessage("");
 		this.salesPersonName.setErrorMessage("");
 		this.purchageOdrNumber.setErrorMessage("");
 		this.purchaseDate.setErrorMessage("");
@@ -1786,20 +1769,16 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.carModel.setReadonly(isReadOnly("CarLoanDetailDialog_carModel"));
 		this.carCc.setReadonly(isReadOnly("CarLoanDetailDialog_carCc"));
 		this.carChasisNo.setReadonly(isReadOnly("CarLoanDetailDialog_carChasisNo"));
-		//this.carInsuranceNo.setReadonly(isReadOnly("CarLoanDetailDialog_carInsuranceNo"));
-		this.carRegNo.setDisabled(isReadOnly("CarLoanDetailDialog_carRegNo"));
+		this.carRegNo.setReadonly(isReadOnly("CarLoanDetailDialog_carRegNo"));
 		this.cbCarColor.setReadonly(isReadOnly("CarLoanDetailDialog_cbCarColor"));  
-		this.engineNumber.setDisabled(isReadOnly("CarLoanDetailDialog_engineNumber"));
-		//this.insuranceType.setDisabled(isReadOnly("CarLoanDetailDialog_insuranceType"));
-		this.salesPersonName.setDisabled(isReadOnly("CarLoanDetailDialog_salesPersonName"));
+		this.engineNumber.setReadonly(isReadOnly("CarLoanDetailDialog_engineNumber"));
+		this.salesPersonName.setReadonly(isReadOnly("CarLoanDetailDialog_salesPersonName"));
 		this.paymentMode.setDisabled(isReadOnly("CarLoanDetailDialog_paymentMode"));
-		this.purchageOdrNumber.setDisabled(true);//isReadOnly("CarLoanDetailDialog_purchageOdrNumber")
+		this.purchageOdrNumber.setReadonly(true);//isReadOnly("CarLoanDetailDialog_purchageOdrNumber")
 		this.quoationNbr.setDisabled(isReadOnly("CarLoanDetailDialog_quoationNbr"));
 		this.quoationDate.setDisabled(isReadOnly("CarLoanDetailDialog_quoationDate"));
-		
-		this.dealerPhone.setDisabled(isReadOnly("CarLoanDetailDialog_dealerPhone"));
+		this.dealerPhone.setReadonly(isReadOnly("CarLoanDetailDialog_dealerPhone"));
 		this.purchaseDate.setDisabled(isReadOnly("CarLoanDetailDialog_purchaseDate"));
-		//ThirdParty
 		this.thirdPartyReg.setDisabled(isReadOnly("CarLoanDetailDialog_thirdPartyReg"));
 		this.thirdPartyName.setReadonly(isReadOnly("CarLoanDetailDialog_thirdPartyName"));
 		this.passportNum.setReadonly(isReadOnly("CarLoanDetailDialog_passportNum"));
@@ -1809,10 +1788,10 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if(isReadOnly("CarLoanDetailDialog_dealerOrSellerAcc")){
 			this.dealerOrSellerAcc.setReadonly(true);
 		}
-		this.iBANnumber.setDisabled(isReadOnly("CarLoanDetailDialog_iBANnumber"));
+		this.iBANnumber.setReadonly(isReadOnly("CarLoanDetailDialog_iBANnumber"));
 		this.vehicleItemNum.setReadonly(isReadOnly("CarLoanDetailDialog_vehicleItemNum"));
 		this.vehicleValue.setDisabled(isReadOnly("CarLoanDetailDialog_vehicleValue"));
-		this.privateDealerName.setDisabled(isReadOnly("CarLoanDetailDialog_privateDealerName"));
+		this.privateDealerName.setReadonly(isReadOnly("CarLoanDetailDialog_privateDealerName"));
 		if(!isFleetVehicle){
 			if (isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1858,7 +1837,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.salesPersonName.setReadonly(true);
 		this.iBANnumber.setReadonly(true);
 		this.dealerOrSellerAcc.setReadonly(true);
-		//this.carInsuranceNo.setReadonly(true);
 		this.carRegNo.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1897,7 +1875,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		this.cbCarColor.setValue(String.valueOf(new Long(0)));
 		this.cbCarColor.setDescription("");
 		this.carCc.setText("");
-		//this.carInsuranceNo.setText("");
 		this.carRegNo.setText("");
 		this.carChasisNo.setText("");
 		logger.debug("Leaving");
@@ -2051,8 +2028,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		}
 		return auditHeader;
 	} 
-
-	
 	
 	/**
 	 * Set the workFlow Details List to Object
@@ -2077,7 +2052,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 		if (isWorkFlowEnabled()) {
 			String taskId = getWorkFlow().getTaskId(getRole());
 			String nextTaskId = "";
-			// Upgraded to ZK-6.5.1.1 Added casting to String
 			aCarLoanDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -2377,7 +2351,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
-
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -2385,7 +2358,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public CarLoanDetail getCarLoanDetail() {
 		return this.carLoanDetail;
 	}
-
 	public void setCarLoanDetail(CarLoanDetail carLoanDetail) {
 		this.carLoanDetail = carLoanDetail;
 	}
@@ -2393,7 +2365,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void setCarLoanDetailService(CarLoanDetailService carLoanDetailService) {
 		this.carLoanDetailService = carLoanDetailService;
 	}
-
 	public CarLoanDetailService getCarLoanDetailService() {
 		return this.carLoanDetailService;
 	}
@@ -2401,7 +2372,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void setCarLoanDetailListCtrl(CarLoanDetailListCtrl carLoanDetailListCtrl) {
 		this.carLoanDetailListCtrl = carLoanDetailListCtrl;
 	}
-
 	public CarLoanDetailListCtrl getCarLoanDetailListCtrl() {
 		return this.carLoanDetailListCtrl;
 	}
@@ -2409,7 +2379,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public boolean isNotes_Entered() {
 		return notes_Entered;
 	}
-
 	public void setNotes_Entered(boolean notesEntered) {
 		this.notes_Entered = notesEntered;
 	}
@@ -2417,7 +2386,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
 		this.overideMap = overideMap;
 	}
-
 	public HashMap<String, ArrayList<ErrorDetails>> getOverideMap() {
 		return overideMap;
 	}
@@ -2425,7 +2393,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public boolean isNewFinance() {
 		return newFinance;
 	}
-
 	public void setNewFinance(boolean newFinance) {
 		this.newFinance = newFinance;
 	}
@@ -2433,7 +2400,6 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
-
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}

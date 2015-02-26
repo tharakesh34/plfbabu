@@ -301,6 +301,7 @@ public class FinanceMain implements java.io.Serializable {
 	private boolean 	limitApproved;
 	private boolean 	policeCaseFound = false;
 	private boolean 	policeCaseOverride = false;
+	private BigDecimal 	score = BigDecimal.ZERO;
 	
 	//===========================================
     //=========Purpose to Other Modules==========
@@ -2164,6 +2165,13 @@ public class FinanceMain implements java.io.Serializable {
 	}
 	public void setPoliceCaseOverride(boolean policeCaseOverride) {
 		this.policeCaseOverride = policeCaseOverride;
+	}
+
+	public BigDecimal getScore() {
+		return score;
+	}
+	public void setScore(BigDecimal score) {
+		this.score = score;
 	}
 
 }

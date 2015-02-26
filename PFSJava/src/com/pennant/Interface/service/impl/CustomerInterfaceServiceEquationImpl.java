@@ -393,13 +393,15 @@ public class CustomerInterfaceServiceEquationImpl implements CustomerInterfaceSe
 		for (DedupParm dedupParm : dedupParmList) {
 			List<CorePoliceCase> list = getCustomerDataProcess().fetchPoliceCustInformation(coreBankPoliceCase, dedupParm.getSQLQuery());
 
-			for (int i = 0; i < list.size(); i++) {
-				CorePoliceCase coreBankList = list.get(i);
-				PoliceCase policeCaseData = new PoliceCase();
-				BeanUtils.copyProperties(policeCaseData, coreBankList);
-				policeCaseData.setPoliceCaseRule(dedupParm.getQueryCode());
-				policeCaseData.setFinReference(policeCase.getFinReference());
-				policeCaseList.add(policeCaseData);
+			if(list != null){
+				for (int i = 0; i < list.size(); i++) {
+					CorePoliceCase coreBankList = list.get(i);
+					PoliceCase policeCaseData = new PoliceCase();
+					BeanUtils.copyProperties(policeCaseData, coreBankList);
+					policeCaseData.setPoliceCaseRule(dedupParm.getQueryCode());
+					policeCaseData.setFinReference(policeCase.getFinReference());
+					policeCaseList.add(policeCaseData);
+				}
 			}
 		}
 

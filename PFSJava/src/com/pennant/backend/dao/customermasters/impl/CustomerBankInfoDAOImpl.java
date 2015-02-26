@@ -238,7 +238,7 @@ public class CustomerBankInfoDAOImpl extends BasisCodeDAO<CustomerBankInfo> impl
 		insertSql.append(" (CustID, BankName, AccountNumber, AccountType," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :BankName, :AccountNumber, :AccountNumber,");
+		insertSql.append(" Values(:CustID, :BankName, :AccountNumber, :AccountType,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		

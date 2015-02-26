@@ -7194,7 +7194,7 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 	
 	protected synchronized void getNextUserId(FinanceMain financeMain, String roleCode, String nextRoleCode, boolean onlyUpdate){
 		logger.debug("Entering");
-		String nextUsers="";
+		String nextUsers= null;
 		Map<String, String> nextUsersRolesMap = null;
 		if(!roleCode.equals(nextRoleCode)){
 			long userId = getUserWorkspace().getUserDetails().getUserId();
@@ -7231,14 +7231,12 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 				
 				nextUsersRolesMap.put(nextRoleCodes[i], String.valueOf(nextUserId));
 				
-				if (nextUsers.equals("")) {
+				if (StringUtils.trimToEmpty(nextUsers).equals("")) {
 					nextUsers = String.valueOf(nextUserId) ; 
 				}else{
 					nextUsers = nextUsers+","+String.valueOf(nextUserId) ; 
 				}
 			}
-		}else {
-			nextUsers = String.valueOf(financeMain.getLastMntBy()) ; 
 		}
 
 		logger.debug("Leaving");

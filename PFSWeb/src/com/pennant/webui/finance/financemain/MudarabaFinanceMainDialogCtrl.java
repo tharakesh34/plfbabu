@@ -2366,6 +2366,7 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 			getScoringDetailDialogCtrl().doSave_ScoreDetail(aFinanceDetail);
 		} else {
 			aFinanceDetail.setFinScoreHeaderList(null);
+			aFinanceDetail.setScore(BigDecimal.ZERO);
 		}
 		
 		// Guaranteer Details Tab ---> Guaranteer Details 
@@ -2617,6 +2618,12 @@ public class MudarabaFinanceMainDialogCtrl extends FinanceBaseCtrl implements Se
 
 					processCompleted = doSaveProcess(auditHeader, method);
 
+				}  else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckScore)) {
+					
+					FinanceDetail tFinanceDetail=  (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					tFinanceDetail.getFinScheduleData().getFinanceMain().setScore(tFinanceDetail.getScore());
+					processCompleted = true;
+					
 				} else if(StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckExceptions)) {
 
 					auditHeader = getFinanceDetailService().doCheckExceptions(auditHeader);

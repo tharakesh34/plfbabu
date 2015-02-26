@@ -41,6 +41,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,6 +158,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean actionSave = false;
 	private boolean dataFetchComplete = false;
 	private String userAction;
+	private BigDecimal score = BigDecimal.ZERO;
 	
 	//Additional Fields
 	//**********************************************************************
@@ -670,6 +672,14 @@ public class FinanceDetail implements java.io.Serializable {
     }
 	public void setDedupPoliceCaseDetails(List<PoliceCase> dedupPoliceCaseDetails) {
 	    this.dedupPoliceCaseDetails = dedupPoliceCaseDetails;
+    }
+
+	public BigDecimal getScore() {
+	    return score;
+    }
+
+	public void setScore(BigDecimal score) {
+	    this.score = score;
     }
 
 }
