@@ -727,25 +727,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerDocumentsList() != null){
 			for (CustomerDocument customerDocument : customerDetails.getCustomerDocumentsList()) {
-				customerDocument.setWorkflowId(0);
-				customerDocument.setCustID(customer.getCustID());
-				if(tableType.equals("")  && !StringUtils.trimToEmpty(customerDocument.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					customerDocument.setRecordType("");
-					customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(customerDocument.getRecordType()).equals("")){
+					customerDocument.setWorkflowId(0);
+					customerDocument.setCustID(customer.getCustID());
+					if(tableType.equals("")  && !StringUtils.trimToEmpty(customerDocument.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						customerDocument.setRecordType("");
+						customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(customerDocument.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerDocumentDAO.delete(customerDocument, tableType);
+					}else if(customerDocument.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerDocumentDAO.save(customerDocument, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerDocumentDAO.update(customerDocument, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(customerDocument.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerDocumentDAO.delete(customerDocument, tableType);
-				}else if(customerDocument.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerDocumentDAO.save(customerDocument, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					customerDocument.setVersion(customerDocument.getVersion()+1);
-					customerDocumentDAO.update(customerDocument, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(customerDocument, customerDocument.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerDocument.getBefImage(), customerDocument));
 			}
@@ -753,25 +753,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getAddressList() != null){
 			for (CustomerAddres custaddress : customerDetails.getAddressList()) {
-				custaddress.setWorkflowId(0);
-				custaddress.setCustID(customer.getCustID());
-				if(tableType.equals("")  && !StringUtils.trimToEmpty(custaddress.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					custaddress.setRecordType("");
-					custaddress.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(custaddress.getRecordType()).equals("")){
+					custaddress.setWorkflowId(0);
+					custaddress.setCustID(customer.getCustID());
+					if(tableType.equals("")  && !StringUtils.trimToEmpty(custaddress.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						custaddress.setRecordType("");
+						custaddress.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(custaddress.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerAddresDAO.delete(custaddress, tableType);
+					}else if(custaddress.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerAddresDAO.save(custaddress, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerAddresDAO.update(custaddress, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(custaddress.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerAddresDAO.delete(custaddress, tableType);
-				}else if(custaddress.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerAddresDAO.save(custaddress, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					custaddress.setVersion(custaddress.getVersion()+1);
-					customerAddresDAO.update(custaddress, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(custaddress, custaddress.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custaddress.getBefImage(), custaddress));
 			}
@@ -779,25 +779,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerPhoneNumList() != null){
 			for (CustomerPhoneNumber custPhoneNumber : customerDetails.getCustomerPhoneNumList()) {
-				custPhoneNumber.setWorkflowId(0);
-				custPhoneNumber.setPhoneCustID(customer.getCustID());
-				if(tableType.equals("")  && !StringUtils.trimToEmpty(custPhoneNumber.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					custPhoneNumber.setRecordType("");
-					custPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(custPhoneNumber.getRecordType()).equals("")){
+					custPhoneNumber.setWorkflowId(0);
+					custPhoneNumber.setPhoneCustID(customer.getCustID());
+					if(tableType.equals("")  && !StringUtils.trimToEmpty(custPhoneNumber.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						custPhoneNumber.setRecordType("");
+						custPhoneNumber.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(custPhoneNumber.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerPhoneNumberDAO.delete(custPhoneNumber, tableType);
+					}else if(custPhoneNumber.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerPhoneNumberDAO.save(custPhoneNumber, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerPhoneNumberDAO.update(custPhoneNumber, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(custPhoneNumber.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerPhoneNumberDAO.delete(custPhoneNumber, tableType);
-				}else if(custPhoneNumber.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerPhoneNumberDAO.save(custPhoneNumber, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					custPhoneNumber.setVersion(custPhoneNumber.getVersion()+1);
-					customerPhoneNumberDAO.update(custPhoneNumber, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(custPhoneNumber, custPhoneNumber.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custPhoneNumber.getBefImage(), custPhoneNumber));
 			}
@@ -805,25 +805,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerEMailList() != null){
 			for (CustomerEMail customerEMail : customerDetails.getCustomerEMailList()) {
-				customerEMail.setWorkflowId(0);
-				customerEMail.setCustID(customer.getCustID());
-				if(tableType.equals("") && !StringUtils.trimToEmpty(customerEMail.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					customerEMail.setRecordType("");
-					customerEMail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(customerEMail.getRecordType()).equals("")){
+					customerEMail.setWorkflowId(0);
+					customerEMail.setCustID(customer.getCustID());
+					if(tableType.equals("") && !StringUtils.trimToEmpty(customerEMail.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						customerEMail.setRecordType("");
+						customerEMail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(customerEMail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerEMailDAO.delete(customerEMail, tableType);
+					}else if(customerEMail.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerEMailDAO.save(customerEMail, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerEMailDAO.update(customerEMail, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(customerEMail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerEMailDAO.delete(customerEMail, tableType);
-				}else if(customerEMail.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerEMailDAO.save(customerEMail, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					customerEMail.setVersion(customerEMail.getVersion()+1);
-					customerEMailDAO.update(customerEMail, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(customerEMail, customerEMail.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], customerEMail.getBefImage(), customerEMail));
 			}
@@ -831,25 +831,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerBankInfoList() != null){
 			for (CustomerBankInfo custBankInfo : customerDetails.getCustomerBankInfoList()) {
-				custBankInfo.setWorkflowId(0);
-				custBankInfo.setCustID(customer.getCustID());
-				if(tableType.equals("") && !StringUtils.trimToEmpty(custBankInfo.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					custBankInfo.setRecordType("");
-					custBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(custBankInfo.getRecordType()).equals("")){
+					custBankInfo.setWorkflowId(0);
+					custBankInfo.setCustID(customer.getCustID());
+					if(tableType.equals("") && !StringUtils.trimToEmpty(custBankInfo.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						custBankInfo.setRecordType("");
+						custBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(custBankInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerBankInfoDAO.delete(custBankInfo, tableType);
+					}else if(custBankInfo.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerBankInfoDAO.save(custBankInfo, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerBankInfoDAO.update(custBankInfo, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(custBankInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerBankInfoDAO.delete(custBankInfo, tableType);
-				}else if(custBankInfo.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerBankInfoDAO.save(custBankInfo, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					custBankInfo.setVersion(custBankInfo.getVersion()+1);
-					customerBankInfoDAO.update(custBankInfo, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custBankInfo.getBefImage(), custBankInfo));
 			}
@@ -857,25 +857,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerChequeInfoList() != null){
 			for (CustomerChequeInfo custChequeInfo : customerDetails.getCustomerChequeInfoList()) {
-				custChequeInfo.setWorkflowId(0);
-				custChequeInfo.setCustID(customer.getCustID());
-				if(tableType.equals("") && !StringUtils.trimToEmpty(custChequeInfo.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					custChequeInfo.setRecordType("");
-					custChequeInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(custChequeInfo.getRecordType()).equals("")){
+					custChequeInfo.setWorkflowId(0);
+					custChequeInfo.setCustID(customer.getCustID());
+					if(tableType.equals("") && !StringUtils.trimToEmpty(custChequeInfo.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						custChequeInfo.setRecordType("");
+						custChequeInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(custChequeInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerChequeInfoDAO.delete(custChequeInfo, tableType);
+					}else if(custChequeInfo.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerChequeInfoDAO.save(custChequeInfo, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerChequeInfoDAO.update(custChequeInfo, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(custChequeInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerChequeInfoDAO.delete(custChequeInfo, tableType);
-				}else if(custChequeInfo.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerChequeInfoDAO.save(custChequeInfo, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					custChequeInfo.setVersion(custChequeInfo.getVersion()+1);
-					customerChequeInfoDAO.update(custChequeInfo, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(custChequeInfo, custChequeInfo.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custChequeInfo.getBefImage(), custChequeInfo));
 			}
@@ -883,25 +883,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if(customerDetails.getCustomerExtLiabilityList() != null){
 			for (CustomerExtLiability custExtLiability : customerDetails.getCustomerExtLiabilityList()) {
-				custExtLiability.setWorkflowId(0);
-				custExtLiability.setCustID(customer.getCustID());
-				if(tableType.equals("") && !StringUtils.trimToEmpty(custExtLiability.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
-					custExtLiability.setRecordType("");
-					custExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(!StringUtils.trimToEmpty(custExtLiability.getRecordType()).equals("")){
+					custExtLiability.setWorkflowId(0);
+					custExtLiability.setCustID(customer.getCustID());
+					if(tableType.equals("") && !StringUtils.trimToEmpty(custExtLiability.getRecordType())
+							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)){
+						custExtLiability.setRecordType("");
+						custExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					}
+					if (StringUtils.trimToEmpty(custExtLiability.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+						auditTranType = PennantConstants.TRAN_DEL;
+						customerExtLiabilityDAO.delete(custExtLiability, tableType);
+					}else if(custExtLiability.isNewRecord()) {
+						auditTranType = PennantConstants.TRAN_ADD;
+						customerExtLiabilityDAO.save(custExtLiability, tableType);
+					} else {
+						auditTranType = PennantConstants.TRAN_UPD;
+						customerExtLiabilityDAO.update(custExtLiability, tableType);
+					}
 				}
-				if (StringUtils.trimToEmpty(custExtLiability.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-					customerExtLiabilityDAO.delete(custExtLiability, tableType);
-				}else if(custExtLiability.isNewRecord()) {
-					auditTranType = PennantConstants.TRAN_ADD;
-					customerExtLiabilityDAO.save(custExtLiability, tableType);
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-					custExtLiability.setVersion(custExtLiability.getVersion()+1);
-					customerExtLiabilityDAO.update(custExtLiability, tableType);
-				}
-
 				fields = PennantJavaUtil.getFieldDetails(custExtLiability, custExtLiability.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size()+1, fields[0], fields[1], custExtLiability.getBefImage(), custExtLiability));
 			}
