@@ -841,6 +841,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		
+		aCustomer.setCustTotalIncome(custEmployeeDetail.getMonthlyIncome().add(custEmployeeDetail.getAdditionalIncome()));
+		aCustomer.setCustTotalExpense(getCustTotExpense());
+		
 		showErrorDetails(wve,custTab,tabkYCDetails);
 		
 		aCustomerDetails.setCustomer(aCustomer);
@@ -856,7 +859,18 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		logger.debug("Leaving");
 	}
 
-
+	private BigDecimal getCustTotExpense(){
+		logger.debug("Entering");
+		BigDecimal custTotExpense = BigDecimal.ZERO;
+		if(this.customerExtLiabilityDetailList != null && !this.customerExtLiabilityDetailList.isEmpty()){
+			for (CustomerExtLiability cusExtLiability : this.customerExtLiabilityDetailList) {
+				custTotExpense = custTotExpense.add(cusExtLiability.getInstalmentAmount());
+			}
+		}
+		logger.debug("Leaving");
+		return custTotExpense;
+	}
+	
 	/**
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
@@ -975,7 +989,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if(!this.empStatus.isReadonly()){
 			this.empStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpStatus.value"), null, true,true));
 		}
-		if(this.row_EmpName.isVisible() && !this.empName.isReadonly()){
+		if(this.row_EmpName.isVisible() && this.empName.isButtonVisible()){
 			this.empName.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceCustomerList_EmpName.value"), null, true,true));
 		}
 		if(this.hbox_empNameOther.isVisible() && !this.empNameOther.isReadonly()){
