@@ -383,8 +383,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			//onload();
 		}
 
-		if(isCheckList && (StringUtils.trimToEmpty(customerDocument.getRecordType()).equals("") 
-				|| StringUtils.trimToEmpty(customerDocument.getRecordType()).equals("Approved"))){
+		if(isCheckList){//TODO Need to add a condition based visibility for delete button 
 			btnDelete.setVisible(false);
 		}
 
