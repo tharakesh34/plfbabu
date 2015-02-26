@@ -152,7 +152,7 @@
 								</hbox>	
 							</row>
 							<row visible="true">											
-								<label id="label_CarLoanDetailDialog_DealerOrSellerAcc" value="${c:l('label_CarLoanDetailDialog_DealerOrSellerAcc.value')}" />											
+								<label id="label_DealerOrSellerAcc" value="${c:l('label_CarLoanDetailDialog_DealerOrSellerAcc.value')}" />											
 									<hbox>	
 										<accountSelectionBox id="dealerOrSellerAcc" visible="false"/>	
 										<space id="space_dealerOrSellerAcc" spacing="2px"/>
