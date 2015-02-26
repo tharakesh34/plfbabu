@@ -336,7 +336,7 @@ public class FleetVehicleLoanDetailListCtrl extends GFCBaseCtrl implements Seria
 				}
 			}
 			if (main != null && this.totVehicleValue.getValue() != null && main.getFinAmount() != null) {
-				BigDecimal finAmount = main.getFinAmount().subtract(main.getDownPayment()).add(main.getFeeChargeAmt());
+				BigDecimal finAmount = main.getFinAmount();
 				if (finAmount.compareTo(PennantAppUtil.unFormateAmount(this.totVehicleValue.getValue(),ccyFormat)) != 0) {
 					throw new WrongValueException(this.totVehicleValue, Labels.getLabel("MUST_BE_EQUAL", new String[] { Labels.getLabel("label_FleetVehicleLoanDetailList_TotVehicleValue.value"), Labels.getLabel("label_FinanceMainDialog_FinAssetValue.value") }));
 				}

@@ -203,6 +203,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private List<CustomerEMail> oldVar_customerEmailDetailList = new ArrayList<CustomerEMail>();
 
 	protected Button btnNew_BankInformation;
+	protected Groupbox gp_BankInformationDetail;
 	protected Listbox listBoxCustomerBankInformation;
 	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
 	private List<CustomerBankInfo> oldVar_customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
@@ -342,6 +343,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.listBoxCustomerAddress.setHeight(borderlayoutHeights - 145 + "px");
 			this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - 145 + "px");
 			this.listBoxCustomerEmails.setHeight(borderlayoutHeights - 145 + "px");
+			this.gp_BankInformationDetail.setHeight(borderlayoutHeights - 42 + "px");
 			this.listBoxCustomerBankInformation.setHeight(borderlayoutHeights - 130 + "px");
 			this.gp_ChequeInformation.setHeight(borderlayoutHeights - 42 + "px");
 			this.listBoxCustomerChequeInformation.setHeight(borderlayoutHeights - 130 + "px");
@@ -830,10 +832,10 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			wve.add(we);
 		}
 		
+		showErrorDetails(wve,custTab,tabkYCDetails);
+		
 		aCustomer.setCustTotalIncome(custEmployeeDetail.getMonthlyIncome().add(custEmployeeDetail.getAdditionalIncome()));
 		aCustomer.setCustTotalExpense(getCustTotExpense());
-		
-		showErrorDetails(wve,custTab,tabkYCDetails);
 		
 		aCustomerDetails.setCustomer(aCustomer);
 		//Set KYC details
@@ -1609,9 +1611,14 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 			this.profession.setVisible(false);
 			this.row_EmpName.setVisible(true);
 			this.row_DesgDept.setVisible(true);
-
 		}
-
+		if(StringUtils.trimToEmpty(this.empName.getDescription()).equalsIgnoreCase(EmploymentName_OTHERS)){
+			this.hbox_empNameOther.setVisible(true);
+			this.label_empNameOther.setVisible(true);
+		}else{
+			this.hbox_empNameOther.setVisible(false);
+			this.label_empNameOther.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 	

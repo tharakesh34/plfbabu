@@ -472,7 +472,7 @@
 									<rows>
 										<row
 											style="vertical-align: top;">
-											<groupbox closable="true">
+											<groupbox id="gp_BankInformationDetail" closable="true">
 												<caption
 													label="${c:l('gp_BankInformationDetails')}">
 												</caption>
