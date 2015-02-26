@@ -288,7 +288,9 @@ public class FeeDetailDialogCtrl extends GFCBaseListCtrl<FeeRule> implements Ser
 			this.takafulFrq.setDisabled(true);
 			this.takafulRate.setDisabled(true);
 		}
-		
+		if(!isModify || isWIF){
+			this.button_takafulRef.setVisible(false);
+		}
 		//If User can Modify Frequency Remove below condition
 		this.takafulFrq.setDisabled(true);
 	}
