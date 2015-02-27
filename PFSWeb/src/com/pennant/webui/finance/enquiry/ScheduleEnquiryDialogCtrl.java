@@ -63,6 +63,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.dashboard.ChartDetail;
@@ -106,6 +107,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 	protected Div           graphDivTabDiv;
 	
 	// Step Finance Fields
+	protected Listheader    listheader_SchFee;
 	protected Listheader    listHeader_cashFlowEffect;
 	protected Listheader    listHeader_vSProfit;
 	protected Listheader    listHeader_orgPrincipalDue;
@@ -158,6 +160,14 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDe
 		}
 
 		doShowDialog();
+		
+		if(getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals("") ||
+				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(PennantConstants.List_Select) ||
+				getFinScheduleData().getFinanceMain().getRemFeeSchdMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			this.listheader_SchFee.setVisible(false);
+		}else{
+			this.listheader_SchFee.setVisible(true);
+		}
 
 		/*if(getFinScheduleData().getFinanceMain().isStepFinance()){
 			if(getFinScheduleData().getFinanceMain().isAlwManualSteps()){  // TODO  Based on Fin type we need to change list header label name

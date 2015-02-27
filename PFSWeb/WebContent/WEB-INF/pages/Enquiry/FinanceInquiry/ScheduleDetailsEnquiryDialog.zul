@@ -39,6 +39,8 @@
 											hflex="min" />
 										<listheader
 											label="${c:l('listheader_CalProfit.label')}" hflex="min" />
+										<listheader id="listheader_SchFee"
+												label="${c:l('listheader_SchFee.label')}" hflex="min" />
 										<listheader
 											label="${c:l('listheader_SchProfit.label')}" hflex="min" />
 										<listheader
