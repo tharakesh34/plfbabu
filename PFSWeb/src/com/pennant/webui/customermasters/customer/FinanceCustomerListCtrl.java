@@ -241,7 +241,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private transient String oldVar_empStatus;
 	private transient String oldVar_empSector;
 	private transient String oldVar_profession;
-	private transient String oldVar_empName;
+	private transient int oldVar_empName;
 	private transient String oldVar_empNameOther;
 	private transient Date oldVar_empFrom;
 	private transient String oldVar_empDesg;
@@ -1043,7 +1043,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_empStatus = this.empStatus.getValue();
 		this.oldVar_empSector = this.empSector.getValue();
 		this.oldVar_profession = this.profession.getValue();
-		this.oldVar_empName = this.empName.getValue();
+		this.oldVar_empName = Integer.valueOf(this.empName.getValue());
 		this.oldVar_empNameOther = this.empNameOther.getValue();
 		this.oldVar_empFrom = this.empFrom.getValue();
 		this.oldVar_empDesg = this.empDesg.getValue();
@@ -1326,7 +1326,7 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if (this.oldVar_profession != this.profession.getValue()) {
 			return true;
 		}
-		if (this.oldVar_empName != this.empName.getValue()) {
+		if (this.oldVar_empName != Integer.valueOf(this.empName.getValue())) {
 			return true;
 		}
 		if (this.oldVar_empNameOther != this.empNameOther.getValue()) {
