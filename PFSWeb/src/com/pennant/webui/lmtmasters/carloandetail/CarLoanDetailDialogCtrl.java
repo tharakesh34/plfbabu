@@ -1514,7 +1514,7 @@ public class CarLoanDetailDialogCtrl extends GFCBaseCtrl implements Serializable
 					DateUtility.getYear((Date) SystemParameterDetails.getSystemParameterValue("APP_DFT_START_DATE")), DateUtility.getYear(new Date())+1));
 		}
 		if (!this.carCc.isReadonly()) {
-			this.carCc.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_CarCc.value"),null,true));
+			this.carCc.setConstraint(new PTNumberValidator(Labels.getLabel("label_CarLoanDetailDialog_CarCc.value"), true, false));
 		}
 		if (!this.engineNumber.isReadonly()) {
 			this.engineNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CarLoanDetailDialog_engineNumber.value"),null,true));
