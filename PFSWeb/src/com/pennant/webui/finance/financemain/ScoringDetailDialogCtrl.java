@@ -1428,7 +1428,14 @@ public class ScoringDetailDialogCtrl extends GFCBaseListCtrl<FinanceScoreDetail>
 		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 		int months = DateUtility.getMonthsBetween(finStartDate, finMaturityDate);
 		
-		return getFinanceDetailService().getCustEligibilityDetail(aCustomer, productName, financeMain.getFinCcy(), curFinRepayAmt, months, finAmount, financeMain.getCustDSR());
+		//Get Customer Employee Designation
+		String custEmpDesg = "";
+		if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null){
+			custEmpDesg = StringUtils.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+		}
+
+		return getFinanceDetailService().getCustEligibilityDetail(aCustomer, productName, financeMain.getFinCcy(), 
+				curFinRepayAmt, months, finAmount, financeMain.getCustDSR(), custEmpDesg);
 
 	}
 	

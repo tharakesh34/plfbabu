@@ -7608,7 +7608,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 						getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
 						months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR()));
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR(),""));
 				setCustomerScoringData();
 
 				//Fill Finance Schedule details List data into ListBox
@@ -9133,7 +9133,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 				getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
 				getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
 				months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),
-				getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR()));
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR(),""));
 		setCustomerScoringData();
 
 		// Execute Eligibility Rule and Display Result
@@ -11583,7 +11583,7 @@ public class FinanceMainDialogCtrl extends GFCBaseCtrl implements Serializable {
 					getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
 					months, financeDetail.getFinScheduleData().getFinanceMain().getFinAmount(),
-					getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR()));
+					getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR(),""));
 			setCustomerScoringData();
 		}else{
 			setCustomerScoringData();

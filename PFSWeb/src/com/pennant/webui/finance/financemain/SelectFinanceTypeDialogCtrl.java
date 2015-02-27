@@ -370,8 +370,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 				
 				this.loanType = details.getLovDescProductCodeName();
 				this.wIfFinaceRef.setValue(details.getFinReference(),"");
-				FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(details.getFinType());
-				setFinanceWorkFlow(financeWorkFlow);
 				CheckScreenCode(financeWorkFlow.getScreenCode());
 				this.promotionCode.setReadonly(true);
 				this.promotionCode.setValue("", "");
@@ -412,12 +410,28 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
 			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODAllowWaiver(financeType.isODAllowWaiver());
 			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+			
+			if(getFinanceWorkFlow() == null){
+				FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(financeType.getFinType());
+				setFinanceWorkFlow(financeWorkFlow);
+			}
 
 		}else{
-			if(!StringUtils.trimToEmpty(this.finType.getValue()).equals("")){
+			if(!StringUtils.trimToEmpty(this.finType.getValue()).equals("") && 
+					StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")){
 				financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.finType.getValue().trim());
+				
+				if(getFinanceWorkFlow() == null){
+					FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(this.finType.getValue().trim());
+					setFinanceWorkFlow(financeWorkFlow);
+				}
 			} else if(!StringUtils.trimToEmpty(this.promotionCode.getValue()).equals("")){
 				financeType = getFinanceTypeService().getApprovedFinanceTypeById(this.promotionCode.getValue().trim());
+				
+				if(getFinanceWorkFlow() == null){
+					FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(this.promotionCode.getValue().trim());
+					setFinanceWorkFlow(financeWorkFlow);
+				}
 			}
 			financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain(), financeType);
 			financeDetail.getFinScheduleData().setFinanceType(financeType);
@@ -453,11 +467,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl implements Serializ
 			setWorkFlowId(workFlowDetails.getId());
 			financeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 			financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(workFlowDetails.getWorkFlowId());
+			
+			//Fetching Finance Reference Detail
+			financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, 
+					getFinanceWorkFlow().getLovDescFirstTaskOwner(),getFinanceWorkFlow().getScreenCode(),"");
 		}
 
-		//Fetching Finance Reference Detail
-		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, 
-				getFinanceWorkFlow().getLovDescFirstTaskOwner(),getFinanceWorkFlow().getScreenCode(),"");
 		financeDetail.setNewRecord(true);
 
 		/*

@@ -46,12 +46,15 @@ package com.pennant.webui.finance.financemain;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -66,12 +69,21 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SystemParameterDetails;
+import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -125,6 +137,9 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 	private FinanceMain financeMain = null;
  	
 	private EligibilityDetailService eligibilityDetailService;
+	private CurrencyService currencyService;
+	private RuleService ruleService;
+	private RuleExecutionUtil ruleExecutionUtil;
 	private List<ValueLabel> profitDaysBasisList = new ArrayList<ValueLabel>();
 	private List<ValueLabel> schMethodList = new ArrayList<ValueLabel>();
 	
@@ -274,6 +289,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 				}
 				logger.error(e);
 			}
+		}else{
+			getCustEligibilityDetail(aFinanceDetail);
 		}
 		
 		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
@@ -295,6 +312,132 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD) Currency
+	 */
+	private void getCustEligibilityDetail(FinanceDetail financeDetail) {
+		logger.debug("Entering");
+
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		CustomerEligibilityCheck eligibilityCheck = financeDetail.getCustomerEligibilityCheck();
+		if(eligibilityCheck == null){
+			eligibilityCheck = new CustomerEligibilityCheck();
+		}
+
+		// Eligibility object
+		BeanUtils.copyProperties(customer, eligibilityCheck);
+		int age = DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.today());
+		eligibilityCheck.setCustAge(age);
+
+		//Minor Age Calculation
+		int minorAge = Integer.parseInt(SystemParameterDetails.getSystemParameterValue("MINOR_AGE").toString());
+		if (age < minorAge) {
+			eligibilityCheck.setCustIsMinor(true);
+		} else {
+			eligibilityCheck.setCustIsMinor(false);
+		}
+
+		Currency finCurrency = null;
+		//Customer Total Income & Expense Conversion
+		if (!StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString())
+				.equals(customer.getCustBaseCcy())) {
+			finCurrency = getCurrencyService().getCurrencyById(customer.getCustBaseCcy());
+			eligibilityCheck.setCustTotalIncome(calculateExchangeRate(customer.getCustTotalIncome(), finCurrency));
+			eligibilityCheck.setCustTotalExpense(calculateExchangeRate(customer.getCustTotalExpense(), finCurrency));
+		}
+		
+		BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
+		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
+				financeMain.getMaturityDate(), true);
+
+		BigDecimal curFinRpyAmount = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
+		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+
+		//Get Customer Employee Designation
+		String custEmpDesg = "";
+		if(financeDetail.getCustomerDetails().getCustEmployeeDetail() != null){
+			custEmpDesg = StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+		}
+		
+		if (months > 0) {
+			eligibilityCheck.setTenure(new BigDecimal((months / 12) + "." + (months % 12)));
+		}
+		eligibilityCheck.setReqFinAmount(financeMain.getFinAmount());
+
+		Date curBussDate = (Date) SystemParameterDetails.getSystemParameterValue(PennantConstants.APP_DATE_CUR);
+		eligibilityCheck.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate,
+				customer.getCustBlackListDate()));
+
+		eligibilityCheck.setCustCtgType(customer.getLovDescCustCtgType());
+		eligibilityCheck.setReqProduct(financeDetail.getFinScheduleData().getFinanceType().getLovDescProductCodeName());
+
+		//Currently
+		if (curFinRpyAmount != null && curFinRpyAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (!StringUtils.trimToEmpty(SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").toString())
+					.equals(financeMain.getFinCcy())) {
+
+				if (finCurrency != null && finCurrency.getCcyCode().equals(financeMain.getFinCcy())) {
+					eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
+				} else {
+					finCurrency = getCurrencyService().getCurrencyById(financeMain.getFinCcy());
+					eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
+				}
+			} else {
+				eligibilityCheck.setCurFinRepayAmt(curFinRpyAmount);
+			}
+		}
+
+		//set Customer Designation if customer status is Employed
+		eligibilityCheck.setCustEmpDesg(custEmpDesg);
+
+		//get Customer Employee Allocation Type if customer status is Employed
+		eligibilityCheck.setCustEmpAloc("");//getCustomerDAO().getCustCurEmpAlocType(customer.getCustID())
+
+		//DSR Calculation
+		Rule rule = getRuleService().getRuleById("DSRCAL", "ELGRULE", "");
+		if (rule != null) {
+			List<GlobalVariable> globalVariableList = SystemParameterDetails.getGlobaVariableList();
+			Object dscr = getRuleExecutionUtil().executeRule(rule.getSQLRule(), eligibilityCheck, globalVariableList,financeMain.getFinCcy());
+
+			if(dscr == null){
+				dscr = BigDecimal.ZERO;
+			}else if(new BigDecimal(dscr.toString()).intValue() > 9999){
+				dscr = 9999;
+			}
+
+			eligibilityCheck.setDSCR(new BigDecimal(dscr.toString()));
+		}else{
+			eligibilityCheck.setDSCR(BigDecimal.ZERO);
+		}
+
+		financeDetail.setCustomerEligibilityCheck(eligibilityCheck);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Calculating Exchange Rate for Finance Schedule Calculation
+	 * 
+	 * @param amount
+	 * @param aCurrency
+	 * @return
+	 */
+	private BigDecimal calculateExchangeRate(BigDecimal amount, Currency aCurrency) {
+		if (SystemParameterDetails.getSystemParameterValue("APP_DFT_CURR").equals(
+				aCurrency.getCcyCode())) {
+			return amount;
+		} else {
+			if (amount == null) {
+				amount = BigDecimal.ZERO;
+			}
+
+			if (aCurrency != null) {
+				amount = amount.multiply(aCurrency.getCcySpotRate());
+			}
+		}
+		return amount;
+	}
 	
 	/**
 	 * Method for Rendering Executed Eligibility Details
@@ -531,6 +674,30 @@ public class EligibilityDetailDialogCtrl extends GFCBaseListCtrl<FinanceEligibil
 
 	public void setCustisEligible(boolean custisEligible) {
 		this.custisEligible = custisEligible;
+	}
+
+	public CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
+	public void setCurrencyService(CurrencyService currencyService) {
+		this.currencyService = currencyService;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 	
 }

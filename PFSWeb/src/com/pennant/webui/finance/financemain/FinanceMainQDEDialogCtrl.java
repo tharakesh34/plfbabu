@@ -821,7 +821,7 @@ public class FinanceMainQDEDialogCtrl extends GFCBaseCtrl implements Serializabl
 		getFinanceDetail().setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(aCustomer,"",
 				getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
 				months, financeDetail.getFinScheduleData().getFinanceMain().getFinAmount(),
-				getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR()));
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getCustDSR(),""));
 		
 		// Set Customer Data to Calculate the Score
 		//setCustomerScoringData(aCustomer);

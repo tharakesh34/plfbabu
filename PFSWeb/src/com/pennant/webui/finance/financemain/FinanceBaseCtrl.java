@@ -7182,12 +7182,18 @@ public class FinanceBaseCtrl extends GFCBaseCtrl implements Serializable {
 		if(customer == null){
 			customer = getCustomerService().getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		}
+		
+		//Get Customer Employee Designation
+		String custEmpDesg = "";
+		if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null){
+			custEmpDesg = StringUtils.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+		}
 
 		// Set Customer Data to check the eligibility
 		getFinanceDetail().setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
 				getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
 				getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
-				months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null));
+				months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null, custEmpDesg));
 		
 		return getFinanceDetail().getCustomerEligibilityCheck();
 	}

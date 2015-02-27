@@ -570,8 +570,10 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 
 		if(isReadOnly("FinanceMainDialog_NoScheduleGeneration")){
 
-			//Customer Details   
-			appendCustomerDetailTab();
+			 //Customer Details   
+			if(moduleDefiner.equals("")){
+				appendCustomerDetailTab();
+			}
 			
 			//Step Policy Details
 			appendStepDetailTab(true);
@@ -870,11 +872,12 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 			doStoreInitValues();
 			if (moduleDefiner.equals("")){
 				setDiscrepancy(getFinanceDetail());
+			
+				//Set Customer Data
+				if(getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()){
+					doSetCustomer(getFinanceDetail().getCustomerDetails().getCustomer(),null);
+				}
 	        }
-			//Set Customer Data
-			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()){
-				doSetCustomer(getFinanceDetail().getCustomerDetails().getCustomer(),null);
-			}
 			setDialog(this.window_IstnormFinanceMainDialog);
 
 		} catch (final Exception e) {
@@ -3628,11 +3631,17 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 					customer = getCustomerService().getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 				}
 
+				//Get Customer Employee Designation
+				String custEmpDesg = "";
+				if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null){
+					custEmpDesg = StringUtils.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+				}
+				
 				// Set Customer Data to check the eligibility
 				getFinanceDetail().setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
 						getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescProductCodeName(),
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(), curFinRepayAmt,
-						months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null));
+						months, getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount(),null, custEmpDesg));
 
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setCustDSR(getFinanceDetail().getCustomerEligibilityCheck().getDSCR());
 				setCustomerScoringData();
@@ -3790,9 +3799,16 @@ public class IstnormFinanceMainDialogCtrl extends FinanceBaseCtrl implements Ser
 		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
+		//Get Customer Employee Designation
+		String custEmpDesg = "";
+		if(financeDetail.getCustomerDetails() != null && financeDetail.getCustomerDetails().getCustEmployeeDetail() != null){
+			custEmpDesg = StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+		}
+
 		// Set Customer Data to check the eligibility
 		financeDetail.setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
-				productCode, financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getFinAmount(), financeMain.getCustDSR()));
+				productCode, financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getFinAmount(),
+				financeMain.getCustDSR(), custEmpDesg));
 
 		setCustomerScoringData();
 

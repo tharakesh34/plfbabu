@@ -429,7 +429,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseListCtrl<Customer
 		
 		//Customer Eligibility Amounts Calculation
 		CustomerEligibilityCheck custElgCheck = getFinanceDetailService().getCustEligibilityDetail(customer,"", 
-				customer.getCustBaseCcy(), BigDecimal.ZERO, 0 , BigDecimal.ZERO, null);
+				customer.getCustBaseCcy(), BigDecimal.ZERO, 0 , BigDecimal.ZERO, null,"");
 		
 		if ("FINANCE".equals(this.elgModule.getValue()) && 
 				!StringUtils.trimToEmpty(this.finType.getValue()).equals("")) {

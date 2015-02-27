@@ -269,7 +269,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (!isWIF){
 			//Finance Customer Details			
-			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), "_View"));
+			if(financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE){
+				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), "_View"));
+			}
 		}
 		
 		
@@ -2065,7 +2067,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering ");
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID(), "_AView");
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 
 		if (customer != null) {
 
@@ -2080,7 +2082,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Customer Eligibility Amounts Calculation
 			financeDetail.setCustomerEligibilityCheck(getCustEligibilityDetail(customer, productCode,
-					financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getFinAmount(), financeMain.getCustDSR()));
+					financeMain.getFinCcy(), curFinRepayAmt, months, financeMain.getFinAmount(), 
+					financeMain.getCustDSR(),financeDetail.getCustomerDetails().getCustEmployeeDetail().getEmpDesg()));
 
 			//Reset Customer Debt Service Ratio
 			financeMain.setCustDSR(financeDetail.getCustomerEligibilityCheck().getDSCR());
@@ -2098,7 +2101,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode,
 			String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal finAmount,
-			BigDecimal custDSR) {
+			BigDecimal custDSR, String custEmpDesg) {
 		logger.debug("Entering");
 
 		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
@@ -2171,17 +2174,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			eligibilityCheck.setCustLiveFinAmount(custFinAmount);
 			eligibilityCheck.setCustPastDueAmt(custODAmount);				
 
-			//get Customer Designation if customer status is Employed
-			eligibilityCheck.setCustEmpDesg(getCustomerDAO().getCustEmpDesg(customer.getCustID()));
+			//set Customer Designation if customer status is Employed
+			eligibilityCheck.setCustEmpDesg(custEmpDesg);
 
 			//get Customer Employee Allocation Type if customer status is Employed
-			eligibilityCheck.setCustEmpAloc(getCustomerDAO().getCustCurEmpAlocType(customer.getCustID()));
+			eligibilityCheck.setCustEmpAloc("");//getCustomerDAO().getCustCurEmpAlocType(customer.getCustID())
 
 			//Get Customer Repay Totals On Bank
 			eligibilityCheck.setCustRepayBank(getCustomerDAO().getCustRepayBankTotal(customer.getCustID()));
 
 			//Get Customer Repay Totals by Other Commitments
-			eligibilityCheck.setCustRepayOther(getCustomerDAO().getCustRepayOtherTotal(customer.getCustID()));
+			eligibilityCheck.setCustRepayOther(BigDecimal.ZERO);//getCustomerDAO().getCustRepayOtherTotal(customer.getCustID())
 
 			//Get Customer Worst Status From Finances
 			eligibilityCheck.setCustWorstSts(getCustomerDAO().getCustWorstSts(customer.getCustID()));

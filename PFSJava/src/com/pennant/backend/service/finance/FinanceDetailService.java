@@ -109,7 +109,7 @@ public interface FinanceDetailService {
 	List<String> getFinanceReferenceList();
 	String getCustStatusByMinDueDays();
 	CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode,String finCcy, 
-	BigDecimal curFinRpyAmount,int months, BigDecimal finAmount, BigDecimal custDSR);
+	BigDecimal curFinRpyAmount,int months, BigDecimal finAmount, BigDecimal custDSR, String custEmpDesg);
 	FinanceSummary getFinanceProfitDetails(String finRef);
 	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
 

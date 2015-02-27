@@ -2395,6 +2395,9 @@
 		class="com.pennant.webui.finance.financemain.EligibilityDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 			<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
+			<property name="currencyService" ref="currencyService" />
+			<property name="ruleService" ref="ruleService" />
+			<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	
 	<!--============ Accounting Detail ============== -->
