@@ -708,7 +708,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 			finDocumentPdfView.setContent(amedia);
 		}
 		
-		//CPR number fetching from Customers
+		/*//CPR number fetching from Customers
 		if(PennantConstants.CPRCODE.equals(this.custDocType.getValue())){
 			if(getCustomerDialogCtrl() != null){
 				if(getCustomerDialogCtrl().getCustomerDetails().getCustomer().getLovDescCustCtgType().equals(PennantConstants.INTERFACE_CUSTCTG_INDIV)){
@@ -720,7 +720,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 				this.custDocTitle.setValue(custCRCPR);
 				this.custDocTitle.setReadonly(isReadOnly("CustomerDocumentDialog_custDocTitle"));
 			}
-		}
+		}*/
 
 		this.recordStatus.setValue(aCustomerDocument.getRecordStatus());
 		logger.debug("Leaving");
@@ -1308,9 +1308,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl implements Serializa
 
 		this.custDocType.setReadonly(isReadOnly("CustomerDocumentDialog_custDocType"));
 		this.custDocTitle.setReadonly(isReadOnly("CustomerDocumentDialog_custDocTitle"));
-		if(PennantConstants.CPRCODE.equals(StringUtils.trimToEmpty(getCustomerDocument().getCustDocCategory()))){
+		/*if(PennantConstants.CPRCODE.equals(StringUtils.trimToEmpty(getCustomerDocument().getCustDocCategory()))){
 			this.custDocTitle.setReadonly(true);
-		}
+		}*/
 		this.btnUploadDoc.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIssuedCountry"));
 		this.custDocSysName.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.custDocRcvdOn.setDisabled(isReadOnly("CustomerDocumentDialog_custDocRcvdOn"));
