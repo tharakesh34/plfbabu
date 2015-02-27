@@ -237,6 +237,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 	private transient String oldVar_custSalutationCode;
 	private transient String oldVar_custGenderCode;
 	private transient String oldVar_custMaritalSts;
+	private transient int oldVar_noOfDependents;
+	private transient boolean oldVar_salariedCustomer;
+	private transient String oldVar_target;
 	
 	private transient String oldVar_empStatus;
 	private transient String oldVar_empSector;
@@ -1039,6 +1042,9 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		this.oldVar_custSalutationCode = this.custSalutationCode.getValue();
 		this.oldVar_custGenderCode = this.custGenderCode.getValue();
 		this.oldVar_custMaritalSts = this.custMaritalSts.getValue();
+		this.oldVar_noOfDependents = this.noOfDependents.getValue();
+		this.oldVar_salariedCustomer = this.salariedCustomer.isChecked();
+		this.oldVar_target = this.target.getValue();
 		//Employee Details
 		this.oldVar_empStatus = this.empStatus.getValue();
 		this.oldVar_empSector = this.empSector.getValue();
@@ -1316,6 +1322,19 @@ public class FinanceCustomerListCtrl extends GFCBaseCtrl implements Serializable
 		if (this.oldVar_custNationality != this.custNationality.getValue()) {
 			return true;
 		}
+		
+		if (this.oldVar_noOfDependents != this.noOfDependents.getValue()) {
+			return true;
+		}
+		
+		if (this.oldVar_salariedCustomer != this.salariedCustomer.isChecked()) {
+			return true;
+		}
+		
+		if (this.oldVar_target != this.target.getValue()) {
+			return true;
+		}
+		
 		//Employee Details
 		if (this.oldVar_empStatus != this.empStatus.getValue()) {
 			return true;
