@@ -559,8 +559,12 @@ public class ScheduleCalculator {
 		dpScheduleData.getFinanceScheduleDetails().get(0).setDisbAmount(financeMain.getFinAmount());
 		dpScheduleData.getFinanceScheduleDetails().get(0).setDownPaymentAmount(BigDecimal.ZERO);
 		dpScheduleData.getFinanceScheduleDetails().get(0).setDownpaymentOnSchDate(false);
-		dpScheduleData.getFinanceScheduleDetails().get(0).setCalculatedRate(BigDecimal.ZERO);
-		dpScheduleData.getFinanceScheduleDetails().get(0).setActRate(BigDecimal.ZERO);
+		
+		//Rate Reset to all Schedule terms
+		for (FinanceScheduleDetail curSchd : dpScheduleData.getFinanceScheduleDetails()) {
+			curSchd.setCalculatedRate(BigDecimal.ZERO);
+			curSchd.setActRate(BigDecimal.ZERO);
+        }
 		
 		//Schedule Calculation with New Setup Data for Down payment Program
 		dpScheduleData = getCalSchd(dpScheduleData, BigDecimal.ZERO);
