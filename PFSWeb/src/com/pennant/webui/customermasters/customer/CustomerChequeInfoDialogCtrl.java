@@ -44,6 +44,7 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,8 +138,12 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 	// on the values are edited since the last initial.
 	private transient long  		oldVar_custID;
 	private transient Date  		oldVar_monthYear;
+	protected transient BigDecimal 	oldVar_totChequePayment;
+	protected transient BigDecimal 	oldVar_salary;
+	protected transient BigDecimal 	oldVar_returnChequeAmt;
+	protected transient int 		oldVar_returnChequeCount;
 	private transient String 		oldVar_recordStatus;
-
+	
 	private transient boolean validationOn;
 	private boolean notes_Entered=false;
 
@@ -652,6 +657,10 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		this.oldVar_custID = this.custID.longValue();
 		this.oldVar_monthYear = this.monthYear.getValue();
+		this.oldVar_totChequePayment = this.totChequePayment.getValue();
+		this.oldVar_salary = this.salary.getValue();
+		this.oldVar_returnChequeAmt = this.returnChequeAmt.getValue();
+		this.oldVar_returnChequeCount = this.returnChequeCount.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -663,6 +672,10 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		logger.debug("Entering");
 		this.custID.setValue(this.oldVar_custID);
 		this.monthYear.setValue(this.oldVar_monthYear);
+		this.totChequePayment.setValue(this.oldVar_totChequePayment);
+		this.salary.setValue(this.oldVar_salary);
+		this.returnChequeAmt.setValue(this.oldVar_returnChequeAmt);
+		this.returnChequeCount.setValue(this.oldVar_returnChequeCount);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -687,6 +700,22 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl implements Seriali
 		}
 		
 		if (this.oldVar_monthYear != this.monthYear.getValue()) {
+			return true;
+		}
+
+		if (this.oldVar_totChequePayment != this.totChequePayment.getValue()) {
+			return true;
+		}
+		
+		if (this.oldVar_salary != this.salary.getValue()) {
+			return true;
+		}
+		
+		if (this.oldVar_returnChequeAmt != this.returnChequeAmt.getValue()) {
+			return true;
+		}
+		
+		if (this.oldVar_returnChequeCount != this.returnChequeCount.getValue()) {
 			return true;
 		}
 		return false;

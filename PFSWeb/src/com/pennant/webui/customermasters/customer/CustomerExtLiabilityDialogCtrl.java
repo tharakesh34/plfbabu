@@ -44,7 +44,9 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +141,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 	private transient long  		oldVar_custID;
 	private transient String  		oldVar_bankName;
 	private transient String  		oldVar_finType;
+	private transient Date  		oldVar_finDate;
+	protected transient BigDecimal 	oldVar_originalAmount;
+	protected transient BigDecimal 	oldVar_installmentAmount;
+	protected transient BigDecimal 	oldVar_outStandingBal;
+	private transient String  		oldVar_finStatus;
 	private transient String 		oldVar_recordStatus;
 
 	private transient boolean validationOn;
@@ -708,6 +715,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		this.oldVar_lovDescBankName = this.bankName.getDescription();
 		this.oldVar_finType = this.finType.getValue();
 		this.oldVar_lovDescFinType = this.finType.getDescription();
+		this.oldVar_finDate = this.finDate.getValue();
+		this.oldVar_originalAmount = this.originalAmount.getValue();
+		this.oldVar_installmentAmount = this.installmentAmount.getValue();
+		this.oldVar_outStandingBal = this.outStandingBal.getValue();
+		this.oldVar_finStatus = this.finStatus.getValue();
 		this.oldVar_recordStatus = this.recordStatus.getValue();
 		logger.debug("Leaving");
 	}
@@ -722,6 +734,11 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 		this.bankName.setDescription(this.oldVar_lovDescBankName);
 		this.finType.setValue(this.oldVar_finType);
 		this.finType.setDescription(this.oldVar_lovDescFinType);
+		this.finDate.setValue(this.oldVar_finDate);
+		this.originalAmount.setValue(this.oldVar_originalAmount);
+		this.installmentAmount.setValue(this.oldVar_installmentAmount);
+		this.outStandingBal.setValue(this.oldVar_outStandingBal);
+		this.finStatus.setValue(this.oldVar_finStatus);
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
 		if (isWorkFlowEnabled()) {
@@ -748,6 +765,21 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl implements Seria
 			return true;
 		}
 		if (this.oldVar_finType != this.finType.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finDate != this.finDate.getValue()) {
+			return true;
+		}
+		if (this.oldVar_originalAmount != this.originalAmount.getValue()) {
+			return true;
+		}
+		if (this.oldVar_installmentAmount != this.installmentAmount.getValue()) {
+			return true;
+		}
+		if (this.oldVar_outStandingBal != this.outStandingBal.getValue()) {
+			return true;
+		}
+		if (this.oldVar_finStatus != this.finStatus.getValue()) {
 			return true;
 		}
 		return false;
