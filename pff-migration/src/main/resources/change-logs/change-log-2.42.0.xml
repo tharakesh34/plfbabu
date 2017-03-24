@@ -18,5 +18,10 @@
 		update ErrorDetails set ErrorMessage='Select either planned emi holiday (OR) Stepping loan' where ErrorCode='30573';
 		</sql>
 	</changeSet>
+	<changeSet id="02" author="Surekha">
+	<sql>
+	ALTER TABLE DATA_ENGINE_TABLE ALTER COLUMN  STATUSUPDATE varchar(1000);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
