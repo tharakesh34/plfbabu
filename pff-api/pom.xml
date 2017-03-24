@@ -22,11 +22,16 @@
 
 
 	<dependencies>
-		<!-- PFF Application dependencies -->
 		<dependency>
 			<groupId>com.pennant.pff</groupId>
 			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.pennant.pff</groupId>
@@ -39,14 +44,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-beans</artifactId> 
-			<version>${spring.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -72,16 +74,49 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
+		<!-- Spring framework integration services dependency -->
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-xml</artifactId>
+			<version>4.3.4.RELEASE</version>
+		</dependency>
+
+
 		<!-- Servlet & JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
+
+
 		<!-- CXF Framwork -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.annotation</groupId>
+					<artifactId>javax.annotation-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-service-description</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-client</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
 
@@ -91,24 +126,20 @@
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-xc -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+
+
 		<!-- web services and rest services API dependency -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0.1</version>
-		</dependency>
-
-		<!-- Spring framework integration services dependency -->
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-xml</artifactId>
-			<version>4.3.4.RELEASE</version>
 		</dependency>
 
 		<!-- Bean validation framework dependency -->
@@ -122,12 +153,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.4.Final</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>3.1.6</version>
 		</dependency>
 
 		<dependency>
@@ -157,6 +182,7 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -173,6 +199,8 @@
 			<artifactId>ojdbc</artifactId>
 			<version>6</version>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
@@ -199,8 +227,6 @@
 			<artifactId>zkspring-core</artifactId>
 			<version>3.0</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt-spring3 -->
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
@@ -212,6 +238,7 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.23</version>
 		</dependency>
+
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
@@ -223,12 +250,6 @@
 			<version>1.8.9</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jasypt</groupId>
-			<artifactId>jasypt-spring3</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		<!-- Mail -->
-		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.4</version>
@@ -238,6 +259,7 @@
 			<artifactId>quartz-all</artifactId>
 			<version>1.8.6</version>
 		</dependency>
+
 		<dependency>
 			<groupId>net.objectlab.kit</groupId>
 			<artifactId>datecalc-common</artifactId>
@@ -248,7 +270,6 @@
 			<artifactId>datecalc-jdk</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.healthmarketscience.sqlbuilder/sqlbuilder -->
 		<dependency>
 			<groupId>com.healthmarketscience.sqlbuilder</groupId>
 			<artifactId>sqlbuilder</artifactId>
@@ -265,22 +286,11 @@
 			<version>1.7.9</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-service-description</artifactId>
-			<version>3.1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-client</artifactId>
-			<version>3.1.8</version>
-		</dependency>
-		
-		<!-- Email Validator  -->
-		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
