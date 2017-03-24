@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<include file="change-logs/change-log-2.26-unicode_char_cleanup.xml" />
+	<include file="change-logs/change-log-2.26-bool-correction.xml" />
+	<include file="change-logs/change-log-2.26.xml" />
+	<include file="change-logs/change-log-2.27-bool-correction.xml" />
+	<include file="change-logs/change-log-2.27.xml" />
+	<include file="change-logs/change-log-2.31-unicode_char_cleanup_oracle.xml" />
+	<include file="change-logs/change-log-2.31-unicode_char_cleanup_mssql.xml" />
+	<include file="change-logs/change-log-2.31-bool-correction.xml" />
+	<include file="change-logs/change-log-2.31.0.xml" />
+	<include file="change-logs/change-log-2.31.1.xml" />
+	<include file="change-logs/change-log-2.32.0.xml" />
+	<include file="change-logs/change-log-2.33-bool-correction.xml" />
+	<include file="change-logs/change-log-2.33.0.xml" />
+	<include file="change-logs/change-log-2.35.0.xml" />
+	<include file="change-logs/change-log-2.36.0.xml" />
+	<include file="change-logs/change-log-2.37.0.xml" />
+	<include file="change-logs/change-log-2.38.0.xml" />
+	<include file="change-logs/change-log-2.38.0-bankBranches-Bajaj.xml" />
+	<include file="change-logs/change-log-Dataengine-Oracle.xml" />
+	<include file="change-logs/change-log-Dataengine-Data.xml" />
+	<!-- <include file="change-logs/change-log-secusers-bajaj.xml" /> -->
+	<include file="change-logs/change-log-2.39.0.xml" />
+	<include file="change-logs/change-log-2.40.0.xml" />
+	<include file="change-logs/change-log-2.40.1.xml" />
+	<include file="change-logs/change-log-2.41.0.xml" />	
+</databaseChangeLog>

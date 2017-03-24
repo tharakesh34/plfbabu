@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+<!-- FeeRule validations -->
+<bean class="com.pennant.backend.model.finance.FinFeeDetail"
+		ignore-annotations="false">
+		<field name="feeTypeCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			 	<message>9009</message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+		</field>
+		<field name="terms">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>9009</message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+		</field>
+		<field name="feeScheduleMethod">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			 	<message>9009</message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+		</field>
+		<field name="validateFinFeeDetail">
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>9009 </message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.actualAmount !=null &amp;&amp; _this.actualAmount != ""
+					&amp;&amp; _this.actualAmount >=0 ) {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>9009 </message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.waivedAmount !=null &amp;&amp; _this.waivedAmount != ""
+					&amp;&amp; _this.waivedAmount >=0 ) {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>9009 </message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.paidAmount !=null &amp;&amp; _this.paidAmount != ""
+					&amp;&amp; _this.paidAmount >=0 ) {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>9009 </message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.paidAmount !=null &amp;&amp; _this.paidAmount != ""
+					&amp;&amp; _this.paidAmount >=0 ) {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			</field>
+	</bean> 
+	</constraint-mappings>

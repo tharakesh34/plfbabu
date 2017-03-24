@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_DeviationTrackerList" apply="${deviationTrackerListCtrl}" border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="button_DeviationTrackerList_Search" label="${c:l('label_Filter')}" autodisable="button_DeviationTrackerList_Search,button_DeviationTrackerList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('button_DeviationTrackerList_Search.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_DeviationTrackerList_PrintList" label="${c:l('label_Print')}" autodisable="button_DeviationTrackerList_Search,button_DeviationTrackerList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('button_WIFFinanceMainList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" visible="false" />
+					</toolbar>
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="button_DeviationTrackerList_Search,button_DeviationTrackerList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnHelp" visible="false" label="${c:l('label_Help')}" autodisable="button_DeviationTrackerList_Search,button_DeviationTrackerList_PrintList,btnRefresh,btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_DeviationTrackerList">
+				<north border="none">
+					<textbox id="loanType" value="" visible="false" />
+				</north>
+				<center border="none">
+					<div>
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_DeviationTrackerSearch_deviationDate.value')}" />
+									<listbox id="sortOperator_deviationDate" width="43px" mold="select" rows="1" />
+									<datebox id="deviationDate" width="100px" format="dd/MM/yyyy" />
+									<label value="${c:l('label_DeviationTrackerSearch_finreference.value')}" />
+									<listbox id="sortOperator_finreference" width="43px" mold="select" rows="1" />
+									<textbox id="finreference" maxlength="20" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxApprovedDeviationDetails" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"   width="100%" multiple="false">
+							<listhead sizable="false">
+								<listheader label="${c:l('DeviationTracker_FinRefernce.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_CustomerCIF.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_DeviationCode.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_DeviationType.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_DeviationDays.label')}" sort="false" hflex="min" align="right" />
+								<listheader label="${c:l('DeviationTracker_DelegationRole.label')}" sort="false" hflex="min" visible="false" />
+								<listheader label="${c:l('DeviationTracker_DeviationDate.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_ExpectedDate.label')}" sort="false" hflex="min" />
+								<listheader label="${c:l('DeviationTracker_Status.label')}" sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingWIFFinanceMainList" visible="false" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

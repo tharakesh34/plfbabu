@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<context:annotation-config />
+    <context:component-scan base-package="com.pennant" />
+
+	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection">
+		<property name="serverName" value="${pffEquation.ServerName}" />
+		<property name="unitName" value="${pffEquation.UnitName}" />
+		<property name="userName" value="${pffEquation.username}" />
+		<property name="password" value="${pffEquation.password}" />
+	</bean>
+
+	<bean id="accountDetailProcess" class="com.pennant.equation.process.impl.AccountDetailProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+
+	<bean id="accountPostingProcess" class="com.pennant.equation.process.impl.AccountPostingProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+
+	<bean id="customerDataProcess" class="com.pennant.equation.process.impl.CustomerDataProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+
+	<bean id="customerLimitProcess" class="com.pennant.equation.process.impl.CustomerLimitProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="dateRollOverProcess" class="com.pennant.equation.process.impl.DateRollOverProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="dailyDownloadProcess" class="com.pennant.equation.process.impl.DailyDownloadProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+
+	<bean id="financeCancellationProcess" class="com.pennant.equation.process.impl.FinanceCancellationProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="uploadProfitDetailProcess" class="com.pennant.equation.process.impl.UploadProfitDetailProcessImpl">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="ddaProcess" class="com.pennant.equation.process.impl.DDAProcessmpl">
+	</bean>
+	
+	<bean id="depositDetailProcess" class="com.pennant.equation.process.impl.DepositDetailProcessImpl">
+	</bean>
+	
+		<bean id="policeAcceptanceProcess" class="com.pennant.equation.process.impl.PoliceAcceptanceProcessImpl"/>
+	
+	<bean id="hostStatusEnquiryProcess" class="com.pennant.equation.process.impl.HostStatusEnquiryProcessImpl">
+			<property name="hostConnection" ref="hostConnection" />
+	</bean>
+	
+	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess">
+		<property name="hostConnection" ref="hostConnection" />
+	</bean>
+
+</beans>

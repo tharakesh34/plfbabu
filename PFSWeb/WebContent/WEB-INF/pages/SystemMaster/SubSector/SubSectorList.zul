@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_SubSectorList" apply="${subSectorListCtrl}"
+			border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button
+							id="button_SubSectorList_SubSectorSearchDialog"
+							label="${c:l('label_Filter')}"
+							autodisable="button_SubSectorList_SubSectorSearchDialog,print,
+										 button_SubSectorList_NewSubSector, btnRefresh, help"
+							tooltiptext="${c:l('button_SubSectorList_SubSectorSearchDialog.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="button_SubSectorList_SubSectorSearchDialog,print,
+										 button_SubSectorList_NewSubSector, btnRefresh, help"
+							tooltiptext="${c:l('button_SubSectorList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="button_SubSectorList_NewSubSector"
+							label="${c:l('label_New')}"
+							autodisable="button_SubSectorList_SubSectorSearchDialog,print,
+									 button_SubSectorList_NewSubSector, btnRefresh, help"
+							tooltiptext="${c:l('button_SubSectorList_NewSubSector.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnRefresh"
+							label="${c:l('label_Refresh')}"
+							autodisable="button_SubSectorList_SubSectorSearchDialog,print,
+									 button_SubSectorList_NewSubSector, btnRefresh, help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" visible="false"
+							label="${c:l('label_Help')}"
+							autodisable="button_SubSectorList_SubSectorSearchDialog,print,
+									 button_SubSectorList_NewSubSector, btnRefresh, help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayout_SubSectorList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_SubSectorSearch_SectorCode"
+										value="${c:l('label_SubSectorSearch_SectorCode.value')}" />
+									<listbox
+										id="sortOperator_sectorCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="sectorCode"
+										width="100px" maxlength="8" />
+									<label
+										id="label_SubSectorSearch_SubSectorCode"
+										value="${c:l('label_SubSectorSearch_SubSectorCode.value')}" />
+									<listbox
+										id="sortOperator_subSectorCode" width="43px" mold="select"
+										rows="1" />
+									<uppercasebox id="subSectorCode"
+										width="100px" maxlength="8" />
+								</row>
+								<row>
+									<label
+										id="label_SubSectorSearch_SubSectorDesc"
+										value="${c:l('label_SubSectorSearch_SubSectorDesc.value')}" />
+									<listbox
+										id="sortOperator_subSectorDesc" width="43px" mold="select"
+										rows="1" />
+									<textbox id="subSectorDesc"
+										width="320px" maxlength="50" />
+									<label
+										id="label_SubSectorSearch_SubSectorIsActive"
+										value="${c:l('label_SubSectorSearch_SubSectorIsActive.value')}" />
+									<listbox
+										id="sortOperator_subSectorIsActive" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="subSectorIsActive"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_SubSectorSearch_RecordStatus"
+										value="${c:l('label_SubSectorSearch_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_SubSectorSearch_RecordType"
+										value="${c:l('label_SubSectorSearch_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxSubSector"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader id="listheader_SectorCode"
+									label="${c:l('listheader_SectorCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_SubSectorCode"
+									label="${c:l('listheader_SubSectorCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_SubSectorDesc"
+									label="${c:l('listheader_SubSectorDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_SubSectorIsActive"
+									label="${c:l('listheader_SubSectorIsActive.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingSubSectorList" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

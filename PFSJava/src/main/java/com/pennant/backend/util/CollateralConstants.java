@@ -1,0 +1,13 @@
+package com.pennant.backend.util;
+
+public class CollateralConstants {
+
+	// LTV Types
+	public static final String FIXED_LTV 				= "F";
+	public static final String VARIABLE_LTV 			= "V";
+	
+	// Extended Field Detail Module Name
+	public static final String 	MODULE_NAME   			= "Collateral";
+	public static final String 	COLL_DIVISION 			= "CT";
+	
+}

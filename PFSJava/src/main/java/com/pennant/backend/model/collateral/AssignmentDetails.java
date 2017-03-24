@@ -1,0 +1,78 @@
+package com.pennant.backend.model.collateral;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+
+public class AssignmentDetails {
+	private String		module;
+	private String		reference;
+	private String		currency;
+	private BigDecimal	assignedPerc;
+	private BigDecimal	collateralValue;
+	private BigDecimal	utilizedValue;
+	private BigDecimal	totalUtilized;
+	private Date		cmtExpDate;
+	private boolean		finIsActive;
+
+	public String getModule() {
+		return module;
+	}
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public BigDecimal getAssignedPerc() {
+		return assignedPerc;
+	}
+	public void setAssignedPerc(BigDecimal assignedPerc) {
+		this.assignedPerc = assignedPerc;
+	}
+
+	public BigDecimal getUtilizedValue() {
+		return utilizedValue;
+	}
+	public void setUtilizedValue(BigDecimal utilizedValue) {
+		this.utilizedValue = utilizedValue;
+	}
+	public Date getCmtExpDate() {
+		return cmtExpDate;
+	}
+	public void setCmtExpDate(Date cmtExpDate) {
+		this.cmtExpDate = cmtExpDate;
+	}
+	
+	public boolean isFinIsActive() {
+		return finIsActive;
+	}
+	public void setFinIsActive(boolean finIsActive) {
+		this.finIsActive = finIsActive;
+	}
+	public BigDecimal getCollateralValue() {
+		return collateralValue;
+	}
+	public void setCollateralValue(BigDecimal collateralValue) {
+		this.collateralValue = collateralValue;
+	}
+	
+	public BigDecimal getTotalUtilized() {
+		return totalUtilized;
+	}
+	public void setTotalUtilized(BigDecimal totalUtilized) {
+		this.totalUtilized = totalUtilized;
+	}
+
+}

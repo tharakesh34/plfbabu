@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_CheckListEnquiryDialog" border="none"
+			width="100%" height="100%" apply="${checkListEnquiryDialogCtrl}"
+			style="padding-top:10px" sizable="false">
+
+			<borderlayout id="borderlayoutCheckListEnquiry">
+				<center border="none" id="divCenter">
+
+					<tabbox width="99%" height="100%"
+						id="tabBoxIndexCenter">
+						<tabs id="tabsIndexCenter">
+							<tab id="chkDetailsTab"
+								label="CheckList Details" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel id="tabpanel_ChkDetails"
+								style="overflow:auto">
+								<listbox id="listBoxCheckList"
+									emptyMessage="${c:l('listbox.emptyMessage')}"
+									fixedLayout="true"   sizedByContent="true"
+									span="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+									width="100%" height="100%" multiple="false">
+
+									<listhead sizable="true">
+										<listheader
+											label="${c:l('listheader_QuestionId.label')}" hflex="min" />
+										<listheader
+											label="${c:l('listheader_QuestionDesc.label')}" hflex="min" />
+										<listheader
+											label="${c:l('listheader_Answer.label')}" hflex="min" />
+										<listheader
+											label="${c:l('listheader_Remarks.label')}" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+
+				</center>
+			</borderlayout>
+
+		</window>
+	</window>
+</zk>

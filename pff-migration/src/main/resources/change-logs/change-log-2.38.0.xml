@@ -1,0 +1,1328 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+<changeSet id="1" author="Subbarao">
+	<sql>
+	 
+  	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_CustomerTemplates_SOA','Menu',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+ 	INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'Reports', 'Reports', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+  	
+  	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Reports') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_Reports'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+  	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Reports') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_CustomerTemplates'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+  	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Reports') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_CustomerTemplates_SOA'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+  	INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='Reports'), (Select  RoleID  From SecRoles Where RoleCd='CL_DISB_RM'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+  	
+  	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+	</sql>
+</changeSet>
+
+
+<changeSet id="2" author="Madhubabu">
+<sql>
+update SeqFinReference set SeqNo=0
+</sql>
+</changeSet>
+
+	<changeSet id="3" author="Kesava" dbms="mssql">
+		<sql>
+			Update rules set sqlrule = replace(sqlrule,'FT_','ft_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FT_','ft_') where  sqlrule like '%FT[_]%';
+			Update rules set sqlrule = replace(sqlrule,'FM_','fm_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FM_','fm_') where  sqlrule like '%FM[_]%';
+			Update rules set sqlrule = replace(sqlrule,'CT_','ct_') , ACTUALBLOCK = replace(ACTUALBLOCK,'CT_','ct_') where  sqlrule like '%CT[_]%';
+			
+			Update rules_temp set sqlrule = replace(sqlrule,'FT_','ft_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FT_','ft_') where  sqlrule like '%FT[_]%';
+			Update rules_temp set sqlrule = replace(sqlrule,'FM_','fm_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FM_','fm_') where  sqlrule like '%FM[_]%';
+			Update rules_temp set sqlrule = replace(sqlrule,'CT_','ct_') , ACTUALBLOCK = replace(ACTUALBLOCK,'CT_','ct_') where  sqlrule like '%CT[_]%';
+		</sql>
+	</changeSet>
+
+	<changeSet id="3.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			Update rules set sqlrule=replace(sqlrule,'FT_','ft_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FT_','ft_') where  sqlrule like '%FT_%';
+			Update rules set sqlrule=replace(sqlrule,'FM_','fm_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FM_','fm_') where  sqlrule like '%FM_%';
+			Update rules set sqlrule=replace(sqlrule,'CT_','ct_') , ACTUALBLOCK = replace(ACTUALBLOCK,'CT_','ct_') where  sqlrule like '%CT_%';
+			
+			Update rules_temp set sqlrule=replace(sqlrule,'FT_','ft_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FT_','ft_') where  sqlrule like '%FT_%';
+			Update rules_temp set sqlrule=replace(sqlrule,'FM_','fm_') , ACTUALBLOCK = replace(ACTUALBLOCK,'FM_','fm_') where  sqlrule like '%FM_%';
+			Update rules_temp set sqlrule=replace(sqlrule,'CT_','ct_') , ACTUALBLOCK = replace(ACTUALBLOCK,'CT_','ct_') where  sqlrule like '%CT_%';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="4" author="SreeRavali">
+		<sql>
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		
+		
+		
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_PLANNEDEMIH_MAKER', 'Planned EMI Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_PLANNEDEMIH_APPROVER', 'Planned EMI Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_PLANNEDEMIH_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_PLANNEDEMIH_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_PlannedEMIH','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_PlannedEMIH'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnRecalculate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_PlannedEMIH'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PLANNEDEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	<changeSet id="5" author="SreeRavali">
+		<sql>
+			Delete from ErrorDetails where errorcode='30571';
+			INSERT INTO ErrorDetails VALUES('30571','EN','E','Bpi Treatment not applicable for the selected Schedule Dates.','test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="6" author="Siva">
+		<sql>
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			Delete from SECGROUPRIGHTS where grpid in 
+(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FIN_UNPLANEMIH_MAKER') and RIGHTID in       
+      (SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinFeeDetailListCtrl_AlwFeeMaintenance');
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinFeeDetailListCtrl_AlwFeeMaintenance'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+</changeSet>
+	
+<changeSet id="7" author="SreeRavali">
+	<createView viewName="FinanceMaintenance_View" replaceIfExists="true">
+		
+		SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision, T1.RepayRateBasis,
+                   T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate,
+                   COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		   T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+              T1.planEMIHAlw   
+            FROM           FinanceMain_Temp T1 INNER JOIN
+			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+
+ UNION ALL
+SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt,T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,  
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision,  T1.RepayRateBasis ,
+                   T1.ManualSchedule , T1.TakeOverFinance  , T1.NextRolloverDate,
+                    COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		    T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,  T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+		    T1.planEMIHAlw
+            FROM           FinanceMain T1 INNER JOIN
+	    			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+          </createView>
+  </changeSet>
+  <changeSet id="8" author="SreeRavali">
+  <createView viewName="FinanceMaintenance_AView" replaceIfExists="true">
+   SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive,  T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, 
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.MigratedFinance, T1.RcdMaintainSts,T1.ClosingStatus, T1.RepayRateBasis,
+                  T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate, T1.DownPayment,
+		  T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,T1.planEMIHAlw   
+            FROM           FinanceMain T1 INNER JOIN
+	    			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+
+  
+  </createView>
+  </changeSet>
+  <changeSet id="9" author="SreeRavali">
+  <sql>
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+	SECGROUPRIGHTS);
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM
+	SECROLEGROUPS);
+
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,
+	'button_FinanceMainDialog_btnRecalEMIH','MENU',0,1000,CURRENT_TIMESTAMP,'
+	',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0,
+	'button_WIFFinanceMainDialog_btnRecalEMIH','MENU',0,1000,CURRENT_TIMESTAMP,'
+	',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+	SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+	GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+	RIGHTNAME='button_FinanceMainDialog_btnRecalEMIH'), 1,
+	0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+	delete from secgrouprights where grpid = (Select GrpId From SecGroups Where
+	GrpCode='FIN_PLANNEDEMIH_MAKER') and rightid = (SELECT RIGHTID FROM
+	SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnRecalculate');
+
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+	SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+	GRPCODE='FIN_PLANNEDEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+	RIGHTNAME='button_FinanceMainDialog_btnRecalEMIH'), 1,
+	0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+	SECGROUPRIGHTS);
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM
+	SECROLEGROUPS);
+
+</sql>
+  </changeSet>
+
+  <changeSet id="10" author="Madhubabu">
+	<sql>
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerPhoneNumberDialog_mobileNumber','CustomerPhoneNumberDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERPHONENUMBER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerPhoneNumberDialog_mobileNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+2 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerPhoneNumberDialog_mobileNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
+	</sql>
+</changeSet>
+
+  <changeSet id="11" author="SreeRavali">
+  <sql>
+  	update SecRights set Page = 'FinanceMainDialog' where RightName = 'button_FinanceMainDialog_btnRecalEMIH';
+  </sql>
+  </changeSet>
+  <changeSet author="Prasad Raju" id="12">
+    <createView replaceIfExists="true" viewName="RPT_soa_finsmry_view">
+	Select FinReference,'Instalment Amount' comp,(NSchdPri+NSchdPft)/100 due,
+			(TotalPriBal+TotalPftBal)/100 Receipt from FinPftDetails union all
+	Select FinReference,'Principal Component' comp,	NSchdPri/100 due,
+	TotalPriBal/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Interest Component' comp,NSchdPft/100 due,
+	TotalPftBal/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Late Payment Penalty' comp,PenaltyDue due,
+	PenaltyPaid Receipt from FinPftDetails union all
+	Select FinReference,'Bounce Charges' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Other Receivables' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Unadjusted Amount' comp,0 due,
+	0 Receipt from FinPftDetails union all
+	Select FinReference,'Other Payables' comp,0 due,
+	0 Receipt from FinPftDetails
+	</createView>
+</changeSet>
+<changeSet author="Prasad Raju" id="13">
+    <createView replaceIfExists="true" viewName="RPT_soa_customer_view">
+	Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t1.FinBranch,FinCategory FinType,'' Interest_Type,T1.ApplicationNo Linked_Agreement_No,
+		'' Closed_Linked_Agree_No,T.CustFName,T.CustMName,
+		CustLName,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+	CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+	PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+	Select CustFName,CustMName,CustLName,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+	CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,PhoneCountryCode,
+	PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+	from Customers T1 Left join
+	CustomerAddresses T2 ON t1.CustID =T2.CustID Left join
+	CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  Left join
+	CustomerEMails T4 on T4.CustID =T1.CustID  Left join
+	(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+	where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+	(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+	where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+	FinanceMain T1 on T.CustID=T1.CustID inner join
+	RMTFinanceTypes T2 on T1.FinType =T2.FinType
+	</createView>
+</changeSet>
+
+<changeSet author="Prasad Raju" id="14">
+    <createView replaceIfExists="true" viewName="RPT_soa_loan_view">
+	Select FM.FinReference,FM.finamount/100 LoanAmount,
+	   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FM.RepayProfitRate ROI,
+	   FP.noinst Tenure,(TotalPriPaid + TotalPftPaid)/100 EMIReceived,
+	   0.00 PreferredCardLimit,(LastRpySchPri + LastRpySchPft)/100 PrevInstAmt,
+	   FM.RepayRateBasis intRateType,FD.disbdate LastDisbursalDate,
+	   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+	   '0.00/ 0' AdvInstAmt,FP.FinIsActive Status,(totalPriBal+TotalPftBal)/100 FutureInstAmt,
+	   NOInst-NOPaidInst FutureInstNo,totalPriBal/100 FuturePriComponent,TotalPftBal/100 Future_inst_comp,
+	   FR.PenaltyPaid Charge_coll_cust,
+	   0 Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+	   '' Repo_Status,'' Repo_Date,FM.FinContractDate Sale_Date,FM.MaturityDate Release_Date,FM.MaturityDate Closure_Date
+From FinanceMain FM inner join
+	 FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+	 (Select FinReference,MAX(DisbDate)disbdate from FinDisbursementDetails
+	  group by FinReference) FD on FP.FinReference = FD.FinReference left join
+	  ( Select FinReference,SUM(PenaltyPaid) PenaltyPaid from FinODCRecovery
+	 group by FinReference) FR on FR.FinReference = FD.FinReference
+	</createView>
+</changeSet>
+
+
+
+	
+	
+	<changeSet id="20" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeDetail_Backup from FinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeDetail_Backup as  Select * from FinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="22" author="Kesava">
+		<dropTable tableName="FinFeeDetail" />
+	</changeSet>
+	
+	<changeSet author="Kesava" id="23">
+        <createTable tableName="FinFeeDetail">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="24" author="Kesava">
+		<addPrimaryKey columnNames="FeeID" constraintName="PK_FINFEEDETAIL" tableName="FinFeeDetail" />
+	</changeSet>
+	
+	<changeSet id="25" author="Kesava">
+  	<sql>
+  		Insert into FinFeeDetail
+		SELECT ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID,1 FeeSeq, FeeOrder, CalculatedAmount, 
+				ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, 
+				Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, 
+				RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+ 		from FinFeeDetail_Backup;
+  	</sql>
+  </changeSet>
+	
+	<changeSet id="26" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeDetail_Temp_Backup from FinFeeDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeDetail_Temp_Backup as  Select * from FinFeeDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="Kesava">
+		<dropTable tableName="FinFeeDetail_Temp" />
+	</changeSet>
+	
+	<changeSet author="Kesava" id="29">
+        <createTable tableName="FinFeeDetail_Temp">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="30" author="Kesava">
+		<addPrimaryKey columnNames="FeeID" constraintName="PK_FinFeeDetail_Temp" tableName="FinFeeDetail_Temp" />
+	</changeSet>
+	
+	<changeSet id="31" author="Kesava">
+  	<sql>
+  		Insert into FinFeeDetail_Temp
+		SELECT ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID,1 FeeSeq, FeeOrder, CalculatedAmount, 
+				ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, 
+				Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, 
+				RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+ 		from FinFeeDetail_Temp_Backup;
+  	</sql>
+  </changeSet>
+	
+	<changeSet id="32" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeDetail_PA_Backup from FinFeeDetail_PA;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeDetail_PA_Backup as  Select * from FinFeeDetail_PA;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="34" author="Kesava">
+		<dropTable tableName="FinFeeDetail_PA" />
+	</changeSet>
+	
+	<changeSet author="Kesava" id="35">
+        <createTable tableName="FinFeeDetail_PA">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="36" author="Kesava">
+		<addPrimaryKey columnNames="FeeID" constraintName="PK_FinFeeDetail_PA" tableName="FinFeeDetail_PA" />
+	</changeSet>
+	
+	<changeSet id="37" author="Kesava">
+		<sql>
+			Insert into FinFeeDetail_PA
+			SELECT ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID,1 FeeSeq,  FeeOrder, CalculatedAmount, 
+				ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, Percentage,
+				CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,
+				NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			from FinFeeDetail_PA_Backup 
+		</sql>
+  </changeSet>
+  
+  	<changeSet id="38" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into WIFFinFeeDetail_Backup from WIFFinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="39" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table WIFFinFeeDetail_Backup as  Select * from WIFFinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="40" author="Kesava">
+		<dropTable tableName="WIFFinFeeDetail" />
+	</changeSet>
+	
+	<changeSet author="Kesava" id="41">
+        <createTable tableName="WIFFinFeeDetail">
+			 <column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="42" author="Kesava">
+		<addPrimaryKey columnNames="FeeID" constraintName="PK_WIFFINFEEDETAIL" tableName="WIFFinFeeDetail" />
+	</changeSet>
+	
+	<changeSet id="43" author="Kesava">
+  	<sql>
+  		Insert into WIFFinFeeDetail
+			SELECT ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID,1 FeeSeq,  FeeOrder, CalculatedAmount, 
+			ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, Percentage, 
+			CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,
+			TaskId, NextTaskId, RecordType, WorkflowId
+		from WIFFinFeeDetail_Backup 
+  	</sql>
+  </changeSet>
+	
+		<changeSet id="44" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into WIFFinFeeDetail_Temp_Backup from WIFFinFeeDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="45" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table WIFFinFeeDetail_Temp_Backup as  Select * from WIFFinFeeDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="Kesava">
+		<dropTable tableName="WIFFinFeeDetail_Temp" />
+	</changeSet>
+	
+	<changeSet author="Kesava" id="47">
+        <createTable tableName="WIFFinFeeDetail_Temp">
+			 <column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Version" type="int" />
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+        
+    <changeSet id="48" author="Kesava">
+		<addPrimaryKey columnNames="FeeID" constraintName="PK_WIFFinFeeDetail_Temp" tableName="WIFFinFeeDetail_Temp" />
+	</changeSet>
+	
+	<changeSet id="49" author="Kesava">
+  	<sql>
+  		Insert into WIFFinFeeDetail_Temp
+			SELECT ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID,1 FeeSeq,  FeeOrder, CalculatedAmount, 
+			ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, Percentage, 
+			CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,
+			TaskId, NextTaskId, RecordType, WorkflowId
+		from WIFFinFeeDetail_Temp_Backup 
+  	</sql>
+  </changeSet>
+  <changeSet id="15" author="Madhubabu">
+<sql>
+drop table seqFinreference
+</sql>
+</changeSet>
+
+<changeSet id="16" author="Madhubabu">
+	<createTable tableName="SeqFinReference">
+			<column name="SeqNo" type="bigint"/>
+	</createTable>
+</changeSet>
+<changeSet id="17" author="Madhubabu">
+<sql>
+insert into seqFinreference (seqno) values(0);
+</sql>
+</changeSet>
+
+
+  <changeSet  author="Kesava" id="50">
+		<createView replaceIfExists="true" viewName="FinFeeDetail_View">
+			SELECT 	T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, 
+					T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, T1.PaidAmount,
+					T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, 
+					T1.CalculateOn,
+					T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					T2.FeeTypeCode, T2.FeeTypeDesc
+					
+		FROM        FinFeeDetail_Temp T1 INNER JOIN 
+					FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		UNION ALL
+		SELECT      T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, 
+					T1.WaivedAmount, T1.PaidAmount,
+					T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+					T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					T2.FeeTypeCode, T2.FeeTypeDesc
+		FROM        FinFeeDetail T1 INNER JOIN 
+					FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		WHERE     	NOT EXISTS
+                          (SELECT     1
+                            FROM          FinFeeDetail_Temp
+                            WHERE      FeeID = T1.FeeID)
+		</createView>
+	</changeSet>
+	
+	<changeSet  author="Kesava" id="51">
+		<createView replaceIfExists="true" viewName="FinFeeDetail_TView">
+			SELECT  T1.FeeID, T1.FinReference, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeSeq, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, T1.PaidAmount,
+					T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+					T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Version, T1.LastMntBy,
+					T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					T2.FeeTypeCode, T2.FeeTypeDesc
+			FROM    FinFeeDetail_Temp T1 INNER JOIN 
+					FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="52" author="Kesava">
+		<dropTable tableName="FinFeeDetail_Backup" />
+	</changeSet>
+	<changeSet id="53" author="Kesava">
+		<dropTable tableName="WIFFinFeeDetail_Temp_Backup" />
+	</changeSet>
+	<changeSet id="54" author="Kesava">
+		<dropTable tableName="FinFeeDetail_Temp_Backup" />
+	</changeSet>
+	<changeSet id="55" author="Kesava">
+		<dropTable tableName="WIFFinFeeDetail_Backup" />
+	</changeSet>
+	
+	<changeSet id="56" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeScheduleDetail_Backup from FinFeeScheduleDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="56.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeScheduleDetail_Backup as  Select * from FinFeeScheduleDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="57" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDetail" />
+	</changeSet>
+	
+	<changeSet id="58" author="Kesava">
+        <createTable tableName="FinFeeScheduleDetail">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="OSAmount" type="decimal(18, 0)"/>
+            <column name="WaiverAmount" type="decimal(18, 0)"/>
+            <column name="WriteoffAmount" type="decimal(18, 0)"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="59" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, SchDate" constraintName="PK_FINFEESCHEDULEDETAIL" tableName="FinFeeScheduleDetail" />
+	</changeSet>
+	
+  <changeSet id="60" author="Kesava">
+  	<sql>
+  		Insert into  FinFeeScheduleDetail
+				Select T1.FeeID, T2.SchDate, T2.SchAmount, T2.PaidAmount, T2.OSAmount, T2.WaiverAmount,T2.WriteoffAmount
+				from FinFeeDetail T1
+				Inner join FinFeeScheduleDetail_Backup T2 on T1.FinReference = T2.FinReference
+				And T1.FeeTypeID = T2.FeeTypeID
+  	</sql>
+  </changeSet>
+  <changeSet id="60.1" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeScheduleDetail_Temp_Backup from FinFeeScheduleDetail_Temp;
+		</sql>
+	</changeSet>
+  <changeSet id="60.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeScheduleDtl_Temp_Backup as  Select * from FinFeeScheduleDetail_Temp;
+		</sql>
+	</changeSet>
+	<changeSet id="60.2" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDetail_Temp" />
+	</changeSet>
+  <changeSet id="61" author="Kesava">
+        <createTable tableName="FinFeeScheduleDetail_Temp">
+            <column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="OSAmount" type="decimal(18, 0)"/>
+            <column name="WaiverAmount" type="decimal(18, 0)"/>
+            <column name="WriteoffAmount" type="decimal(18, 0)"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="62" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, SchDate" constraintName="PK_FinFeeScheduleDetail_Temp" tableName="FinFeeScheduleDetail_Temp" />
+	</changeSet>
+	
+  <changeSet id="63" author="Kesava">
+  	<sql>
+  		Insert into  FinFeeScheduleDetail_Temp
+				Select T1.FeeID, T2.SchDate, T2.SchAmount, T2.PaidAmount, T2.OSAmount, T2.WaiverAmount,T2.WriteoffAmount
+				from FinFeeDetail T1
+				Inner join FinFeeScheduleDtl_Temp_Backup T2 on T1.FinReference = T2.FinReference
+				And T1.FeeTypeID = T2.FeeTypeID
+  	</sql>
+  </changeSet>
+  
+  <changeSet id="64" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into FinFeeScheduleDetail_PA_Backup from FinFeeScheduleDetail_PA;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="64.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table FinFeeScheduleDtl_PA_Backup as  Select * from FinFeeScheduleDetail_PA;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="65" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDetail_PA" />
+	</changeSet>
+	
+	<changeSet id="66" author="Kesava">
+        <createTable tableName="FinFeeScheduleDetail_PA">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="OSAmount" type="decimal(18, 0)"/>
+            <column name="WaiverAmount" type="decimal(18, 0)"/>
+            <column name="WriteoffAmount" type="decimal(18, 0)"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="67" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, SchDate" constraintName="PK_FinFeeScheduleDetail_PA" tableName="FinFeeScheduleDetail_PA" />
+	</changeSet>
+	
+  <changeSet id="68" author="Kesava">
+  	<sql>
+  		Insert into  FinFeeScheduleDetail_PA
+				Select T1.FeeID, T2.SchDate, T2.SchAmount, T2.PaidAmount, T2.OSAmount, T2.WaiverAmount,T2.WriteoffAmount
+				from FinFeeDetail T1
+				Inner join FinFeeScheduleDtl_PA_Backup T2 on T1.FinReference = T2.FinReference
+				And T1.FeeTypeID = T2.FeeTypeID;
+  	</sql>
+  </changeSet>
+	
+  <changeSet id="69" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into WIFFinFeeScheduleDetail_Backup from WIFFinFeeScheduleDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="69.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table WIFFinFeeScheduleDetail_Backup as  Select * from WIFFinFeeScheduleDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="70" author="Kesava">
+		<dropTable tableName="WIFFinFeeScheduleDetail" />
+	</changeSet>
+	
+	<changeSet id="71" author="Kesava">
+        <createTable tableName="WIFFinFeeScheduleDetail">
+            <column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="OSAmount" type="decimal(18, 0)"/>
+            <column name="WaiverAmount" type="decimal(18, 0)"/>
+            <column name="WriteoffAmount" type="decimal(18, 0)"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="72" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, SchDate" constraintName="PK_WIFFinFeeScheduleDetail" tableName="WIFFinFeeScheduleDetail" />
+	</changeSet>
+	
+  <changeSet id="73" author="Kesava">
+  	<sql>
+  		Insert into  WIFFinFeeScheduleDetail
+				Select T1.FeeID, T2.SchDate, T2.SchAmount, T2.PaidAmount, T2.OSAmount, T2.WaiverAmount,T2.WriteoffAmount
+				from WIFFinFeeDetail T1
+				Inner join WIFFinFeeScheduleDetail_Backup T2 on T1.FinReference = T2.FinReference
+				And T1.FeeTypeID = T2.FeeTypeID;
+  	</sql>
+  </changeSet>
+  
+  <changeSet id="74" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into WIFFinFeeScheduleDtlT_Backup from WIFFinFeeScheduleDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="74.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table WIFFinFeeScheduleDtlT_Backup as  Select * from WIFFinFeeScheduleDetail_Temp;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="75" author="Kesava">
+		<dropTable tableName="WIFFinFeeScheduleDetail_Temp" />
+	</changeSet>
+	
+	<changeSet id="76" author="Kesava">
+        <createTable tableName="WIFFinFeeScheduleDetail_Temp">
+            <column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SchAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="OSAmount" type="decimal(18, 0)"/>
+            <column name="WaiverAmount" type="decimal(18, 0)"/>
+            <column name="WriteoffAmount" type="decimal(18, 0)"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="77" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, SchDate" constraintName="PK_WIFFinFeeScheduleDtl_Temp" tableName="WIFFinFeeScheduleDetail_Temp" />
+	</changeSet>
+	
+  <changeSet id="78" author="Kesava">
+  	<sql>
+  		Insert into  WIFFinFeeScheduleDetail_Temp
+				Select T1.FeeID, T2.SchDate, T2.SchAmount, T2.PaidAmount, T2.OSAmount, T2.WaiverAmount,T2.WriteoffAmount
+				from WIFFinFeeDetail T1
+				Inner join WIFFinFeeScheduleDtlT_Backup T2 on T1.FinReference = T2.FinReference
+				And T1.FeeTypeID = T2.FeeTypeID
+  	</sql>
+  </changeSet>
+   
+  <changeSet  author="Kesava" id="79">
+		<createView replaceIfExists="true" viewName="FinFeeScheduleDetail_View">
+			SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount,T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       FinFeeScheduleDetail_Temp T1
+			Inner Join FinFeeDetail T2 On T1.FeeID = T2.FeeID 
+			UNION ALL
+			SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       FinFeeScheduleDetail T1
+			Inner Join FinFeeDetail T2 On T1.FeeID = T2.FeeID 
+			WHERE     NOT EXISTS(SELECT 1 FROM FinFeeScheduleDetail_Temp WHERE FeeID = T1.FeeID AND SchDate = T1.SchDate)
+		</createView>
+	</changeSet>
+	
+	<changeSet  author="Kesava" id="80">
+		<createView replaceIfExists="true" viewName="FinFeeScheduleDetail_TView">
+			SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       FinFeeScheduleDetail_Temp T1
+			Inner Join FinFeeDetail T2 On T1.FeeID = T2.FeeID 
+		</createView>
+	</changeSet>
+		<changeSet  author="Kesava" id="81" dbms="mssql">
+		<sql>CREATE TABLE SeqFinFeeDetail(
+	SeqNo bigint IDENTITY(1,1) NOT NULL,
+	Value int NOT NULL
+) </sql>
+	</changeSet>
+	
+  	<changeSet  author="Kesava" id="81" dbms="oracle">
+		<sql>CREATE SEQUENCE SeqFinFeeDetail START WITH 100 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE;
+</sql>
+	</changeSet>
+	
+	<changeSet  author="Kesava" id="81" dbms="postgresql">
+		<sql>CREATE SEQUENCE SeqFinFeeDetail START WITH 100 INCREMENT BY 1;
+</sql>
+	</changeSet>
+	
+	
+	<changeSet id="82" author="Kesava">
+		<dropTable tableName="FinFeeDetail_PA_Backup" />
+	</changeSet>
+	
+	<changeSet id="83" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDtl_Temp_Backup" />
+	</changeSet>
+	<changeSet id="84" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDtl_PA_Backup" />
+	</changeSet>
+	
+	<changeSet id="85" author="Kesava">
+		<dropTable tableName="FinFeeScheduleDetail_Backup" />
+	</changeSet>
+	
+	<changeSet id="86" author="Kesava">
+		<dropTable tableName="WIFFinFeeScheduleDetail_Backup" />
+	</changeSet>
+	<changeSet id="87" author="Kesava">
+		<dropTable tableName="WIFFinFeeScheduleDtlT_Backup" />
+	</changeSet>
+	
+	<changeSet  author="Kesava" id="88">
+		<createView replaceIfExists="true" viewName="FinFeeScheduleDetail_TView">
+			SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount, T2.FinReference, T2.FeeTypeID, T2.FinEvent
+			FROM       FinFeeScheduleDetail_Temp T1
+			Inner Join FinFeeDetail_Temp T2 On T1.FeeID = T2.FeeID
+		</createView>
+	</changeSet>
+	<changeSet id="89" author="satish">
+	<sql>
+	
+	 Update LIMITGROUPLINES set GROUPCODE=null where GROUPCODE=''' ''';
+  Update LIMITGROUPLINES set limitline=null where limitline=''' ''';
+	</sql>
+	
+	</changeSet>
+	
+	<changeSet id="90" author="satish">
+		<createView viewName="PayOrderIssueHeader_View" replaceIfExists="true">
+		SELECT     T1.FinReference,T4.CustCIF,T4.PhoneNumber,T4.CustShrtName,T3.FinType,T3.FinTypeDesc,T3.FinCategory,T4.CustCRCPR,
+			T1.TotalPOAmount,T1.TotalPOCount,
+			T1.IssuedPOAmount,T1.IssuedPOCount,T1.PODueAmount,T1.PODueCount,T2.FinCcy , T2.NumberOfTerms, T2.GraceTerms , T2.FinStartDate , T2.MaturityDate, T2.FinAmount,
+            T2.FeeChargeAmt, T2.DownPaySupl, T2.TotalProfit, T2.EffectiveRateOfReturn , T2.ProfitDaysBasis,T2.CustID,
+			T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,
+			T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T3.AlwMultiPartyDisb,T2.quickDisb,T2.LoanApproved,T2.FinIsActive
+FROM        PayOrderIssueHeader_Temp   T1  INNER JOIN
+			(   
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,1 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain
+			    UNION ALL 
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,0 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain_Temp 
+				 WHERE NOT EXISTS(
+					SELECT 1 FROM FinanceMain WHERE FinReference = FinanceMain_Temp.finreference
+				 )
+			)  T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			RMTFinanceTypes  T3 ON T2.FinType=T3.FinType INNER JOIN
+            Customers  T4 ON T2.CustID = T4.CustID  
+ union all
+ SELECT     T1.FinReference,T4.CustCIF,T4.PhoneNumber,T4.CustShrtName,T3.FinType,T3.FinTypeDesc,T3.FinCategory,T4.CustCRCPR,
+			T1.TotalPOAmount,T1.TotalPOCount,
+			T1.IssuedPOAmount,T1.IssuedPOCount,T1.PODueAmount,T1.PODueCount,T2.FinCcy , T2.NumberOfTerms, T2.GraceTerms , T2.FinStartDate , T2.MaturityDate, T2.FinAmount,
+            T2.FeeChargeAmt, T2.DownPaySupl, T2.TotalProfit, T2.EffectiveRateOfReturn , T2.ProfitDaysBasis,T2.CustID,
+			T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,
+			T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T3.AlwMultiPartyDisb,T2.quickDisb,T2.LoanApproved,T2.FinIsActive
+FROM        PayOrderIssueHeader   T1  INNER JOIN
+			(   
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,1 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain
+			    UNION ALL 
+				SELECT FinCcy,FinType,CustID,NumberOfTerms,GraceTerms,FinStartDate,FinReference,0 LoanApproved,
+				MaturityDate,FinAmount,FeeChargeAmt,DownPaySupl,TotalProfit,EffectiveRateOfReturn,ProfitDaysBasis,quickDisb,
+				FinisActive
+				FROM FinanceMain_Temp 
+				 WHERE NOT EXISTS(
+					SELECT 1 FROM FinanceMain WHERE FinReference = FinanceMain_Temp.finreference
+				 )
+			)  T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			RMTFinanceTypes  T3 ON T2.FinType=T3.FinType INNER JOIN
+            Customers  T4 ON T2.CustID = T4.CustID  
+ WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          PayOrderIssueHeader_Temp
+                            WHERE      FinReference = T1.FinReference)       
+            
+		</createView>
+	
+	</changeSet>
+	
+	
+	<changeSet id="91" author="Srikanth">
+	<sql>
+	Delete From ErrorDetails where ErrorCode in ('90253','90254');
+  	INSERT INTO ErrorDetails VALUES('90253','EN','E','Fee amount can not be override for FeeCode:({0}).','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90254','EN','E','Total FeeAmount should be equal to paidAmount of FeeCode:({0}).','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
+<changeSet id="92" author="Surekha">
+	<dropDefaultValue  columnName="Nach"  tableName="BMTBankDetail_temp"/>
+</changeSet>
+<changeSet id="93" author="Surekha">
+	<dropDefaultValue  columnName="Ecs"  tableName="BMTBankDetail_temp"/>
+	<dropDefaultValue  columnName="Dd"  tableName="BMTBankDetail_temp"/>
+	<dropDefaultValue  columnName="Dda"  tableName="BMTBankDetail_temp"/>
+	<dropDefaultValue  columnName="Cheque"  tableName="BMTBankDetail_temp"/>
+	<dropDefaultValue  columnName="Cheque"  tableName="BMTBankDetail"/>
+	<dropDefaultValue  columnName="Ecs"  tableName="BMTBankDetail"/>
+	<dropDefaultValue  columnName="Dd"  tableName="BMTBankDetail"/>
+	<dropDefaultValue  columnName="Dda"  tableName="BMTBankDetail"/>
+	<dropDefaultValue  columnName="Nach"  tableName="BMTBankDetail"/>
+</changeSet>
+<changeSet id="94" author="Surekha">
+		<dropColumn columnName="Nach"  tableName="BMTBankDetail"/>
+		<dropColumn columnName="Ecs"  tableName="BMTBankDetail"/>
+		<dropColumn columnName="Dd"  tableName="BMTBankDetail"/>
+		<dropColumn columnName="Dda"  tableName="BMTBankDetail"/>
+		<dropColumn columnName="Cheque"  tableName="BMTBankDetail"/>
+		<dropColumn columnName="Nach"  tableName="BMTBankDetail_Temp"/>
+		<dropColumn columnName="Ecs"  tableName="BMTBankDetail_Temp"/>
+		<dropColumn columnName="Dd"  tableName="BMTBankDetail_Temp"/>
+		<dropColumn columnName="Dda"  tableName="BMTBankDetail_Temp"/>
+		<dropColumn columnName="Cheque"  tableName="BMTBankDetail_Temp"/>
+</changeSet>
+<changeSet id="95" author="Surekha">
+	<createView viewName="BMTBankDetail_View" replaceIfExists="true">
+		SELECT BankCode, BankName, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail_TEMP
+				UNION ALL
+				SELECT	BankCode, BankName, Active				
+							, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+							RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+				WHERE     NOT EXISTS (SELECT 1 FROM BMTBankDetail_TEMP WHERE BankCode = BMTBankDetail.BankCode)
+	</createView>
+</changeSet>
+<changeSet id="96" author="Surekha">
+	<createView viewName="BMTBankDetail_AView" replaceIfExists="true">
+		SELECT BankCode, BankName, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+	</createView>
+</changeSet>
+<changeSet id="97" author="satish">
+	<createView viewName="CustomerFinanceDetails_View" replaceIfExists="true">
+	SELECT     T1.FinReference, T1.FinBranch, T2.CustID,  T1.RoleCode, T1.NextRoleCode, 
+			T1.FinType,T1.FinAmount,T1.DownPayment, T1.FeeChargeAmt,T1.FinStartDate,T1.LastMntBy, T1.FinCcy,
+			T1.RecordType, T2.CustCIF, T2.CustShrtName, T3.RoleDesc PrvRoleDesc, COALESCE(T4.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,T6.DeptDesc,
+			T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,T9.FinTypeDesc,
+			T9.FinDivision lovDescFinDivision
+FROM          FinanceMain_Temp T1 INNER JOIN
+                       Customers T2 ON T1.CustID = T2.CustID   LEFT OUTER JOIN
+                       SecRoles T3 ON T3.RoleCd = T1.RoleCode LEFT OUTER JOIN
+                       SecRoles T4 ON T4.RoleCd = T1.NextRoleCode LEFT OUTER JOIN
+                       SecUsers T5 ON T5.UsrID = T1.LastMntBy LEFT OUTER JOIN
+                       BMTDepartments T6 ON T6.DeptCode = T5.UsrDeptCode LEFT OUTER JOIN
+                       SecUsers  T7 on T1.LastMntBy =T7.UsrID LEFT OUTER JOIN
+                       RMTFinanceTypes T9 on T1.FinType=T9.FinType
+	
+	</createView>
+	
+	
+	<createView viewName="CustomerFinanceDetails_AView" replaceIfExists="true">
+	SELECT     T1.FinReference, T1.FinBranch, T2.CustID,  T1.RoleCode, T1.NextRoleCode, 
+			T1.FinType,T1.FinAmount,T1.DownPayment, T1.FeeChargeAmt,T1.FinStartDate,T1.LastMntBy, T1.FinCcy,
+			T1.RecordType, T2.CustCIF, T2.CustShrtName, T3.RoleDesc PrvRoleDesc,T4.RoleDesc NextRoleDesc,T6.DeptDesc,
+			T7.UsrFName UsrFName, T7.UsrLName lastMntByUser,T9.FinTypeDesc,T9.FinDivision lovDescFinDivision
+	FROM          FinanceMain T1 INNER JOIN
+                       Customers T2 ON T1.CustID = T2.CustID   LEFT OUTER JOIN
+                       SecRoles T3 ON T3.RoleCd = T1.RoleCode LEFT OUTER JOIN
+                       SecRoles T4 ON T4.RoleCd = T1.NextRoleCode LEFT OUTER JOIN
+                       SecUsers T5 ON T5.UsrID = T1.LastMntBy LEFT OUTER JOIN
+                       BMTDepartments T6 ON T6.DeptCode = T5.UsrDeptCode LEFT OUTER JOIN
+                       SecUsers  T7 on T1.LastMntBy =T7.UsrID LEFT OUTER JOIN
+                       RMTFinanceTypes T9 on T1.FinType=T9.FinType
+	</createView>
+
+</changeSet>
+
+<changeSet id="98" author="Kesava">
+	<createView viewName="WIFFinFeeScheduleDetail_View" replaceIfExists="true">
+		SELECT     T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount
+		FROM       WIFFinFeeScheduleDetail_Temp T1
+		UNION ALL
+		SELECT    T1.FeeID, T1.SchDate, T1.SchAmount, T1.PaidAmount, T1.OSAmount, T1.WaiverAmount, T1.WriteoffAmount
+		FROM       WIFFinFeeScheduleDetail T1
+		WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          WIFFinFeeScheduleDetail_Temp
+                            WHERE      FeeID = T1.FeeID
+							AND SchDate = T1.SchDate)
+	</createView>
+</changeSet>
+<changeSet id="99" author="Kesava">
+	<createView viewName="WIFFinFeeDetail_View" replaceIfExists="true">
+		SELECT  T1.FeeID, T1.FinReference, T1.FeeSeq, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, T1.PaidAmount,
+           		T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+		  		T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Version, T1.LastMntBy,
+		   		T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		   		T2.FeeTypeCode, T2.FeeTypeDesc
+		FROM    WIFFinFeeDetail_Temp T1 INNER JOIN 
+           		FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		UNION ALL
+		SELECT  T1.FeeID, T1.FinReference, T1.FeeSeq, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.CalculatedAmount, T1.ActualAmount, T1.WaivedAmount, T1.PaidAmount,
+          		T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn,
+		   		T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Version, T1.LastMntBy,
+		   		T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		   		T2.FeeTypeCode, T2.FeeTypeDesc
+		FROM      WIFFinFeeDetail T1 INNER JOIN 
+           		FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID
+		WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          WIFFinFeeDetail_Temp
+                            WHERE      FinReference = T1.FinReference AND OriginationFee = T1.OriginationFee
+							AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID)
+	</createView>
+</changeSet>
+
+	<changeSet id="100" author="Prasad">
+		<update tableName="REPORTFILTERFIELDS">
+			<column name="MULTISELECTSEARCH">0</column>
+			<where>reportid in (Select reportid from REPORTCONFIGURATION where reportname='Statement Of Account')</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

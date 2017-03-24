@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- LimitDetails validations -->
+
+	<bean class="com.pennant.backend.model.limit.LimitDetails">
+		<field name="limitStructureDetailsID">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>structureDetailId is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>structureDetailId allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">9999999999999999999</element>
+			</constraint>
+		</field>
+
+
+		<field name="limitChkMethod">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>limitChkMethod should have maximum 1 character</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">1</element>
+			</constraint>
+		</field>
+
+
+		<field name="limitSanctioned">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>limitSanctioned allow 21 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999999</element>
+			</constraint>
+		</field>
+
+	</bean>
+</constraint-mappings>

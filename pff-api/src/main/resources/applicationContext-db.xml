@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- ====================================================== -->
+	<!-- Define schemas for transactions -->
+	<!-- ====================================================== -->
+	<tx:advice id="secServiceTxAdvice" transaction-manager="secTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<tx:advice id="auditServiceTxAdvice" transaction-manager="auditTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- ====================================================== -->
+	<!-- Define Aspect pointcuts and advisors -->
+	<!-- for the transaction scopes. -->
+	<!-- ====================================================== -->
+	<aop:config>
+		<aop:pointcut id="guiServiceMethods"
+			expression="execution(* com.pennant.gui.service.*.*(..))" />
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.pennant.backend.service.*.*(..))" />
+		<aop:pointcut id="daoMethods"
+			expression="execution(* com.pennant.backend.dao.*.*(..))" />
+
+		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="serviceMethods" />
+		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
+		<aop:advisor advice-ref="auditServiceTxAdvice"
+			pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="auditServiceTxAdvice"
+			pointcut-ref="serviceMethods" />
+
+	</aop:config>
+
+	<!-- ====================================================== -->
+	<!-- Define the transaction manager -->
+	<!-- ====================================================== -->
+	<bean id="pfsTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="secTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="secDatasource" />
+	</bean>
+	<bean id="auditTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="auditDatasource" />
+	</bean>
+
+	<!-- ====================================================== -->
+	<!-- Define the property placeholder configurer -->
+	<!-- ====================================================== -->
+
+	<!-- -->
+	<!-- The EncryptablePropertyPlaceholderConfigurer will read the -->
+	<!-- .properties files and make their values accessible as ${var} -->
+	<!-- -->
+	<!-- Our "configurationEncryptor" bean (which implements -->
+	<!-- org.jasypt.encryption.StringEncryptor) is set as a constructor arg. -->
+	<!-- -->
+	<bean id="propertyConfigurer"
+		class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="locations">
+			<list>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/jdbc.properties</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Interface config file loading class -->
+
+	<bean id="placeholderConfigMM" class="com.pennant.mqconnection.InterfacePropertiesUtil">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+		<property name="locations">
+			<list>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQConfig.config</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQMessageFormat.config
+				</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- -->
+	<!-- Configuration for encryptor, based on environment variables. -->
+	<!-- -->
+	<!-- In this example, the encryption password will be read from an -->
+	<!-- environment variable called "APP_ENCRYPTION_PASSWORD" which, once -->
+	<!-- the application has been started, could be safely unset. -->
+	<!-- -->
+	<bean id="environmentVariablesConfiguration"
+		class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+	</bean>
+
+	<!-- -->
+	<!-- The will be the encryptor used for decrypting configuration values. -->
+	<!-- -->
+
+	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="environmentVariablesConfiguration" />
+	</bean>
+	<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- = CONFIG-FILE FOR CONNECTING TO A DATABASE = -->
+	<!-- ====================================================== -->
+	<!-- ====================================================== -->
+
+
+	<!-- ====================================================== -->
+	<!-- THIS PLACE IS FOR CONFIGURING AN JDBC CONNECTION -->
+	<!-- AND CONFIGURE IT IN FILE: jdbc.properties -->
+	<!-- ====================================================== -->
+	<!--Security database DSN -->
+	<bean id="secDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${secjdbc.driverClassName}" />
+		<property name="url" value="${secjdbc.url}" />
+		<property name="username" value="${secjdbc.username}" />
+		<property name="password" value="${secjdbc.password}" />
+		<property name="maxActive" value="200" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+		<property name="maxWait" value="16000" />
+	</bean>
+
+	<!--PFS Application database DSN -->
+	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+		<property name="url" value="${pfsjdbc.url}" />
+		<property name="username" value="${pfsjdbc.username}" />
+		<property name="password" value="${pfsjdbc.password}" />
+		<property name="maxActive" value="200" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+		<property name="maxWait" value="16000" />
+	</bean>
+
+	<!--AUDIT Application database DSN -->
+	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+		<property name="url" value="${auditjdbc.url}" />
+		<property name="username" value="${auditjdbc.username}" />
+		<property name="password" value="${auditjdbc.password}" />
+		<property name="maxActive" value="200" />
+		<property name="minIdle" value="0" />
+		<property name="maxIdle" value="8" />
+		<property name="maxWait" value="16000" />
+	</bean>
+
+	<bean id="equationDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${equationReportsjdbc.driverClassName}" />
+		<property name="url" value="${equationReportsjdbc.url}" />
+		<property name="username" value="${equationReportsjdbc.username}" />
+		<property name="password" value="${equationReportsjdbc.password}" />
+	</bean>
+
+	<!--LDAP Environment -->
+
+	<bean id="ldapEnvironment"
+		class="com.pennant.backend.model.administration.LDAPEnvironment"
+		scope="prototype">
+		<property name="contextFactory" value="${ladp.contextFactory}" />
+		<property name="authentication" value="${ldap.authentication}" />
+		<property name="principal" value="${ldap.principal}" />
+		<property name="credentials" value="${ldap.credentials}" />
+		<property name="providerURL" value="${ldap.provider.url}" />
+		<property name="base" value="${ldap.base}" />
+	</bean>
+
+	<!--PFSEXT Application database DSN -->
+	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
+		<property name="url" value="${pffextjdbc.url}" />
+		<property name="username" value="${pffextjdbc.username}" />
+		<property name="password" value="${pffextjdbc.password}" />
+	</bean>
+
+	<!-- ====================================================== -->
+	<!-- THIS PLACE IS FOR CONFIGURING a Jndi CONNECTION -->
+	<!-- USE THIS FOR LET TOMCAT CONNECT TO YOUR OWN -->
+	<!-- DATABASE PER: Jndi -->
+	<!-- ====================================================== -->
+	<!-- <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
+		<property name="jndiName" value="java:comp/env/jdbc/toledo" /> <property 
+		name="lookupOnStartup" value="false" /> <property name="cache" value="true" 
+		/> <property name="proxyInterface" value="javax.sql.DataSource" /> </bean> -->
+
+
+	<!-- ============================================================ -->
+	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
+	<!-- for DEMO Database H2 we use a special implementation !!! -->
+	<!-- H2: " ~.backend.dao.impl.NextIdViewH2DAOImpl" -->
+	<!-- PostgreSQL: " ~.backend.dao.impl.NextIdViewPostgresDaoImpl -->
+	<!-- ============================================================ -->
+	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="extDataSource" ref="pfsExtDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="secDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="auditDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+</beans>

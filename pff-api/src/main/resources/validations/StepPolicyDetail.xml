@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+<!-- StepPolicyDetails validations -->
+	<bean class="com.pennant.backend.model.finance.FinanceStepPolicyDetail"
+		ignore-annotations="false">
+		<field name="stepNo">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>stepNumber should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>stepNumber allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field>
+		<field name="tenorSplitPerc">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>tenorSplitPerc should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>tenorSplitPerc allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field>
+		 <field name="rateMargin">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>rateMargin allow 4 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">9999</element>
+			</constraint>
+		</field>
+		
+		<field name="emiSplitPerc">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>emiSplitPerc should should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>emiSplitPerc allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field>
+	</bean>
+
+	</constraint-mappings>

@@ -1,0 +1,786 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/integration 	            	 	  		
+	http://www.springframework.org/schema/integration/spring-integration-4.3.xsd">
+
+	Customer SoapServices
+	<int:chain input-channel="createCustomerChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="createCustomer" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomer" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomer" />
+	</int:chain>
+	<int:chain input-channel="getCustomerDetailChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerDetails" />
+	</int:chain>
+
+	<int:chain input-channel="getPersonalInfoChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerPersonalInfo" />
+	</int:chain>
+	<int:chain input-channel="updatePersonalInfoChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerPersonlaInfo" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerEmploymentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerEmploymentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerEmploymentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="getCustomerEmploymentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerEmployment" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerPhoneNumberChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerPhoneNumberChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerPhoneNumberChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="getCustomerPhoneNumbersChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerPhoneNumbers" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerAddressChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerAddressChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerAddressChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="getCustomerAddressesChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerAddresses" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerEmailChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerEmailChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerEmailChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="getCustomerEmailsChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerEmails" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerIncomeChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerIncomeChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerIncomeChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="getCustomerIncomesChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerIncomes" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerBankingInformationChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerBankingInformationChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerBankingInformationChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="getCustomerBankingInformationChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerBankingInformation" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerAccountBehaviourChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerAccountBehaviourChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerAccountBehaviourChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="getCustomerAccountBehaviourChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerAccountBehaviour" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerExternalLiabilityChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerExternalLiability" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerExternalLiabilityChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerExternalLiability" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerExternalLiabilityChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerExternalLiability" />
+	</int:chain>
+
+	<int:chain input-channel="getCustomerExternalLiabilitiesChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerExternalLiabilities" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerDocumentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerDocumentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerDocumentChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="getCustomerDocumentsChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerDocuments" />
+	</int:chain>
+	REST Configurations
+	Customer Configurations for REST Service
+	<int:chain input-channel="createCustomerChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="createCustomer" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomer" />
+	</int:chain>
+	<int:chain input-channel="getCustomerDetailChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerDetails" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomer" />
+	</int:chain>
+
+
+	<int:chain input-channel="getPersonalInfoChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerPersonalInfo" />
+	</int:chain>
+	<int:chain input-channel="updatePersonalInfoChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerPersonlaInfo" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerEmploymentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerEmploymentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerEmploymentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerEmployment" />
+	</int:chain>
+	<int:chain input-channel="getCustomerEmploymentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerEmployment" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerPhoneNumberChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerPhoneNumberChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerPhoneNumberChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerPhoneNumber" />
+	</int:chain>
+	<int:chain input-channel="getCustomerPhoneNumbersChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerPhoneNumbers" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerAddressChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerAddressChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerAddressChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerAddress" />
+	</int:chain>
+	<int:chain input-channel="getCustomerAddressesChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerAddresses" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerEmailChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerEmailChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerEmailChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerEmail" />
+	</int:chain>
+	<int:chain input-channel="getCustomerEmailsChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerEmails" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerIncomeChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerIncomeChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerIncomeChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerIncome" />
+	</int:chain>
+	<int:chain input-channel="getCustomerIncomesChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerIncomes" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerBankingInformationChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerBankingInformationChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerBankingInformationChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerBankingInformation" />
+	</int:chain>
+	<int:chain input-channel="getCustomerBankingInformationChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerBankingInformation" />
+	</int:chain>
+
+
+	<int:chain input-channel="addCustomerAccountBehaviourChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerAccountBehaviourChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerAccountBehaviourChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerAccountBehaviour" />
+	</int:chain>
+	<int:chain input-channel="getCustomerAccountBehaviourChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerAccountBehaviour" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerExternalLiabilityChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerExternalLiability" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerExternalLiabilityChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerExternalLiability" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerExternalLiabilityChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerExternalLiability" />
+	</int:chain>
+	<int:chain input-channel="getCustomerExternalLiabilitiesChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerExternalLiabilities" />
+	</int:chain>
+
+	<int:chain input-channel="getCustomerExternalLiabilitiesChannelSOAP">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerExternalLiabilities" />
+	</int:chain>
+
+	<int:chain input-channel="addCustomerDocumentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="addCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="updateCustomerDocumentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="updateCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="deleteCustomerDocumentChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="deleteCustomerDocument" />
+	</int:chain>
+	<int:chain input-channel="getCustomerDocumentsChannelREST">
+		<int:service-activator ref="webCustomerService"
+			method="getCustomerDocuments" />
+	</int:chain>
+	Finance Schedule Calculator Channels
+	REST
+	<int:chain input-channel="createFinSchdChannelREST">
+		<int:service-activator ref="financeSchedule"
+			method="createFinanceSchedule" />
+	</int:chain>
+	<int:chain input-channel="getFinInquiryChannelREST">
+		<int:service-activator ref="financeSchedule"
+			method="getFinanceInquiry" />
+	</int:chain>
+	SOAP
+	<int:chain input-channel="createFinSchdChannelSOAP">
+		<int:service-activator ref="financeSchedule"
+			method="createFinanceSchedule" />
+	</int:chain>
+	<int:chain input-channel="getFinInquiryChannelSOAP">
+		<int:service-activator ref="financeSchedule"
+			method="getFinanceInquiry" />
+	</int:chain>
+
+	Finance Service Instructions
+	REST
+	<int:chain input-channel="addRateChangeChannelREST">
+		<int:service-activator ref="finInstructionService" method="addRateChange" />
+	</int:chain>
+	<int:chain input-channel="changeRepayAmtChannelREST">
+		<int:service-activator ref="finInstructionService" method="changeRepayAmt" />
+	</int:chain>
+	<int:chain input-channel="defermentsChannelREST">
+		<int:service-activator ref="finInstructionService" method="deferments" />
+	</int:chain>
+	<int:chain input-channel="addTermsChannelREST">
+		<int:service-activator ref="finInstructionService" method="addTerms" />
+	</int:chain>
+	<int:chain input-channel="removeTermsChannelREST">
+		<int:service-activator ref="finInstructionService" method="removeTerms" />
+	</int:chain>
+	<int:chain input-channel="recalculateChannelREST">
+		<int:service-activator ref="finInstructionService" method="recalculate" />
+	</int:chain>
+	<int:chain input-channel="changeInterestChannelREST">
+		<int:service-activator ref="finInstructionService" method="changeInterest" />
+	</int:chain>
+	<int:chain input-channel="addDisbursementChannelREST">
+		<int:service-activator ref="finInstructionService" method="addDisbursement" />
+	</int:chain>
+	<int:chain input-channel="partialSettlementChannelREST">
+		<int:service-activator ref="finInstructionService" method="partialSettlement" />
+	</int:chain>
+	<int:chain input-channel="earlySettlementChannelREST">
+		<int:service-activator ref="finInstructionService" method="earlySettlement" />
+	</int:chain>
+	<int:chain input-channel="changeInstallmentFrqChannelREST">
+		<int:service-activator ref="finInstructionService" method="changeInstallmentFrq" />
+	</int:chain>
+	<int:chain input-channel="reSchedulingChannelREST">
+		<int:service-activator ref="finInstructionService" method="reScheduling" />
+	</int:chain>
+	<int:chain input-channel="updateLoanBasicDetailsChannelREST">
+		<int:service-activator ref="finInstructionService" method="updateLoanBasicDetails" />
+	</int:chain>
+	<int:chain input-channel="updateLoanPenaltyChannelREST">
+		<int:service-activator ref="finInstructionService" method="updateLoanPenaltyDetails" />
+	</int:chain>
+	
+	SOAP
+	<int:chain input-channel="addRateChangeChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="addRateChange" />
+	</int:chain>
+	<int:chain input-channel="changeRepayAmtChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="changeRepayAmt" />
+	</int:chain>
+	<int:chain input-channel="defermentsChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="deferments" />
+	</int:chain>
+	<int:chain input-channel="addTermsChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="addTerms" />
+	</int:chain>
+	<int:chain input-channel="removeTermsChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="removeTerms" />
+	</int:chain>
+	<int:chain input-channel="recalculateChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="recalculate" />
+	</int:chain>
+	<int:chain input-channel="changeInterestChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="changeInterest" />
+	</int:chain>
+ 	<int:chain input-channel="addDisbursementChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="addDisbursement" />
+	</int:chain>
+	<int:chain input-channel="partialSettlementChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="partialSettlement" />
+	</int:chain>
+	<int:chain input-channel="earlySettlementChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="earlySettlement" />
+	</int:chain>
+	<int:chain input-channel="changeInstallmentFrqChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="changeInstallmentFrq" />
+	</int:chain>
+	<int:chain input-channel="reSchedulingChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="reScheduling" />
+	</int:chain>
+	<int:chain input-channel="updateLoanBasicDetailsChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="updateLoanBasicDetails" />
+	</int:chain>
+	<int:chain input-channel="updateLoanPenaltyChannelSOAP">
+		<int:service-activator ref="finInstructionService" method="updateLoanPenaltyDetails" />
+	</int:chain>
+
+	Finance Type Services
+	SOAP Configuration
+	<int:chain input-channel="getFinanceTypeChannelSOAP">
+		<int:service-activator ref="financeTypeWebService" method="getFinanceTypeDetails" />
+	</int:chain>
+	<int:chain input-channel="getStepPolicyDetailChannelSOAP">
+		<int:service-activator ref="financeTypeWebService" method="getStepPolicyDetails" />
+	</int:chain>
+	<int:chain input-channel="getLoanTypesChannelSOAP">
+		<int:service-activator ref="financeTypeWebService" method="getLoanTypes" />
+	</int:chain>
+
+	Rest Configuration
+	<int:chain input-channel="getFinanceTypeChannelREST">
+		<int:service-activator ref="financeTypeWebService" method="getFinanceTypeDetails" />
+	</int:chain>
+	<int:chain input-channel="getStepPolicyDetailChannelREST">
+		<int:service-activator ref="financeTypeWebService" method="getStepPolicyDetails" />
+	</int:chain>
+	<int:chain input-channel="getLoanTypesChannelREST">
+		<int:service-activator ref="financeTypeWebService" method="getLoanTypes" />
+	</int:chain>
+	
+	Promotion Services
+	SOAP Configuration
+	<int:chain input-channel="getPromotionChannelSOAP">
+		<int:service-activator ref="promotionTypeWebService" method="getPromotion" />
+	</int:chain>
+	<int:chain input-channel="getStepPolicyChannelSOAP">
+		<int:service-activator ref="promotionTypeWebService" method="getStepPolicy" />
+	</int:chain>
+	<int:chain input-channel="getPromotionsChannelSOAP">
+		<int:service-activator ref="promotionTypeWebService" method="getPromotions" />
+	</int:chain>
+
+	Rest Configuration
+	<int:chain input-channel="getPromotionChannelREST">
+		<int:service-activator ref="promotionTypeWebService" method="getPromotion" />
+	</int:chain>
+	<int:chain input-channel="getStepPolicyChannelREST">
+		<int:service-activator ref="promotionTypeWebService" method="getStepPolicy" />
+	</int:chain>
+	<int:chain input-channel="getPromotionsChannelREST">
+		<int:service-activator ref="promotionTypeWebService" method="getPromotions" />
+	</int:chain>
+
+	Create Finance/Loan
+	<int:chain input-channel="createFinanceChannelSOAP">
+		<int:service-activator ref="createFinanceWebService" method="doCreateFinance" />
+	</int:chain>
+	<int:chain input-channel="createFinanceChannelREST">
+		<int:service-activator ref="createFinanceWebService" method="doCreateFinance" />
+	</int:chain>
+
+	<int:chain input-channel="getFinanceDetailChannelSOAP">
+		<int:service-activator ref="createFinanceWebService" method="getFinanceDetails" />
+	</int:chain>
+	<int:chain input-channel="getFinanceDetailChannelREST">
+		<int:service-activator ref="createFinanceWebService" method="getFinanceDetails" />
+	</int:chain>
+
+	<int:chain input-channel="createFinanceWithWIFChannelSOAP">
+		<int:service-activator ref="createFinanceWebService" method="createFinanceWithWIF" />
+	</int:chain>
+	<int:chain input-channel="createFinanceWithWIFChannelREST">
+		<int:service-activator ref="createFinanceWebService" method="createFinanceWithWIF" />
+	</int:chain>
+
+	Mandate Configurations for Rest
+	<int:chain input-channel="getMandateChannelREST">
+		<int:service-activator ref="mandateWebService" method="getMandate" />
+	</int:chain>
+	<int:chain input-channel="createMandateChannelREST">
+		<int:service-activator ref="mandateWebService" method="createMandate" />
+	</int:chain>
+	<int:chain input-channel="updateMandateChannelREST">
+		<int:service-activator ref="mandateWebService" method="updateMandate" />
+	</int:chain>
+	<int:chain input-channel="deleteMandateChannelREST">
+		<int:service-activator ref="mandateWebService" method="deleteMandate" />
+	</int:chain>
+	<int:chain input-channel="getMandatesChannelREST">
+		<int:service-activator ref="mandateWebService" method="getMandates" />
+	</int:chain>
+	<int:chain input-channel="loanMandateSwappingChannelREST">
+		<int:service-activator ref="mandateWebService" method="loanMandateSwapping" />
+	</int:chain>
+
+	Mandate Configurations for SOAP
+	<int:chain input-channel="getMandateChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="getMandate" />
+	</int:chain>
+	<int:chain input-channel="createMandateChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="createMandate" />
+	</int:chain>
+	<int:chain input-channel="updateMandateChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="updateMandate" />
+	</int:chain>
+	<int:chain input-channel="deleteMandateChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="deleteMandate" />
+	</int:chain>
+	<int:chain input-channel="getMandatesChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="getMandates" />
+	</int:chain>
+	<int:chain input-channel="loanMandateSwappingChannelSOAP">
+		<int:service-activator ref="mandateWebService"
+			method="loanMandateSwapping" />
+	</int:chain>
+
+	Limit service channels implementation
+	Rest
+	<int:chain input-channel="limitStructureChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="getCustomerLimitStructure" />
+	</int:chain>
+	<int:chain input-channel="limitSetupChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="getLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="createLimitSetupChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="createLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="updateLimitSetupChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="updateLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="reserveLimitChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="reserveLimit" />
+	</int:chain>
+	<int:chain input-channel="cancelLimitReserveChannelREST">
+		<int:service-activator ref="limitWebService"
+			method="cancelLimitReserve" />
+	</int:chain>
+
+	Limit service channels implementation
+	SOAP
+	<int:chain input-channel="limitStructureChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="getCustomerLimitStructure" />
+	</int:chain>
+	<int:chain input-channel="limitSetupChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="getLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="createLimitSetupChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="createLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="updateLimitSetupChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="updateLimitSetup" />
+	</int:chain>
+	<int:chain input-channel="reserveLimitChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="reserveLimit" />
+	</int:chain>
+	<int:chain input-channel="cancelLimitReserveChannelSOAP">
+		<int:service-activator ref="limitWebService"
+			method="cancelLimitReserve" />
+	</int:chain>
+
+	Beneficiary Configurations for Rest
+	<int:chain input-channel="getBeneficiaryChannelREST">
+		<int:service-activator ref="beneficiaryWebService"
+			method="getBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="createBeneficiaryChannelREST">
+		<int:service-activator ref="beneficiaryWebService"
+			method="createBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="updateBeneficiaryChannelREST">
+		<int:service-activator ref="beneficiaryWebService"
+			method="updateBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="deleteBeneficiaryChannelREST">
+		<int:service-activator ref="beneficiaryWebService"
+			method="deleteBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="getBeneficiariesChannelREST">
+		<int:service-activator ref="beneficiaryWebService"
+			method="getBeneficiaries" />
+	</int:chain>
+
+	Beneficiary Configurations for SOAP
+	<int:chain input-channel="getBeneficiaryChannelSOAP">
+		<int:service-activator ref="beneficiaryWebService"
+			method="getBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="createBeneficiaryChannelSOAP">
+		<int:service-activator ref="beneficiaryWebService"
+			method="createBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="updateBeneficiaryChannelSOAP">
+		<int:service-activator ref="beneficiaryWebService"
+			method="updateBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="deleteBeneficiaryChannelSOAP">
+		<int:service-activator ref="beneficiaryWebService"
+			method="deleteBeneficiary" />
+	</int:chain>
+	<int:chain input-channel="getBeneficiariesChannelSOAP">
+		<int:service-activator ref="beneficiaryWebService"
+			method="getBeneficiaries" />
+	</int:chain>
+
+	Collateral channel Configurations for Rest
+	<int:chain input-channel="getCollateralTypeChannelREST">
+		<int:service-activator ref="collateralWebService"
+			method="getCollateralType" />
+	</int:chain>
+	<int:chain input-channel="createCollateralChannelREST">
+		<int:service-activator ref="collateralWebService"
+			method="createCollateral" />
+	</int:chain>
+	<int:chain input-channel="updateCollateralChannelREST">
+		<int:service-activator ref="collateralWebService"
+			method="updateCollateral" />
+	</int:chain>
+	<int:chain input-channel="deleteCollateralChannelREST">
+		<int:service-activator ref="collateralWebService"
+			method="deleteCollateral" />
+	</int:chain>
+	<int:chain input-channel="getCollateralsChannelREST">
+		<int:service-activator ref="collateralWebService"
+			method="getCollaterals" />
+	</int:chain>
+
+	Collateral Configurations for SOAP
+	<int:chain input-channel="getCollateralTypeChannelSOAP">
+		<int:service-activator ref="collateralWebService"
+			method="getCollateralType" />
+	</int:chain>
+	<int:chain input-channel="createCollateralChannelSOAP">
+		<int:service-activator ref="collateralWebService"
+			method="createCollateral" />
+	</int:chain>
+	<int:chain input-channel="updateCollateralChannelSOAP">
+		<int:service-activator ref="collateralWebService"
+			method="updateCollateral" />
+	</int:chain>
+	<int:chain input-channel="deleteCollateralChannelSOAP">
+		<int:service-activator ref="collateralWebService"
+			method="deleteCollateral" />
+	</int:chain>
+	<int:chain input-channel="getCollateralsChannelSOAP">
+		<int:service-activator ref="collateralWebService"
+			method="getCollaterals" />
+	</int:chain>
+
+
+	Flag channel Configurations for Rest
+	<int:chain input-channel="getLoanFlagsChannelREST">
+		<int:service-activator ref="flagWebService"
+			method="getLoanFlags" />
+	</int:chain>
+	<int:chain input-channel="addLoanFlagsChannelREST">
+		<int:service-activator ref="flagWebService"
+			method="addLoanFlags" />
+	</int:chain>
+	<int:chain input-channel="deleteLoanFlagsChannelREST">
+		<int:service-activator ref="flagWebService"
+			method="deleteLoanFlags" />
+	</int:chain>
+	Flag Configurations for SOAP
+	<int:chain input-channel="getLoanFlagsChannelSOAP">
+		<int:service-activator ref="flagWebService"
+			method="getLoanFlags" />
+	</int:chain>
+	<int:chain input-channel="addLoanFlagsChannelSOAP">
+		<int:service-activator ref="flagWebService"
+			method="addLoanFlags" />
+	</int:chain>
+	<int:chain input-channel="deleteLoanFlagsChannelSOAP">
+		<int:service-activator ref="flagWebService"
+			method="deleteLoanFlags" />
+	</int:chain>
+
+	SecRoles channel Configurations for SOAP
+	<int:chain input-channel="getSecRolesChannelSoap">
+		<int:service-activator ref="secRolesWebService" method="getSecRoles" />
+	</int:chain>
+
+	SecRoles channel Configurations for Rest
+	<int:chain input-channel="getSecRolesChannelRest">
+		<int:service-activator ref="secRolesWebService" method="getSecRoles" />
+	</int:chain>
+</beans> -->

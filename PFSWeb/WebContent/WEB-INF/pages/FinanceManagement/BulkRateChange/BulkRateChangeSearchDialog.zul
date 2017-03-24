@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_BulkRateChangeSearch"
+		title="${c:l('window_BulkRateChangeSearch.title')}" border="none"
+		apply="${bulkRateChangeSearchCtrl}" closable="true" width="500px"
+		height="240px" sizable="true">
+
+		<borderlayout>
+			<north></north>
+			<center flex="true">
+
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px; padding-left:5px; padding-right:5px;">
+					<columns>
+						<column width="160px" />
+						<column width="50px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<label
+								id="label_BulkRateChangeSearch_FinReference"
+								value="${c:l('label_BulkRateChangeSearch_FinReference.value')}" />
+							<listbox id="sortOperator_finReference"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="finReference"
+								width="150px" maxlength="20" />
+						</row>
+						<row>
+							<label
+								id="label_BulkRateChangeSearch_CustCIF"
+								value="${c:l('label_BulkRateChangeSearch_CustCIF.value')}" />
+							<listbox id="sortOperator_custCIF"
+								width="43px" mold="select" rows="1" />
+							<textbox id="custCIF" width="150px"
+								maxlength="19" />
+						</row>
+						<row>
+							<label
+								id="label_BulkRateChangeSearch_FinBranch"
+								value="${c:l('label_BulkRateChangeSearch_FinBranch.value')}" />
+							<listbox id="sortOperator_FinBranch"
+								width="43px" mold="select" rows="1" />
+							<textbox id="finBranch" width="100px"
+								maxlength="8" />
+						</row>
+						<row>
+							<label
+								id="label_BulkRateChangeSearch_FinCcy"
+								value="${c:l('label_BulkRateChangeSearch_FinCcy.value')}" />
+							<listbox id="sortOperator_FinCcy"
+								width="43px" mold="select" rows="1" />
+							<uppercasebox id="finCcy" width="50px"
+								maxlength="3" />
+						</row>
+						<row>
+							<label id="label_BulkRateChangeSearch_Rate"
+								value="${c:l('label_BulkRateChangeSearch_Rate.value')}" />
+							<listbox id="sortOperator_Rate" width="43px"
+								mold="select" rows="1" />
+							<decimalbox id="rate" width="150px"
+								maxlength="18" />
+						</row>
+					</rows>
+				</grid>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px"
+				splittable="false">
+				<div id="divSouthBulkRateChange" align="left"
+					width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20"
+										label="${c:l('btnSearch.label')}"
+										tooltiptext="${c:l('btnSearch.tooltiptext')}" />
+									<button id="btnClose" height="20"
+										label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<label
+										id="label_BulkRateChangeSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

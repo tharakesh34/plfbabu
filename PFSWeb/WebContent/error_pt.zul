@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+	<window title="Error Window : Code ${requestScope['javax.servlet.error.status_code']}" border="normal" mode="modal">
+		<vbox align="center" style="padding:10px 30px">
+			<div align="center">
+				<separator />
+				<separator />
+				<hbox align="center">
+					<label value="${c:l('message.SystemError')} Please try again or contact your system administrator." width="100%" style="align:center"/>
+				</hbox>
+				<separator />
+				<separator />
+				<hbox align="center">
+					<space></space>
+					<button label="Continue" onClick="spaceOwner.detach()" />
+					<button label="Reload" onClick="Executions.sendRedirect(null)" />
+				</hbox>		
+			</div>
+		</vbox>
+	</window>
+</zk>

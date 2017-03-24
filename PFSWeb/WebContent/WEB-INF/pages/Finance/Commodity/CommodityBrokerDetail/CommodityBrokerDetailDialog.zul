@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CommodityBrokerDetailDialog" border="normal"
+		apply="${commodityBrokerDetailDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutCommodityBrokerDetail">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start"
+							sclass="toolbar-start">
+
+							<button id="btnNew" 
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnEdit" 
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnDelete" 
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnSave" 
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnCancel" 
+								tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnNotes" 
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_CommodityBrokerDetailDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end"
+							sclass="toolbar-end">
+							<button id="btnHelp" visible="false" 
+								label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnClose" 
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="250px" />
+							<column />
+							<column width="250px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerCode"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+
+									<uppercasebox id="brokerCode"
+										maxlength="8" width="100px" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerCIF"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerCustCIF.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<hbox>
+										<longbox id="brokerCustID"
+											width="171px" visible="false">
+										</longbox>
+										<textbox id="lovDescBrokerCIF"
+											width="180px" readonly="true" />
+										<button
+											id="btnSearchBrokerCustID"
+											image="/images/icons/LOVSearch.png" >
+										</button>
+									</hbox>
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerShtName"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerShtName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="brokerShtName"
+										width="180px" readonly="true" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerFrom"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerFrom.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<datebox id="brokerFrom" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrHNbr"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrHNbr.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="brokerAddrHNbr"
+										maxlength="50" width="180px" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrFlatNbr"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrFlatNbr.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="brokerAddrFlatNbr"
+										maxlength="50" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrStreet"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrStreet.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="brokerAddrStreet"
+										maxlength="50" width="180px" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrLane1"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrLane1.value')}" />
+								<hbox>
+									<space spacing="2px" />
+
+									<textbox id="brokerAddrLane1"
+										maxlength="50" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrLane2"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrLane2.value')}" />
+								<hbox>
+									<space spacing="2px" />
+
+									<textbox id="brokerAddrLane2"
+										maxlength="50" width="180px" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrPOBox"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrPOBox.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="brokerAddrPOBox"
+										maxlength="8" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrCountry"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrCountry.value')}" />
+								<extendedcombobox
+									id="brokerAddrCountry" />
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrProvince"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrProvince.value')}" />
+								<extendedcombobox
+									id="brokerAddrProvince" />
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrCity"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrCity.value')}" />
+									<hbox id="hbox_brokerAddrCity" spacing="2px">
+								<extendedcombobox id="brokerAddrCity" />
+									<textbox id="cityName"
+											 width="180px" />
+											 </hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrZIP"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrZIP.value')}" />
+								<hbox>
+									<space id="space_brokerAddrZIP" spacing="2px"/>
+									<textbox id="brokerAddrZIP"
+										maxlength="10" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrPhone"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrPhone.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<hbox>
+										<textbox id="phoneCountryCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="phoneAreaCode"
+											width="40px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="brokerAddrPhone"
+											width="80px" />
+									</hbox>
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerAddrFax"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerAddrFax.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="faxCountryCode"
+										width="40px" />
+									<label value="-"
+										style="display:inline-block;padding-top:4px;" />
+									<textbox id="faxAreaCode"
+										width="40px" />
+									<label value="-"
+										style="display:inline-block;padding-top:4px;" />
+									<textbox id="brokerAddrFax" width="80px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_BrokerEmail"
+									value="${c:l('label_CommodityBrokerDetailDialog_BrokerEmail.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="brokerEmail"
+										maxlength="50" width="180px" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_AgreementRef"
+									value="${c:l('label_CommodityBrokerDetailDialog_AgreementRef.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="agreementRef"
+										maxlength="100" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_CommodityBrokerDetailDialog_FeeOnUnsold"
+									value="${c:l('label_CommodityBrokerDetailDialog_FeeOnUnsold.value')}" />
+								<currencyBox id="feeOnUnsold" />
+								<label
+									id="label_CommodityBrokerDetailDialog_AccountNumber"
+									value="${c:l('label_CommodityBrokerDetailDialog_AccountNumber.value')}" />
+								<accountSelectionBox id="accountNumber" />
+							</row>
+							<row>
+								<label
+									id="label_CommodityBrokerDetailDialog_CommodityDetail"
+									value="${c:l('label_CommodityBrokerDetailDialog_CommodityDetail.value')}" />
+								<hbox>
+								     <space spacing="2px" sclass="mandatory" />
+									<listbox id="listbox_commodity"
+										width="300px" height="190px"
+										emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listhead>
+											<listheader
+												id="listheader_Commodity"
+												label="${c:l('label_listheader_Commodity.value')}">
+												<space spacing="50px"  />
+												<button
+													id="btnSearchCommodityDetail"
+													image="/images/icons/LOVSearch.png" />
+											</listheader>
+										</listhead>
+									</listbox>
+									<textbox id="commodityDetail"
+										readonly="true" visible="false" />
+								</hbox>
+								<label
+									id="label_CommodityBrokerDetailDialog_CommissionRate"
+									value="${c:l('label_CommodityBrokerDetailDialog_CommissionRate.value')}" />
+									<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+								<decimalbox id="commissionRate"
+									width="120px" maxlength="15" />
+									</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_CommodityBrokerDetailDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

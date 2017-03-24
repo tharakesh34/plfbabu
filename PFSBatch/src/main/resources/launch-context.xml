@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+		<property name="url" value="${pfsjdbc.url}" />
+		<property name="username" value="${pfsjdbc.username}" />
+		<property name="password" value="${pfsjdbc.password}" />
+		<!-- <property name="validationQuery" value="SELECT 1" /> -->
+		<property name="testOnBorrow" value="1" />
+		<property name="maxActive" value="2" />
+		<!-- <property name="maxIdle" value="1" />
+		<property name="maxWait" value="10000" /> -->
+	</bean>
+	
+	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
+		<property name="url" value="${pffextjdbc.url}" />
+		<property name="username" value="${pffextjdbc.username}" />
+		<property name="password" value="${pffextjdbc.password}" />
+		<!-- <property name="validationQuery" value="SELECT 1" /> -->
+		<property name="testOnBorrow" value="1" />
+		<property name="maxActive" value="2" />
+		<!-- <property name="maxIdle" value="1" />
+		<property name="maxWait" value="10000" /> -->
+	</bean>
+	
+	<!--AUDIT Application database DSN-->
+	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	  <property name="driverClassName" value="${pfsjdbc.driverClassName}" />
+	  <property name="url" value="${auditjdbc.url}" />
+	  <property name="username" value="${auditjdbc.username}" />
+	  <property name="password" value="${auditjdbc.password}" />
+	</bean>
+	
+	<bean id="jobOperator"
+		class="org.springframework.batch.core.launch.support.SimpleJobOperator"
+		p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer"
+		p:jobRepository-ref="jobRepository" p:jobRegistry-ref="jobRegistry" />
+		
+	<bean id="jobExplorer"
+		class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
+		p:dataSource-ref="pfsDatasource" />
+		
+	<bean id="jobRegistry"
+		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+	
+	<bean class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry" />
+	</bean>
+	
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+	
+	<bean id="jobRepository"
+		class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean"
+		p:dataSource-ref="pfsDatasource" p:transactionManager-ref="transactionManager" />
+	<!--  p:lobHandler-ref="oracleLobHandler"  -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		lazy-init="true">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler"
+      p:nativeJdbcExtractor-ref="nativeJdbcExtractor"/>
+      
+      <bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor"/>
+      
+	
+	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="locations">
+			<list>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/jdbc.properties</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="order" value="1" />
+	</bean>
+	
+	 <!--                                                                      -->
+	 <!-- Configuration for encryptor, based on environment variables.         -->
+	 <!--                                                                      -->
+	 <!-- In this example, the encryption password will be read from an        -->
+	 <!-- environment variable called "APP_ENCRYPTION_PASSWORD" which, once    --> 
+	 <!-- the application has been started, could be safely unset.             -->
+	 <!--                                                                      -->
+     <bean id="environmentVariablesConfiguration"
+	     class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+	   <property name="algorithm" value="PBEWithMD5AndDES" />
+	   <property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+	 </bean>
+	  
+	 <!--                                                                      -->
+	 <!-- The will be the encryptor used for decrypting configuration values.  -->
+	 <!--                                                                      -->
+	 
+	 <bean id="configurationEncryptor"
+	     class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+	   <property name="config" ref="environmentVariablesConfiguration" />
+	 </bean>
+</beans>

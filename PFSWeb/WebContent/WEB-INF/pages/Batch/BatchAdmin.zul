@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<style>.batch-loading { background-color: #6eadff; cursor: wait; white-space: nowrap; padding:3px; border: 1px solid #83B5F7; } .batch-loading-indicator { background-color: #FFFFFF; color: #102B6D; border:1px solid #83B5F7; white-space: nowrap; padding:6px; } .batch-loading-icon { background: transparent no-repeat center; background-image: url(${c:encodeURL('~./zk/img/progress3.gif')}); height: 16px; width: 16px; background-color: red; font-weight: bold; font-size:12px; color:#FF4500; }</style>
+	<window id="window_BatchAdmin" apply="${batchAdminCtrl}" border="normal" width="100%" height="100%" sizable="false">
+		<timer id="timer" repeats="true" />
+		<div sclass="z-toolbar" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="20%,40%,20%,20%">
+				<toolbar align="start" sclass="toolbar-start">
+					<button id="btnStartJob" tooltiptext="${c:l('label_BatchAdminCtrl_Run.tooltiptext')}" label="Start" sclass="z-toolbarbutton" />
+				</toolbar>
+				<toolbar align="center" sclass="toolbar-center">
+					<label id="lable_current_step" style="font-weight: bold; font-size:12px;color:#FF4500;" />
+				</toolbar>
+				<toolbar align="center" sclass="toolbar-center">
+					<hbox>
+						<label value="${c:l('label_BatchAdminCtrl_Lock.value')}" />
+						<space />
+						<checkbox id="lock" />
+					</hbox>
+				</toolbar>
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnStaleJob" tooltiptext="${c:l('label_BatchAdminCtrl_Terminate.tooltiptext')}" label="${c:l('label_BatchAdminCtrl_Terminate.value')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+		<borderlayout id="borderLayoutBatchAdmin" height="99%">
+			<north border="none">
+				<groupbox id="gb_basicDetails" mold="3d">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:1px">
+						<columns>
+							<column width="20%" />
+							<column width="12%" />
+							<column width="20%" />
+							<column width="12%" />
+							<column width="15%" />
+							<column width="12%" />
+						</columns>
+						<rows>
+							<row>
+								<label value="${c:l('label_BatchAdminCtrl_LastBussDate.value')}" />
+								<textbox id="lable_LastBusiness_Date" width="100px" readonly="true" />
+								<label value="${c:l('label_BatchAdminCtrl_NextBussDate.value')}" />
+								<textbox id="lable_NextBusiness_Date" width="100px" readonly="true" />
+								<label value="${c:l('label_BatchAdminCtrl_ValueDate.value')}" />
+								<textbox id="lable_Value_Date" width="100px" readonly="true" />
+							</row>
+							<row>
+								<label value="${c:l('label_estimated_completed_Time')}" />
+								<textbox id="estimatedTime" width="100px" readonly="true" style="font-weight: bold; font-size:12px;color:#FF4500;" />
+								<label id="label_elapsed_Time" value="${c:l('label_completed_Time')}" />
+								<textbox id="completedTime" width="100px" readonly="true" />
+								<label value="${c:l('label_BatchAdminCtrl_BatchStatus.value')}" />
+								<hbox id="batchStatus" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</north>
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox width="100%">
+						<caption label="Phase 1"></caption>
+						<grid sclass="GridLayoutNoBorder">
+							<columns>
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="dailyDownload" border="normal" title="${c:l('label_dailyDownload')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="repayQueueCalculation" border="normal" title="${c:l('label_repayQueueCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="repayRequest" border="normal" title="${c:l('label_repayRequest')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%" align="start">
+										<exePannel id="prepareRecoveryFile" border="normal" title="${c:l('label_prepareRecoveryFile')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="readRecoveryFile" border="normal" title="${c:l('label_readRecoveryFile')}" imgSrc="/images/icons/send.gif" />
+										<hbox></hbox>
+										<hbox></hbox>
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox width="100%">
+						<caption label="Phase 2"></caption>
+						<grid sclass="GridLayoutNoBorder">
+							<columns>
+								<column width="100%" />
+							</columns>
+							<rows>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="repayResponse" border="normal" title="${c:l('label_repayResponse')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="overdueCalculation" border="normal" title="${c:l('label_overdueCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="suspenseCalculation" border="normal" title="${c:l('label_suspenseCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="statusUpdate" border="normal" title="${c:l('label_StatusUpdate')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="amortizationCalculation" border="normal" title="${c:l('label_amortizationCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="financeMovement" border="normal" title="${c:l('label_financeMovement')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="thirdPartyPostings" border="normal" title="${c:l('label_thirdPartyPostings')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="installmentDueDatePostings" border="normal" title="${c:l('label_installmentDueDatePostings')}" imgSrc="/images/icons/calc.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="dibursementPostings" border="normal" title="${c:l('label_dibursementPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="rateReviewCalculation" border="normal" title="${c:l('label_rateReviewCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="collateralDeMarkPostings" border="normal" title="${c:l('label_collateralDeMarkPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="ddaCancellationPostings" border="normal" title="${c:l('label_ddaCancellationPostings')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="postLimitUtilization" border="normal" title="${c:l('label_postLimitUtilization')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="ddaRepresentmentPostings" border="normal" title="${c:l('label_ddaRepresentmentPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postGLPLPostings" border="normal" title="${c:l('label_postGLPLPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postBenchmarkInfo" border="normal" title="${c:l('label_postBenchmarkInfo')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="postODDetails" border="normal" title="${c:l('label_postODDetails')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postNextPaymentDetails" border="normal" title="${c:l('label_postNextPaymentDetails')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postStudyAndDocFee" border="normal" title="${c:l('label_postStudyAndDocFee')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postFXRevaluation" border="normal" title="${c:l('label_postFXRevaluation')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="notification" border="normal" title="${c:l('label_notification')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postInstallmentDueSMS" border="normal" title="${c:l('label_postInstallmentDueSMS')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="postPastDueSMS" border="normal" title="${c:l('label_postPastDueSMS')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="archiveDocument" border="normal" title="${c:l('label_archiveDocument')}" imgSrc="/images/icons/send.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="sasExtract" border="normal" title="${c:l('label_sasExtract')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="sendMail" border="normal" title="${c:l('label_sendMail')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" />
+										<hbox></hbox>
+									</hbox>
+								</row>
+								<row visible="false">
+									<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<exePannel id="amortizationPostings" border="normal" title="${c:l('label_amortizationPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="provisionCalculation" border="normal" title="${c:l('label_provisionCalculation')}" imgSrc="/images/icons/calc.gif" />
+										<exePannel id="provisionPostings" border="normal" title="${c:l('label_provisionPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="depreciationPostings" border="normal" title="${c:l('label_depreciationPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="capitalizationPostings" border="normal" title="${c:l('label_capitalizationPostings')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="uploadPftDetails" border="normal" title="${c:l('label_uploadPftDetails')}" imgSrc="/images/icons/send.gif" />
+										<exePannel id="auditDataPurging" border="normal" title="${c:l('label_auditDataPurging')}" />
+										<exePannel id="databaseBackupAfterEod" border="normal" title="${c:l('label_databaseBackupAfterEod')}" />
+										<exePannel id="databaseBackupBeforeEod" border="normal" title="${c:l('label_databaseBackupBeforeEod')}" visible="false" />
+										<exePannel id="databaseBackup" border="normal" title="${c:l('label_databaseBackup')}" width="320px" imgSrc="/images/icons/calc.gif" />
+									</hbox>
+								</row>
+								<row>
+									<hbox>
+										<space></space>
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,19 @@
+<zk>
+	<window>
+		<html>
+			<script type="text/javascript">
+				
+				<![CDATA[ function logOut() { document.forms[0].submit(); }
+	
+				]]>
+				
+			</script>		
+			<body onload="logOut();">
+					<form
+						action="j_spring_security_logout?${_csrf.parameterName}=${_csrf.token}"
+						method="post">
+					</form>
+			</body>
+		</html>
+	</window>
+</zk>

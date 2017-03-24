@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PastDueSmry" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4fe86419-c967-4c8c-b111-b73f9e40a352">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="62"/>
+	<template><![CDATA["../../StyleSheet/Template_Analytic.jrtx"]]></template>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="FeeCharges" uuid="589d1ac1-d1ae-4488-a0a5-6d6b2368ea55">
+		<queryString>
+			<![CDATA[Select  T2.FinType Category,T1.FeeCode,
+				 CASE WHEN FeeCode='ADMIN'  THEN 'Administration Fee'
+					  WHEN FeeCode='DEFERFEE'  THEN 'Deferment Fee'
+					  WHEN FeeCode='ERSTLFEE'  THEN 'Early Settlement Fee'
+					  WHEN FeeCode='OTHERINS'  THEN 'External Insurance'
+					  WHEN FeeCode='RTLMFFEE'  THEN 'Mortgage Fee (TIB)'
+					  WHEN FeeCode='TAKAFUL'  THEN 'Insurance Fee'
+					  WHEN FeeCode='TPARTY'  THEN 'Third Party Commission' ELSE FeeCode END Series,
+				 SUM(dbo.[UDF_ConvertCurrency](FeeAmount,T2.FinCcy,'INR'))Value
+		from     FinFeeCharges T1 With(NoLock) Inner Join
+			     FinPftDetails T2 With(NoLock) on T1.FinReference=T2.FinReference Inner Join
+		   RMTFinanceTypes T3 With(NoLock)On T3.FinType=T2.FinType Inner Join
+		  	BMTProduct T4 With(NoLock) ON T3.FinCategory=T4.ProductCode
+			   where T2.FinIsActive=1
+		Group BY T2.FinType,FeeCode,T1.FeeCode]]>
+		</queryString>
+		<field name="Category" class="java.lang.String"/>
+		<field name="FeeCode" class="java.lang.String"/>
+		<field name="Series" class="java.lang.String"/>
+		<field name="Value" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select  'DummyGrp' DummyGrp, T2.FinType,T1.FeeCode,
+				 CASE WHEN FeeCode='ADMIN'  THEN 'Administration Fee'
+					  WHEN FeeCode='DEFERFEE'  THEN 'Deferment Fee'
+					  WHEN FeeCode='ERSTLFEE'  THEN 'Early Settlement Fee'
+					  WHEN FeeCode='OTHERINS'  THEN 'External Insurance'
+					  WHEN FeeCode='RTLMFFEE'  THEN 'Mortgage Fee (TIB)'
+					  WHEN FeeCode='TAKAFUL'  THEN 'Insurance Fee'
+					  WHEN FeeCode='TPARTY'  THEN 'Third Party Commission' ELSE FeeCode END FeeCodeDesc,
+				 SUM(dbo.[UDF_ConvertCurrency](FeeAmount,T2.FinCcy,'INR'))FeeAmount
+		from     FinFeeCharges T1 With(NoLock) Inner Join
+			     FinPftDetails T2 With(NoLock) on T1.FinReference=T2.FinReference Inner join
+
+		   RMTFinanceTypes T3 With(NoLock)On T3.FinType=T2.FinType Inner Join
+		  	BMTProduct T4 With(NoLock) ON T3.FinCategory=T4.ProductCode
+	 where T2.FinIsActive=1
+		Group BY T2.FinType,T1.FeeCode]]>
+	</queryString>
+	<field name="DummyGrp" class="java.lang.String"/>
+	<field name="FinType" class="java.lang.String"/>
+	<field name="FeeCode" class="java.lang.String"/>
+	<field name="FeeCodeDesc" class="java.lang.String"/>
+	<field name="FeeAmount" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="82" splitType="Stretch">
+			<frame>
+				<reportElement uuid="7ba36d77-24f9-4087-b34b-9c53112cceb0" x="0" y="0" width="802" height="43"/>
+				<image hAlign="Left">
+					<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="668" y="0" width="134" height="43"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="0" y="18" width="668" height="25"/>
+					<box>
+						<bottomPen lineWidth="1.5" lineColor="#654402"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Fee Summary]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="48" width="802" height="25"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="4"/>
+				</textElement>
+				<text><![CDATA[Fee Amounts in INR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="285">
+			<crosstab>
+				<reportElement uuid="069a527e-19f0-4d01-8dae-0f6531932779" x="0" y="0" width="802" height="50"/>
+				<rowGroup name="FinCategory" width="91" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{FinType}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#DAE1E8" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineColor="#999999"/>
+								<leftPen lineColor="#999999"/>
+								<bottomPen lineColor="#999999"/>
+								<rightPen lineColor="#999999"/>
+							</box>
+							<textField>
+								<reportElement uuid="0caff2cd-1054-439b-9150-c43e9c7a7d53" style="Detail Header" mode="Transparent" x="0" y="0" width="91" height="25" forecolor="#80551D"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<paragraph leftIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{FinCategory}+" "]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#E8E7E6" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineColor="#999999"/>
+								<leftPen lineColor="#999999"/>
+								<bottomPen lineColor="#999999"/>
+								<rightPen lineColor="#999999"/>
+							</box>
+							<staticText>
+								<reportElement uuid="b9f53ab8-0000-45b9-8578-99997181a360" style="Detail Header" mode="Transparent" x="0" y="0" width="91" height="25" forecolor="#1E3F58"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Total ]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="FeeCode" height="30" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{FeeCodeDesc}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#DAE1E8" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineColor="#999999"/>
+								<leftPen lineColor="#999999"/>
+								<bottomPen lineColor="#999999"/>
+								<rightPen lineColor="#999999"/>
+							</box>
+							<textField>
+								<reportElement uuid="03ea5176-dd7e-4505-bb1b-49373b6a2094" style="Detail Header" x="0" y="0" width="87" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<paragraph leftIndent="3" rightIndent="4"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{FeeCode}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#E8E7E6" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+								<topPen lineColor="#999999"/>
+								<leftPen lineColor="#999999"/>
+								<bottomPen lineColor="#999999"/>
+								<rightPen lineColor="#999999"/>
+							</box>
+							<staticText>
+								<reportElement uuid="68817eab-702f-4692-8aff-411d85e66ab0" style="Detail Header" mode="Transparent" x="0" y="0" width="88" height="30" forecolor="#1E3F58"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Total ]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="FeeAmountMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{FeeAmount}]]></measureExpression>
+				</measure>
+				<crosstabCell width="87" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							<topPen lineColor="#999999"/>
+							<leftPen lineColor="#999999"/>
+							<bottomPen lineColor="#999999"/>
+							<rightPen lineColor="#999999"/>
+						</box>
+						<textField pattern="#,##0.000">
+							<reportElement uuid="ccf1d817-55ce-455b-a9a9-1714bc3c6dea" style="Detail Value" x="0" y="0" width="87" height="25"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<paragraph rightIndent="3"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{FeeAmountMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="87" height="25" rowTotalGroup="FinCategory">
+					<cellContents backcolor="#E8E7E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							<topPen lineColor="#999999"/>
+							<leftPen lineColor="#999999"/>
+							<bottomPen lineColor="#999999"/>
+							<rightPen lineColor="#999999"/>
+						</box>
+						<textField pattern="#,##0.000">
+							<reportElement uuid="18dfd7e6-9bb8-41bf-8a06-fe4670296d91" style="Detail Header" mode="Transparent" x="0" y="0" width="87" height="25" forecolor="#1E3F58"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<paragraph rightIndent="3"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{FeeAmountMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="88" columnTotalGroup="FeeCode">
+					<cellContents backcolor="#E8E7E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							<topPen lineColor="#999999"/>
+							<leftPen lineColor="#999999"/>
+							<bottomPen lineColor="#999999"/>
+							<rightPen lineColor="#999999"/>
+						</box>
+						<textField pattern="#,##0.000">
+							<reportElement uuid="bfda1792-58eb-44ae-b8db-3182e621f733" style="Detail Value" mode="Transparent" x="0" y="0" width="88" height="25" forecolor="#1E3F58"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<paragraph rightIndent="3"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{FeeAmountMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="88" rowTotalGroup="FinCategory" columnTotalGroup="FeeCode">
+					<cellContents backcolor="#E8E7E6" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							<topPen lineColor="#999999"/>
+							<leftPen lineColor="#999999"/>
+							<bottomPen lineColor="#999999"/>
+							<rightPen lineColor="#999999"/>
+						</box>
+						<textField pattern="#,##0.000">
+							<reportElement uuid="5516cb8c-65a9-47bf-8b00-27f5be75b042" style="Detail Header" mode="Transparent" x="0" y="0" width="88" height="25" forecolor="#1E3F58"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<paragraph rightIndent="3"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{FeeAmountMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<frame>
+				<reportElement uuid="1b4840db-0c8f-4a46-84f2-86ec9cb388ca" x="0" y="50" width="802" height="20"/>
+			</frame>
+			<frame>
+				<reportElement uuid="e35fd9a6-2e62-4e38-9999-12493169ca6d" style="Title Description header" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="70" width="802" height="215" backcolor="#FFFFFF"/>
+				<staticText>
+					<reportElement uuid="9883e27d-500d-4d3f-8267-168f7e5dba27" style="Title Description header" x="0" y="0" width="802" height="15"/>
+					<textElement>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[Fee Charges By Each Product]]></text>
+				</staticText>
+				<barChart>
+					<chart>
+						<reportElement uuid="3dfd0b2a-6d53-4419-9cd1-f23c933b1c86" style="Charts" x="0" y="15" width="802" height="200"/>
+						<chartTitle position="Top"/>
+						<chartSubtitle/>
+						<chartLegend position="Right"/>
+					</chart>
+					<categoryDataset>
+						<dataset>
+							<datasetRun subDataset="FeeCharges" uuid="a53e5fcd-e73d-4b91-9bba-6c3fea4a810e">
+								<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+							</datasetRun>
+						</dataset>
+						<categorySeries>
+							<seriesExpression><![CDATA[$F{Series}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{Category}]]></categoryExpression>
+							<valueExpression><![CDATA[$F{Value}]]></valueExpression>
+						</categorySeries>
+					</categoryDataset>
+					<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+						<plot labelRotation="0.0">
+							<seriesColor seriesOrder="0" color="#1284D7"/>
+							<seriesColor seriesOrder="1" color="#E85A0E"/>
+							<seriesColor seriesOrder="2" color="#88C42E"/>
+							<seriesColor seriesOrder="3" color="#8F08D4"/>
+							<seriesColor seriesOrder="4" color="#0DC4DD"/>
+							<seriesColor seriesOrder="5" color="#D50622"/>
+							<seriesColor seriesOrder="6" color="#0ADFAF"/>
+							<seriesColor seriesOrder="7" color="#F1C40D"/>
+							<seriesColor seriesOrder="8" color="#590711"/>
+							<seriesColor seriesOrder="9" color="#DB03C6"/>
+							<seriesColor seriesOrder="10" color="#CCCC05"/>
+							<seriesColor seriesOrder="11" color="#073359"/>
+							<seriesColor seriesOrder="12" color="#147E8C"/>
+						</plot>
+						<itemLabel color="#2D4B7A">
+							<font size="8" isItalic="true" isPdfEmbedded="true"/>
+						</itemLabel>
+						<valueAxisFormat>
+							<axisFormat verticalTickLabels="false">
+								<labelFont>
+									<font fontName="SansSerif" size="36"/>
+								</labelFont>
+							</axisFormat>
+						</valueAxisFormat>
+					</barPlot>
+				</barChart>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

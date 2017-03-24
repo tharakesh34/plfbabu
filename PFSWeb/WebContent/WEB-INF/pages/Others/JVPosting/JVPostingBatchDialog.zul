@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_JVPostingBatchDialog" border="normal"
+			apply="${jVPostingBatchDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutJVPostingBatch">
+				<north id="north">
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" visible="false"
+									 tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" visible="false"
+									 tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" visible="false"
+									 tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnJVPostingBatchDialogSave"
+									visible="false"
+									label="${c:l('btnJVPostingBatchDialogSave.title')}"
+									
+									tooltiptext="${c:l('btnJVPostingBatchDialogSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" visible="false"
+									 tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false"
+									 tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label sclass="label-heading"
+									value="${c:l('window_JVPostingBatchDialog.title')}">
+								</label>
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" 
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" 
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnJVPostingBatchDialogSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center id="center" border="none" autoscroll="false">
+					<div>
+						<groupbox id="gb_BatchDetails">
+							<caption
+								label="${c:l('caption_BatchDetails')}">
+							</caption>
+							<grid sclass="GridLayoutNoBorder"
+								fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
+								<rows>
+									<row id="row0">
+										<label id="label_Batch"
+											value="${c:l('label_JVPostingDialog_Batch.value')}" />
+										<hlayout id="hlayout_Batch">
+											<space id="space_Batch"
+												spacing="2px" sclass="mandatory" />
+											<uppercasebox id="batch"
+												maxlength="50" width="150px" />
+										</hlayout>
+										<label id="label_BatchReference"
+											value="${c:l('label_JVPostingDialog_BatchReference.value')}" />
+										<hlayout
+											id="hlayout_BatchReference">
+											<space
+												id="space_BatchReference" spacing="2px" />
+											<uppercasebox
+												id="batchReference" maxlength="50" width="100px" />
+										</hlayout>
+									</row>
+									<row id="row2">
+										<label id="label_BaseCcy"
+											value="${c:l('label_BaseCcy')}" />
+										<hlayout>
+											<extendedcombobox
+												id="baseCCy" />
+										</hlayout>
+
+										<label
+											id="label_ExchangeRateType"
+											value="${c:l('label_JVPostingDialog_ExchRateType.value')}" visible="false"/>
+										<hlayout visible="false">
+											<extendedcombobox											 
+												id="exchangeRateType" />
+										</hlayout>
+									</row>
+									<row id="row3">
+										<label
+											id="label_TotDebitsByBatchCcy"
+											value="${c:l('label_JVPostingDialog_TotDebitsByBatchCcy.value')}" />
+										<hlayout
+											id="hlayout_TotDebitsByBatchCcy">
+											<space
+												id="space_TotDebitsByBatchCcy" spacing="2px" />
+											<decimalbox
+												id="totDebitsByBatchCcy" width="150px" maxlength="25" />
+										</hlayout>
+										<label
+											id="label_TotCreditsByBatchCcy"
+											value="${c:l('label_JVPostingDialog_TotCreditsByBatchCcy.value')}" />
+										<hlayout
+											id="hlayout_TotCreditsByBatchCcy">
+											<space
+												id="space_TotCreditsByBatchCcy" spacing="2px" />
+											<decimalbox
+												id="totCreditsByBatchCcy" width="150px" maxlength="25" />
+										</hlayout>
+									</row>
+									<row id="row4" valign="top">
+										<label id="label_DebitCount"
+											value="${c:l('label_JVPostingDialog_DebitCount.value')}" />
+										<hlayout
+											id="hlayout_DebitCount">
+											<space id="space_DebitCount"
+												spacing="2px" />
+											<intbox id="debitCount"
+												width="100px" maxlength="14" />
+										</hlayout>
+										<label id="label_CreditsCount"
+											value="${c:l('label_JVPostingDialog_CreditsCount.value')}" />
+										<hlayout
+											id="hlayout_CreditsCount">
+											<space
+												id="space_CreditsCount" spacing="2px" />
+											<intbox id="creditsCount"
+												width="100px" maxlength="14" />
+										</hlayout>
+									</row>
+									<row id="row5" valign="top">
+										<label id="label_BatchPurpose"
+											value="${c:l('label_JVPostingDialog_BatchPurpose.value')}" />
+										<hlayout
+											id="hlayout_BatchPurpose">
+											<space
+												id="space_BatchPurpose" spacing="2px" />
+											<textbox id="batchPurpose"
+												maxlength="200" multiline="true" rows="2" width="300px" />
+										</hlayout>
+										<label id="label_Upload"
+											value="${c:l('label_Upload.value')}" />
+										<hlayout id="hlayout_Upload">
+											<space id="space_Upload"
+												spacing="2px" />
+											<textbox id="fileName"
+												readonly="true" width="150px" />
+											<button id="btn_Upload"
+												label="Upload" upload="true" />
+										</hlayout>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+
+						<groupbox id="gb_BatchEntryDetails">
+							<caption label="${c:l('JVPostingEntry')}" />
+							<listbox id="listBoxJVPostingEntry"
+								fixedLayout="true"   span="true" Width="100%"
+								emptyMessage="${c:l('listEmptyMessage.title')}" multiple="false"
+								sizedByContent="true">
+								<listhead sizable="true">
+									<listheader id="listheader_TxnRef"
+										label="${c:l('listheader_TxnRef.label')}" sort="auto"
+										hflex="min" />
+									<listheader id="listheader_Branch"
+										label="${c:l('listheader_Branch.label')}" sort="auto"
+										hflex="min" />
+									<listheader id="listheader_Base"
+										label="${c:l('listheader_Base.label')}" sort="auto"
+										hflex="min" />
+									<listheader id="listheader_Suffix"
+										label="${c:l('listheader_Suffix.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_PostingDate"
+										label="${c:l('listheader_PostingDate.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_ValueDate"
+										label="${c:l('listheader_ValueDate.label')}" sort="auto"
+										hflex="min" />
+									<listheader id="listheader_DRorCR"
+										label="${c:l('listheader_DRorCR.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_TransacationCode"
+										label="${c:l('listheader_TransacationCode.label')}"
+										sort="auto" hflex="min" />
+									<listheader id="listheader_Amount"
+										label="${c:l('listheader_Amount.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_Narrative1"
+										label="${c:l('listheader_Narrative1.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_Narrative2"
+										label="${c:l('listheader_Narrative2.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_Narrative3"
+										label="${c:l('listheader_Narrative3.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_Narrative4"
+										label="${c:l('listheader_Narrative4.label')}" sort="auto"
+										hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
+				</center>
+				<south id="south" height="0px" border="none"
+					visible="false">
+					<groupbox id="gb_statusDetails" mold="3d"
+						width="100%">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="150px" />
+								<column />
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="statusRow">
+									<label id="label_RecordStatus"
+										value="${c:l('label_RecordStatus')}" sclass="status" />
+									<label id="recordStatus" />
+									<label id="label_RecordType"
+										value="${c:l('label_RecordType')}" sclass="status" />
+									<label id="recordType" />
+								</row>
+								<row spans="4">
+									<groupbox id="groupboxWf"
+										width="100%">
+										<caption
+											label="${c:l('Action')}" style="font-weight:bold" />
+										<hlayout spacing="0px">
+											<radiogroup id="userAction"
+												name="action" />
+										</hlayout>
+									</groupbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

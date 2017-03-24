@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- CustomerIncome validations -->
+	<bean class="com.pennant.backend.model.customermasters.CustomerIncome">
+
+		<field name="incomeExpense">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>incomeExpense is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>incomeExpense should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="custIncome">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>custIncome should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>custIncome allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		</field>
+
+		<field name="custIncomeType">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>custIncomeType is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>custIncomeType should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="category">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>category is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>category should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+
+
+
+	</bean>
+</constraint-mappings>
+		

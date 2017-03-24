@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_InsurancePolicyDialog" border="normal"
+		apply="${insurancePolicyDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutInsurancePolicy">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start"
+							style="float:left; border-style: none;">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes" visible="false"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							style="toolbar-center">
+							<label
+								value="${c:l('window_InsurancePolicyDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end"
+							style="float:right; border-style: none;">
+							<button id="btnHelp" visible="false"
+								label="${c:l('label_Help')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<div>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog"
+						style="border: none; background-color: white;">
+						<grid sclass="GridLayoutNoBorder"
+							style="border: none; background-color: white;"
+							fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_PolicyCode"
+										value="${c:l('label_InsurancePolicyDialog_PolicyCode.value')}" />
+									<hbox id="hlayout_PolicyCode">
+										<space id="space_PolicyCode"
+											sclass="mandatory" spacing="2px" />
+										<uppercasebox id="policyCode"
+											maxlength="8" width="180px" />
+									</hbox>
+									<label id="label_PolicyDesc"
+										value="${c:l('label_InsurancePolicyDialog_PolicyDesc.value')}" />
+									<hbox id="hlayout_PolicyDesc">
+										<space id="space_PolicyDesc"
+											sclass="mandatory" spacing="2px" />
+										<textbox id="policyDesc"
+											maxlength="50" width="250px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_InsuranceType"
+										value="${c:l('label_InsurancePolicyDialog_InsuranceType.value')}" />
+									<extendedcombobox
+										id="insuranceType" />
+
+									<label id="label_InsuranceProvider"
+										value="${c:l('label_InsurancePolicyDialog_InsuranceProvider.value')}" />
+									<extendedcombobox
+										id="insuranceProvider" />
+								</row>
+								<row>
+									<label id="label_PolicyRate"
+										value="${c:l('label_InsurancePolicyDialog_PolicyRate.value')}" />
+									<hbox id="hlayout_PolicyRate">
+										<space id="space_PolicyRate"
+											sclass="mandatory" spacing="2px" />
+										<decimalbox id="policyRate"
+											maxlength="13" width="180px" />
+									</hbox>
+
+									<label id="label_Active"
+										value="${c:l('label_InsurancePolicyDialog_Active.value')}" />
+									<hbox id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active"
+											checked="false" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+						<grid sclass="GridLayoutNoBorder"
+							style="border: none; background-color: white;"
+							fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="85%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_Features"
+										value="${c:l('label_InsurancePolicyDialog_Features.value')}" />
+									<hbox id="hlayout_Features">
+										<space id="space_Features"
+											spacing="2px" />
+										<ptCKeditor id="features"
+											width="920px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_LimitGroupDialog" border="normal" apply="${limitGroupDialogCtrl}" width="100%" height="100%" sizable="false">
+			<borderlayout id="borderlayoutLimitGroup">
+				<north id="north">
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" style="float:left; border-style: none;">
+								<button id="btnNew" visible="false" height="24px" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnEdit" visible="false" height="24px" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" visible="false" height="24px" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnSave" visible="false" height="24px" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnCancel" visible="false" height="24px" tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" visible="false" height="24px" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="window_LimitGroupDialog_title" value="${c:l('window_LimitGroupDialog.title')}" sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" style="float:right; border-style: none;">
+								<button id="btnHelp" height="24px" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnClose" height="24px" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="false">
+					<div>
+						<groupbox id="gb_basicDetails" mold="3d">
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="15%" />
+									<column width="35%" />
+									<column width="15%" />
+									<column width="35%" />
+								</columns>
+								<rows>
+									<row id="row0">
+										<label id="label_GroupCode" value="${c:l('label_LimitGroupDialog_GroupCode.value')}" />
+										<hlayout id="hlayout_GroupCode">
+											<space id="space_GroupCode" spacing="2px" sclass="mandatory" />
+											<uppercasebox id="groupCode" maxlength="8" width="72px" />
+										</hlayout>
+										<label id="label_GroupName" value="${c:l('label_LimitGroupDialog_GroupName.value')}" />
+										<hlayout id="hlayout_GroupName">
+											<space id="space_GroupName" spacing="2px" sclass="mandatory" />
+											<textbox id="groupName" maxlength="50" width="350px" />
+										</hlayout>
+									</row>
+									<row>
+										<label id="label_GroupOf" value="${c:l('label_LimitGroupDialog_GroupOf.value')}" />
+										<hlayout id="hlayout_GroupOf">
+											<space id="space_GroupOf" spacing="2px" />
+											<combobox id="groupOf" width="200px" />
+										</hlayout>
+										<label id="label_GroupCategory" visible="false" value="${c:l('label_LimitGroupDialog_GroupCategory.value')}" />
+										<hlayout id="hlayout_GroupCategory">
+											<space id="space_GroupCategory" spacing="2px" />
+											<label id="groupCategory" width="200px" />
+										</hlayout>
+									</row>
+									<row>
+										<label id="label_active" value="${c:l('label_active.value')}" />
+										<hbox>
+											<space id="space_Active" spacing="2px" />
+											<checkbox id="active" checked="false" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<separator />
+						<div id="divWaiverDetail" sclass="z-toolbar" style="padding:0px" width="100%">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+								<toolbar align="start" sclass="toolbar-start">
+									<label value="${c:l('limitGroupItems.value')}" style="color: #ff4500; font-weight: bold;" />
+								</toolbar>
+								<!-- CRUD BUTTONS -->
+								<toolbar align="center" style="float:right; border-style: none; padding:0px;" />
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+									<button id="btnAddLimitLine" visible="false" label="${c:l('btnNew_LimitItem.value')}" tooltiptext="${c:l('btnNew_LimitItem.tooltiptext')}" />
+									<button id="btnAddGroup" visible="false" label="${c:l('btnNew_LimitGroup.value')}" tooltiptext="${c:l('btnNew_LimitGroup.tooltiptext')}" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+						<div height="100%">
+							<hbox width="100%">
+								<div width="100%">
+									<listbox id="listBoxLimitGroupLines" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('limitGroupItems.value')}" multiple="false" width="100%" height="100%" style="overflow:auto;">
+										<listhead>
+											<listheader id="listheader_LimitGroup" label="${c:l('listheader_LimitGroupDialog.label')}" sort="false" align="left" width="45%" />
+											<listheader id="listheader_LimitLine" label="${c:l('listheader_LimitItemDialog.label')}" sort="false" align="left" width="45%" />
+											<listheader id="listheader_Delete" label="" sort="false" align="center" width="10%" />
+										</listhead>
+									</listbox>
+								</div>
+								<div>
+									<vbox align="center" spacing="10px" width="40px" visible="false">
+										<separator height="30px" />
+										<button image="/images/icons/2Up.png" id="btnTop" width="35px" tooltiptext="${c:l('label_LimitStructureDialog.btnTop.tooltiptext')}" height="30px" />
+										<separator height="30px" />
+										<button image="/images/icons/up.png" id="btnUp" width="35px" tooltiptext="${c:l('label_LimitStructureDialog.btnUp.tooltiptext')}" height="30px" />
+										<button image="/images/icons/downArrow.png" id="btnDown" width="35px" tooltiptext="${c:l('label_LimitStructureDialog.btnDown.tooltiptext')}" height="30px" />
+										<separator height="30px" />
+										<button image="/images/icons/2downarrow-icon.png" id="btnBottom" width="35px" tooltiptext="${c:l('label_LimitStructureDialog.btnBottom.tooltiptext')}" height="30px" />
+										<separator />
+									</vbox>
+								</div>
+							</hbox>
+						</div>
+					</div>
+				</center>
+				<south id="south" sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%" closable="false">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus" value="${c:l('label_RecordStatus')}" sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

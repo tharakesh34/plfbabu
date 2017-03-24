@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_CreditRevSelectCategory"
+		title="${c:l('window_CreditRevSelectCategory.title')}" border="normal"
+		apply="${creditApplicationRevSelectCategoryCtrl}" width="50%"
+		height="40%" sizable="false"
+		style="border:0px; padding-left:5px; padding-right:5px;"
+		closable="true">
+		<borderlayout id="borderLayout_FinanceTypeList">
+
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="100px" />
+						<column width="150px" />
+						<column />
+					</columns>
+					<rows>
+						<row id="CustSelectionRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_Customer"
+								value="${c:l('label_CreditRevSelectCategory_CustomerType.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory"
+									visible="false" />
+								<hbox>
+									<radiogroup id="custType">
+										<radio id="custType_Existing"
+											label="Existing" selected="true" />
+										<radio id="custType_Prospect"
+											label="Prospect" />
+									</radiogroup>
+								</hbox>
+							</hbox>
+						</row>
+						<row id="customerRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_CustomerCIF"
+								value="${c:l('label_CreditRevSelectCategory_CustomerCIF.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<longbox id="custID" width="171px"
+									maxlength="26" visible="false" />
+								<textbox id="lovDescCustCIF"
+									width="150px" />
+								<button id="btnSearchCustCIF"
+									image="/images/icons/LOVSearch.png" />
+								<label id="custShrtName" />
+							</hbox>
+						</row>
+						<row id="auditYearRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_auditYearRow"
+								value="${c:l('label_CreditRevSelectCategory_AuditYear.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<intbox id="auditYear" width="150px"
+									maxlength="4" />
+							</hbox>
+						</row>
+						<row id="auditPeriodRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_auditPeriodRow"
+								value="${c:l('label_CreditRevSelectCategory_auditPeriod.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="auditPeriod"
+									width="150px" />
+							</hbox>
+						</row>
+						<row id="customerCategoryRow">
+							<space />
+							<label
+								id="label_CreditRevSelectCategory_customerCategory"
+								value="${c:l('label_CreditRevSelectCategory_CustomerCategory.value')}" />
+							<hbox>
+								<space spacing="2px" sclass="mandatory" />
+								<combobox id="custCategory"
+									width="150px" />
+							</hbox>
+						</row>
+						<row>
+							<space />
+							<space />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"
+										 style="align:center"
+										tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CreditApplication_Review_subreport1" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="96153448-d994-4ad6-be75-aeb85b576cee">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<field name="subCategoryDesc" class="java.lang.String"/>
+	<field name="mainGroupDesc" class="java.lang.String"/>
+	<field name="mainGroup" class="java.lang.String"/>
+	<field name="yera23PerChangeHeader" class="java.lang.String"/>
+	<field name="yera23PerChange" class="java.lang.String"/>
+	<field name="yera3BreakDownHeader" class="java.lang.String"/>
+	<field name="yera3AuditValueHeader" class="java.lang.String"/>
+	<field name="yera3BreakDown" class="java.lang.String"/>
+	<field name="yera3AuditValue" class="java.lang.String"/>
+	<field name="yera12PerChangeHeader" class="java.lang.String"/>
+	<field name="yera12PerChange" class="java.lang.String"/>
+	<field name="yera2AuditValueHeader" class="java.lang.String"/>
+	<field name="yera2BreakDownHeader" class="java.lang.String"/>
+	<field name="yera2BreakDown" class="java.lang.String"/>
+	<field name="yera2AuditValue" class="java.lang.String"/>
+	<field name="yera1AuditValueHeader" class="java.lang.String"/>
+	<field name="yera1BreakDownHeader" class="java.lang.String"/>
+	<field name="yera1AuditValue" class="java.lang.String"/>
+	<field name="yera1BreakDown" class="java.lang.String"/>
+	<field name="calC" class="java.lang.String"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="groupCode" class="java.lang.String"/>
+	<group name="mainGroupDesc">
+		<groupExpression><![CDATA[$F{mainGroupDesc}]]></groupExpression>
+		<groupHeader>
+			<band height="68">
+				<frame>
+					<reportElement uuid="fe9e1575-34b0-4c90-8fb9-ca2589268524" mode="Opaque" x="0" y="0" width="802" height="18" isRemoveLineWhenBlank="true" backcolor="#E0E6ED">
+						<printWhenExpression><![CDATA[$F{mainGroupDesc}!=""]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Group Header" x="0" y="0" width="527" height="18" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{mainGroupDesc}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="7c5bc01b-8cd0-4e23-ab03-5c302bd609a1" x="0" y="18" width="802" height="50" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{yera1AuditValueHeader}!=""]]></printWhenExpression>
+					</reportElement>
+					<staticText>
+						<reportElement uuid="563fc4ad-d261-4e8a-8c95-6257a96434e1" style="Detail Header" x="0" y="0" width="194" height="50"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<text><![CDATA[Categories]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="270" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera1BreakDownHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="422" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera2BreakDownHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="498" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera12PerChangeHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="650" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera3BreakDownHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="726" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera23PerChangeHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="574" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera3AuditValueHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="346" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera2AuditValueHeader}]]></textFieldExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Header" x="194" y="0" width="76" height="50" isPrintWhenDetailOverflows="true"/>
+						<box>
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+						<textElement>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{yera1AuditValueHeader}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement uuid="aa2fe735-b9d1-459d-bf3d-2224838a86b3" x="0" y="0" width="802" height="15" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{subCategoryDesc}!=""]]></printWhenExpression>
+				</reportElement>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="bfae3595-8a08-4eff-9665-2bef3e7e880d" style="Detail Value" x="0" y="0" width="194" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement markup="styled">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{subCategoryDesc}+ "</style>" :$F{subCategoryDesc}):$F{subCategoryDesc}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="74514b65-d2f8-4dde-a958-4e4501243b0e" style="Detail Value" x="270" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera1BreakDown}+ "</style>" :$F{yera1BreakDown}):$F{yera1BreakDown}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a701fbfc-477d-4ea1-abf6-39dea91793e3" style="Detail Value" x="346" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera2AuditValue}+ "</style>" :$F{yera2AuditValue}):$F{yera2AuditValue}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="e9e40b73-0318-4291-9dfb-e3b5a2c3e64a" style="Detail Value" x="422" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera2BreakDown}+ "</style>" :$F{yera2BreakDown}):$F{yera2BreakDown}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="c1ad0027-0959-4718-b008-5b1464563a8a" style="Detail Value" x="498" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera12PerChange}+ "</style>" :$F{yera12PerChange}):$F{yera12PerChange}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="19ab6a87-b28f-4090-8b2a-6b94fb22e0dc" style="Detail Value" x="574" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera3AuditValue}+ "</style>" :$F{yera3AuditValue}):$F{yera3AuditValue}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="dbe7fd14-a666-484e-9fb8-3ca68305a8db" style="Detail Value" x="726" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera23PerChange}+ "</style>" :$F{yera23PerChange}):$F{yera23PerChange}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="65a03e55-67eb-4700-bcec-6671da1559e5" style="Detail Value" x="650" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera3BreakDown}+ "</style>" :$F{yera3BreakDown}):$F{yera3BreakDown}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="74514b65-d2f8-4dde-a958-4e4501243b0e" style="Detail Value" x="194" y="0" width="76" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" markup="styled">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calC}.equals("C")?($F{remarks}!='R'? "<style fontName='Trebuchet MS' fontSize='15' isBold='true' pdfFontName='Helvetica-Bold' isPdfEmbedded='true' forecolor='#336699'>" + $F{yera1AuditValue}+ "</style>" :$F{yera1AuditValue}):$F{yera1AuditValue}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

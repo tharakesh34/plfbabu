@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_ScriptValidationResult" border="normal"
+			height="200px" width="50%" sizable="true"
+			apply="${scriptValidationResultCtrl}">
+
+			<borderlayout id="borderlayoutAcademic">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label value="${c:l('label_resultSimulation')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose"
+									label="${c:l('label_Close')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+
+
+				</north>
+				<center border="none" autoscroll="false">
+					<div>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="30%" />
+								<column width="5%" />
+								<column width="65%" />
+							</columns>
+							<rows id="rows_Fields" width="100%"></rows>
+						</grid>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="30%" />
+								<column width="5%" />
+								<column width="65%" />
+							</columns>
+							<rows width="100%">
+								<row>
+									<label value="" />
+									<label value="" />
+									<button id="btn_Stimulate"
+										label="Get Result" />
+								</row>
+								<row id="rowResult" visible="false">
+									<label value="Result" />
+									<label value=":" />
+									<label id="result" />
+								</row>
+
+							</rows>
+						</grid>
+					</div>
+				</center>
+			</borderlayout>
+
+		</window>
+	</window>
+</zk>

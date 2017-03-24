@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_VesselDetailList"
+			apply="${vesselDetailListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" style="toolbar-center">
+						<button
+							id="button_VesselDetailList_VesselDetailSearch" height="24px"
+							label="${c:l('label_Filter')}" sclass="z-toolbarbutton"
+							autodisable="button_VesselDetailList_VesselDetailSearch,print,button_VesselDetailList_NewVesselDetail,btnRefresh,help"
+							tooltiptext="${c:l('button_VesselDetailList_VesselDetailSearch.tooltiptext')}" />
+						<button id="print" height="24px"
+							sclass="z-toolbarbutton" label="${c:l('label_Print')}"
+							autodisable="button_VesselDetailList_VesselDetailSearch,print,button_VesselDetailList_NewVesselDetail,btnRefresh,help"
+							tooltiptext="${c:l('button_VesselDetailList_PrintList.tooltiptext')}" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="toolbar-end">
+						<button
+							id="button_VesselDetailList_NewVesselDetail" height="24px"
+							sclass="z-toolbarbutton" visible="false"
+							label="${c:l('label_New')}"
+							autodisable="button_VesselDetailList_VesselDetailSearch,print,button_VesselDetailList_NewVesselDetail,btnRefresh,help"
+							tooltiptext="${c:l('button_VesselDetailList_NewVesselDetail.tooltiptext')}" />
+
+						<button id="btnRefresh" height="24px"
+							sclass="z-toolbarbutton" label="${c:l('label_Refresh')}"
+							autodisable="button_VesselDetailList_VesselDetailSearch,print,button_VesselDetailList_NewVesselDetail,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="help" visible="false" height="24px"
+							label="${c:l('label_Help')}" sclass="z-toolbarbutton"
+							autodisable="button_VesselDetailList_VesselDetailSearch,print,button_VesselDetailList_NewVesselDetail,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_VesselDetailList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_VesselDetailList_VesselTypeID"
+										value="${c:l('label_VesselDetailList_VesselTypeID.value')}" />
+									<listbox
+										id="sortOperator_VesselTypeID" width="43px" mold="select"
+										rows="1" />
+									<textbox id="vesselTypeID"
+										width="200px" maxlength="100" />
+									<label
+										id="label_VesselDetailList_VesselType"
+										value="${c:l('label_VesselDetailList_VesselType.value')}" />
+									<listbox
+										id="sortOperator_VesselType" width="43px" mold="select"
+										rows="1" />
+									<textbox id="vesselType"
+										width="200px" />
+								</row>
+								<row>
+									<label
+										id="label_VesselDetailList_VesselSubType"
+										value="${c:l('label_VesselDetailList_VesselSubType.value')}" />
+									<listbox
+										id="sortOperator_VesselSubType" width="43px" mold="select"
+										rows="1" />
+									<textbox id="vesselSubType"
+										width="200px" maxlength="100" />
+									<label
+										id="label_VesselDetailList_IsActive"
+										value="${c:l('label_VesselDetailList_IsActive.value')}" />
+									<listbox id="sortOperator_IsActive"
+										width="43px" mold="select" rows="1" />
+									<checkbox id="active"
+										checked="false" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label
+										id="label_VesselDetailList_RecordStatus"
+										value="${c:l('label_VesselDetailList_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_VesselDetailList_RecordType"
+										value="${c:l('label_VesselDetailList_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxVesselDetail"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							sizedByContent="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader id="listheader_VesselTypeID"
+									label="${c:l('listheader_VesselTypeID.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_VesselType"
+									label="${c:l('listheader_VesselTypeName.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_VesselSubType"
+									label="${c:l('listheader_VesselSubType.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_IsActive"
+									label="${c:l('listheader_IsActive.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingVesselDetailList" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

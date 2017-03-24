@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://www.springframework.org/schema/aop   
+		   http://www.springframework.org/schema/aop/spring-aop.xsd                        
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+           
+ 	<beans:import resource="springSecurityContext.xml"/>
+ 	
+	<http auto-config="false" use-expressions="false" disable-url-rewriting="true" entry-point-ref="authenticationEntryPoint">
+		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter"/>
+		<custom-filter position="LOGOUT_FILTER" ref="logoutFilter"/>		
+		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
+		<custom-filter after="SESSION_MANAGEMENT_FILTER" ref="sessionFixationProtectionFilter" />
+			
+		<intercept-url pattern="/pages/**" access="IS_AUTHENTICATED_REMEMBERED" />
+		<intercept-url pattern="/WEB-INF/pages/**" access="IS_AUTHENTICATED_REMEMBERED" />
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<csrf request-matcher-ref="csrfSecurityRequestMatcher" />
+
+		<headers>
+			 <cache-control/>
+			 <content-type-options/>
+			 <frame-options policy="SAMEORIGIN"/>
+			 <hsts/>
+			 <header name="server" value="PFFSERVER"/>
+			 <xss-protection/>
+		</headers>
+				
+		<session-management  session-authentication-strategy-ref="sas"/>
+	</http>
+		
+	<beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint" p:loginFormUrl="/loginDialog.zul" />
+		
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="myUserDetailsService">
+			<password-encoder ref="passwordEncoder">
+				<salt-source user-property="token" />
+			</password-encoder>
+		</authentication-provider> 
+	</authentication-manager>
+	
+	<aop:config>
+		<aop:aspect id="LoginLoggingAspect" ref="LoginLoggingPolicyService">
+			<aop:pointcut id="authPointcut"
+				expression="execution(public org.springframework.security.core.Authentication org.springframework.security.authentication.AuthenticationProvider.authenticate(org.springframework.security.core.Authentication))" />
+			<aop:around pointcut-ref="authPointcut" method="loginLogging" />
+		</aop:aspect>
+	</aop:config>
+</beans:beans>

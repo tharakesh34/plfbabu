@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- ====================================================== -->
+	<!--         Define schemas for transactions                -->
+	<!-- ====================================================== -->
+	<tx:advice id="secServiceTxAdvice" transaction-manager="secTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="pfsServiceTxAdvice" transaction-manager="pfsTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<tx:advice id="auditServiceTxAdvice" transaction-manager="auditTransactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- ====================================================== -->
+	<!--         Define Aspect pointcuts and advisors           -->
+	<!--               for the transaction scopes.              -->
+	<!-- ====================================================== -->
+	<aop:config>
+		<aop:pointcut id="guiServiceMethods"
+			expression="execution(* com.pennant.gui.service.*.*(..))" />
+		<aop:pointcut id="serviceMethods"
+			expression="execution(* com.pennant.backend.service.*.*(..))" />
+		<aop:pointcut id="daoMethods"
+			expression="execution(* com.pennant.backend.dao.*.*(..))" />
+
+		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="secServiceTxAdvice" pointcut-ref="serviceMethods" />
+		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="pfsServiceTxAdvice" pointcut-ref="serviceMethods" />
+		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="guiServiceMethods" />
+		<aop:advisor advice-ref="auditServiceTxAdvice" pointcut-ref="serviceMethods" />
+	
+	</aop:config> 
+
+	<!-- ====================================================== -->
+	<!--             Define the transaction manager             -->
+	<!-- ====================================================== -->
+	<bean id="pfsTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="secTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="secDatasource" />
+	</bean>
+	<bean id="auditTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="auditDatasource" />
+	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- Define the property placeholder configurer -->
+	<!-- ====================================================== -->
+	 
+	 <!--                                                                      -->
+	 <!-- The EncryptablePropertyPlaceholderConfigurer will read the           -->
+	 <!-- .properties files and make their values accessible as ${var}         -->
+	 <!--                                                                      -->
+	 <!-- Our "configurationEncryptor" bean (which implements                  --> 
+	 <!-- org.jasypt.encryption.StringEncryptor) is set as a constructor arg.  -->
+	 <!--                                                                      -->
+ 	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+	   <constructor-arg ref="configurationEncryptor" />
+	   	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="locations">
+		<list>
+			<value>file:${APP_ROOT_PATH}/PFF/BASE/config/jdbc.properties</value>
+			<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
+		</list>
+	</property>
+	 </bean>
+	 
+	 	 <!-- Interface config file loading class -->
+
+	<bean id="placeholderConfigMM" class="com.pennant.mqconnection.InterfacePropertiesUtil">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+		<property name="locations">
+			<list>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQConfig.config</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQMessageFormat.config</value>
+			</list>
+		</property>
+	</bean>
+	 
+	 <!--                                                                      -->
+	 <!-- Configuration for encryptor, based on environment variables.         -->
+	 <!--                                                                      -->
+	 <!-- In this example, the encryption password will be read from an        -->
+	 <!-- environment variable called "APP_ENCRYPTION_PASSWORD" which, once    --> 
+	 <!-- the application has been started, could be safely unset.             -->
+	 <!--                                                                      -->
+     <bean id="environmentVariablesConfiguration"
+	     class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+	   <property name="algorithm" value="PBEWithMD5AndDES" />
+	   <property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
+	 </bean>
+	  
+	 <!--                                                                      -->
+	 <!-- The will be the encryptor used for decrypting configuration values.  -->
+	 <!--                                                                      -->
+	 
+	 <bean id="configurationEncryptor"
+	     class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+	   <property name="config" ref="environmentVariablesConfiguration" />
+	 </bean>
+</beans>

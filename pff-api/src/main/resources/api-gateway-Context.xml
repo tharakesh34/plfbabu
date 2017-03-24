@@ -1,0 +1,324 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/integration 	            	 	  		
+	http://www.springframework.org/schema/integration/spring-integration-4.3.xsd">
+
+	wire rest with SI
+
+	<int:gateway id="customerRESTServiceGateway"
+		service-interface="com.pennanttech.pffws.CustomerRESTService">
+		<int:method name="createCustomer" request-channel="createCustomerChannelREST" />
+		<int:method name="updateCustomer" request-channel="updateCustomerChannelREST" />
+		<int:method name="getCustomerDetails" request-channel="getCustomerDetailChannelREST" />
+		<int:method name="deleteCustomer" request-channel="deleteCustomerChannelREST" />
+		
+		<int:method name="getCustomerPersonalInfo" request-channel="getPersonalInfoChannelREST" />
+		<int:method name="updateCustomerPersonalInfo" request-channel="updatePersonalInfoChannelREST" />
+		
+		<int:method name="getCustomerEmployment"  request-channel="getCustomerEmploymentChannelREST" />
+		<int:method name="addCustomerEmployment" request-channel="addCustomerEmploymentChannelREST" />
+		<int:method name="updateCustomerEmployment" request-channel="updateCustomerEmploymentChannelREST" />
+		<int:method name="deleteCustomerEmployment" request-channel="deleteCustomerEmploymentChannelREST" />
+		
+		<int:method name="getCustomerPhoneNumbers"  request-channel="getCustomerPhoneNumbersChannelREST" />
+		<int:method name="addCustomerPhoneNumber" request-channel="addCustomerPhoneNumberChannelREST" />
+		<int:method name="updateCustomerPhoneNumber" request-channel="updateCustomerPhoneNumberChannelREST" />
+		<int:method name="deleteCustomerPhoneNumber" request-channel="deleteCustomerPhoneNumberChannelREST" />
+		
+		<int:method name="getCustomerAddresses"  request-channel="getCustomerAddressesChannelREST" />
+		<int:method name="addCustomerAddress" request-channel="addCustomerAddressChannelREST" />
+		<int:method name="updateCustomerAddress" request-channel="updateCustomerAddressChannelREST" />
+		<int:method name="deleteCustomerAddress" request-channel="deleteCustomerAddressChannelREST" />
+		
+		<int:method name="getCustomerEmails"  request-channel="getCustomerEmailsChannelREST" />
+		<int:method name="addCustomerEmail" request-channel="addCustomerEmailChannelREST" />
+		<int:method name="updateCustomerEmail" request-channel="updateCustomerEmailChannelREST" />
+		<int:method name="deleteCustomerEmail" request-channel="deleteCustomerEmailChannelREST" />
+		
+		<int:method name="getCustomerIncomes"  request-channel="getCustomerIncomesChannelREST" />
+		<int:method name="addCustomerIncome" request-channel="addCustomerIncomeChannelREST" />
+		<int:method name="updateCustomerIncome" request-channel="updateCustomerIncomeChannelREST" />
+		<int:method name="deleteCustomerIncome" request-channel="deleteCustomerIncomeChannelREST" />
+		
+		<int:method name="getCustomerBankingInformation"  request-channel="getCustomerBankingInformationChannelREST" />
+		<int:method name="addCustomerBankingInformation" request-channel="addCustomerBankingInformationChannelREST" />
+		<int:method name="updateCustomerBankingInformation" request-channel="updateCustomerBankingInformationChannelREST" />
+		<int:method name="deleteCustomerBankingInformation" request-channel="deleteCustomerBankingInformationChannelREST" />
+		
+		<int:method name="getCustomerAccountBehaviour"  request-channel="getCustomerAccountBehaviourChannelREST" />
+		<int:method name="addCustomerAccountBehaviour" request-channel="addCustomerAccountBehaviourChannelREST" />
+		<int:method name="updateCustomerAccountBehaviour" request-channel="updateCustomerAccountBehaviourChannelREST" />
+		<int:method name="deleteCustomerAccountBehaviour" request-channel="deleteCustomerAccountBehaviourChannelREST" />
+		
+		<int:method name="getCustomerExternalLiabilities"  request-channel="getCustomerExternalLiabilitiesChannelREST" />
+		<int:method name="addCustomerExternalLiability" request-channel="addCustomerExternalLiabilityChannelREST" />
+		<int:method name="updateCustomerExternalLiability" request-channel="updateCustomerExternalLiabilityChannelREST" />
+		<int:method name="deleteCustomerExternalLiability" request-channel="deleteCustomerExternalLiabilityChannelREST" />
+		
+		<int:method name="getCustomerDocuments"  request-channel="getCustomerDocumentsChannelREST" />
+		<int:method name="addCustomerDocument" request-channel="addCustomerDocumentChannelREST" />
+		<int:method name="updateCustomerDocument" request-channel="updateCustomerDocumentChannelREST" />
+		<int:method name="deleteCustomerDocument" request-channel="deleteCustomerDocumentChannelREST" />
+		
+	</int:gateway>
+
+	<int:gateway id="customerSOAPServiceGateway"
+		service-interface="com.pennanttech.pffws.CustomerSOAPService">
+		<int:method name="createCustomer" request-channel="createCustomerChannelSOAP" />
+		<int:method name="updateCustomer" request-channel="updateCustomerChannelSOAP" />
+		<int:method name="getCustomerDetails" request-channel="getCustomerDetailChannelSOAP" />
+		<int:method name="deleteCustomer" request-channel="deleteCustomerChannelSOAP" />
+		
+		<int:method name="getCustomerPersonalInfo" request-channel="getPersonalInfoChannelSOAP" />
+		<int:method name="updateCustomerPersonalInfo" request-channel="updatePersonalInfoChannelSOAP" />
+		
+		<int:method name="getCustomerEmployment"  request-channel="getCustomerEmploymentChannelSOAP" />
+		<int:method name="addCustomerEmployment" request-channel="addCustomerEmploymentChannelSOAP" />
+		<int:method name="updateCustomerEmployment" request-channel="updateCustomerEmploymentChannelSOAP" />
+		<int:method name="deleteCustomerEmployment" request-channel="deleteCustomerEmploymentChannelSOAP" />
+		
+		<int:method name="getCustomerPhoneNumbers"  request-channel="getCustomerPhoneNumbersChannelSOAP" />
+		<int:method name="addCustomerPhoneNumber" request-channel="addCustomerPhoneNumberChannelSOAP" />
+		<int:method name="updateCustomerPhoneNumber" request-channel="updateCustomerPhoneNumberChannelSOAP" />
+		<int:method name="deleteCustomerPhoneNumber" request-channel="deleteCustomerPhoneNumberChannelSOAP" />
+		
+		<int:method name="getCustomerAddresses"  request-channel="getCustomerAddressesChannelSOAP" />
+		<int:method name="addCustomerAddress" request-channel="addCustomerAddressChannelSOAP" />
+		<int:method name="updateCustomerAddress" request-channel="updateCustomerAddressChannelSOAP" />
+		<int:method name="deleteCustomerAddress" request-channel="deleteCustomerAddressChannelSOAP" />
+		
+		<int:method name="getCustomerEmails"  request-channel="getCustomerEmailsChannelSOAP" />
+		<int:method name="addCustomerEmail" request-channel="addCustomerEmailChannelSOAP" />
+		<int:method name="updateCustomerEmail" request-channel="updateCustomerEmailChannelSOAP" />
+		<int:method name="deleteCustomerEmail" request-channel="deleteCustomerEmailChannelSOAP" />
+		
+		<int:method name="getCustomerIncomes "  request-channel="getCustomerIncomesChannelSOAP" />
+		<int:method name="addCustomerIncome" request-channel="addCustomerIncomeChannelSOAP" />
+		<int:method name="updateCustomerIncome" request-channel="updateCustomerIncomeChannelSOAP" />
+		<int:method name="deleteCustomerIncome" request-channel="deleteCustomerIncomeChannelSOAP" />
+		
+		<int:method name="getCustomerBankingInformation"  request-channel="getCustomerBankingInformationChannelSOAP" />
+		<int:method name="addCustomerBankingInformation" request-channel="addCustomerBankingInformationChannelSOAP" />
+		<int:method name="updateCustomerBankingInformation" request-channel="updateCustomerBankingInformationChannelSOAP" />
+		<int:method name="deleteCustomerBankingInformation" request-channel="deleteCustomerBankingInformationChannelSOAP" />
+		
+		<int:method name="getCustomerAccountBehaviour"  request-channel="getCustomerAccountBehaviourChannelSOAP" />
+		<int:method name="addCustomerAccountBehaviour" request-channel="addCustomerAccountBehaviourChannelSOAP" />
+		<int:method name="updateCustomerAccountBehaviour" request-channel="updateCustomerAccountBehaviourChannelSOAP" />
+		<int:method name="deleteCustomerAccountBehaviour" request-channel="deleteCustomerAccountBehaviourChannelSOAP" />
+		
+		<int:method name="getCustomerExternalLiabilities"  request-channel="getCustomerExternalLiabilitiesChannelSOAP" />
+		<int:method name="addCustomerExternalLiability" request-channel="addCustomerExternalLiabilityChannelSOAP" />
+		<int:method name="updateCustomerExternalLiability" request-channel="updateCustomerExternalLiabilityChannelSOAP" />
+		<int:method name="deleteCustomerExternalLiability" request-channel="deleteCustomerExternalLiabilityChannelSOAP" />
+		
+		<int:method name="getCustomerDocuments"  request-channel="getCustomerDocumentsChannelSOAP" />
+		<int:method name="addCustomerDocument" request-channel="addCustomerDocumentChannelSOAP" />
+		<int:method name="updateCustomerDocument" request-channel="updateCustomerDocumentChannelSOAP" />
+		<int:method name="deleteCustomerDocument" request-channel="deleteCustomerDocumentChannelSOAP" />
+	</int:gateway>
+
+	Gateway for Loan calculator Service :wire rest with SI
+	<int:gateway id="finScheduleRestServiceGateway"
+		service-interface="com.pennanttech.pffws.FinanceScheduleRestService">
+		<int:method name="createFinanceSchedule" request-channel="createFinSchdChannelREST" />
+		<int:method name="getFinanceInquiry" request-channel="getFinInquiryChannelREST" />
+	</int:gateway>
+
+	Gateway for Loan calculator Service :wire SOAP with SI
+	<int:gateway id="finScheduleSoapServiceGateway"
+		service-interface="com.pennanttech.pffws.FinanceScheduleSoapService">
+		<int:method name="createFinanceSchedule" request-channel="createFinSchdChannelSOAP" />
+		<int:method name="getFinanceInquiry" request-channel="getFinInquiryChannelSOAP" />
+	</int:gateway>
+
+	Gateway for Finance ServiceInstruction :wire rest with SI
+	<int:gateway id="finInstructionRESTServiceGateway"
+		service-interface="com.pennanttech.pffws.FinServiceInstRESTService">
+		<int:method name="addRateChange" request-channel="addRateChangeChannelREST"/>
+		<int:method name="changeRepayAmt" request-channel="changeRepayAmtChannelREST"/>
+		<int:method name="deferments" request-channel="defermentsChannelREST"/>
+		<int:method name="addTerms" request-channel="addTermsChannelREST"/>
+		<int:method name="removeTerms" request-channel="removeTermsChannelREST"/>
+		<int:method name="recalculate" request-channel="recalculateChannelREST"/>
+		<int:method name="changeInterest" request-channel="changeInterestChannelREST"/>
+		<int:method name="addDisbursement" request-channel="addDisbursementChannelREST"/>
+		<int:method name="partialSettlement" request-channel="partialSettlementChannelREST"/>
+		<int:method name="earlySettlement" request-channel="earlySettlementChannelREST"/>
+		<int:method name="changeInstallmentFrq" request-channel="changeInstallmentFrqChannelREST"/>
+		<int:method name="reScheduling" request-channel="reSchedulingChannelREST"/>
+		<int:method name="updateLoanBasicDetails" request-channel="updateLoanBasicDetailsChannelREST"/>
+		<int:method name="updateLoanPenaltyDetails" request-channel="updateLoanPenaltyChannelREST"/>
+	</int:gateway>
+
+	Gateway for Finance ServiceInstruction :wire SOAP with SI
+	<int:gateway id="finInstructionSOAPServiceGateway"
+		service-interface="com.pennanttech.pffws.FinServiceInstSOAPService">
+		<int:method name="addRateChange" request-channel="addRateChangeChannelSOAP" />
+		<int:method name="changeRepayAmt" request-channel="changeRepayAmtChannelSOAP" />
+		<int:method name="deferments" request-channel="defermentsChannelSOAP" />
+		<int:method name="addTerms" request-channel="addTermsChannelSOAP" />
+		<int:method name="removeTerms" request-channel="removeTermsChannelSOAP"/>
+		<int:method name="recalculate" request-channel="recalculateChannelSOAP"/>
+		<int:method name="changeInterest" request-channel="changeInterestChannelSOAP"/>
+		<int:method name="addDisbursement" request-channel="addDisbursementChannelSOAP"/>
+		<int:method name="partialSettlement" request-channel="partialSettlementChannelSOAP"/>
+		<int:method name="earlySettlement" request-channel="earlySettlementChannelSOAP"/>
+		<int:method name="changeInstallmentFrq" request-channel="changeInstallmentFrqChannelSOAP"/>
+		<int:method name="reScheduling" request-channel="reSchedulingChannelSOAP"/>
+		<int:method name="updateLoanBasicDetails" request-channel="updateLoanBasicDetailsChannelSOAP"/>
+		<int:method name="updateLoanPenaltyDetails" request-channel="updateLoanPenaltyChannelSOAP"/>
+	</int:gateway>
+
+	Gateway for FinanceType
+	<int:gateway id="financeTypeSoapServiceGateway"
+		service-interface="com.pennanttech.pffws.FinanceTypeSoapService">
+		<int:method name="getFinanceTypeDetails" request-channel="getFinanceTypeChannelSOAP" />
+		<int:method name="getStepPolicyDetails" request-channel="getStepPolicyDetailChannelSOAP" />
+		<int:method name="getLoanTypes" request-channel="getLoanTypesChannelSOAP" />
+	</int:gateway>
+
+	<int:gateway id="financeTypeRestServiceGateway"
+		service-interface="com.pennanttech.pffws.FinanceTypeRestService">
+		<int:method name="getFinanceTypeDetails" request-channel="getFinanceTypeChannelREST" />
+		<int:method name="getStepPolicyDetails" request-channel="getStepPolicyDetailChannelREST" />
+		<int:method name="getLoanTypes" request-channel="getLoanTypesChannelREST" />
+	</int:gateway>
+
+	Gateway for PromotionType
+	<int:gateway id="promotionTypeSoapServiceGateway"
+		service-interface="com.pennanttech.pffws.PromotionTypeSoapService">
+		<int:method name="getPromotion" request-channel="getPromotionChannelSOAP" />
+		<int:method name="getStepPolicy" request-channel="getStepPolicyChannelSOAP" />
+		<int:method name="getPromotions" request-channel="getPromotionsChannelSOAP" />
+	</int:gateway>
+
+	<int:gateway id="promotionTypeRestServiceGateway"
+		service-interface="com.pennanttech.pffws.PromotionTypeRestService">
+		<int:method name="getPromotion" request-channel="getPromotionChannelREST" />
+		<int:method name="getStepPolicy" request-channel="getStepPolicyChannelREST" />
+		<int:method name="getPromotions" request-channel="getPromotionsChannelREST" />
+	</int:gateway>
+
+	Gateway for Finance Creation
+	<int:gateway id="createFinanceSoapGateway"
+		service-interface="com.pennanttech.pffws.CreateFinanceSoapService">
+		<int:method name="createFinance" request-channel="createFinanceChannelSOAP" />
+		<int:method name="createFinanceWithWIF" request-channel="createFinanceWithWIFChannelSOAP" />
+		<int:method name="getFinanceDetails" request-channel="getFinanceDetailChannelSOAP" />
+	</int:gateway>
+
+	<int:gateway id="createFinanceRestGateway"
+		service-interface="com.pennanttech.pffws.CreateFinanceRestService">
+		<int:method name="createFinance" request-channel="createFinanceChannelREST" />
+		<int:method name="createFinanceWithWIF" request-channel="createFinanceWithWIFChannelREST" />
+		<int:method name="getFinanceDetails" request-channel="getFinanceDetailChannelREST" />
+	</int:gateway>
+
+	Gateway for Mandate Service :wire rest with SI
+	<int:gateway id="mandateRestGateway" service-interface="com.pennanttech.pffws.MandateRestService">
+		<int:method name="getMandate" request-channel="getMandateChannelREST" />
+		<int:method name="createMandate" request-channel="createMandateChannelREST" />
+		<int:method name="updateMandate" request-channel="updateMandateChannelREST" />
+		<int:method name="deleteMandate" request-channel="deleteMandateChannelREST" />
+		<int:method name="getMandates" request-channel="getMandatesChannelREST" />
+		<int:method name="loanMandateSwapping" request-channel="loanMandateSwappingChannelREST" />
+	</int:gateway>
+
+	Gateway for Mandate Service :wire SOAP with SI
+	<int:gateway id="mandateSoapGateway" service-interface="com.pennanttech.pffws.MandateSoapService">
+		<int:method name="getMandate" request-channel="getMandateChannelSOAP" />
+		<int:method name="createMandate" request-channel="createMandateChannelSOAP" />
+		<int:method name="updateMandate" request-channel="updateMandateChannelSOAP" />
+		<int:method name="deleteMandate" request-channel="deleteMandateChannelSOAP" />
+		<int:method name="getMandates" request-channel="getMandatesChannelSOAP" />
+		<int:method name="loanMandateSwapping" request-channel="loanMandateSwappingChannelSOAP" />
+	</int:gateway>
+
+	Gateway for Limit Structure Service :wire rest with SI
+	<int:gateway id="limitRestGateway" service-interface="com.pennanttech.pffws.LimitRestService">
+		<int:method name="getCustomerLimitStructure" request-channel="limitStructureChannelREST"/>
+		<int:method name="getLimitSetup" request-channel="limitSetupChannelREST"/>
+		<int:method name="createLimitSetup" request-channel="createLimitSetupChannelREST"/>
+		<int:method name="updateLimitSetup" request-channel="updateLimitSetupChannelREST"/>
+		<int:method name="reserveLimit" request-channel="reserveLimitChannelREST" />
+		<int:method name="cancelLimitReserve" request-channel="cancelLimitReserveChannelREST"/>
+	</int:gateway>
+
+	Gateway for Limit Structure Service :wire SOAP with SI
+	<int:gateway id="limitSoapGateway" service-interface="com.pennanttech.pffws.LimitSoapService">
+		<int:method name="getCustomerLimitStructure" request-channel="limitStructureChannelSOAP"/>
+		<int:method name="getLimitSetup" request-channel="limitSetupChannelSOAP"/>
+		<int:method name="createLimitSetup" request-channel="createLimitSetupChannelSOAP"/>
+		<int:method name="updateLimitSetup" request-channel="updateLimitSetupChannelSOAP"/>
+		<int:method name="reserveLimit" request-channel="reserveLimitChannelSOAP"/>
+		<int:method name="cancelLimitReserve" request-channel="cancelLimitReserveChannelSOAP"/>
+	</int:gateway>
+
+	Gateway for Beneficiary Service :wire rest with SI
+	<int:gateway id="beneficiaryRestGateway"
+		service-interface="com.pennanttech.pffws.BeneficiaryRestService">
+		<int:method name="getBeneficiary" request-channel="getBeneficiaryChannelREST" />
+		<int:method name="createBeneficiary" request-channel="createBeneficiaryChannelREST" />
+		<int:method name="updateBeneficiary" request-channel="updateBeneficiaryChannelREST" />
+		<int:method name="deleteBeneficiary" request-channel="deleteBeneficiaryChannelREST" />
+		<int:method name="getBeneficiaries" request-channel="getBeneficiariesChannelREST" />
+	</int:gateway>
+
+	Gateway for Beneficiary Service :wire SOAP with SI
+	<int:gateway id="beneficiarySoapGateway"
+		service-interface="com.pennanttech.pffws.BeneficiarySoapService">
+		<int:method name="getBeneficiary" request-channel="getBeneficiaryChannelSOAP" />
+		<int:method name="createBeneficiary" request-channel="createBeneficiaryChannelSOAP" />
+		<int:method name="updateBeneficiary" request-channel="updateBeneficiaryChannelSOAP" />
+		<int:method name="deleteBeneficiary" request-channel="deleteBeneficiaryChannelSOAP" />
+		<int:method name="getBeneficiaries" request-channel="getBeneficiariesChannelSOAP" />
+	</int:gateway>
+
+	Gateway for Collateral Service :wire rest with SI
+	<int:gateway id="collateralRestGateway"
+		service-interface="com.pennanttech.pffws.CollateralRestService">
+		<int:method name="getCollateralType" request-channel="getCollateralTypeChannelREST" />
+		<int:method name="createCollateral" request-channel="createCollateralChannelREST" />
+		<int:method name="updateCollateral" request-channel="updateCollateralChannelREST" />
+		<int:method name="deleteCollateral" request-channel="deleteCollateralChannelREST" />
+		<int:method name="getCollaterals" request-channel="getCollateralsChannelREST" />
+	</int:gateway>
+
+	Gateway for Collateral Service :wire SOAP with SI
+	<int:gateway id="collateralSoapGateway"
+		service-interface="com.pennanttech.pffws.CollateralSoapService">
+		<int:method name="getCollateralType" request-channel="getCollateralTypeChannelSOAP" />
+		<int:method name="createCollateral" request-channel="createCollateralChannelSOAP" />
+		<int:method name="updateCollateral" request-channel="updateCollateralChannelSOAP" />
+		<int:method name="deleteCollateral" request-channel="deleteCollateralChannelSOAP" />
+		<int:method name="getCollaterals" request-channel="getCollateralsChannelSOAP" />
+	</int:gateway>
+
+
+Gateway for Flag Service :wire rest with SI
+	<int:gateway id="flagRestGateway" service-interface="com.pennanttech.pffws.FinanceFlagsRestService">
+		<int:method name="getLoanFlags" request-channel="getLoanFlagsChannelREST" />
+		<int:method name="addLoanFlags" request-channel="addLoanFlagsChannelREST" />
+		<int:method name="deleteLoanFlags" request-channel="deleteLoanFlagsChannelREST" />
+	</int:gateway>
+
+	Gateway for Flag Service :wire SOAP with SI
+	<int:gateway id="flagSoapGateway" service-interface="com.pennanttech.pffws.FinanceFlagsSoapService">
+		<int:method name="getLoanFlags" request-channel="getLoanFlagsChannelSOAP" />
+		<int:method name="addLoanFlags" request-channel="addLoanFlagsChannelSOAP" />
+		<int:method name="deleteLoanFlags" request-channel="deleteLoanFlagsChannelSOAP" />
+	</int:gateway>
+	
+	SecRoles Service
+	<int:gateway id="secRolesSoapServiceGateway" service-interface="com.pennanttech.pffws.SecRolesSoapService">
+		<int:method name="getSecRoles" request-channel="getSecRolesChannelSoap" />
+	</int:gateway>
+
+	<int:gateway id="secRolesRestServiceGateway" service-interface="com.pennanttech.pffws.SecRolesRestService">
+		<int:method name="getSecRoles" request-channel="getSecRolesChannelRest" />
+	</int:gateway>
+</beans> -->

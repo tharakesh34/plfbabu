@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_StepPolicyDetailDialog" border="normal"
+		apply="${stepPolicyDetailDialogCtrl}" width="80%" height="80%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutStepPolicyDetail">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" label="Delete"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_StepPolicyDetailDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" label="Help" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="${c:l('btnClose.tooltiptext')}" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false"
+				style="padding:5px;">
+				<groupbox id="gb_stepPolicyDetails" closable="false">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label id="label_StepPolicyDetailDialog_PolicyCode"
+									value="${c:l('label_StepPolicyDetailDialog_PolicyCode.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="policyCode" width="200px" readonly="true" />
+								</hbox>
+								<label id="label_StepPolicyDetailDialog_PolicyDesc"
+									value="${c:l('label_StepPolicyDetailDialog_PolicyDesc.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<textbox id="policyDesc" width="300px" readonly="true" />
+								</hbox>
+							</row>
+							<!-- <row>
+								<label id="label_StepPolicyDetailDialog_NoOfSteps"
+									value="${c:l('label_StepPolicyDetailDialog_NoOfSteps.value')}" />
+								<intbox id="noOfSteps" width="40px" readonly="true" />
+							</row> -->
+							<row visible="true">
+								<label id="label_StepPolicyDetailDialog_StepNumber"
+									value="${c:l('label_StepPolicyDetailDialog_StepNumber.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<intbox id="stepNumber" width="40px" />
+								</hbox>
+								<label id="label_StepPolicyDetailDialog_TenorSplitPerc"
+									value="${c:l('label_StepPolicyDetailDialog_TenorSplitPerc.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<decimalbox id="tenorSplitPerc" width="120px"  />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label id="label_StepPolicyDetailDialog_RateMargin"
+									value="${c:l('label_StepPolicyDetailDialog_RateMargin.value')}" />
+								<hbox>
+									<space spacing="2px"/>
+									<decimalbox id="rateMargin" width="120px" />
+								</hbox>
+								<label id="label_StepPolicyDetailDialog_EMISplitPerc"
+									value="${c:l('label_StepPolicyDetailDialog_EMISplitPerc.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<decimalbox id="emiSplitPerc" width="120px"  />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south height="0px" border="none" style="padding:5px;">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_StepPolicyDetailDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

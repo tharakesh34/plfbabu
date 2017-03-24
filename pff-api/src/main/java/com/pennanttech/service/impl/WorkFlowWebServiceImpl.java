@@ -1,0 +1,169 @@
+package com.pennanttech.service.impl;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.service.WorkFlowDetailsService;
+import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.pff.core.engine.WorkflowEngine;
+import com.pennanttech.pffws.WorkFlowRESTService;
+import com.pennanttech.pffws.WorkFlowSOAPService;
+import com.pennanttech.ws.service.APIErrorHandlerService;
+
+@Service
+public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPService {
+	private final static Logger logger = Logger.getLogger(WorkFlowWebServiceImpl.class);
+	@Autowired
+	WorkFlowDetailsService workFlowDetailsService;
+	private  final String Create = "create";
+	private  final String Update = "update";
+	private  final String Get = "get";
+
+	@Override
+	public WorkFlowDetails createWorkFlow(WorkFlowDetails workFlowDetails) throws ServiceException {
+		logger.debug("Entering");
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		WorkFlowDetails response = new WorkFlowDetails();
+		workFlowDetails.setNewRecord(true);
+		workFlowDetails.setWorkflowId(0);
+		workFlowDetails.setLastMntBy(userDetails.getLoginUsrID());
+		workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create); // validating object
+			for(ErrorDetails errDetail : errorDetails) {// returning in case of exception
+				WSReturnStatus status = new WSReturnStatus();
+				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnText(errDetail.getError());
+				response.setReturnStatus(status);
+				return response;
+			}
+			// proceeding for insertion
+			workFlowDetails.setNewRecord(true);
+			workFlowDetails.setWorkFlowActive(true); 
+			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting getting FirstTaskOwners and Actors.
+			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
+			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
+			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
+			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
+					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+
+			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
+			workFlowDetails = (WorkFlowDetails) auditHeader.getAuditDetail().getModelData();
+
+			doEmptyResponseObject(workFlowDetails);
+
+			response.setWorkFlowActive(true);
+			response.setWorkFlowId(workFlowDetails.getId());
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public WorkFlowDetails updateWorkFlow(WorkFlowDetails workFlowDetails) throws ServiceException {
+		logger.debug("Entering");
+		WorkFlowDetails response = new WorkFlowDetails();
+		try {
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			workFlowDetails.setLastMntBy(userDetails.getLoginUsrID());
+			workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Update);
+
+			for(ErrorDetails errDetail : errorDetails) {
+				WSReturnStatus status = new WSReturnStatus();
+				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnText(errDetail.getError());
+				response.setReturnStatus(status);
+				return response;
+			}
+			// proceeding for updation
+			workFlowDetails.setNewRecord(false);
+			workFlowDetails.setBefImage(workFlowDetails);
+			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting getting FirstTaskOwners and Actors.
+			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
+			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
+			workFlowDetails.setVersion(workFlowDetailsService.getWorkFlowDetailsVersionByID(workFlowDetails.getWorkflowId()));
+			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
+			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
+					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
+			doEmptyResponseObject(response);
+			response.setWorkflowId( ((WorkFlowDetails) auditHeader.getAuditDetail().getModelData()).getId());
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		} catch (Exception e) {
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("112121", "Something Went Wrong"));
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public WorkFlowDetails getWorkFlowDetails(String workFlowId) throws ServiceException {
+		logger.debug("Entering");
+		WorkFlowDetails details = new WorkFlowDetails();
+			if(StringUtils.isNotBlank(workFlowId))
+			details.setWorkflowId(Long.valueOf(workFlowId));
+			List<ErrorDetails> errorDetails = workFlowDetailsService.doValidations(details, Get);
+			for(ErrorDetails errDetail : errorDetails) {
+				WSReturnStatus status = new WSReturnStatus();
+				status.setReturnCode(errDetail.getErrorCode());
+				status.setReturnText(errDetail.getError());
+				details.setReturnStatus(status);
+				return details;
+			}
+			details = workFlowDetailsService.getWorkFlowDetailsByID(Long.valueOf(workFlowId)); // getting result
+			details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		return details;
+	}
+
+	/**
+	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
+	 * 
+	 * @param response
+	 * @throws Exception
+	 */
+	private void doEmptyResponseObject(WorkFlowDetails response) {
+		response.setWorkFlowType(null);
+		response.setWorkFlowSubType(null);
+		response.setWorkFlowDesc(null);
+		response.setWorkFlowXml(null);
+		response.setWorkFlowRoles(null);
+		response.setFirstTaskOwner(null);
+		response.setJsonDesign(null);
+	}
+	
+	private List<String> getFirstTaskOwnersNActors(String xml){
+		String actrors = "";
+		List<String> firstTaskOwnersAndActors =  new ArrayList<String>();
+		try{
+		WorkflowEngine workflowEngine = new WorkflowEngine(xml);
+		firstTaskOwnersAndActors.add(workflowEngine.firstTaskOwner());
+		for (String actor : workflowEngine.getActors(false)) {
+			actrors += actor+";";
+		}
+		firstTaskOwnersAndActors.add(actrors.substring(0, actrors.length() - 1));
+		System.out.println(workflowEngine.firstTaskOwner());
+		System.out.println(workflowEngine.getActors(false));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return firstTaskOwnersAndActors;
+		
+	}
+}
