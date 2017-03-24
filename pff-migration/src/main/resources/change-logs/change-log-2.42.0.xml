@@ -90,4 +90,123 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="6" author="Kesav">
+		<sql>
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONFEES_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONFEES_MAKER','WF Maker for Promotion Fees', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_PromotionFeesDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionFeesDialog_btnDelete', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONFEES_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnSave');
+			Delete from SecRights where RightName = 'button_PromotionFeesDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionFeesDialog_btnSave', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnNew');
+			Delete from SecRights where RightName = 'button_PromotionFeesDialog_btnNew';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionFeesDialog_btnNew', 'PromotionList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_PromotionCode');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_PromotionCode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_PromotionCode', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_PromotionCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeTypeID');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_FeeTypeID';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_FeeTypeID', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeTypeID'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FinEvent');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_FinEvent';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_FinEvent', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FinEvent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeOrder');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_FeeOrder';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_FeeOrder', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeOrder'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeScheduleMethod');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_FeeScheduleMethod';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_FeeScheduleMethod', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_FeeScheduleMethod'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_CalculationType');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_CalculationType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_CalculationType', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_CalculationType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_RuleCode');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_RuleCode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_RuleCode', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_RuleCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Amount');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_Amount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_Amount', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Amount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Percentage');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_Percentage';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_Percentage', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Percentage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_CalculateOn');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_CalculateOn';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_CalculateOn', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_CalculateOn'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwDeviation');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_AlwDeviation';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_AlwDeviation', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwDeviation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_MaxWaiverPerc');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_MaxWaiverPerc';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_MaxWaiverPerc', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_MaxWaiverPerc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFee');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFee';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_AlwModifyFee', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFee'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFeeSchdMthd');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFeeSchdMthd';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_AlwModifyFeeSchdMthd', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_AlwModifyFeeSchdMthd'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Active');
+			Delete from SecRights where RightName = 'PromotionFeesDialog_Active';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionFeesDialog_Active', 'PromotionFeesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionFeesDialog_Active'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_APPROVER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONFEES_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'PROMOTIONFEES_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONFEES_APPROVER','WF Approver for Promotion Fees', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONFEES_APPROVER'), (Select RightID from SecRights where RightName = 'button_PromotionFeesDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONFEES_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
