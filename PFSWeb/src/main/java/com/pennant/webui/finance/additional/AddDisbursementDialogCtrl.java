@@ -609,7 +609,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setEventFromDate(this.fromDate.getValue());
 			finMain.setRecalFromDate(this.fromDate.getValue());
 			finMain.setRecalToDate(finMain.getMaturityDate());
-			finMain.setRepayRateBasis(CalculationConstants.RATE_BASIS_D);
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finServiceInstruction.setFromDate(this.fromDate.getValue());
 			finServiceInstruction.setRecalFromDate(this.fromDate.getValue());
