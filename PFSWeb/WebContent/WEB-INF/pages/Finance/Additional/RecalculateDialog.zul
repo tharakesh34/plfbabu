@@ -35,7 +35,7 @@
 									</combobox>
 								</hbox>
 							</row>
-							<row>
+							<row id="row_recalType">
 								<label
 									id="label_RecalculateDialog_ReCalType"
 									value="${c:l('label_RecalculateDialog_RecalType.value')}" />

@@ -89,6 +89,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Combobox						cbTillDate;
 	protected Combobox						cbEventFromDate;
 	protected Combobox						cbReCalType;
+	protected Row							row_recalType;
 	protected Row							tillDateRow;
 	protected Checkbox						pftIntact;
 	protected Label							label_RecalculateDialog_TillDate;
@@ -226,9 +227,18 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
 				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,";
 			}
-
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), excldValues);
+			
+			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)){
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
+						PennantStaticListUtil.getSchCalCodes(), excldValues);
+				this.row_recalType.setVisible(false);
+				this.cbReCalType.setDisabled(true);
+				this.window_RecalculateDialog.setTitle(Labels.getLabel("window_AddTermRecalculateDialog.title"));
+			}else{
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(), excldValues);
+			}
+			
 			fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails());
 			fillSchDates(this.cbTillDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate());
 		}

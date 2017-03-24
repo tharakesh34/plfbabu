@@ -58,7 +58,7 @@
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
 								sclass="toolbar-center">
-								<label id="label_OdFacility"
+								<label id="windowTitle"
 									value="${c:l('window_OverdraftFacilityFinanceMainDialog.title')}"
 									sclass="label-heading" />
 							</toolbar>

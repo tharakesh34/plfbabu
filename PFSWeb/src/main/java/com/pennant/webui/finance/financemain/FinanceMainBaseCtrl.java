@@ -269,6 +269,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long								serialVersionUID		= -1171206258809472640L;
 	private final static Logger								logger					= Logger.getLogger(FinanceMainBaseCtrl.class);
 
+	protected Label											windowTitle;
+	
 	protected Datebox										finStartDate;
 	protected Textbox										promotionProduct;
 	protected Textbox										finDivisionName;
@@ -3800,6 +3802,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Set Unvisible fields based on Product (OD Facility)
 			if (isOverDraft) {
 				doVisibleODFacilityFields();
+			}
+			
+			// Setting tile Name based on Service Action
+			if(StringUtils.isNotEmpty(moduleDefiner)){
+				//this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
 			}
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {

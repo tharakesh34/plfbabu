@@ -6,19 +6,16 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -33,10 +30,6 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window 		window_ODFacilityFinanceMainDialog; 					
-	
-	protected Label 		label_OdFacility;
-
-	public int formatter;
 	/**
 	 * default constructor.<br>
 	 */
@@ -104,8 +97,6 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		}
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		
-		formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
@@ -123,12 +114,6 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		setMainWindow(window_ODFacilityFinanceMainDialog);
 		setProductCode("ODFacility");
 		
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,moduleDefiner)){
-			this.label_OdFacility.setValue(Labels.getLabel("label_OdFacility.value"));
-		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,moduleDefiner)){
-			this.label_OdFacility.setValue(Labels.getLabel("label_OdFacility_AddDisbursment.value"));
-		}
-		
 		if(financeMain.isAllowRepayRvw()){
 			this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
 		}else{
@@ -139,7 +124,6 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 
 		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52+ "px");
 
-		
 		// set Field Properties
 		doSetFieldProperties();
 		
@@ -159,7 +143,7 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 		
 		this.accountsOfficer.setMandatoryStyle(false);
 		this.dsaCode.setMandatoryStyle(false);
-		this.finAssetValue.setProperties(true, formatter);
+		this.finAssetValue.setProperties(true, CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 		this.repayPftFrq.setMandatoryStyle(true);
 		
 		if (getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
