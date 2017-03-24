@@ -12,6 +12,11 @@
 	<property name="call.collength" value="LEN" dbms="mssql" />
 	<property name="call.collength" value="LENGTH" dbms="oracle" />
 
-
+<changeSet id="01" author="Madhubabu">
+		<sql>
+		update ErrorDetails set ErrorMessage='Select either planned emi holiday (OR) Multiple disbursement' where ErrorCode='30574';
+		update ErrorDetails set ErrorMessage='Select either planned emi holiday (OR) Stepping loan' where ErrorCode='30573';
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
