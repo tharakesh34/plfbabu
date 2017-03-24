@@ -501,6 +501,10 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				this.custEID.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
+						PennantRegularExpressions.REGEX_PASSPORT, true));
+			}else{
+				this.custEID.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_BlacklistCustomerDialog_CustEID.value"),
 						PennantRegularExpressions.REGEX_PANNUMBER, true));
 			}
 			
