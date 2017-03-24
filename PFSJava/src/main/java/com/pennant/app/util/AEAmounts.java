@@ -302,13 +302,13 @@ public class AEAmounts implements Serializable {
 				// do nothing
 			} else if (valueDate.after(curSchdDate) && valueDate.compareTo(nextSchdDate) <= 0) {
 				int days = getNoDays(valueDate, curSchdDate);
-				int previouDays = nextSchd.getNoOfDays();
-				tdPftAmortized = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(previouDays), 0, RoundingMode.HALF_DOWN);
+				int daysInCurPeriod = nextSchd.getNoOfDays();
+				tdPftAmortized = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
 			} else {
 				tdPftAmortized = nextSchd.getProfitCalc();
 			}
 
-			if (curSchd.isRepayOnSchDate() && curSchdDate.compareTo(valueDate) <= 0) {
+			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) <= 0) {
 				if ((!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())) {
 					finState = CalculationConstants.FINSTATE_PD;
 				}
@@ -324,8 +324,8 @@ public class AEAmounts implements Serializable {
 					// do nothing
 				} else if (dateSusp.after(curSchdDate) && dateSusp.compareTo(nextSchdDate) <= 0) {
 					int days = getNoDays(dateSusp, curSchdDate);
-					int previouDays = nextSchd.getNoOfDays();
-					tdPftAmortizedPD = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(previouDays), 0, RoundingMode.HALF_DOWN);
+					int daysInCurPeriod = nextSchd.getNoOfDays();
+					tdPftAmortizedPD = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
 				} else {
 					tdPftAmortizedPD = nextSchd.getProfitCalc();
 				}

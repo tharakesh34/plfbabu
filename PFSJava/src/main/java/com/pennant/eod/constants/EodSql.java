@@ -14,7 +14,8 @@ public class EodSql {
 			+ " S.InsSchd SchdIns, S.SchdInsPaid SchdInsPaid, (S.InsSchd - S.SchdInsPaid) SchdInsBal,"
 			+ " S.AdvCalRate, S.AdvProfit, S.CalculatedRate "
 			+ " FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? "
-			+ " AND  (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))  AND F.FinIsActive = 1 "
+			//AND  (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))
+			+ " AND F.FinIsActive = 1 "
 			+ " AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
 			+ "   OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
 			+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
@@ -32,8 +33,10 @@ public class EodSql {
 			+ " WHERE RQ.CustomerID=? "
 			+ " ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor , RQ.LinkedFinRef ASC ";
 
-	public static final String accrual = "SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp,P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate FROM "
-			+ "FinanceMain F  INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference WHERE P.FinIsActive = 1  AND F.FinStartDate <=? And F.CustID=? ";
+	//P.AcrTillLBD, P.TdPftAmortizedSusp,P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate
+	//INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference
+	public static final String accrual = "SELECT F.FinReference FROM "
+			+ "FinanceMain F  WHERE F.FinIsActive = 1  AND F.FinStartDate <=? And F.CustID=? ";
 
 	public static final String rateReview = " SELECT fm.FinReference  FinReference FROM FinanceMain  fm  WHERE fm.FinIsActive = 1  AND AllowGrcPftRvw = 1 AND "
 			+ "LastRepayRvwDate < GrcPeriodEndDate AND NextGrcPftRvwDate = ? AND GraceBaseRate IS NOT NULL AND GraceBaseRate <> '' and fm.CustID=? UNION"

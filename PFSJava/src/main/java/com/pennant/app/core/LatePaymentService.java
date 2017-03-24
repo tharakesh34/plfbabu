@@ -283,8 +283,7 @@ public class LatePaymentService extends ServiceHelper {
 		finODDetails.setCustID(queue.getCustomerID());
 		// Prepare Overdue Penalty rate Details & set to Finance Overdue
 		// Details
-		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinReference(),
-				"_AView");
+		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinReference(), "_AView");
 		if (penaltyRate != null) {
 			finODDetails.setApplyODPenalty(penaltyRate.isApplyODPenalty());
 			finODDetails.setODIncGrcDays(penaltyRate.isODIncGrcDays());
@@ -356,8 +355,8 @@ public class LatePaymentService extends ServiceHelper {
 			return;
 		}
 
-		List<OverdueChargeRecovery> chargeRecoveries = recoveryDAO.getOverdueChargeRecovery(
-				queue.getFinReference(), queue.getRpyDate());
+		List<OverdueChargeRecovery> chargeRecoveries = recoveryDAO.getOverdueChargeRecovery(queue.getFinReference(),
+				queue.getRpyDate());
 		List<OverdueChargeRecovery> profitList = new ArrayList<OverdueChargeRecovery>();
 
 		Iterator<OverdueChargeRecovery> it = chargeRecoveries.iterator();
@@ -439,10 +438,10 @@ public class LatePaymentService extends ServiceHelper {
 	 * Method for Preparation of Overdue Recovery Penalty Record
 	 * 
 	 * @param odDetails
-	 * @param dateValueDate
+	 * @param odCalculatedDate
 	 * @param repayQueue
 	 */
-	private void processLPPenalty(FinODDetails odDetails, Date dateValueDate, FinRepayQueue repayQueue) {
+	private void processLPPenalty(FinODDetails odDetails, Date valueDate, FinRepayQueue repayQueue) {
 		logger.debug("Entering");
 
 		Date finODSchdDate = odDetails.getFinODSchdDate();
@@ -461,7 +460,7 @@ public class LatePaymentService extends ServiceHelper {
 
 		Date newPenaltyDate = DateUtility.addDays(finODSchdDate, odDetails.getODGraceDays());
 
-		if (newPenaltyDate.compareTo(dateValueDate) > 0) {
+		if (newPenaltyDate.compareTo(valueDate) > 0) {
 			return;
 		}
 
@@ -472,10 +471,11 @@ public class LatePaymentService extends ServiceHelper {
 			finODDateCal = DateUtility.addDays(finODSchdDate, odDetails.getODGraceDays());
 		}
 
-		OverdueChargeRecovery prvRecovery = recoveryDAO.getChargeRecoveryById(finReference, finODSchdDate,
-				finODFor);
+		OverdueChargeRecovery prvRecovery = recoveryDAO.getChargeRecoveryById(finReference, finODSchdDate, finODFor);
 
 		OverdueChargeRecovery recovery = null;
+
+		Date businessDate = DateUtility.addDays(valueDate, 1);
 
 		if (prvRecovery != null) {
 
@@ -488,31 +488,34 @@ public class LatePaymentService extends ServiceHelper {
 				if (odDetails.getFinCurODAmt().compareTo(recovery.getFinCurODAmt()) != 0
 						|| odDetails.getODChargeAmtOrPerc().compareTo(recovery.getPenaltyAmtPerc()) != 0) {
 
-					recovery.setMovementDate(dateValueDate);
+					//recovery.setMovementDate(dateValueDate);
 					recovery.setRcdCanDel(false);
 					// overdue changed create new record
 					saveNewRecord = true;
 
 				} else {
-					recovery.setODDays(DateUtility.getDaysBetween(dateValueDate, finODDateCal) + 1);
-					recovery.setPenalty(calculateAmount(odDetails, finODDateCal, dateValueDate, profitDaysBasis));
+					finODDateCal = recovery.getMovementDate();
+					recovery.setODDays(DateUtility.getDaysBetween(businessDate, finODDateCal));
+					divedAmountToMatchPercentage(odDetails);
+					recovery.setPenalty(calculateAmount(odDetails, finODDateCal, businessDate, profitDaysBasis));
 					recovery.setPenaltyBal(recovery.getPenalty().subtract(recovery.getPenaltyPaid()));
 				}
 
 				recoveryDAO.updateChargeRecovery(recovery);
 
 				if (saveNewRecord) {
-					createNewLPPenalty(odDetails, recovery.getMovementDate(), dateValueDate, profitDaysBasis,
-							recovery.getSeqNo());
+					createNewLPPenalty(odDetails, valueDate, businessDate, profitDaysBasis, recovery.getSeqNo(),
+							valueDate);
 				}
 
 			} else {
-				recovery.setODDays(DateUtility.getDaysBetween(dateValueDate, finODDateCal) + 1);
+				finODDateCal = recovery.getMovementDate();
+				recovery.setODDays(DateUtility.getDaysBetween(businessDate, finODDateCal));
 				recoveryDAO.updateChargeRecovery(recovery);
 			}
 
 		} else {
-			createNewLPPenalty(odDetails, finODDateCal, dateValueDate, profitDaysBasis, 0);
+			createNewLPPenalty(odDetails, finODDateCal, businessDate, profitDaysBasis, 0, valueDate);
 		}
 
 		updateLPPenaltyOrProfitTotals(odDetails);
@@ -522,10 +525,40 @@ public class LatePaymentService extends ServiceHelper {
 
 	/**
 	 * @param odDetails
-	 * @param dateValueDate
+	 * @param penaltyDate
+	 * @param valueDate
+	 * @param profitDayBasis
+	 * @param seq
+	 */
+	private void createNewLPPenalty(FinODDetails odDetails, Date penaltyDate, Date valueDate, String profitDayBasis,
+			int seq, Date movementdate) {
+		OverdueChargeRecovery recovery = getNewRecovery(odDetails, penaltyDate, valueDate, profitDayBasis, seq);
+		if (recovery != null) {
+			divedAmountToMatchPercentage(odDetails);
+			recovery.setMovementDate(movementdate);
+			recovery.setODDays(DateUtility.getDaysBetween(valueDate, penaltyDate));
+			// Check Grace
+			recovery.setPenalty(calculateAmount(odDetails, penaltyDate, valueDate, profitDayBasis));
+			recovery.setPenaltyBal(getPenaltyBal(recovery));
+			recovery.setRcdCanDel(true);
+			recoveryDAO.save(recovery, "");
+		}
+	}
+
+	private void divedAmountToMatchPercentage(FinODDetails odDetails) {
+		if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())) {
+			//Since rate is stored by multiplying with 100 we should divide the rate by 100
+			odDetails.setODChargeAmtOrPerc(odDetails.getODMaxWaiverPerc().divide(new BigDecimal(100),
+					RoundingMode.HALF_DOWN));
+		}
+	}
+
+	/**
+	 * @param odDetails
+	 * @param valueDate
 	 * @param repayQueue
 	 */
-	private void processLPProfit(FinODDetails odDetails, Date dateValueDate, FinRepayQueue repayQueue) {
+	private void processLPProfit(FinODDetails odDetails, Date valueDate, FinRepayQueue repayQueue) {
 		logger.debug("Entering");
 
 		// profit Calculations
@@ -552,7 +585,8 @@ public class LatePaymentService extends ServiceHelper {
 		odDetails.setODChargeCalOn(FinanceConstants.ODCALON_STOT);
 		odDetails.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
 
-		Date finODDateCal = odDetails.getFinODSchdDate();
+		Date finODSchdDate = odDetails.getFinODSchdDate();
+		Date finODDateCal = finODSchdDate;
 		String finReference = odDetails.getFinReference();
 		String finODFor = odDetails.getFinODFor();
 		String profitDaysBasis = repayQueue.getProfitDaysBasis();
@@ -562,12 +596,13 @@ public class LatePaymentService extends ServiceHelper {
 			return;
 		}
 
-		OverdueChargeRecovery prvRecovery = recoveryDAO
-				.getChargeRecoveryById(finReference, finODDateCal, finODFor);
+		OverdueChargeRecovery prvRecovery = recoveryDAO.getChargeRecoveryById(finReference, finODSchdDate, finODFor);
 
 		OverdueChargeRecovery recovery = null;
 
-		BigDecimal rebate = getRebateAmount(finReference, finODDateCal);
+		BigDecimal rebate = getRebateAmount(finReference, finODSchdDate);
+
+		Date businessDate = DateUtility.addDays(valueDate, 1);
 
 		if (prvRecovery != null) {
 
@@ -581,14 +616,14 @@ public class LatePaymentService extends ServiceHelper {
 
 			if (odDetails.getFinCurODAmt().compareTo(recovery.getFinCurODAmt()) != 0
 					|| odDetails.getODChargeAmtOrPerc().compareTo(recovery.getPenaltyAmtPerc()) != 0) {
-				recovery.setMovementDate(dateValueDate);
 				recovery.setRcdCanDel(false);
 				// overdue changed create new record
 				saveNewRecord = true;
 
 			} else {
-				recovery.setODDays(DateUtility.getDaysBetween(dateValueDate, finODDateCal) + 1);
-				recovery.setPenalty(calculateAmount(odDetails, finODDateCal, dateValueDate, profitDaysBasis));
+				finODDateCal = recovery.getMovementDate();
+				recovery.setODDays(DateUtility.getDaysBetween(businessDate, finODDateCal));
+				recovery.setPenalty(calculateAmount(odDetails, finODDateCal, businessDate, profitDaysBasis));
 				recovery.setPenaltyBal(recovery.getPenalty().subtract(recovery.getPenaltyPaid()));
 			}
 
@@ -596,23 +631,20 @@ public class LatePaymentService extends ServiceHelper {
 			recoveryDAO.updateChargeRecovery(recovery);
 
 			if (saveNewRecord) {
-				OverdueChargeRecovery newRecovery = getNewODCRecovery(odDetails, recovery.getMovementDate(),
-						dateValueDate, profitDaysBasis, recovery.getSeqNo());
-				createNewLPProfit(newRecovery, totPft, rebate);
+				createNewLPProfit(odDetails, valueDate, businessDate, profitDaysBasis, recovery.getSeqNo(), totPft,
+						rebate, valueDate);
 			}
 
 		} else {
 
 			if (!ImplementationConstants.LATEPAY_PROFIT_CAL_ON_DAYZERO) {
-				int oddays = DateUtility.getDaysBetween(dateValueDate, finODDateCal) + 1;
+				int oddays = DateUtility.getDaysBetween(valueDate, finODDateCal);
 				if (oddays == 1) {
 					return;
 				}
 			}
 
-			OverdueChargeRecovery newRecovery = getNewODCRecovery(odDetails, finODDateCal, dateValueDate,
-					profitDaysBasis, 0);
-			createNewLPProfit(newRecovery, totPft, rebate);
+			createNewLPProfit(odDetails, finODDateCal, businessDate, profitDaysBasis, 0, totPft, rebate, valueDate);
 		}
 
 		updateLPPenaltyOrProfitTotals(odDetails);
@@ -626,8 +658,17 @@ public class LatePaymentService extends ServiceHelper {
 	 * @param totPft
 	 * @param rebate
 	 */
-	private void createNewLPProfit(OverdueChargeRecovery recovery, BigDecimal totPft, BigDecimal rebate) {
+	private void createNewLPProfit(FinODDetails odDetails, Date penaltyDate, Date valueDate, String profitDayBasis,
+			int seq, BigDecimal totPft, BigDecimal rebate, Date movementdate) {
+
+		OverdueChargeRecovery recovery = getNewRecovery(odDetails, penaltyDate, valueDate, profitDayBasis, seq);
 		if (recovery != null) {
+			recovery.setMovementDate(movementdate);
+			recovery.setODDays(DateUtility.getDaysBetween(valueDate, penaltyDate));
+			// Check Grace
+			recovery.setPenalty(calculateAmount(odDetails, penaltyDate, valueDate, profitDayBasis));
+			recovery.setPenaltyBal(getPenaltyBal(recovery));
+			recovery.setRcdCanDel(true);
 			chekRebateCap(totPft, rebate, recovery);
 			if (recovery.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
 				recoveryDAO.save(recovery, "");
@@ -641,23 +682,8 @@ public class LatePaymentService extends ServiceHelper {
 	 * @param penaltyDate
 	 * @param valueDate
 	 * @param profitDayBasis
-	 * @param seq
 	 */
-	private void createNewLPPenalty(FinODDetails odDetails, Date penaltyDate, Date valueDate, String profitDayBasis,
-			int seq) {
-		OverdueChargeRecovery recovery = getNewODCRecovery(odDetails, penaltyDate, valueDate, profitDayBasis, seq);
-		if (recovery != null) {
-			recoveryDAO.save(recovery, "");
-		}
-	}
-
-	/**
-	 * @param odDetails
-	 * @param penaltyDate
-	 * @param valueDate
-	 * @param profitDayBasis
-	 */
-	private OverdueChargeRecovery getNewODCRecovery(FinODDetails odDetails, Date penaltyDate, Date valueDate,
+	private OverdueChargeRecovery getNewRecovery(FinODDetails odDetails, Date penaltyDate, Date valueDate,
 			String profitDayBasis, int seq) {
 
 		if (odDetails.getFinCurODAmt().compareTo(BigDecimal.ZERO) <= 0) {
@@ -675,9 +701,6 @@ public class LatePaymentService extends ServiceHelper {
 		recovery.setPenaltyPaid(BigDecimal.ZERO);
 		recovery.setPenaltyBal(BigDecimal.ZERO);
 		recovery.setSeqNo(seq + 1);
-		recovery.setMovementDate(valueDate);
-		recovery.setODDays(DateUtility.getDaysBetween(valueDate, penaltyDate) + 1);
-
 		recovery.setFinCurODAmt(odDetails.getFinCurODAmt());
 		recovery.setFinCurODPri(odDetails.getFinCurODPri());
 		recovery.setFinCurODPft(odDetails.getFinCurODPft());
@@ -685,10 +708,6 @@ public class LatePaymentService extends ServiceHelper {
 		recovery.setPenaltyCalOn(odDetails.getODChargeCalOn());
 		recovery.setPenaltyAmtPerc(odDetails.getODChargeAmtOrPerc());
 		recovery.setMaxWaiver(odDetails.getODMaxWaiverPerc());
-		// Check Grace
-		recovery.setPenalty(calculateAmount(odDetails, penaltyDate, valueDate, profitDayBasis));
-		recovery.setPenaltyBal(getPenaltyBal(recovery));
-		recovery.setRcdCanDel(true);
 		return recovery;
 
 	}
@@ -754,7 +773,7 @@ public class LatePaymentService extends ServiceHelper {
 		}
 
 		if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(chargeType)) {
-			return getDayPercValue(odPenCalon, amtOrPercetage, finODDate, dateValueDate, profitDayBasis);
+			return CalculationUtil.calInterest(finODDate, dateValueDate, odPenCalon, profitDayBasis, amtOrPercetage);
 		}
 
 		int months = DateUtility.getMonthsBetween(finODDate, dateValueDate) + 1;
@@ -773,28 +792,12 @@ public class LatePaymentService extends ServiceHelper {
 	}
 
 	/**
-	 * Method for get the Percentage of given value
-	 * 
-	 * @param amount
-	 * @param percent
-	 * @return
-	 */
-	private BigDecimal getDayPercValue(BigDecimal amount, BigDecimal percent, Date startDate, Date endDate,
-			String profitDayBasis) {
-
-		endDate = DateUtility.addDays(endDate, 1);
-		BigDecimal value = ((amount.multiply(percent)).multiply(CalculationUtil.getInterestDays(startDate, endDate,
-				profitDayBasis))).divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
-
-		return value.setScale(0, RoundingMode.HALF_DOWN);
-	}
-
-	/**
 	 * @param amount
 	 * @param percent
 	 * @return
 	 */
 	private BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
+		//Since rate is stored by multiplying with 100 we should divide the rate by 100
 		return (amount.multiply(percent)).divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
 	}
 
