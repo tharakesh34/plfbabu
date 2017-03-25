@@ -219,4 +219,82 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="7" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONINSURANCES_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONINSURANCES_MAKER','WF Maker for Promotion Insurances', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_PromotionInsurancesDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionInsurancesDialog_btnDelete', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnSave');
+			Delete from SecRights where RightName = 'button_PromotionInsurancesDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionInsurancesDialog_btnSave', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_InsuranceType');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_InsuranceType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_InsuranceType', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_InsuranceType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_PaymentType');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_PaymentType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_PaymentType', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_PaymentType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_CalType');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_CalType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_CalType', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_CalType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_AmountRule');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_AmountRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_AmountRule', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_AmountRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_ConstAmt');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_ConstAmt';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_ConstAmt', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_ConstAmt'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_CalculateOn');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_CalculateOn';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_CalculateOn', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_CalculateOn'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_Percentage');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_Percentage';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_Percentage', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_Percentage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_Mandatory');
+			Delete from SecRights where RightName = 'PromotionInsurancesDialog_Mandatory';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionInsurancesDialog_Mandatory', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'PromotionInsurancesDialog_Mandatory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_APPROVER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONINSURANCES_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'PROMOTIONINSURANCES_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONINSURANCES_APPROVER','WF Approver for Promotion Insurances', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_APPROVER'), (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONINSURANCES_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
