@@ -96,7 +96,7 @@ public class WorkflowEngine {
 	private enum Namespace {
 		DEFAULT("http://www.omg.org/spec/BPMN/20100524/MODEL"), DROOLS("http://www.jboss.org/drools");
 
-		private String	uri;
+		private String uri;
 
 		private Namespace(String uri) {
 			this.uri = uri;
@@ -152,6 +152,13 @@ public class WorkflowEngine {
 			for (String taskId : getNextTaskIds(Element.startEvent, startEventId, null)) {
 				task = getUserTask(taskId);
 
+				// Setting the first task in the document order to ensure when
+				// the process (like default, collateral) doesn't have the
+				// re-instate level specified.
+				if (StringUtils.isBlank(actualFirstTaskId)) {
+					actualFirstTaskId = task.getId();
+					actualFirstTaskActor = task.getActor();
+				}
 				firstTaskActors.add(task.getActor());
 
 				if (task.isReinstateLevel()) {
@@ -429,7 +436,8 @@ public class WorkflowEngine {
 			OMElement target = XmlUtil.getElement(process, "id", flow.getTargetRef(), null);
 			Element targetElement = Element.valueOf(target.getLocalName());
 
-			// Add whether notes mandatory or not and drill down further in the flow.
+			// Add whether notes mandatory or not and drill down further in the
+			// flow.
 			if (eval(flow.getConditionExpression(), object)) {
 				if (flow.isNotesMandatory()) {
 					result.add("Notes");
@@ -582,8 +590,8 @@ public class WorkflowEngine {
 				flow.setAction(action);
 				flow.setState(state);
 				flow.setConditionExpression(XmlUtil.getElementText(sequenceFlow, "conditionExpression", namespaceURI));
-				flow.setNotesMandatory(StringUtils.isNotBlank(XmlUtil.getElementText(sequenceFlow,
-						"auditing/documentation", namespaceURI)));
+				flow.setNotesMandatory(StringUtils
+						.isNotBlank(XmlUtil.getElementText(sequenceFlow, "auditing/documentation", namespaceURI)));
 				flow.setTargetRef(XmlUtil.getAttribute(sequenceFlow, "targetRef"));
 
 				flows.add(flow);
@@ -653,7 +661,7 @@ public class WorkflowEngine {
 	}
 
 	// *****************************************************************
-	// ************				PBPM Designer				************
+	// ************ PBPM Designer ************
 	// *****************************************************************
 	private static final String	pbpmUrl			= "http://localhost:8080/designer/editor?profile=pbpm";
 	private static final String	pbpmRepository	= "C:/pbpm/designer/repository";
@@ -735,8 +743,8 @@ public class WorkflowEngine {
 		return saved;
 	}
 
-	public static StAXOMBuilder getBpmnBuilder(String type) throws FileNotFoundException, IOException,
-			XMLStreamException, FactoryConfigurationError {
+	public static StAXOMBuilder getBpmnBuilder(String type)
+			throws FileNotFoundException, IOException, XMLStreamException, FactoryConfigurationError {
 		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".bpmn");
 		StringWriter bpmn = new StringWriter();
 
@@ -760,6 +768,6 @@ public class WorkflowEngine {
 		return json.toString();
 	}
 	// *****************************************************************
-	// ************				PBPM Designer				************
+	// ************ PBPM Designer ************
 	// *****************************************************************
 }
