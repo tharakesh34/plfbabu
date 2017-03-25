@@ -137,6 +137,8 @@ public class FinServiceInstController {
 
 			if (CalculationConstants.RPYCHG_TILLMDT.equals(finServiceInst.getRecalType())) {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
+			} else if(CalculationConstants.RPYCHG_TILLDATE.equals(finServiceInst.getRecalType())) {
+				financeMain.setRecalToDate(finServiceInst.getRecalToDate());
 			}
 
 			if(StringUtils.isBlank(finServiceInst.getBaseRate())) {
@@ -223,7 +225,7 @@ public class FinServiceInstController {
 
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
-			financeMain.setScheduleMethod(finServiceInst.getSchdMethod());
+			//financeMain.setScheduleMethod(finServiceInst.getSchdMethod());
 			financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
 
 			financeMain.setRecalType(finServiceInst.getRecalType());
@@ -232,19 +234,17 @@ public class FinServiceInstController {
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
-			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					|| StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)) {
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 				financeMain.setRecalToDate(finServiceInst.getRecalToDate());
-			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)) {
-				financeMain.setRecalFromDate(finServiceInst.getFromDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
 			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
-				financeMain.setScheduleRegenerated(true);
+				//financeMain.setScheduleRegenerated(true);
 			}
 
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
@@ -397,6 +397,17 @@ public class FinServiceInstController {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
+			// validate number of terms
+/*			int tenor = financeMain.getNumberOfTerms()+financeMain.getGraceTerms()+finServiceInst.getTerms();
+			if(tenor > finScheduleData.getFinanceType().getFinMaxTerm()) {
+				FinanceDetail response = new FinanceDetail();
+				String[] valueParm = new String[2];
+				valueParm[0] = "Terms:"+finServiceInst.getTerms();
+				valueParm[1] = "Allowed max loan terms:"+finScheduleData.getFinanceType().getFinMaxTerm();
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30551", valueParm));
+				doEmptyResponseObject(financeDetail);
+				return response;
+			}*/
 			try {
 				// Call Schedule calculator for Rate change
 				finScheduleData = addTermsService.getAddTermsDetails(finScheduleData, finServiceInst);
@@ -940,11 +951,18 @@ public class FinServiceInstController {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			financeMain.setRecalFromDate(finServiceInst.getFromDate());
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
+			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalToDate(financeMain.getMaturityDate());
+			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalToDate(financeMain.getMaturityDate());
+			}
+			
 			try {
 				// Call Schedule calculator for Rate change
 				finScheduleData = rmvTermsService.getRmvTermsDetails(finScheduleData);

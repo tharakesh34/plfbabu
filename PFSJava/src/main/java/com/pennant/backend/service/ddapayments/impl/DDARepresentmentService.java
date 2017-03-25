@@ -69,7 +69,7 @@ public class DDARepresentmentService {
 		Date schDate = rpySchd.getSchDate();
 
 		// Fetch Finance Schdule details
-		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schDate);
+		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schDate, false);
 
 		// process DDA Re-presentment data
 		processRepresentment(scheduleDetail, financeMain);
@@ -91,7 +91,7 @@ public class DDARepresentmentService {
 		}
 
 		// Fetch Finance Schdule details
-		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate);
+		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate, false);
 
 		// Fetch FinanceMain details
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(finReference, "", false);

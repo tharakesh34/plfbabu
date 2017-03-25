@@ -1207,7 +1207,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 	 * 
 	 */
 	@Override
-	public FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate) {
+	public FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF) {
 		logger.debug("Entering");
 
 		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
@@ -1229,7 +1229,11 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
 		selectSql
 				.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee ");
-		selectSql.append(" From FinScheduleDetails");
+		if(!isWIF) {
+			selectSql.append(" From FinScheduleDetails");
+		} else {
+			selectSql.append(" From WIFFinScheduleDetails");
+		}
 
 		selectSql.append(" Where FinReference =:FinReference AND SchDate=:SchDate");
 

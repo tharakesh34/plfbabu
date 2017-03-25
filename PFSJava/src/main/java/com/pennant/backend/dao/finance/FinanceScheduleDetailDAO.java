@@ -101,7 +101,7 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getFinanceScheduleForRebate(String finreference, Date schdDate);
 
-	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate);
+	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinSchdDetailsForBatch(String finReference);
 
