@@ -326,8 +326,8 @@ public class AEAmounts implements Serializable {
 					int days = getNoDays(dateSusp, curSchdDate);
 					int daysInCurPeriod = nextSchd.getNoOfDays();
 					tdPftAmortizedPD = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
-				} else {
-					tdPftAmortizedPD = nextSchd.getProfitCalc();
+				} else if (curSchdDate.before(dateSusp)) {
+					tdPftAmortizedPD = tdPftAmortized.subtract(tdPftAmortizedNormal);
 				}
 			}
 

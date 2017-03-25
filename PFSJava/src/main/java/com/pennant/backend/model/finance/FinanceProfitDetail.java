@@ -90,9 +90,9 @@ public class FinanceProfitDetail implements Serializable {
 	private String				FinStatus;
 	private String				FinStsReason;
 	private String				FinWorstStatus;
-	private BigDecimal			insPaidAmt			= BigDecimal.ZERO;		//New Table
+	private BigDecimal			insPaidAmt				= BigDecimal.ZERO;		//New Table
 	private BigDecimal			AdminPaidAmt			= BigDecimal.ZERO;		//New Table
-	private BigDecimal			insCal			= BigDecimal.ZERO;		//New Table
+	private BigDecimal			insCal					= BigDecimal.ZERO;		//New Table
 	private int					NOInst					= 0;
 	private int					NOPaidInst				= 0;
 	private int					NOODInst				= 0;
@@ -115,7 +115,7 @@ public class FinanceProfitDetail implements Serializable {
 	private int					CRBODDays				= 0;					//New Table
 	private Date				firstODDate;
 	private Date				lastODDate;
-	private Date				cRBFirstODDate;								//New Table
+	private Date				cRBFirstODDate;									//New Table
 	private Date				cRBLastODDate;									//New Table
 	private String				closingStatus;
 	private String				finCategory;

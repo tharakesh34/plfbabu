@@ -515,7 +515,13 @@ public class LatePaymentService extends ServiceHelper {
 			}
 
 		} else {
-			createNewLPPenalty(odDetails, finODDateCal, businessDate, profitDaysBasis, 0, valueDate);
+			
+			Date movementDate = valueDate;
+			if (odDetails.isODIncGrcDays()) {
+				movementDate = finODDateCal;
+			}
+			
+			createNewLPPenalty(odDetails, finODDateCal, businessDate, profitDaysBasis, 0, movementDate);
 		}
 
 		updateLPPenaltyOrProfitTotals(odDetails);
@@ -548,7 +554,7 @@ public class LatePaymentService extends ServiceHelper {
 	private void divedAmountToMatchPercentage(FinODDetails odDetails) {
 		if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())) {
 			//Since rate is stored by multiplying with 100 we should divide the rate by 100
-			odDetails.setODChargeAmtOrPerc(odDetails.getODMaxWaiverPerc().divide(new BigDecimal(100),
+			odDetails.setODChargeAmtOrPerc(odDetails.getODChargeAmtOrPerc().divide(new BigDecimal(100),
 					RoundingMode.HALF_DOWN));
 		}
 	}

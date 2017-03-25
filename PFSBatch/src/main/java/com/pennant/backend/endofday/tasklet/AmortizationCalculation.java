@@ -137,8 +137,7 @@ public class AmortizationCalculation implements Tasklet {
 	private String getCountQuery() {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" SELECT count(F.FinReference) FROM FinanceMain F ");
-		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE P.FinIsActive = 1");
+		sqlQuery.append(" WHERE F.FinIsActive = 1");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();
 	}
@@ -150,10 +149,8 @@ public class AmortizationCalculation implements Tasklet {
 	 */
 	private String getSelectQuery() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp, ");
-		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate FROM FinanceMain F ");
-		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
-		sqlQuery.append(" WHERE P.FinIsActive = 1");
+		sqlQuery.append(" SELECT F.FinReference  FROM FinanceMain F ");
+		sqlQuery.append(" WHERE F.FinIsActive = 1");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
 		return sqlQuery.toString();
 	}

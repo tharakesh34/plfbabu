@@ -73,6 +73,12 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 				((Textbox) map.get(7)).setValue("Started");
 			} else {
 				startEod = false;
+				//Restart
+				if (eodDetail.getEndTime() == null) {
+					startEod=true;
+				}
+				
+				
 			}
 
 			if (startEod) {

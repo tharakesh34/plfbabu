@@ -136,11 +136,10 @@ public class SuspenseService extends ServiceHelper {
 			return;
 		}
 
-		// Finance Related Details Fetching
-		Date suspFromDate = DateUtility.addDays(repayQueue.getRpyDate(), curOdDays);
+		//Finance Related Details Fetching
 		BigDecimal suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(), valueDate);
 
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_NORM_PIS, valueDate, suspFromDate);
+		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_NORM_PIS, valueDate, valueDate);
 		AEAmountCodes amountCodes = new AEAmountCodes();
 		amountCodes.setFinReference(dataSet.getFinReference());
 		amountCodes.setSUSPNOW(suspAmount);
@@ -151,11 +150,11 @@ public class SuspenseService extends ServiceHelper {
 
 		if (suspHead != null) {
 			// Update Finance Suspend Head
-			suspHead = prepareSuspHeadData(suspHead, repayQueue, suspFromDate, suspAmount, isPastDeferment);
+			suspHead = prepareSuspHeadData(suspHead, repayQueue, valueDate, suspAmount, isPastDeferment);
 			getFinanceSuspHeadDAO().update(suspHead, "");
 		} else {
 			// Insert Finance Suspend Head
-			suspHead = prepareSuspHeadData(suspHead, repayQueue, suspFromDate, suspAmount, isPastDeferment);
+			suspHead = prepareSuspHeadData(suspHead, repayQueue, valueDate, suspAmount, isPastDeferment);
 			suspHead.setVersion(0);
 			suspHead.setLastMntBy(9999);
 			suspHead.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -170,7 +169,7 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		// Insert Finance Suspend Details data
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", suspFromDate, linkedTranId);
+		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");
