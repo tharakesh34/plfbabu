@@ -980,6 +980,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append("AND FinReference IN (select  Reference from FinInsurances where PaymentMethod="+"'"+InsuranceConstants.PAYTYPE_SCH_FRQ+"')");
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_PLANNEDEMI)){
 			whereClause.append(" AND PlanEMIHAlw = 1");
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)){
+			whereClause.append(" AND (MaxReAgeHolidays - AvailedReAgeH > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_REAGING+"') "); 
 		}
 	
 		//Written Off Finance Reference Details Condition
@@ -2179,7 +2181,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				} else if("tab_PlannedEMI".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_PLANNEDEMI;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode =  FinanceConstants.FINSER_EVENT_PLANNEDEMI;
+					workflowCode =  FinanceConstants.FINSER_EVENT_PLANNEDEMI;				
+				} else if("tab_ReAgeHolidays".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_REAGING;
+					eventCodeRef  = AccountEventConstants.ACCEVENT_REAGING;
+					workflowCode =  FinanceConstants.FINSER_EVENT_REAGING;
 				} else if("tab_RolloverFinance".equals(tab.getId())){
 					moduleDefiner = FinanceConstants.FINSER_EVENT_ROLLOVER;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_ROLLOVER;

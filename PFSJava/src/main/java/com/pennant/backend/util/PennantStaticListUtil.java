@@ -1654,6 +1654,7 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CANCELDISB,Labels.getLabel("label_FinSerEvent_CancelDisbursement")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,Labels.getLabel("label_FinSerEvent_OverdraftSchedule")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_PLANNEDEMI,Labels.getLabel("label_FinSerEvent_PlannedEMI")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_REAGING,Labels.getLabel("label_FinSerEvent_ReAging")));
 		}
 		return finServiceEvents;
 	}

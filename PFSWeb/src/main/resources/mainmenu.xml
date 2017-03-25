@@ -11,8 +11,6 @@
 	<!---Message Sending Dialog For User -->
 	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
 	
-<!-- 	<menuItem id="menu_Item_CustomerEOD" zulNavigation="/WEB-INF/pages/Batch/CustomerEOD.zul" /> -->
-	
 	<!-- System Masters Menu Tree -->
 	<menu id="menu_Category_SystemMaster" rightName="menuCat_SystemMaster" >
 <!-- 		<menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul"  rightName="menuItem_SystemMaster_Academic"/> -->
@@ -207,9 +205,6 @@
  		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  /> <!-- rightName="menuItem_SolutionFactory_WorkFlowDetail" -->
 		
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
-		
-		<!--Promotions -->
-		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/Promotion/PromotionList.zul" rightName="menuItem_Promotion_Promotion"/>
 	</menu>
 	
 	<!--Finance Menu Tree -->
@@ -338,6 +333,7 @@
 	   <menuItem id="menu_Item_Postponement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Postponement"/>
        <menuItem id="menu_Item_Provision" zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionList.zul?rightName=menuItem_FinanceManagement_Provision"  rightName="menuItem_FinanceManagement_Provision"/>
        <menuItem id="menu_Item_CoreProvision" zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"  rightName="menuItem_FinanceManagement_CoreProvision"/>
+       <menuItem id="menu_Item_ReAgeHolidays" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReAgeHolidays"/>
 	   <menuItem id="menu_Item_Recalculate" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Recalculate"/>
 	   <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" rightName="menuItem_FinanceManagement_ReinstateFinance"/>
 	   <menuItem id="menu_Item_RmvTerms" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RmvTerms"/>

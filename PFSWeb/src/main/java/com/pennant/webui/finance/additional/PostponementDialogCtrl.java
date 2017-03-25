@@ -272,7 +272,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillSchDates(this.cbRecalToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), true);
 
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,");
-		if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)){
+		if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) &&
+			!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			if(StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_TILLDATE) ||
 					StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceMain().getRecalType() , CalculationConstants.RPYCHG_TILLMDT)) {
 				this.recallFromDateRow.setVisible(true);
@@ -515,6 +516,13 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxUnplannedEmi())}));
 				return;
 			}
+		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+			//Check max limit
+			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH()+adjTerms > getFinScheduleData().getFinanceMain().getMaxReAgeHolidays()) {
+				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value", 
+						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxReAgeHolidays())}));
+				return;
+			}
 		}
 		
 		if(getFeeDetailDialogCtrl() != null){
@@ -527,7 +535,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		finServiceInstruction.setRecalFromDate(recalFromDate);
 		finServiceInstruction.setRecalToDate(recalToDate);
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)){
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) ||
+			StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADDTERM);
 			finServiceInstruction.setTerms(adjTerms);
 		}
@@ -551,8 +560,16 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			getFinScheduleData().setSchduleGenerated(true);
 			if(StringUtils.isNotBlank(moduleDefiner)){
-				int availedDefRpyChange = getFinScheduleData().getFinanceMain().getAvailedDefRpyChange();
-				getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange + 1);
+				if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)){
+					int availedDefRpyChange = getFinScheduleData().getFinanceMain().getAvailedDefRpyChange();
+					getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange + adjTerms);
+				}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
+					int availedUnPlanChange = getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi();
+					getFinScheduleData().getFinanceMain().setAvailedUnPlanEmi(availedUnPlanChange + adjTerms);
+				}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+					int availedReAgeHChange = getFinScheduleData().getFinanceMain().getAvailedReAgeH();
+					getFinScheduleData().getFinanceMain().setAvailedReAgeH(availedReAgeHChange + adjTerms);
+				}
 			}
 				
 			if(getScheduleDetailDialogCtrl() != null){

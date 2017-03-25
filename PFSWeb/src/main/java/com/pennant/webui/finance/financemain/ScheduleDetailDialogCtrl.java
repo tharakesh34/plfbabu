@@ -215,6 +215,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Button btnChangeFrq; // autoWired
 	protected Button btnReschedule; // autoWired
 	protected Button btnSuplRentIncrCost; // autoWired
+	protected Button btnReAgeHolidays; // autoWired
 	protected Button btnPrintSchedule; // autoWired
 
 	protected Listheader listheader_ScheduleDetailDialog_Date;
@@ -504,6 +505,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if(StringUtils.equals(product, FinanceConstants.PRODUCT_STRUCTMUR)){
 				this.btnPostponement.setVisible(false);
 				this.btnUnPlanEMIH.setVisible(false);
+				this.btnReAgeHolidays.setVisible(false);
 				this.btnAddDisbursement.setVisible(false);
 				this.btnCancelDisbursement.setVisible(false);
 				this.btnAddTerms.setVisible(false);
@@ -552,6 +554,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeProfit.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit"));
 		this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
 		this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
+		this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnSuplRentIncrCost.setVisible(false);
 
 		this.btnRecalEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
@@ -569,6 +572,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeProfit.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit"));
 		this.btnChangeFrq.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
 		this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
+		this.btnReAgeHolidays.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnSuplRentIncrCost.setDisabled(true);
 		
 		if(StringUtils.isBlank(moduleDefiner)){
@@ -576,6 +580,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnPostponement.setDisabled(true);
 			this.btnUnPlanEMIH.setVisible(false);
 			this.btnUnPlanEMIH.setDisabled(true);
+			this.btnReAgeHolidays.setVisible(false);
+			this.btnReAgeHolidays.setDisabled(true);
 			this.btnSubSchedule.setVisible(false);
 			this.btnChangeProfit.setVisible(false);
 			this.btnSubSchedule.setDisabled(true);
@@ -585,6 +591,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnPostponement.setDisabled(true);
 			this.btnUnPlanEMIH.setVisible(false);
 			this.btnUnPlanEMIH.setDisabled(true);
+			this.btnReAgeHolidays.setVisible(false);
+			this.btnReAgeHolidays.setDisabled(true);
 		}
 
 		logger.debug("Leaving");
@@ -1537,6 +1545,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeProfit.setVisible(false);
 		this.btnChangeFrq.setVisible(false);
 		this.btnReschedule.setVisible(false);
+		this.btnReAgeHolidays.setVisible(false);
 		this.btnSuplRentIncrCost.setVisible(false);
 
 		this.btnAddReviewRate.setDisabled(true);
@@ -1553,6 +1562,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeProfit.setDisabled(true);
 		this.btnChangeFrq.setDisabled(true);
 		this.btnReschedule.setDisabled(true);
+		this.btnReAgeHolidays.setDisabled(true);
 		this.btnSuplRentIncrCost.setDisabled(true);
 
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG)) {
@@ -1587,10 +1597,14 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnUnPlanEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
 			this.btnUnPlanEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
 
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)) {
+			this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
+			this.btnReAgeHolidays.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
+			
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
-			this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+			//this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+			//this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
 			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
@@ -1967,12 +1981,39 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 	
 	/**
-	 * when the "btnPostponement" button is clicked. <br>
+	 * when the "btnUnPlanned EMI" button is clicked. <br>
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onClick$btnUnPlanEMIH(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
+		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("moduleDefiner", moduleDefiner);
+		
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/PostponementDialog.zul",
+					window_ScheduleDetailDialog, map);
+		} catch (Exception e) {
+			logger.error("Exception: Opening window", e);
+			MessageUtil.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "btnReAge" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnReAgeHolidays(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -2204,6 +2245,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Events.postEvent("onClick$btnUnPlanEMIH", this.window_ScheduleDetailDialog, null);
 			} else {
 				this.btnUnPlanEMIH.setVisible(false);
+			}
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)) {
+			if (getFinScheduleData().getFinanceMain().getMaxReAgeHolidays() > 0
+					&& getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays")) {
+				Events.postEvent("onClick$btnReAgeHolidays", this.window_ScheduleDetailDialog, null);
+			} else {
+				this.btnReAgeHolidays.setVisible(false);
 			}
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
 			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms")) {
