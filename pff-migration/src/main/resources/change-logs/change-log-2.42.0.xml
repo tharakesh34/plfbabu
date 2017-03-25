@@ -297,4 +297,29 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="8" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnNew');
+			Delete from SecRights where RightName = 'button_PromotionInsurancesDialog_btnNew';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionInsurancesDialog_btnNew', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnEdit');
+			Delete from SecRights where RightName = 'button_PromotionInsurancesDialog_btnEdit';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionInsurancesDialog_btnEdit', 'PromotionInsurancesDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONINSURANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionInsurancesDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
