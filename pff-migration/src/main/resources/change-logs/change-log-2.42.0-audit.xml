@@ -8,5 +8,61 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 	
+	<changeSet id="1" author="Kesav">
+        <createTable tableName="AdtPromotionInsurances">
+            <column name="AuditId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditSeq" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditImage" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="InsuranceID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="InsuranceType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Mandatory" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DftPayType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalType" type="char(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AmountRule" type="varchar(4000)"/>
+			<column name="ConstAmt" type="decimal(18, 0)"/>
+			<column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" />   
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="2" author="Kesav">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtPromotionInsurances" tableName="AdtPromotionInsurances" />
+	</changeSet>
+	
 	
 </databaseChangeLog>
