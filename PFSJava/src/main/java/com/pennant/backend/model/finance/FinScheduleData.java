@@ -130,6 +130,8 @@ public class FinScheduleData {
 	private List<Integer> planEMIHmonths = new ArrayList<Integer>();
 	@XmlElement
 	private List<Date> planEMIHDates = new ArrayList<Date>(); 
+	
+	//TODO: To be removed(DDP)
 	@XmlElement(name="overdueCharges")
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
 	
