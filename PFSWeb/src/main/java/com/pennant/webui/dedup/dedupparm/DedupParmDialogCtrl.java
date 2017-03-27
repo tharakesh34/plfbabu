@@ -1410,7 +1410,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					}
 				} else if (comboCount == 3) {
 					if(likeCondition){
-						strSqlQuery = strSqlQuery + ":like" + element;
+						strSqlQuery = strSqlQuery + ":"+ element;
 						likeCondition = false;
 					}else{
 						strSqlQuery = strSqlQuery + ":" + element ;
