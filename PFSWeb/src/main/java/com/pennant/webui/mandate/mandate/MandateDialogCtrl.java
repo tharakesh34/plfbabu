@@ -1239,7 +1239,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccNumber.value"),
-					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate, accNoLength,accNoLength));
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate,accNoLength));
 		}
 		// Account Holder Name
 		if (!this.accHolderName.isReadonly()) {
