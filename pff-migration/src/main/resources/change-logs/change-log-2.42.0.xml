@@ -428,4 +428,14 @@
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERALASSIGN_NEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CollateralAssignmentDetailDialog_AssignValuePerc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	</sql>
 	</changeSet>
+	<changeSet id="17" author="Srikanth">
+		<addColumn tableName="WIFFinanceMain_Temp">
+			<column name="FinRepayMethod" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="18" author="Srikanth">
+		<addColumn tableName="WIFFinanceMain">
+			<column name="FinRepayMethod" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
