@@ -241,13 +241,13 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 		Long workflowId = workFlowDetails.getWorkflowId();
 		if (workflowId == 0 && !"create".equals(flag)) {// empty check for workflowId in get
 			String[] valueParm = new String[1];
-			valueParm[0] = "WorkflowId";
+			valueParm[0] = "WorkflowDesignId";
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
 			errDetails.add(errorDetail);
 		}
 		if ((workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not found in get or update
 			String[] valueParm = new String[2];
-			valueParm[0] = "workflow";
+			valueParm[0] = "Workflow";
 			valueParm[1] = String.valueOf(workflowId);
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90256", valueParm), "EN");
 			errDetails.add(errorDetail);
