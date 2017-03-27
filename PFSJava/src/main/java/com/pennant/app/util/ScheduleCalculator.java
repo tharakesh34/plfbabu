@@ -1027,39 +1027,19 @@ public class ScheduleCalculator {
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
 
-		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
-		int risize = repayInstructions.size();
-		String schdMethod = finMain.getRecalSchdMethod();
-
-		if (StringUtils.equals(schdMethod, PennantConstants.List_Select) || StringUtils.isBlank(schdMethod)) {
-			for (int i = 0; i < risize; i++) {
-				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) <= 0) {
-					finMain.setRecalSchdMethod(repayInstructions.get(i).getRepaySchdMethod());
-				}
-
-				//FIXME: below code is temporary fix, need to set schedule method
-				if (StringUtils.isBlank(finMain.getRecalSchdMethod())) {
-					finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-				}
-
-				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) >= 0) {
-					break;
-				}
-			}
+		//Current Period or Till MDT set Recal from date and recal todate
+		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
+			finScheduleData = getCurPerodDates(finScheduleData);
 		}
 
-		/*
-		 * if (event Todate is maturity date OR event Todate is before grace period end date) AND recalculation type is
-		 * for CURPRD then force it to TILLMDT
-		 */
-
-		boolean isSetRecalFromDate = false;
+		//Force Set recaltype and recal to date to TILLMDT
 		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
+
 			if (evtToDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
-				finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-				isSetRecalFromDate = true;
-			} else if (evtToDate.compareTo(finMain.getMaturityDate()) >= 0) {
-				isSetRecalFromDate = true;
+				finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+			}
+
+			if (evtToDate.compareTo(finMain.getMaturityDate()) >= 0) {
 				finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			}
 		}
@@ -1076,11 +1056,6 @@ public class ScheduleCalculator {
 			Date schdDate = curSchd.getSchDate();
 
 			if (schdDate.compareTo(evtFromDate) > 0) {
-
-				if (isSetRecalFromDate) {
-					finMain.setRecalFromDate(schdDate);
-				}
-
 				break;
 			}
 
@@ -2216,7 +2191,7 @@ public class ScheduleCalculator {
 			for (int i = 0; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
 
-				if (curSchd.getSchDate().after(toDate)) {
+				if (curSchd.getSchDate().after(toDate) && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
 					nextInstructDate = curSchd.getSchDate();
 					nextInstructSchdMethod = curSchd.getSchdMethod();
 					break;
@@ -2828,7 +2803,7 @@ public class ScheduleCalculator {
 		} else {
 			curSchd.setBalanceForPftCal(prvSchd.getBalanceForPftCal().add(prvSchd.getDisbAmount())
 					.subtract(prvSchd.getDownPaymentAmount()).add(prvSchd.getFeeChargeAmt())
-					.add(prvSchd.getCpzAmount()));
+					.add(prvSchd.getCpzAmount()).subtract(prvSchd.getPrincipalSchd()));
 		}
 
 		curSchd.setNoOfDays(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate()));
@@ -5030,10 +5005,8 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
 
 		int sdSize = finSchdDetails.size();
-		int risize = repayInstructions.size();
 
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
@@ -5050,6 +5023,7 @@ public class ScheduleCalculator {
 		int iOldMDT = finSchdDetails.size() - 1;
 		boolean resetRpyInstruction = true;
 
+		//Force set recaltype to TILLMDT. TILLDATE comparision will happen with closing balance, which gives wrong results for last record. 
 		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLDATE)) {
 			if (finMain.getRecalToDate().equals(finSchdDetails.get(sdSize - 1).getSchDate())) {
 				recaltype = CalculationConstants.RPYCHG_TILLMDT;
@@ -5095,14 +5069,10 @@ public class ScheduleCalculator {
 			finMain.setCompareWith(CalculationConstants.COMPARE_CLOSEBAL);
 
 		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
-
-			finMain.setRecalToDate(finMain.getMaturityDate());
-
+			finMain.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
 		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
 			finMain.setCompareToExpected(true);
 			finMain.setCompareWith(CalculationConstants.COMPARE_CLOSEBAL);
-			finMain.setRecalFromDate(finMain.getEventFromDate());
-			finMain.setRecalToDate(finMain.getEventToDate());
 		}
 
 		BigDecimal approxEMI = BigDecimal.ZERO;
@@ -5118,82 +5088,18 @@ public class ScheduleCalculator {
 		String schdMethod = finMain.getRecalSchdMethod();
 		BigDecimal buffer = new BigDecimal(98765);
 
-		// FIXME: Siva/Pradeep : Disbursement Date is selected before Grace Period End date 
-		// selection Schedule method is different combination with repayment period and Grace
-		boolean disbAndCalInGrc = false;
-		String grcSchdMethod = finMain.getRecalSchdMethod();
-		Date rpyFirstDate = finMain.getGrcPeriodEndDate();
-		if (StringUtils.equals(recalPurpose, PROC_ADDDISBURSEMENT)) {
-			if (evtFromDate.compareTo(finMain.getGrcPeriodEndDate()) < 0) {
-				if (recalFromDate.compareTo(finMain.getGrcPeriodEndDate()) < 0) {
-					disbAndCalInGrc = true;
+		//Set RecalSchdMethod
+		finScheduleData = getSchdMethod(finScheduleData);
+		schdMethod = finMain.getRecalSchdMethod();
 
-					for (int i = 0; i < sdSize; i++) {
-						if (finSchdDetails.get(i).getSchDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
-							rpyFirstDate = finSchdDetails.get(i).getSchDate();
-							break;
-						}
-					}
-				}
-				schdMethod = finMain.getScheduleMethod();
-				finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-			}
-		}
-
-		if (StringUtils.equals(recalPurpose, PROC_CHANGEREPAY)) {
-			for (int i = 0; i < risize; i++) {
-				RepayInstruction curInstruction = repayInstructions.get(i);
-				if (curInstruction.getRepayDate().compareTo(recalFromDate) <= 0) {
-					schdMethod = curInstruction.getRepaySchdMethod();
-				}
-
-				if (curInstruction.getRepayDate().compareTo(recalFromDate) >= 0) {
-					break;
-				}
-			}
-		}
-
-		//SETTING REACL DATE FOR CURPRD
 		//SETTING EXPECTED COMPARISION INDEX AND AMOUNT FOR CRDPRD & TILLDATE
 		//CALCULATING AMOUNT CHANGE FOR CHANGEREPAY PROCESS
-		boolean isCurPrdRecalSet = false;
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)
 				&& !StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
 			for (int i = 0; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
 				schdDate = curSchd.getSchDate();
-
-				if (schdDate.compareTo(evtFromDate) < 0) {
-					continue;
-				}
-
-				//SET RECAL FROMDATE
-				if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
-
-					if (!isCurPrdRecalSet && schdDate.compareTo(evtFromDate) > 0) {
-						if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-							finMain.setRecalFromDate(schdDate);
-							recalFromDate = schdDate;
-							iTerms = 0;
-							isCurPrdRecalSet = true;
-
-							//This will happen in case event from date is and event to date falls in the same period
-							//Example: Before the change the payment period is 01st Jan to 1st Feb and rate change happens from 10th Jan to 20th Jan.
-							if (recalFromDate.compareTo(recalToDate) > 0) {
-								recalToDate = recalFromDate;
-								finMain.setRecalToDate(recalFromDate);
-							}
-
-						} else {
-							continue;
-						}
-					}
-				}
-
-				if (recalFromDate == null) {
-					continue;
-				}
 
 				if (schdDate.compareTo(recalFromDate) < 0) {
 					continue;
@@ -5219,14 +5125,7 @@ public class ScheduleCalculator {
 
 				//CALCULATE TOTAL AMOUNT OF CHANGE FOR APPROXIMATE EMI CALCULATION. ONLY USED TO REDUCE LOOPS
 				if (schdDate.compareTo(recalFromDate) >= 0 && schdDate.compareTo(recalToDate) <= 0) {
-					if (disbAndCalInGrc) {
-						if (schdDate.compareTo(finMain.getGrcPeriodEndDate()) > 0
-								|| StringUtils.equals(grcSchdMethod, CalculationConstants.SCHMTHD_NOPAY)) {
-							recalPaymentAmount = recalPaymentAmount.add(curSchd.getRepayAmount());
-						}
-					} else {
-						recalPaymentAmount = recalPaymentAmount.add(curSchd.getRepayAmount());
-					}
+					recalPaymentAmount = recalPaymentAmount.add(curSchd.getRepayAmount());
 
 					if (curSchd.isRepayOnSchDate()) {
 						iTerms = iTerms + 1;
@@ -5243,9 +5142,7 @@ public class ScheduleCalculator {
 
 		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT) && resetRpyInstruction) {
 
-			if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
-
-			} else {
+			if (!StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
 				approxEMI = newDisbAmount.add(oldPaymentAmount).subtract(newPaymentAmount).add(recalPaymentAmount)
 						.add(buffer);
 
@@ -5255,16 +5152,7 @@ public class ScheduleCalculator {
 				}
 			}
 
-			// Grace Period Calculation, in Disbursement if Required
-			if (disbAndCalInGrc) {
-				finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, finMain.getGrcPeriodEndDate(),
-						BigDecimal.ZERO, grcSchdMethod);
-				finScheduleData = setRpyInstructDetails(finScheduleData, rpyFirstDate, recalToDate, approxEMI,
-						schdMethod);
-			} else {
-				finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, approxEMI,
-						schdMethod);
-			}
+			finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, approxEMI, schdMethod);
 
 		} else if (!resetRpyInstruction) {
 
@@ -5275,6 +5163,90 @@ public class ScheduleCalculator {
 		finScheduleData.setFinanceMain(finMain);
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+
+	private FinScheduleData getSchdMethod(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		String schdMethod = finMain.getRecalSchdMethod();
+
+		if (StringUtils.equals(schdMethod, PennantConstants.List_Select)) {
+			schdMethod = "";
+		}
+
+		if (!StringUtils.isBlank(schdMethod)) {
+			return finScheduleData;
+		}
+
+		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
+		int risize = repayInstructions.size();
+
+		Date schdMethodDate = finMain.getRecalFromDate();
+
+		//Set date from which schedule method can be taken 
+		if (schdMethodDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+			schdMethodDate = finMain.getGrcPeriodEndDate();
+
+			//Add one day to bring comparison date to repayment period
+			schdMethodDate = DateUtility.addDays(schdMethodDate, 1);
+		}
+
+		//Find Schedule Method used for existing instruction 
+		for (int i = 0; i < risize; i++) {
+			schdMethod = repayInstructions.get(i).getRepaySchdMethod();
+
+			if (repayInstructions.get(i).getRepayDate().compareTo(schdMethodDate) >= 0) {
+				break;
+			}
+		}
+
+		finMain.setRecalSchdMethod(schdMethod);
+
+		return finScheduleData;
+
+	}
+
+	private FinScheduleData getCurPerodDates(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+
+		boolean isFromDateSet = false;
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		int sdSize = finSchdDetails.size();
+		Date schdDate = new Date();
+
+		for (int i = 0; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(finMain.getEventFromDate()) <= 0) {
+				continue;
+			}
+
+			//SET RECAL FROMDATE
+			if (!isFromDateSet) {
+				if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
+					finMain.setRecalFromDate(schdDate);
+					finMain.setRecalToDate(schdDate);
+					isFromDateSet = true;
+				}
+			}
+
+			if (schdDate.compareTo(finMain.getEventToDate()) < 0) {
+				continue;
+			}
+
+			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
+				finMain.setRecalToDate(schdDate);
+				break;
+			}
+
+		}
+
+		return finScheduleData;
+
 	}
 
 	/*
