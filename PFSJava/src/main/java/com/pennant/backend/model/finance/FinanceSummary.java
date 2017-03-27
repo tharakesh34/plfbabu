@@ -53,7 +53,10 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = {
 		"effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
-		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "maturityDate"
+		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms","loanTenor", "maturityDate","firstDisbDate",
+		"lastDisbDate","firstEmiAmount","nextSchDate","nextRepayAmount","futureInst","futureTenor","firstInstDate","paidTotal",
+		"schdPriPaid","schdPftPaid","finLastRepayDate","totalOutStanding","outStandPrincipal","outStandProfit",
+		"totalOverDue","overDuePrincipal","overDueProfit","overDueInstlments","finStatus"
 })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -66,7 +69,9 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal profitSchd = BigDecimal.ZERO;
+	@XmlElement(name="paidPft")
 	private BigDecimal schdPftPaid = BigDecimal.ZERO;
+	@XmlElement(name="paidPri")
 	private BigDecimal schdPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalDownPayment = BigDecimal.ZERO;
 	@XmlElement
@@ -78,6 +83,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal finODTotPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal finODTotPenaltyBal = BigDecimal.ZERO;
 	
+	@XmlElement
 	private Date nextSchDate;
 	private Date schDate;
 	
@@ -93,11 +99,16 @@ public class FinanceSummary implements Serializable {
 	private Date finStartDate;
 	@XmlElement
 	private Date maturityDate;
+	@XmlElement(name="finActiveStatus")
 	private String finStatus;
 	private BigDecimal finRate = BigDecimal.ZERO;
+	@XmlElement(name="lastRepayDate")
 	private Date finLastRepayDate;
+	@XmlElement(name="outstandingPri")
 	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
+	@XmlElement(name="outstandingPft")
 	private BigDecimal outStandProfit = BigDecimal.ZERO;
+	@XmlElement(name="outstandingTotal")
 	private BigDecimal totalOutStanding = BigDecimal.ZERO;
 	
 	private BigDecimal totalOriginal = BigDecimal.ZERO;
@@ -107,8 +118,11 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal unPaidProfit = BigDecimal.ZERO;
 	private BigDecimal totalUnPaid = BigDecimal.ZERO;
 	
+	@XmlElement(name="overduePri")
 	private BigDecimal overDuePrincipal = BigDecimal.ZERO;
+	@XmlElement(name="overduePft")
 	private BigDecimal overDueProfit = BigDecimal.ZERO;
+	@XmlElement(name="overdueTotal")
 	private BigDecimal totalOverDue = BigDecimal.ZERO;
 	
 	private BigDecimal earnedPrincipal = BigDecimal.ZERO;
@@ -123,6 +137,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal payOffProfit = BigDecimal.ZERO;
 	private BigDecimal totalPayOff = BigDecimal.ZERO;
 	
+	@XmlElement(name="overdueInst")
 	private long overDueInstlments;
 	private BigDecimal overDueInstlementPft = BigDecimal.ZERO;
 	private long paidInstlments;
@@ -157,6 +172,24 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal 	totalProfit = BigDecimal.ZERO;
 	@XmlElement(name="feeChargeAmount")
 	private BigDecimal 	feeChargeAmt = BigDecimal.ZERO;
+	@XmlElement
+	private int	loanTenor;
+	@XmlElement
+	private Date firstDisbDate;
+	@XmlElement
+	private Date lastDisbDate;
+	@XmlElement
+	private BigDecimal nextRepayAmount;
+	@XmlElement
+	private BigDecimal firstEmiAmount;
+	@XmlElement
+	private int futureInst;
+	@XmlElement
+	private int futureTenor;
+	@XmlElement
+	private Date firstInstDate;
+	@XmlElement
+	private BigDecimal paidTotal;
 	
 	public FinanceSummary() {
 		
@@ -609,5 +642,77 @@ public class FinanceSummary implements Serializable {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public int getLoanTenor() {
+		return loanTenor;
+	}
+
+	public void setLoanTenor(int loanTenor) {
+		this.loanTenor = loanTenor;
+	}
+
+	public Date getFirstDisbDate() {
+		return firstDisbDate;
+	}
+
+	public void setFirstDisbDate(Date firstDisbDate) {
+		this.firstDisbDate = firstDisbDate;
+	}
+
+	public Date getLastDisbDate() {
+		return lastDisbDate;
+	}
+
+	public void setLastDisbDate(Date lastDisbDate) {
+		this.lastDisbDate = lastDisbDate;
+	}
+
+	public BigDecimal getNextRepayAmount() {
+		return nextRepayAmount;
+	}
+
+	public void setNextRepayAmount(BigDecimal nextRepayAmount) {
+		this.nextRepayAmount = nextRepayAmount;
+	}
+
+	public BigDecimal getFirstEmiAmount() {
+		return firstEmiAmount;
+	}
+
+	public void setFirstEmiAmount(BigDecimal firstEmiAmount) {
+		this.firstEmiAmount = firstEmiAmount;
+	}
+
+	public int getFutureInst() {
+		return futureInst;
+	}
+
+	public void setFutureInst(int futureInst) {
+		this.futureInst = futureInst;
+	}
+
+	public int getFutureTenor() {
+		return futureTenor;
+	}
+
+	public void setFutureTenor(int futureTenor) {
+		this.futureTenor = futureTenor;
+	}
+
+	public Date getFirstInstDate() {
+		return firstInstDate;
+	}
+
+	public void setFirstInstDate(Date firstInstDate) {
+		this.firstInstDate = firstInstDate;
+	}
+
+	public BigDecimal getPaidTotal() {
+		return paidTotal;
+	}
+
+	public void setPaidTotal(BigDecimal paidTotal) {
+		this.paidTotal = paidTotal;
 	}
 }

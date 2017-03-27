@@ -186,5 +186,7 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinanceByCustId(long custId);
 	
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
+	
+	List<String> getFinReferencesByMandateId(long mandateId);
 
 }

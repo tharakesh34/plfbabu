@@ -140,6 +140,15 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public List<FinanceMain> getFinanceByCollateralRef(String collateralRef) {
 		return financeMainDAO.getFinanceByCollateralRef(collateralRef);
 	}
+	
+	/**
+	 * Method to get FinanceReferences by Given MandateId.
+	 * @param mandateId
+	 */
+	@Override
+	public List<String> getFinReferencesByMandateId(long mandateId) {
+		return financeMainDAO.getFinReferencesByMandateId(mandateId);
+	}
 
 	/**
 	 * @param financeMainDAO
@@ -149,6 +158,5 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	
 	
 }

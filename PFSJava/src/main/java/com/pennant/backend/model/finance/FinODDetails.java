@@ -46,22 +46,31 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 
 /**
  * Model class for the <b>FinODDetails table</b>.<br>
  *
  */
+@XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "totPftAmt", "totPftPaid"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinODDetails implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
+	@XmlElement(name="odDate")
 	private Date finODSchdDate;
 	private String finODFor;
 	private String finBranch;
 	private String finType;
 	private long custID;
 	private Date finODTillDate;
+	@XmlElement(name="odAmount")
 	private BigDecimal finCurODAmt = BigDecimal.ZERO;
 	private BigDecimal finCurODPri = BigDecimal.ZERO;
 	private BigDecimal finCurODPft = BigDecimal.ZERO;
@@ -73,11 +82,15 @@ public class FinODDetails implements java.io.Serializable {
 	private int finCurODDays;
 	
 	private BigDecimal totWaived = BigDecimal.ZERO;
+	@XmlElement(name="odCharge")
 	private BigDecimal totPenaltyAmt = BigDecimal.ZERO;
+	@XmlElement(name="odChargePaid")
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 	
+	@XmlElement(name="odPft")
 	private BigDecimal totPftAmt = BigDecimal.ZERO;
+	@XmlElement(name="odPftPaid")
 	private BigDecimal totPftPaid = BigDecimal.ZERO;
 	private BigDecimal totPftBal = BigDecimal.ZERO;
 	

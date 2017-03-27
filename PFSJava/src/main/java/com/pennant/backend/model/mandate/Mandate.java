@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = { "custCIF", "useExisting", "mandateID", "mandateRef", "mandateType", "bankCode", "branchCode",
 		"iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate", "startDate",
 		"expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "status", "active",
-		"returnStatus" })
+		"totEMIAmount","returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity implements Entity {
@@ -153,6 +153,8 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private Mandate validateMandate = this;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	@XmlElement
+	private BigDecimal totEMIAmount;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -186,6 +188,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("validateMandate");
 		excludeFields.add("sourceId");
 		excludeFields.add("returnStatus");
+		excludeFields.add("totEMIAmount");
 		return excludeFields;
 	}
 
@@ -546,6 +549,14 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setOrgReference(String orgReference) {
 		this.orgReference = orgReference;
+	}
+
+	public BigDecimal getTotEMIAmount() {
+		return totEMIAmount;
+	}
+
+	public void setTotEMIAmount(BigDecimal totEMIAmount) {
+		this.totEMIAmount = totEMIAmount;
 	}
 
 }

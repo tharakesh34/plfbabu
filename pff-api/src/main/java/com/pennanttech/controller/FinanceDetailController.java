@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -34,6 +37,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -71,7 +75,7 @@ public class FinanceDetailController {
 	private FinanceStepDetailDAO financeStepDetailDAO;
 	private FeeDetailService feeDetailService;
 	private FinFeeDetailService finFeeDetailService;
-
+	private FinODDetailsDAO finODDetailsDAO;
 
 	/**
 	 * Method for create Finance/WIFFinance
@@ -249,45 +253,6 @@ public class FinanceDetailController {
 		
 		feeDetailService.doExecuteFeeCharges(true, financeDetail);
 		
-		/*List<String> ruleCodes = new ArrayList<String>();
-		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
-			ruleCodes.add(finFeeDetail.getFeeTypeCode());
-			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-			finFeeDetail.setFinReference(financeMain.getFinReference());
-			finFeeDetail.setLastMntBy(userDetails.getLoginUsrID());
-			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		}
-		List<Rule> feeCodeRules = getRuleService().getRuleDetails(ruleCodes, RuleConstants.MODULE_FEES);
-		String feeMethd;
-		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
-			finFeeDetail.setFinEvent("ADDDBSP");
-			 feeMethd = finFeeDetail.getFeeScheduleMethod();
-			if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, feeMethd)) {
-				finFeeDetail.setTerms(1);
-			} else if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, feeMethd)) {
-				finFeeDetail.setTerms(finScheduleData.getFinanceMain().getNumberOfTerms());
-			} else if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, feeMethd)) {
-				finFeeDetail.setTerms(finFeeDetail.getTerms());
-			}
-		
-	
-			for (Rule rule : feeCodeRules) {
-				if (StringUtils.equals(rule.getRuleCode(), finFeeDetail.getFeeTypeCode())) {
-					finFeeDetail.setFeeTypeDesc(rule.getRuleCodeDesc());
-					finFeeDetail.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-					 feeMethd = finFeeDetail.getFeeScheduleMethod();
-					if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, feeMethd)) {
-						finFeeDetail.setTerms(1);
-					} else if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, feeMethd)) {
-						finFeeDetail.setTerms(finScheduleData.getFinanceMain().getNumberOfTerms());
-					} else if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, feeMethd)) {
-						finFeeDetail.setTerms(finFeeDetail.getTerms());
-					}
-				}
-			}
-		}
-		*/
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {
 			String stepPolicyCode = financeMain.getStepPolicy();
@@ -458,7 +423,30 @@ public class FinanceDetailController {
 
 			if(financeDetail != null) {
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				//setting Disb first and lastDates
+				List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
+				Collections.sort(disbList,
+						new Comparator<FinanceDisbursement>() {
+							@Override
+							public int compare(FinanceDisbursement b1,FinanceDisbursement b2) {
+								return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+							}
+						});
 
+				if (disbList != null && disbList.size() > 0) {
+					if (disbList.size() == 1) {
+						financeMain.setFirstDisbDate(disbList.get(0)
+								.getDisbDate());
+						financeMain.setLastDisbDate(disbList.get(0)
+								.getDisbDate());
+					} else {
+						financeMain.setFirstDisbDate(disbList.get(0)
+								.getDisbDate());
+						financeMain.setLastDisbDate(disbList.get(
+								disbList.size() - 1).getDisbDate());
+					}
+				}
+				
 				// Avoid Grace Period details into the marshaling in case of Allow grace is false
 				if(!financeMain.isAllowGrcPeriod()) {
 					financeMain.setGrcPeriodEndDate(null);
@@ -500,7 +488,9 @@ public class FinanceDetailController {
 				response = financeDetail.getFinScheduleData();
 				response.setFinanceSummary(summary);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				
+				//get FinODDetails
+				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDetailsByFinReference(finReference, "");
+				response.setFinODDetails(finODDetailsList);
 				// to remove un-necessary objects from response make them as null
 				response.setDisbursementDetails(null);
 				response.setRepayInstructions(null);
@@ -602,5 +592,8 @@ public class FinanceDetailController {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 }

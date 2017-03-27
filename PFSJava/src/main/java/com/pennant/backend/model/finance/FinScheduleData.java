@@ -75,7 +75,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "planEMIHmonths",
-		"planEMIHDates", "financeSummary", "returnStatus" })
+		"planEMIHDates", "financeSummary","finODDetails", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {
@@ -130,6 +130,8 @@ public class FinScheduleData {
 	private List<Integer> planEMIHmonths = new ArrayList<Integer>();
 	@XmlElement
 	private List<Date> planEMIHDates = new ArrayList<Date>(); 
+	@XmlElement(name="overdueCharges")
+	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
 	
 
 	@XmlElement
@@ -593,6 +595,14 @@ public class FinScheduleData {
 	}
 	public void setFinInsuranceList(List<FinInsurances> finInsuranceList) {
 		this.finInsuranceList = finInsuranceList;
+	}
+
+	public List<FinODDetails> getFinODDetails() {
+		return finODDetails;
+	}
+
+	public void setFinODDetails(List<FinODDetails> finODDetails) {
+		this.finODDetails = finODDetails;
 	}
 
 	

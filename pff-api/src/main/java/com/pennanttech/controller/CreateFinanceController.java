@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +22,8 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -38,6 +42,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -87,8 +92,9 @@ public class CreateFinanceController {
 	private CollateralSetupService collateralSetupService;
 	private FinanceMainService financeMainService;
 	private JointAccountDetailService jointAccountDetailService;
-
-
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -493,7 +499,13 @@ public class CreateFinanceController {
 			summary.setFeeChargeAmt(financeMain.getFeeChargeAmt());
 			summary.setNumberOfTerms(financeMain.getNumberOfTerms() + financeMain.getGraceTerms());
 			summary.setMaturityDate(financeMain.getMaturityDate());
-
+			//FIXME
+			summary.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(),financeMain.getMaturityDate(), false));
+			summary.setNextRepayAmount(financeMain.getFirstRepay());
+			summary.setFirstInstDate(financeMain.getNextRepayDate());
+			summary.setFirstEmiAmount(financeMain.getFirstRepay());
+			summary.setFinStatus(financeMain.getClosingStatus());
+			
 			finScheduleData.setFinanceSummary(summary);
 
 			// Fetch FeeRules
@@ -512,9 +524,76 @@ public class CreateFinanceController {
 			
 			// fetch finance schedule details
 			List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-
+			boolean isnextRepayAmount=true;
+			BigDecimal paidTotal = BigDecimal.ZERO;
+			BigDecimal schdFeePaid = BigDecimal.ZERO;
+			BigDecimal schdInsPaid = BigDecimal.ZERO;
+			BigDecimal schdPftPaid = BigDecimal.ZERO;
+			BigDecimal schdPriPaid = BigDecimal.ZERO;
+			BigDecimal principalSchd = BigDecimal.ZERO;
+			BigDecimal profitSchd = BigDecimal.ZERO;
+			int futureInst = 0;
+			for(FinanceScheduleDetail detail:finSchduleList){
+				schdFeePaid = schdFeePaid.add(detail.getSchdFeePaid());
+				schdInsPaid = schdInsPaid.add(detail.getSchdInsPaid());
+				schdPftPaid = schdPftPaid.add(detail.getSchdPftPaid());
+				schdPriPaid = schdPriPaid.add(detail.getSchdPriPaid());
+				principalSchd = principalSchd.add(detail.getPrincipalSchd());
+				profitSchd = profitSchd.add(detail.getProfitSchd());
+				if (DateUtility.getAppDate().compareTo(detail.getSchDate()) == -1) {
+					if(!(detail.getRepayAmount().compareTo(BigDecimal.ZERO)==0) && isnextRepayAmount){
+						summary.setNextRepayAmount(detail.getRepayAmount());
+						summary.setNextSchDate(detail.getSchDate());
+						isnextRepayAmount=false;
+					}
+					futureInst++;
+				}
+			}
+			summary.setFutureInst(futureInst);
+			summary.setSchdPftPaid(schdPftPaid);
+			summary.setSchdPriPaid(schdPriPaid);
+			paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid).add(schdInsPaid);
+			summary.setPaidTotal(paidTotal);
+			BigDecimal outstandingPri = principalSchd.subtract(schdPriPaid);
+			BigDecimal outstandingPft = profitSchd.subtract(schdPftPaid);
+			summary.setOutStandPrincipal(outstandingPri);
+			summary.setOutStandProfit(outstandingPft);
+			summary.setTotalOutStanding(outstandingPri.add(outstandingPft));
+			
+			//get FinODDetails
+			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDetailsByFinReference(finReference, "");
+			BigDecimal totalOverDue= BigDecimal.ZERO;
+			BigDecimal overDueProfit= BigDecimal.ZERO;
+			BigDecimal overDuePrincipal= BigDecimal.ZERO;
+			for(FinODDetails detail:finODDetailsList){
+				totalOverDue =totalOverDue.add(detail.getFinCurODAmt());
+				overDueProfit = overDueProfit.add(detail.getFinCurODPft());
+				overDuePrincipal = overDuePrincipal.add(detail.getFinCurODPri());
+			}
+			summary.setOverDueProfit(overDueProfit);
+			summary.setOverDuePrincipal(overDuePrincipal);
+			summary.setTotalOverDue(totalOverDue);
 			if(finSchduleList != null && !finSchduleList.isEmpty()) {
 				finScheduleData.setFinanceScheduleDetails(finSchduleList);
+			}
+			//setting Disb first and lastDates
+			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(
+					finReference, "", false);//financeDetail.getFinScheduleData().getDisbursementDetails();
+			Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
+				@Override
+				public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
+					return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+				}
+			});
+
+			if (disbList != null && disbList.size() > 0) {
+				if (disbList.size() == 1) {
+					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
+					summary.setLastDisbDate(disbList.get(0).getDisbDate());
+				} else {
+					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
+					summary.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+				}
 			}
 		}
 
@@ -572,7 +651,28 @@ public class CreateFinanceController {
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
 					FinanceConstants.FINSER_EVENT_ORG, "");
-
+			if (financeDetail != null){
+				Mandate mandate=financeDetail.getMandate();
+					long mandateId=mandate.getMandateID();
+				List<String> financeRefeList= financeMainService.getFinReferencesByMandateId(mandateId);
+				BigDecimal totEMIAmount= BigDecimal.ZERO;
+				for(String detail:financeRefeList){
+					List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(
+							detail,"" , false);
+					if (finSchduleList != null) {
+						for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
+							if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
+								if(!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)==0)){
+								totEMIAmount=totEMIAmount.add(financeScheduleDetail.getRepayAmount());
+								break;
+								}
+							}
+						}
+					}
+				
+				}
+			mandate.setTotEMIAmount(totEMIAmount);
+			}
 			if (financeDetail != null) {
 				prepareResponse(financeDetail);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -632,6 +732,7 @@ public class CreateFinanceController {
 			int futureInst = 0;
 			List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(
 					financeMain.getFinReference(), "", false);
+					boolean isnextRepayAmount = true;
 			if (finSchduleList != null) {
 				for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
 					schdFeePaid = schdFeePaid.add(financeScheduleDetail.getSchdFeePaid());
@@ -641,10 +742,11 @@ public class CreateFinanceController {
 					principalSchd = principalSchd.add(financeScheduleDetail.getPrincipalSchd());
 					profitSchd = profitSchd.add(financeScheduleDetail.getProfitSchd());
 					if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
+						if(!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)==0) && isnextRepayAmount){
+							finInquiryDetail.setNextRepayAmount(financeScheduleDetail.getRepayAmount());
+							isnextRepayAmount=false;
+						}
 						futureInst++;
-					}
-					if (futureInst == 1) {
-						finInquiryDetail.setNextRepayAmount(financeScheduleDetail.getRepayAmount());
 					}
 				}
 			}
@@ -812,4 +914,16 @@ public class CreateFinanceController {
 	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
 		this.jointAccountDetailService = jointAccountDetailService;
 	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
 }

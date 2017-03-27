@@ -43,7 +43,6 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,7 +86,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
 		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "quickDisb", "unPlanEMIHLockPeriod",
 		"unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "planEMIHAlw",
-		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz" })
+		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz","firstDisbDate","lastDisbDate" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -590,6 +589,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	
 	// API validation purpose only
 	private FinanceMain validateMain = this;
+	@XmlElement
+	private Date firstDisbDate;
+	@XmlElement
+	private Date lastDisbDate;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -697,6 +700,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("nextRoleCodeDesc");
 		excludeFields.add("secUsrFullName");
 		excludeFields.add("workFlowType");
+		excludeFields.add("firstDisbDate");
+		excludeFields.add("lastDisbDate");
+		
 		return excludeFields;
 	}
 
@@ -3331,6 +3337,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.eventFromDate = null;
 		this.eventToDate = null;
 		this.pftIntact = false;
+	}
+
+	public Date getFirstDisbDate() {
+		return firstDisbDate;
+	}
+
+	public void setFirstDisbDate(Date firstDisbDate) {
+		this.firstDisbDate = firstDisbDate;
+	}
+
+	public Date getLastDisbDate() {
+		return lastDisbDate;
+	}
+
+	public void setLastDisbDate(Date lastDisbDate) {
+		this.lastDisbDate = lastDisbDate;
 	}
 	
 	

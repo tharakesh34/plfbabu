@@ -352,6 +352,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
+			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 		logger.debug("Leaving");
 		return returnStatus;
