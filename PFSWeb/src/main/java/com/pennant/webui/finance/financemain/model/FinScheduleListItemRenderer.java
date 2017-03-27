@@ -485,7 +485,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
 				
-				availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getDisbAmount());
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
 						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
@@ -500,9 +499,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 				showZeroEndBal = false;
 				isGrcBaseRate = false;
 				isRpyBaseRate = false;
-				if(availableLimit.compareTo(BigDecimal.ZERO)>0){
-					availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getClosingBalance());
-				}
 				
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < getFinScheduleData().getDisbursementDetails().size(); i++) {
@@ -511,6 +507,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if(DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0){
 						
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+						//Subtract the available amount with the curDisb amount
+							availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")",
 								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
@@ -1381,9 +1379,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
 				}
-				
-				availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getDisbAmount());
-				
+			
 				doFillListBox(getFinanceScheduleDetail(), count, label,
 						getFinanceScheduleDetail().getProfitCalc(),getFinanceScheduleDetail().getSuplRent(),getFinanceScheduleDetail().getIncrCost(),
 						getFinanceScheduleDetail().getFeeSchd(),getFinanceScheduleDetail().getTDSAmount() == null ? BigDecimal.ZERO :getFinanceScheduleDetail().getTDSAmount() , 
@@ -1402,8 +1398,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}*/
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
-				
-				availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getDisbAmount());
+			
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
 						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
@@ -1419,13 +1414,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 				isGrcBaseRate = false;
 				isRpyBaseRate = false;
 				
-				availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getDisbAmount());
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < getFinScheduleData().getDisbursementDetails().size(); i++) {
 					
 					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(i);
 					if(DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0){
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+						//Subtract the available amount with the curDisb amount
+							availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+" (Seq : "+curDisb.getDisbSeq()+")",
 								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
@@ -2203,7 +2199,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) > 0 && (i == 12)){
-					if(finType.isDroplineOD() && fillType==0 && !lastRec &&  isODSchdLimit  && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
+					if(finType.isDroplineOD() && fillType==0 && !lastRec && showZeroEndBal  &&  isODSchdLimit  && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(limitIncreaseAmt, finFormatter));
 						lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
@@ -2212,7 +2208,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						lc.setStyle("text-align:right;"); 
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)){
-					if(finType.isDroplineOD() && fillType==0 && !lastRec &&  isODSchdLimit){
+					if(finType.isDroplineOD() && fillType==0 && !lastRec && showZeroEndBal  &&  isODSchdLimit){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(limitDrop, finFormatter));
 						lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
@@ -2222,7 +2218,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						lc.setStyle("text-align:right;"); 
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) > 0 && (i == 14)){
-					if(fillType==0  && !lastRec && (isLimitDrop|| count ==1||(data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
+					if(fillType==0  && !lastRec && showZeroEndBal  && (isLimitDrop|| count ==1||(data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, finFormatter));
 						
@@ -2236,7 +2232,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						lc.setStyle("text-align:right;"); 
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 15)){
-					if(fillType==0 && !lastRec &&(isLimitDrop || count ==1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
+					if(fillType==0 && !lastRec && showZeroEndBal &&(isLimitDrop || count ==1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(odLimit, finFormatter));
 						lc.setStyle("text-align:right;");
