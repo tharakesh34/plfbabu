@@ -2954,6 +2954,32 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 											this.totPriDue.getValue(), formatter), formatter) }));
 					return false;
 				}
+				
+				// Check Whether Any Future Payments already done in Schedule or not
+				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+				boolean futureInstPaid = false;
+				for (int i = 0; i < scheduleList.size(); i++) {
+					FinanceScheduleDetail curSchd = scheduleList.get(i);
+					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0){
+						continue;
+					}
+
+					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0 ) {
+
+						futureInstPaid = true;
+						break;
+					}
+
+				}
+				if(futureInstPaid){
+					MessageUtil.showErrorMessage(Labels.getLabel("label_PaymentDialog_PartialSettlement_Future"));
+					return false;
+				}
 			}
 
 			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isChgRpy) {

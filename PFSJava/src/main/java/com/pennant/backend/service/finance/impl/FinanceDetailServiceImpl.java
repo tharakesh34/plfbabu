@@ -5717,29 +5717,37 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
 		if (financeMain == null) {
 			return finSchData;
-		}else{
+		}
+		
 		finSchData.setFinReference(financeMain.getFinReference());
 		finSchData.setFinanceMain(financeMain);
-		finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
 		
-
+		// Overdraft Schedule Details
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())){
 			finSchData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "_Temp", false));
-		}else{
-			finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 		}
-		if(FinanceConstants.PRODUCT_ISTISNA.equals(financeMain.getLovDescProductCodeName())){
-			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
-		}
-
-		finSchData.setFinPftSuspended(false);
-		FinanceSuspHead financeSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
-		if (financeSuspHead != null && financeSuspHead.isFinIsInSusp()) {
-			finSchData.setFinPftSuspended(true);
-			finSchData.setFinSuspDate(financeSuspHead.getFinSuspDate());
-		}
+		
+		// Schedule details
+		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		
+		// Disbursement Details
+		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		
+		// Repay instructions
+		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		if (summaryRequired) {
+			
+			// Finance Type
+			finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
+			
+			// Suspense
+			finSchData.setFinPftSuspended(false);
+			FinanceSuspHead financeSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
+			if (financeSuspHead != null && financeSuspHead.isFinIsInSusp()) {
+				finSchData.setFinPftSuspended(true);
+				finSchData.setFinSuspDate(financeSuspHead.getFinSuspDate());
+			}
 
 			//Finance Summary Details Preparation
 			final Date curBussDate = DateUtility.getAppDate();
@@ -5768,7 +5776,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 			}
 		}
-		}
+
 		logger.debug("Leaving");
 		return finSchData;
 	}

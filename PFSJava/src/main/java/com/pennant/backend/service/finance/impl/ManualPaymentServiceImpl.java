@@ -133,6 +133,9 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			//Finance Schedule Details
 			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
 					"_View", false));
+			
+			//Finance Disbursement Details
+			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "_View" , false));
 
 			//Finance Repayments Instruction Details
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, "_View",

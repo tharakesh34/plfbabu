@@ -2984,7 +2984,15 @@ public class ScheduleCalculator {
 							isRepayComplete = true;
 						}
 					} else {
-						if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance) >= 0) {
+						if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())){
+							if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance) > 0) {
+								curSchd.setPrincipalSchd(prvClosingBalance);
+								curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
+										.add(curSchd.getProfitCalc()));
+								curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
+								isRepayComplete = true;
+							}
+						}else if (curSchd.getPrincipalSchd().compareTo(prvClosingBalance) >= 0) {
 							curSchd.setPrincipalSchd(prvClosingBalance);
 							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 									.add(curSchd.getProfitCalc()));
