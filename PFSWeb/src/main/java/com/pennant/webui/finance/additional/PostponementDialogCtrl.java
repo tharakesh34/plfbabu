@@ -205,6 +205,15 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.btnPostponement.setLabel(Labels.getLabel("btnUnPlannedEMiH.label"));
 			this.btnPostponement.setTooltiptext(Labels.getLabel("btnUnPlannedEMiH.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
+		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
+			this.window_PostponementDialog.setTitle(Labels.getLabel("window_ReAgeHolidayDialog.title"));
+			this.btnPostponement.setLabel(Labels.getLabel("btnReAgeHoliday.label"));
+			this.btnPostponement.setTooltiptext(Labels.getLabel("btnReAgeHoliday.tooltiptext"));
+			
+			this.recalTypeRow.setVisible(false);
+			this.recallFromDateRow.setVisible(false);
+			this.recallToDateRow.setVisible(false);
+			this.numOfTermsRow.setVisible(false);
 		}
 
 		logger.debug("Leaving");
@@ -266,12 +275,17 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 
-		fillSchDates(this.cbFromDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
-		fillSchDates(this.cbToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
-		fillSchDates(this.cbRecalFromDate,aFinSchData,  aFinSchData.getFinanceMain().getFinStartDate(), false);
-		fillSchDates(this.cbRecalToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), true);
-
-		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,");
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+			fillODSchDates(this.cbFromDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
+			fillODSchDates(this.cbToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
+		}else{
+			fillSchDates(this.cbFromDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
+			fillSchDates(this.cbToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
+			fillSchDates(this.cbRecalFromDate,aFinSchData,  aFinSchData.getFinanceMain().getFinStartDate(), false);
+			fillSchDates(this.cbRecalToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), true);
+			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,");
+		}
+		
 		if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) &&
 			!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			if(StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_TILLDATE) ||
@@ -359,6 +373,64 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setStyle("color:Red;");
 					comboitem.setAttribute("pftBal", curSchd.getProfitBalance());
 				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	/** To fill schedule dates */
+	private void fillODSchDates(Combobox dateCombobox,
+			FinScheduleData financeDetail, Date fillAfter, boolean includeDate) {
+		logger.debug("Entering");
+		
+		dateCombobox.getItems().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		dateCombobox.appendChild(comboitem);
+		dateCombobox.setSelectedItem(comboitem);
+		Date graceEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+		if (financeDetail.getFinanceScheduleDetails() != null) {
+
+			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
+			Date curBussDate = DateUtility.getAppDate();
+			for (int i = 0; i < financeScheduleDetails.size(); i++) {
+
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				
+				if(curSchd.getSchDate().after(curBussDate)){
+					break;
+				}
+
+				//Profit Paid (Partial/Full)
+				if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
+					continue;
+				}
+
+				//Principal Paid (Partial/Full)
+				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0) {
+					continue;
+				}
+				
+				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+					continue;
+				}
+				
+				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate)<=0){
+					continue;
+				}
+				
+				comboitem = new Comboitem();
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				comboitem.setValue(curSchd.getSchDate());
+				if(fillAfter.compareTo(financeDetail.getFinanceMain().getFinStartDate())==0) {
+					dateCombobox.appendChild(comboitem);
+				}else if(includeDate && curSchd.getSchDate().compareTo(fillAfter) >= 0) {
+					dateCombobox.appendChild(comboitem);
+				}else if(!includeDate && curSchd.getSchDate().compareTo(fillAfter) > 0) {
+					dateCombobox.appendChild(comboitem);
+				}
+				
 			}
 		}
 		logger.debug("Leaving");
@@ -771,8 +843,14 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.cbReCalType.setDisabled(false);
 			this.cbRecalFromDate.getItems().clear();		
 			if (isValidComboValue(this.cbFromDate,Labels.getLabel("label_PostponementDialog_FromDate.value"))) {
-				fillSchDates(this.cbToDate, getFinScheduleData(),
-						(Date) this.cbFromDate.getSelectedItem().getValue(), true);
+				
+				if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+					fillODSchDates(this.cbToDate, getFinScheduleData(),
+							(Date) this.cbFromDate.getSelectedItem().getValue(), true);
+				}else{
+					fillSchDates(this.cbToDate, getFinScheduleData(),
+							(Date) this.cbFromDate.getSelectedItem().getValue(), true);
+				}
 			}
 		}else {
 			this.cbReCalType.setSelectedIndex(0);
@@ -796,7 +874,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if(this.cbToDate.getSelectedIndex() > 0) {
 			this.cbRecalFromDate.getItems().clear();	
 			this.cbRecalToDate.getItems().clear();	
-			if (isValidComboValue(this.cbToDate,Labels.getLabel("label_PostponementDialog_ToDate.value"))) {
+			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner) && 
+					isValidComboValue(this.cbToDate,Labels.getLabel("label_PostponementDialog_ToDate.value"))) {
 				fillSchDates(this.cbRecalFromDate, getFinScheduleData(),
 						(Date) this.cbToDate.getSelectedItem().getValue(), false);
 				fillSchDates(this.cbRecalToDate, getFinScheduleData(),

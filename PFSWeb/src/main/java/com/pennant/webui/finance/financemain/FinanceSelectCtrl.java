@@ -947,6 +947,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)){
 			if(StringUtils.equals(ImplementationConstants.IMPLEMENTATION_ISLAMIC, ImplementationConstants.IMPLEMENTATION_TYPE)){
 				whereClause.append(" AND ProductCategory IN ( '" + FinanceConstants.PRODUCT_IJARAH +"','"+FinanceConstants.PRODUCT_FWIJARAH+"') " );
+			}else{
+				whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 			}
 			whereClause.append(" AND AllowGrcPeriod = 1");
 			whereClause.append(" AND GrcPeriodEndDate >= '" + appDate+"' " );
