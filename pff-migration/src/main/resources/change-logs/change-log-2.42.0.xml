@@ -375,4 +375,12 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="12">
+		<modifyDataType tableName="PromotionInsurances" columnName="CalType" newDataType="char(1)"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="13">
+		<modifyDataType tableName="PromotionInsurances_Temp" columnName="CalType" newDataType="char(1)"/>
+	</changeSet>
+	
 </databaseChangeLog>
