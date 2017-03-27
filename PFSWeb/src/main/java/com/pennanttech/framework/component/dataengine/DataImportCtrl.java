@@ -52,7 +52,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	protected Rows panelRows;
 
 	protected Timer timer;
-	protected Media media = null;
+	private Media media = null;
 
 	protected DataEngineConfig dataEngineConfig;
 	private DataSource dataSource;
@@ -236,8 +236,8 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
-		new File(media.getName());
-		media.getStringData().getBytes("UTF-8");
+		String type = media.getContentType();
+		System.out.println("type :" + type);
 		fileName.setText(media.getName());
 	}
 
@@ -347,13 +347,14 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			this.userId = userId;
 			this.config = config;
 		}
-
+		byte[] fileData;
 		@Override
 		public void run() {
 			DataEngineStatus status = null;
 			try {
 				status = getPannelExecution(config);
 				DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status);
+				dataEngine.setMedia(media);
 				dataEngine.importData(config.getName());
 			} catch (Exception e) {
 				logger.error("Exception:", e);
