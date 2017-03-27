@@ -385,30 +385,30 @@ public class ScheduleGenerator {
 	private static FinScheduleData maintainFrqSchdProcess(FinScheduleData finScheduleData, String frequency,
 			Date grcStartDate, Date rpyStartDate, Date endDate) {
 		logger.debug("Entering");
-
+		
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		if (financeMain.isAllowGrcPeriod() && grcStartDate != null
 				&& grcStartDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 
 			// Load Grace period profit dates
-			finScheduleData = getSchedule(finScheduleData, frequency, grcStartDate, financeMain.getGrcPeriodEndDate(),
+			finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftFrq(), grcStartDate, financeMain.getGrcPeriodEndDate(),
 					true, CalculationConstants.SCHDFLAG_PFT);
 
 			// Load Repayment dates during grace period
 			if (financeMain.isAllowGrcRepay()) {
-				finScheduleData = getSchedule(finScheduleData, frequency, grcStartDate,
+				finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftFrq(), grcStartDate,
 						financeMain.getGrcPeriodEndDate(), true, CalculationConstants.SCHDFLAG_RPY);
 			}
 
 			// Load Grace period profit review dates
 			if (financeMain.isAllowGrcPftRvw()) {
-				finScheduleData = getSchedule(finScheduleData, frequency, grcStartDate,
+				finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftRvwFrq(), grcStartDate,
 						financeMain.getGrcPeriodEndDate(), true, CalculationConstants.SCHDFLAG_RVW);
 			}
 
 			// Load Grace period capitalization dates
 			if (financeMain.isAllowGrcCpz()) {
-				finScheduleData = getSchedule(finScheduleData, frequency, grcStartDate,
+				finScheduleData = getSchedule(finScheduleData, financeMain.getGrcCpzFrq(), grcStartDate,
 						financeMain.getGrcPeriodEndDate(), true, CalculationConstants.SCHDFLAG_CPZ);
 			}
 
@@ -442,19 +442,19 @@ public class ScheduleGenerator {
 
 		// Load Repay profit dates
 		if (StringUtils.isNotBlank(financeMain.getRepayPftFrq())) {
-			finScheduleData = getSchedule(finScheduleData, frequency, rpyStartDate, financeMain.getMaturityDate(),
+			finScheduleData = getSchedule(finScheduleData, getFrequency(financeMain.getRepayPftFrq(), frequency), rpyStartDate, financeMain.getMaturityDate(),
 					true, CalculationConstants.SCHDFLAG_PFT);
 		}
 
 		// Load Repay profit review dates
 		if (financeMain.isAllowRepayRvw()) {
-			finScheduleData = getSchedule(finScheduleData, frequency, rpyStartDate, financeMain.getMaturityDate(),
+			finScheduleData = getSchedule(finScheduleData, getFrequency(financeMain.getRepayRvwFrq(), frequency), rpyStartDate, financeMain.getMaturityDate(),
 					true, CalculationConstants.SCHDFLAG_RVW);
 		}
 
 		// Load Repay capitalize dates
 		if (financeMain.isAllowRepayCpz()) {
-			finScheduleData = getSchedule(finScheduleData, frequency, rpyStartDate, financeMain.getMaturityDate(),
+			finScheduleData = getSchedule(finScheduleData, getFrequency(financeMain.getRepayCpzFrq(), frequency), rpyStartDate, financeMain.getMaturityDate(),
 					true, CalculationConstants.SCHDFLAG_CPZ);
 		}
 
@@ -466,6 +466,36 @@ public class ScheduleGenerator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+	
+	/**
+	 * Method for Preparation of Frequency based on existing
+	 * @param frq1
+	 * @param frq2
+	 * @return 
+	 */
+	private static String getFrequency(String frq1, String frq2){
+		
+		char frqCode = frq1.charAt(0);
+		String returnfrq = "";
+		switch (frqCode) {
+		case 'Y':
+		case 'H':
+		case 'Q':
+		case 'B':
+		case 'M':
+			returnfrq = frq1.substring(0, 3).concat(frq2.substring(3));
+			break;
+		case 'F':
+		case 'X':
+		case 'W':
+		case 'D':
+		default:
+			returnfrq = frq2;
+			break;
+		}
+		
+		return returnfrq;
 	}
 
 	private static FinScheduleData getSchedule(FinScheduleData finScheduleData, String frequency, Date startDate,

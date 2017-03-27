@@ -126,6 +126,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1,
 						finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0).getNextFrequencyDate();
 				
+				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
+					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
+							.getNextFrequencyDate();
+				}
+				
 			}
 
 			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true,
@@ -162,6 +167,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			} else {
 				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
 						.getNextFrequencyDate();
+				
+				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
+					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
+							.getNextFrequencyDate();
+				}
 				
 				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
 						PennantConstants.DBDateFormat));

@@ -102,7 +102,6 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private boolean isNotFinanceProcess = false;
 	private Map<String, List<Listitem>>  checkListDocTypeMap = null;
 	private List<Object> custDetails = null;
-	private String moduleDefiner;
 	
 	/**
 	 * default constructor.<br>
@@ -176,10 +175,6 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (arguments.containsKey("window")) {
 				this.window_documentDetailDialog = (Component) arguments
 						.get("window");
-			}
-			
-			if (arguments.containsKey("moduleDefiner")) {
-				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 			
 			doShowDialog();

@@ -160,7 +160,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	// Finance Main Details Tab---> 1. Key Details
 	protected CurrencyBox					downPaySupl;																// autoWired
 	protected Row							row_downPaySupl;															// autoWired
-	protected Label							label_window;																// autoWired
+	protected Label							windowTitle;																// autoWired
 
 	protected Row							row_finWriteoffPaymentDate;
 	protected Datebox						writeoffDate;
@@ -289,6 +289,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 - 52 + "px");
 			// set Field Properties
 			doSetFieldProperties();
+			
+			// Setting tile Name based on Service Action
+			if(StringUtils.isNotEmpty(moduleDefiner)){
+				this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
+			}
+			
 			doShowDialog(getFinanceDetail());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -332,8 +338,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.finWriteoffPaidAmount.setTextBoxWidth(200);
 			this.finWriteoffPaidAmount.setScale(format);
 
-			this.label_window.setValue(Labels.getLabel("label_Window_WriteoffPayment"));
-
 			if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
 				this.label_FinanceMainDialog_finWriteoffPayAccount.setVisible(false);
 				this.finWriteoffPayAccount.setVisible(false);
@@ -352,9 +356,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.finRepayMethod);
 			readOnlyComponent(true, this.mandateRef);
 		}
-		
-		
-
 
 		//Accounts should be displayed only to the Banks
 		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {

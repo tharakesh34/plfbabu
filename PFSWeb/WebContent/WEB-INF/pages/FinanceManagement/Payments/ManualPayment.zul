@@ -52,7 +52,7 @@
 				<toolbar align="center" sclass="toolbar-center">
 					<label
 						value="${c:l('window_ManualPaymentDialog.title')}"
-						sclass="label-heading" />
+						sclass="windowTitle" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->

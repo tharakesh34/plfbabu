@@ -543,7 +543,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected boolean 			isEnquiry = false;
 
 	protected Component 	childWindow = null;
-	protected Component 	finPurposeWindow = null;
 	protected Component 	checkListChildWindow = null;
 	protected Component 	customerWindow = null;
 	protected Component 	collateralAssignmentWindow = null;
@@ -1344,14 +1343,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	private String getTabpanelID(String id) {
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
-	}
-
-	private void clearTabpanelChildren(String id) {
-		Tabpanel tabpanel = getTabpanel(id);
-		if (tabpanel != null) {
-			tabpanel.setStyle("overflow:auto;");
-			tabpanel.getChildren().clear();
-		}
 	}
 
 	private Tab getTab(String id) {
@@ -5294,12 +5285,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					return true;
 				}
 			}
-			if (finPurposeWindow != null ) {
-				Events.sendEvent("onFinPurposeClose", finPurposeWindow, null);
-				if (isFinPurposeDataChanged()) {
-					return true;
-				}
-			}
 			if (checkListChildWindow != null) {
 				Events.sendEvent("onCheckListClose", checkListChildWindow, null);
 				if (isAssetDataChanged()) {
@@ -6925,11 +6910,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	
 	@Override
 	public void closeDialog() {
-		// Closing Finance Purpose Asset Details Window
-		if (finPurposeWindow != null) {
-			// FIXME
-			//closeDialog((Window) finPurposeWindow, "FinancePurposeDetailList");
-		}
 
 		// Closing Finance Fee Details Window
 		if (feeDetailDialogCtrl != null) {
@@ -7697,14 +7677,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.childWindow = childWindow;
 	}
 	
-	public Component getFinPurposeWindow() {
-		return finPurposeWindow;
-	}
-
-	public void setFinPurposeWindow(Window finPurposeWindow) {
-		this.finPurposeWindow = finPurposeWindow;
-	}
-
 	public FinanceMainExtService getFinanceMainExtService() {
 		return financeMainExtService;
 	}

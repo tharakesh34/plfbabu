@@ -104,7 +104,6 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.Gender;
-import com.pennant.backend.model.systemmasters.IdentityDetails;
 import com.pennant.backend.model.systemmasters.IncomeCategory;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;

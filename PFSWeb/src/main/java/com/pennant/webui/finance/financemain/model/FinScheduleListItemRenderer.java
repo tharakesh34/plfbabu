@@ -482,6 +482,16 @@ public class FinScheduleListItemRenderer implements Serializable{
 						allowRvwRateEdit) {
 					ComponentsCtrl.applyForward(listitem, "onDoubleClick=onReviewRateItemDoubleClicked");
 				}*/
+			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
+					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
+				
+				availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getDisbAmount());
+				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
+						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+										getFinanceScheduleDetail().getClosingBalance(),false, false, false,
+										false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
+				count = 2;
 			}
 
 			if (getFinanceScheduleDetail().isDisbOnSchDate()) {

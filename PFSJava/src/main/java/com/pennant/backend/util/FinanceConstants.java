@@ -195,11 +195,10 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_REINSTATE 			= "ReInstate";
 	public static final String FINSER_EVENT_SUPLRENTINCRCOST	= "SuplRentIncrCost";
 	public static final String FINSER_EVENT_REAGING				= "ReAging";
-	public static final String FINSER_EVENT_EMIHOLIDAY			= "EMIHoliday";
 	public static final String FINSER_EVENT_CANCELDISB			= "CancelDisbursement";
 	public static final String FINSER_EVENT_OVERDRAFTSCHD		= "OverdraftSchedule";
 	public static final String FINSER_EVENT_PLANNEDEMI			= "PlannedEMI";
-	public static final String BULK_RATE_CHG	 	= "BulkRateChange";
+	public static final String BULK_RATE_CHG	 				= "BulkRateChange";
 	
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT 			= "FD";

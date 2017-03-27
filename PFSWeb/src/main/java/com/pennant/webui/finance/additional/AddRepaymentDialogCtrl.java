@@ -400,7 +400,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-				boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
+				//boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
 				//Not before Current Business date & not Current Schedule Term Date
 				if (curBussDate.compareTo(curSchd.getSchDate()) > 0) {
 					continue;
@@ -430,9 +430,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+				/*if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 					isRepayPftOnFrq = false;
-				}
+				}*/
 
 				/*
 				 * if (isRepayPftOnFrq || ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
@@ -484,11 +484,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-				boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
+				/*boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 					isRepayPftOnFrq = false;
-				}
+				}*/
 
 				if (i == 0 || i == financeScheduleDetails.size() - 1) {
 					continue;

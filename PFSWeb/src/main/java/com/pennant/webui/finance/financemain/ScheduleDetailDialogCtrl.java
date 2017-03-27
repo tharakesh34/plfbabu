@@ -2254,8 +2254,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				this.btnReAgeHolidays.setVisible(false);
 			}
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
-			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms")) {
-				Events.postEvent("onClick$btnAddTerms", this.window_ScheduleDetailDialog, null);
+			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate")) {
+				Events.postEvent("onClick$btnReCalcualte", this.window_ScheduleDetailDialog, null);
 			}
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
 			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms")) {

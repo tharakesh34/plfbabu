@@ -196,6 +196,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	protected Window										window_ManualPaymentDialog;
 	protected Borderlayout									borderlayout_ManualPayment;
+	protected Label											windowTitle;
 
 	//Summary Details
 
@@ -455,13 +456,18 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				//Reset Finance Repay Header Details
 				doWriteBeanToComponents();
 
-				setDialog(DialogType.EMBEDDED);
-
 				this.borderlayout_ManualPayment.setHeight(getBorderLayoutHeight());
 				this.listBoxPayment.setHeight(getListBoxHeight(this.grid_Repayment.getRows().getVisibleItemCount()+3));
 				this.listBoxSchedule.setHeight(getListBoxHeight(9));
 				this.repaymentDetailsTab.setSelected(true);
 				this.rpyAmount.setFocus(true);
+				
+				// Setting tile Name based on Service Action
+				if(StringUtils.isNotEmpty(moduleDefiner)){
+					this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
+				}
+				
+				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

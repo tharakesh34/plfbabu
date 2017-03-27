@@ -3806,8 +3806,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			// Setting tile Name based on Service Action
 			if(StringUtils.isNotEmpty(moduleDefiner)){
-				//this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
+				this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
 			}
+			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

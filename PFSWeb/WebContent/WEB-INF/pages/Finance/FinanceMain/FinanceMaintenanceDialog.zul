@@ -21,7 +21,7 @@
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label id="label_window" value="${c:l('window_FinanceMainDialog.title')}" sclass="label-heading" />
+								<label id="windowTitle" value="${c:l('window_FinanceMainDialog.title')}" sclass="label-heading" />
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">

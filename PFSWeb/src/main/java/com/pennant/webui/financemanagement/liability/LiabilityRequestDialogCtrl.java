@@ -255,6 +255,12 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		} else {
 			doShowDialog(getFinanceDetail());
 		}
+		
+		// Setting tile Name based on Service Action
+		if(StringUtils.isNotEmpty(moduleDefiner)){
+			this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
+		}
+		
 		this.basicDetailTabDiv.setHeight(this.borderLayoutHeight - 100 + "px");
 		logger.debug("Leaving " + event.toString());
 	}

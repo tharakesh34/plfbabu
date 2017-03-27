@@ -172,6 +172,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		// set Field Properties
 		doSetFieldProperties();
 		doShowDialog(getFinanceDetail());
+					
 		Events.echoEvent("onPostWinCreation", this.self, null);
 		logger.debug("Leaving " + event.toString());
 	}
