@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * AbstractEntity class. Any class that should be uniquely identifiable from another should subclass from

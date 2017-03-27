@@ -60,6 +60,9 @@ public class WorkFlowDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 5638930814989470679L;
 
 	@XmlElement
+	private long workFlowDesignId = 0; // duplicate of workFlowId for API purpose.
+	
+	@XmlElement
 	private String workFlowType;
 
 	@XmlElement
@@ -115,6 +118,14 @@ public class WorkFlowDetails extends AbstractWorkflowEntity implements Entity {
 		this.newRecord = newRecord;
 	}
 	
+	public long getWorkFlowDesignId() {
+		return workFlowDesignId;
+	}
+
+	public void setWorkFlowDesignId(long workFlowDesignId) {
+		this.workFlowDesignId = workFlowDesignId;
+	}
+
 	public long getId() {
 		return super.getWorkflowId();
 	}

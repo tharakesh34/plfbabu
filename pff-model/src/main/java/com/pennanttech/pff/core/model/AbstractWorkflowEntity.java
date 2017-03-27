@@ -30,7 +30,6 @@ public abstract class AbstractWorkflowEntity extends AbstractEntity {
 	private String nextTaskId = "";
 	private String recordType;
 	
-	@XmlElement
 	private long workflowId = 0;
 	private String userAction = "Save";
 
