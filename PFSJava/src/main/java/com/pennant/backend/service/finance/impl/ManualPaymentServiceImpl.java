@@ -960,8 +960,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 				//Overdue Details preparation
 				//FIXME Satish overdue should not calculated here it should be recovered
-//				getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay,
-//						false, false);
+				getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay,
+						false, false);
 
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());

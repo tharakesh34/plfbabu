@@ -666,11 +666,9 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		schdDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(" Select SchDate, CpzOnSchDate, RepayOnSchDate, BalanceForPftCal, ");
-		selectSql
-				.append(" ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, CalculatedRate, ");
-		selectSql
-				.append(" SchdPriPaid, SchdPftPaid, NoOfDays ");
-		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, ");
+		selectSql.append(" CalculatedRate, SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, ");
+		selectSql.append(" NoOfDays From FinScheduleDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
