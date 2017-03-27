@@ -891,6 +891,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)){
 			whereClause.append(" AND (RcdMaintainSts = '"+moduleDefiner+"' ) "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else {
 			if(App.DATABASE == Database.ORACLE){
 				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '"+moduleDefiner+"' ) "); 
@@ -916,17 +917,22 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND AlwMultiDisb = 1  AND MaturityDate > '" + appDate + "'");  
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RLSDISB)) {
 			whereClause.append(" AND AlwMultiDisb = 1  AND MaturityDate > '" + appDate + "'");  
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) { 
 			whereClause.append(" AND (Defferments - AvailedDefRpyChange > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_POSTPONEMENT+"' ) "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH)) { 
 			whereClause.append(" AND (MaxUnplannedEmi - AvailedUnPlanEmi > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_UNPLANEMIH+"') "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)){
-			
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)){
-			
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECALCULATE)){
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SUBSCHD)){
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGPFT)){
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) "); 
@@ -934,8 +940,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");*/  
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)){
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESCHD)){
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)){
 			if(StringUtils.equals(ImplementationConstants.IMPLEMENTATION_ISLAMIC, ImplementationConstants.IMPLEMENTATION_TYPE)){
 				whereClause.append(" AND ProductCategory IN ( '" + FinanceConstants.PRODUCT_IJARAH +"','"+FinanceConstants.PRODUCT_FWIJARAH+"') " );
@@ -948,13 +956,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADVRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 			whereClause.append(" AND FinStartDate < '" + appDate +"' " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)){
 			whereClause.append(" AND FinStartDate < '" + appDate +"' " );
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)){
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)){
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)){
 			//whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
@@ -965,10 +978,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND MigratedFinance = 0 ");
 			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");  
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL)) {
 			whereClause.append(" AND FinReference IN(SELECT FinReference FROM FinFeeCharges WHERE FeeCode= 'TAKAFUL')");
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 			whereClause.append(" AND NextRolloverDate IS NOT NULL "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
 			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails where DisbDate >= '"+appDate+ "') "); 
 			whereClause.append(" AND ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"' )"); 
@@ -978,10 +994,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCHANGE)) {
 			whereClause.append("AND FinReference IN (select  Reference from FinInsurances where PaymentMethod="+"'"+InsuranceConstants.PAYTYPE_SCH_FRQ+"')");
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_PLANNEDEMI)){
 			whereClause.append(" AND PlanEMIHAlw = 1");
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)){
 			whereClause.append(" AND (MaxReAgeHolidays - AvailedReAgeH > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_REAGING+"') "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}
 	
 		//Written Off Finance Reference Details Condition
