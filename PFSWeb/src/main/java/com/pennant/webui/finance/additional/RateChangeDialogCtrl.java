@@ -713,7 +713,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// BaseRate margin validation
 		try {
 			if(StringUtils.trimToNull(this.rate.getBaseValue()) == null && this.rate.getMarginValue() != null &&
-					this.rate.getMarginValue().compareTo(BigDecimal.ZERO) > 0){
+					this.rate.getMarginValue().compareTo(BigDecimal.ZERO) !=0){
 				throw new WrongValueException(rate.getMarginComp(),Labels.getLabel("FIELD_EMPTY",new String[]{
 						Labels.getLabel("label_RateChangeDialog_MarginRate.value")}));
 				
