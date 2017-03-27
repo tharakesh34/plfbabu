@@ -1981,8 +1981,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		
 		try {
-			if(StringUtils.trimToNull(this.financeGrcBaseRate.getBaseValue()) == null && this.financeGrcBaseRate.getMarginValue() != null &&
-					this.financeGrcBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) > 0){
+			if(!this.financeGrcBaseRate.getMarginComp().isReadonly() && StringUtils.trimToNull(this.financeGrcBaseRate.getBaseValue()) == null && this.financeGrcBaseRate.getMarginValue() != null &&
+					this.financeGrcBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) !=0){
 				throw new WrongValueException(financeGrcBaseRate.getMarginComp(),Labels.getLabel("FIELD_EMPTY",new String[]{
 						Labels.getLabel("label_FinanceTypeDialog_FinMargin.value")}));
 				
@@ -2042,8 +2042,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		try {
 			//To check whether the margin entered without base rate
-			if(StringUtils.trimToNull(this.financeBaserate.getBaseValue()) == null && this.financeBaserate.getMarginValue() != null &&
-					this.financeBaserate.getMarginValue().compareTo(BigDecimal.ZERO) > 0){
+			if(!this.financeBaserate.getMarginComp().isReadonly()
+					&&StringUtils.trimToNull(this.financeBaserate.getBaseValue()) == null && this.financeBaserate.getMarginValue() != null &&
+					this.financeBaserate.getMarginValue().compareTo(BigDecimal.ZERO) != 0){
 				throw new WrongValueException(financeBaserate.getMarginComp(),Labels.getLabel("FIELD_EMPTY",new String[]{
 						Labels.getLabel("label_FinanceTypeDialog_FinMargin.value")}));
 				

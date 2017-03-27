@@ -407,6 +407,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.btnCtrl.setInitEdit();
 		this.btnEdit.setVisible(true);
 		this.btnCancel.setVisible(false);
+		this.btnDelete.setVisible(true);
 		logger.debug("Leaving");
 	}
 

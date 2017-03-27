@@ -152,7 +152,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean finIsActive;
 	private String finRemarks;
 	private long initiateUser;
-	private Timestamp initiateDate;
+	private Date initiateDate;
 	private long mMAId;
 	private String agreeName;
 	private boolean finIsAlwMD;
@@ -2612,11 +2612,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.custStsDescription = custStsDescription;
 	}
 
-	public Timestamp getInitiateDate() {
+	public Date getInitiateDate() {
 		return initiateDate;
 	}
 
-	public void setInitiateDate(Timestamp initiateDate) {
+	public void setInitiateDate(Date initiateDate) {
 		this.initiateDate = initiateDate;
 	}
 

@@ -791,6 +791,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custGroupId.setValueColumn("CustGrpID");
 		this.custGroupId.setDescColumn("CustGrpDesc");
 		this.custGroupId.setValidateColumns(new String[] { "CustGrpID" });
+		this.custGroupId.setFilters(new Filter[]{new Filter("CustGrpIsActive","1",Filter.OP_EQUAL)});
 
 		this.custStaffID.setMaxlength(8);
 		this.custDSACode.setMaxlength(8);
@@ -801,6 +802,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custDSADept.setValueColumn("DeptCode");
 		this.custDSADept.setDescColumn("DeptDesc");
 		this.custDSADept.setValidateColumns(new String[] { "DeptCode" });
+		this.custDSADept.setFilters(new Filter[]{new Filter("DeptIsActive","1",Filter.OP_EQUAL)});
 
 		this.custRiskCountry.setMaxlength(2);
 		this.custRiskCountry.setMandatoryStyle(false);

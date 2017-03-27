@@ -144,6 +144,10 @@ public class PTStringValidator implements Constraint{
 				
 			}
 			if(minLenValid && maxLenValid){
+				if(minLength==maxLength){
+					return Labels.getLabel("FIELD_ALLOWED_MANFILL", new String[] {fieldParm,String.valueOf(maxLength)});
+				}
+				
 				if(compValue.length()< minLength || compValue.length() > maxLength){
 					return Labels.getLabel("FIELD_ALLOWED_RANGE", new String[] {fieldParm,String.valueOf(minLength),String.valueOf(maxLength)});
 				}

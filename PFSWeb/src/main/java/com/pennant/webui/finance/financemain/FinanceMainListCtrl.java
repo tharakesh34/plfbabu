@@ -1010,22 +1010,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Here added filters for If InitiateDate value is null, when search
 		// with opreator(<>) value not papulated.
 		if (this.initiateDate.getValue() != null) {
-			if (this.sortOperator_InitiateDate.getSelectedIndex() == Filter.OP_NOT_EQUAL) {
-				Filter[] initiateDate = new Filter[2];
-				initiateDate[0] = new Filter("InitiateDate", DateUtility.formatDate(this.initiateDate.getValue(),
-						PennantConstants.DBDateTimeFormat2), Filter.OP_NOT_EQUAL);
-				if (App.DATABASE == Database.ORACLE) {
-					initiateDate[1] = Filter.isEmpty("InitiateDate");
-				} else {
-					initiateDate[1] = Filter.isNull("InitiateDate");
-				}
-				searchObj.addFilterOr(initiateDate);
-			} else {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_InitiateDate.getSelectedItem(),
 						DateUtility.formatDate(this.initiateDate.getValue(), PennantConstants.DBDateTimeFormat),
 						"InitiateDate");
-			}
-
 		}
 		// finPromotion
 		if (StringUtils.isNotBlank(this.finPromotion.getValue())) {

@@ -59,6 +59,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 
 /**
@@ -118,7 +120,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
-		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(),PennantConstants.dateAndTimeFormat));
+		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(),DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);

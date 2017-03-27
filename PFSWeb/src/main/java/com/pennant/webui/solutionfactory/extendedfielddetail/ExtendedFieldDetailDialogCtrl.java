@@ -1642,8 +1642,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	}
 
 	public void onChange$fieldType(Event event) {
-		if (this.fieldType.getSelectedItem() != null
-				&& !("").equals(this.fieldType.getSelectedItem().getValue())) {
+		if (!("").equals(this.fieldType.getSelectedItem().getValue())) {
 			onFieldTypeChange(this.fieldType.getSelectedItem().getValue().toString(),true);
 		}
 	}
@@ -1684,6 +1683,16 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private void onFieldTypeChange(String fieldType, boolean newSelection) {
 		logger.debug("Entering");
 
+		if(StringUtils.equals(PennantConstants.List_Select,fieldType)){
+			this.rowfieldLength.setVisible(true);
+			this.rowfieldPrec.setVisible(true);
+			this.rowMandatory.setVisible(true);
+			this.rowUnique.setVisible(true);
+			this.rowConstraint.setVisible(true);
+			fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
+			this.rowfieldDefaultValue.setVisible(false);
+		}else{
+		
 		if(this.rowfieldList.getFellowIfAny("SListId") != null){
 			this.combofieldList.getPreviousSibling().detach();
 		}
@@ -1896,7 +1905,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 						PennantRegularExpressions.REGEX_NM_AMOUNT,false));
 			}
 		}
-
+	}
 		logger.debug("Leaving");
 	}
 

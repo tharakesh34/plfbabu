@@ -253,7 +253,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 		aAccountType.setInternalAc(type.isInternalAc());
 		aAccountType.setCustSysAc(type.isCustSysAc());
 		aAccountType.setAcTypeIsActive(type.isAcTypeIsActive());
-
+		aAccountType.setAssertOrLiability(type.getAssertOrLiability());
 		logger.debug("Leaving");
 
 		return aAccountType;

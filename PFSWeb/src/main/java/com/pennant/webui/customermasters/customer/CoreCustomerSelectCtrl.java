@@ -67,6 +67,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -469,6 +470,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.row_custCRCPR.setVisible(false);
 		this.row_CustCIF.setVisible(false);
 		this.row_EIDNumber.setVisible(true);
+		this.custNationality.setValue(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"));
 	}
 
 

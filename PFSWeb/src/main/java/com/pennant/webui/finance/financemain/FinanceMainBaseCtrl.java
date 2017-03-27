@@ -1474,7 +1474,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Collateral Detail Tab
-		if (StringUtils.isEmpty(moduleDefiner)) {
+		if (StringUtils.isEmpty(moduleDefiner)|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
 			appendFinCollateralTab(onLoad);
 		}
 
@@ -10853,7 +10853,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (aFinanceMain.getInitiateDate() == null && getUserWorkspace().getLoggedInUser().getLoginUsrID() != 0) {
 			if (!recSave) {
-				aFinanceMain.setInitiateDate(new Timestamp(System.currentTimeMillis()));
+				aFinanceMain.setInitiateDate(DateUtility.getAppDate());
 			}
 		}
 

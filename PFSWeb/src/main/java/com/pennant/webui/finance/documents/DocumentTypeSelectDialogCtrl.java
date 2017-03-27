@@ -258,9 +258,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setValueColumn("DocTypeCode");
 		this.docCategory.setDescColumn("DocTypeDesc");
 		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
-		if(!StringUtils.isEmpty(moduleDefiner)){			
-			this.docCategory.setFilters(new Filter[]{new Filter("DocIsCustDoc","0",Filter.OP_EQUAL)});
-		}
+		this.docCategory.setFilters(new Filter[]{new Filter("DocIsCustDoc","0",Filter.OP_EQUAL)});
+		
 		
 		logger.debug("Leaving ");
 		

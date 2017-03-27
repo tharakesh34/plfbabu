@@ -1475,8 +1475,16 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 							.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
 							PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
 						
-				}else{					
-					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));
+				}else if(StringUtils.equals(this.guarantorIDType.getSelectedItem().getValue().toString(), PennantConstants.PANNUMBER)){
+					if(this.guarantorIDNumber.getConstraint()!=null){
+						this.guarantorIDNumber.setConstraint("");
+					}
+					
+					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels
+							.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+							PennantRegularExpressions.REGEX_PANNUMBER, true));
+				}else{
+					this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));					
 				}
 				
 			}
@@ -1769,9 +1777,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if(!this.guarantorIDType.getSelectedItem().getValue().equals( PennantConstants.List_Select)){  
 			if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
 				this.guarantorIDNumber.setMaxlength(20);
-				/*this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
-						PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));*/
-			}else{
+				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
+						PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+			}else if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.PANNUMBER)){
+				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value"),
+						PennantRegularExpressions.REGEX_PANNUMBER, true));
+			}
+			else{
 				this.guarantorIDNumber.setMaxlength(20);
 				this.guarantorIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
 			}
@@ -2082,6 +2094,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if(this.guarantorIDType.getSelectedIndex()!=0){  
 			if(this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)){
 				this.guarantorIDNumber.setValue(PennantApplicationUtil.formatEIDNumber(this.guarantorIDNumber.getValue()));
+			}else{
+				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
 			}
 				
 		}

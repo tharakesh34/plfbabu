@@ -342,14 +342,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
-		logger.debug("Enetring" + event.toString());
-		try {
-			doClose(null);
-		} catch (final WrongValuesException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-		logger.debug("Leaving" + event.toString());
+		
+		doClose(this.btnSave.isVisible());
 	}
 
 	/**
@@ -359,10 +353,13 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
-		String message = "Change done to the existing definition. Do you want to save before copy?";
-		doClose(message);
-		Events.postEvent("onClick$button_AccountTypeList_NewAccountType",
-				accountTypeListCtrl.window_AccountTypeList, getAccountType());
+		logger.debug("Entering");
+		if (doClose(this.btnSave.isVisible())) {
+			Events.postEvent("onClick$button_AccountTypeList_NewAccountType",
+					accountTypeListCtrl.window_AccountTypeList, getAccountType());
+		}
+		logger.debug("Leaving");
+	
 	}
 
 	// GUI operations

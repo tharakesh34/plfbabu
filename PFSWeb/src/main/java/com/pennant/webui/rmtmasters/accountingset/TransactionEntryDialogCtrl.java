@@ -1821,9 +1821,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		
 		this.openNewFinAc.setChecked(false);
 		this.row_OpenNewFinAc.setVisible(false);
-		this.btnSearchAccountType.setDisabled(true);
+		//this.btnSearchAccountType.setDisabled(true);
 		this.btnSearchSystemIntAccount.setDisabled(true);
-		this.btnSearchAccountSubHeadRule.setDisabled(true);
+		//this.btnSearchAccountSubHeadRule.setDisabled(true);
 		this.lovDescAccountTypeName.setValue("");
 		this.spAccountType.setSclass("");
 
