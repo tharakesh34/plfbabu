@@ -846,7 +846,12 @@
 			DROP table SeqFinanceScoreHeader_bk;
 	</sql>
 </changeSet>
-
+<changeSet id="32" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQDOCUMENTDETAILS_bk as select * from SEQDOCUMENTDETAILS;
+			 DROP table SEQDOCUMENTDETAILS;
+		</sql>
+	</changeSet>
 <changeSet id="32.1" author="Subbarao" dbms="oracle">	
    		<sql splitStatements="false">
    			 declare ex number;
@@ -892,7 +897,12 @@
 			DROP table SeqFinanceScoreHeader_bk;
 	</sql>
 </changeSet>
-
+<changeSet id="34" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQSECLOGINLOG_bk as select * from SEQSECLOGINLOG;
+			 DROP table SEQSECLOGINLOG;
+		</sql>
+	</changeSet>
 <changeSet id="34.1" author="Subbarao" dbms="oracle">	
    		<sql splitStatements="false">
    			 declare ex number;
