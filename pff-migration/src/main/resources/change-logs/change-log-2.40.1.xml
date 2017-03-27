@@ -795,4 +795,55 @@
 			DROP table SEQPOSTINGS_bk;
 	</sql>
 </changeSet>
+<changeSet id="30" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SeqFinanceScoreHeader_bk as select * from SeqFinanceScoreHeader;
+			 DROP table SeqFinanceScoreHeader;
+		</sql>
+	</changeSet>
+   		<changeSet id="30.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SeqFinanceScoreHeader_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SeqFinanceScoreHeader START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="30.1" author="Subbarao" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SeqFinanceScoreHeader_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQPOSTINGS_bk into ex;
+			 execute 'CREATE SEQUENCE SeqFinanceScoreHeader START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+     	</sql>
+     	</changeSet>
+     	<changeSet id="30.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SeqFinanceScoreHeader_bk;
+		</sql>
+	</changeSet>
+ <changeSet id="31" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SeqFinanceScoreHeader_bk  from SeqFinanceScoreHeader;
+			DROP table SeqFinanceScoreHeader;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SeqFinanceScoreHeader_bk)T);
+			CREATE TABLE SeqFinanceScoreHeader(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SeqFinanceScoreHeader'', RESEED,'+@ex+' )');
+			
+			DROP table SeqFinanceScoreHeader_bk;
+	</sql>
+</changeSet>
 </databaseChangeLog>
