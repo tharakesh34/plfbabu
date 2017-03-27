@@ -50,9 +50,9 @@
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
-					<label
+					<label id="windowTitle"
 						value="${c:l('window_ManualPaymentDialog.title')}"
-						sclass="windowTitle" />
+						sclass="label-heading" />
 				</toolbar>
 
 				<!-- CRUD BUTTONS -->
