@@ -400,6 +400,42 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				// Actual Available Limit
 				availableLimit = availableLimit.subtract(closingbal);
 			
+				/*
+				 * 		Validation to check whether the available limit is negative when the disbursment amount is entered
+				 * 		getting the DisbSchdDate and checking with the overdraftDropline Date to get the particular ODLimit 
+				 * 		and Subtract the Closing Limit and the Disb amount if it is negative then Validation is raised
+				 * 
+				 */
+				List<FinanceScheduleDetail> finSched = aFinScheduleData.getFinanceScheduleDetails();
+				
+				BigDecimal avalLimit =finMain.getFinAssetValue();
+				
+				for(int i=1;i<finSched.size()-1;i++){
+
+					if(!finSched.get(i).isDisbOnSchDate()){
+						continue;
+					}else{
+						List<OverdraftScheduleDetail> odDetail = aFinScheduleData.getOverdraftScheduleDetails();
+
+						for(int j = 0;j<odDetail.size()-1;j++){
+
+							if(DateUtility.compare(odDetail.get(j).getDroplineDate(),odDetail.get(j+1).getDroplineDate())<0){
+								if(DateUtility.compare(odDetail.get(j).getDroplineDate(),finSched.get(i).getSchDate())<=0
+										&& DateUtility.compare(odDetail.get(j+1).getDroplineDate(),finSched.get(i).getSchDate())>0 ){
+									avalLimit = odDetail.get(j).getODLimit().subtract(finSched.get(i).getClosingBalance());
+									break;
+								}
+							}
+						}
+					}
+					if(avalLimit.subtract(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter)).
+							compareTo(BigDecimal.ZERO)<0){
+						throw new WrongValueException(this.disbAmount,
+								Labels.getLabel("od_DisbAmount_Validation", new String[]{(PennantApplicationUtil.amountFormate(avalLimit,formatter))}));
+					}
+
+				}
+
 				// Validating against Available Limit amount
 				if(this.disbAmount.getValidateValue().compareTo(PennantAppUtil.formateAmount(availableLimit,formatter)) > 0){
 					throw new WrongValueException(this.disbAmount, Labels.getLabel("NUMBER_MAXVALUE_EQ",
@@ -413,8 +449,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 					totDisbAmount = PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter).add(totDisbAmount);
 					if(totDisbAmount.compareTo(finMain.getFinAssetValue()) > 0){
-						throw new WrongValueException(this.disbAmount,"Disbursement Amount Exceeded the Available ODLimit : "+ 
-								PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(),formatter));
+						throw new WrongValueException(this.disbAmount,Labels.getLabel("od_DisbAmount",new String[]{(PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(),formatter))}));
 					}
 				}
 			}
