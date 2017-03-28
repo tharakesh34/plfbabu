@@ -474,4 +474,110 @@
 		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
+	<changeSet id="20" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table FinTypeFees disable constraint FK_FinTypeFees_FeeTypeID;
+			alter table FinTypeFees_Temp disable constraint FK_FinTypeFees_Temp_FeeTypeID;
+			
+			create table sai_temp as select * from FinTypeFees;
+			delete from FinTypeFees;
+			commit;
+			
+			alter table FinTypeFees modify (OriginationFee number(1));
+			alter table FinTypeFees modify (Active number(1));
+
+			insert into FinTypeFees select * from sai_temp;
+			commit;
+			drop table sai_temp;
+			
+			create table sai_temp as select * from FinTypeFees_Temp;
+			delete from FinTypeFees_Temp;
+			commit;
+			
+			alter table FinTypeFees_Temp modify (OriginationFee number(1));
+			alter table FinTypeFees_Temp modify (Active number(1));
+
+			insert into FinTypeFees_Temp select * from sai_temp;
+			commit;
+			drop table sai_temp;
+				alter table FinTypeFees enable constraint FK_FinTypeFees_FeeTypeID;
+			alter table FinTypeFees_Temp enable constraint FK_FinTypeFees_Temp_FeeTypeID;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="20" author="Prasad" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table FinTypeFees drop constraint PK_FINTYPEFEES;
+			alter table FinTypeFees drop constraint FK_FinTypeFees_FeeTypeID;
+			alter table FinTypeFees drop constraint DF_FinTypeFees_Version;
+			
+			alter table FinTypeFees_Temp drop constraint PK_FINTYPEFEES_TEMP;
+			alter table FinTypeFees_Temp drop constraint FK_FinTypeFees_Temp_FeeTypeID;
+			alter table FinTypeFees_Temp drop constraint DF_FinTypeFees_Temp_Version;
+			
+			alter table FinTypeFees alter column OriginationFee bit not null;
+			alter table FinTypeFees alter column Active bit;
+			alter table FinTypeFees_Temp alter column OriginationFee bit not null;
+			alter table FinTypeFees_Temp alter column Active bit;
+				
+			alter table FinTypeFees add constraint PK_FINTYPEFEES primary key clustered (FinType,OriginationFee,FinEvent,FeeTypeID);
+			alter table FinTypeFees_Temp add constraint PK_FINTYPEFEES_TEMP primary key clustered (FinType,OriginationFee,FinEvent,FeeTypeID);
+			alter table FinTypeFees add constraint FK_FinTypeFees_FeeTypeID foreign key (FeeTypeID) references FeeTypes (FeeTypeID);
+			alter table FinTypeFees_Temp add constraint FK_FinTypeFees_Temp_FeeTypeID foreign key (FeeTypeID) references FeeTypes (FeeTypeID);
+			alter table FinTypeFees add constraint DF_FinTypeFees_Version default ((0)) for Version;
+			alter table FinTypeFees_Temp add constraint DF_FinTypeFees_Temp_Version default ((0)) for Version;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="20" author="Prasad" dbms="postgresql">
+		<sql>
+		<![CDATA[
+		 drop view FinTypeFees_View;
+		    drop view FinTypeFees_AView;
+			update FinTypeFees set OriginationFee = 0 where OriginationFee is null;
+			alter table FinTypeFees alter column OriginationFee type smallint using OriginationFee::smallint ;
+			alter table FinTypeFees alter column OriginationFee SET NOT NULL;
+			update FinTypeFees set Active = 0 where Active is null;
+			alter table FinTypeFees alter column Active type smallint using Active::smallint ;
+			
+			update FinTypeFees_Temp set OriginationFee = 0 where OriginationFee is null;
+			alter table FinTypeFees_Temp alter column OriginationFee type smallint using OriginationFee::smallint ;
+			alter table FinTypeFees_Temp alter column OriginationFee SET NOT NULL;
+			update FinTypeFees_Temp set Active = 0 where Active is null;
+			alter table FinTypeFees_Temp alter column Active type smallint using Active::smallint ;
+            
+            Create view FinTypeFees_AView as
+            SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+           T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+		   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees T1 INNER JOIN 
+			           FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent;
+			           
+			           CREATE VIEW FinTypeFees_View AS SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+			           T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+					   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees_Temp T1 INNER JOIN 
+			           FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			UNION ALL
+			SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+			           T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+					   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees T1 INNER JOIN 
+			           FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			WHERE     NOT EXISTS
+			                          (SELECT     1
+			                            FROM          FinTypeFees_Temp
+			                            WHERE      FinType = T1.FinType AND FinEvent = T1.FinEvent AND 
+										FeeTypeID = T1.FeeTypeID AND OriginationFee = T1.OriginationFee);
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
