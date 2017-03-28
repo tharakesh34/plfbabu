@@ -390,9 +390,9 @@ Update DATA_Engine_config set Uploadlocation = 'C' Where NAME = 'MANDATES_IMPORT
 
 <changeSet author="DurgaPrasad G" id="14">
 <sql>
-Delete from DATA_ENGINE_COLUMN Where TableId = (Select id from DATA_ENGINE_TABLE Where NAME = 'MADATES_EXPORT');
-Delete from DATA_ENGINE_TABLE Where NAME = 'MADATES_EXPORT';
-Delete from DATA_ENGINE_CONFIG Where NAME = 'MADATES_EXPORT';
+Delete from DATA_ENGINE_COLUMN where TableId = (select ID from DATA_ENGINE_TABLE where configId = (select ID from DATA_ENGINE_CONFIG Where NAME = 'MADATES_EXPORT'));
+Delete from DATA_ENGINE_TABLE where configId = (select ID from DATA_ENGINE_CONFIG Where NAME = 'MADATES_EXPORT');
+delete from DATA_ENGINE_CONFIG Where NAME = 'MADATES_EXPORT';
 </sql>
 </changeSet>
 	
