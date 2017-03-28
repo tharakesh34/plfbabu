@@ -5469,7 +5469,7 @@ public class ScheduleCalculator {
 				curSchd.setODLimit(finMain.getFinAssetValue());
 				curSchd.setLimitDrop(BigDecimal.ZERO);
 			} else {
-				if (prvSchd.getODLimit().compareTo(limitDrop) < 0) {
+				if (prvSchd.getODLimit().compareTo(limitDrop) < 0 || (i == scheduleList.size() - 1)) {
 					limitDrop = prvSchd.getODLimit();
 				}
 				curSchd.setODLimit(prvSchd.getODLimit().subtract(limitDrop));
