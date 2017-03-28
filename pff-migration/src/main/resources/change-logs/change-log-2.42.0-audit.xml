@@ -74,7 +74,8 @@
 	
 	<changeSet id="3" author="Prasad" dbms="oracle">
 		<sql>
-		<![CDATA[			
+		<![CDATA[	
+			delete from adtFinTypeFees;
 			alter table adtFinTypeFees modify (OriginationFee number(1));
 			alter table adtFinTypeFees modify (Active number(1));			
 		]]>
@@ -104,8 +105,21 @@
 	
 	<changeSet id="4" author="Prasad" dbms="oracle">
 		<sql>
-		<![CDATA[			
-			alter table adtfinancemain modify (QuickDisb number(1));		
+		<![CDATA[	
+			create table sai_temp as select * from adtfinancemain;	
+			update adtfinancemain set QuickDisb = null;
+			alter table adtfinancemain modify QuickDisb number(1);
+			
+			
+update adtfinancemain m set (m.QuickDisb) = (select t.QuickDisb from sai_temp t where t.auditid = m.auditid 
+and t.auditdate=m.auditdate and t.finreference=m.finreference and t.auditseq =m.auditseq and t.lastmnton=m.lastmnton and t.auditimage =m.auditimage) 
+where exists (select 1 from sai_temp t where t.auditid = m.auditid and t.auditdate=m.auditdate and t.auditimage =m.auditimage 
+and t.finreference=m.finreference  and t.auditseq =m.auditseq and t.lastmnton=m.lastmnton and t.auditimage =m.auditimage);
+			
+			alter table adtfinancemain modify QuickDisb number(1) not null;
+			
+			drop table sai_temp;
+					
 		]]>
 		</sql>
 	</changeSet>
