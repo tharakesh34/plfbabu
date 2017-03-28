@@ -395,57 +395,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
-
-		try {
-			doClose();
-		} catch (final WrongValuesException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	protected void doClose() throws Exception {
-		logger.debug("Entering");
-		boolean close = true;
-
-		if (isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			final String title = Labels.getLabel("message.Information");
-
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doClose: Yes");
-				doSave();
-				close = false;
-			} else {
-				logger.debug("doClose: No");
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
-
-		logger.debug("Leaving");
+		doClose(this.btnSave.isVisible());
 	}
 
 	// CRUD operations

@@ -31,6 +31,7 @@ import com.pennant.backend.service.applicationmaster.PoliceCaseService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
@@ -55,7 +56,7 @@ public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	protected  Datebox				policeCaseCustDOB;
 	protected  Textbox				policeCaseCustFName;
 	protected  Textbox				policeCaseCustLName;
-	protected  Textbox				policeCaseCustEIDNumber;
+	protected  Uppercasebox			policeCaseCustEIDNumber;
 	protected  Textbox  			policeCaseCustPassport;
 	protected Textbox 				phoneCountryCode; 						
 	protected Textbox 				phoneAreaCode; 	

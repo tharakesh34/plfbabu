@@ -5976,7 +5976,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Clients.showNotification(msg, "info", null, null, -1);
 				} else {
 					String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
-							aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Finance ",
+							aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Loan ",
 							aFinanceMain.getRecordStatus(), getNextUserId());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}

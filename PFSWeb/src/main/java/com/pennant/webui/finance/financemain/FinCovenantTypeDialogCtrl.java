@@ -963,8 +963,13 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.mandRole.setValue("", "");
 			this.space_receivableDate.setSclass("mandatory");
 		} else {
-			this.mandRole.setVisible(true);
-			this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+			if(this.alwWaiver.isChecked()){
+				this.mandRole.setVisible(false);
+				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			}else{				
+				this.mandRole.setVisible(true);
+				this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+			}
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");
 			this.receivableDate.setConstraint("");

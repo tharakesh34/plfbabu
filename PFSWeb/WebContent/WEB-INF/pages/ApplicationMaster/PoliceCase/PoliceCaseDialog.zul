@@ -128,7 +128,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox
+									<uppercasebox
 										id="policeCaseCustEIDNumber" width="180px" />
 								</hbox>
 								<label

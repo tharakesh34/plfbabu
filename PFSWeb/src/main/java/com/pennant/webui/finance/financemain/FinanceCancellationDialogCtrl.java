@@ -940,7 +940,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					aFinanceMain.setNextRoleCode("");
 				}
 				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
-						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Finance ",
+						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Loan ",
 						aFinanceMain.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 

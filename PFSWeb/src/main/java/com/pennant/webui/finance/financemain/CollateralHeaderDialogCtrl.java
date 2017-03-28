@@ -299,7 +299,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		
 		getUserWorkspace().allocateAuthorities("CollateralAssignmentDialog", this.roleCode);
 		this.btnNew_CollateralAssignment.setVisible(getUserWorkspace().isAllowed("button_CollateralAssignmentDialog_btnNew"));
-		this.btnNew_AssetType.setVisible(getUserWorkspace().isAllowed("button_CollateralAssignmentDialog_btnNew"));
+		this.btnNew_AssetType.setVisible(getUserWorkspace().isAllowed("button_CollateralAssignmentDialog_btnNewAsset"));
 		
 		logger.debug("Leaving");
 	}
