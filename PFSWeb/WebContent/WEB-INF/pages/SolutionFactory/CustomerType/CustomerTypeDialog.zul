@@ -89,7 +89,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="custTypeDesc"
-										maxlength="100" width="1,200px" />
+										maxlength="100"/>
 								</hbox>
 							</row>
 							<row visible="true">
