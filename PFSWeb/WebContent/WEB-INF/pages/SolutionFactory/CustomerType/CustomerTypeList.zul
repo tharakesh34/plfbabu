@@ -86,7 +86,7 @@
 									value="${c:l('label_CustomerTypeSearch_CustTypeDesc.value')}" />
 								<listbox id="sortOperator_custTypeDesc"
 									width="43px" mold="select" rows="1" />
-								<textbox id="custTypeDesc" width="350px"
+								<textbox id="custTypeDesc" width="250px"
 									maxlength="100" />
 							</row>
 							<row>
