@@ -133,8 +133,8 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 			logger.debug("updateSql:" + updateSql.toString());
 			this.namedParameterJdbcTemplate.update(updateSql.toString(), namedParameters);
 		} else {
-
-			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS");
+			//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
+			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1 ;
 			namedParameters.put("UsrEnabled", 0);
 			namedParameters.put("LastFailLoginOn", null);
 			namedParameters.put("invalidLogins", invalidLogins);
