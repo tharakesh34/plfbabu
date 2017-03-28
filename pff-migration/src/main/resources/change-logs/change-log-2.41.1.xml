@@ -387,5 +387,13 @@ update DATA_ENGINE_CONFIG set fileextension='.csv' where Name in ('DISB_OTHER_NE
 Update DATA_Engine_config set Uploadlocation = 'C' Where NAME = 'MANDATES_IMPORT';
 </sql>
 </changeSet>
+
+<changeSet author="DurgaPrasad G" id="14">
+<sql>
+Delete from DATA_ENGINE_COLUMN Where TableId = (Select id from DATA_ENGINE_TABLE Where NAME = 'MADATES_EXPORT');
+Delete from DATA_ENGINE_TABLE Where NAME = 'MADATES_EXPORT';
+Delete from DATA_ENGINE_CONFIG Where NAME = 'MADATES_EXPORT';
+</sql>
+</changeSet>
 	
 </databaseChangeLog>
