@@ -63,6 +63,33 @@
     <changeSet id="2" author="Kesav">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtPromotionInsurances" tableName="AdtPromotionInsurances" />
 	</changeSet>
+	<changeSet id="3" author="Prasad" dbms="mssql">
+		<sql>
+		<![CDATA[			
+			alter table adtFinTypeFees alter column OriginationFee bit not null;
+			alter table adtFinTypeFees alter column Active bit;				
+		]]>
+		</sql>
+	</changeSet>
 	
+	<changeSet id="3" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[			
+			alter table adtFinTypeFees modify (OriginationFee number(1));
+			alter table adtFinTypeFees modify (Active number(1));			
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="3" author="Prasad" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			update adtFinTypeFees set OriginationFee = 0 where OriginationFee is null;
+			alter table adtFinTypeFees alter column OriginationFee type smallint using OriginationFee::smallint ;
+			alter table adtFinTypeFees alter column OriginationFee SET NOT NULL;
+			update adtFinTypeFees set Active = 0 where Active is null;
+			alter table adtFinTypeFees alter column Active type smallint using Active::smallint ;
+		]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
