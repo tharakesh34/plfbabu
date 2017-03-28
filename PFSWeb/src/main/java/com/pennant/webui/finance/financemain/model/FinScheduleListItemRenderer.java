@@ -370,7 +370,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							limitDrop = odSchedule.getLimitDrop();
 							odLimit = odSchedule.getODLimit();
 							if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-								availableLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount()));
 							}else{
 								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
 							}
@@ -404,6 +404,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
+					if(isSameDropLineDate){
+						availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getClosingBalance());
+					}
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
 						count = 2;
 					}
@@ -1249,11 +1252,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 						}
 						
+						
 						if(odAvailable){
 							limitDrop = odSchedule.getLimitDrop();
 							odLimit = odSchedule.getODLimit();
 							if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-								availableLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount()));
 							}else{
 								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
 							}
@@ -1287,6 +1291,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
+					if(isSameDropLineDate){
+						availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getClosingBalance());
+					}
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
 						count = 2;
 					}
