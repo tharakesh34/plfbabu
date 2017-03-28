@@ -817,7 +817,7 @@
 			 begin
 			
 			 Update SeqFinanceScoreHeader_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
-			  Select SeqNo from SEQPOSTINGS_bk into ex;
+			  Select SeqNo from SeqFinanceScoreHeader_bk into ex;
 			 execute 'CREATE SEQUENCE SeqFinanceScoreHeader START  ' || ex || ' INCREMENT BY 1 ';  
 			 end;  
 			$$;
