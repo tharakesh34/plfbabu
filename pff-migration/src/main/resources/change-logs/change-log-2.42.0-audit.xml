@@ -91,5 +91,33 @@
 		]]>
 		</sql>
 	</changeSet>
+	<changeSet id="4" author="Prasad" dbms="mssql">
+		<sql>
+		<![CDATA[		
+		alter table adtfinancemain	 drop constraint DF_AdtFinanceMain_QuickDisb;
+		Update 	adtfinancemain set QuickDisb = 0 where QuickDisb is null;
+			alter table adtfinancemain alter column QuickDisb bit not null;	
+			alter table adtfinancemain add constraint DF_AdtFinanceMain_QuickDisb default ((0)) for QuickDisb;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="4" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[			
+			alter table adtfinancemain modify (QuickDisb number(1));		
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="Prasad" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			update adtfinancemain set QuickDisb = 0 where QuickDisb is null;
+            alter table adtfinancemain alter column QuickDisb DROP DEFAULT;
+			alter table adtfinancemain alter column QuickDisb type smallint using QuickDisb::smallint ;
+			alter table adtfinancemain alter column QuickDisb SET NOT NULL;
+		]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
