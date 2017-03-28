@@ -56,7 +56,7 @@
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
 								sclass="toolbar-center">
-								<label
+								<label id="windowTitle"
 									value="${c:l('window_FinanceMainDialog.title')}"
 									sclass="label-heading" />
 							</toolbar>
@@ -523,6 +523,7 @@
 														<extendedcombobox
 															id="dsaCode" />
 													</row>
+												<row id="row_salesDept"/>
 													<!-- Facility Details Start-->
 													<row
 														id="row_commitment">
@@ -637,7 +638,7 @@
 																id="insPaidStatus" width="220px" readonly="true" />
 														</hbox>
 													</row>
-													<row>
+													<row id="row_ReferralId">
 														<label
 															id="label_FinanceMainDialog_ReferralId"
 															value="${c:l('label_FinanceMainDialog_ReferralId.value')}" />
