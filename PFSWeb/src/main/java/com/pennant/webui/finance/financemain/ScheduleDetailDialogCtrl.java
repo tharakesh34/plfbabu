@@ -364,9 +364,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
-		String product = getFinScheduleData().getFinanceType().getProductCategory();
 
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
+		String product = financeMain.getProductCategory();
 		this.schdl_finType.setValue(financeMain.getFinType());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
 		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),PennantStaticListUtil.getProfitDaysBasis()));

@@ -29,7 +29,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	private FinanceMainDAO financeMainDAO;
 	
 	/**
-	 * 
+	 * Method for Processing Postponement for the selected period by adding new terms
 	 * @param finscheduleData
 	 * @return FinScheduleData
 	 */
@@ -50,7 +50,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	}
 	
 	/**
-	 * 
+	 * Method for Processing Unplanned EMI holidays for the selected period
 	 * @param finscheduleData
 	 * @return FinScheduleData
 	 */
@@ -65,13 +65,13 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.postpone(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		finscheduleData = ScheduleCalculator.unPlannedEMIH(finscheduleData, BigDecimal.ZERO, scheduleMethod);
 		logger.debug("Leaving");
 		return finscheduleData;
 	}
 	
 	/**
-	 * 
+	 * Method for Processing Re-Aging for the selected period by adding new terms
 	 * @param finscheduleData
 	 * @return FinScheduleData
 	 */
@@ -86,7 +86,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.postpone(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		finscheduleData = ScheduleCalculator.reAging(finscheduleData, BigDecimal.ZERO, scheduleMethod);
 		logger.debug("Leaving");
 		return finscheduleData;
 	}

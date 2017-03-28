@@ -78,6 +78,8 @@ public class ScheduleCalculator {
 	public static final String	PROC_CHANGERATE			= "procChangeRate";
 	public static final String	PROC_CHANGEREPAY		= "procChangeRepay";
 	public static final String	PROC_POSTPONE			= "procPostpone";
+	public static final String	PROC_UNPLANEMIH			= "procUnPlannedEMIH";
+	public static final String	PROC_REAGEH				= "procReAgeH";
 	public static final String	PROC_CHANGEPROFIT		= "procChangeProfit";
 	public static final String	PROC_ADDDISBURSEMENT	= "procAddDisbursement";
 	public static final String	PROC_RECALSCHD			= "procReCalSchd";
@@ -136,6 +138,14 @@ public class ScheduleCalculator {
 
 	public static FinScheduleData postpone(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
 		return new ScheduleCalculator(PROC_POSTPONE, finScheduleData, amount, schdMethod).getFinScheduleData();
+	}
+	
+	public static FinScheduleData unPlannedEMIH(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
+		return new ScheduleCalculator(PROC_UNPLANEMIH, finScheduleData, amount, schdMethod).getFinScheduleData();
+	}
+	
+	public static FinScheduleData reAging(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
+		return new ScheduleCalculator(PROC_REAGEH, finScheduleData, amount, schdMethod).getFinScheduleData();
 	}
 
 	public static FinScheduleData changeProfit(FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
@@ -374,6 +384,14 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_POSTPONE)) {
 			setFinScheduleData(procPostpone(finScheduleData, amount, schdMethod));
+		}
+		
+		if (StringUtils.equals(method, PROC_UNPLANEMIH)) {
+			setFinScheduleData(procUnPlanEMIH(finScheduleData, amount, schdMethod));
+		}
+		
+		if (StringUtils.equals(method, PROC_REAGEH)) {
+			setFinScheduleData(procReAgeH(finScheduleData, amount, schdMethod));
 		}
 
 		if (StringUtils.equals(method, PROC_RECALSCHD)) {
@@ -1339,6 +1357,127 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
+
+	private FinScheduleData procReAgeH(FinScheduleData finScheduleData, BigDecimal repayAmount, String schdMethod) {
+		logger.debug("Entering");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+		int adjTerms = finMain.getAdjTerms();
+		finMain.setCompareToExpected(false);
+		finMain.setRecalSchdMethod(CalculationConstants.RPYCHG_ADJMDT);
+
+		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+
+		Date schdDate = new Date();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+
+		for (int i = 0; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(evtFromDate) < 0) {
+				continue;
+			}
+
+			if (schdDate.compareTo(evtToDate) > 0) {
+				break;
+			}
+
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_REAGE);
+			}
+
+		}
+
+		finScheduleData = procAddTerm(finScheduleData, adjTerms, false);
+		finScheduleData = calSchdProcess(finScheduleData, false, false);
+
+		finMain.setScheduleMaintained(true);
+
+		finScheduleData = afterChangeRepay(finScheduleData);
+
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+	
+	private FinScheduleData procUnPlanEMIH(FinScheduleData finScheduleData, BigDecimal repayAmount, String schdMethod) {
+		logger.debug("Entering");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
+
+		int risize = repayInstructions.size();
+
+		//BigDecimal totalDesiredProfit = finMain.getTotalGrossPft();
+
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+
+		if (StringUtils.equals(schdMethod, PennantConstants.List_Select) || StringUtils.isBlank(schdMethod)) {
+			for (int i = 0; i < risize; i++) {
+				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) <= 0) {
+					schdMethod = repayInstructions.get(i).getRepaySchdMethod();
+				}
+
+				//FIXME: below code is temporary fix, need to set schedule method
+				if (StringUtils.isBlank(finMain.getRecalSchdMethod())) {
+					finMain.setRecalSchdMethod(finMain.getScheduleMethod());
+				}
+
+				if (repayInstructions.get(i).getRepayDate().compareTo(evtFromDate) >= 0) {
+					break;
+				}
+			}
+		}
+
+		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		int prvIndex = 0;
+		boolean isRepaymentFoundInSD = false;
+
+		Date schdDate = new Date();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+
+		for (int i = 0; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(evtFromDate) > 0) {
+				break;
+			}
+
+			if (schdDate.compareTo(evtFromDate) == 0) {
+				isRepaymentFoundInSD = true;
+				break;
+			}
+
+			prvIndex = i;
+		}
+
+		if (!isRepaymentFoundInSD) {
+			finScheduleData = addSchdRcd(finScheduleData, evtFromDate, prvIndex);
+			curSchd = finSchdDetails.get(prvIndex + 1);
+			curSchd.setPftOnSchDate(true);
+			curSchd.setRepayOnSchDate(true);
+			curSchd.setRepayAmount(repayAmount);
+		}
+
+		finScheduleData = setRecalAttributes(finScheduleData, PROC_UNPLANEMIH, BigDecimal.ZERO, repayAmount);
+		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, schdMethod);
+		finScheduleData = calSchdProcess(finScheduleData, false, false);
+
+		finMain.setScheduleMaintained(true);
+
+		finScheduleData = afterChangeRepay(finScheduleData);
+
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+
 
 	/*
 	 * ================================================================================================================
@@ -2832,9 +2971,9 @@ public class ScheduleCalculator {
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
-				curSchd.setProfitSchd(BigDecimal.ZERO);
-				curSchd.setPrincipalSchd(BigDecimal.ZERO);
-				curSchd.setRepayAmount(BigDecimal.ZERO);
+				curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+				curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 			} else {
 				calPftPriRpy(finScheduleData, iCur, (iCur - 1));
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -3011,9 +3150,9 @@ public class ScheduleCalculator {
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
 							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
-						curSchd.setProfitSchd(BigDecimal.ZERO);
-						curSchd.setPrincipalSchd(BigDecimal.ZERO);
-						curSchd.setRepayAmount(BigDecimal.ZERO);
+						curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+						curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+						curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 					} else {
 						curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
 						curSchd.setRepayAmount(curSchd.getProfitSchd());
@@ -3073,9 +3212,9 @@ public class ScheduleCalculator {
 				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
 				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
 				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
-			curSchd.setProfitSchd(BigDecimal.ZERO);
-			curSchd.setPrincipalSchd(BigDecimal.ZERO);
-			curSchd.setRepayAmount(BigDecimal.ZERO);
+			curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+			curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+			curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 
 			// store first repay amount
 			if (finMain.getCalTerms() == 1) {
@@ -5060,7 +5199,7 @@ public class ScheduleCalculator {
 
 				finMain.setRecalFromDate(finSchdDetails.get(iOldMDT + 1).getSchDate());
 				finMain.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
-				if (StringUtils.equals(recalPurpose, PROC_CHANGEREPAY)) {
+				if (StringUtils.equals(recalPurpose, PROC_UNPLANEMIH)) {
 					resetRpyInstruction = false;
 				}
 			}
