@@ -106,8 +106,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinScheduleData						finScheduleData;															// overhanded per param
 	private ScheduleDetailDialogCtrl			financeMainDialogCtrl;
 
-	private int									adjRepayTerms	= 0;
-
 	private transient ChangeFrequencyService	changeFrequencyService;
 
 	/**
@@ -307,11 +305,21 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				//Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
 					continue;
 				}
 
 				//Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
 					continue;
 				}
 				
@@ -480,7 +488,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
 		finServiceInstruction.setFinEvent(getFinanceMainDialogCtrl().getFinanceDetail().getModuleDefiner());
-		finServiceInstruction.setAdjRpyTerms(adjRepayTerms);
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFromDate(fromDate);
 		finServiceInstruction.setRepayFrq(frq);
@@ -521,52 +528,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		logger.debug("Leaving");
-	}
-
-	public void onChange$cbFrqFromDate(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		adjRepayTerms = 0;
-		int rpyTermsCompleted = 0;
-		int totRepayTerms = 0;
-		boolean isFromDateFound = false;
-
-		this.row_GrcPeriodEndDate.setVisible(false);
-		this.row_grcNextRepayDate.setVisible(false);
-
-		if (this.cbFrqFromDate.getSelectedIndex() != 0) {
-			Date fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
-
-			List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
-			if (financeScheduleDetails != null) {
-				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-
-					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-
-					if (curSchd.isRepayOnSchDate()
-							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-						if (fromDate.compareTo(curSchd.getSchDate()) < 0) {
-							if (fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
-								this.row_GrcPeriodEndDate.setVisible(true);
-								this.row_grcNextRepayDate.setVisible(true);
-							}
-							isFromDateFound = true;
-						}
-						
-						totRepayTerms = totRepayTerms + 1;
-						if(!isFromDateFound){
-
-							if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) > 0) {
-								rpyTermsCompleted = rpyTermsCompleted + 1;
-							}
-						}
-					}
-				}
-				
-				adjRepayTerms = totRepayTerms - rpyTermsCompleted;
-			}
-		}
-		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onSelectDay$repayFrq(Event event) {

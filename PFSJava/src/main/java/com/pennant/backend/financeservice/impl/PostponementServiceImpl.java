@@ -33,7 +33,50 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	 * @param finscheduleData
 	 * @return FinScheduleData
 	 */
+	@Override
 	public FinScheduleData doPostponement(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
+		logger.debug("Entering");
+		
+		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
+		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
+		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
+		finscheduleData.getFinanceMain().setAdjTerms(serviceInstruction.getTerms());
+		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
+		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
+		
+		finscheduleData = ScheduleCalculator.postpone(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		logger.debug("Leaving");
+		return finscheduleData;
+	}
+	
+	/**
+	 * 
+	 * @param finscheduleData
+	 * @return FinScheduleData
+	 */
+	@Override
+	public FinScheduleData doUnPlannedEMIH(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
+		logger.debug("Entering");
+		
+		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
+		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
+		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
+		finscheduleData.getFinanceMain().setAdjTerms(serviceInstruction.getTerms());
+		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
+		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
+		
+		finscheduleData = ScheduleCalculator.postpone(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		logger.debug("Leaving");
+		return finscheduleData;
+	}
+	
+	/**
+	 * 
+	 * @param finscheduleData
+	 * @return FinScheduleData
+	 */
+	@Override
+	public FinScheduleData doReAging(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
 		logger.debug("Entering");
 		
 		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());

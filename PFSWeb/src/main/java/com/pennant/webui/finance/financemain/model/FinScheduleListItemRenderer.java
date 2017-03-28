@@ -510,7 +510,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						//Subtract the available amount with the curDisb amount
 							availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")",
-								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getProfitCalc(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
 								getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 								getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
@@ -1423,7 +1423,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						//Subtract the available amount with the curDisb amount
 							availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+" (Seq : "+curDisb.getDisbSeq()+")",
-								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								getFinanceScheduleDetail().getProfitCalc(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
 								getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 								getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
@@ -2458,7 +2458,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								
 								data = new FinanceScheduleReportData();	
 								data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
-								data.setPftAmount("");
+								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 								data.setSchdPft("");
 								data.setTdsAmount("");
 								data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));

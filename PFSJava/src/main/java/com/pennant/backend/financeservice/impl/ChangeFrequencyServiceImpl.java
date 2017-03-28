@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,7 +15,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ScheduleCalculator;
-import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
@@ -27,9 +25,9 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.rits.cloning.Cloner;
 
 public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruction> implements ChangeFrequencyService {
@@ -55,115 +53,66 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		String frequency = finServiceInst.getRepayFrq();
 		Date fromDate = finServiceInst.getFromDate();
-		Date startRepayCaldate = finServiceInst.getRecalFromDate();
-		Date reCalToDate = finServiceInst.getRecalToDate();
-		int adjRepayTerms = finServiceInst.getAdjRpyTerms();
 		
-		// FinanceMain
+		// Finance Main Details
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleList = scheduleData.getFinanceScheduleDetails();
-
-		// Repayment Calculated Rate storing
-		Date firstRepayDate = null;
-		boolean chkFirstRpyDate = false;
-		BigDecimal repayCalRate = financeMain.getRepayProfitRate();
-		for (int i = 0; i < scheduleList.size(); i++) {
-			if (scheduleList.get(i).getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) >= 0) {
-				if (chkFirstRpyDate) {
-					firstRepayDate = scheduleList.get(i).getSchDate();
-					break;
-				}
-				repayCalRate = scheduleList.get(i).getCalculatedRate();
-				chkFirstRpyDate = true;
-			}
-		}
-
-		// Removing Schedule Details from Selected Recalculation From Date
-		HashMap<Date, FinanceScheduleDetail> mapList = new HashMap<Date, FinanceScheduleDetail>();
-		BigDecimal unModifiedPft = BigDecimal.ZERO;
-		BigDecimal schPriDue = BigDecimal.ZERO;
-		BigDecimal schPftDue = BigDecimal.ZERO;
-		for (int i = 0; i < scheduleList.size(); i++) {
-			if (scheduleList.get(i).getSchDate().compareTo(fromDate) <= 0) {
-				mapList.put(scheduleList.get(i).getSchDate(), scheduleList.get(i));
-				unModifiedPft = unModifiedPft.add(scheduleList.get(i).getProfitSchd());
-			} else {
-				schPftDue = schPftDue.add(scheduleList.get(i).getProfitSchd());
-				schPriDue = schPriDue.add(scheduleList.get(i).getPrincipalSchd());
-			}
-		}
-		scheduleData.setScheduleMap(mapList);
-		mapList = null;
 		
-		//Check Date Status Specifier
-		boolean calFromGrcPeriod = false;
-		if(fromDate != null && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0){
-			calFromGrcPeriod = true;
+		// Dates Modifications as per New Frequency Date Selection
+		Date prvSchdate = financeMain.getFinStartDate();
+		FinanceScheduleDetail prvSchd = null;;
+		Date eventFromdate = null;
+		int day = Integer.parseInt(frequency.substring(3));
+		for (int i = 1; i < scheduleList.size(); i++) {
+			
+			FinanceScheduleDetail curSchd = scheduleList.get(i);
+			if(curSchd.getSchDate().compareTo(fromDate) <= 0){
+				prvSchdate = curSchd.getSchDate();
+				prvSchd = curSchd;
+				continue;
+			}
+			
+			if(!curSchd.isRepayOnSchDate()){
+				curSchd.setDisbOnSchDate(false);
+				curSchd.setDisbAmount(BigDecimal.ZERO);
+				curSchd.setFeeChargeAmt(BigDecimal.ZERO);
+				prvSchd = curSchd;
+				continue;
+			}
+			
+			Calendar newDate = Calendar.getInstance();
+			newDate.setTime(curSchd.getSchDate());
+			int maxdays = newDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+			if (day > maxdays) {
+				newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), maxdays);
+			} else {
+				newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), day);
+			}
+			
+			// Check days Difference between earlier date and current newly calculated date
+			if(DateUtility.getDaysBetween(newDate.getTime(), prvSchdate) <= 15){
+				newDate.add(Calendar.MONTH,1);
+			}
+			curSchd.setSchDate(DateUtility.getDBDate(DateUtility.formatUtilDate(newDate.getTime(),PennantConstants.DBDateFormat)));
+			curSchd.setDefSchdDate(curSchd.getSchDate());
+			curSchd.setDisbOnSchDate(false);
+			curSchd.setDisbAmount(BigDecimal.ZERO);
+			curSchd.setFeeChargeAmt(BigDecimal.ZERO);
+			
+			if(prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
+				scheduleList.remove(i-1);
+				i--;
+			}
+			
+			if(eventFromdate == null){
+				eventFromdate = curSchd.getSchDate();
+				finServiceInst.setFromDate(eventFromdate);
+			}
+			
+			prvSchdate = curSchd.getSchDate();
+			prvSchd = curSchd;
 		}
-		
-		//Setting Event From Date Value
-		if (calFromGrcPeriod) {
-			scheduleData.getFinanceMain().setGrcPeriodEndDate(finServiceInst.getGrcPeriodEndDate());
-			if (finServiceInst.getNextGrcRepayDate() != null) {
-				scheduleData.getFinanceMain().setEventFromDate(finServiceInst.getNextGrcRepayDate());
-			} else {
-				scheduleData.getFinanceMain().setEventFromDate(FrequencyUtil.getNextDate(
-						frequency, 1, finServiceInst.getFromDate(), "A", false, 0).getNextFrequencyDate());
-			}
-
-			if (finServiceInst.getNextRepayDate() != null) {
-				startRepayCaldate = finServiceInst.getNextRepayDate();
-				reCalToDate = finServiceInst.getNextRepayDate();
-			} else {
-				startRepayCaldate = FrequencyUtil.getNextDate(frequency, 1, finServiceInst.getGrcPeriodEndDate(), "A",
-						false, 0).getNextFrequencyDate();
-			}
-
-			if (scheduleData.getFinanceMain().getNumberOfTerms() != 0) {
-
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, adjRepayTerms, startRepayCaldate,
-						"A", true, 0).getScheduleList();
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					reCalToDate = calendar.getTime();
-				}
-				scheduleDateList = null;
-			}
-
-			scheduleData.getFinanceMain().setMaturityDate(reCalToDate);
-
-			finServiceInst.setRecalFromDate(startRepayCaldate);
-			finServiceInst.setRecalToDate(reCalToDate);
-
-		} else {
-			if (finServiceInst.getNextRepayDate() != null) {
-				startRepayCaldate = finServiceInst.getNextRepayDate();
-			} else {
-				startRepayCaldate = FrequencyUtil.getNextDate(frequency, 1, finServiceInst.getFromDate(), "A", false, 0)
-						.getNextFrequencyDate();
-			}
-
-			if (scheduleData.getFinanceMain().getNumberOfTerms() != 0) {
-
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, adjRepayTerms, startRepayCaldate,
-						"A", true, 0).getScheduleList();
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					reCalToDate = calendar.getTime();
-				}
-				scheduleDateList = null;
-			}
-
-			scheduleData.getFinanceMain().setEventFromDate(startRepayCaldate);
-			scheduleData.getFinanceMain().setMaturityDate(reCalToDate);
-
-			finServiceInst.setRecalFromDate(startRepayCaldate);
-			finServiceInst.setRecalToDate(reCalToDate);
-		}
-		
-		// call schedule calculator for new schedules
-		FinScheduleData finSchdData = ScheduleGenerator.getScheduleDateList(scheduleData, frequency, fromDate,
-				startRepayCaldate, reCalToDate);
 		
 		boolean isDisbDateFoundInSD = false;
 		int disbIndex = 0;
@@ -179,6 +128,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			FinanceDisbursement curDisb = finDisbDetails.get(k);
 			Date curDisbDate = curDisb.getDisbDate();
+			isDisbDateFoundInSD = false;
 			if(curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0){
 				continue;
 			}
@@ -218,7 +168,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			//If new disbursement date add a record in schedule
 			if (!isDisbDateFoundInSD) {
 				scheduleData = addSchdRcd(scheduleData, curDisbDate, disbIndex);
-				FinanceScheduleDetail prvSchd = finSchdDetails.get(disbIndex);
+				prvSchd = finSchdDetails.get(disbIndex);
 				disbIndex = disbIndex + 1;
 				curSchd = scheduleData.getFinanceScheduleDetails().get(disbIndex);
 
@@ -234,116 +184,16 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			return scheduleData;
 		}
 
-		// Set Deferred scheduled date and schedule method first time
-		Date newFirstRpyDate = null;
-		boolean suplRentUpdated = false;
-
-		for (int i = 0; i < finSchdData.getFinanceScheduleDetails().size(); i++) {
-			curSchd = finSchdData.getFinanceScheduleDetails().get(i);
-			FinanceScheduleDetail prvSchd = null;
-			if (i != 0) {
-				prvSchd = finSchdData.getFinanceScheduleDetails().get(i - 1);
-			}
-			curSchd.setDefSchdDate(curSchd.getSchDate());
-			
-			// Profit Days Basis Setting
-			if(StringUtils.isEmpty(curSchd.getPftDaysBasis())){
-				curSchd.setPftDaysBasis(prvSchd.getPftDaysBasis());
-			}
-
-			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
-				if (!finSchdData.getFinanceMain().isAllowGrcRepay()) {
-					curSchd.setSchdMethod(CalculationConstants.SCHMTHD_NOPAY);
-				} else {
-					curSchd.setSchdMethod(financeMain.getGrcSchdMthd());
-				}
-			} else {
-				curSchd.setSchdMethod(financeMain.getScheduleMethod());
-			}
-
-			// Supplementary & increased Cost Re-Setting
-			if (curSchd.getSchDate().compareTo(fromDate) >= 0) {
-
-				if (!suplRentUpdated) {
-					if (prvSchd.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
-						financeMain.setCurSuplRent(financeMain.getSupplementRent());
-						financeMain.setCurIncrCost(financeMain.getIncreasedCost());
-					} else {
-						financeMain.setCurSuplRent(prvSchd.getSuplRent());
-						financeMain.setCurIncrCost(prvSchd.getIncrCost());
-					}
-					suplRentUpdated = true;
-				}
-			}
-			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) >= 0) {
-				
-				if(curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) > 0){
-					if (chkFirstRpyDate && newFirstRpyDate == null) {
-						newFirstRpyDate = curSchd.getSchDate();
-					}
-					chkFirstRpyDate = true;
-				}
-
-				// Actual rates Data setting for maintenance Schedule
-				if (i != 0) {
-					curSchd.setActRate(StringUtils.trimToNull(prvSchd.getBaseRate()) == null ? prvSchd.getActRate()
-							: BigDecimal.ZERO);
-					curSchd.setBaseRate(StringUtils.trimToNull(prvSchd.getBaseRate()));
-					curSchd.setSplRate(StringUtils.trimToNull(prvSchd.getSplRate()));
-					curSchd.setMrgRate(StringUtils.trimToNull(prvSchd.getBaseRate()) == null ? BigDecimal.ZERO:prvSchd.getMrgRate());
-
-					// Advised Rates Setting
-					if (StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, finSchdData.getFinanceType()
-							.getFinCategory())) {
-						curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? 
-								prvSchd.getAdvPftRate():BigDecimal.ZERO);
-						curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
-						curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? 
-								BigDecimal.ZERO:prvSchd.getAdvMargin());
-					}
-				}
-			}
-
-			if (fromDate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
-				if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {
-					curSchd.setCalculatedRate(finSchdData.getFinanceScheduleDetails().get(i - 1).getCalculatedRate());
-				}
-			} else {
-				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
-					if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {
-						curSchd.setCalculatedRate(finSchdData.getFinanceScheduleDetails().get(i - 1)
-								.getCalculatedRate());
-					}
-				} else {
-					curSchd.setCalculatedRate(repayCalRate);
-				}
-			}
-		}
-
-		// For Grace Period Date Selection check Repay Instruction Details
-		List<RepayInstruction> instructionList = finSchdData.getRepayInstructions();
-		for (int i = 0; i < instructionList.size(); i++) {
-			if (firstRepayDate != null && firstRepayDate.compareTo(instructionList.get(i).getRepayDate()) == 0) {
-				instructionList.get(i).setRepayDate(newFirstRpyDate);
-			}
-		}
-
 		// Setting Recalculation Type Method
-		finSchdData.getFinanceMain().setRecalFromDate(finServiceInst.getRecalFromDate());
-		finSchdData.getFinanceMain().setEventToDate(finServiceInst.getRecalToDate());
-		finSchdData.getFinanceMain().setRecalToDate(finSchdData.getFinanceMain().getMaturityDate());
-		finSchdData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-		finSchdData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
-
-		if (finServiceInst.isPftIntact()) {
-			finSchdData.getFinanceMain().setDesiredProfit(finSchdData.getFinanceMain().getTotalGrossPft());
-			finSchdData.getFinanceMain().setAdjTerms(adjRepayTerms);
-			finSchdData.getFinanceMain().setSchPftDue(schPftDue);
-			finSchdData.getFinanceMain().setSchPriDue(schPriDue);
-		}
+		scheduleData.getFinanceMain().setRecalFromDate(eventFromdate);
+		scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
+		scheduleData.getFinanceMain().setEventToDate(finServiceInst.getRecalToDate());
+		scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
+		scheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		scheduleData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
 
 		// Schedule Recalculation Depends on Frequency Change
-		finSchdData = ScheduleCalculator.reCalSchd(finSchdData, financeMain.getScheduleMethod());
+		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 
 		// Plan EMI Holidays Resetting after Rescheduling
 		if(scheduleData.getFinanceMain().isPlanEMIHAlw()){
@@ -362,7 +212,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 
 		logger.debug("Leaving");
-		return finSchdData;
+		return scheduleData;
 	}
 
 	/**
