@@ -763,9 +763,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected String										selectMethodName		= "onSelectTab";
 
 	// Change Frequency Fields
-	private Date											org_nextGrcPftDate		= null;
-	private Date											org_nextGrcRvwDate		= null;
-	private Date											org_nextGrcCpzDate		= null;
+	private Date											org_grcPeriodEndDate	= null;
 
 	// not auto wired variables
 	private transient boolean								validationOn;
@@ -3768,9 +3766,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//Saving Gestation Period Next (Pft/Rvw/Cpz) Dates
 			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
-				this.org_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
-				this.org_nextGrcRvwDate = this.nextGrcPftRvwDate_two.getValue();
-				this.org_nextGrcCpzDate = this.nextGrcCpzDate_two.getValue();
+				this.org_grcPeriodEndDate = this.gracePeriodEndDate_two.getValue();
 			}
 
 			// stores the initial data for comparing if they are changed
@@ -4439,7 +4435,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		
 		boolean isOverdraft = false;
 		
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
@@ -4536,9 +4531,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.maturityDate.getValue() != null) {
 					maturityDate = this.maturityDate.getValue();
 				}
+				
+				Date validFrom = financeDate;
+				if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)){
+					validFrom = org_grcPeriodEndDate;
+				}
 				this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
-						.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, this.finStartDate
-						.getValue(), maturityDate, false));
+						.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, validFrom, maturityDate, false));
+			}else{
+
+				Date validFrom = financeDate;
+				if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)){
+					validFrom = org_grcPeriodEndDate;
+					this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
+							.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, validFrom, appEndDate, false));
+				}
 			}
 
 			if (!this.graceRate.isMarginReadonly()) {
@@ -5728,25 +5735,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;
-		}
-
-		//Setting Next Grace/Gestation Period Details on Gestation Maintenance
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
-			if (org_nextGrcPftDate == null || org_nextGrcPftDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0) {
-				org_nextGrcPftDate = aFinanceMain.getGrcPeriodEndDate();
-			}
-			if (org_nextGrcRvwDate == null || org_nextGrcRvwDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0) {
-				org_nextGrcRvwDate = aFinanceMain.getGrcPeriodEndDate();
-			}
-			if (org_nextGrcCpzDate == null || org_nextGrcCpzDate.compareTo(aFinanceMain.getGrcPeriodEndDate()) > 0) {
-				org_nextGrcCpzDate = aFinanceMain.getGrcPeriodEndDate();
-			}
-
-			//Resetting Next Grace Dates to Object with Original Values
-			aFinanceMain.setNextGrcPftDate(org_nextGrcPftDate);
-			aFinanceMain.setNextGrcPftRvwDate(org_nextGrcRvwDate);
-			aFinanceMain.setNextGrcCpzDate(org_nextGrcCpzDate);
-
 		}
 
 		// save the FinanceMain Extension details
@@ -8622,7 +8610,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					errorList.add(new ErrorDetails("nextRepayDate_two", errorCode, new String[] {
 							PennantAppUtil.formateDate(this.nextRepayDate_two.getValue(), ""),
-							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }));
+							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
 				if (this.rpyPftFrqRow.isVisible()
 						&& this.nextRepayDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
@@ -8725,7 +8713,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					errorList.add(new ErrorDetails("nextRolloverDate_two", errorCode, new String[] {
 							PennantAppUtil.formateDate(this.nextRollOverDate_two.getValue(), ""),
-							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }));
+							PennantAppUtil.formateDate(this.gracePeriodEndDate_two.getValue(), "") }, new String[] {}));
 				}
 			}
 
@@ -14770,7 +14758,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
 				getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
 				getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
-				getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
+				
+				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
+					getFinanceDetail().setFinScheduleData(ScheduleGenerator.getChangedSchd(validFinScheduleData));
+				}else{
+					getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
+				}
 
 				// Show Error Details in Schedule Generation
 				if (getFinanceDetail().getFinScheduleData().getErrorDetails() != null

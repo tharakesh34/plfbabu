@@ -168,7 +168,9 @@ public class ScheduleGenerator {
 			return finScheduleData;
 		}
 
-		finScheduleData.getScheduleMap().clear();
+		if(finScheduleData.getScheduleMap() != null){
+			finScheduleData.getScheduleMap().clear();
+		}
 
 		List<FinanceScheduleDetail> finScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		Date newGraceEnd = financeMain.getGrcPeriodEndDate();
