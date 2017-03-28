@@ -319,6 +319,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				int droplinefrqDay = FrequencyUtil.getIntFrequencyDay(aFinanceMain.getDroplineFrq());
 				int rpyFrqDay =  FrequencyUtil.getIntFrequencyDay(aFinanceMain.getRepayFrq());
 				boolean isSameDropLineDate = false;
+				boolean odAvailable = false;
 				if(getFinScheduleData().getOverdraftScheduleDetails()!=null &&  getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 					for(OverdraftScheduleDetail odSchedule:getFinScheduleData().getOverdraftScheduleDetails()){
 						
@@ -335,91 +336,55 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}else if(droplinefrqDay != rpyFrqDay){
 							if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 && 
 									DateUtility.compare(odSchedule.getDroplineDate(), getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate())>0){
-								if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())<= 0){
-									label = Labels.getLabel("label_LimitDrop");
-									limitDrop = odSchedule.getLimitDrop();
-									
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									
-									odLimit = odSchedule.getODLimit();
-									if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
-										label = Labels.getLabel("label_LimitIncrease");
-										limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-									}
-									odCount = odCount +1;
-									break;
-								}else if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-2 && 
+								if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-2 && 
 										DateUtility.compare(odSchedule.getDroplineDate(),aFinanceMain.getMaturityDate())== 0 && 
-										DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())>=0){
+										DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())==0 ){
 									label = Labels.getLabel("label_LimitExpiry");
-									limitDrop = odSchedule.getLimitDrop();
-									odLimit = odSchedule.getODLimit();
-									
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									odCount = odCount +1;
+									odAvailable = true;
 									isSameDropLineDate = true;
-									break;
+								}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())<= 0){
+									label = Labels.getLabel("label_LimitDrop");
+									odAvailable = true;
 								}
 							}
 						}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate()) == 0){
 							isSameDropLineDate = true;
 							if(DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0){
 								label = Labels.getLabel("label_LimitExpiry");
-								limitDrop = odSchedule.getLimitDrop();
-								odLimit = odSchedule.getODLimit();
-								
-								if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-									availableLimit = odSchedule.getODLimit();
-								}else{
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-								}
-								
-								odCount = odCount +1;
-								break;
+								odAvailable = true;
 							}else{
 								label = Labels.getLabel("label_LimitDrop");
-								limitDrop = odSchedule.getLimitDrop();
-								odLimit = odSchedule.getODLimit();
-								
-								if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-									availableLimit = odSchedule.getODLimit();
-								}else{
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-								}
-								
-								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
-									label = Labels.getLabel("label_LimitIncrease");
-									limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-								}
-								if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
-									odCount = odCount +1;
-									break;
-								}
+								odAvailable = true;
 							}
 						}else{
 							if(droplinefrqDay == rpyFrqDay){
 								if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 && 
 										DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())< 0){
 									label = Labels.getLabel("label_LimitDrop");
-									limitDrop = odSchedule.getLimitDrop();
-									odLimit = odSchedule.getODLimit();
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									odCount = odCount +1;
-									break;
+									odAvailable = true;
 								}
 							}
+						}
+						
+						if(odAvailable){
+							limitDrop = odSchedule.getLimitDrop();
+							odLimit = odSchedule.getODLimit();
+							if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
+								availableLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+							}else{
+								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
+							}
+							if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
+								odCount = odCount +1;
+								break;
+							}
+							if(StringUtils.equals(Labels.getLabel("label_LimitDrop"),label)){
+								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
+									label = Labels.getLabel("label_LimitIncrease");
+									limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
+								}
+							}
+							break;
 						}
 					}
 				}else{
@@ -431,9 +396,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				
 				if(StringUtils.isNotBlank(label)){
+					
+					BigDecimal closingBalance =getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount());
+					
 					doFillListBox(getFinanceScheduleDetail(), count,label,
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
-							BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getClosingBalance(),isEditable, isRate,
+							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
@@ -1234,6 +1202,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				int droplinefrqDay = FrequencyUtil.getIntFrequencyDay(aFinanceMain.getDroplineFrq());
 				int rpyFrqDay =  FrequencyUtil.getIntFrequencyDay(aFinanceMain.getRepayFrq());
 				boolean isSameDropLineDate = false;
+				boolean odAvailable = false;
 				if(getFinScheduleData().getOverdraftScheduleDetails()!=null &&  getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 					for(OverdraftScheduleDetail odSchedule:getFinScheduleData().getOverdraftScheduleDetails()){
 						
@@ -1254,85 +1223,51 @@ public class FinScheduleListItemRenderer implements Serializable{
 										DateUtility.compare(odSchedule.getDroplineDate(),aFinanceMain.getMaturityDate())== 0 && 
 										DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())==0 ){
 									label = Labels.getLabel("label_LimitExpiry");
-									limitDrop = odSchedule.getLimitDrop();
-									odLimit = odSchedule.getODLimit();
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									
-									odCount = odCount +1;
+									odAvailable = true;
 									isSameDropLineDate = true;
-									break;
 								}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())<= 0){
 									label = Labels.getLabel("label_LimitDrop");
-									limitDrop = odSchedule.getLimitDrop();
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									
-									odLimit = odSchedule.getODLimit();
-									if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
-										label = Labels.getLabel("label_LimitIncrease");
-										limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-									}
-									odCount = odCount +1;
-									break;
+									odAvailable = true;
 								}
 							}
 						}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate()) == 0){
 							isSameDropLineDate = true;
 							if(DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0){
 								label = Labels.getLabel("label_LimitExpiry");
-								limitDrop = odSchedule.getLimitDrop();
-								odLimit = odSchedule.getODLimit();
-								if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-									availableLimit = odSchedule.getODLimit();
-								}else{
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-								}
-								
-								odCount = odCount +1;
-								break;
+								odAvailable = true;
 							}else{
 								label = Labels.getLabel("label_LimitDrop");
-								limitDrop = odSchedule.getLimitDrop();
-								odLimit = odSchedule.getODLimit();
-								if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-									availableLimit = odSchedule.getODLimit();
-								}else{
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-								}
-								
-								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
-									label = Labels.getLabel("label_LimitIncrease");
-									limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-								}
-								if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
-									odCount = odCount +1;
-									break;
-								}
+								odAvailable = true;
 							}
 						}else{
 							if(droplinefrqDay == rpyFrqDay){
 								if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 && 
-										DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())< 0 &&
-										DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0){
+										DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())< 0){
 									label = Labels.getLabel("label_LimitDrop");
-									limitDrop = odSchedule.getLimitDrop();
-									odLimit = odSchedule.getODLimit();
-									if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-										availableLimit = odSchedule.getODLimit();
-									}else{
-										availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-									}
-									odCount = odCount +1;
-									break;
+									odAvailable = true;
 								}
 							}
+						}
+						
+						if(odAvailable){
+							limitDrop = odSchedule.getLimitDrop();
+							odLimit = odSchedule.getODLimit();
+							if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
+								availableLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+							}else{
+								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
+							}
+							if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
+								odCount = odCount +1;
+								break;
+							}
+							if(StringUtils.equals(Labels.getLabel("label_LimitDrop"),label)){
+								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
+									label = Labels.getLabel("label_LimitIncrease");
+									limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
+								}
+							}
+							break;
 						}
 					}
 				}else{
@@ -1344,9 +1279,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				
 				if(StringUtils.isNotBlank(label)){
+					
+					BigDecimal closingBalance =getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount());
+					
 					doFillListBox(getFinanceScheduleDetail(), count,label,
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
-							BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getClosingBalance(),isEditable, isRate,
+							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
@@ -2199,7 +2137,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) > 0 && (i == 12)){
-					if(finType.isDroplineOD() && fillType==0 && !lastRec && showZeroEndBal  &&  isODSchdLimit  && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
+					if(finType.isDroplineOD() && fillType==0 && !lastRec &&  isODSchdLimit  && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(limitIncreaseAmt, finFormatter));
 						lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
@@ -2208,7 +2146,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						lc.setStyle("text-align:right;"); 
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)){
-					if(finType.isDroplineOD() && fillType==0 && !lastRec && showZeroEndBal  &&  isODSchdLimit){
+					if(finType.isDroplineOD() && fillType==0 && !lastRec &&  isODSchdLimit){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(limitDrop, finFormatter));
 						lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
@@ -2217,8 +2155,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 						lc = new Listcell("");
 						lc.setStyle("text-align:right;"); 
 					}
-				}else if(amountlist[i].compareTo(BigDecimal.ZERO) > 0 && (i == 14)){
-					if(fillType==0  && !lastRec && showZeroEndBal  && (isLimitDrop|| count ==1||(data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
+				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)){
+					if(fillType==0  && !lastRec  && (isLimitDrop|| count ==1||(data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, finFormatter));
 						
