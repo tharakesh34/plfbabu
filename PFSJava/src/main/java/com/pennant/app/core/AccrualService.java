@@ -103,6 +103,8 @@ public class AccrualService extends ServiceHelper {
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
 		getFinanceProfitDetailDAO().update(finPftDetail, false);
+		
+		//post accruals
 		postAccruals(financeMain, finPftDetail, valueDate);
 		logger.debug(" Leaving ");
 	}

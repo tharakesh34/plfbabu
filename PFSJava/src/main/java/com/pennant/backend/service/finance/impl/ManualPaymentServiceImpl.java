@@ -950,7 +950,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
 			FinRepayQueue finRepayQueue = null;
-			Date curBDay = DateUtility.getAppDate();
 
 			for (int i = 0; i < repaySchdList.size(); i++) {
 
@@ -960,11 +959,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				finRepayQueue.setFinRpyFor(repaySchdList.get(i).getSchdFor());
 				finRepayQueue.setRcdNotExist(true);
 				finRepayQueue = doWriteDataToBean(finRepayQueue, financeMain, repaySchdList.get(i), repayPriority);
-
-				//Overdue Details preparation
-				//FIXME Satish overdue should not calculated here it should be recovered
-				getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay,
-						false, false);
 
 				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());

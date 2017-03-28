@@ -737,7 +737,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		recovery.setFinODSchdDate(finSchDate);
 		recovery.setFinODFor(finOdFor);
 
-		StringBuilder selectSql = new StringBuilder("select SUM(Penalty) Penalty, SUM(PenaltyPaid) PenaltyPaid from FinODCRecovery");
+		StringBuilder selectSql = new StringBuilder("select SUM(Penalty) Penalty, SUM(PenaltyPaid) PenaltyPaid , SUM(WaivedAmt) WaivedAmt from FinODCRecovery");
 		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor ");
 
 		logger.debug("selectSql: " + selectSql.toString());

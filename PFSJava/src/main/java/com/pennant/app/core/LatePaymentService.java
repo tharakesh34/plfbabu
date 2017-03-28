@@ -484,9 +484,11 @@ public class LatePaymentService extends ServiceHelper {
 			if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(chargeType)) {
 
 				boolean saveNewRecord = false;
-
+				//create new records if any of the amount is changed
 				if (odDetails.getFinCurODAmt().compareTo(recovery.getFinCurODAmt()) != 0
-						|| odDetails.getODChargeAmtOrPerc().compareTo(recovery.getPenaltyAmtPerc()) != 0) {
+						|| odDetails.getODChargeAmtOrPerc().compareTo(recovery.getPenaltyAmtPerc()) != 0
+						|| !odDetails.getODChargeCalOn().equals(recovery.getPenaltyCalOn())
+						|| recovery.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0) {
 
 					//recovery.setMovementDate(dateValueDate);
 					recovery.setRcdCanDel(false);
@@ -498,7 +500,7 @@ public class LatePaymentService extends ServiceHelper {
 					recovery.setODDays(DateUtility.getDaysBetween(businessDate, finODDateCal));
 					divedAmountToMatchPercentage(odDetails);
 					recovery.setPenalty(calculateAmount(odDetails, finODDateCal, businessDate, profitDaysBasis));
-					recovery.setPenaltyBal(recovery.getPenalty().subtract(recovery.getPenaltyPaid()));
+					recovery.setPenaltyBal(getPenaltyBal(recovery));
 				}
 
 				recoveryDAO.updateChargeRecovery(recovery);
@@ -515,12 +517,12 @@ public class LatePaymentService extends ServiceHelper {
 			}
 
 		} else {
-			
+
 			Date movementDate = valueDate;
 			if (odDetails.isODIncGrcDays()) {
 				movementDate = finODDateCal;
 			}
-			
+
 			createNewLPPenalty(odDetails, finODDateCal, businessDate, profitDaysBasis, 0, movementDate);
 		}
 
@@ -630,7 +632,7 @@ public class LatePaymentService extends ServiceHelper {
 				finODDateCal = recovery.getMovementDate();
 				recovery.setODDays(DateUtility.getDaysBetween(businessDate, finODDateCal));
 				recovery.setPenalty(calculateAmount(odDetails, finODDateCal, businessDate, profitDaysBasis));
-				recovery.setPenaltyBal(recovery.getPenalty().subtract(recovery.getPenaltyPaid()));
+				recovery.setPenaltyBal(getPenaltyBal(recovery));
 			}
 
 			chekRebateCap(totPft, rebate, recovery);
@@ -736,7 +738,9 @@ public class LatePaymentService extends ServiceHelper {
 		} else {
 			odDetails.setTotPenaltyAmt(getValue(odctotals.getPenalty()));
 			odDetails.setTotPenaltyPaid(getValue(odctotals.getPenaltyPaid()));
-			odDetails.setTotPenaltyBal(odDetails.getTotPenaltyAmt().subtract(odDetails.getTotPenaltyPaid()));
+			odDetails.setTotWaived(getValue(odctotals.getWaivedAmt()));
+			odDetails.setTotPenaltyBal(odDetails.getTotPenaltyAmt().subtract(odDetails.getTotPenaltyPaid())
+					.subtract(odDetails.getTotWaived()));
 			finODDetailsDAO.updatePenaltyTotals(odDetails);
 		}
 

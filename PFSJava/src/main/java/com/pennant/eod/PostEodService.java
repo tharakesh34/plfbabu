@@ -31,7 +31,7 @@ public class PostEodService {
 		Date appDate = DateUtility.getAppDate();
 
 		// Snapshot preparation
-		// getSnapshotService().doSnapshotPreparation(appDate);
+		 getSnapshotService().doSnapshotPreparation(appDate);
 
 		// Third party Postings on monthly basis
 		//getThirdPartyPostingService().processThirdPartyPostings(dateAppDate);

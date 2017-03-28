@@ -5,9 +5,12 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.eod.beans.CustomerDates;
 import com.pennant.eod.dao.CustomerDatesDAO;
 
 public class CustomerDatesDAOImpl implements CustomerDatesDAO {
@@ -76,6 +79,28 @@ public class CustomerDatesDAOImpl implements CustomerDatesDAO {
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * get Customer business date
+	 * @param custId
+	 * @return 
+	 */
+	@Override
+	public CustomerDates getCustomerDates(long custId) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custId);
+		
+		StringBuilder updateSql = new StringBuilder("Select AppDate,ValueDate,NextBusinessDate CustomerDates ");
+		updateSql.append(" WHERE CustID =:CustID");
+		RowMapper<CustomerDates> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDates.class);
+		logger.debug("updateSql: "+ updateSql.toString());
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(updateSql.toString(), source,typeRowMapper);
+		
 	}
 
 	/**
