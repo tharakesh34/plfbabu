@@ -589,7 +589,15 @@
 	<changeSet id="22" author="Prasad" dbms="oracle">
 		<sql>
 		<![CDATA[			
-			alter table Task_Log modify Processed number(1) not null;		
+			create table sai_temp as select * from Task_Log;
+			delete from Task_Log;
+			commit;
+			
+			alter table Task_Log modify (Processed number(1));
+					
+			insert into Task_Log select * from sai_temp;
+			commit;
+			drop table sai_temp;		
 		]]>
 		</sql>
 	</changeSet>
