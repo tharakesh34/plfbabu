@@ -620,7 +620,22 @@
 	<changeSet id="23" author="Prasad" dbms="oracle">
 		<sql>
 		<![CDATA[			
-			alter table FinanceMain modify (QuickDisb number(1));
+			alter table FinanceMain modify QuickDisb default null;
+			
+			update FinanceMain set QuickDisb = 0 where QuickDisb is null;
+			
+			create table sai_temp as select * from FinanceMain;
+			
+						
+			update FinanceMain set QuickDisb = null;
+			
+			alter table FinanceMain modify QuickDisb number(1);
+			
+			update FinanceMain m set (m.QuickDisb) = (select t.QuickDisb from sai_temp t where t.FINREFERENCE = m.FINREFERENCE) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE);
+			
+			alter table FinanceMain modify QuickDisb number(1) not null;
+			
+			drop table sai_temp;
 		]]>
 		</sql>
 	</changeSet>
