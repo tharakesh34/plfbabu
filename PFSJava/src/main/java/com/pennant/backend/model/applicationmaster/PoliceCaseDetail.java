@@ -52,7 +52,6 @@ public class PoliceCaseDetail extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-		excludeFields.add("override");
 		excludeFields.add("finReference");
 		excludeFields.add("overrideUser");
 		excludeFields.add("rules");
