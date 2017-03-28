@@ -29,6 +29,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Textbox;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
@@ -174,7 +175,10 @@ public class SearchFilterControl implements Serializable {
 		if (component instanceof Checkbox) {
 			return ((Checkbox) component).isChecked() ? 1 : 0;
 		}
-
+		if (component instanceof ExtendedCombobox) {
+			return ((ExtendedCombobox) component).getValue();
+		}
+		
 		if (component instanceof Listbox) {
 			Listitem listitem = ((Listbox) component).getSelectedItem();
 			return listitem == null ? "" : listitem.getValue();
@@ -220,6 +224,9 @@ public class SearchFilterControl implements Serializable {
 
 		if (component instanceof Datebox) {
 			((Datebox) component).setValue(null);
+		}
+		if (component instanceof ExtendedCombobox) {
+		((ExtendedCombobox) component).setValue(null);
 		}
 	}
 
