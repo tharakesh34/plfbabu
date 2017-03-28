@@ -580,4 +580,10 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="21" author="Madhubabu">
+	<sql>
+	 update ReportList set FieldLabels='label_CustTypeCode,label_CustTypeDesc,label_CustomerTypeDialog_CustTypeIsActive.value,label_RecordStatus,label_RecordType' ,moduletype='System Masters' where Code='CustomerType'
+	</sql>
+	</changeSet>
 </databaseChangeLog>
