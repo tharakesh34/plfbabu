@@ -1457,7 +1457,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendDocumentDetailTab(onLoad);
 		
 		// Covenant Type Tab Addition
-		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
+		if (ImplementationConstants.ALLOW_COVENANT_TYPES && StringUtils.isEmpty(moduleDefiner) ) {
 			appendCovenantTypeTab(onLoad);
 		}
 
