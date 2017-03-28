@@ -236,10 +236,10 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		registerButton(button_LiabilityRequestList_NewLiabilityRequest, "button_LiabilityRequestList_NewLiabilityRequest", true);
 		registerButton(button_LiabilityRequestList_LiabilityRequestSearch);
 
-		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_FinReference,
-				Operators.STRING);
-		registerField("InitiatedBy",initiatedBy, SortOrder.NONE,  sortOperator_InitiatedBy,
+		registerField("FinReference", listheader_FinReference, SortOrder.ASC,finReference,sortOperator_FinReference,
 				Operators.MULTISELECT);
+		registerField("InitiatedBy",initiatedBy, SortOrder.NONE,  sortOperator_InitiatedBy,
+				Operators.STRING);
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,
 				Operators.MULTISELECT);
 		registerField("FinType", listheader_FinType, SortOrder.NONE, finType, sortOperator_finType,
@@ -247,10 +247,11 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		registerField("finCcy", listheader_FinCcy, SortOrder.NONE, finCcy, sortOperator_finCcy, Operators.MULTISELECT);
 		registerField("finBranch", listheader_FinBranch, SortOrder.NONE, finBranch, sortOperator_finBranch,
 				Operators.MULTISELECT);
-		registerField("FinStartDate");
-		registerField("FinEvent");
-		registerField("MaturityDate");
-		registerField("NumberOfTerms");
+		registerField("FinStartDate",listheader_FinStartDate,SortOrder.NONE);
+		registerField("FinEvent",SortOrder.NONE);
+		registerField("MaturityDate",listheader_MaturityDate,SortOrder.NONE);
+		registerField("NumberOfTerms",listheader_NumberOfTerms,SortOrder.NONE);
+		registerField("FinAmount",listheader_FinAmount,SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
