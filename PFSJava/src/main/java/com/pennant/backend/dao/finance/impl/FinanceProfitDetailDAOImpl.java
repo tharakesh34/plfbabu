@@ -315,8 +315,9 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails").append(type);
-		updateSql.append(" Set AcrTillLBD=:AcrTillLBD, AcrTodayToNBD=:AcrTodayToNBD," );
-		updateSql.append(" AmzTillLBD= :AmzTillLBD,AmzTodayToNBD = :AmzTodayToNBD , LastMdfDate =:LastMdfDate ");
+		updateSql.append(" Set AcrTillLBD=:AcrTillLBD, AcrTodayToNBD=:AcrTodayToNBD, LastMdfDate =:LastMdfDate,");
+		updateSql.append(" AmzTillLBD= :AmzTillLBD, AmzTillLBDNormal =:AmzTillLBDNormal, AmzTillLBDPD = :AmzTillLBDPD, ");
+		updateSql.append(" AmzTillLBDPIS = :AmzTillLBDPIS, AmzTodayToNBD = :AmzTodayToNBD ");
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());

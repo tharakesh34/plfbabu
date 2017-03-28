@@ -31,8 +31,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			tdSchdPftBal			= BigDecimal.ZERO;
 	private BigDecimal			tdSchdAdvPft			= BigDecimal.ZERO;		//New Field 
 	private BigDecimal			tdSchdRbt				= BigDecimal.ZERO;		//New Field
-	private BigDecimal			tdPftAccrued			= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			tdPftAccrueSusp			= BigDecimal.ZERO;		//TO BE Deleted
 	private BigDecimal			tdPftAmortized			= BigDecimal.ZERO;
 	private BigDecimal			tdPftAmortizedNormal	= BigDecimal.ZERO;		//New Field 
 	private BigDecimal			tdPftAmortizedPD		= BigDecimal.ZERO;		//New Field 
@@ -40,10 +38,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			tdSchdPri				= BigDecimal.ZERO;
 	private BigDecimal			tdSchdPriPaid			= BigDecimal.ZERO;
 	private BigDecimal			tdSchdPriBal			= BigDecimal.ZERO;
-	private BigDecimal			acrTillLBD				= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			acrTillNBD				= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			acrTodayToNBD			= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			amzTillNBD				= BigDecimal.ZERO;		//TO BE Deleted
 	//After posting
 	private BigDecimal			amzTillLBD				= BigDecimal.ZERO;
 	private BigDecimal			amzTillLBDNormal		= BigDecimal.ZERO;		//new
@@ -67,8 +61,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			EarlyPaidAmt			= BigDecimal.ZERO;		//Duplicate with TotalPriPaidInAdv
 	private BigDecimal			ODPrincipal				= BigDecimal.ZERO;
 	private BigDecimal			ODProfit				= BigDecimal.ZERO;
-	private BigDecimal			CRBODPrincipal			= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			CRBODProfit				= BigDecimal.ZERO;		//TO BE Deleted
 	private BigDecimal			PenaltyPaid				= BigDecimal.ZERO;
 	private BigDecimal			PenaltyDue				= BigDecimal.ZERO;
 	private BigDecimal			PenaltyWaived			= BigDecimal.ZERO;
@@ -79,24 +71,15 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			NSchdPriDue				= BigDecimal.ZERO;
 	private BigDecimal			NSchdPftDue				= BigDecimal.ZERO;
 
-	private BigDecimal			AccruePft				= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			EarnedPft				= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			Unearned				= BigDecimal.ZERO;		//TO BE Deleted
 	private boolean				PftInSusp;
-	private BigDecimal			SuspPft					= BigDecimal.ZERO;		//TO BE Deleted
-	private BigDecimal			SuspPftAccrueTsfd		= BigDecimal.ZERO;		//TO BE Deleted
+
 	private BigDecimal			PftAccrueTsfd			= BigDecimal.ZERO;
-	private BigDecimal			prvPftAccrueTsfd		= BigDecimal.ZERO;		//TO BE Deleted
 	private String				FinStatus;
 	private String				FinStsReason;
 	private String				FinWorstStatus;
-	private BigDecimal			insPaidAmt				= BigDecimal.ZERO;		//New Table
-	private BigDecimal			AdminPaidAmt			= BigDecimal.ZERO;		//New Table
-	private BigDecimal			insCal					= BigDecimal.ZERO;		//New Table
 	private int					NOInst					= 0;
 	private int					NOPaidInst				= 0;
 	private int					NOODInst				= 0;
-	private int					CRBODInst				= 0;					//New Table
 	private String				FinAccount;
 	private String				FinAcType;
 	private String				DisbAccountId;
@@ -112,14 +95,11 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			FirstRepayAmt			= BigDecimal.ZERO;
 	private BigDecimal			LastRepayAmt			= BigDecimal.ZERO;
 	private int					oDDays					= 0;
-	private int					CRBODDays				= 0;					//New Table
+
 	private Date				firstODDate;
 	private Date				lastODDate;
-	private Date				cRBFirstODDate;									//New Table
-	private Date				cRBLastODDate;									//New Table
 	private String				closingStatus;
 	private String				finCategory;
-
 	private Date				lastRpySchDate;
 	private Date				nextRpySchDate;
 	private BigDecimal			lastRpySchPri			= BigDecimal.ZERO;
@@ -135,6 +115,32 @@ public class FinanceProfitDetail implements Serializable {
 	//others
 	private BigDecimal			disburse				= BigDecimal.ZERO;
 	private BigDecimal			downpay					= BigDecimal.ZERO;
+	
+	private BigDecimal			insPaidAmt				= BigDecimal.ZERO;		//New Table
+	private BigDecimal			AdminPaidAmt			= BigDecimal.ZERO;		//New Table
+	private BigDecimal			insCal					= BigDecimal.ZERO;		//New Table
+	private int					CRBODInst				= 0;					//New Table
+	private int					CRBODDays				= 0;					//New Table
+	private Date				cRBFirstODDate;									//New Table
+	private Date				cRBLastODDate;									//New Table
+	
+	private BigDecimal			acrTillLBD				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			acrTillNBD				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			acrTodayToNBD			= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			amzTillNBD				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			AccruePft				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			EarnedPft				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			Unearned				= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			SuspPft					= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			SuspPftAccrueTsfd		= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			prvPftAccrueTsfd		= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			tdPftAccrued			= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			tdPftAccrueSusp			= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			CRBODPrincipal			= BigDecimal.ZERO;		//TO BE Deleted
+	private BigDecimal			CRBODProfit				= BigDecimal.ZERO;		//TO BE Deleted
+	
+	
+	
 
 	public FinanceProfitDetail() {
 

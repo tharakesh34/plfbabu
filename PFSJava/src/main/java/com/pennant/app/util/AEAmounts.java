@@ -392,7 +392,9 @@ public class AEAmounts implements Serializable {
 		}
 
 		// Suspense Amortization
-		pftDetail.setTdPftAmortizedSusp(pftDetail.getTdPftAmortized().subtract(pftDetail.getTdPftAmortizedNormal()).subtract(pftDetail.getTdPftAmortizedPD()));
+		if (isSusp) {
+			pftDetail.setTdPftAmortizedSusp(pftDetail.getTdPftAmortized().subtract(pftDetail.getTdPftAmortizedNormal()).subtract(pftDetail.getTdPftAmortizedPD()));
+		}
 		// Current Flat Rate
 		BigDecimal calPart1 = pftDetail.getTotalPftSchd().add(pftDetail.getTotalPftCpz());
 		BigDecimal calPart2 = pftDetail.getTotalpriSchd().subtract(pftDetail.getTotalPftCpz()).max(new BigDecimal(100));
