@@ -586,4 +586,27 @@
 	 update ReportList set FieldLabels='label_CustTypeCode,label_CustTypeDesc,label_CustomerTypeDialog_CustTypeIsActive.value,label_RecordStatus,label_RecordType' ,moduletype='System Masters' where Code='CustomerType'
 	</sql>
 	</changeSet>
+	<changeSet id="22" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[			
+			alter table Task_Log modify Processed number(1) not null;		
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="22" author="Prasad" dbms="mssql">
+		<sql>
+		<![CDATA[			
+			alter table Task_Log alter column Processed bit not null;			
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="22" author="Prasad" dbms="postgresql">
+		<sql>
+		<![CDATA[			
+			update Task_Log set Processed = 0 where Processed is null;
+			alter table Task_Log alter column Processed type smallint using Processed::smallint ;
+			alter table Task_Log alter column Processed SET NOT NULL;			
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
