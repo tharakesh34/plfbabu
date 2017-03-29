@@ -157,7 +157,7 @@ public class ScheduleGenerator {
 		logger.debug("Entering");
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			//FIX PV: Change Schedule will not work for OD facility at this point.
+			//TODO PV: Change Schedule will not work for OD facility at this point.
 			return finScheduleData;
 		}
 
@@ -168,7 +168,7 @@ public class ScheduleGenerator {
 			return finScheduleData;
 		}
 
-		if(finScheduleData.getScheduleMap() != null){
+		if (finScheduleData.getScheduleMap() != null) {
 			finScheduleData.getScheduleMap().clear();
 		}
 
@@ -178,6 +178,8 @@ public class ScheduleGenerator {
 		Date newSchdAfter = new Date();
 		boolean isAddGraceDates = false;
 		int iUntouch = 0;
+		String newGrcSchdMethod = "";
+		String newRpySchdMethod = "";
 
 		//Find Date from which schedule dates to be removed.
 		if (newGraceEnd.compareTo(prvGraceEnd) > 0) {
@@ -190,10 +192,20 @@ public class ScheduleGenerator {
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 
+			if (curSchd.getSchDate().compareTo(prvGraceEnd) == 0) {
+				newGrcSchdMethod = curSchd.getSchdMethod();
+			}
+			
 			if (curSchd.getSchDate().compareTo(newSchdAfter) <= 0) {
 				finScheduleData.setScheduleMap(curSchd);
 				iUntouch = i;
 				continue;
+			}
+
+			if (StringUtils.isBlank(newRpySchdMethod)) {
+				if (curSchd.getSchDate().compareTo(prvGraceEnd) > 0) {
+					newRpySchdMethod = curSchd.getSchdMethod();
+				}
 			}
 
 			finScheduleDetails.remove(i);
@@ -228,6 +240,7 @@ public class ScheduleGenerator {
 				curSchd.setAdvBaseRate(financeMain.getGrcAdvBaseRate());
 				curSchd.setAdvMargin(financeMain.getGrcAdvMargin());
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
+				curSchd.setSchdMethod(newGrcSchdMethod);
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 			} else {
 				curSchd.setActRate(financeMain.getRepayProfitRate());
@@ -240,10 +253,13 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
+					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 				} else if (curSchd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
+					curSchd.setSchdMethod(newRpySchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
 				} else {
+					curSchd.setSchdMethod(newRpySchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 				}
 			}
@@ -508,7 +524,7 @@ public class ScheduleGenerator {
 		if (financeMain.isAllowGrcCpz()) {
 			schedule.setCpzOnSchDate(true);
 		}
-		
+
 		finScheduleData.setScheduleMap(schedule);
 
 		// Load Repay profit dates
