@@ -663,7 +663,7 @@ public class ScheduleCalculator {
 			}
 
 			// First payment date also cannot be allowed in planned EMI holiday declaration
-			if (curSchd.getInstNumber() <= 1) {
+			if (curSchd.getInstNumber() == 1) {
 				continue;
 			}
 
@@ -783,7 +783,7 @@ public class ScheduleCalculator {
 				Date schdDate = curSchd.getSchDate();
 
 				// First payment date also cannot be allowed in planned EMI holiday declaration
-				if (curSchd.getInstNumber() <= 1) {
+				if (curSchd.getInstNumber() == 1) {
 					continue;
 				}
 
