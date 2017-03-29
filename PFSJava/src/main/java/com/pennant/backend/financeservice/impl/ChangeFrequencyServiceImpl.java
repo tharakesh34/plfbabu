@@ -289,12 +289,12 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		String finReference = finServiceInstruction.getFinReference();
 
 		FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(finReference, "", isWIF);
-		
+
 		// validate frqDay and frequency
 		String frqday = String.valueOf(finServiceInstruction.getFrqDay());
 		frqday = frqday.length() == 1?"0".concat(frqday):frqday;
 		String newRepayFrq = StringUtils.substring(financeMain.getRepayFrq(), 0, financeMain.getRepayFrq().length()-2).concat(frqday);
-		
+
 		// validate newFrq
 		if (StringUtils.isNotBlank(newRepayFrq)) {
 			ErrorDetails errorDetail = FrequencyUtil.validateFrequency(newRepayFrq);
@@ -304,82 +304,74 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91123", "", valueParm), lang));
 			}
 		}
-		
+
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
-		
-		// It should be valid schedule date
-		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, fromDate, isWIF);
-		if(!isFromDateExists) {
+		if(fromDate == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+			valueParm[0] = "FromDate";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			return auditDetail;
 		}
-		
-		// It shouldn't be greater than or equals to maturity date
-		if (!isFromDateExists && fromDate.compareTo(financeMain.getMaturityDate()) > 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91101", "", valueParm), lang));
+
+		// validate from date with finStart date and maturity date
+		if(fromDate.compareTo(financeMain.getFinStartDate()) < 0 || fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "From date";
+			valueParm[1] = "finance start date:"+DateUtility.formatToShortDate(financeMain.getFinStartDate());
+			valueParm[2] = "maturity date:"+DateUtility.formatToShortDate(financeMain.getMaturityDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), lang));
+			return auditDetail;
 		}
 
 		// It shouldn't be past date when compare to appdate
-		if(!isFromDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		if(fromDate.compareTo(DateUtility.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
 		}
-	
-		// validate nextGrcRepayDate
-		if(finServiceInstruction.getNextGrcRepayDate() != null) {
-			if(!financeMain.isAllowGrcPeriod()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "NextGrcRepayDate";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91124", "", valueParm), lang));
-			}
-		}
-		
-		// validate grcPeriodEndDate
-		// It should be valid schedule date
-		Date grcEndDate = finServiceInstruction.getGrcPeriodEndDate();
-		if(grcEndDate != null) {
-			if(!financeMain.isAllowGrcPeriod()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "GrcPeriodEndDate";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91124", "", valueParm), lang));
-			} else {
-				isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, grcEndDate, isWIF);
-				if(!isFromDateExists) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "GrcPeriodEndDate:"+DateUtility.formatToShortDate(grcEndDate);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
-				}
-				// It shouldn't be greater than application date
-				if(grcEndDate.compareTo(DateUtility.getAppDate()) <= 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "GrcPeriodEndDate:"+DateUtility.formatToShortDate(grcEndDate);
-					valueParm[1] = "Application Date:"+DateUtility.formatToShortDate(DateUtility.getAppDate());
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
+
+		boolean isValidFromDate = false;
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		if(schedules != null) {
+			for(FinanceScheduleDetail schDetail: schedules) {
+				if(DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+					isValidFromDate = true;
+					if(checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+						return auditDetail;
+					}
 				}
 			}
-		}
-		
-		// validate nextRepayDate
-		if(finServiceInstruction.getNextRepayDate().compareTo(DateUtility.getAppDate()) <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "NextRepayDate:"+DateUtility.formatToShortDate(finServiceInstruction.getNextRepayDate());
-			valueParm[1] = "Application Date:"+DateUtility.formatToShortDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
-		}
-		
-		if(finServiceInstruction.getNextRepayDate().compareTo(DateUtility.getAppDate()) <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "NextRepayDate:"+DateUtility.formatToShortDate(finServiceInstruction.getNextRepayDate());
-			valueParm[1] = "Application Date:"+DateUtility.formatToShortDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
+
+			if(!isValidFromDate) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+	
+	/**
+	 * Method for validate current schedule date is valid schedule or not
+	 * 
+	 * @param auditDetail
+	 * @param curSchd
+	 * @param label
+	 * @return
+	 */
+	private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
+		if (!((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
+				&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() 
+				&& !curSchd.isSchPftPaid()) || (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
+				&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
+			String[] valueParm = new String[1];
+			valueParm[0] = label;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+			return auditDetail;
+		}
+		return null;
 	}
 	
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {

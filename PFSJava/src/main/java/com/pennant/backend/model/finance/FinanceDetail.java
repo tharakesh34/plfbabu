@@ -82,7 +82,7 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage","finScheduleData","customerDetails", "advancePaymentsList", "mandate",
 		"jountAccountDetailList", "gurantorsDetailList", "documentDetailsList", "covenantTypeList",
-		"collateralAssignmentList", "finFlagsDetails", "returnStatus" })
+		"collateralAssignmentList", "finFlagsDetails","finFeeDetails", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -214,9 +214,12 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name="mandateDetail")
 	private Mandate mandate;
 	
-	@XmlElementWrapper(name="financeFlags")
-	@XmlElement(name="financeFlag")
+	@XmlElementWrapper(name="flags")
+	@XmlElement(name="flag")
 	private List<FinFlagsDetail> finFlagsDetails;
+	@XmlElementWrapper(name="fees")
+	@XmlElement(name="fee")
+	List<FinFeeDetail> finFeeDetails;
 	
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
@@ -814,6 +817,13 @@ public class FinanceDetail implements java.io.Serializable {
 	}
 	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
 		this.vasRecordingList = vasRecordingList;
+	}
+	
+	public List<FinFeeDetail> getFinFeeDetails() {
+		return finFeeDetails;
+	}
+	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
+		this.finFeeDetails = finFeeDetails;
 	}
 
 }

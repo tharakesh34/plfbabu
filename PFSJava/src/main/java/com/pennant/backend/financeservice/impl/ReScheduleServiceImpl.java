@@ -19,11 +19,9 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -34,14 +32,12 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.rits.cloning.Cloner;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
 	private static Logger logger = Logger.getLogger(ReScheduleServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * Method for perform re-schedule action based on given instructions.
@@ -125,7 +121,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			} else {
 				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1,
 						finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0).getNextFrequencyDate();
-				
+
 				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
@@ -149,9 +145,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (DateUtility.compare(recalToDate, lastDateLimit) > 0) {
 				// Through Error
 				finScheduleData
-						.setErrorDetail(new ErrorDetails("SCH30",
-								"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
-								new String[] { " " }));
+				.setErrorDetail(new ErrorDetails("SCH30",
+						"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
+						new String[] { " " }));
 				return finScheduleData;
 			}
 
@@ -167,7 +163,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			} else {
 				startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
 						.getNextFrequencyDate();
-				
+
 				if(DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15){
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
@@ -502,34 +498,56 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		String finReference = finServiceInstruction.getFinReference();
 
 		Date fromDate = finServiceInstruction.getFromDate();
-
-		// It should be valid schedule date
-		boolean isExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, fromDate, isWIF);
-		if (!isExists) {
+		if(fromDate == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+			valueParm[0] = "FromDate";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			return auditDetail;
 		}
 
-		// It shouldn't be past date when compare to appdate
-		if (isExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		boolean isValidFromDate = false;
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		if(schedules != null) {
+			for(FinanceScheduleDetail schDetail: schedules) {
+				if(DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+					isValidFromDate = true;
+					if(checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+						return auditDetail;
+					}
+				}
+			}
+
+			if(!isValidFromDate) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+			}
+		}
+		if(finServiceInstruction.getNextRepayDate() == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91117", "", valueParm), lang));
+			valueParm[0] = "NextRepayDate";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			return auditDetail;
+		}
+		// validate Next payment date with finStart date and maturity date
+		if(finServiceInstruction.getNextRepayDate().compareTo(fromDate) <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Next RepayDate";
+			valueParm[1] = "From Date:"+DateUtility.formatToShortDate(fromDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm), lang));
+			return auditDetail;
 		}
 
 		// FromDate should be Unpaid Date
-		if (isExists) {
-			FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(
-					finReference, fromDate, "", isWIF);
-			BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid().add(
-					finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
+		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(
+				finReference, fromDate, "", isWIF);
+		BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid().add(
+				finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
 
-			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91116", "", valueParm), lang));
-			}
+		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91116", "", valueParm), lang));
 		}
 
 		// validate repay frequency code
@@ -540,73 +558,39 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm), lang));
 		}
 
-		FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(finReference, "", isWIF);
-
-		// validate from date
-		if (isExists && finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(financeMain.getMaturityDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91101", "", valueParm), lang));
-		}
-
-		// NextGrcRepayDate
-		if (isExists && finServiceInstruction.getNextGrcRepayDate() != null) {
-			if (!financeMain.isAllowGrcPeriod()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Next grace repay date:" + String.valueOf(finServiceInstruction.getNextGrcRepayDate());
-				valueParm[1] = finServiceInstruction.getFinReference();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90204", "", valueParm), lang));
-			}
-		}
-
-		// GrcPeriodEndDate
-		if (isExists && finServiceInstruction.getGrcPeriodEndDate() != null) {
-			if (!financeMain.isAllowGrcPeriod()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Grace period end date:" + String.valueOf(finServiceInstruction.getGrcPeriodEndDate());
-				valueParm[1] = finServiceInstruction.getFinReference();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90204", "", valueParm), lang));
-			}
-		}
-
-		// validate recalType
-		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			List<ValueLabel> recalTypes = PennantStaticListUtil.getSchCalCodes();
-			boolean recalTypeSts = false;
-			for (ValueLabel value : recalTypes) {
-				if (StringUtils.equals(value.getValue(), finServiceInstruction.getRecalType())) {
-					recalTypeSts = true;
-					break;
-				}
-			}
-			if (!recalTypeSts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", "", valueParm), lang));
-			}
-		}
-
 		// terms
-		if (finServiceInstruction.getTerms() > 0) {
-			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
-					|| !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-				String[] valueParm = new String[2];
-				valueParm[0] = CalculationConstants.RPYCHG_ADDTERM;
-				valueParm[1] = CalculationConstants.RPYCHG_ADDRECAL;
-				// auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91118", "", valueParm), lang));
-			}
+		if (finServiceInstruction.getTerms() <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Terms";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
 		}
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
 
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
+		/**
+		 * Method for validate current schedule date is valid schedule or not
+		 * 
+		 * @param auditDetail
+		 * @param curSchd
+		 * @param label
+		 * @return
+		 */
+		private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
+			if (!((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) 
+					&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() 
+					&& !curSchd.isSchPftPaid()) || (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
+					&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = label;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+				return auditDetail;
+			}
+			return null;
+		}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
+		public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+			this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+		}
 	}
-
-}

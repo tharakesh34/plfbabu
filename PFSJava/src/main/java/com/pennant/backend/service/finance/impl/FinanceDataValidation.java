@@ -140,12 +140,12 @@ public class FinanceDataValidation {
 		}
 
 		// Fee validations
-			errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall);
-			if(!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
-			}
-		
+		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall);
+		if(!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}
+
 
 		// Insurance validations
 		if(finScheduleData.getInsuranceList() != null && !finScheduleData.getInsuranceList().isEmpty()) {
@@ -191,12 +191,12 @@ public class FinanceDataValidation {
 		}
 
 		errorDetails = finODPenaltyRateValidation(finScheduleData);
-		
+
 		if(!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
 		}
-		
+
 		return finScheduleData;
 	}
 	

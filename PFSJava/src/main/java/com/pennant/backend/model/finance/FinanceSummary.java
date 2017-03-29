@@ -45,19 +45,20 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {
-		"effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
-		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms","loanTenor", "maturityDate","firstDisbDate",
-		"lastDisbDate","firstEmiAmount","nextSchDate","nextRepayAmount","futureInst","futureTenor","firstInstDate","paidTotal",
-		"schdPriPaid","schdPftPaid","finLastRepayDate","totalOutStanding","outStandPrincipal","outStandProfit",
-		"totalOverDue","overDuePrincipal","overDueProfit","overDueInstlments","finStatus"
-})
+@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
+		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate", "firstDisbDate",
+		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
+		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
+		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
+		"overDueInstlments", "finODDetail", "advPaymentAmount", "finStatus", "fullyDisb" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
 	
@@ -190,7 +191,14 @@ public class FinanceSummary implements Serializable {
 	private Date firstInstDate;
 	@XmlElement
 	private BigDecimal paidTotal;
-	
+	@XmlElement
+	private BigDecimal advPaymentAmount;
+	@XmlElementWrapper(name="overdueCharges")
+	@XmlElement(name="overdueCharge")
+	private List<FinODDetails> finODDetail;
+	@XmlElement
+	private boolean fullyDisb;
+
 	public FinanceSummary() {
 		
 	}
@@ -714,5 +722,29 @@ public class FinanceSummary implements Serializable {
 
 	public void setPaidTotal(BigDecimal paidTotal) {
 		this.paidTotal = paidTotal;
+	}
+
+	public List<FinODDetails> getFinODDetail() {
+		return finODDetail;
+	}
+
+	public void setFinODDetail(List<FinODDetails> finODDetail) {
+		this.finODDetail = finODDetail;
+	}
+
+	public BigDecimal getAdvPaymentAmount() {
+		return advPaymentAmount;
+	}
+
+	public void setAdvPaymentAmount(BigDecimal advPaymentAmount) {
+		this.advPaymentAmount = advPaymentAmount;
+	}
+
+	public boolean isFullyDisb() {
+		return fullyDisb;
+	}
+
+	public void setFullyDisb(boolean fullyDisb) {
+		this.fullyDisb = fullyDisb;
 	}
 }

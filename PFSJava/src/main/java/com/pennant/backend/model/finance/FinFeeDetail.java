@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-@XmlType(propOrder = { "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount", "feeScheduleMethod", "terms"})
+@XmlType(propOrder = { "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount", "feeScheduleMethod", "terms","remainingFee"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -84,6 +84,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	@XmlElement(name= "scheduleTerms")
 	private int terms = 0;
+	@XmlElement(name= "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
 	private String paymentRef;
 	

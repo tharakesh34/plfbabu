@@ -8349,6 +8349,8 @@
 
 	<bean name="rmvTermsServiceTarget"
 		class="com.pennant.backend.financeservice.impl.RemoveTermsServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
 	<bean id="recalService"
@@ -8373,7 +8375,6 @@
 	<bean name="recalServiceTarget"
 		class="com.pennant.backend.financeservice.impl.RecalculateServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
-		<property name="financeMainDAO" ref="financeMainDAO"/>
 	</bean>
 
 	<bean id="changeProfitService"
@@ -8447,7 +8448,6 @@
 	<bean name="reScheduleServiceTarget"
 		class="com.pennant.backend.financeservice.impl.ReScheduleServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
-		<property name="financeMainDAO" ref="financeMainDAO"/>
 	</bean>
 	
 	<bean id="postponementService"

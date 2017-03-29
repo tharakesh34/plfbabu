@@ -75,7 +75,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "planEMIHmonths",
-		"planEMIHDates", "financeSummary","finODDetails", "returnStatus" })
+		"planEMIHDates","finODDetails","financeSummary","returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {

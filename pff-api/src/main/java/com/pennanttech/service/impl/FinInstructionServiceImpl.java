@@ -21,6 +21,7 @@ import com.pennant.backend.financeservice.ChangeProfitService;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
+import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
@@ -75,6 +76,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	private ManualPaymentService manualPaymentService;
 	private ReScheduleService reScheduleService;
 	private RecalculateService recalService;
+	private RemoveTermsService rmvTermsService;
+	
 	private FinanceMainDAO financeMainDAO;
 	private RuleService ruleService;
 	private ValidationUtility validationUtility;
@@ -340,7 +343,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class); 
-		
+
 		FinanceDetail financeDetail = null;
 
 		// service level validations
@@ -363,7 +366,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 				returnStatus = APIErrorHandlerService.getFailedStatus("91104", valueParm);
 			}
 		}
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -371,9 +374,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
+
+		// validate service instruction data
+		AuditDetail auditDetail = rmvTermsService.doValidations(finServiceInstruction);
+
 		// validate fees
 		String eventCode = FinanceConstants.FINSER_EVENT_RMVTERM;
-		AuditDetail auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), new AuditDetail(), eventCode);
+		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
 
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
@@ -1187,6 +1194,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
-
-	
+	@Autowired
+	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
+		this.rmvTermsService = rmvTermsService;
+	}
 }

@@ -952,9 +952,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 				
 				// Advance Payment Details
-				if(financeDetail.getFinScheduleData().getFinanceType().isAlwMultiPartyDisb()){
-					financeDetail.setAdvancePaymentsList(getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference,"_View"));
-				}
+				financeDetail.setAdvancePaymentsList(getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference,"_View"));
 				
 				// Covenant Type Details
 				financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference,"_View"));

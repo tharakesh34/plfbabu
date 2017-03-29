@@ -421,34 +421,29 @@ public class FinanceDetailController {
 				financeDetail = getFinanceDetailService().getWIFFinance(finReference, false, null);
 			}
 
-			if(financeDetail != null) {
+			if (financeDetail != null) {
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				//setting Disb first and lastDates
 				List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
-				Collections.sort(disbList,
-						new Comparator<FinanceDisbursement>() {
-							@Override
-							public int compare(FinanceDisbursement b1,FinanceDisbursement b2) {
-								return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
-							}
-						});
+				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
+					@Override
+					public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
+						return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+					}
+				});
 
 				if (disbList != null && disbList.size() > 0) {
 					if (disbList.size() == 1) {
-						financeMain.setFirstDisbDate(disbList.get(0)
-								.getDisbDate());
-						financeMain.setLastDisbDate(disbList.get(0)
-								.getDisbDate());
+						financeMain.setFirstDisbDate(disbList.get(0).getDisbDate());
+						financeMain.setLastDisbDate(disbList.get(0).getDisbDate());
 					} else {
-						financeMain.setFirstDisbDate(disbList.get(0)
-								.getDisbDate());
-						financeMain.setLastDisbDate(disbList.get(
-								disbList.size() - 1).getDisbDate());
+						financeMain.setFirstDisbDate(disbList.get(0).getDisbDate());
+						financeMain.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 					}
 				}
-				
+
 				// Avoid Grace Period details into the marshaling in case of Allow grace is false
-				if(!financeMain.isAllowGrcPeriod()) {
+				if (!financeMain.isAllowGrcPeriod()) {
 					financeMain.setGrcPeriodEndDate(null);
 					financeMain.setGrcRateBasis(null);
 					financeMain.setGrcPftRate(null);
@@ -470,7 +465,7 @@ public class FinanceDetailController {
 					financeMain.setGrcAdvBaseRate(null);
 					financeMain.setGrcAdvMargin(null);
 				}
-				
+
 				// Summary details
 				FinanceSummary summary = new FinanceSummary();
 

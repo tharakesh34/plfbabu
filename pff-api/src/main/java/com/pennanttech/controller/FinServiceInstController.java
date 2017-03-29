@@ -397,17 +397,6 @@ public class FinServiceInstController {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
-			// validate number of terms
-/*			int tenor = financeMain.getNumberOfTerms()+financeMain.getGraceTerms()+finServiceInst.getTerms();
-			if(tenor > finScheduleData.getFinanceType().getFinMaxTerm()) {
-				FinanceDetail response = new FinanceDetail();
-				String[] valueParm = new String[2];
-				valueParm[0] = "Terms:"+finServiceInst.getTerms();
-				valueParm[1] = "Allowed max loan terms:"+finScheduleData.getFinanceType().getFinMaxTerm();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30551", valueParm));
-				doEmptyResponseObject(financeDetail);
-				return response;
-			}*/
 			try {
 				// Call Schedule calculator for Rate change
 				finScheduleData = addTermsService.getAddTermsDetails(finScheduleData, finServiceInst);
@@ -415,6 +404,7 @@ public class FinServiceInstController {
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {
 						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
 						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
 								errorDetail.getError()));
 						return response;
@@ -532,8 +522,8 @@ public class FinServiceInstController {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			financeMain.setEventFromDate(finServiceInst.getFromDate());
-			financeMain.setEventToDate(financeMain.getMaturityDate());
+			//financeMain.setEventFromDate(finServiceInst.getFromDate());
+			//financeMain.setEventToDate(financeMain.getMaturityDate());
 			financeMain.setAdjTerms(finServiceInst.getTerms());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			
@@ -547,11 +537,11 @@ public class FinServiceInstController {
 				financeMain.setRecalToDate(finServiceInst.getRecalToDate());
 				break;
 			case CalculationConstants.RPYCHG_ADJMDT:
-				financeMain.setRecalFromDate(financeMain.getMaturityDate());
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				break;
 			case CalculationConstants.RPYCHG_ADDRECAL:
-				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				financeMain.setScheduleRegenerated(true);
 				break;
@@ -758,7 +748,7 @@ public class FinServiceInstController {
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				financeMain.setScheduleRegenerated(true);
 			}
@@ -867,7 +857,7 @@ public class FinServiceInstController {
 						if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
 							isFromDateFound = true;
 						}
-						
+
 						totRepayTerms = totRepayTerms + 1;
 						if(!isFromDateFound){
 							if (curSchd.getSchDate().compareTo(finScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0) {
@@ -878,24 +868,24 @@ public class FinServiceInstController {
 				}
 				adjRepayTerms = totRepayTerms - rpyTermsCompleted;
 			}
-			
-			finServiceInst.setAdjRpyTerms(adjRepayTerms);
 
+			finServiceInst.setAdjRpyTerms(adjRepayTerms);
+			finScheduleData.getFinanceMain().setFinSourceID(APIConstants.FINSOURCE_ID_API);
+			finScheduleData.getFinanceMain().setVersion(finScheduleData.getFinanceMain().getVersion() + 1);
 			try {
 				// call change frequency service
 				finScheduleData = changeFrequencyService.doChangeFrequency(finScheduleData, finServiceInst);
 				financeDetail.setFinScheduleData(finScheduleData);
 
 				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
 					finScheduleData.setSchduleGenerated(true);
+
+					// set generated schedule details to financeDetails
+					financeDetail.setFinScheduleData(finScheduleData);
 
 					// Save the Schedule details
 					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
 					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
 
 					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
 
@@ -903,7 +893,7 @@ public class FinServiceInstController {
 					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 					//set the headerDetails to AuditHeader
 					auditHeader.setApiHeader(reqHeaderDetails);
-					
+
 					auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
 
 					if (auditHeader.getErrorMessage() != null) {
@@ -952,15 +942,15 @@ public class FinServiceInstController {
 
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
+			financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+			financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
-				financeMain.setRecalFromDate(finServiceInst.getFromDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
 			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
 			}
 			
 			try {
@@ -1415,6 +1405,7 @@ public class FinServiceInstController {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setInsuranceList(null);
+		finScheduleData.setFinODDetails(null);
 
 		logger.debug("Entering");
 		return response;

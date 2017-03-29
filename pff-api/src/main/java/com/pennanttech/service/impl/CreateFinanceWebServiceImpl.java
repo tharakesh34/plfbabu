@@ -145,7 +145,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 				int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
 				if (countInOrg > 0) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "";
+					valueParm[0] = finReference;
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91122"));

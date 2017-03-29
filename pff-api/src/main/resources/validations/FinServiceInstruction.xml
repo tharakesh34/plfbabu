@@ -58,7 +58,6 @@
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 					<value>com.pennant.validation.DefermentsGroup</value>
 					<value>com.pennant.validation.RemoveTermsGroup</value>
-					<value>com.pennant.validation.RecalculateGroup</value>
 					<value>com.pennant.validation.ChangeInterestGroup</value>
 					<value>com.pennant.validation.AddDatedScheduleGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>

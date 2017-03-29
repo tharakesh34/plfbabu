@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * Model class for the <b>FinODDetails table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "totPftAmt", "totPftPaid"})
+@XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "totPftAmt", "totPftPaid","oDChargeType"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODDetails implements java.io.Serializable {
 	
@@ -99,6 +99,7 @@ public class FinODDetails implements java.io.Serializable {
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
+	@XmlElement(name="chargeType")
 	private String oDChargeType;
 	private int oDGraceDays;
 	private String oDChargeCalOn;
