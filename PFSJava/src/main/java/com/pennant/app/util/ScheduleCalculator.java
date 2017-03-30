@@ -1465,6 +1465,23 @@ public class ScheduleCalculator {
 			curSchd.setRepayOnSchDate(true);
 			curSchd.setRepayAmount(repayAmount);
 		}
+		
+		for (int i = 0; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(evtFromDate) < 0) {
+				continue;
+			}
+
+			if (schdDate.compareTo(evtToDate) > 0) {
+				break;
+			}
+
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_UNPLANNED);
+			}
+		}
 
 		finScheduleData = setRecalAttributes(finScheduleData, PROC_UNPLANEMIH, BigDecimal.ZERO, repayAmount);
 		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, schdMethod);
@@ -3153,6 +3170,7 @@ public class ScheduleCalculator {
 						curSchd.setProfitSchd(curSchd.getSchdPftPaid());
 						curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 						curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
+						
 					} else {
 						curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
 						curSchd.setRepayAmount(curSchd.getProfitSchd());
@@ -3160,6 +3178,17 @@ public class ScheduleCalculator {
 					}
 				}
 
+				// Resetting Capitalize flag
+				if(!curSchd.isCpzOnSchDate() && StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())){
+					if(StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+						curSchd.setCpzOnSchDate(finMain.isPlanEMICpz());
+					}else if(StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)){
+						curSchd.setCpzOnSchDate(finMain.isReAgeCpz());
+					}else if(StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)){
+						curSchd.setCpzOnSchDate(finMain.isUnPlanEMICpz());
+					}
+				}
+				
 				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod()));
 
 				// Capitalize OR not
