@@ -996,4 +996,16 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		]]>
 		</sql>
 	</changeSet>
+	<changeSet id="25" author="Siva" dbms="mssql">
+		<sql>
+		DELETE FROM SecGroupRights WHERE GrpID = (Select GrpID From SecGroups where GrpCode = 'FIN_CHANGEGESTATION_MAKER')
+			AND RightID = (Select RightID From SecRights Where RightName = 'FinanceMainDialog_nextGrcPftDate');
+
+		DELETE FROM SecGroupRights WHERE GrpID = (Select GrpID From SecGroups where GrpCode = 'FIN_CHANGEGESTATION_MAKER')
+			AND RightID = (Select RightID From SecRights Where RightName = 'FinanceMainDialog_nextGrcPftRvwDate');
+		
+		DELETE FROM SecGroupRights WHERE GrpID = (Select GrpID From SecGroups where GrpCode = 'FIN_CHANGEGESTATION_MAKER')
+			AND RightID = (Select RightID From SecRights Where RightName = 'FinanceMainDialog_nextGrcCpzDate');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
