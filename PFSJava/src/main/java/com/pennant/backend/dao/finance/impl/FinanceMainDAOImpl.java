@@ -2329,9 +2329,10 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setCustID(custId);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinAmount, FinType, FinCcy, FinAssetValue,");
-		selectSql.append(" NumberOfTerms, MaturityDate, Finstatus, FinStartDate, FirstRepay");
-		selectSql.append(" From FinanceMain");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference,FM.FinAmount, FM.FinType, FM.FinCcy,");
+		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,");
+		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct ");
+		selectSql.append(" From FinanceMain FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
 		selectSql.append(" Where CustID =:CustID");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -2359,10 +2360,11 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
-		StringBuilder selectSql = new StringBuilder("select T1.FinReference, T1.FinAmount, T1.FinType,T1.FinCcy,");
-		selectSql.append(" T1.FinAssetValue,T1.NumberOfTerms,T1.MaturityDate,T1.Finstatus,T1.FinStartDate,T1.FirstRepay,");
-		selectSql.append(" T2.CollateralRef From FinanceMain T1 Inner Join CollateralAssignment T2 On ");
-		selectSql.append(" T1.FinReference = T2.Reference");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.FinAmount, FM.FinType, FM.FinCcy,");
+		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,FM.FinStartDate, FM.FirstRepay,");
+		selectSql.append(" FT.FinCategory lovDescFinProduct, CA.CollateralRef From FinanceMain FM INNER JOIN ");
+		selectSql.append(" CollateralAssignment CA On FM.FinReference = CA.Reference INNER JOIN ");
+		selectSql.append(" RMTFinanceTypes FT ON FM.FinType = FT.FinType");
 		selectSql.append(" Where CollateralRef =:CollateralRef");
 
 		logger.debug("selectSql: " + selectSql.toString());

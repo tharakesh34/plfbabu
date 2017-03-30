@@ -615,93 +615,111 @@ public class CreateFinanceController {
 	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType) {
 		logger.debug("Entering");
 		try {
-		FinanceInquiry financeInquiry = new FinanceInquiry();
-		List<FinanceMain> financeMainList = null;
-		String[] valueParm = new String[1];
+			FinanceInquiry financeInquiry = new FinanceInquiry();
+			List<FinanceMain> financeMainList = null;
+			String[] valueParm = new String[1];
 
-		if (StringUtils.equalsIgnoreCase(APIConstants.FINANCE_INQUIRY_CUSTOMER, serviceType)) {
-			Customer customer = customerDetailsService.getCustomerByCIF(reference);
-			financeMainList = financeMainService.getFinanceByCustId(customer.getCustID());
-			valueParm[0] = "CIF :" + reference;
-		} else {
-			financeMainList = financeMainService.getFinanceByCollateralRef(reference);
-			valueParm[0] = "CollateralRef :" + reference;
-		}
+			if (StringUtils.equalsIgnoreCase(APIConstants.FINANCE_INQUIRY_CUSTOMER, serviceType)) {
+				Customer customer = customerDetailsService.getCustomerByCIF(reference);
+				financeMainList = financeMainService.getFinanceByCustId(customer.getCustID());
+				valueParm[0] = "CIF :" + reference;
+			} else {
+				financeMainList = financeMainService.getFinanceByCollateralRef(reference);
+				valueParm[0] = "CollateralRef :" + reference;
+			}
 
-		if (financeMainList.size() == 0) {
-			financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
-			return financeInquiry;
-		}
+			if (financeMainList.size() == 0) {
+				financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
+				return financeInquiry;
+			}
 
-		List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
-		for (FinanceMain financeMain : financeMainList) {
-			FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
-			BigDecimal paidTotal = BigDecimal.ZERO;
-			BigDecimal schdFeePaid = BigDecimal.ZERO;
-			BigDecimal schdInsPaid = BigDecimal.ZERO;
-			BigDecimal schdPftPaid = BigDecimal.ZERO;
-			BigDecimal schdPriPaid = BigDecimal.ZERO;
-			BigDecimal principalSchd = BigDecimal.ZERO;
-			BigDecimal profitSchd = BigDecimal.ZERO;
-			int futureInst = 0;
-			List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(
-					financeMain.getFinReference(), "", false);
-					boolean isnextRepayAmount = true;
-			if (finSchduleList != null) {
-				for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
-					schdFeePaid = schdFeePaid.add(financeScheduleDetail.getSchdFeePaid());
-					schdInsPaid = schdInsPaid.add(financeScheduleDetail.getSchdInsPaid());
-					schdPftPaid = schdPftPaid.add(financeScheduleDetail.getSchdPftPaid());
-					schdPriPaid = schdPriPaid.add(financeScheduleDetail.getSchdPriPaid());
-					principalSchd = principalSchd.add(financeScheduleDetail.getPrincipalSchd());
-					profitSchd = profitSchd.add(financeScheduleDetail.getProfitSchd());
-					if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
-						if(!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)==0) && isnextRepayAmount){
-							finInquiryDetail.setNextRepayAmount(financeScheduleDetail.getRepayAmount());
-							isnextRepayAmount=false;
+			List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
+			for (FinanceMain financeMain : financeMainList) {
+				FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
+				BigDecimal paidTotal = BigDecimal.ZERO;
+				BigDecimal schdFeePaid = BigDecimal.ZERO;
+				BigDecimal schdInsPaid = BigDecimal.ZERO;
+				BigDecimal schdPftPaid = BigDecimal.ZERO;
+				BigDecimal schdPriPaid = BigDecimal.ZERO;
+				BigDecimal principalSchd = BigDecimal.ZERO;
+				BigDecimal profitSchd = BigDecimal.ZERO;
+				int futureInst = 0;
+				List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(
+						financeMain.getFinReference(), "", false);
+				boolean isnextRepayAmount = true;
+				if (finSchduleList != null) {
+					for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
+						schdFeePaid = schdFeePaid.add(financeScheduleDetail.getSchdFeePaid());
+						schdInsPaid = schdInsPaid.add(financeScheduleDetail.getSchdInsPaid());
+						schdPftPaid = schdPftPaid.add(financeScheduleDetail.getSchdPftPaid());
+						schdPriPaid = schdPriPaid.add(financeScheduleDetail.getSchdPriPaid());
+						principalSchd = principalSchd.add(financeScheduleDetail.getPrincipalSchd());
+						profitSchd = profitSchd.add(financeScheduleDetail.getProfitSchd());
+						if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
+							if (!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) && isnextRepayAmount) {
+								finInquiryDetail.setNextRepayAmount(financeScheduleDetail.getRepayAmount());
+								isnextRepayAmount = false;
+							}
+							futureInst++;
 						}
-						futureInst++;
 					}
 				}
+				finInquiryDetail.setFinReference(financeMain.getFinReference());
+				finInquiryDetail.setFinType(financeMain.getFinType());
+				finInquiryDetail.setProduct(financeMain.getLovDescFinProduct());
+				finInquiryDetail.setFinCcy(financeMain.getFinCcy());
+				finInquiryDetail.setFinAmount(financeMain.getFinAmount());
+				finInquiryDetail.setFinAssetValue(financeMain.getFinAssetValue());
+				finInquiryDetail.setNumberOfTerms(financeMain.getNumberOfTerms());
+				finInquiryDetail.setFirstEmiAmount(financeMain.getFirstRepay());
+				finInquiryDetail.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
+						financeMain.getMaturityDate(), true));
+				finInquiryDetail.setMaturityDate(financeMain.getMaturityDate());
+				paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid).add(schdInsPaid);
+				finInquiryDetail.setPaidTotal(paidTotal);
+				finInquiryDetail.setPaidPri(schdPriPaid);
+				finInquiryDetail.setPaidPft(schdPftPaid);
+				BigDecimal outstandingPri = principalSchd.subtract(schdPriPaid);
+				BigDecimal outstandingPft = profitSchd.subtract(schdPftPaid);
+				finInquiryDetail.setOutstandingTotal(outstandingPri.add(outstandingPft));
+				finInquiryDetail.setOutstandingPri(outstandingPri);
+				finInquiryDetail.setOutstandingPft(outstandingPft);
+				finInquiryDetail.setFutureInst(futureInst);
+				finInquiryDetail.setFinStatus(financeMain.getClosingStatus());
+
+				// fetch co-applicant details
+				List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService.getJoinAccountDetail(
+						financeMain.getFinReference(), "_View");
+				finInquiryDetail.setJountAccountDetailList(jountAccountDetailList);
+				
+				// fetch disbursement details
+				List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(
+						financeMain.getFinReference(), "", false);
+				BigDecimal totDisbAmt = BigDecimal.ZERO;
+				BigDecimal totfeeChrgAmt = BigDecimal.ZERO;
+				for(FinanceDisbursement finDisb: disbList) {
+					totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
+					totfeeChrgAmt = totfeeChrgAmt.add(finDisb.getFeeChargeAmt());
+				}
+				BigDecimal assetValue = financeMain.getFinAssetValue() == null?BigDecimal.ZERO:financeMain.getFinAssetValue();
+				if(assetValue.compareTo(totDisbAmt) == 0) {
+					finInquiryDetail.setDisbStatus(APIConstants.FIN_DISB_FULLY);
+				} else {
+					finInquiryDetail.setDisbStatus(APIConstants.FIN_DISB_PARTIAL);
+				}
+				
+				finance.add(finInquiryDetail);
 			}
-			finInquiryDetail.setFinReference(financeMain.getFinReference());
-			finInquiryDetail.setFinType(financeMain.getFinType());
-			finInquiryDetail.setFinCcy(financeMain.getFinCcy());
-			finInquiryDetail.setFinAmount(financeMain.getFinAmount());
-			finInquiryDetail.setFinAssetValue(financeMain.getFinAssetValue());
-			finInquiryDetail.setNumberOfTerms(financeMain.getNumberOfTerms());
-			finInquiryDetail.setFirstEmiAmount(financeMain.getFirstRepay());
-			finInquiryDetail.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
-					financeMain.getMaturityDate(), true));
-			finInquiryDetail.setMaturityDate(financeMain.getMaturityDate());
-			paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid).add(schdInsPaid);
-			finInquiryDetail.setPaidTotal(paidTotal);
-			finInquiryDetail.setPaidPri(schdPriPaid);
-			finInquiryDetail.setPaidPft(schdPftPaid);
-			BigDecimal outstandingPri = principalSchd.subtract(schdPriPaid);
-			BigDecimal outstandingPft = profitSchd.subtract(schdPftPaid);
-			finInquiryDetail.setOutstandingTotal(outstandingPri.add(outstandingPft));
-			finInquiryDetail.setOutstandingPri(outstandingPri);
-			finInquiryDetail.setOutstandingPft(outstandingPft);
-			finInquiryDetail.setFutureInst(futureInst);
-			finInquiryDetail.setFinStatus(financeMain.getFinStatus());
-			
-			// fetch co-applicant details
-			List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService.getJoinAccountDetail(
-					financeMain.getFinReference(), "_View");
-			finInquiryDetail.setJountAccountDetailList(jountAccountDetailList);
-			finance.add(finInquiryDetail);
-		}
-		financeInquiry.setFinance(finance);
-		financeInquiry.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		logger.debug("Leaving");
-		return financeInquiry;
+			financeInquiry.setFinance(finance);
+			financeInquiry.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			logger.debug("Leaving");
+			return financeInquiry;
 		} catch(Exception e) {
 			FinanceInquiry financeInquiry= new FinanceInquiry();
 			financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return financeInquiry;
 		}
-				
+
 	}
 
 	private void prepareResponse(FinanceDetail financeDetail) {
@@ -889,7 +907,7 @@ public class CreateFinanceController {
 				totfeeChrgAmt = totfeeChrgAmt.add(finDisb.getFeeChargeAmt());
 			}
 			BigDecimal assetValue = financeMain.getFinAssetValue() == null?BigDecimal.ZERO:financeMain.getFinAssetValue();
-			if(assetValue.compareTo((totDisbAmt.add(totfeeChrgAmt))) == 0) {
+			if(assetValue.compareTo(totDisbAmt) == 0) {
 				summary.setFullyDisb(true);
 			}
 

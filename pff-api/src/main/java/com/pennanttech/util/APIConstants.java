@@ -22,5 +22,9 @@ public class APIConstants {
 	
 	// Get Finance Inquiry
 	public static final String FINANCE_INQUIRY_CUSTOMER = "CUSTOMER";
+	
+	// Disbursement status
+	public static final String FIN_DISB_FULLY = "Fully Disbursed";
+	public static final String FIN_DISB_PARTIAL = "Partially Disbursed";
 
 }
