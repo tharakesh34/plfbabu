@@ -6,50 +6,34 @@
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
- 
-	 <bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFSEC"/>
-		<property name="lookupOnStartup" value="true"/>
+	<!-- BEAN FOR GENERATING THE DATA SOURCES -->
+	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFSEC" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
 	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFF"/>
-		<property name="lookupOnStartup" value="true"/>
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
 	<bean id="auditDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFAUDIT"/>
-		<property name="lookupOnStartup" value="true"/>
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFAUDIT" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
 	<bean id="equationDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFEQUATION"/>
-		<property name="lookupOnStartup" value="true"/>
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFEQUATION" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
 	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	  	<property name="resourceRef" value="true"/>		
-		<property name="jndiName" value="jdbc/PFFEXT"/>
-		<property name="lookupOnStartup" value="true"/>
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFEXT" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
-	 	
-	<!-- ====================================================== -->
-	<!-- THIS PLACE IS FOR CONFIGURING a Jndi CONNECTION -->
-	<!-- USE THIS FOR LET TOMCAT CONNECT TO YOUR OWN -->
-	<!-- DATABASE PER: Jndi -->
-	<!-- ====================================================== -->
-	<!-- <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
-		<property name="jndiName" value="java:comp/env/jdbc/toledo" /> <property 
-		name="lookupOnStartup" value="false" /> <property name="cache" value="true" 
-		/> <property name="proxyInterface" value="javax.sql.DataSource" /> </bean> -->
 
-
-	<!-- ============================================================ -->
 	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
-	<!-- for DEMO Database H2 we use a special implementation !!! -->
-	<!-- H2: " ~.backend.dao.impl.NextIdViewH2DAOImpl" -->
-	<!-- PostgreSQL: " ~.backend.dao.impl.NextIdViewPostgresDaoImpl -->
-	<!-- ============================================================ -->
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="extDataSource" ref="pfsExtDatasource" />
