@@ -1,5 +1,7 @@
 package com.pennanttech.service.impl;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,23 +31,21 @@ import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.pennanttech.ws.service.FinanceValidationService;
 
 @Service
-public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,CreateFinanceRestService {
+public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, CreateFinanceRestService {
 
-	private final static Logger logger = Logger.getLogger(CreateFinanceWebServiceImpl.class);
+	private final static Logger		logger	= Logger.getLogger(CreateFinanceWebServiceImpl.class);
 
-	private CreateFinanceController createFinanceController;
-	private CustomerDetailsService customerDetailsService;
-	private FinanceDetailService financeDetailService;
-	private ValidationUtility validationUtility;
-	private FinanceMainDAO financeMainDAO;
-	private FinanceValidationService financeValidationService;
-	private FinanceDataDefaulting financeDataDefaulting;
-	private FinanceDataValidation financeDataValidation;
-	private CollateralSetupService collateralSetupService;
-	
+	private CreateFinanceController	createFinanceController;
+	private CustomerDetailsService	customerDetailsService;
+	private FinanceDetailService	financeDetailService;
+	private ValidationUtility		validationUtility;
+	private FinanceMainDAO			financeMainDAO;
+	private FinanceDataDefaulting	financeDataDefaulting;
+	private FinanceDataValidation	financeDataValidation;
+	private CollateralSetupService	collateralSetupService;
+
 	/**
 	 * validate and create finance by receiving request object from interface
 	 * 
@@ -61,41 +61,41 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		// validate and Data defaulting
 		financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
-		if(!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			return getErrorMessage(financeDetail.getFinScheduleData());
 		}
 
 		// validate finance data
-		financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(), true);
-		
-		if(!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+		financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(),
+				true);
+
+		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			return getErrorMessage(financeDetail.getFinScheduleData());
 		}
+
 		//validate FinanceDetail Validations
 		financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
-
-		if(!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			return getErrorMessage(financeDetail.getFinScheduleData());
 		}
-		
+
 		// call doCreateFinance method after successful validations
 		FinanceDetail financeDetailRes = null;
-		
-			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, false);
-			
-			if(financeDetailRes != null) {
-				if(financeDetailRes.getFinScheduleData() != null) {
-					for(ErrorDetails errorDetails: financeDetailRes.getFinScheduleData().getErrorDetails()) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(), 
-								errorDetails.getError()));
-						return response;
-					}
+		financeDetailRes = createFinanceController.doCreateFinance(financeDetail, false);
+
+		if (financeDetailRes != null) {
+			if (financeDetailRes.getFinScheduleData() != null) {
+				for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+							errorDetails.getError()));
+					return response;
 				}
 			}
-		
+		}
+
 		logger.debug("Leaving");
 		return financeDetailRes;
 	}
@@ -114,7 +114,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 
 		// call WIF finance related validations
 		WSReturnStatus returnStatus = doValidations(financeDetail);
-
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
@@ -122,55 +121,84 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 			return response;
 		}
 
-		// call finance validations which include all details of finance
-		returnStatus = financeValidationService.doFinanceValidations(financeDetail);
-
 		FinanceDetail financeDetailRes = null;
-		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-			String finReference = financeDetail.getFinReference();
-			String procEdtEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finReference = financeDetail.getFinReference();
+		String procEdtEvent = FinanceConstants.FINSER_EVENT_ORG;
 
-			FinanceDetail wifFinanceDetail = null;
-			int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
-			if (countInWIF > 0) {
-				// fetch WIF finance details
-				wifFinanceDetail = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
-				if (wifFinanceDetail != null) {
-					String custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);
-					financeDetail.setFinScheduleData(wifFinanceDetail.getFinScheduleData());
-				}
+		FinanceDetail wifFinanceDetail = null;
+		int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
+		if (countInWIF > 0) {
+			// fetch WIF finance details
+			wifFinanceDetail = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
+			if (wifFinanceDetail != null) {
+				String custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
+				String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+				Date finContractDate = financeDetail.getFinScheduleData().getFinanceMain().getFinContractDate();
+				String finPurpose = financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose();
+				String finLimitRef = financeDetail.getFinScheduleData().getFinanceMain().getFinLimitRef();
+				String finCommitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
+				String repayAccountId = financeDetail.getFinScheduleData().getFinanceMain().getRepayAccountId();
+				String depreciationFrq = financeDetail.getFinScheduleData().getFinanceMain().getDepreciationFrq();
+				String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
+				String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
+				String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
+				String accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
+				String referralId = financeDetail.getFinScheduleData().getFinanceMain().getReferralId();
+				boolean quickDisb = financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb();
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinRepayMethod(finRepayMethod);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinContractDate(finContractDate);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinPurpose(finPurpose);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinLimitRef(finLimitRef);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinCommitmentRef(finCommitmentRef);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setRepayAccountId(repayAccountId);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDepreciationFrq(depreciationFrq);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDsaCode(dsaCode);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setSalesDepartment(salesDepartment);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDmaCode(dmaCode);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setAccountsOfficer(accountsOfficer);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setReferralId(referralId);
+				wifFinanceDetail.getFinScheduleData().getFinanceMain().setQuickDisb(quickDisb);
+				financeDetail.setFinScheduleData(wifFinanceDetail.getFinScheduleData());
+			}
 
-				// check origination with same WIF Reference
-				int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
-				if (countInOrg > 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finReference;
+			// check origination with same WIF Reference
+			int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
+			if (countInOrg > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91122"));
+				return response;
+			}
+		}
+		// validate and Data defaulting
+		financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+
+		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+			return getErrorMessage(financeDetail.getFinScheduleData());
+		}
+		//validate FinanceDetail Validations
+		financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+
+		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+			return getErrorMessage(financeDetail.getFinScheduleData());
+		}
+
+		// call doCreate method to create finance with WIF Reference
+		financeDetailRes = createFinanceController.doCreateFinance(financeDetail, true);
+
+		if (financeDetailRes != null) {
+			if (financeDetailRes.getFinScheduleData() != null) {
+				for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91122"));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+							errorDetails.getError()));
 					return response;
 				}
 			}
-
-			// call doCreate method to create finance with WIF Reference
-			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, true);
-
-			if (financeDetailRes != null) {
-				if (financeDetailRes.getFinScheduleData() != null) {
-					for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-								errorDetails.getError()));
-						return response;
-					}
-				}
-			}
-		} else {
-			financeDetailRes = new FinanceDetail();
-			doEmptyResponseObject(financeDetailRes);
-			financeDetailRes.setReturnStatus(returnStatus);
 		}
 
 		logger.debug("Leaving");
@@ -196,7 +224,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
-			return financeValidationService.getErrorDetails("90101", valueParm);
+			returnStatus = APIErrorHandlerService.getFailedStatus("90101", valueParm);
 		}
 
 		String finReference = financeDetail.getFinReference();
@@ -205,14 +233,20 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		if (rcdCountInWIF <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			return financeValidationService.getErrorDetails("90201", valueParm);
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finRepayMethod";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
 		logger.debug("Leaving");
 
 		return returnStatus;
 	}
-	
+
 	/**
 	 * get the Finance Details by the given finReference.
 	 * 
@@ -237,7 +271,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	/**
 	 * get the Finance Details by the given CustCif.
 	 * 
@@ -248,12 +282,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 	@Override
 	public FinanceInquiry getFinanceWithCustomer(String custCif) throws ServiceException {
 		logger.debug("Enetring");
-		
+
 		// Mandatory validation
 		if (StringUtils.isBlank(custCif)) {
 			validationUtility.fieldLevelException();
 		}
-		
+
 		FinanceInquiry response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(custCif);
 		if (customer == null) {
@@ -268,6 +302,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 
 		return response;
 	}
+
 	/**
 	 * get the Finance Details by the given collateralRef.
 	 * 
@@ -278,11 +313,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 	@Override
 	public FinanceInquiry getFinanceWithCollateral(String collateralRef) throws ServiceException {
 		logger.debug("Enetring");
-		
+
 		if (StringUtils.isBlank(collateralRef)) {
 			validationUtility.fieldLevelException();
 		}
-		
+
 		FinanceInquiry response = null;
 		int count = collateralSetupService.getCountByCollateralRef(collateralRef);
 		if (count <= 0) {
@@ -308,15 +343,16 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 	}
 
 	private FinanceDetail getErrorMessage(FinScheduleData financeSchdData) {
-		for(ErrorDetails erroDetail: financeSchdData.getErrorDetails()) {
+		for (ErrorDetails erroDetail : financeSchdData.getErrorDetails()) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getErrorCode(), erroDetail.getError()));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(erroDetail.getErrorCode(),
+					erroDetail.getError()));
 			return response;
 		}
 		return new FinanceDetail();
 	}
-	
+
 	/**
 	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
@@ -334,9 +370,9 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		response.setFinFlagsDetails(null);
 		response.setCustomerDetails(null);
 	}
-	
+
 	/**
-	 * Method for validate finance reference and check existence in origination 
+	 * Method for validate finance reference and check existence in origination
 	 * 
 	 * @param finReference
 	 * @return
@@ -357,8 +393,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 		logger.debug("Leaving");
 		return returnStatus;
 	}
+
 	/**
-	 * @param createFinanceController the createFinanceController to set
+	 * @param createFinanceController
+	 *            the createFinanceController to set
 	 */
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
@@ -379,17 +417,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
-	
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-	
-	@Autowired
-	public void setFinanceValidationService(FinanceValidationService financeValidationService) {
-		this.financeValidationService = financeValidationService;
-	}
-	
+
 	@Autowired
 	public void setFinanceDataDefaulting(FinanceDataDefaulting financeDataDefaulting) {
 		this.financeDataDefaulting = financeDataDefaulting;
@@ -399,6 +432,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService,Cre
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
 	}
+
 	@Autowired
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;

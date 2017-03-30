@@ -896,6 +896,34 @@ public class FinanceValidationService {
 				valueParm[0] = financeMain.getDsaCode();
 				return getErrorDetails("90501", valueParm);
 			}
+
+			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
+				GeneralDepartment salesDepartment = generalDepartmentService
+						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
+				if (salesDepartment == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getAccountsOfficer();
+					return getErrorDetails("90501", valueParm);
+				}
+			}
+			if (StringUtils.isNotBlank(financeMain.getDmaCode())) {
+				RelationshipOfficer dmaCode = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain
+						.getDmaCode());
+				if (dmaCode == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getDsaCode();
+					return getErrorDetails("90501", valueParm);
+				}
+			}
+			if (StringUtils.isNotBlank(financeMain.getReferralId())) {
+				RelationshipOfficer referralId = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(financeMain.getReferralId());
+				if (referralId == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getDsaCode();
+					return getErrorDetails("90501", valueParm);
+				}
+			}
 		}
 
 		logger.debug("Leaving");

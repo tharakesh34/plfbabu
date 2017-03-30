@@ -22,6 +22,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
@@ -29,8 +30,8 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 public class FinanceDataDefaulting {
 
@@ -120,10 +121,25 @@ public class FinanceDataDefaulting {
 		//Validate Repayment Method
 		//TODO: To be confirmed from where it should be taken? PennantStaticListUtil.getRepayMethods() OR MandateConstants or FinanceConstants??
 		String repayMethod = finMain.getFinRepayMethod();
+		
+		if (StringUtils.isBlank(repayMethod) && StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "repayMethod";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+		} else if(StringUtils.isBlank(repayMethod)){
+			repayMethod=financeType.getFinRepayMethod();
+		}
+		
 		if (StringUtils.isNotBlank(repayMethod)) {
-			if (!StringUtils.equals(repayMethod, MandateConstants.TYPE_DDM)
-					&& !StringUtils.equals(repayMethod, MandateConstants.TYPE_ECS)
-					&& !StringUtils.equals(repayMethod, MandateConstants.TYPE_NACH)) {
+			List<ValueLabel> mandateType = PennantStaticListUtil.getRepayMethods();
+			boolean mandateTypeSts = false;
+			for (ValueLabel value : mandateType) {
+				if (StringUtils.equals(value.getValue(), repayMethod)) {
+					mandateTypeSts = true;
+					break;
+				}
+			}
+			if (!mandateTypeSts) {
 				String[] valueParm = new String[1];
 				valueParm[0] = repayMethod;
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90307", valueParm)));

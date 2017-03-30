@@ -116,7 +116,9 @@ public class FinanceDetailController {
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 					finScheduleData.setSchduleGenerated(true);
-					
+					if(!finScheduleData.getFinanceMain().isAllowGrcPeriod()){
+						finScheduleData.getFinanceMain().setGrcSchdMthd(null);
+					}
 					// fees calculation
 					if(!finScheduleData.getFinFeeDetailList().isEmpty()) {
 						finScheduleData = FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);

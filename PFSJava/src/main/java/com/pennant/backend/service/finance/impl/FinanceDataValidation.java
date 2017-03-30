@@ -33,11 +33,13 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
+import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -55,14 +57,18 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
+import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -86,6 +92,10 @@ public class FinanceDataValidation {
 	private CollateralSetupService collateralSetupService;
 	private MandateService mandateService;
 	private StepPolicyService stepPolicyService;
+	private CommitmentService commitmentService;
+	private GeneralDepartmentService generalDepartmentService;
+	private RelationshipOfficerService relationshipOfficerService;
+
 
 	public FinanceDataValidation() {
 		super();
@@ -298,6 +308,7 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		Customer customer=null;
 		boolean isCreateLoan = false;
 
 		if (StringUtils.equals(vldGroup, PennantConstants.VLD_CRT_LOAN)) {
@@ -306,11 +317,13 @@ public class FinanceDataValidation {
 
 		// Validate customer
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
-			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
+			customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getLovDescCustCIF();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90101", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
 			}
 		}
 
@@ -322,6 +335,114 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
 		} else {
 			finScheduleData.setFinanceType(financeType);
+			if (finMain.getFinContractDate() == null) {
+				finMain.setFinContractDate(financeType.getStartDate());
+			} else {
+				if (finMain.getFinContractDate().compareTo(finMain.getFinStartDate()) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatDate(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
+					valueParm[1] = DateUtility.formatDate(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
+				}
+			}
+			if (financeType.isLimitRequired()) {
+				if (StringUtils.isBlank(finMain.getFinLimitRef())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "finLimitRef";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				} else {
+					//TODO 
+				}
+			}
+			if (financeType.isFinCommitmentReq()) {
+				if (StringUtils.isBlank(finMain.getFinCommitmentRef())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "finCommitmentRef";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				} else {
+					Commitment commitment = commitmentService.getApprovedCommitmentById(finMain.getFinCommitmentRef());
+					if (commitment == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "finCommitmentRef";
+						valueParm[1] = finMain.getFinCommitmentRef();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", valueParm)));
+					} else {
+						if (customer.getCustID() != commitment.getCustID()) {
+							String[] valueParm = new String[2];
+							valueParm[0] = String.valueOf(commitment.getCustID());
+							valueParm[1] = "finCommitmentRef";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90250", valueParm)));
+						}
+					}
+
+				}
+			}
+			if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
+				if (StringUtils.isBlank(finMain.getRepayAccountId())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "repayAccountId";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				}
+			}
+			if (financeType.isFinDepreciationReq()) {
+				if (StringUtils.isBlank(finMain.getDepreciationFrq())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "depreciationFrq";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				} else {
+					ErrorDetails errorDetail = FrequencyUtil.validateFrequency(finMain.getDepreciationFrq());
+					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = finMain.getDepreciationFrq();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", valueParm)));
+					}
+				}
+			}
+			if (StringUtils.isNotBlank(finMain.getDsaCode())) {
+				RelationshipOfficer relationshipOfficer = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(finMain.getDsaCode());
+				if (relationshipOfficer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getDsaCode();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(finMain.getAccountsOfficer())) {
+				GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+						.getAccountsOfficer());
+				if (generalDepartment == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getAccountsOfficer();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
+				GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+						.getSalesDepartment());
+				if (generalDepartment == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getAccountsOfficer();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(finMain.getDmaCode())) {
+				RelationshipOfficer relationshipOfficer = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(finMain.getDmaCode());
+				if (relationshipOfficer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getDsaCode();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(finMain.getReferralId())) {
+				RelationshipOfficer relationshipOfficer = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(finMain.getReferralId());
+				if (relationshipOfficer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getDsaCode();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+				}
+			}
 		}
 
 		//Validate Finance Currency
@@ -705,7 +826,7 @@ public class FinanceDataValidation {
 					}
 				}
 			} else {
-
+				mandate.setMandateID(Long.MIN_VALUE);
 				// validate Mandate fields
 				if (StringUtils.isBlank(mandate.getMandateType())) {
 					String[] valueParm = new String[1];
@@ -846,6 +967,14 @@ public class FinanceDataValidation {
 						valueParm[0] = mandate.getStatus();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90309", valueParm)));
 					}
+				}
+				if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), financeDetail
+						.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+					valueParm[1] = mandate.getMandateType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90311", valueParm)));
+					return errorDetails;
 				}
 			}
 		}
@@ -2800,5 +2929,14 @@ public class FinanceDataValidation {
 	}
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
+	}
+	public void setCommitmentService(CommitmentService commitmentService) {
+		this.commitmentService = commitmentService;
+	}
+	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
+		this.generalDepartmentService = generalDepartmentService;
+	}
+	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
+		this.relationshipOfficerService = relationshipOfficerService;
 	}
 }
