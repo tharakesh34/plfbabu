@@ -537,7 +537,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_SecondaryAccount;
 	protected Label											label_FinanceMainDialog_DownPayAccount;
 	protected Label											label_FinanceMainDialog_SalesDepartment;
-	protected Label											label_ConvFinanceMainDialog_QuickDisb;
 
 	//DIV Components for Showing Finance basic Details in Each tab
 	protected Div											basicDetailTabDiv;
@@ -16152,14 +16151,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLabel_FinanceMainDialog_SalesDepartment(Label label_FinanceMainDialog_SalesDepartment) {
 		this.label_FinanceMainDialog_SalesDepartment = label_FinanceMainDialog_SalesDepartment;
-	}
-
-	public Label getLabel_ConvFinanceMainDialog_QuickDisb() {
-		return label_ConvFinanceMainDialog_QuickDisb;
-	}
-
-	public void setLabel_ConvFinanceMainDialog_QuickDisb(Label label_ConvFinanceMainDialog_QuickDisb) {
-		this.label_ConvFinanceMainDialog_QuickDisb = label_ConvFinanceMainDialog_QuickDisb;
 	}
 
 }

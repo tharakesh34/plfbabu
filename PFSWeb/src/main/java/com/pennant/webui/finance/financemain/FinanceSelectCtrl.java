@@ -1002,6 +1002,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)){
 			whereClause.append(" AND (MaxReAgeHolidays - AvailedReAgeH > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_REAGING+"') "); 
+			whereClause.append(" AND FinReference IN ( Select D.FinReference From FinODDetails D Where D.FinCurODAmt > 0 AND D.FinODSchdDate > GrcPeriodEndDate) "); 
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}
 	
