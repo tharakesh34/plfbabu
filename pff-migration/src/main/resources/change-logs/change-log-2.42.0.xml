@@ -389,6 +389,68 @@
 		<modifyDataType tableName="PromotionInsurances_Temp" columnName="CalType" newDataType="char(1)"/>
 	</changeSet>
 	
+	<changeSet author="Prasad" id="13" dbms="postgresql">
+	<sql>
+		drop view promotioninsurances_view;
+		drop view promotioninsurances_aview;
+		drop view promotioninsurances_tview ;
+		
+	update PromotionInsurances set CalType = 0 where CalType is null;
+		alter table PromotionInsurances alter column CalType DROP DEFAULT;
+		alter table PromotionInsurances alter column CalType type smallint using CalType::smallint ;
+		
+					
+		update PromotionInsurances_Temp set CalType = 0 where CalType is null;
+		alter table PromotionInsurances_Temp alter column CalType DROP DEFAULT;
+		alter table PromotionInsurances_Temp alter column CalType type smallint using CalType::smallint ;
+		
+		create view promotioninsurances_view as 
+		SELECT 		T1.InsuranceID , T1.PromotionCode , T1.FinType , T1.InsuranceType , T1.Mandatory , T1.DftPayType , T1.CalType , T1.AmountRule , 
+						T1.ConstAmt , T1.Percentage , T1.CalculateOn , T1.Version , T1.LastMntBy , T1.LastMntOn , T1.RecordStatus , T1.RoleCode , 
+						T1.NextRoleCode , T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId,
+						T2.InsuranceTypeDesc,
+						T3.RuleCodeDesc
+			FROM 		PromotionInsurances_Temp T1 INNER JOIN
+						InsuranceType T2 ON T2.InsuranceType = T1.InsuranceType LEFT OUTER JOIN
+						Rules T3 ON T1.AmountRule = T3.RuleCode 
+
+			UNION ALL
+
+			SELECT 		T1.InsuranceID , T1.PromotionCode , T1.FinType , T1.InsuranceType , T1.Mandatory , T1.DftPayType , T1.CalType , T1.AmountRule , 
+						T1.ConstAmt , T1.Percentage , T1.CalculateOn , T1.Version , T1.LastMntBy , T1.LastMntOn , T1.RecordStatus , T1.RoleCode , 
+						T1.NextRoleCode , T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId,
+						T2.InsuranceTypeDesc,
+						T3.RuleCodeDesc
+			FROM 		PromotionInsurances T1 INNER JOIN
+						InsuranceType T2 ON T2.InsuranceType = T1.InsuranceType LEFT OUTER JOIN
+						Rules T3 ON T1.AmountRule = T3.RuleCode 
+
+			WHERE   NOT EXISTS (SELECT 1 FROM PromotionInsurances_Temp 
+					WHERE InsuranceID = T1.InsuranceID AND InsuranceType = T1.InsuranceType);
+					
+				create view promotioninsurances_aview as 	
+					SELECT 		T1.InsuranceID , T1.PromotionCode , T1.FinType , T1.InsuranceType , T1.Mandatory , T1.DftPayType , T1.CalType , T1.AmountRule , 
+						T1.ConstAmt , T1.Percentage , T1.CalculateOn , T1.Version , T1.LastMntBy , T1.LastMntOn , T1.RecordStatus , T1.RoleCode , 
+						T1.NextRoleCode , T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId,
+						T2.InsuranceTypeDesc,
+						T3.RuleCodeDesc
+			FROM 		PromotionInsurances T1 INNER JOIN
+						InsuranceType T2 ON T2.InsuranceType = T1.InsuranceType LEFT OUTER JOIN
+						Rules T3 ON T1.AmountRule = T3.RuleCode;
+						
+			create view PromotionInsurances_TView as
+			SELECT 		T1.InsuranceID , T1.PromotionCode , T1.FinType , T1.InsuranceType , T1.Mandatory , T1.DftPayType , T1.CalType , T1.AmountRule , 
+						T1.ConstAmt , T1.Percentage , T1.CalculateOn , T1.Version , T1.LastMntBy , T1.LastMntOn , T1.RecordStatus , T1.RoleCode , 
+						T1.NextRoleCode , T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId,
+						T2.InsuranceTypeDesc,
+						T3.RuleCodeDesc
+			FROM 		PromotionInsurances_Temp T1 INNER JOIN
+						InsuranceType T2 ON T2.InsuranceType = T1.InsuranceType LEFT OUTER JOIN
+						Rules T3 ON T1.AmountRule = T3.RuleCode;
+		
+		</sql>
+	</changeSet>
+	
 	<changeSet author="Madhubabu" id="14">
 	<sql>
 		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
