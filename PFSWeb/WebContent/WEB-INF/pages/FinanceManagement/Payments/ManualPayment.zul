@@ -57,7 +57,8 @@
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+					<button id="btnHelp" visible="false"
+						label="${c:l('label_Help')}"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}"
 						autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
 					<button id="btnClose"
@@ -114,7 +115,8 @@
 										<label
 											id="label_PaymentDialog_FinCcy"
 											value="${c:l('label_PaymentDialog_FinCcy.value')}" />
-										<extendedcombobox id="finCcy" readonly="true"/>
+										<extendedcombobox id="finCcy"
+											readonly="true" />
 										<label
 											id="label_PaymentDialog_ProfitDayBasis"
 											value="${c:l('label_PaymentDialog_ProfitDayBasis.value')}" />
@@ -134,12 +136,14 @@
 												readonly="true" visible="false" />
 											<textbox id="lovDescCustCIF"
 												width="120px" readonly="true" />
-											<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;"/>
+											<label id="custShrtName"
+												style="margin-left:10px;display:inline-block;padding-top:3px;" />
 										</hbox>
 										<label
 											id="label_PaymentDialog_FinBranch"
 											value="${c:l('label_PaymentDialog_FinBranch.value')}" />
-										<extendedcombobox id="finBranch" readonly="true"/>
+										<extendedcombobox id="finBranch"
+											readonly="true" />
 									</row>
 									<row>
 										<label
@@ -359,8 +363,8 @@
 											value="${c:l('label_PaymentDialog_InsPayment.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<decimalbox
-												id="insPayment" width="150px" readonly="true" />
+											<decimalbox id="insPayment"
+												width="150px" readonly="true" />
 										</hbox>
 									</row>
 									<row id="row_SchdFee"
@@ -375,7 +379,7 @@
 										</hbox>
 									</row>
 									<row id="row_SuplRentNIncrCost"
-										visible="true">
+										visible="false">
 										<label
 											id="label_PaymentDialog_SuplRentAmount"
 											value="${c:l('label_PaymentDialog_SuplRentAmount.value')}" />
@@ -452,7 +456,8 @@
 												readonly="true" visible="false" />
 											<textbox
 												id="lovDescCustCIF1" width="120px" readonly="true" />
-											<label id="custShrtName1" style="margin-left:10px;display:inline-block;padding-top:3px;"/>
+											<label id="custShrtName1"
+												style="margin-left:10px;display:inline-block;padding-top:3px;" />
 										</hbox>
 										<label
 											id="label_PaymentDialog_InsRefundAmt"
@@ -520,8 +525,8 @@
 												id="totRefundAmt" width="150px" disabled="true" />
 										</hbox>
 									</row>
-									<row
-										id="row_EarlyRepayEffectOnSchd" visible="false">
+									<row id="row_EarlyRepayEffectOnSchd"
+										visible="false">
 										<label
 											id="label_PaymentDialog_EarlyRepayEffectOnSchd"
 											value="${c:l('label_PaymentDialog_EarlyRepayEffectOnSchd.value')}" />
@@ -587,7 +592,8 @@
 											id="label_PaymentDialog_PaymentApportionment"
 											value="${c:l('label_PaymentDialog_PaymentApportionment.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory"/>
+											<space spacing="2px"
+												sclass="mandatory" />
 											<combobox
 												id="paymentApportionment" width="180px" readonly="true" />
 										</hbox>
@@ -708,7 +714,7 @@
 													id="finSchGracePeriodEndDate" style="font-weight:bold" />
 											</hbox>
 										</row>
-										<row>
+										<row visible="false">
 											<label
 												value="${c:l('label_PaymentDialog_EffectiveRateOfReturn.value')}" />
 											<hbox>
@@ -735,66 +741,81 @@
 								<button id="btnPrintSchedule"
 									label="${c:l('label_Print')}"
 									tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
-									style="float:right;" visible="false"/>
+									style="float:right;" visible="false" />
 								<space width="2px" />
 							</toolbar>
 
-							<listbox id="listBoxSchedule"  
-								emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-								height="100%" multiple="false" sizedByContent="true"
-								span="true">
-							<listhead sizable="false"
-											style="padding:0px;position:relative;">
-											<listheader hflex="min" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_Date" hflex="min"
-												value="" label="${c:l('listheader_ScheduleDate.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_ScheduleEvent"
-												hflex="min" label="${c:l('listheader_ScheduleEvent.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_CalProfit" hflex="min"
-												align="right" label="${c:l('listheader_CalProfit.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_SupplementRent" hflex="min" visible="false"
-												align="right" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min" visible="false"
-												align="right" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_SchFee" hflex="min" 
-												align="right"  label="${c:l('listheader_SchFee.label')}" visible="false"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_TDSAmount" hflex="min"
-												align="right" label="${c:l('listheader_TDSAmount.label')}" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min" visible="false"
-												align="right" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_SchProfit" hflex="min"
-												align="right" label="${c:l('listheader_SchProfit.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_Principal" hflex="min"
-												align="right" label="${c:l('listheader_Principal.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min" visible="false"
-												align="right" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_Rebate" hflex="min" visible="false"
-												align="right" />
-											<listheader
-												id="listheader_ScheduleDetailDialog_Total" hflex="min"
-												align="right" label="${c:l('listheader_Total.label')}"/>
-											<listheader
-												id="listheader_ScheduleDetailDialog_ScheduleEndBal"
-												hflex="min" align="right" label="${c:l('listheader_ScheduleEndBal.label')}"/>
-											<listheader
-												id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false"/>
-											<listheader
-												id="listHeader_vSProfit" hflex="min" align="right"  visible="false"/>
-											<listheader
-												id="listHeader_orgPrincipalDue" hflex="min" align="right"  visible="false"/>
-										</listhead>
+							<listbox id="listBoxSchedule"
+								emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+								sizedByContent="true" span="true"
+								tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+								height="100%" multiple="false">
+								<listhead sizable="false"
+									style="padding:0px;position:relative;">
+									<listheader hflex="min" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Date" hflex="min" value=""
+										label="${c:l('listheader_ScheduleDate.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min"
+										label="${c:l('listheader_ScheduleEvent.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_CalProfit" hflex="min"
+										align="right" label="${c:l('listheader_CalProfit.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SupplementRent"
+										hflex="min" visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchFee" hflex="min"
+										align="right" label="${c:l('listheader_SchFee.label')}"
+										visible="false" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_TDSAmount" hflex="min"
+										align="right" label="${c:l('listheader_TDSAmount.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchProfit" hflex="min"
+										align="right" label="${c:l('listheader_SchProfit.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Principal" hflex="min"
+										align="right" label="${c:l('listheader_Principal.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Rebate" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Total" hflex="min"
+										align="right" label="${c:l('listheader_Total.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+										hflex="min" align="right"
+										label="${c:l('listheader_ScheduleEndBal.label')}" />
+									<listheader
+										id="listheader_LimitChange" hflex="min" align="right"
+										visible="false" />
+									<listheader
+										id="listheader_AvailableLimit" hflex="min" align="right"
+										visible="false" />
+									<listheader id="listheader_ODLimit"
+										hflex="min" align="right" visible="false" />
+									<listheader visible="false"
+										id="listHeader_planEMIHDates" hflex="min" align="center" />
+									<listheader
+										id="listHeader_cashFlowEffect" hflex="min" align="right"
+										visible="false" />
+									<listheader id="listHeader_vSProfit"
+										hflex="min" align="right" visible="false" />
+									<listheader
+										id="listHeader_orgPrincipalDue" hflex="min" align="right"
+										visible="false" />
+								</listhead>
 							</listbox>
 						</tabpanel>
 					</tabpanels>

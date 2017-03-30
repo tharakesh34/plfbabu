@@ -1366,6 +1366,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
+			this.listBoxSchedule.setSizedByContent(true);
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {

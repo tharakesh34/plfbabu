@@ -539,7 +539,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		getUserWorkspace().allocateAuthorities(dialogName, roleCode, menuItemRightName);
 
 		// Schedule related buttons
-		this.btnRecalEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 		this.btnAddReviewRate.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
 		this.btnAdvPftRateChange.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAdvPftRateChange"));
 		this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
@@ -557,7 +556,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnSuplRentIncrCost.setVisible(false);
 
-		this.btnRecalEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 		this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
 		this.btnAdvPftRateChange.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAdvPftRateChange"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
@@ -947,6 +945,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.listBoxSchedule.getItems().clear();
 			this.btnPrintSchedule.setDisabled(false);
 			this.btnPrintSchedule.setVisible(true);
+			boolean termsCountCompleted = false;
 
 			boolean allowRvwRate = getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate");
 
@@ -964,7 +963,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				boolean showAdvRate = false;
 				FinanceScheduleDetail curSchd = aFinSchData.getFinanceScheduleDetails().get(i);
 
-				if (i != 0) {
+				if (i != 0 && !termsCountCompleted) {
 					if (curSchd.getSchDate().compareTo(grcEndDate) <= 0) {
 						if (curSchd.isPftOnSchDate()) {
 							totGrcTerms = totGrcTerms + 1;
@@ -977,6 +976,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 								&& (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
 							totRepayTerms = totRepayTerms + 1;
 						}
+					}
+					
+					if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+							!StringUtils.equals(product, FinanceConstants.PRODUCT_ODFACILITY)){
+						termsCountCompleted = true;
 					}
 				}
 
@@ -2321,7 +2325,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			// Event Dates and Reschedule method setting
 			getFinScheduleData().getFinanceMain().setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
 			getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
-			getFinScheduleData().getFinanceMain().setRecalFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
+			getFinScheduleData().getFinanceMain().setRecalFromDate(getFinScheduleData().getFinanceMain().getNextRepayDate());
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinScheduleData().getFinanceMain().getScheduleMethod());
 			
@@ -2355,10 +2359,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnRecalEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 			this.btnRecalEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 		}else{
-			this.btnRecalEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
-			this.btnRecalEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
-			/*this.btnRecalEMIH.setVisible(false);
-			this.btnRecalEMIH.setDisabled(true);*/
+			this.btnRecalEMIH.setVisible(false);
+			this.btnRecalEMIH.setDisabled(true);
 		}
 		
 		// Planned EMI Holiday Months

@@ -324,6 +324,9 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		Date graceEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 		if (financeDetail.getFinanceScheduleDetails() != null) {
+			
+			Date unplanEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
+					getFinScheduleData().getFinanceMain().getUnPlanEMIHLockPeriod());
 
 			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
 			Date curBussDate = DateUtility.getAppDate();
@@ -363,6 +366,12 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				
 				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate)<=0){
 					continue;
+				}
+				
+				if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
+					if(DateUtility.compare(curSchd.getSchDate(), unplanEMIHStart) <= 0){
+						continue;
+					}
 				}
 				
 				comboitem = new Comboitem();

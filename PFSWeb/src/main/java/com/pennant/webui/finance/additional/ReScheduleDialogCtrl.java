@@ -396,6 +396,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				// Should not allow Maturity and after Closing Balance is Zero terms
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());

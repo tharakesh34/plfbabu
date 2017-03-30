@@ -218,6 +218,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			
 			FinanceDisbursement curDisb = finDisbDetails.get(k);
 			Date curDisbDate = curDisb.getDisbDate();
+			isDisbDateFoundInSD = false;
 			if(curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0){
 				continue;
 			}

@@ -489,7 +489,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_AddDisbursementDialog_SchdMthd.value")) && this.cbSchdMthd.getSelectedIndex() != 0) {
 				finServiceInstruction.setSchdMethod(getComboboxValue(this.cbSchdMthd));
-				finMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
+				//finMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

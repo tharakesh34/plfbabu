@@ -116,6 +116,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
@@ -1170,11 +1171,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		writeoff.setProvisionedAmount(PennantApplicationUtil.unFormateAmount(
 				this.label_FinWriteoffDialog_ProvisionAmt.getValue(), format));
 
-		if (this.writeoffDate.getValue() == null) {
-			this.writeoffDate.setValue(DateUtility.getAppDate());
-		}
-
-		writeoff.setWriteoffDate(this.writeoffDate.getValue());
 		writeoff.setWriteoffPrincipal(PennantApplicationUtil.unFormateAmount(this.writeoffPriAmt.getValue(),
 				format));
 		writeoff.setWriteoffProfit(PennantApplicationUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format));
@@ -1189,6 +1185,18 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		writeoff.setRemarks(this.remarks.getValue());
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		try {
+			if (this.writeoffDate.getValue() == null) {
+				this.writeoffDate.setValue(DateUtility.getAppDate());
+			}else if(!this.writeoffDate.isDisabled()){
+				this.writeoffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinWriteoffDialog_WriteoffDate.value"), false, 
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), DateUtility.getAppDate(), true));
+			}
+
+			writeoff.setWriteoffDate(this.writeoffDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		try {
 			if (!recSave && this.writtenoffAcc.isMandatory() && this.writtenoffAcc.isVisible()
 					&& !this.writtenoffAcc.isReadonly()) {
@@ -1215,7 +1223,11 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			tab.setSelected(true);
+			this.writeoffDate.setConstraint("");
 			this.writtenoffAcc.setConstraint("");
+			
+			this.writeoffDate.setErrorMessage("");
+			this.writtenoffAcc.setErrorMessage("");
 
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {

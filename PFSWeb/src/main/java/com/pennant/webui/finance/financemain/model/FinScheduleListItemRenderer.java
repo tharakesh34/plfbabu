@@ -456,12 +456,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
 				
-				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
-						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
-						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
-										getFinanceScheduleDetail().getClosingBalance(),false, false, false,
-										false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
-				count = 2;
+				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0){
+					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
+							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+							getFinanceScheduleDetail().getClosingBalance(),false, false, false,
+							false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
+					count = 2;
+				}
 			}
 
 			if (getFinanceScheduleDetail().isDisbOnSchDate()) {
@@ -799,7 +801,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 						// Calculated Profit Display
 						if(!getFinanceScheduleDetail().isDisbOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() &&
-						getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+						getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && count == 1){
 							
 							String label = Labels.getLabel("label_listcell_profitCalc.label");
 							if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
@@ -1344,12 +1346,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
 			
-				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
-						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
-						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
-										getFinanceScheduleDetail().getClosingBalance(),false, false, false,
-										false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
-				count = 2;
+				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0){
+					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
+							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+							getFinanceScheduleDetail().getClosingBalance(),false, false, false,
+							false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
+					count = 2;
+				}
 			}
 
 			if (getFinanceScheduleDetail().isDisbOnSchDate()) {
@@ -2232,10 +2236,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 			
 			// For Planned EMI Holiday Dates
 			boolean alwEMIHoliday = true;
-			Date planEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getFinStartDate(),
+			Date planEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
 					getFinScheduleData().getFinanceMain().getPlanEMIHLockPeriod());
 			if(DateUtility.compare(data.getSchDate(), planEMIHStart) <= 0 || 
-					DateUtility.compare(data.getSchDate(), getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0 || 
 					data.getInstNumber() == 1){
 				alwEMIHoliday = false;
 			}
@@ -2642,6 +2645,19 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}else {
 							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
 						}
+						
+						if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
+							if(DateUtility.compare(aScheduleDetail.getDefSchdDate(), aScheduleDetail.getSchDate()) != 0 && 
+									aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+								if (aScheduleDetail.isRvwOnSchDate() || 
+										aScheduleDetail.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getFinStartDate()) == 0) {
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()) + " [R]");
+								} else {
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+								}	
+							}
+						}
+						
 					}else {
 						data.setSchDate("");
 					}
