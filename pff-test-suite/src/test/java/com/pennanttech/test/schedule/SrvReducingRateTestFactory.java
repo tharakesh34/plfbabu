@@ -26,7 +26,7 @@ public class SrvReducingRateTestFactory {
 		long t1 = DateUtility.getSysDate().getTime();
 
 		//int testCount = dataset.getColumns() - DATA_OFFSET;
-		int testCount = 28;
+		int testCount = 33;
 		Object[] result = new Object[testCount];
 
 		for (int i = 0; i < testCount; i++) {

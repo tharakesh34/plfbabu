@@ -26,8 +26,8 @@ public class BeanFactory {
 	public static BigDecimal	MARGIN_RATE				= new BigDecimal(0.5);
 	public static final String	MNTH_FRQ				= "M0025";
 	public static final String	QTLY_FRQ				= "Q0125";
-	
-	public static final String	BASE_RATE_HIGH				= "MIBORHIGH";
+
+	public static final String	BASE_RATE_HIGH			= "MIBORHIGH";
 
 	public static final Date	date_bpi				= DateUtility.getDate("25/01/2017");
 	public static final Date	date_bpi_1month			= DateUtility.getDate("25/02/2017");
@@ -233,11 +233,11 @@ public class BeanFactory {
 		cellStrValue = Dataset.getString(cells, 16);
 		if (cellStrValue.equals("FIX")) {
 			if (testType.equals("GENSCHD")) {
-				fm.setRepayProfitRate(new BigDecimal(10));	
+				fm.setRepayProfitRate(new BigDecimal(10));
 			} else {
 				fm.setRepayProfitRate(new BigDecimal(100));
 			}
-			
+
 		} else {
 			fm.setRepayProfitRate(new BigDecimal(0));
 
@@ -325,11 +325,10 @@ public class BeanFactory {
 		cellStrValue = Dataset.getString(cells, 16);
 		if (cellStrValue.equals("FIX")) {
 			if (testType.equals("GENSCHD")) {
-				fm.setGrcPftRate(new BigDecimal(10));				
+				fm.setGrcPftRate(new BigDecimal(10));
 			} else {
 				fm.setGrcPftRate(new BigDecimal(100));
 			}
-
 
 		} else {
 			fm.setGrcPftRate(new BigDecimal(0));
@@ -397,7 +396,7 @@ public class BeanFactory {
 			rate = new BigDecimal(90);
 			rateIncrease = new BigDecimal(10);
 		}
-		
+
 		for (int i = 0; i < 4; i++) {
 			FinanceStepPolicyDetail spd = new FinanceStepPolicyDetail();
 
@@ -465,6 +464,14 @@ public class BeanFactory {
 		FinanceMain fm = schedule.getFinanceMain();
 
 		String cellStrValue;
+		Boolean isGraceRequired = false;
+		cellStrValue = Dataset.getString(cells, 3);
+
+		if (cellStrValue.startsWith("GRC")) {
+			isGraceRequired = true;
+		} else {
+			isGraceRequired = false;
+		}
 
 		//_______________________________________________________________________________________________
 		//Basic Details
@@ -522,18 +529,58 @@ public class BeanFactory {
 		}
 
 		//Next Dates
-		fm.setNumberOfTerms(24);
-		fm.setNextRepayPftDate(date_bpi_1month);
-		fm.setNextRepayRvwDate(date_bpi_1month);
-		fm.setNextRepayDate(date_bpi_1month);
-		fm.setFinRepayPftOnFrq(true);
+		if (isGraceRequired) {
+			fm.setNumberOfTerms(18);
+			fm.setNextRepayPftDate(DateUtility.getDate("25/08/2017"));
+		} else {
+			fm.setNumberOfTerms(24);
+			fm.setNextRepayPftDate(date_bpi_1month);
+		}
 
+		fm.setNextRepayRvwDate(fm.getNextRepayPftDate());
+		fm.setNextRepayDate(fm.getNextRepayPftDate());
+		fm.setFinRepayPftOnFrq(true);
 		fm.setEventFromDate(fm.getFinStartDate());
 		fm.setEventToDate(fm.getMaturityDate());
 		fm.setRecalFromDate(fm.getFinStartDate());
 		fm.setRecalToDate(fm.getMaturityDate());
 		fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
+		//_______________________________________________________________________________________________
+		//GRACE Details
+		//_______________________________________________________________________________________________
+		if (isGraceRequired) {
+			fm = setSrvGraceDetails(fm, cells);
+		}
+
 		return schedule;
 	}
+
+	private static FinanceMain setSrvGraceDetails(FinanceMain fm, Cell[] cells) {
+		fm.setAllowGrcPeriod(true);
+		fm.setGrcPeriodEndDate(DateUtility.getDate("25/07/2017"));
+		fm.setGrcPftRate(new BigDecimal(10));
+		fm.setGrcRateBasis(CalculationConstants.RATE_BASIS_R);
+
+		fm.setGrcProfitDaysBasis(fm.getProfitDaysBasis());
+		fm.setGrcPftFrq(fm.getRepayPftFrq());
+		fm.setNextGrcPftDate(date_bpi_1month);
+
+		fm.setAllowGrcPftRvw(true);
+		fm.setGrcPftRvwFrq(fm.getGrcPftFrq());
+		fm.setNextGrcPftRvwDate(fm.getNextGrcPftDate());
+
+		//Grace Capitalize
+		fm.setAllowGrcCpz(true);
+		fm.setGrcCpzFrq(QTLY_FRQ);
+		fm.setNextGrcCpzDate(date_bpi_1quarter);
+		fm.setCpzAtGraceEnd(true);
+
+		//Grace Schedule Method
+		fm.setAllowGrcRepay(true);
+		fm.setGrcSchdMthd(CalculationConstants.SCHMTHD_GRCENDPAY);
+
+		return fm;
+	}
+
 }

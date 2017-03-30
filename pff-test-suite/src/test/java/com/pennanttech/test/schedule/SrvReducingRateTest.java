@@ -347,14 +347,14 @@ public class SrvReducingRateTest {
 			} else if (recalType.equals("CURPRDD")) {
 				iRecord = 3;
 				evtFromDate = schedule.getFinanceScheduleDetails().get(iRecord).getSchDate();
-				evtToDate = schedule.getFinanceScheduleDetails().get(schedule.getFinanceScheduleDetails().size()-1).getSchDate();
+				evtToDate = schedule.getFinanceScheduleDetails().get(schedule.getFinanceScheduleDetails().size() - 1)
+						.getSchDate();
 
 				fm.setEventFromDate(evtFromDate);
 				fm.setEventToDate(evtToDate);
 				fm.setRepayMargin(MARGIN_RATE1);
 				fm.setRecalType(CalculationConstants.RPYCHG_CURPRD);
 			}
-
 
 			schedule = ScheduleCalculator.changeRate(schedule, fm.getRepayBaseRate(), fm.getRepaySpecialRate(),
 					fm.getRepayMargin(), BigDecimal.ZERO, true);
@@ -426,7 +426,8 @@ public class SrvReducingRateTest {
 				iRecord = 3;
 				evtFromDate = schedule.getFinanceScheduleDetails().get(iRecord).getSchDate();
 				evtFromDate = DateUtility.addDays(evtFromDate, -15);
-				evtToDate = DateUtility.addDays(evtFromDate, 10);;
+				evtToDate = DateUtility.addDays(evtFromDate, 10);
+				;
 
 				fm.setEventFromDate(evtFromDate);
 				fm.setEventToDate(evtToDate);
@@ -435,7 +436,8 @@ public class SrvReducingRateTest {
 				iRecord = 9;
 				evtFromDate = schedule.getFinanceScheduleDetails().get(iRecord).getSchDate();
 				evtFromDate = DateUtility.addDays(evtFromDate, -15);
-				evtToDate = DateUtility.addDays(evtFromDate, 10);;
+				evtToDate = DateUtility.addDays(evtFromDate, 10);
+				;
 
 				recalFromDate = schedule.getFinanceScheduleDetails().get(iRecord + 2).getSchDate();
 
@@ -447,7 +449,8 @@ public class SrvReducingRateTest {
 				iRecord = 15;
 				evtFromDate = schedule.getFinanceScheduleDetails().get(iRecord).getSchDate();
 				evtFromDate = DateUtility.addDays(evtFromDate, -15);
-				evtToDate = DateUtility.addDays(evtFromDate, 10);;
+				evtToDate = DateUtility.addDays(evtFromDate, 10);
+				;
 
 				fm.setEventFromDate(evtFromDate);
 				fm.setEventToDate(evtToDate);
@@ -457,6 +460,7 @@ public class SrvReducingRateTest {
 			schedule = ScheduleCalculator.changeRate(schedule, fm.getRepayBaseRate(), fm.getRepaySpecialRate(),
 					fm.getRepayMargin(), BigDecimal.ZERO, true);
 		}
+
 		if (srvTestCase.equals("CHGPAY")) {
 			BigDecimal newPayment = BigDecimal.ZERO;
 
@@ -513,15 +517,15 @@ public class SrvReducingRateTest {
 				schdMethod = CalculationConstants.SCHMTHD_NOPAY;
 				fm.setRecalFromDate(fsdList.get(10).getSchDate());
 				fm.setAdjTerms(2);
-			}  else if (recalType.equals("TILLDATEL")) {
+			} else if (recalType.equals("TILLDATEL")) {
 				schdMethod = CalculationConstants.SCHMTHD_EQUAL;
-				int i = fsdList.size()-1;
-				fm.setRecalFromDate(fsdList.get(i-1).getSchDate());
+				int i = fsdList.size() - 1;
+				fm.setRecalFromDate(fsdList.get(i - 1).getSchDate());
 				fm.setRecalToDate(fsdList.get(i).getSchDate());
 			} else if (recalType.equals("TILLMDTL")) {
 				schdMethod = CalculationConstants.SCHMTHD_EQUAL;
-				int i = fsdList.size()-1;
-				fm.setRecalFromDate(fsdList.get(i-1).getSchDate());
+				int i = fsdList.size() - 1;
+				fm.setRecalFromDate(fsdList.get(i - 1).getSchDate());
 			}
 
 			schedule = ScheduleCalculator.reCalSchd(schedule, schdMethod);
@@ -538,6 +542,56 @@ public class SrvReducingRateTest {
 			}
 
 			schedule = ScheduleCalculator.deleteTerm(schedule);
+		}
+
+		if (srvTestCase.equals("GRCCHG_E")) {
+			fm.setRecalType("");
+			fm.setEventFromDate(fm.getGrcPeriodEndDate());
+			fm.setGrcPeriodEndDate(DateUtility.addMonths(fm.getGrcPeriodEndDate(), 2));
+			fm.setNextRepayDate(DateUtility.addMonths(fm.getGrcPeriodEndDate(), 1));
+			fm.setNextRepayPftDate(fm.getNextRepayDate());
+			fm.setNextRepayRvwDate(fm.getNextRepayDate());
+			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), 2));
+			schedule = ScheduleCalculator.changeGraceEnd(schedule);
+		}
+		
+		if (srvTestCase.equals("GRCCHG_R")) {
+			fm.setRecalType("");
+			fm.setEventFromDate(fm.getGrcPeriodEndDate());
+			fm.setGrcPeriodEndDate(DateUtility.addMonths(fm.getGrcPeriodEndDate(), -2));
+			fm.setNextRepayDate(DateUtility.addMonths(fm.getGrcPeriodEndDate(), 1));
+			fm.setNextRepayPftDate(fm.getNextRepayDate());
+			fm.setNextRepayRvwDate(fm.getNextRepayDate());
+			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), -2));
+			schedule = ScheduleCalculator.changeGraceEnd(schedule);
+		}
+		
+		if (srvTestCase.equals("GRCCHG_ED")) {
+			fm.setRecalType("");
+			fm.setEventFromDate(fm.getGrcPeriodEndDate());
+			
+			Date dateCal = DateUtility.addMonths(fm.getGrcPeriodEndDate(), 2);
+			
+			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal,-10));
+			fm.setNextRepayDate(DateUtility.addMonths(dateCal, 1));
+			fm.setNextRepayPftDate(fm.getNextRepayDate());
+			fm.setNextRepayRvwDate(fm.getNextRepayDate());
+			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), 2));
+			schedule = ScheduleCalculator.changeGraceEnd(schedule);
+		}
+		
+		if (srvTestCase.equals("GRCCHG_RD")) {
+			fm.setRecalType("");
+			fm.setEventFromDate(fm.getGrcPeriodEndDate());
+			
+			Date dateCal = DateUtility.addMonths(fm.getGrcPeriodEndDate(), -2);
+			
+			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal,-10));
+			fm.setNextRepayDate(DateUtility.addMonths(dateCal, 1));
+			fm.setNextRepayPftDate(fm.getNextRepayDate());
+			fm.setNextRepayRvwDate(fm.getNextRepayDate());
+			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), -2));
+			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
 
 		return schedule;
