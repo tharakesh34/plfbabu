@@ -120,8 +120,9 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append("  and RT.Page = :Page ");
 
 		if (StringUtils.isNotBlank(menuRightName)) {
-			sql.append(" and GR.GrpID in (select GrpId from SecGroupRights_View ");
-			sql.append(" where RightName = '");
+			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
+			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
+			sql.append(" where TR.RightName = '");
 			sql.append(menuRightName);
 			sql.append("')");
 		}

@@ -226,6 +226,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	public void allocateAuthorities(String page) {
 
 		SecurityRight secRight = new SecurityRight();
+		secRight.setLoginAppId(App.ID);
 		secRight.setLoginAppCode(App.CODE);
 		secRight.setUsrID(loggedInUser.getLoginUsrID());
 		secRight.setPage(page);
@@ -242,6 +243,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	public void allocateAuthorities(String page, String roleCode) {
 
 		SecurityRight secRight = new SecurityRight();
+		secRight.setLoginAppId(App.ID);
 		secRight.setLoginAppCode(App.CODE);
 		secRight.setUsrID(loggedInUser.getLoginUsrID());
 		secRight.setRoleCd(roleCode);
@@ -259,6 +261,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	public void allocateAuthorities(String page, String roleCode, String menuRightName) {
 
 		SecurityRight secRight = new SecurityRight();
+		secRight.setLoginAppId(App.ID);
 		secRight.setLoginAppCode(App.CODE);
 		secRight.setUsrID(loggedInUser.getLoginUsrID());
 		secRight.setRoleCd(roleCode);
