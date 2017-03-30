@@ -105,16 +105,13 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName ");
-		sql.append("  from SecUsers U ");
-		sql.append("  inner join SecUserOperations UO on UO.UsrID = U.UsrID ");
+		sql.append("  from SecUserOperations UO ");
 		sql.append("  inner join SecOperationRoles OPR on OPR.OprID = UO.OprID ");
 		sql.append("  inner join SecRoles R on R.RoleID = OPR.RoleID ");
 		sql.append("  inner join SecRoleGroups RG on RG.RoleID = R.RoleID ");
-		sql.append("  inner join SecGroups G on G.GrpID = RG.GrpID ");
-		sql.append("  inner join SecGroupRights GR on GR.GrpID = G.GrpID ");
+		sql.append("  inner join SecGroupRights GR on GR.GrpID = RG.GrpID ");
 		sql.append("  inner join SecRights RT on RT.RightID = GR.RightID ");
-		sql.append("  inner join PTApplicationDetails A on A.AppID = R.RoleApp ");
-		sql.append("  where RT.RightType <> 0  and U.UsrID = :UsrID and  A.AppCode = :loginAppCode ");
+		sql.append("  where RT.RightType <> 0  and UO.UsrID = :UsrID and  R.RoleApp = :LoginAppId ");
 		
 		if (StringUtils.isNotBlank(secRight.getRoleCd())) {
 			sql.append("  and R.RoleCd = :RoleCd ");
@@ -123,7 +120,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append("  and RT.Page = :Page ");
 
 		if (StringUtils.isNotBlank(menuRightName)) {
-			sql.append(" and G.GrpCode in (select GrpCode from SecGroupRights_View ");
+			sql.append(" and GR.GrpID in (select GrpId from SecGroupRights_View ");
 			sql.append(" where RightName = '");
 			sql.append(menuRightName);
 			sql.append("')");
