@@ -25,7 +25,7 @@ public class LoadConfigTest {
 			"../PLFInterface/src/main/resources/applicationContext-mq-interface.xml",
 			"../PFSJava/src/main/resources/applicationContext-daos.xml",
 			"../PFSWeb/src/main/resources/applicationContext-db.xml",
-			"../PFSWeb/src/main/resources/customize-applicationContext.xml" };
+			"/src/test/resources/applicationContext.xml" };
 	static ApplicationContext context;
 
 	@BeforeSuite
