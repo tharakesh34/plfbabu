@@ -30,6 +30,24 @@ public final class QueryUtil {
 	 *            The criteria that need to be checked.
 	 * @return The SQL query.
 	 */
+	public static String getCountQuery(String table, String whereClause) {
+		StringBuilder sql = new StringBuilder("select count(*) from ");
+		sql.append(table);
+		sql.append(" where ");
+		sql.append(whereClause);
+
+		return sql.toString();
+	}
+
+	/**
+	 * Returns the SQL query to check the number of records exist in the tables with the specified criteria.
+	 * 
+	 * @param tables
+	 *            The array of tables that need to be looked.
+	 * @param whereClause
+	 *            The criteria that need to be checked.
+	 * @return The SQL query.
+	 */
 	public static String getCountQuery(String[] tables, String whereClause) {
 		StringBuilder sql = new StringBuilder("select sum(cnt) from (");
 
