@@ -948,4 +948,25 @@
 			DROP table SEQSECLOGINLOG_bk;
 	</sql>
 </changeSet>
+<changeSet id="36" author="prasad" dbms="mssql">
+	<sql>
+	DROP INDEX SECUSEROPERATIONS.IX_UO_UID_OID;
+	DROP INDEX SecOperationRoles.IX_OR_OID_RID;
+	DROP INDEX SecRoles.IX_R_RA;
+	</sql>
+	</changeSet>
+	<changeSet id="36" author="prasad" dbms="oracle, postgresql">
+	<sql>
+	DROP INDEX IX_UO_UID_OID;
+	DROP INDEX IX_OR_OID_RID;
+	DROP INDEX IX_R_RA;
+	</sql>
+	</changeSet>
+<changeSet id="36.1" author="prasad">
+	<sql>
+	CREATE INDEX IX_UO_UID_OID ON SECUSEROPERATIONS (USRID ASC, OPRID ASC);
+	CREATE INDEX IX_OR_OID_RID ON SecOperationRoles (OprID ASC, RoleID ASC);
+	CREATE INDEX IX_R_RA ON SecRoles (RoleApp ASC);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
