@@ -1008,4 +1008,11 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 			AND RightID = (Select RightID From SecRights Where RightName = 'FinanceMainDialog_nextGrcCpzDate');
 		</sql>
 	</changeSet>
+	<changeSet id="26" author="prasad">
+	<sql>
+	CREATE INDEX IX_UO_UID_OID ON SECUSEROPERATIONS (USRID ASC, OPRID ASC);
+	CREATE INDEX IX_OR_OID_RID ON SecOperationRoles (OprID ASC, RoleID ASC);
+	CREATE INDEX IX_R_RA ON SecRoles (RoleApp ASC);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
