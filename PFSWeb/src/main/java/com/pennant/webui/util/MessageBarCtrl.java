@@ -205,10 +205,10 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			this.msg = builder.toString();
 
 			((Textbox) getMsgWindow().getFellow("tb")).setValue(getMsg());
+			// Clear Off line messages from OfflineMessagesBackup table
+			messagesService.deleteOfflineUsersMessages(userName);
 		}
 
-		// Clear Off line messages from OfflineMessagesBackup table
-		messagesService.deleteOfflineUsersMessages(userName);
 
 		logger.debug("Leaving");
 	}

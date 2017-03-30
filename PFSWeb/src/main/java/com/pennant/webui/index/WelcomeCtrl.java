@@ -142,7 +142,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		setDashBoardsLayOut(initilizeDashBords(false));
+		setDashBoardsLayOut(initilizeDashBords(true));
 	}
 
 	/**
@@ -154,22 +154,20 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		
 		int column = 0 ;
 		int dashboardColIndex = 0 ;
-		
-		// Initialize widgets collection list
-		DashBoard dashBoard = getDashboardConfigurationService().getDashBoardData(getUserWorkspace().getLoggedInUser().getLoginUsrID(), "");
-		setDashBoard(dashBoard);
-		doFillDashboardList(dashBoard);
-		List<ValueLabel> dashboardlist = getDashboardslist();
-		setDashboardslist(dashboardlist);
-
-		if (dashBoardPosition != null) {
-			dashBoardPosition.clear();
-		}
-		if (isRefresh) {
-			dashBoardPosition = getCurrentDashBordPositions();
-		} else {
+		if(isRefresh){
+			// Initialize widgets collection list
+			DashBoard dashBoard = getDashboardConfigurationService().getDashBoardData(getUserWorkspace().getLoggedInUser().getLoginUsrID(), "");
+			setDashBoard(dashBoard);
+			doFillDashboardList(getDashBoard());
+			List<ValueLabel> dashboardlist = getDashboardslist();
+			setDashboardslist(dashboardlist);
 			dashBoardPosition = getDashBoard().getDashBoardPosition();
+
+		}else{
+			dashBoardPosition = getCurrentDashBordPositions();
 		}
+		
+		
 
 		this.firstPortalChildColumn.getChildren().clear();
 		this.secondPortalChildColumn.getChildren().clear();
@@ -358,7 +356,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 			break ;
 			
 		}
-		initilizeDashBords(true);
+		initilizeDashBords(false);
 		
 	}
 
