@@ -138,54 +138,34 @@
 	<!-- AND CONFIGURE IT IN FILE: jdbc.properties -->
 	<!-- ====================================================== -->
 	<!--Security database DSN -->
-	<bean id="secDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${secjdbc.driverClassName}" />
-		<property name="url" value="${secjdbc.url}" />
-		<property name="username" value="${secjdbc.username}" />
-		<property name="password" value="${secjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
+	
+	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFSEC"/>
+		<property name="lookupOnStartup" value="true"/>
+	</bean>
+	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFF"/>
+		<property name="lookupOnStartup" value="true"/>
+	</bean>
+	<bean id="auditDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFAUDIT"/>
+		<property name="lookupOnStartup" value="true"/>
+	</bean>
+	<bean id="equationDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFEQUATION"/>
+		<property name="lookupOnStartup" value="true"/>
+	</bean>
+	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFEXT"/>
+		<property name="lookupOnStartup" value="true"/>
 	</bean>
 
-	<!--PFS Application database DSN -->
-	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-		<property name="url" value="${pfsjdbc.url}" />
-		<property name="username" value="${pfsjdbc.username}" />
-		<property name="password" value="${pfsjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
-	</bean>
-
-	<!--AUDIT Application database DSN -->
-	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-		<property name="url" value="${auditjdbc.url}" />
-		<property name="username" value="${auditjdbc.username}" />
-		<property name="password" value="${auditjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
-	</bean>
-
-	<bean id="equationDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${equationReportsjdbc.driverClassName}" />
-		<property name="url" value="${equationReportsjdbc.url}" />
-		<property name="username" value="${equationReportsjdbc.username}" />
-		<property name="password" value="${equationReportsjdbc.password}" />
-	</bean>
-
-	<!--LDAP Environment -->
-
+	<!-- LDAP Environment -->
 	<bean id="ldapEnvironment"
 		class="com.pennant.backend.model.administration.LDAPEnvironment"
 		scope="prototype">
@@ -196,16 +176,7 @@
 		<property name="providerURL" value="${ldap.provider.url}" />
 		<property name="base" value="${ldap.base}" />
 	</bean>
-
-	<!--PFSEXT Application database DSN -->
-	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
-		<property name="url" value="${pffextjdbc.url}" />
-		<property name="username" value="${pffextjdbc.username}" />
-		<property name="password" value="${pffextjdbc.password}" />
-	</bean>
-
+	
 	<!-- ====================================================== -->
 	<!-- THIS PLACE IS FOR CONFIGURING a Jndi CONNECTION -->
 	<!-- USE THIS FOR LET TOMCAT CONNECT TO YOUR OWN -->
