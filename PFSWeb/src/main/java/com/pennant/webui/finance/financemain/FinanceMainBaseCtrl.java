@@ -4550,7 +4550,32 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				Date validFrom = financeDate;
 				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
-					validFrom = org_grcPeriodEndDate;
+					
+					// Find Valid From Date by rendering 
+					List<FinanceScheduleDetail> scheduelist = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+					for (int i = 1; i < scheduelist.size(); i++) {
+						
+						FinanceScheduleDetail curSchd = scheduelist.get(i);
+						if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
+							validFrom = DateUtility.getAppDate();
+							continue;
+						}
+						if(StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())){
+							validFrom = curSchd.getSchDate();
+							continue;
+						}
+						
+						if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 
+								|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 
+								|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 
+								|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0 
+								|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 
+								|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0 ) {
+
+							validFrom = curSchd.getSchDate();
+							continue;
+						}
+					}
 					this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
 							.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, validFrom, appEndDate,
 							false));
