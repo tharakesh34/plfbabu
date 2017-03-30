@@ -21,7 +21,7 @@ public class ConcurrencyException extends AppException {
 	 * Constructs a {@code ConcurrencyException} with the default detail message.
 	 */
 	public ConcurrencyException() {
-		super(ErrorCode.APP_00101.getMessage());
+		super(ErrorCode.PPS_00101.getMessage());
 	}
 
 	/**
@@ -44,6 +44,5 @@ public class ConcurrencyException extends AppException {
 	 */
 	public ConcurrencyException(String message, Throwable cause) {
 		super(message, cause);
-		getCause();
 	}
 }

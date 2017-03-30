@@ -18,27 +18,11 @@ package com.pennant.Exception;
 public class AppException extends Exception {
 	private static final long serialVersionUID = 888700447794830646L;
 
-	public enum ErrorCode {
-		APP_00001("00001: Unable to process the request. Please try again later or contact the system administrator."),
-		APP_00101(
-				"00101: The record has been modified by another user. Please refresh the list to get the latest details of the record.");
-
-		private String message;
-
-		private ErrorCode(String message) {
-			this.message = message;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-	}
-
 	/**
 	 * Constructs an {@code AppException} with the default detail message.
 	 */
 	public AppException() {
-		super(ErrorCode.APP_00001.getMessage());
+		super(ErrorCode.PPS_00001.getMessage());
 	}
 
 	/**
@@ -73,6 +57,5 @@ public class AppException extends Exception {
 	 */
 	public AppException(String message, Throwable cause) {
 		super(message, cause);
-		getCause();
 	}
 }
