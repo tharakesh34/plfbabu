@@ -657,5 +657,92 @@
 		]]>
   </sql>
 </changeSet>
+<changeSet id="sys-10-postgresql" author="sys" dbms="postgresql">
+  <sql>
+		<![CDATA[
+		  alter table AdtRMTFinanceTypes alter column allowDownpayPgm type smallint using allowDownpayPgm::smallint ;
+alter table AdtRMTFinanceTypes alter column allowRIAInvestment type smallint using allowRIAInvestment::smallint ;
+alter table AdtRMTFinanceTypes alter column alwAdvanceRent type smallint using alwAdvanceRent::smallint ;
+alter table AdtRMTFinanceTypes alter column alwBPI type smallint using alwBPI::smallint ;
+alter table AdtRMTFinanceTypes alter column alwManualSteps DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column alwManualSteps type smallint using alwManualSteps::smallint ;
+alter table AdtRMTFinanceTypes alter column alwMultiPartyDisb type smallint using alwMultiPartyDisb::smallint ;
+alter table AdtRMTFinanceTypes alter column alwPlanDeferment type smallint using alwPlanDeferment::smallint ;
+alter table AdtRMTFinanceTypes alter column applyGrcPricing type smallint using applyGrcPricing::smallint ;
+alter table AdtRMTFinanceTypes alter column applyODPenalty type smallint using applyODPenalty::smallint ;
+alter table AdtRMTFinanceTypes alter column applyRpyPricing type smallint using applyRpyPricing::smallint ;
+alter table AdtRMTFinanceTypes alter column droplineOD type smallint using droplineOD::smallint ;
+alter table AdtRMTFinanceTypes alter column equalRepayment type smallint using equalRepayment::smallint ;
+alter table AdtRMTFinanceTypes alter column finAlwRateChangeAnyDate type smallint using finAlwRateChangeAnyDate::smallint ;
+alter table AdtRMTFinanceTypes alter column finCollateralOvrride DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column finCollateralOvrride type smallint using finCollateralOvrride::smallint ;
+alter table AdtRMTFinanceTypes alter column finCollateralReq type smallint using finCollateralReq::smallint ;
+alter table AdtRMTFinanceTypes alter column finCommitmentOvrride DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column finCommitmentOvrride type smallint using finCommitmentOvrride::smallint ;
+alter table AdtRMTFinanceTypes alter column finCommitmentReq DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column finCommitmentReq type smallint using finCommitmentReq::smallint ;
+alter table AdtRMTFinanceTypes alter column finDepreciationReq DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column finDepreciationReq type smallint using finDepreciationReq::smallint ;
+alter table AdtRMTFinanceTypes alter column finGrcIsIntCpz type smallint using finGrcIsIntCpz::smallint ;
+alter table AdtRMTFinanceTypes alter column finGrcIsRvwAlw type smallint using finGrcIsRvwAlw::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsActive type smallint using finIsActive::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwDifferment type smallint using finIsAlwDifferment::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwEarlyRpy type smallint using finIsAlwEarlyRpy::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwEarlySettle type smallint using finIsAlwEarlySettle::smallint ;
+alter table AdtRMTFinanceTypes alter column fInIsAlwGrace type smallint using fInIsAlwGrace::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwGrcRepay type smallint using finIsAlwGrcRepay::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwMD type smallint using finIsAlwMD::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsAlwPartialRpy type smallint using finIsAlwPartialRpy::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsDwPayRequired type smallint using finIsDwPayRequired::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsGenRef type smallint using finIsGenRef::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsIntCpz type smallint using finIsIntCpz::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsIntCpzAtGrcEnd type smallint using finIsIntCpzAtGrcEnd::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsOpenNewFinAc type smallint using finIsOpenNewFinAc::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsOpenPftPayAcc type smallint using finIsOpenPftPayAcc::smallint ;
+alter table AdtRMTFinanceTypes alter column finIsRvwAlw type smallint using finIsRvwAlw::smallint ;
+alter table AdtRMTFinanceTypes alter column finPftUnChanged DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column finPftUnChanged type smallint using finPftUnChanged::smallint ;
+alter table AdtRMTFinanceTypes alter column finRepayPftOnFrq type smallint using finRepayPftOnFrq::smallint ;
+alter table AdtRMTFinanceTypes alter column limitRequired DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column limitRequired type smallint using limitRequired::smallint ;
+alter table AdtRMTFinanceTypes alter column manualSchedule type smallint using manualSchedule::smallint ;
+alter table AdtRMTFinanceTypes alter column oDAllowWaiver type smallint using oDAllowWaiver::smallint ;
+alter table AdtRMTFinanceTypes alter column oDIncGrcDays type smallint using oDIncGrcDays::smallint ;
+alter table AdtRMTFinanceTypes alter column overrideLimit DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column overrideLimit type smallint using overrideLimit::smallint ;
+alter table AdtRMTFinanceTypes alter column planEMICpz type smallint using planEMICpz::smallint ;
+alter table AdtRMTFinanceTypes alter column planEMIHAlw type smallint using planEMIHAlw::smallint ;
+alter table AdtRMTFinanceTypes alter column rateChgAnyDay type smallint using rateChgAnyDay::smallint ;
+alter table AdtRMTFinanceTypes alter column reAgeCpz type smallint using reAgeCpz::smallint ;
+alter table AdtRMTFinanceTypes alter column rollOverFinance type smallint using rollOverFinance::smallint ;
+alter table AdtRMTFinanceTypes alter column stepFinance DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column stepFinance type smallint using stepFinance::smallint ;
+alter table AdtRMTFinanceTypes alter column steppingMandatory DROP DEFAULT;
+alter table AdtRMTFinanceTypes alter column steppingMandatory type smallint using steppingMandatory::smallint ;
+alter table AdtRMTFinanceTypes alter column tDSApplicable type smallint using tDSApplicable::smallint ;
+alter table AdtRMTFinanceTypes alter column unPlanEMICpz type smallint using unPlanEMICpz::smallint ;
+
+
+alter table AdtBulkProcessDetails alter column alwProcess type smallint using alwProcess::smallint ;
+alter table AdtBulkRateChangeDetails alter column allowRateChange type smallint using allowRateChange::smallint ;
+alter table AdtCustomerDedupDetail alter column override type smallint using override::smallint ;
+alter table AdtFinanceEligibilityDetail alter column userOverride type smallint using userOverride::smallint ;
+alter table AdtFinanceEligibilityDetail alter column canOverride type smallint using canOverride::smallint ;
+alter table AdtFinBlackListDetail alter column override type smallint using override::smallint ;
+
+alter table AdtFinPoliceCaseDetail alter column override type smallint using override::smallint ;
+
+alter table AdtLimitStructureDetails alter column editable type smallint using editable::smallint ;
+alter table AdtLimitStructureDetails alter column revolving type smallint using revolving::smallint ;
+alter table AdtLimitStructureDetails alter column limitCheck type smallint using limitCheck::smallint ;
+
+alter table AdtFinCreditRevSubCategory alter column format type smallint using format::smallint ;
+alter table AdtFinCreditRevSubCategory alter column grand type smallint using grand::smallint ;
+alter table AdtFinCreditRevSubCategory alter column isCreditCCY DROP DEFAULT;
+alter table AdtFinCreditRevSubCategory alter column isCreditCCY type smallint using isCreditCCY::smallint ;
+alter table AdtFinCreditRevSubCategory alter column percentCategory type smallint using percentCategory::smallint ;
+		]]>
+  </sql>
+</changeSet>
 
 </databaseChangeLog>
