@@ -665,7 +665,7 @@ FROM DATA_ENGINE_EXECUTION_FIELDS' where  NAME='INTERFACE_MANDATE_REG_VIEW'
 	inner join RMTBranches branch on fin.finBranch=branch.branchCode
 	inner join Bankbranches bankbranch on mandate.bankbranchid=bankbranch.bankbranchid
 	inner join BMTbankdetail  bank on bankbranch.bankcode=bank.bankcode
-	where mandate.status='NEW';
+	where mandate.status='NEW'
 	</createView>
 </changeSet>
 
