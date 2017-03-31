@@ -8473,6 +8473,7 @@
 	</bean>
 	<bean name="postponementServiceTarget"
 		class="com.pennant.backend.financeservice.impl.PostponementServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
 		<property name="financeMainDAO" ref="financeMainDAO"/>
 	</bean>
 

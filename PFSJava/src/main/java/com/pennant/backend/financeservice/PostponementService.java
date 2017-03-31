@@ -10,7 +10,7 @@ public interface PostponementService {
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 
-	FinScheduleData doUnPlannedEMIH(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod);
+	FinScheduleData doUnPlannedEMIH(FinScheduleData finscheduleData);
 
 	FinScheduleData doReAging(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod);
 }

@@ -18,6 +18,7 @@ import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.financeservice.ChangeProfitService;
+import com.pennant.backend.financeservice.PostponementService;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
@@ -77,6 +78,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	private ReScheduleService reScheduleService;
 	private RecalculateService recalService;
 	private RemoveTermsService rmvTermsService;
+	private PostponementService postponementService;
 	
 	private FinanceMainDAO financeMainDAO;
 	private RuleService ruleService;
@@ -244,11 +246,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// validate service instruction data
-		/*AuditDetail auditDetail = deffermentService.doValidations(finServiceInstruction);
+		AuditDetail auditDetail = postponementService.doValidations(finServiceInstruction);
 		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_DEFRPY;
-		auditDetail = doFeeValidations(finServiceInstruction.getFeeRules(), auditDetail, eventCode);
+		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
 
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
@@ -259,7 +261,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 				return financeDetail;
 			}
-		}*/
+		}
 
 		// call change repay amount service
 		financeDetail = finServiceInstController.doDefferment(finServiceInstruction);
@@ -1197,5 +1199,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	@Autowired
 	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
 		this.rmvTermsService = rmvTermsService;
+	}
+	@Autowired
+	public void setPostponementService(PostponementService postponementService) {
+		this.postponementService = postponementService;
 	}
 }

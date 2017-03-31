@@ -640,13 +640,12 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().setFeeEvent(moduleDefiner);
 		
 		// Service details calling for Schedule calculation
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)){
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doPostponement(getFinScheduleData(), finServiceInstruction,
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
-		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
-			setFinScheduleData(this.postponementService.doUnPlannedEMIH(getFinScheduleData(), finServiceInstruction,
-					getFinScheduleData().getFinanceMain().getScheduleMethod()));
-		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
+		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+			setFinScheduleData(this.postponementService.doUnPlannedEMIH(getFinScheduleData()));
+		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doReAging(getFinScheduleData(), finServiceInstruction,
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
 		}

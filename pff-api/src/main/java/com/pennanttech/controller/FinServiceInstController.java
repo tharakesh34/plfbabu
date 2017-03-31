@@ -33,6 +33,7 @@ import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.financeservice.ChangeProfitService;
+import com.pennant.backend.financeservice.PostponementService;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
@@ -97,6 +98,8 @@ public class FinServiceInstController {
 	private ChangeFrequencyService 		changeFrequencyService;
 	private ReScheduleService 			reScheduleService;
 	private ManualPaymentService 		manualPaymentService;
+	private PostponementService 		postponementService;
+
 	private RepayCalculator			    repayCalculator;
 	private FinanceScheduleDetailDAO 	financeScheduleDetailDAO;
 
@@ -108,7 +111,7 @@ public class FinServiceInstController {
 	private FinanceProfitDetailDAO 		profitDetailsDAO;
 	private RepaymentPostingsUtil		repayPostingUtil;
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
-	private FinanceRepayPriorityDAO			financeRepayPriorityDAO;
+	private FinanceRepayPriorityDAO		financeRepayPriorityDAO;
 
 	
 	/**
@@ -320,17 +323,27 @@ public class FinServiceInstController {
 
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
-			financeMain.setRecalType(finServiceInst.getRecalType());
-			financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
-			financeMain.setRecalToDate(finServiceInst.getRecalToDate());
-			financeMain.setAvailedDefRpyChange(financeMain.getAvailedDefRpyChange() + 1);
-
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
+			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
+				financeMain.setRecalToDate(finServiceInst.getToDate());
+			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					|| StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)) {
+				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalToDate(financeMain.getMaturityDate());
+			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
+				financeMain.setRecalToDate(finServiceInst.getRecalToDate());
+			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+				financeMain.setRecalFromDate(finServiceInst.getFromDate());
+				financeMain.setRecalToDate(financeMain.getMaturityDate());
+				//financeMain.setScheduleRegenerated(true);
+			}
+			
+			finScheduleData.setFinServiceInstruction(finServiceInst);
 			try {
-				// Call Schedule calculator for Rate change
-				//TODO add after the Deferment service is added 
-			//	finScheduleData = deffermentService.getAddDefferments(finScheduleData);
+				finScheduleData = postponementService.doUnPlannedEMIH(finScheduleData);
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {
@@ -345,19 +358,20 @@ public class FinServiceInstController {
 					// Set Version value
 					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
+
+					// set generated schedule details to financeDetails
+					financeDetail.setFinScheduleData(finScheduleData);
 
 					// Save the Schedule details
 					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
 					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					
+
 					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
 					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+							.get(APIHeader.API_HEADER_KEY);
 					//set the headerDetails to AuditHeader
 					auditHeader.setApiHeader(reqHeaderDetails);
-					
 					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
 
 					financeDetail = getServiceInstResponse(finScheduleData);
@@ -1742,4 +1756,9 @@ public class FinServiceInstController {
 	public void setFinanceRepayPriorityDAO(FinanceRepayPriorityDAO financeRepayPriorityDAO) {
 		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
+	
+	public void setPostponementService(PostponementService postponementService) {
+		this.postponementService = postponementService;
+	}
+
 }
