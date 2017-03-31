@@ -428,10 +428,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							}
 						}
 					}
-					if(avalLimit.subtract(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter)).
-							compareTo(BigDecimal.ZERO)<0){
+					avalLimit = avalLimit.subtract(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter));
+					if(avalLimit.compareTo(BigDecimal.ZERO)<0){
 						throw new WrongValueException(this.disbAmount,
-								Labels.getLabel("od_DisbAmount_Validation", new String[]{(PennantApplicationUtil.amountFormate(avalLimit,formatter))}));
+								Labels.getLabel("od_DisbAmount_Validation", new String[]{}));
 					}
 
 				}

@@ -1080,6 +1080,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				try {
 
 					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
+					if(isOverdraft){
+						this.schdl_odyearlyTenor.setValue(String.valueOf(totRepayTerms/12));
+						this.schdl_odMnthTenor.setValue(String.valueOf(totRepayTerms%12));
+					}
 					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
 								.invoke(financeMainDialogCtrl, aFinSchData);

@@ -376,7 +376,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 							if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
 								odCount = odCount +1;
-								break;
+							}else{
+								odCount = getFinScheduleData().getOverdraftScheduleDetails().size()-1;
 							}
 							if(StringUtils.equals(Labels.getLabel("label_LimitDrop"),label)){
 								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
@@ -404,9 +405,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
-					if(isSameDropLineDate){
-						availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getClosingBalance());
-					}
+					
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
 						count = 2;
 					}
@@ -1254,7 +1253,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 						}
 						
-						
 						if(odAvailable){
 							limitDrop = odSchedule.getLimitDrop();
 							odLimit = odSchedule.getODLimit();
@@ -1265,7 +1263,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 							if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
 								odCount = odCount +1;
-								break;
+							}else{
+								odCount = getFinScheduleData().getOverdraftScheduleDetails().size()-1;
 							}
 							if(StringUtils.equals(Labels.getLabel("label_LimitDrop"),label)){
 								if(odSchedule.getODLimit().compareTo(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getODLimit())>0){
@@ -1293,9 +1292,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal.ZERO,BigDecimal.ZERO,closingBalance,isEditable, isRate,
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,limitIncreaseAmt,limitDrop,availableLimit,odLimit, true);
 					count = 1;
-					if(isSameDropLineDate){
-						availableLimit = availableLimit.subtract(getFinanceScheduleDetail().getClosingBalance());
-					}
+					
 					if( isSameDropLineDate || DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), getFinanceScheduleDetail().getDefSchdDate()) == 0){
 						count = 2;
 					}
@@ -2170,15 +2167,20 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if(fillType==0  && !lastRec  && (isLimitDrop|| count ==1||(data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
 						
 						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, finFormatter));
-						
 						lc.setStyle("text-align:right;");
 						if(!isEditable) {
 							lc.setStyle("text-align:right;cursor:default;");
 						}
 						isLimitDrop = false;
+						if(availableLimit.compareTo(BigDecimal.ZERO)<0){
+							lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
+						}
 					}else{
 						lc = new Listcell("");
 						lc.setStyle("text-align:right;"); 
+						if(availableLimit.compareTo(BigDecimal.ZERO)<0){
+							lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
+						}
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 15)){
 					if(fillType==0 && !lastRec && showZeroEndBal &&(isLimitDrop || count ==1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
