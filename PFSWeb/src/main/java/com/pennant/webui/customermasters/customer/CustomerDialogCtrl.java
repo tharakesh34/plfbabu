@@ -3276,7 +3276,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					doShowValidationMessage(custTab, 5, custDocument.getLovDescCustDocCategory());
 					return false;
 				}
-				if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
+				//date of incorporation may not be required to validate with the PAN number
+				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL) &&
+						!this.custDOB.isDisabled() && this.custDOB.getValue() != null
 						&& custDocument.getCustDocIssuedOn() != null
 						&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
 					doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
