@@ -58,9 +58,12 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -1941,7 +1944,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 			}
 		}else if(isDropLine && !lastRec){
-			 odSchd =  getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
+			odSchd =  getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
 			strDate = DateUtility.formatToLongDate(odSchd.getDroplineDate());
 			isODSchdLimit = true;
 		}
@@ -1950,10 +1953,18 @@ public class FinScheduleListItemRenderer implements Serializable{
 		if(fillType == 2 && progClaimDate != null){
 			strDate = DateUtility.formatToLongDate(progClaimDate);
 		}
-
+		
 		//Color Cell
-		lc = new Listcell(String.valueOf((data.getInstNumber() == 0 || lastRec )? "" : data.getInstNumber()));
-		//lc.setSclass(lcColor);
+		lc = new Listcell();
+		Hbox hbox = new Hbox();
+		Space space = new Space();
+		space.setWidth("10px");
+		space.setStyle(getTermColor(lcColor));
+		hbox.appendChild(space);
+		if(count == 1){
+			hbox.appendChild(new Label(String.valueOf((data.getInstNumber() == 0 || lastRec )? "" : data.getInstNumber())));
+		}
+		lc.appendChild(hbox);
 		listitem.appendChild(lc);
 
 		// Date listcell
@@ -3330,6 +3341,41 @@ public class FinScheduleListItemRenderer implements Serializable{
 		}
 
 		return graphSchdlList;
+	}
+	
+	/* --- Color codes for Finance Schedule details --- */ 
+	private String getTermColor(String lcColor){
+		String color = "";
+		switch (lcColor) {
+		case "color_Disbursement":
+			color = "background-color: #F87217";
+			break;
+		case "color_ReviewRate":
+			color = "background-color: #E6A9EC";
+			break;
+		case "color_GracePeriodendDate":
+			color = "background-color: #726E6D";
+			break;
+		case "color_LastScheduleRecord":
+			color = "background-color: #726E6D";
+			break;
+		case "color_Deferred":
+			color = "background-color: #E0FFFF";
+			break;
+		case "color_Repayment":
+			color = "background-color: #008000";
+			break;
+		case "color_EarlyRepayment":
+			color = "background-color: #008000";
+			break;
+		case "color_RepaymentOverdue":
+			color = "background-color: #FF0000";
+			break;
+
+		default:
+			break;
+		}
+		return color;
 	}
 
 	public FinScheduleData getFinScheduleData() {

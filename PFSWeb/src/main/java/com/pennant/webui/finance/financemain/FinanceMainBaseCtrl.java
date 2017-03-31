@@ -10813,16 +10813,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int size = aFinanceSchData.getFinanceScheduleDetails().size();
 				aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
 
-				if (financeType.isDroplineOD()) {
-					aFinanceSchData.setFinanceScheduleDetails(sortSchdDetails(aFinanceSchData
-							.getFinanceScheduleDetails()));
-					//Reset Grace period End Date while Change Frequency Option
-					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
-						for (int i = 0; i < aFinanceSchData.getFinanceScheduleDetails().size(); i++) {
-							FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
-							if (curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
-								aFinanceMain.setGrcPeriodEndDate(curSchd.getSchDate());
-							}
+				aFinanceSchData.setFinanceScheduleDetails(sortSchdDetails(aFinanceSchData
+						.getFinanceScheduleDetails()));
+				//Reset Grace period End Date while Change Frequency Option
+				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
+					for (int i = 0; i < aFinanceSchData.getFinanceScheduleDetails().size(); i++) {
+						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
+						if (curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
+							aFinanceMain.setGrcPeriodEndDate(curSchd.getSchDate());
 						}
 					}
 				}

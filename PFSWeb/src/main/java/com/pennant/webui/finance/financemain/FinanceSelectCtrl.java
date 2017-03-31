@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,6 +85,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -1170,11 +1172,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			//Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+			String[] errParm= new String[1];
+			String[] valueParm= new String[1];
+			valueParm[0]=aFinanceMain.getId();
+			errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 			if(StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aFinanceMain.getId();
-				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
@@ -1183,6 +1185,42 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
 				return;
+			}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)){
+
+				Date validFrom = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
+				List<FinanceScheduleDetail> scheduelist = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+				for (int i = 1; i < scheduelist.size(); i++) {
+
+					FinanceScheduleDetail curSchd = scheduelist.get(i);
+					if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
+						validFrom = DateUtility.getAppDate();
+						continue;
+					}
+					if(StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())){
+						validFrom = curSchd.getSchDate();
+						continue;
+					}
+
+					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 
+							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0 ) {
+
+						validFrom = curSchd.getSchDate();
+						continue;
+					}
+				}
+				
+				if(financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate().compareTo(validFrom) <= 0){
+					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD,"41019", errParm,valueParm), getUserWorkspace().getUserLanguage());
+					MessageUtil.showErrorMessage(errorDetails.getError());
+					
+					logger.debug("Leaving");
+					return;
+				}
 			}
 			
 			String maintainSts = "";
@@ -1191,11 +1229,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 			
 			if(StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)){
-				String[] errParm= new String[1];
-				String[] valueParm= new String[1];
-				valueParm[0]=aFinanceMain.getId();
-				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
-
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
 				MessageUtil.showErrorMessage(errorDetails.getError());
 			}else{

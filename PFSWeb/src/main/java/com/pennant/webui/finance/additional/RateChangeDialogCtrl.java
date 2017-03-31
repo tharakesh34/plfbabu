@@ -1108,12 +1108,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
 						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
 				fillSchToDates(this.cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(),
-						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), true);
+						(Date) this.cbRateChangeToDate.getSelectedItem().getValue(), true);
 			}else if (anyDateRateChangeFromDate.getValue() != null){
 				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
 						anyDateRateChangeFromDate.getValue(), false);
 				fillSchToDates(this.cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(),
-						anyDateRateChangeFromDate.getValue(), true);
+						anyDateRateChangeToDate.getValue(), true);
 			}
 			
 		}else if(this.cbReCalType.getSelectedItem().getValue().toString()
@@ -1337,7 +1337,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if(this.cbRecalFromDate.getSelectedIndex() > 0){
 			this.cbRecalToDate.getItems().clear();
 			//As discussed with Pradep ,include from date has set to true,if any issue should recheck it
-			fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), (Date)this.cbRecalFromDate.getSelectedItem().getValue(), true);	
+			Date ratechgTo  = (Date)this.cbRateChangeToDate.getSelectedItem().getValue();
+			Date recalFrom  = (Date)this.cbRecalFromDate.getSelectedItem().getValue();
+			if(ratechgTo.compareTo(recalFrom) > 0){
+				fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo, true);	
+			}else{
+				fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom, true);	
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}

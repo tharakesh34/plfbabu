@@ -3497,7 +3497,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if(ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())){
 			saveFinSalPayment(financeDetail.getFinScheduleData(), orgNextSchd, false);
 		}
-		getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
+		if(!isWIF){
+			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
+		}
 		logger.debug("Leaving");
 		return auditHeader;
 
