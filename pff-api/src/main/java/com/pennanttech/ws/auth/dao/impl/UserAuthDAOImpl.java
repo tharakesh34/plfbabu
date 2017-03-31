@@ -153,7 +153,7 @@ public void updateSession(UserAuthentication webServiceUserSecurity) {
 	
 	StringBuilder updateSql = new StringBuilder("update webServiceUserSecurity" );
 
-	updateSql.append(" Set TokenId =:TokenId, Expiry =:Expiry" );
+	updateSql.append(" Set Expiry =:Expiry" );
 	updateSql.append(" where TokenId =:TokenId");
 	
 
