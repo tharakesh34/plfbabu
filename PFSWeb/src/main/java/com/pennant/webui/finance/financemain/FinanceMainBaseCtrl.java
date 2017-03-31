@@ -1413,10 +1413,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Advance Payment Detail Tab Addition
-		if ((StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,
-				moduleDefiner))
-				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceDetail.getFinScheduleData()
-						.getFinanceMain().getProductCategory())) {
+		if (((StringUtils.isEmpty(moduleDefiner)
+				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner))
+				&& !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+						aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))
+				|| (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+						aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())
+						&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
 			appendAdvancePaymentsDetailTab(onLoad);
 		}
 
@@ -5541,7 +5544,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//FIXME Satish this will be used for disbursements instructions, need to be renamed when time permits.
-		if (!isOverdraft) {
+		if(!(isOverdraft && StringUtils.isEmpty(moduleDefiner))){
 			if (advancePaymentWindow != null && finAdvancePaymentsListCtrl != null) {
 				finAdvancePaymentsListCtrl.doSetLabels(getFinBasicDetails());
 				Map<String, Object> map = new HashMap<String, Object>();
@@ -5566,7 +5569,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-
 		//Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
