@@ -146,7 +146,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName) {
 		logger.debug("Entering ");
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+	/*	MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("RightType", "3");
 		paramSource.addValue("RoleCd", secRight.getRoleCd());
 		paramSource.addValue("AppId", secRight.getLoginAppId());
@@ -158,18 +158,25 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append(" FROM SecRolesRights_View ");
 		sql.append(" where RightType = :RightType and RoleCd = :RoleCd and AppId = :AppId ");
 		sql.append(" and Page = :Page AND UsrId = :UsrId ");
-
-		// Checking Rights Based on Menu Right Item
+		
 		if (StringUtils.isNotBlank(menuRightName)) {
-			sql.append(" AND GrpID IN (select GrpID from SecGroupRights_View ");
-			sql.append(" WHERE RightName = :RightName) ");
+			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
+			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
+			sql.append(" where TR.RightName = '");
+			sql.append(menuRightName);
+			sql.append("')");
 		}
+		
+		
 
 		logger.debug("selectSql:" + sql.toString());
 		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
+	
+		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);*/
+		
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+		return getPageRights(secRight, menuRightName);
 	}
 
 	@Override
