@@ -9,8 +9,8 @@
 	</test>
 	<test name="schedule-test" group-by-instances="true">
 		<classes>
-			<!-- <class name="com.pennanttech.test.schedule.CrtReducingRateTestFactory" />
-			<class name="com.pennanttech.test.schedule.SrvReducingRateTestFactory" /> -->
+			<class name="com.pennanttech.test.schedule.CrtReducingRateTestFactory" />
+			<class name="com.pennanttech.test.schedule.SrvReducingRateTestFactory" />
 			<!-- <class name="com.pennanttech.test.schedule.CrtReducingRateHighTestFactory" /> -->
 		</classes>
 	</test>
