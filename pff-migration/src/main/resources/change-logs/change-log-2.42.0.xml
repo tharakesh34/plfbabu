@@ -1070,4 +1070,11 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 			AND RightID = (Select RightID From SecRights Where RightName = 'FinanceMainDialog_nextGrcCpzDate');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="26" author="Madhubabu">
+	<sql>
+			update reportlist set  ReportHeading='Customer Groups' where Module='CustomerGroup' and Code='CustomerGroup'
+			update reportlist set  ReportHeading='Mandate',Module='Customers',ModuleType='Customers' where Code='Mandate'
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
