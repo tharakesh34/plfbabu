@@ -1116,4 +1116,9 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		</insert>
 	
 	</changeSet>
+	<changeSet id="30" author="Madhubabu" dbms="oracle">
+	<sql>
+     INSERT INTO ErrorDetails VALUES('30702','EN','E','{0} Already had one address with {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
