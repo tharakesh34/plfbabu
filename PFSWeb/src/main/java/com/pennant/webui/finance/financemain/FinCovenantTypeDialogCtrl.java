@@ -137,6 +137,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	protected Datebox	receivableDate;
 	protected Space space_receivableDate;
 	private FinanceDetail financedetail;
+	
+	protected  Label label_FinCovenantTypeDialog_RecvbleDate;
 
 	/**
 	 * default constructor.<br>
@@ -341,7 +343,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aFinCovenantType.isNew()) {
-
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
+			this.receivableDate.setVisible(false);
+			this.space_receivableDate.setSclass("");
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -388,6 +392,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Entering");
 		if (getFinCovenantType().isNewRecord()) {
 			this.covenantType.setReadonly(isReadOnly("FinCovenantTypeDialog_covenantType"));
+			this.space_receivableDate.setSclass("");
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
+			this.receivableDate.setVisible(false);
 		} else {
 			this.covenantType.setReadonly(true);
 		}
@@ -962,6 +969,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			this.mandRole.setValue("", "");
 			this.space_receivableDate.setSclass("mandatory");
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(true);
+			this.receivableDate.setVisible(true);
+			
 		} else {
 			if(this.alwWaiver.isChecked()){
 				this.mandRole.setVisible(false);
@@ -973,6 +983,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");
 			this.receivableDate.setConstraint("");
+			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
+			this.receivableDate.setVisible(false);
+			this.space_receivableDate.setSclass("");
 		}
 	}
 	
