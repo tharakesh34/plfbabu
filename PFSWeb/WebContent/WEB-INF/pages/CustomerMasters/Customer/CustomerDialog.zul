@@ -288,7 +288,7 @@
 													<hbox>
 														<space
 															spacing="2px" sclass="mandatory" />
-														<textbox
+														<uppercasebox
 															id="eidNumber" width="156px" />
 													</hbox>
 													<label

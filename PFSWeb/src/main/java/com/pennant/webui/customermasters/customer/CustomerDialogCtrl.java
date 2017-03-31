@@ -141,6 +141,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
@@ -205,7 +206,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox					custBaseCcy;																	// autowired
 	protected Checkbox							salariedCustomer;																// autowired
 	protected ExtendedCombobox					custRO1;																		// autowired
-	protected Textbox							eidNumber;																		// autowired
+	protected Uppercasebox					    eidNumber;																		// autowired
 	protected Label								label_CustomerDialog_EIDNumber;												// autowired
 	protected Textbox							custTradeLicenceNum;															// autowired
 	protected Textbox							custRelatedParty;																// autowired
