@@ -2387,13 +2387,40 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	public List<String> getFinReferencesByMandateId(long mandateId) {
 		logger.debug("Entering");
 
-		FinanceMain financeMain = getNewFinanceMain(false);
+		FinanceMain financeMain = new FinanceMain();
 		financeMain.setMandateID(mandateId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
 		selectSql.append(" From FinanceMain");
 
 		selectSql.append(" Where MandateID =:MandateID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+	}
+	/**
+	 * Method to get FinanceReferences by Given custId.
+	 * @param custId
+	 * @param finActiveStatus
+	 */
+	@Override
+	public List<String> getFinReferencesByCustID(long custId, String finActiveStatus) {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setCustID(custId);
+		financeMain.setClosingStatus(finActiveStatus);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where CustID =:CustID AND");
+		if (StringUtils.isBlank(finActiveStatus)) {
+			selectSql.append(" ClosingStatus is null");
+		} else {
+			selectSql.append(" ClosingStatus =:ClosingStatus");
+		}
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);

@@ -65,4 +65,6 @@ public interface FinanceMainService {
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
 	
 	List<String> getFinReferencesByMandateId(long mandateId);
+
+	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
 }

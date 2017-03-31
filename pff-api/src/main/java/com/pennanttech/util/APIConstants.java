@@ -26,5 +26,12 @@ public class APIConstants {
 	// Disbursement status
 	public static final String FIN_DISB_FULLY = "Fully Disbursed";
 	public static final String FIN_DISB_PARTIAL = "Partially Disbursed";
-
+	
+	// Statement related
+	public static final String CLOSE_STATUS_ACTIVE = "A";
+	public static final String STATEMENT_INTREST_CERTIFICATE = "INSTCERT";
+	public static final String STATEMENT_ACCOUNT = "STMTACC";
+	public static final String STATEMENT_REPAYMENT_SCHEDULE = "REPYSCHD";
+	public static final String STATEMENT_NOC = "NOC";
+	
 }

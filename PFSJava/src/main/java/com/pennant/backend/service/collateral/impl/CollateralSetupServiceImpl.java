@@ -2476,4 +2476,53 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	public int getCountByCollateralRef(String collateralRef) {
 		return getCollateralSetupDAO().getCountByCollateralRef(collateralRef);
 	}
+	/**
+	 * Fetch list of customer collateral by custId
+	 * 
+	 * @param custId
+	 * @return List<CollateralSetup>
+	 */
+	@Override
+	public List<CollateralSetup> getApprovedCollateralSetupByCustId(long custId) {
+		logger.debug("Entering");
+
+		List<CollateralSetup> collaterals = getCollateralSetupDAO().getApprovedCollateralByCustId(custId, "_AView");
+		for (CollateralSetup setup : collaterals) {
+			// set Extended details
+			CollateralStructure collateralStructure = collateralStructureService.getApprovedCollateralStructureByType(setup.getCollateralType());
+			setup.setCollateralStructure(collateralStructure);
+			String reference = setup.getCollateralRef();
+			ExtendedFieldHeader extendedFieldHeader = setup.getCollateralStructure().getExtendedFieldHeader();
+			StringBuilder tableName  = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<Map<String, Object>> extendedMapValues = getExtendedFieldRenderDAO().getExtendedFieldMap(reference, 
+					tableName.toString(), "");
+			if (extendedMapValues != null) {
+				List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
+				for (Map<String, Object> mapValues : extendedMapValues) {
+					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
+					for (Entry<String, Object> entry : mapValues.entrySet()) {
+						ExtendedFieldData exdFieldData = new ExtendedFieldData();
+						if (StringUtils.isNotBlank(String.valueOf(entry.getValue())) 
+								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
+							exdFieldData.setFieldName(entry.getKey());
+							exdFieldData.setFieldValue(String.valueOf(entry.getValue()));
+							extendedFieldDataList.add(exdFieldData);
+						}
+					}
+					ExtendedField extendedField = new ExtendedField();
+					extendedField.setExtendedFieldDataList(extendedFieldDataList);
+					extendedDetails.add(extendedField);
+				}
+				setup.setExtendedDetails(extendedDetails);
+			}
+		}
+
+		logger.debug("Leaving");
+		return collaterals;
+	}
 }

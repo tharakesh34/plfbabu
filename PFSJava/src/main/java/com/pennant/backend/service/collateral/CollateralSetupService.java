@@ -75,4 +75,6 @@ public interface CollateralSetupService {
 	BigDecimal getAssignedPerc(String collateralRef, String reference);
 	
 	int getCountByCollateralRef(String collateralRef);
+	
+	List<CollateralSetup> getApprovedCollateralSetupByCustId(long custId);
 }

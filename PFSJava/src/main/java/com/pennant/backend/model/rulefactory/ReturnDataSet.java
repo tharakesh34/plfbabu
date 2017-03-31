@@ -3,34 +3,53 @@ package com.pennant.backend.model.rulefactory;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode",
+		"tranDesc", "revTranCode", "account", "drOrCr", "acCcy",
+		"postAmount"})
 public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 5269669204845337757L;
 
 	private long linkedTranId = Long.MIN_VALUE;
+	@XmlElement
 	private String postref;
 	private String postingId;
 	private String finReference;
+	@XmlElement(name="accEvent")
 	private String finEvent;
 	private String lovDescEventCodeName;
+	@XmlElement
 	private Date postDate;
+	@XmlElement
 	private Date valueDate;
+	@XmlElement
 	private String tranCode;
 	private int transOrder;
 	private int derivedTranOrder = 0;
+	@XmlElement
 	private String tranDesc;
+	@XmlElement
 	private String revTranCode;
+	@XmlElement
 	private String drOrCr;
 	private boolean shadowPosting;
+	@XmlElement
 	private String account;
+	@XmlElement
 	private BigDecimal postAmount = BigDecimal.ZERO;
 	private String amountType;
 	private String postStatus;
 	private String errorId;
 	private String errorMsg;
 	private long custId = Long.MIN_VALUE;
+	@XmlElement
 	private String acCcy;
 	private String tranOrderId;
 	private String postToSys;

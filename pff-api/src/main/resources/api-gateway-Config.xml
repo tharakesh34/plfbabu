@@ -399,5 +399,31 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="workFlowSOAPService" implementor="#wsWorkFlowService"
 		address="/workFlowSoap" />
+		
+	<!-- Statement API gateway -->
+	<bean id="wsStatementService" class="com.pennanttech.service.impl.FinStatementWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="statementRestService" address="/statementRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsStatementService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="statementSoapService" implementor="#wsStatementService"
+		address="/statementSoap" />
 
 </beans>

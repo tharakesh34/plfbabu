@@ -59,6 +59,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -82,7 +83,7 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage","finScheduleData","customerDetails", "advancePaymentsList", "mandate",
 		"jountAccountDetailList", "gurantorsDetailList", "documentDetailsList", "covenantTypeList",
-		"collateralAssignmentList", "finFlagsDetails","finFeeDetails", "returnStatus" })
+		"collateralAssignmentList", "finFlagsDetails","finFeeDetails","returnDataSetList","collateralSetup","returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -136,6 +137,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	
 	private List<TransactionEntry> transactionEntries = new ArrayList<TransactionEntry>(1);
+	@XmlElementWrapper(name= "transactions")
+	@XmlElement(name="transaction")
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
 	
 	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<TransactionEntry>(1);
@@ -227,6 +230,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private String stp;
 	@XmlElement
 	private String processStage;
+	@XmlElementWrapper(name="collateralDetails")
+	@XmlElement(name="collateralDetail")
+	private List<CollateralSetup> collateralSetup;
 	
    public FinanceDetail() {
 		
@@ -824,6 +830,14 @@ public class FinanceDetail implements java.io.Serializable {
 	}
 	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
 		this.finFeeDetails = finFeeDetails;
+	}
+
+	public List<CollateralSetup> getCollateralSetup() {
+		return collateralSetup;
+	}
+
+	public void setCollateralSetup(List<CollateralSetup> collateralSetup) {
+		this.collateralSetup = collateralSetup;
 	}
 
 }

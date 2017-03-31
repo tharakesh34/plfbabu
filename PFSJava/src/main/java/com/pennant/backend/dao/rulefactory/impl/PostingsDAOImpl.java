@@ -44,6 +44,7 @@ package com.pennant.backend.dao.rulefactory.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -51,6 +52,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -432,7 +434,39 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		
 	}
-	
+	/*
+	 * Method to get the Posting Details By FinRefernce
+	 */
+
+	@Override
+	public List<ReturnDataSet> getPostingsByFintref(String finReference) {
+		logger.debug("Entering");
+
+		ReturnDataSet dataSet = new ReturnDataSet();
+		dataSet.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
+		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
+		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" FROM Postings");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		logger.debug("Leaving");
+		List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>();
+		try {
+			returnDataSetList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
+		logger.debug("Leaving");
+		return returnDataSetList;
+	}
 	/**
 	 * To Set  dataSource
 	 * @param dataSource

@@ -149,6 +149,15 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public List<String> getFinReferencesByMandateId(long mandateId) {
 		return financeMainDAO.getFinReferencesByMandateId(mandateId);
 	}
+	/**
+	 * Method to get FinanceReferences by Given custId with FinActiveStatus.
+	 * @param custId
+	 * @param finActiveStatus
+	 */
+	@Override
+	public List<String> getFinReferencesByCustID(long custId, String finActiveStatus) {
+		return financeMainDAO.getFinReferencesByCustID(custId,finActiveStatus);
+	}
 
 	/**
 	 * @param financeMainDAO

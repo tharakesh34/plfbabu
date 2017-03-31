@@ -139,4 +139,9 @@
 	<bean id="SecRolesController" class="com.pennanttech.controller.SecRolesController"
 		autowire="byName" scope="prototype">
 	</bean>
+	
+	<!-- SecRoles controller -->
+	<bean id="finStatementController" class="com.pennanttech.controller.FinStatementController"
+		autowire="byName" scope="prototype">
+	</bean>
 </beans>
