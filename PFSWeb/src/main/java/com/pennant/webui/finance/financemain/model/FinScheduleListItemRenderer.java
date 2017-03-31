@@ -670,7 +670,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				
 				doFillListBox(getFinanceScheduleDetail(), count, label,
-						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
+						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
 						BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getClosingBalance(),isEditable, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
 				count = 2;
@@ -1558,7 +1558,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				
 				doFillListBox(getFinanceScheduleDetail(), count, label,
-						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
+						getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(),
 						BigDecimal.ZERO,BigDecimal.ZERO,getFinanceScheduleDetail().getClosingBalance(),isEditable, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,availableLimit,odLimit, false);
 				count = 2;
