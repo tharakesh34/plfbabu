@@ -57,7 +57,7 @@ public class FinanceGraphReportData implements Serializable {
 	private BigDecimal financeBal;
 
 	public FinanceGraphReportData() {
-		
+		super();
 	}
 	
 	// ******************************************************//
