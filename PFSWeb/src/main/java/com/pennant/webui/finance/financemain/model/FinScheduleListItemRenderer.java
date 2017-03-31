@@ -2854,6 +2854,46 @@ public class FinScheduleListItemRenderer implements Serializable{
 				reportList.add(data);
 				count = 2;
 			}
+			
+			if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0 && 
+					aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 &&
+					!aScheduleDetail.isDisbOnSchDate() && count == 1){
+				data = new FinanceScheduleReportData();	
+				
+				String label = Labels.getLabel("label_listcell_profitCalc.label");
+				if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+					label = Labels.getLabel("label_listcell_BPIAmount.label");
+					if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+						label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+					}
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+				}
+
+				data.setLabel(label);
+				if (count == 1) {
+					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+					if( aScheduleDetail.isRvwOnSchDate()) {
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+					}else {
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+					}
+				}else {
+					data.setSchDate("");
+				}
+				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+				data.setSchdPft("");
+				data.setSchdPri("");
+				data.setTotalAmount("");
+				data.setLimitDrop("");
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				data.setLimitIncreaseAmt("");
+				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+				reportList.add(data);
+				count = 2;
+			}
 
 			if (aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
 
@@ -3008,47 +3048,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setLimitIncreaseAmt("");
 				reportList.add(data);
 				count = 2;
-			} else {
-
-				if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0 && 
-						aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 &&
-						!aScheduleDetail.isDisbOnSchDate() && count == 1){
-					data = new FinanceScheduleReportData();	
-					
-					String label = Labels.getLabel("label_listcell_profitCalc.label");
-					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-						label = Labels.getLabel("label_listcell_BPIAmount.label");
-						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-						}
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-					}
-
-					data.setLabel(label);
-					if (count == 1) {
-						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						if( aScheduleDetail.isRvwOnSchDate()) {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
-						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
-						}
-					}else {
-						data.setSchDate("");
-					}
-					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-					data.setSchdPft("");
-					data.setSchdPri("");
-					data.setTotalAmount("");
-					data.setLimitDrop("");
-					data.setAvailLimit("");
-					data.setTotalLimit("");
-					data.setLimitIncreaseAmt("");
-					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
-					reportList.add(data);
-				}
-			}	
+			} 
+			
 			count = 1;
 			if(lastRec && includeSummary){
 				data = new FinanceScheduleReportData();
