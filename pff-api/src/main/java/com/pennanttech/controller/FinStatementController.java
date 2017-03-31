@@ -14,6 +14,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -47,38 +48,44 @@ public class FinStatementController {
 	 * @param finreferencecList
 	 * @throws ServiceException
 	 */
-	public FinStatementResponse getStatement(List<String> finreference, String serviceName) {
+	public FinStatementResponse getStatement(List<String> finReferences, String serviceName) {
 		logger.debug("Enetring");
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
 		List<FinanceDetail> finDetailList = new ArrayList<>();
 		try {
-			for (String finReference : finreference) {
+			for (String finReference : finReferences) {
 				FinanceDetail financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
 						FinanceConstants.FINSER_EVENT_ORG, "");
+				if (financeDetail == null) {
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+					return stmtResponse;
+				}
+
 				List<ReturnDataSet> postingsList = null;
-				if (StringUtils.equals(APIConstants.STATEMENT_ACCOUNT, serviceName)) {
+				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
 					postingsList = postingsDAO.getPostingsByFintref(finReference);
 				}
-				if (StringUtils.equals(APIConstants.STATEMENT_INTREST_CERTIFICATE, serviceName)) {
-					if (financeDetail.getCustomerDetails().getCustomer().getCustID() != 0) {
-						financeDetail.setCollateralSetup(collateralSetupService
-								.getApprovedCollateralSetupByCustId(financeDetail.getCustomerDetails().getCustomer()
-										.getCustID()));
+				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
+					long custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
+					if (custId != 0) {
+						List<CollateralSetup> collatSetupList = collateralSetupService.getCollateralSetupByCustId(custId);
+						financeDetail.setCollateralSetup(collatSetupList);
 					}
 				}
-				if (financeDetail != null) {
-					financeDetail.setReturnDataSetList(postingsList);
-					prepareResponse(financeDetail, serviceName);
-					stmtResponse.setCustomer(financeDetail.getCustomerDetails());
-					financeDetail.setCustomerDetails(null);
-					finDetailList.add(financeDetail);
-				} else {
-					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-				}
+
+				financeDetail.setReturnDataSetList(postingsList);
+				
+				// generate response info
+				prepareResponse(financeDetail, serviceName);
+				
+				stmtResponse.setCustomer(financeDetail.getCustomerDetails());
+				financeDetail.setCustomerDetails(null);
+				finDetailList.add(financeDetail);
 			}
 
 		} catch (Exception e) {
+			logger.error("Exception", e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
@@ -96,7 +103,7 @@ public class FinStatementController {
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
-		if (!StringUtils.equals(APIConstants.STATEMENT_REPAYMENT_SCHEDULE, servicName)) {
+		if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
 			financeDetail.getFinScheduleData().setFinanceScheduleDetails(null);
 		}
 		financeDetail.getFinScheduleData().setRateInstruction(null);
@@ -129,17 +136,19 @@ public class FinStatementController {
 			}
 		}
 
-		if (StringUtils.equals(APIConstants.STATEMENT_ACCOUNT, servicName)) {
+		if (StringUtils.equals(APIConstants.STMT_ACCOUNT, servicName)) {
 			List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
 			financeDetail.setFinFeeDetails(finFeeDetail);
 		}
 
 		// Fetch summary details
 		prepareFinanceSummary(financeDetail);
+		
 		financeDetail.getFinScheduleData().setDisbursementDetails(null);
 		financeDetail.getFinScheduleData().setFinFeeDetailList(null);
 		financeDetail.getFinScheduleData().setFinODDetails(null);
 		financeDetail.getFinScheduleData().setFinODPenaltyRate(null);
+		
 		// customer details
 		CustomerDetails customerDetail = financeDetail.getCustomerDetails();
 		customerDetail.setCustCIF(customerDetail.getCustomer().getCustCIF());

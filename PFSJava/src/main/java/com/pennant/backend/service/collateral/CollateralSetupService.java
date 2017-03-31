@@ -76,5 +76,5 @@ public interface CollateralSetupService {
 	
 	int getCountByCollateralRef(String collateralRef);
 	
-	List<CollateralSetup> getApprovedCollateralSetupByCustId(long custId);
+	List<CollateralSetup> getCollateralSetupByCustId(long custId);
 }

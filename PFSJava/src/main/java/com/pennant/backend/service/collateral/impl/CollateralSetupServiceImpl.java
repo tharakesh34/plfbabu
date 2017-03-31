@@ -2483,7 +2483,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 * @return List<CollateralSetup>
 	 */
 	@Override
-	public List<CollateralSetup> getApprovedCollateralSetupByCustId(long custId) {
+	public List<CollateralSetup> getCollateralSetupByCustId(long custId) {
 		logger.debug("Entering");
 
 		List<CollateralSetup> collaterals = getCollateralSetupDAO().getApprovedCollateralByCustId(custId, "_AView");

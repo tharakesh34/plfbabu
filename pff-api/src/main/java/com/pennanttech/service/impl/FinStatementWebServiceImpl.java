@@ -44,13 +44,19 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
+		FinStatementResponse finStatement = new FinStatementResponse();
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			FinStatementResponse finStatement = new FinStatementResponse();
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		FinStatementResponse response = finStatementController.getStatement(getFinanceReferences(statementRequest),
-				APIConstants.STATEMENT_ACCOUNT);
+		List<String> finReferences = getFinanceReferences(statementRequest);
+		if (finReferences.isEmpty()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getCif();
+			finStatement.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			return finStatement;
+		}
+		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_ACCOUNT);
 		logger.debug("Leaving");
 		return response;
 	}
@@ -66,13 +72,19 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
+		FinStatementResponse finStatement = new FinStatementResponse();
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			FinStatementResponse finStatement = new FinStatementResponse();
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		FinStatementResponse response = finStatementController.getStatement(getFinanceReferences(statementRequest),
-				APIConstants.STATEMENT_INTREST_CERTIFICATE);
+		List<String> finReferences = getFinanceReferences(statementRequest);
+		if (finReferences.isEmpty()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getCif();
+			finStatement.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			return finStatement;
+		}
+		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_INST_CERT);
 		logger.debug("Leaving");
 		return response;
 	}
@@ -89,13 +101,19 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
+		FinStatementResponse finStatement = new FinStatementResponse();
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			FinStatementResponse finStatement = new FinStatementResponse();
 			finStatement.setReturnStatus(returnStatus);
 			return finStatement;
 		}
-		FinStatementResponse response = finStatementController.getStatement(getFinanceReferences(statementRequest),
-				APIConstants.STATEMENT_REPAYMENT_SCHEDULE);
+		List<String> finReferences = getFinanceReferences(statementRequest);
+		if (finReferences.isEmpty()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getCif();
+			finStatement.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			return finStatement;
+		}
+		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_REPAY_SCHD);
 		logger.debug("Leaving");
 		return response;
 	}
@@ -118,16 +136,16 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 		} else {
 			int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference(), "", false);
-			if (count > 0) {
-			} else {
+			if (count <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = statementRequest.getFinReference();
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return finStatementResponse;
 			}
 		}
-		FinStatementResponse response = finStatementController.getStatement(getFinanceReferences(statementRequest),
-				APIConstants.STATEMENT_NOC);
+		
+		List<String> finReferences = getFinanceReferences(statementRequest);
+		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_NOC);
 		logger.debug("Leaving");
 		return response;
 	}
@@ -138,7 +156,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 * @param statementRequest
 	 */
 	private List<String> getFinanceReferences(FinStatementRequest statementRequest) {
-		logger.debug("Enetring");
+		logger.debug("Entering");
 		List<String> referencesList = new ArrayList<String>();
 		if (StringUtils.isNotBlank(statementRequest.getCif())) {
 			Customer customer = customerDetailsService.getCustomerByCIF(statementRequest.getCif());
@@ -192,8 +210,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			}
 		} else if(StringUtils.isNotBlank(statementRequest.getFinReference())) {
 			int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference(), "", false);
-			if (count > 0) {
-			} else {
+			if (count <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = statementRequest.getFinReference();
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);

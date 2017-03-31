@@ -2397,8 +2397,15 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		List<String> finReferencesList = new ArrayList<String>(); 
+		try {
+			finReferencesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		return finReferencesList;
 	}
 	/**
 	 * Method to get FinanceReferences by Given custId.
@@ -2424,7 +2431,14 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		List<String> finReferencesList = new ArrayList<String>(); 
+		try {
+			finReferencesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		return finReferencesList;
 	}
 }

@@ -29,9 +29,9 @@ public class APIConstants {
 	
 	// Statement related
 	public static final String CLOSE_STATUS_ACTIVE = "A";
-	public static final String STATEMENT_INTREST_CERTIFICATE = "INSTCERT";
-	public static final String STATEMENT_ACCOUNT = "STMTACC";
-	public static final String STATEMENT_REPAYMENT_SCHEDULE = "REPYSCHD";
-	public static final String STATEMENT_NOC = "NOC";
+	public static final String STMT_INST_CERT = "INSTCERT";
+	public static final String STMT_ACCOUNT = "STMTACC";
+	public static final String STMT_REPAY_SCHD = "REPYSCHD";
+	public static final String STMT_NOC = "NOC";
 	
 }
