@@ -779,7 +779,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			BigDecimal futTotDisbAmt = BigDecimal.ZERO;
 			if(aFinSchData.getDisbursementDetails()!=null && aFinSchData.getDisbursementDetails().size()>0){
 				for(FinanceDisbursement finDisb:aFinSchData.getDisbursementDetails()){
-					if(DateUtility.compare(DateUtility.getAppDate(), finDisb.getDisbDate())>=0){
+					if(DateUtility.compare( finDisb.getDisbDate(),DateUtility.getAppDate())>=0){
 						futTotDisbAmt = futTotDisbAmt.add(finDisb.getDisbAmount());
 					}
 				}
