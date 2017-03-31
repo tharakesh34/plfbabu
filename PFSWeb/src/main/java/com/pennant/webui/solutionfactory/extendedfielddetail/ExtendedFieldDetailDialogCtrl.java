@@ -1685,6 +1685,14 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Entering");
 
 		if(StringUtils.equals(PennantConstants.List_Select,fieldType)){
+			this.fieldLength.setText("");
+			this.fieldPrec.setText("");
+			this.fieldLength.setReadonly(false);
+			this.fieldPrec.setReadonly(false);
+			this.fieldMandatory.setChecked(false);
+			this.fieldUnique.setChecked(false);
+			this.fieldConstraint.setSelectedIndex(0);
+			this.fieldSeqOrder.setText("");
 			this.rowfieldLength.setVisible(true);
 			this.rowfieldPrec.setVisible(true);
 			this.rowMandatory.setVisible(true);
@@ -1692,6 +1700,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowConstraint.setVisible(true);
 			fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 			this.rowfieldDefaultValue.setVisible(false);
+			this.rowfieldList.setVisible(false);
+			this.rowfieldMinValue.setVisible(false);
+			this.rowfieldMaxValue.setVisible(false);
+			this.rowfieldMultilinetxt.setVisible(false);
+			
 		}else{
 		
 		if(this.rowfieldList.getFellowIfAny("SListId") != null){
