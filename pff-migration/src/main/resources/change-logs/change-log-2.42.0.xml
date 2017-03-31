@@ -1095,4 +1095,25 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		Update ErrorDetails set ErrorMessage ='RecalToDate {0} should be greater than or equal to RecalFromDate {1}.' where ErrorCode = '91109';
 			</sql>
 	</changeSet>
+	
+	<changeSet id="29" author="Siva">
+			<insert tableName="ErrorDetails">
+			<column name="ErrorCode">41019</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Future Installments after Grace End already paid. Not allowed Change Gestation Period End date. </column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	
+	</changeSet>
 	</databaseChangeLog>
