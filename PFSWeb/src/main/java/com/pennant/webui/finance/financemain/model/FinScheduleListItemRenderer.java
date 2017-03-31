@@ -1692,7 +1692,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						
 						// Calculated Profit Display
 						if(!getFinanceScheduleDetail().isDisbOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
-								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && count == 1){
 							
 							String label = Labels.getLabel("label_listcell_profitCalc.label");
 							if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
