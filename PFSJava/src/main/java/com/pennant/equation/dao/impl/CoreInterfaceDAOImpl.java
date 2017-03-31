@@ -903,8 +903,8 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
-		updateSql.append(" Set  AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
-		updateSql.append(" InternalAc = :InternalAc,CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive");
+		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
+		updateSql.append(" InternalAc = :InternalAc, CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive");
 		updateSql.append(" Where AcType =:AcType");
 		
 		logger.debug("selectSql: " + updateSql.toString());
@@ -1669,8 +1669,8 @@ public class CoreInterfaceDAOImpl implements CoreInterfaceDAO{
 
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerPhoneNumbers");
-		updateSql.append(" Set  PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode," );
-		updateSql.append(" PhoneNumber = :PhoneNumber " );
+		updateSql.append(" Set PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode," );
+		updateSql.append(" PhoneNumber = :PhoneNumber" );
 		updateSql.append(" Where PhoneCustID =:PhoneCustID AND PhoneTypeCode=:PhoneTypeCode");
 		logger.debug("selectSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(customerList.toArray());

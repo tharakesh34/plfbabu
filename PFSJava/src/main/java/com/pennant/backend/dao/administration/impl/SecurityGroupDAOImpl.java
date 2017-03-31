@@ -267,7 +267,7 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 		logger.debug("Entering ");
 		StringBuilder updateSql =new StringBuilder("Update SecGroups");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set GrpID = :GrpID, GrpCode = :GrpCode, GrpDesc = :GrpDesc, ");
+		updateSql.append(" Set GrpCode = :GrpCode, GrpDesc = :GrpDesc, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");

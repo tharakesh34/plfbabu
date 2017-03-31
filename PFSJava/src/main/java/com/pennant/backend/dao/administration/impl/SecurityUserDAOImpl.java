@@ -318,7 +318,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		StringBuilder   updateSql = new StringBuilder  ("Update SecUsers");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set UsrID = :UsrID, UsrLogin = :UsrLogin, UserStaffID = :UserStaffID, UsrFName = :UsrFName, ");
+		updateSql.append(" Set UsrLogin = :UsrLogin, UserStaffID = :UserStaffID, UsrFName = :UsrFName, ");
 		updateSql.append(" UsrMName = :UsrMName, UsrLName = :UsrLName, UsrMobile = :UsrMobile, UsrEmail = :UsrEmail, ");
 		updateSql.append(" UsrEnabled = :UsrEnabled, UsrCanSignonFrom = :UsrCanSignonFrom, UsrCanSignonTo = :UsrCanSignonTo,");
 		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
@@ -448,8 +448,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		StringBuilder   updateSql = new StringBuilder  ("Update SecurityUserDivBranch");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set UsrID = :UsrID, UserDivision = :UserDivision, UserBranch = :UserBranch,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");

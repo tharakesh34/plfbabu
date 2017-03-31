@@ -330,7 +330,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update Accounts");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AccountId = :AccountId, AcCcy = :AcCcy, AcType = :AcType" ); 
+		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
 		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
 		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
 		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 
@@ -378,7 +378,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		
 		StringBuilder	updateSql =new StringBuilder("Update Accounts");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AccountId = :AccountId, AcCcy = :AcCcy, AcType = :AcType" ); 
+		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
 		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
 		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
 		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 

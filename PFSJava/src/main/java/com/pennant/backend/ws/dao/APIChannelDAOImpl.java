@@ -210,12 +210,12 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		StringBuilder updateSql = new StringBuilder("Update API_CHANNEL_DETAILS");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Id= :Id,Code = :Code,Description = :Description,Active = :Active,");
-		updateSql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" Set Code = :Code, Description = :Description, Active = :Active,");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where   Id = :Id ");
+		updateSql.append(" Where Id = :Id ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannel);
@@ -398,12 +398,12 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update API_CHANNEL_IP_DETAILS");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Id = :Id, ChannelId = :ChannelId, IP = :IP,  Active= :Active,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" Set IP = :IP, Active= :Active,");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where  Id = :Id AND  ChannelId = :ChannelId ");
+		updateSql.append(" Where Id = :Id AND ChannelId = :ChannelId");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannelIP);

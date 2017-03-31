@@ -279,7 +279,7 @@ public class SecurityOperationDAOImpl extends BasisNextidDaoImpl<SecurityOperati
 		logger.debug("Entering ");
 		StringBuilder updateSql =new StringBuilder("Update SecOperations");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set OprID = :OprID, OprCode = :OprCode, OprDesc = :OprDesc");
+		updateSql.append(" Set OprCode = :OprCode, OprDesc = :OprDesc");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append("RecordType = :RecordType, WorkflowId = :WorkflowId");

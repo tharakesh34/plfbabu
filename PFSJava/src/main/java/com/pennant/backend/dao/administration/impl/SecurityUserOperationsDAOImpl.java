@@ -303,7 +303,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		StringBuilder sql = new StringBuilder("Update SecUserOperations");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql
-		.append(" Set UsrOprID = :UsrOprID, UsrID = :UsrID, OprID = :OprID,  ");
+		.append(" Set UsrID = :UsrID, OprID = :OprID,  ");
 		sql
 		.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		sql

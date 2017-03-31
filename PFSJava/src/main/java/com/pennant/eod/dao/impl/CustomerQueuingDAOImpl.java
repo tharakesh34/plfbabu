@@ -120,7 +120,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing");
 		updateSql.append(" Set ErrorLog = :ErrorLog, Status = :Status,");
 		if (start) {
-			updateSql.append(" StartTime =:StartTime ,");
+			updateSql.append(" StartTime =:StartTime,");
 		} else {
 			updateSql.append(" EndTime = :EndTime,");
 		}

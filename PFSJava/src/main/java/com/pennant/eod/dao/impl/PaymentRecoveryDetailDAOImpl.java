@@ -48,8 +48,8 @@ public class PaymentRecoveryDetailDAOImpl implements PaymentRecoveryDetailDAO {
 	public void update(List<PaymentRecoveryDetail> detail) {
 		logger.debug(" Entering ");
 		StringBuilder insertSql = new StringBuilder("Update PaymentRecoveryDetail");
-		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt,SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
-		insertSql.append("PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
+		insertSql.append(" set SysTranRef=:SysTranRef, PrimaryAcDebitAmt= :PrimaryAcDebitAmt, SecondaryAcDebitAmt=:SecondaryAcDebitAmt,");
+		insertSql.append(" PaymentStatus=:PaymentStatus where TransactionReference=:TransactionReference");
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detail.toArray());
 		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 
