@@ -159,7 +159,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		if(PennantConstants.YES.equals(SysParamUtil.getValueAsString("LAST_LOGIN_INFO"))) {
 			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLastLogin", null, ""));
 		}
-
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -171,10 +171,12 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 * @throws Exception
 	 */
 	public void onClientInfo(ClientInfoEvent event) throws Exception {
+		logger.debug("Entering");
 		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);
 		currentDesktopWidth.setValue(event.getDesktopWidth());
 
 		createMainTreeMenu();
+		logger.debug("Leaving");
 	}
 
 	/**
