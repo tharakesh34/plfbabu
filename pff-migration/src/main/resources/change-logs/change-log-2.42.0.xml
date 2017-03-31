@@ -1077,4 +1077,12 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 			update reportlist set  ReportHeading='Mandate',Module='Customers',ModuleType='Customers' where Code='Mandate'
 	</sql>
 	</changeSet>
+	
+	<changeSet id="27" author="madhubabu">
+	<sql>
+	update ReportList set FormatReq=0 where Code='WIF';
+	update reportlist set FieldLabels='listheader_CustCIF.label,listheader_CustShrtName.label,listheader_CustCoreBank.label,listheader_CustDftBranch.label,listheader_CustCtgCode.label,listheader_CustTypeCode.label' where Code='Customer';
+	</sql>
+	
+	</changeSet>
 	</databaseChangeLog>
