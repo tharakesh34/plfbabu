@@ -3550,6 +3550,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
 		this.cbfinGrcRateType.setDisabled(isTrue);
 		this.finCpzFrq.setDisabled(isTrue);
+		this.financeGrcBaseRate.setReadonly(isTrue);
 		this.financeGrcBaseRate.getBaseComp().setReadonly(isTrue);
 		this.financeGrcBaseRate.getSpecialComp().setReadonly(isTrue);
 		this.finGrcIntRate.setReadonly(isTrue);
@@ -3649,6 +3650,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.financeBaserate.getBaseComp().setMandatoryStyle(false);
 			this.financeBaserate.getSpecialComp().setMandatoryStyle(false);
 			this.financeBaserate.setReadonly(false);
+			this.financeGrcBaseRate.getBaseComp().setMandatoryStyle(false);
+			this.financeGrcBaseRate.getSpecialComp().setMandatoryStyle(false);
+			this.financeGrcBaseRate.setReadonly(false);
 			this.rpyPricingMethod.setMandatoryStyle(false);
 			this.finAcType.setMandatoryStyle(false);
 			this.pftPayAcType.setMandatoryStyle(false);
@@ -3657,8 +3661,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finBankContingentAcType.setMandatoryStyle(false);
 			this.downPayRule.setMandatoryStyle(false);
 			this.finContingentAcType.setMandatoryStyle(false);
-			this.financeGrcBaseRate.getBaseComp().setReadonly(false);
-			this.financeGrcBaseRate.getSpecialComp().setReadonly(false);
 			this.grcPricingMethod.setMandatoryStyle(false);
 			this.grcAdvBaseRate.setMandatoryStyle(false);
 			this.finGrcDftIntFrq.setMandatoryStyle(false);
@@ -5002,6 +5004,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					|| StringUtils.equals(value, CalculationConstants.RATE_BASIS_C)
 					|| StringUtils.equals(value, CalculationConstants.RATE_BASIS_D)) {
 				this.finGrcIsRvwAlw.setDisabled(true);
+				this.financeGrcBaseRate.setReadonly(true);
 				if (checkAction) {
 					this.financeGrcBaseRate.getBaseComp().setDescription("");
 					this.financeGrcBaseRate.getSpecialComp().setDescription("");
