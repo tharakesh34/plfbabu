@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.security.core.Authentication;
@@ -96,7 +97,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private Collection<GrantedAuthority> grantedAuthorities;
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
-
+	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<String, Collection<SecurityRight>>();
 	/**
 	 * Get a logged-in users WorkSpace which holds all necessary vars. <br>
 	 * 
@@ -224,50 +225,16 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	public void allocateAuthorities(String page) {
-
-		SecurityRight secRight = new SecurityRight();
-		secRight.setLoginAppId(App.ID);
-		secRight.setLoginAppCode(App.CODE);
-		secRight.setUsrID(loggedInUser.getLoginUsrID());
-		secRight.setPage(page);
-
-		final Collection<SecurityRight> rights = getUserService().getPageRights(secRight, null);
-
-		for (final SecurityRight right : rights) {
-			if (!getGrantedAuthoritySet().contains(right.getRightName())) {
-				this.grantedAuthoritySet.add(right.getRightName());
-			}
-		}
+		allocateAuthorities(page, null, null);
 	}
 
 	public void allocateAuthorities(String page, String roleCode) {
-
-		SecurityRight secRight = new SecurityRight();
-		secRight.setLoginAppId(App.ID);
-		secRight.setLoginAppCode(App.CODE);
-		secRight.setUsrID(loggedInUser.getLoginUsrID());
-		secRight.setRoleCd(roleCode);
-		secRight.setPage(page);
-
-		final Collection<SecurityRight> rights = getUserService().getPageRights(secRight, null);
-
-		for (final SecurityRight right : rights) {
-			if (!getGrantedAuthoritySet().contains(right.getRightName())) {
-				this.grantedAuthoritySet.add(right.getRightName());
-			}
-		}
+		allocateAuthorities(page, roleCode, null);
 	}
 
 	public void allocateAuthorities(String page, String roleCode, String menuRightName) {
 
-		SecurityRight secRight = new SecurityRight();
-		secRight.setLoginAppId(App.ID);
-		secRight.setLoginAppCode(App.CODE);
-		secRight.setUsrID(loggedInUser.getLoginUsrID());
-		secRight.setRoleCd(roleCode);
-		secRight.setPage(page);
-
-		final Collection<SecurityRight> rights = getUserService().getPageRights(secRight, menuRightName);
+		final Collection<SecurityRight> rights = getSecurityRights(page, roleCode, menuRightName);
 
 		for (final SecurityRight right : rights) {
 			if (!getGrantedAuthoritySet().contains(right.getRightName())) {
@@ -276,6 +243,36 @@ public class UserWorkspace implements Serializable, DisposableBean {
 		}
 	}
 
+	private Collection<SecurityRight> getSecurityRights(String page, String roleCode, String menuRightName){
+		StringBuffer rightKey= new StringBuffer();
+		rightKey.append(page);
+		
+		if (StringUtils.isNotBlank(roleCode)) {
+			rightKey.append("@");
+			rightKey.append(roleCode);
+		}
+		
+		if (StringUtils.isNotBlank(menuRightName)) {
+			rightKey.append("@");
+			rightKey.append(menuRightName);
+		}
+		
+		if(!rightsMap.containsKey(rightKey.toString())){
+			SecurityRight secRight = new SecurityRight();
+			secRight.setLoginAppId(App.ID);
+			secRight.setLoginAppCode(App.CODE);
+			secRight.setUsrID(loggedInUser.getLoginUsrID());
+			secRight.setRoleCd(roleCode);
+			secRight.setPage(page);
+			Collection<SecurityRight> rights  = getUserService().getPageRights(secRight, menuRightName);
+			rightsMap.put(rightKey.toString(), rights);
+			return rights;
+		}
+		
+		return rightsMap.get(rightKey.toString());
+	}
+	
+	
 	public void deAllocateAuthorities(String page) {
 		Set<String> tempAuthoritySet = new HashSet<String>();
 		Object[] object = grantedAuthoritySet.toArray();
@@ -296,12 +293,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	private void setRoleMenuAuthorities(String roleCode, String page, String menuRightName) {
-		SecurityRight secRight = new SecurityRight();
-		secRight.setLoginAppId(App.ID);
-		secRight.setPage(page);
-		secRight.setRoleCd(roleCode);
-		secRight.setUsrID(loggedInUser.getLoginUsrID());
-		final Collection<SecurityRight> rights = getUserService().getRoleRights(secRight, menuRightName);
+		final Collection<SecurityRight> rights = getSecurityRights(page, roleCode, menuRightName);
 
 		if (this.roleRights == null) {
 			this.roleRights = new HashSet<String>(rights.size());
