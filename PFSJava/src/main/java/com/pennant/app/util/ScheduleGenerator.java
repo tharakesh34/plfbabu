@@ -696,8 +696,7 @@ public class ScheduleGenerator {
 		logger.debug("Entering");
 
 		//TODO: As of now reCheckFlags code is incorporated only for capitalizations. The same can be incorporated on need basis
-		
-		
+
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(frequency, startDate, endDate, true, true);
 
@@ -739,7 +738,14 @@ public class ScheduleGenerator {
 								&& financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
 							schedule.setPftOnSchDate(true);
 						} else if (financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFT)) {
-							schedule.setPftOnSchDate(true);
+
+							if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
+									&& FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(),
+											financeMain.getGrcPeriodEndDate())) {
+								schedule.setPftOnSchDate(true);
+							} else {
+								schedule.setPftOnSchDate(true);
+							}
 						}
 
 						schedule.setRepayOnSchDate(false);
@@ -756,8 +762,10 @@ public class ScheduleGenerator {
 
 					//Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
-					
-					if (reCheckFlags && (schedule.getSchDate().compareTo(startDate)==0 || schedule.getSchDate().compareTo(endDate)==0)) {
+
+					if (reCheckFlags
+							&& (schedule.getSchDate().compareTo(startDate) == 0 || schedule.getSchDate().compareTo(
+									endDate) == 0)) {
 						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
 					} else {
 						schedule.setCpzOnSchDate(true);
