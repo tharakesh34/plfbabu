@@ -91,7 +91,7 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
 		if (conf == MultiLineMessageBox.YES) {
-//			closeOtherTabs();
+			closeOtherTabs();
 			this.btnStartJob.setDisabled(true);
 
 			try {
