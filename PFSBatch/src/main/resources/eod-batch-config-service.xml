@@ -97,6 +97,7 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="financeRateReviewDAO" ref="financeRateReviewDAO" />
 	</bean>
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">

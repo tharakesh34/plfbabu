@@ -135,7 +135,7 @@ public class EodService {
 		statusMovementService.processMovements(connection, custId, date);
 
 		//installment date posting
-		installmentDueService.processDueDatePostings(connection, custId, date);
+//		installmentDueService.processDueDatePostings(connection, custId, date);
 
 		//Rate review
 		//FIXE Rate review process should checked after the completion new method in schedule calculator

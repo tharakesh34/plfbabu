@@ -1852,102 +1852,102 @@ public class ScheduleCalculator {
 
 	private FinScheduleData procRefreshRates(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
-
-		//TODO: PV: MODIFIED to get rid off errors but pending for complete change
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		String recaltype = finMain.getRecalType();
-
-		finMain.setCompareToExpected(false);
-		finMain.setCompareExpectedResult(BigDecimal.ZERO);
-
-		Date recalStartDate = null;
-		Date recalEndDate = null;
-		Date curBussniessDate = DateUtility.getAppDate();
-
-		/*
-		 * Check reviews allowed or not. If not allowed then return without any change
-		 */
-		if (curBussniessDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
-			if (!finMain.isAllowGrcPftRvw()) {
-				return finScheduleData;
-			}
-		} else {
-			if (!finMain.isAllowRepayRvw()) {
-				return finScheduleData;
-			}
-		}
-
-		/*
-		 * Three types of recalculation allowed in review rate refresh CURPRD, TILLMDT, and ADJMDT When current review
-		 * period installments paid completely recalculation will be forced to ADJMDT
-		 */
-		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
-
-		boolean isFirstAdjSet = false;
-
-		// CURPRD OR TILLMDT
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)
-				|| StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
-
-			// TILLMDT
-			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
-				recalEndDate = finMain.getMaturityDate();
-			}
-
-			for (int i = 0; i < sdSize; i++) {
-				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				Date schdDate = curSchd.getSchDate();
-
-				if (schdDate.compareTo(finMain.getLastRepayRvwDate()) <= 0) {
-					continue;
-				}
-
-				if (curSchd.isRepayOnSchDate() && (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())
-						&& !isFirstAdjSet) {
-
-					isFirstAdjSet = true;
-					recalStartDate = schdDate;
-
-					// ?TILLMDT No need to check end date again
-					if (recaltype.equals(CalculationConstants.RPYCHG_TILLMDT)) {
-						break;
-					}
-				}
-
-				if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_EQUAL)) {
-					finMain.setCompareExpectedResult(curSchd.getRepayAmount());
-				} else {
-					finMain.setCompareExpectedResult(curSchd.getPrincipalSchd());
-				}
-
-				// Applicable to CURPRD only. If not current period will not
-				// come to this stage
-				if (curSchd.isRvwOnSchDate() && isFirstAdjSet) {
-					recalEndDate = schdDate;
-					break;
-				}
-			}
-
-			if (!isFirstAdjSet) {
-				recalStartDate = recalEndDate;
-				recaltype = CalculationConstants.RPYCHG_ADJMDT;
-			} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
-				finMain.setCompareToExpected(true);
-			}
-		}
-
-		// ADJMDT (No other types are allowed)
-		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)
-				&& !StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
-			recaltype = CalculationConstants.RPYCHG_ADJMDT;
-			isFirstAdjSet = true;
-
-			recalStartDate = finMain.getMaturityDate();
-			recalEndDate = recalStartDate;
-		}
-
-		finMain.setRecalFromDate(recalStartDate);
-		finMain.setRecalToDate(recalEndDate);
+//		TODO satish:It can be removed.No need to required set the dates here since date setting done before calling this method
+//		//TODO: PV: MODIFIED to get rid off errors but pending for complete change
+//		FinanceMain finMain = finScheduleData.getFinanceMain();
+//		String recaltype = finMain.getRecalType();
+//
+//		finMain.setCompareToExpected(false);
+//		finMain.setCompareExpectedResult(BigDecimal.ZERO);
+//
+//		Date recalStartDate = null;
+//		Date recalEndDate = null;
+//		Date curBussniessDate = DateUtility.getAppDate();
+//
+//		/*
+//		 * Check reviews allowed or not. If not allowed then return without any change
+//		 */
+//		if (curBussniessDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+//			if (!finMain.isAllowGrcPftRvw()) {
+//				return finScheduleData;
+//			}
+//		} else {
+//			if (!finMain.isAllowRepayRvw()) {
+//				return finScheduleData;
+//			}
+//		}
+//
+//		/*
+//		 * Three types of recalculation allowed in review rate refresh CURPRD, TILLMDT, and ADJMDT When current review
+//		 * period installments paid completely recalculation will be forced to ADJMDT
+//		 */
+//		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+//
+//		boolean isFirstAdjSet = false;
+//
+//		// CURPRD OR TILLMDT
+//		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)
+//				|| StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
+//
+//			// TILLMDT
+//			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
+//				recalEndDate = finMain.getMaturityDate();
+//			}
+//
+//			for (int i = 0; i < sdSize; i++) {
+//				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+//				Date schdDate = curSchd.getSchDate();
+//
+//				if (schdDate.compareTo(finMain.getLastRepayRvwDate()) <= 0) {
+//					continue;
+//				}
+//
+//				if (curSchd.isRepayOnSchDate() && (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())
+//						&& !isFirstAdjSet) {
+//
+//					isFirstAdjSet = true;
+//					recalStartDate = schdDate;
+//
+//					// ?TILLMDT No need to check end date again
+//					if (recaltype.equals(CalculationConstants.RPYCHG_TILLMDT)) {
+//						break;
+//					}
+//				}
+//
+//				if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_EQUAL)) {
+//					finMain.setCompareExpectedResult(curSchd.getRepayAmount());
+//				} else {
+//					finMain.setCompareExpectedResult(curSchd.getPrincipalSchd());
+//				}
+//
+//				// Applicable to CURPRD only. If not current period will not
+//				// come to this stage
+//				if (curSchd.isRvwOnSchDate() && isFirstAdjSet) {
+//					recalEndDate = schdDate;
+//					break;
+//				}
+//			}
+//
+//			if (!isFirstAdjSet) {
+//				recalStartDate = recalEndDate;
+//				recaltype = CalculationConstants.RPYCHG_ADJMDT;
+//			} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)) {
+//				finMain.setCompareToExpected(true);
+//			}
+//		}
+//
+//		// ADJMDT (No other types are allowed)
+//		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_CURPRD)
+//				&& !StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
+//			recaltype = CalculationConstants.RPYCHG_ADJMDT;
+//			isFirstAdjSet = true;
+//
+//			recalStartDate = finMain.getMaturityDate();
+//			recalEndDate = recalStartDate;
+//		}
+//
+//		finMain.setRecalFromDate(recalStartDate);
+//		finMain.setRecalToDate(recalEndDate);
 
 		// Call schedule calculation process
 		// Except first time creation of schedule covert flat rate to reducing

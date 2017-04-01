@@ -682,9 +682,9 @@ public class PennantStaticListUtil {
 		if(revRateAppPeriods == null){
 			revRateAppPeriods = new ArrayList<ValueLabel>(2);
 			//reviewRateAppliedPeriodsList.add(new ValueLabel("INCPRP", Labels.getLabel("label_Include_Past_Review_Periods")));
-			revRateAppPeriods.add(new ValueLabel("RVWUPR", Labels.getLabel("label_Current_Future_Unpaid_Review_Periods")));
-			revRateAppPeriods.add(new ValueLabel("RVWALL", Labels.getLabel("label_All_Current_Future_Review_Periods")));
-			revRateAppPeriods.add(new ValueLabel("NORVW", Labels.getLabel("label_All_Current_No_Auto_Rate_Review")));
+			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_RVWUPR, Labels.getLabel("label_Current_Future_Unpaid_Review_Periods")));
+			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_RVWALL, Labels.getLabel("label_All_Current_Future_Review_Periods")));
+			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_NORVW, Labels.getLabel("label_All_Current_No_Auto_Rate_Review")));
 		}
 		return revRateAppPeriods;
 	}

@@ -108,8 +108,8 @@ public class RateReview implements Tasklet {
 
 
 			while (resultSet.next()) {
-				
-				getRateReviewService().processRateReview(resultSet.getString("FinReference"),dateValueDate);
+				//FIXME change the method as per new rate review process				
+				//				getRateReviewService().processRateReview(resultSet.getString("FinReference"),dateValueDate);
 				
 				processed = resultSet.getRow();
 				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));

@@ -9110,5 +9110,11 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
+		<bean id="financeRateReviewDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 	
 </beans>

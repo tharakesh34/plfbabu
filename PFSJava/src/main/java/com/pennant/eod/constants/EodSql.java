@@ -83,9 +83,6 @@ public class EodSql {
 
 	public static final String approvedFinances = " SELECT FinReference, custid FROM FinanceMain WHERE FinApprovedDate = ?  ";
 	
-	public static void main(String[] args) {
-		System.out.println(customerRepayQueue);
-	}
 	
 	
 }

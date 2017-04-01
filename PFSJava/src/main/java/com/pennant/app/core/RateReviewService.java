@@ -45,28 +45,35 @@ package com.pennant.app.core;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceRateReview;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.eod.constants.EodSql;
-import com.rits.cloning.Cloner;
 
 public class RateReviewService extends ServiceHelper {
 
@@ -77,6 +84,13 @@ public class RateReviewService extends ServiceHelper {
 	private FinanceDisbursementDAO	financeDisbursementDAO;
 	private RepayInstructionDAO		repayInstructionDAO;
 	private FinLogEntryDetailDAO	finLogEntryDetailDAO;
+	private FinanceRateReviewDAO	financeRateReviewDAO;
+
+	//fetch rates changed yesterday or effective date is today
+	public static final String		QUERY_BASERATE		= "SELECT BRType,Currency,BREffDate,BRRate FROM RMTBaserates WHERE lastmdfDate >= ? OR BREffDate = ? ";
+	public static final String		QUERY_FINANCE		= "SELECT rv.FinReference FROM  (Select Distinct FSD.FinReference FinReference FROM FinScheduleDetails FSD "
+																+ " FSD.RvwOnSchDate = 1 AND FSD.BaseRate = ? ) rv  INNER JOIN Financemain fm ON fm.FinReference = rv.FinReference"
+																+ " WHERE fm.finccy = ? AND fm.finisActive=1 AND fm.custid = ? ";
 
 	public RateReviewService() {
 		super();
@@ -86,14 +100,15 @@ public class RateReviewService extends ServiceHelper {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		try {
-			sqlStatement = connection.prepareStatement(EodSql.rateReview);
-			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
-			sqlStatement.setLong(2, custId);
-			sqlStatement.setDate(3, DateUtility.getDBDate(date.toString()));
-			sqlStatement.setLong(4, custId);
+
+			sqlStatement = connection.prepareStatement(QUERY_BASERATE);
+			java.sql.Date yesterDay = DateUtility.addDays(date, -1);
+			sqlStatement.setDate(1, yesterDay);
+			sqlStatement.setDate(2, new java.sql.Date(date.getTime()));
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
-				processRateReview(resultSet.getString("FinReference"), date);
+				BaseRate baseRate = prepareBaseRate(resultSet);
+				processRateReview(connection, custId, baseRate, date);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
@@ -108,79 +123,177 @@ public class RateReviewService extends ServiceHelper {
 		}
 	}
 
-	public void processRateReview(String finReference, Date date) throws Exception {
+	private void processRateReview(Connection connection, long custId, BaseRate baseRate, Date date) throws Exception {
 
-		logger.debug("START: Rate Review for Value Date: " + DateUtility.addDays(date, -1));
+		ResultSet resultSet = null;
+		PreparedStatement sqlStatement = null;
+		try {
+			sqlStatement = connection.prepareStatement(QUERY_FINANCE);
+			sqlStatement.setString(1, baseRate.getBRType());
+			sqlStatement.setString(2, baseRate.getCurrency());
+			sqlStatement.setLong(3, custId);
+			resultSet = sqlStatement.executeQuery();
 
-		FinanceProfitDetail profitDetail = null;
-		FinanceMain financeMain;
+			while (resultSet.next()) {
+				String finref = resultSet.getString("finReference");
 
-		// Fetching Finance Schedule Data by FinReference
-		FinScheduleData finScheduleData = getFinSchDataByFinRef(finReference, "_AView");
-		financeMain = finScheduleData.getFinanceMain();
+				boolean rateRveCompled = false;
+				FinanceRateReview finRateReview = null;
+				List<FinanceRateReview> list = financeRateReviewDAO.getFinanceRateReviewById(finref, date);
+				if (!list.isEmpty()) {
+					rateRveCompled = true;
+					finRateReview = list.get(0);
+				}
 
-		Cloner cloner = new Cloner();
-		FinScheduleData orgFinScheduleData = cloner.deepClone(finScheduleData);
+				if (!rateRveCompled) {
+					doRateReview(finref, date, baseRate);
+				} else {
+					if (finRateReview != null) {
+						finRateReview.setFinReference(finref);
+						finRateReview.setRateType(baseRate.getBRType());
+						finRateReview.setCurrency(baseRate.getCurrency());
+						finRateReview.setValueDate(date);
+						finRateReview.setEffectiveDate(baseRate.getBREffDate());
+						financeRateReviewDAO.save(finRateReview);
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+			if (sqlStatement != null) {
+				sqlStatement.close();
+			}
+		}
+
+	}
+
+	private void doRateReview(String finref, Date date, BaseRate baseRate) throws Exception {
+
+		FinScheduleData finScheduleData = getFinSchDataByFinRef(finref, "_AView");
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceType finType = finScheduleData.getFinanceType();
+		List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
+
+		String rvwAppFor = StringUtils.trimToEmpty(finType.getFinRvwRateApplFor());
+
+		if (!finType.isFinIsRvwAlw()) {
+			return;
+		}
+
+		if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_NORVW)) {
+			return;
+		}
+
+		if (!finType.isRateChgAnyDay() && baseRate.getBREffDate().compareTo(date) != 0) {
+			return;
+		}
+
+		//Log Entry before the schedule change Saving for Total Finance Detail
+		listSave(finScheduleData, "_Log", date);
+
+		Date eventFromDate = null;
+		Date eventToDate = financeMain.getMaturityDate();
+
+		String rvwCalon = finType.getFinSchCalCodeOnRvw();
+
+		for (FinanceScheduleDetail finSchDetail : schList) {
+
+			Date schdate = finSchDetail.getSchDate();
+
+			if (schdate.compareTo(baseRate.getBREffDate()) < 0) {
+				continue;
+			}
+
+			if (eventFromDate == null) {
+				if (finSchDetail.isRepayOnSchDate()) {
+
+					if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
+						if ((!finSchDetail.isSchPftPaid() && !finSchDetail.isSchPriPaid())) {
+							eventFromDate = schdate;
+							break;
+						}
+
+					} else if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWALL)) {
+						eventFromDate = schdate;
+						break;
+					}
+				}
+			}
+		}
+
+		financeMain.setEventFromDate(eventFromDate);
+		financeMain.setEventToDate(eventToDate);
+		financeMain.setRecalType(rvwCalon);
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		// Finance Profit Details
-		profitDetail = AEAmounts.calProfitDetails(financeMain, finScheduleData.getFinanceScheduleDetails(),
-				profitDetail, date);
-
+		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(financeMain, schList, null, date);
 		// Amount Codes Details Preparation
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(financeMain, profitDetail, date);
 
 		// DataSet preparation
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_RATCHG, date,
-				DateUtility.getAppDate());
-
-		// Posting Preparation Util
+		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_RATCHG, date, date);
 
 		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, finScheduleData.getFinanceType());
 		saveAccounting(list);
 
 		// Update New Finance Schedule Details Data
-		listSave(finScheduleData, profitDetail);
+		saveOrUpdate(finScheduleData, profitDetail);
 
-		//Create log entry for Action for Schedule Modification
-		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-		entryDetail.setFinReference(finScheduleData.getFinReference());
-		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_RATCHG);
-		entryDetail.setSchdlRecal(true);
-		entryDetail.setPostDate(date);
-		entryDetail.setReversalCompleted(false);
-		long logKey = getFinLogEntryDetailDAO().save(entryDetail);
+		FinanceRateReview rateReview = new FinanceRateReview();
+		rateReview.setFinReference(finref);
+		rateReview.setRateType(baseRate.getBRType());
+		rateReview.setCurrency(baseRate.getCurrency());
+		rateReview.setValueDate(date);
+		rateReview.setEffectiveDate(baseRate.getBREffDate());
+		rateReview.setEventFromDate(eventFromDate);
+		rateReview.setEventToDate(eventToDate);
+		rateReview.setRecalFromdate(financeMain.getRecalFromDate());
+		rateReview.setRecalToDate(financeMain.getRecalToDate());
+		financeRateReviewDAO.save(rateReview);
 
-		//Log Entry Saving for TOtal Finance Detail
-		listSave(orgFinScheduleData, "_Log", logKey);
+	}
 
-		logger.debug("COMPLETE: Rate Review for Value Date: " + DateUtility.addDays(date, -1));
+	private BaseRate prepareBaseRate(ResultSet resultSet) throws SQLException {
+		BaseRate baseRate = new BaseRate();
+		baseRate.setBRType(resultSet.getString("BRType"));
+		baseRate.setCurrency(resultSet.getString("Currency"));
+		baseRate.setBREffDate(resultSet.getDate("BREffDate"));
+		baseRate.setBRRate(resultSet.getBigDecimal("BRRate"));
 
+		return baseRate;
 	}
 
 	/**
 	 * Method for fetching Finance Schedule Data based on FinReference
 	 * 
-	 * @param financeReference
+	 * @param finRef
 	 * @param type
 	 * @return
 	 */
-	public FinScheduleData getFinSchDataByFinRef(String financeReference, String type) {
+	public FinScheduleData getFinSchDataByFinRef(String finRef, String type) {
 		logger.debug("Entering");
-
 		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinReference(financeReference);
-		finSchData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(financeReference, type, false));
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(financeReference,
-				type, false));
-		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(financeReference, type, false));
-		finSchData.setFinanceType(getFinanceTypeDAO()
-				.getFinanceTypeByID(finSchData.getFinanceMain().getFinType(), type));
+		finSchData.setFinReference(finRef);
+		FinanceMain finMain = getFinanceMainDAO().getFinanceMainById(finRef, type, false);
+		FinanceType fintype = getFinanceTypeDAO().getFinanceTypeByID(finMain.getFinType(), type);
+		List<FinanceScheduleDetail> list = getFinanceScheduleDetailDAO().getFinScheduleDetails(finRef, type, false);
+		List<RepayInstruction> insrt = repayInstructionDAO.getRepayInstructions(finRef, type, false);
+		finSchData.setFinanceMain(finMain);
+		finSchData.setFinanceType(fintype);
+		finSchData.setFinanceScheduleDetails(list);
+		finSchData.setRepayInstructions(insrt);
 		logger.debug("Leaving");
 		return finSchData;
-
 	}
 
 	/**
@@ -188,33 +301,40 @@ public class RateReviewService extends ServiceHelper {
 	 * 
 	 * @param schdueleData
 	 */
-	public void listSave(FinScheduleData schdueleData, FinanceProfitDetail profitDetail) {
+	public void saveOrUpdate(FinScheduleData schdueleData, FinanceProfitDetail profitDetail) {
 		logger.debug("Entering ");
 
+		FinanceMain finMain = schdueleData.getFinanceMain();
 		// FinanceMain updation
-		schdueleData.getFinanceMain().setVersion(schdueleData.getFinanceMain().getVersion() + 1);
-		getFinanceMainDAO().update(schdueleData.getFinanceMain(), "", false);
-
+		finMain.setVersion(finMain.getVersion() + 1);
+		getFinanceMainDAO().update(finMain, "", false);
 		// Finance Schedule Details
 		getFinanceScheduleDetailDAO().updateList(schdueleData.getFinanceScheduleDetails(), "");
-
 		// Finance Repay Instruction Details
-		getRepayInstructionDAO().deleteByFinReference(schdueleData.getFinanceMain().getFinReference(), "", false, 0);
-
-		for (int i = 0; i < schdueleData.getRepayInstructions().size(); i++) {
-			schdueleData.getRepayInstructions().get(i).setFinReference(schdueleData.getFinanceMain().getFinReference());
+		repayInstructionDAO.deleteByFinReference(finMain.getFinReference(), "", false, 0);
+		//Add repay instructions
+		List<RepayInstruction> lisRepayIns = schdueleData.getRepayInstructions();
+		for (RepayInstruction repayInstruction : lisRepayIns) {
+			repayInstruction.setFinReference(finMain.getFinReference());
 		}
-
-		getRepayInstructionDAO().saveList(schdueleData.getRepayInstructions(), "", false);
-
+		repayInstructionDAO.saveList(lisRepayIns, "", false);
 		// UPDATE Finance Profit Details
-		getFinanceProfitDetailDAO().update(profitDetail, false);
+		//getFinanceProfitDetailDAO().update(profitDetail, false);
 
 		logger.debug("Leaving ");
 	}
 
-	public void listSave(FinScheduleData finDetail, String tableType, long logKey) {
+	public void listSave(FinScheduleData finDetail, String tableType, Date valueDate) {
 		logger.debug("Entering ");
+		//Create log entry for Action for Schedule Modification
+		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+		entryDetail.setFinReference(finDetail.getFinReference());
+		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_RATCHG);
+		entryDetail.setSchdlRecal(true);
+		entryDetail.setPostDate(valueDate);
+		entryDetail.setReversalCompleted(false);
+		long logKey = finLogEntryDetailDAO.save(entryDetail);
+
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
@@ -244,14 +364,14 @@ public class RateReviewService extends ServiceHelper {
 			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
 			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
 		}
-		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, false);
+		financeDisbursementDAO.saveList(finDetail.getDisbursementDetails(), tableType, false);
 
 		//Finance Repay Instruction Details
 		for (int i = 0; i < finDetail.getRepayInstructions().size(); i++) {
 			finDetail.getRepayInstructions().get(i).setFinReference(finDetail.getFinReference());
 			finDetail.getRepayInstructions().get(i).setLogKey(logKey);
 		}
-		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, false);
+		repayInstructionDAO.saveList(finDetail.getRepayInstructions(), tableType, false);
 
 		logger.debug("Leaving ");
 	}
@@ -260,28 +380,20 @@ public class RateReviewService extends ServiceHelper {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public RepayInstructionDAO getRepayInstructionDAO() {
-		return repayInstructionDAO;
 	}
 
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
 		this.repayInstructionDAO = repayInstructionDAO;
 	}
 
-	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
-		return finLogEntryDetailDAO;
-	}
-
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
+	}
+
+	public void setFinanceRateReviewDAO(FinanceRateReviewDAO financeRateReviewDAO) {
+		this.financeRateReviewDAO = financeRateReviewDAO;
 	}
 
 }
