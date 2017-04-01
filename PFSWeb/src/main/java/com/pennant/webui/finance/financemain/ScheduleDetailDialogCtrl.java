@@ -2148,30 +2148,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
-	/**
-	 * when the "btnReCalcualte" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onClick$btnAddTakafulRate(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finScheduleData", getFinScheduleData());
-		map.put("financeMainDialogCtrl", this);
-		map.put("moduleDefiner", moduleDefiner);
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/Additional/TakafulRateChangeDialog.zul",
-					window_ScheduleDetailDialog, map);
-		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
-		}
-		logger.debug("Leaving" + event.toString());
-	}
 	
 	/**
 	 * when the "btnReCalcualte" button is clicked. <br>
