@@ -63,6 +63,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * This is the controller class for the
@@ -243,24 +244,27 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws Exception 
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
-		String recStatus = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus());
-		
-		if(this.userAction.getSelectedItem() != null && !recStatus.equals(PennantConstants.RCD_STATUS_REJECTED) &&
-				(this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED) ||
-						this.userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED)) && StringUtils.isEmpty(moduleDefiner)){
-			 boolean allow = FinAdvancePaymentsCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
+		String prevRecordStatus = getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus();
+		String recordStatus = userAction.getSelectedItem().getValue();
+
+		if (!PennantConstants.RCD_STATUS_REJECTED.equals(prevRecordStatus)
+				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
+				&& StringUtils.isEmpty(moduleDefiner)) {
+			boolean allow = FinAdvancePaymentsCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
 			if (!allow) {
 				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
 				return;
-			}else{
-				doReject();	
+			} else {
+				doReject();
 			}
-		}else{
+		} else {
 			doSave();
 		}
-		logger.debug("Leaving " + event.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
