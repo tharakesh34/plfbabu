@@ -152,7 +152,7 @@
 
 									<row id="row_DeviationType"
 										visible="false">
-										<label
+										<label id="label_ReturnType"
 											value="${c:l('label_RuleDialog_returnType.value')}" />
 										<hbox>
 											<space spacing="2px"
@@ -160,9 +160,9 @@
 											<combobox id="returnType"
 												width="100px" readonly="true" />
 										</hbox>
-										<label id="label_deviationType"
+										<label id="label_DeviationType"
 											value="${c:l('label_RuleDialog_deviateReturnType.value')}" />
-										<hbox id="hbox_deviationType">
+										<hbox id="hbox_DeviationType">
 											<space
 												id="space_DeviationType" spacing="2px" />
 											<combobox id="deviationType"
