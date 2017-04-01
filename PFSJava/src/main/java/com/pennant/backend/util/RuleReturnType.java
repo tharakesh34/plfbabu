@@ -5,7 +5,8 @@ public enum RuleReturnType {
 		DECIMAL("D"), 
 		INTEGER("I"), 
 		BOOLEAN("B"), 
-		OBJECT("O");
+		OBJECT("O"),
+		CALCSTRING("C");
 
 		private String value;
 

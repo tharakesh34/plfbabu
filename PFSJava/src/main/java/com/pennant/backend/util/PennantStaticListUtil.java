@@ -887,12 +887,13 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getRuleReturnType() {
 
 		if(ruleReturnTypes == null){
-			ruleReturnTypes = new ArrayList<ValueLabel>(4);
+			ruleReturnTypes = new ArrayList<ValueLabel>(6);
 			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_STRING, Labels.getLabel("label_String")));
 			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_DECIMAL, Labels.getLabel("label_Decimal")));
 			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_INTEGER, Labels.getLabel("label_Integer")));
 			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_BOOLEAN, Labels.getLabel("label_Boolean")));
 			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_OBJECT, Labels.getLabel("label_Object")));
+			ruleReturnTypes.add(new ValueLabel(RuleConstants.RETURNTYPE_CALCSTRING, Labels.getLabel("label_CalcString")));
 		}
 		return ruleReturnTypes;
 	}

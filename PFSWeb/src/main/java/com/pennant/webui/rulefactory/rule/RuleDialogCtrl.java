@@ -60,6 +60,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
@@ -130,6 +131,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	protected Label label_RuleDialog_ruleCode;
 	protected Label label_RuleDialog_ruleCodeDesc;
 	protected Label label_seqOrder;
+	protected Label label_DeviationType;
+	
+	protected Hbox	hbox_DeviationType;
 
 	protected Row row_FeeType;
 	protected Row row_SeqOrder;
@@ -446,6 +450,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		case RuleConstants.MODULE_ELGRULE:
 			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setVisible(true);
+			this.hbox_DeviationType.setVisible(true);
 			break;
 
 		case RuleConstants.MODULE_FEES:
@@ -477,7 +483,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			break;
 
 		case RuleConstants.MODULE_SUBHEAD:
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setVisible(false);
+			this.hbox_DeviationType.setVisible(false);
+			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
 
 		case RuleConstants.MODULE_LMTLINE:
@@ -617,7 +626,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		String excludeFields = "";
 
 		if (StringUtils.equals(module, RuleConstants.MODULE_ELGRULE)) {
-			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + ",";
+			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + "," + RuleConstants. RETURNTYPE_CALCSTRING + ",";
+		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)) {
+			excludeFields = "," + RuleConstants.RETURNTYPE_DECIMAL + "," + RuleConstants.RETURNTYPE_BOOLEAN + ","
+					+ RuleConstants.RETURNTYPE_INTEGER + "," + RuleConstants.RETURNTYPE_OBJECT + ",";
 		}
 
 		fillComboBox(this.returnType, aRule.getReturnType(), PennantStaticListUtil.getRuleReturnType(), excludeFields);
@@ -715,7 +727,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		}
 
 		// Deviation Return type
-		if (this.row_DeviationType.isVisible()) {
+		if (this.hbox_DeviationType.isVisible()) {
 			try {
 				if (StringUtils.equals(returnType_Value, RuleConstants.RETURNTYPE_OBJECT)
 						&& this.deviationType.getSelectedIndex() == 0) {
@@ -909,6 +921,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 				ruleReturnType = RuleReturnType.DECIMAL;
 			} else if (StringUtils.equals(returnType, RuleReturnType.STRING.value())) {
 				ruleReturnType = RuleReturnType.STRING;
+			} else if (StringUtils.equals(returnType, RuleReturnType.CALCSTRING.value())) {
+				ruleReturnType = RuleReturnType.CALCSTRING;
 			} else if (StringUtils.equals(returnType, RuleReturnType.INTEGER.value())) {
 				ruleReturnType = RuleReturnType.INTEGER;
 			} else if (StringUtils.equals(returnType, RuleReturnType.OBJECT.value())) {

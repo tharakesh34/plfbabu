@@ -257,6 +257,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 				break;
 
 			case STRING:
+			case CALCSTRING:
 				resultValue = object.toString().trim();
 				break;
 

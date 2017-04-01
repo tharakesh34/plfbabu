@@ -58,6 +58,7 @@ public class RuleConstants {
 	public static final String RETURNTYPE_BOOLEAN = "B";
 	public static final String RETURNTYPE_INTEGER = "I";
 	public static final String RETURNTYPE_OBJECT = "O";
+	public static final String RETURNTYPE_CALCSTRING = "C";
 
 	// Eligibility Constant Rules
 	public static final String ELGRULE_DSRCAL = "DSRCAL";

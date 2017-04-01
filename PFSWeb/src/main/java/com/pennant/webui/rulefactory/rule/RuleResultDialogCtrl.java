@@ -171,17 +171,29 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			String fieldType = null;
 			for (RBFieldDetail rbFieldDetail : objectFieldList) {
 				fieldType = rbFieldDetail.getRbFldType();
-				if ((StringUtils.equalsIgnoreCase(fieldType, PennantConstants.DECIMAL))
+				
+				if(this.returnType == RuleReturnType.DECIMAL || this.returnType == RuleReturnType.INTEGER) {
+					if ((StringUtils.equalsIgnoreCase(fieldType, PennantConstants.DECIMAL))
 						|| (StringUtils.equalsIgnoreCase(fieldType, PennantConstants.BIGINT))
-						|| (StringUtils.equalsIgnoreCase(fieldType, PennantConstants.NUMERIC))) {					
-				item = new Listitem();
-				cell = new Listcell(rbFieldDetail.getRbFldName());
-				cell.setStyle("text-align:left;");
-				cell.setParent(item);
-				cell = new Listcell(rbFieldDetail.getRbFldDesc());
-				cell.setStyle("text-align:left;");
-				cell.setParent(item);
-				item.setParent(listboxFieldCodes);
+						|| (StringUtils.equalsIgnoreCase(fieldType, PennantConstants.NUMERIC))) {	
+					item = new Listitem();
+					cell = new Listcell(rbFieldDetail.getRbFldName());
+					cell.setStyle("text-align:left;");
+					cell.setParent(item);
+					cell = new Listcell(rbFieldDetail.getRbFldDesc());
+					cell.setStyle("text-align:left;");
+					cell.setParent(item);
+					item.setParent(listboxFieldCodes);
+					}
+				} else {
+					item = new Listitem();
+					cell = new Listcell(rbFieldDetail.getRbFldName());
+					cell.setStyle("text-align:left;");
+					cell.setParent(item);
+					cell = new Listcell(rbFieldDetail.getRbFldDesc());
+					cell.setStyle("text-align:left;");
+					cell.setParent(item);
+					item.setParent(listboxFieldCodes);
 				}
 			}
 		}

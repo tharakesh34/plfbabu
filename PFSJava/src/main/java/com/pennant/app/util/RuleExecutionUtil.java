@@ -242,6 +242,7 @@ public class RuleExecutionUtil implements Serializable {
 
 			break;
 		case STRING:
+		case CALCSTRING:
 			if (result == null) {
 				result = "";
 			} else if (!(result instanceof String)) {
