@@ -11,6 +11,8 @@
  */
 package com.pennanttech.pff.core.util;
 
+import com.pennanttech.pff.core.TableType;
+
 /**
  * <p>
  * A suite of utilities for building the SQL queries.
@@ -65,5 +67,13 @@ public final class QueryUtil {
 		sql.append(") t");
 
 		return sql.toString();
+	}
+
+	public static String getConcurrencyCondition(TableType tableType) {
+		if (TableType.TEMP_TAB.equals(tableType)) {
+			return " and LastMntOn = :PrevMntOn";
+		} else {
+			return " and Version = :Version - 1";
+		}
 	}
 }

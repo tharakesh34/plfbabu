@@ -15,7 +15,7 @@ package com.pennanttech.pff.core;
  * The class {@code AppException} and its subclasses are a form of {@code Throwable} that indicates conditions that the
  * application might catch.
  */
-public class AppException extends Exception {
+public class AppException extends RuntimeException {
 	private static final long serialVersionUID = 888700447794830646L;
 
 	/**
