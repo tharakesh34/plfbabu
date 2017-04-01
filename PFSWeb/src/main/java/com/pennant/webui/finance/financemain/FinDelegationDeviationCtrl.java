@@ -39,7 +39,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 
 public class FinDelegationDeviationCtrl {
-	private final static Logger			logger				= Logger.getLogger(FinDelegationDeviationCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(FinDelegationDeviationCtrl.class);
 
 	private int							format				= 0;
 	private String						userRole;
@@ -53,7 +53,7 @@ public class FinDelegationDeviationCtrl {
 	private CheckListDetailService		checkListDetailService;
 
 	/* This list which hold the all deviation across the tab's */
-	private List<FinanceDeviations>		financeDeviations	= new ArrayList<FinanceDeviations>();
+	private List<FinanceDeviations>		financeDeviations	= new ArrayList<>();
 
 	public FinDelegationDeviationCtrl() {
 		super();
