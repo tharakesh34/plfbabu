@@ -86,8 +86,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List search(DataSource dataSource, Class<?> searchClass, ISearch search)
-	        throws DataAccessException {
+	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) throws DataAccessException {
 		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
 		}
@@ -146,47 +145,41 @@ public class JdbcSearchProcessor {
 			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
 				Sort sortField = (Sort) iterator.next();
 				selectQuery.addCustomOrdering(sortField.getProperty(),
-				        sortField.isDesc() ? OrderObject.Dir.DESCENDING
-				                : OrderObject.Dir.ASCENDING);
+						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
 			}
 		}
 
 		logger.debug("1SQL : " + selectQuery.toString());
 		selectQuery.validate();
-		
 
 		boolean firstResult = false;
 		if (search.getFirstResult() > 0) {
 			firstResult = true;
 		}
 		logger.debug("2SQL : "
-		        + getLimitString(selectQuery.toString(), firstResult, search.getFirstResult(),
-		                search.getMaxResults()));
+				+ getLimitString(selectQuery.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
 		List rowTypes = null;
-		if (searchClass != null) {  
+		if (searchClass != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(searchClass);
 			try {
-				rowTypes = this.namedParameterJdbcTemplate.query(
-				        getLimitString(selectQuery.toString(), firstResult,
-				                search.getFirstResult(), search.getMaxResults()), 
-				        rowMapper);
+				rowTypes = this.namedParameterJdbcTemplate.query(getLimitString(selectQuery.toString(), firstResult,
+						search.getFirstResult(), search.getMaxResults()), rowMapper);
 
 			} catch (Exception e) {
 				logger.debug(e);
 			}
 		} else {
 			Map<String, Object> namedParameters = new HashMap<String, Object>();
-			rowTypes = this.namedParameterJdbcTemplate.queryForList(
-			        getLimitString(selectQuery.toString(), firstResult, search.getFirstResult(),
-			                search.getMaxResults()), namedParameters);
-			
+			rowTypes = this.namedParameterJdbcTemplate.queryForList(getLimitString(selectQuery.toString(), firstResult,
+					search.getFirstResult(), search.getMaxResults()), namedParameters);
+
 			namedParameters = null;
 		}
 		//addPaging(query, search);
 		return rowTypes;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	public String getQuery(ISearch search) throws DataAccessException {
 		
