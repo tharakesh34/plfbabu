@@ -30,6 +30,9 @@ import com.pennant.app.util.SessionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.EodDetailDAO;
+import com.pennant.eod.model.EodDetail;
 import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -67,6 +70,18 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 				.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
 		lable_LastBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
 				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		EodDetailDAO eodDetailsDAO = applicationContext.getBean(EodDetailDAO.class);
+
+		EodDetail eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST));
+		if (eodDetail != null) {
+			this.startTime.setValue(DateUtility.format(eodDetail.getStatTime(), DateFormat.LONG_TIME));
+			if (eodDetail.getEndTime() != null) {
+				this.completedTime.setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
+				this.batchStatus.setValue(EodConstants.PROGRESS_COMPLETED);
+			} else {
+				this.batchStatus.setValue(EodConstants.STATUS_FAILED);
+			}
+		}
 
 		this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
 
@@ -95,7 +110,7 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 			this.btnStartJob.setDisabled(true);
 
 			try {
-				EodTrigger eodTrigger = (EodTrigger) applicationContext.getBean("eodTrigger");
+				EodTrigger eodTrigger = (EodTrigger) applicationContext.getBean(EodTrigger.class);
 				setFileds(eodTrigger);
 				eodTrigger.run();
 

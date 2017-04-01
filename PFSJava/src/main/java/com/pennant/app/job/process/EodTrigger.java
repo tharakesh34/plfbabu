@@ -28,7 +28,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 	private static final Logger				logger				= Logger.getLogger(EodTrigger.class);
 
 	private Eod								eod;
-	
+
 	public volatile Map<Integer, Component>	map					= new HashMap<Integer, Component>();
 
 	public EodTrigger() {
@@ -75,10 +75,9 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 				startEod = false;
 				//Restart
 				if (eodDetail.getEndTime() == null) {
-					startEod=true;
+					startEod = true;
 				}
-				
-				
+
 			}
 
 			if (startEod) {
@@ -94,20 +93,28 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 
 			while (true) {
 				//logger.debug("Waiting..............");
+
 				
 				((Textbox) map.get(7)).setValue("Running");
 
 				if (eod.getThreadPoolTaskExecutor().getActiveCount() == 0) {
 
-					long count = eod.getCustomerIdCount(DateUtility.getAppDate(), EodConstants.PROGRESS_START);
+					long count = eod.getCountbyProgress(DateUtility.getAppDate(), EodConstants.PROGRESS_START);
 					if (count == 0) {
-						eod.getPostEodService().doProcess();
+						long stauscount = eod.getCountByStatus(DateUtility.getAppDate(), EodConstants.STATUS_FAILED);
+						if (stauscount > 0) {
+							((Textbox) map.get(7)).setValue("Failed");
+						} else {
 
-						eodDetail.setEndTime(DateUtility.getSysDate());
-						eod.getEodDetailDAO().update(eodDetail);
+							eod.getPostEodService().doProcess();
+							eodDetail.setEndTime(DateUtility.getSysDate());
+							eod.getEodDetailDAO().update(eodDetail);
+							((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(),
+									DateFormat.LONG_TIME));
+						}
+
 						eod.getThreadPoolTaskExecutor().destroy();
 
-						((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
 						updateCompleteEODStatus();
 						logger.debug("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
 						break;

@@ -87,8 +87,12 @@ public class CustomerQueuingService {
 		logger.debug("Leaving");
 	}
 
-	public long getCustomerIdCount(Date date,String progress) {
-		return getCustomerQueuingDAO().getCustomerIdCount(date,progress);
+	public long getCountbyProgress(Date date,String progress) {
+		return getCustomerQueuingDAO().getCountByProgress(date,progress);
+	}
+	
+	public long getCountByStatus(Date date,String progress) {
+		return getCustomerQueuingDAO().getCountByStatus(date,progress);
 	}
 
 	public CustomerQueuingDAO getCustomerQueuingDAO() {

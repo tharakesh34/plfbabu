@@ -50,7 +50,7 @@ public class Eod implements ApplicationContextAware {
 		boolean recordslessThanThread = false;
 		int threadCount = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
 
-		long custIdCount = getCustomerIdCount(date, null);
+		long custIdCount = getCountbyProgress(date, null);
 
 		if (custIdCount != 0) {
 
@@ -94,8 +94,17 @@ public class Eod implements ApplicationContextAware {
 	 * @param progress
 	 * @return
 	 */
-	public long getCustomerIdCount(Date date, String progress) {
-		return getCustomerQueuingService().getCustomerIdCount(date, progress);
+	public long getCountbyProgress(Date date, String progress) {
+		return getCustomerQueuingService().getCountbyProgress(date, progress);
+	}
+	
+	/**
+	 * @param date
+	 * @param progress
+	 * @return
+	 */
+	public long getCountByStatus(Date date, String progress) {
+		return getCustomerQueuingService().getCountByStatus(date, progress);
 	}
 
 	/**

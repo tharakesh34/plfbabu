@@ -9,7 +9,7 @@ public interface CustomerQueuingDAO {
 
 	void prepareCustomerQueue(Date date);
 
-	long getCustomerIdCount(Date date, String progress);
+	long getCountByProgress(Date date, String progress);
 
 	void updateNoofRows(Date date, long noOfRows, String threadId);
 
@@ -20,5 +20,7 @@ public interface CustomerQueuingDAO {
 	void update(CustomerQueuing customerQueuing, boolean start);
 
 	void logCustomerQueuing();
+
+	long getCountByStatus(Date date, String status);
 
 }

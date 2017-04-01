@@ -46,7 +46,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public long getCustomerIdCount(Date date, String progress) {
+	public long getCountByProgress(Date date, String progress) {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -61,6 +61,23 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+	}
+	
+	@Override
+	public long getCountByStatus(Date date, String status) {
+		logger.debug("Entering");
+		
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setStatus(status);
+		customerQueuing.setEodDate(date);
+		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
+		selectSql.append(" and (Status = :Status)");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 	}
 
