@@ -43,14 +43,14 @@ import com.pennanttech.pff.core.util.ModuleUtil;
  */
 @SuppressWarnings("static-access")
 public class JdbcSearchProcessor {
-	private final static Logger logger = Logger.getLogger(JdbcSearchProcessor.class);
+	private final static Logger							logger		= Logger.getLogger(JdbcSearchProcessor.class);
 
-	private static final String SELECT = "select";
-	private static final String FROM = "from";
-	private static final String DISTINCT = "distinct";
+	private static final String							SELECT		= "select";
+	private static final String							FROM		= "from";
+	private static final String							DISTINCT	= "distinct";
 
-	private static Map<DataSource, JdbcSearchProcessor> map = new HashMap<DataSource, JdbcSearchProcessor>();
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<DataSource, JdbcSearchProcessor>();
+	private NamedParameterJdbcTemplate					namedParameterJdbcTemplate;
 
 	public static JdbcSearchProcessor getInstanceForDataSource(DataSource dataSource) {
 		logger.debug("Entering");
@@ -74,7 +74,7 @@ public class JdbcSearchProcessor {
 	public List search(DataSource dataSource, ISearch search) {
 		return search == null ? null : search(dataSource, search.getSearchClass(), search);
 	}
-	
+
 	public String getSearchQuery(ISearch search) {
 		return search == null ? null : getQuery(search);
 	}
@@ -182,9 +182,8 @@ public class JdbcSearchProcessor {
 
 	@SuppressWarnings({ "rawtypes" })
 	public String getQuery(ISearch search) throws DataAccessException {
-		
-		if (search == null
-		        || StringUtils.isBlank(search.getTabelName())) {
+
+		if (search == null || StringUtils.isBlank(search.getTabelName())) {
 			return null;
 		}
 
@@ -194,7 +193,8 @@ public class JdbcSearchProcessor {
 		if (StringUtils.isBlank(search.getTabelName())) {
 			switch (App.DATABASE) {
 			case SQL_SERVER:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(search.getSearchClass().getSimpleName()) + " WITH (NOLOCK)");
+				selectQuery.addCustomFromTable(
+						ModuleUtil.getTableName(search.getSearchClass().getSimpleName()) + " WITH (NOLOCK)");
 				break;
 			default:
 				selectQuery.addCustomFromTable(ModuleUtil.getTableName(search.getSearchClass().getSimpleName()));
@@ -238,8 +238,7 @@ public class JdbcSearchProcessor {
 			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
 				Sort sortField = (Sort) iterator.next();
 				selectQuery.addCustomOrdering(sortField.getProperty(),
-				        sortField.isDesc() ? OrderObject.Dir.DESCENDING
-				                : OrderObject.Dir.ASCENDING);
+						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
 			}
 		}
 
@@ -265,8 +264,7 @@ public class JdbcSearchProcessor {
 						whereClause.append(" or ");
 					}
 
-					if (subFilter.getOperator() == filter.OP_IN
-					        || subFilter.getOperator() == filter.OP_NOT_IN) {
+					if (subFilter.getOperator() == filter.OP_IN || subFilter.getOperator() == filter.OP_NOT_IN) {
 						whereClause.append(setInCond(subFilter));
 					} else {
 						String andCond = subFilter.toString().trim();
@@ -275,8 +273,7 @@ public class JdbcSearchProcessor {
 				}
 
 				selectQuery.addCondition(new CustomCondition(whereClause.toString()));
-			} else if (filter.getOperator() == filter.OP_IN
-			        || filter.getOperator() == filter.OP_NOT_IN) {
+			} else if (filter.getOperator() == filter.OP_IN || filter.getOperator() == filter.OP_NOT_IN) {
 				selectQuery.addCondition(setInCond(filter));
 			} else {
 				String andCond = filter.toString().trim();
@@ -305,8 +302,7 @@ public class JdbcSearchProcessor {
 	public int count(DataSource dataSource, Class<?> searchClass, ISearch search) {
 
 		int count;
-		if (search == null
-		        || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
+		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
 			return 0;
 		}
 
@@ -338,7 +334,7 @@ public class JdbcSearchProcessor {
 
 		// Add where conditions
 		addWhereClause(search, selectQuery);
-		
+
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
 			selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
@@ -348,9 +344,9 @@ public class JdbcSearchProcessor {
 		logger.debug("3SQL : " + selectQuery.toString());
 
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
-		
+
 		count = this.namedParameterJdbcTemplate.queryForObject(selectQuery.toString(), namedParameters, Integer.class);
-		
+
 		return count;
 	}
 
@@ -409,8 +405,7 @@ public class JdbcSearchProcessor {
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
 
 		return new StringBuffer(sql.length() + 20).append(sql)
-		        .append(hasOffset ? " limit " + startRow + " , " + endRow : " limit " + endRow)
-		        .toString();
+				.append(hasOffset ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
 	}
 
 	public static String getMSSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
@@ -455,7 +450,7 @@ public class JdbcSearchProcessor {
 
 		int orderByIndex = sb.indexOf("order by");
 		CharSequence orderby = orderByIndex > 0 ? sb.subSequence(orderByIndex, sb.length())
-		        : "ORDER BY CURRENT_TIMESTAMP";
+				: "ORDER BY CURRENT_TIMESTAMP";
 
 		if (startRow != 0) {
 			endRow = startRow + endRow;
@@ -540,12 +535,11 @@ public class JdbcSearchProcessor {
 	public static String getDB2LimitString(String sql, int startRow, int endRow) {
 
 		int startOfSelect = sql.toLowerCase().indexOf("select");
-		StringBuffer pagingSelect = new StringBuffer(sql.length() + 100)
-		        .append(sql.substring(0, startOfSelect)) // add the comment
-		        .append("select * from ( select ") // nest the main query in an
-		                                           // outer select
-		        .append(getRowNumber(sql)); // add the rownnumber bit into the
-		                                    // outer query select list
+		StringBuffer pagingSelect = new StringBuffer(sql.length() + 100).append(sql.substring(0, startOfSelect)) // add the comment
+				.append("select * from ( select ") // nest the main query in an
+				// outer select
+				.append(getRowNumber(sql)); // add the rownnumber bit into the
+									// outer query select list
 
 		if (startRow != 0) {
 			endRow = startRow + endRow;
@@ -553,26 +547,25 @@ public class JdbcSearchProcessor {
 
 		if (hasDistinct(sql)) {
 			pagingSelect.append(" row_.* from ( ") // add another (inner) nested
-			                                       // select
-			        .append(sql.substring(startOfSelect)) // add the main query
-			        .append(" ) as row_"); // close off the inner nested select
+					// select
+					.append(sql.substring(startOfSelect)) // add the main query
+					.append(" ) as row_"); // close off the inner nested select
 		} else {
 			pagingSelect.append("Results.* From(" + sql.substring(startOfSelect) + ") as Results"); // add the
 			// main
 			// query
 		}
 		pagingSelect.append(" ) as temp_ where rownumber_ "); // add the
-		                                                      // restriction
-		                                                      // to the outer
-		                                                      // select
+																// restriction
+																// to the outer
+																// select
 		pagingSelect.append(" between " + (startRow + 1) + " and " + endRow);
 
 		return pagingSelect.toString();
 
 	}
 
-	public static String getORACLELimitString(String sql, boolean hasOffset, int startRow,
-	        int endRow) {
+	public static String getORACLELimitString(String sql, boolean hasOffset, int startRow, int endRow) {
 		// Condition added to by pass the usage of valid item in extended combo box
 		if (startRow > 1 || endRow > 1) {
 			sql = sql.trim();
@@ -589,8 +582,7 @@ public class JdbcSearchProcessor {
 			}
 			pagingSelect.append(sql);
 			if (hasOffset) {
-				pagingSelect.append(" ) row_ ) where rownum_ <= " + (endRow + startRow)
-				        + " and rownum_ > " + startRow);
+				pagingSelect.append(" ) row_ ) where rownum_ <= " + (endRow + startRow) + " and rownum_ > " + startRow);
 			} else {
 				pagingSelect.append(" ) where rownum <= " + endRow);
 			}
