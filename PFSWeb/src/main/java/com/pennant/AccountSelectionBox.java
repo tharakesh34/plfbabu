@@ -75,6 +75,7 @@ import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pff.core.Literal;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
@@ -358,40 +359,47 @@ public class AccountSelectionBox extends Hbox {
 	 * @throws InterruptedException 
 	 * @throws WrongValueException 
 	 */
-	public void validateValue() throws WrongValueException, InterruptedException {
-		logger.debug("Entering");
-		String accno = this.textbox.getValue().replace("-", "");
+	public void validateValue() throws InterruptedException {
+		logger.trace(Literal.ENTERING);
+
+		String accountNo = textbox.getValue().replace("-", "");
+
+		if (StringUtils.isEmpty(accountNo)) {
+			return;
+		}
+
 		boolean valid = true;
 		selectedAccount = null;
-		if(!("").equals(accno)){
-			
-			try {
-				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
-				Matcher matcher = pattern.matcher(accno);
-				valid = matcher.matches();
-			} catch (Exception e) {
-				logger.debug(e);
-			}
-			
-			if (!valid) {
-				throw new WrongValueException(this.textbox, Labels.getLabel(PennantRegularExpressions.REGEX_ACCOUNT,
-						new String[] {Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
-			} else {
-				IAccounts accountDetail =null;
-				try{
-					accountDetail = getAccountInterfaceService().fetchAccountAvailableBal(accno);
-				}catch(PFFInterfaceException e){
-					logger.error("Exception: ", e);
-					this.textbox.setFocus(true);
-					this.decimalbox.setValue(BigDecimal.ZERO);
-					Events.postEvent("onFulfill", this, null);
-					throw new WrongValueException(this.button, e.getErrorMessage() + " Please select/enter different account");
-				}
-				this.selectedAccount = accountDetail;
-				doWrite();
-			}
+
+		try {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
+			Matcher matcher = pattern.matcher(accountNo);
+			valid = matcher.matches();
+		} catch (Exception e) {
+			logger.debug(e);
 		}
-		logger.debug("Leaving");
+
+		if (!valid) {
+			throw new WrongValueException(this.textbox, Labels.getLabel(PennantRegularExpressions.REGEX_ACCOUNT,
+					new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
+		} else {
+			IAccounts accountDetail = null;
+			try {
+				accountDetail = getAccountInterfaceService().fetchAccountAvailableBal(accountNo);
+			} catch (PFFInterfaceException e) {
+				logger.error("Exception: ", e);
+				this.textbox.setFocus(true);
+				this.decimalbox.setValue(BigDecimal.ZERO);
+				Events.postEvent("onFulfill", this, null);
+				throw new WrongValueException(this.button,
+						e.getErrorMessage() + " Please select/enter different account");
+			}
+			this.selectedAccount = accountDetail;
+			doWrite();
+		}
+
+		logger.trace(Literal.LEAVING);
 	}
 	
 	/**
