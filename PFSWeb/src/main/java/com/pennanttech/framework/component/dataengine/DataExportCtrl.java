@@ -247,7 +247,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 
 			String filePath = config.getUploadPath();
 			if (ds.getFileName() != null) {
-				filePath = filePath.concat(ds.getFileName());
+				filePath = filePath.concat("/").concat(ds.getFileName());
 			}
 
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
