@@ -798,6 +798,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 			try {
+				if (this.writeoffDate.getValue() == null) {
+					this.writeoffDate.setValue(DateUtility.getAppDate());
+				}
+				aFinanceDetail.getFinwriteoffPayment().setWriteoffDate(this.writeoffDate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
 				if (this.finWriteoffPayAmount.getValidateValue() != null) {
 					aFinanceDetail.getFinwriteoffPayment().setWriteoffPayAmount(
 							PennantAppUtil.unFormateAmount(this.finWriteoffPayAmount.getValidateValue(), format));
@@ -1508,6 +1516,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 
+			if(!this.writeoffDate.isDisabled()){
+				this.writeoffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_WriteoffDate.value"), false, 
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), DateUtility.getAppDate(), true));
+			}
+			
 			if (!recSave && this.finWriteoffPayAccount.isMandatory()) {
 				this.finWriteoffPayAccount.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_FinanceMaintenanceDialog_finWriteoffPayAccount.value"), null, true));
@@ -1687,6 +1700,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.repayAcctId.setConstraint("");
 		this.commitmentRef.setConstraint("");
 		this.finLimitRef.setConstraint("");
+		this.writeoffDate.setConstraint("");
 		this.finWriteoffPayAccount.setConstraint("");
 		this.finWriteoffPayAmount.setConstraint("");
 		this.accountsOfficer.setConstraint("");
@@ -1848,6 +1862,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void doClearMessage() {
 		logger.debug("Entering");
 		super.doClearMessage();
+		this.writeoffDate.setErrorMessage("");
 		this.finWriteoffPayAccount.setErrorMessage("");
 		this.finWriteoffPayAmount.setErrorMessage("");
 		logger.debug("Leaving");

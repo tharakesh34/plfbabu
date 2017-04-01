@@ -4552,10 +4552,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 
 				Date validFrom = financeDate;
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (!this.gracePeriodEndDate.isReadonly() && StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
 					
 					// Find Valid From Date by rendering 
 					List<FinanceScheduleDetail> scheduelist = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 					for (int i = 1; i < scheduelist.size(); i++) {
 						
 						FinanceScheduleDetail curSchd = scheduelist.get(i);
@@ -4575,6 +4576,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 
 								|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0 ) {
 
+							validFrom = curSchd.getSchDate();
+							continue;
+						}
+						
+						if(financeMain.getNextGrcCpzDate() != null && curSchd.getSchDate().compareTo(financeMain.getNextGrcCpzDate()) <= 0){
+							validFrom = curSchd.getSchDate();
+							continue;
+						}
+						if(financeMain.getNextGrcPftRvwDate() != null && curSchd.getSchDate().compareTo(financeMain.getNextGrcPftRvwDate()) <= 0){
+							validFrom = curSchd.getSchDate();
+							continue;
+						}
+						if(financeMain.getNextGrcPftDate() != null && curSchd.getSchDate().compareTo(financeMain.getNextGrcPftDate()) <= 0){
 							validFrom = curSchd.getSchDate();
 							continue;
 						}

@@ -1914,7 +1914,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		listitem = new Listitem();
 		Listcell lc = null;
 		String strDate = "";
-		String rate = "";
+		//String rate = "";
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 		FinanceType finType = getFinScheduleData().getFinanceType();
 		boolean isODSchdLimit = false;
@@ -2085,8 +2085,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 			// Append amount listcells to listitem
 			for (int i = 0; i < amountlist.length; i++) {
 				if (amountlist[i].compareTo(BigDecimal.ZERO) != 0) {
-					if (isRate) { // Append % sysmbol if rate and format using rate format
-						rate = PennantApplicationUtil.formatRate(amountlist[i].doubleValue(), PennantConstants.rateFormate);
+					if (isRate) { // Append % symbol if rate and format using rate format
+						//rate = PennantApplicationUtil.formatRate(amountlist[i].doubleValue(), PennantConstants.rateFormate);
 						String baseRate = data.getBaseRate();
 						String splRate = StringUtils.trimToEmpty(data.getSplRate());
 						BigDecimal marginRate = data.getMrgRate() == null ? BigDecimal.ZERO:data.getMrgRate();
@@ -2312,12 +2312,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 			
 			// if the schedule specifier is grace end then don't display the tooltip text
 			if (isEditable && !lastRec) {
-				if (isRate && this.btnAddReviewRate != null && !this.btnAddReviewRate.isDisabled()) { 
+				/*if (isRate && this.btnAddReviewRate != null && !this.btnAddReviewRate.isDisabled()) { 
 					// Append rate to tooltip text without formating
 					listitem.setTooltiptext(Labels.getLabel("listbox.ratechangetooltiptext") + "  " + rate);
 				} else if (this.btnChangeRepay != null && !this.btnChangeRepay.isDisabled()) {
 					listitem.setTooltiptext(Labels.getLabel("listbox.repayamounttooltiptext"));
-				}
+				}*/
 				listitem.setAttribute("data", data);
 			}
 		}

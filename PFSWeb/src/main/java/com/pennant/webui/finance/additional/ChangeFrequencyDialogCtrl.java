@@ -323,6 +323,10 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				if(i == financeScheduleDetails.size() -1){
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());

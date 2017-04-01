@@ -165,7 +165,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private int maxSeqNo = 0;
 	private ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
 	private List<ExtendedFieldDetail> extendedFieldDetails;
-	private List<ValueLabel> moduleList = PennantAppUtil.getModuleList(false);
+	private List<ValueLabel> moduleList = PennantAppUtil.getExtendedModuleList();
 
 	/**
 	 * default constructor.<br>

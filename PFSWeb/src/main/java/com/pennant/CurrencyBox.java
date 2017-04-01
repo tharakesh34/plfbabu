@@ -31,7 +31,7 @@ public class CurrencyBox extends Hbox {
 	private Decimalbox			decimalbox;
 
 	private static final int	tb_Width			= 180;
-	private static final int	db_Width			= 180;
+	private static final int	db_Width			= 200;
 
 	private int					scale;
 	private int					maxLength			= 24;
@@ -320,6 +320,8 @@ public class CurrencyBox extends Hbox {
 					}
 				}else if (textbox.getValue().length() > 18) {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
+					throw new WrongValueException(this.textbox, errormesage4);
+				}else if (new BigDecimal(textbox.getValue()).compareTo(BigDecimal.ZERO) > 0 && bigDecimal.compareTo(BigDecimal.ZERO) == 0) {
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
 			}

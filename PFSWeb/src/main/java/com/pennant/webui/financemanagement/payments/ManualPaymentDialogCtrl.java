@@ -3134,7 +3134,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//For Finance Vs Amounts Chart z
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
 
-		ChartsConfig chartsConfig = new ChartsConfig("Finance Vs Amounts", "FinanceAmount ="
+		ChartsConfig chartsConfig = new ChartsConfig("Loan Vs Amounts", "Loan Amount ="
 				+ PennantAppUtil.amountFormate(PennantAppUtil.unFormateAmount(financeAmount, formatter), formatter),
 				"", "");
 		aDashboardConfiguration = new DashboardConfiguration();
@@ -3158,7 +3158,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.graphDivTabDiv.appendChild(chartUtil.getHtmlContent(chartDetail));
 
 		//For Repayments Chart 
-		chartsConfig = new ChartsConfig("Repayments", "", "", "");
+		chartsConfig = new ChartsConfig("Payments", "", "", "");
 		chartsConfig.setSetElements(getReportDataForRepayments(finScheduleData, formatter));
 		chartsConfig.setRemarks("");
 		aDashboardConfiguration.setDashboardType(Labels.getLabel("label_Select_Bar"));
@@ -3202,7 +3202,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"RepayAmount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(),
+							"Payment Amount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(),
 									format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -3213,7 +3213,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"PrincipalSchd", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(),
+							"Principal", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(),
 									format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -3225,7 +3225,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"ProfitSchd", PennantAppUtil.formateAmount(curSchd.getProfitSchd(),
+							"Interest", PennantAppUtil.formateAmount(curSchd.getProfitSchd(),
 									format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -3271,13 +3271,13 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						format));
 
 			}
-			chartSetElement = new ChartSetElement("DownPayment", downPayment);
+			chartSetElement = new ChartSetElement("Down Payment", downPayment);
 			listChartSetElement.add(chartSetElement);
 			chartSetElement = new ChartSetElement("Capitalized", capitalized);
 			listChartSetElement.add(chartSetElement);
-			chartSetElement = new ChartSetElement("ScheduleProfit", scheduleProfit);
+			chartSetElement = new ChartSetElement("Schedule Interest", scheduleProfit);
 			listChartSetElement.add(chartSetElement);
-			chartSetElement = new ChartSetElement("SchedulePrincipal", schedulePrincipal);
+			chartSetElement = new ChartSetElement("Schedule Principal", schedulePrincipal);
 			listChartSetElement.add(chartSetElement);
 		}
 		logger.debug("Leaving ");

@@ -671,6 +671,80 @@ public class PennantAppUtil {
 		}
 		return moduleName;
 	}
+	
+	/**
+	 * Method for getting List of Module Names for Extended Field modules
+	 * 
+	 * @return
+	 */
+	public static ArrayList<ValueLabel> getExtendedModuleList() {
+
+		Set<String> moduleList = new HashSet<String>() ;
+		
+		moduleList.add("AccountType");
+		moduleList.add("AccountingSet");
+		moduleList.add("AddressType");
+		moduleList.add("AgreementDefinition");
+		moduleList.add("BankBranch");
+		moduleList.add("BankDetail");
+		moduleList.add("BaseRate");
+		moduleList.add("BaseRateCode");
+		moduleList.add("Beneficiary");
+		moduleList.add("BlackListCustomers");
+		moduleList.add("BlackListReasonCode");
+		moduleList.add("Branch");
+		moduleList.add("City");
+		moduleList.add("Country");
+		moduleList.add("Currency");
+		moduleList.add("Customer");
+		moduleList.add("Department");
+		moduleList.add("Designation");
+		moduleList.add("DivisionDetail");
+		moduleList.add("DocumentType");
+		moduleList.add("EMailType");
+		moduleList.add("EmpStsCode");
+		moduleList.add("EmployerDetail");
+		moduleList.add("EmploymentType");
+		moduleList.add("FeeType");
+		moduleList.add("FinanceType");
+		moduleList.add("Flag");
+		moduleList.add("Gender");
+		moduleList.add("GeneralDepartment");
+		moduleList.add("GeneralDesignation");
+		moduleList.add("IncomeType");
+		moduleList.add("Industry");
+		moduleList.add("Language");
+		moduleList.add("LovFieldDetail");
+		moduleList.add("Mandate");
+		moduleList.add("MaritalStatusCode");
+		moduleList.add("NationalityCode");
+		moduleList.add("OtherBankFinanceType");
+		moduleList.add("PhoneType");
+		moduleList.add("PoliceCaseDetail");
+		moduleList.add("Product");
+		moduleList.add("Profession");
+		moduleList.add("PromotionCode");
+		moduleList.add("Province");
+		moduleList.add("RejectDetail");
+		moduleList.add("RelationshipOfficer");
+		moduleList.add("ReturnedChequeDetails");
+		moduleList.add("SalesOfficer");
+		moduleList.add("Salutation");
+		moduleList.add("Sector");
+		moduleList.add("SubSector");
+		
+		ArrayList<ValueLabel> moduleName = new ArrayList<ValueLabel>();
+
+		String[] modules = ModuleUtil.getCodes();
+		Arrays.sort(modules);
+
+		for (int i = 0; i < modules.length; i++) {
+			if (moduleList.contains(modules[i].trim())) {
+				moduleName.add(new ValueLabel(modules[i].trim(), modules[i].trim()));
+			}
+		}
+		return moduleName;
+	}
 
 	public static int getReportListColumns(String reportName) {
 		reportName = StringUtils.trimToEmpty(reportName);

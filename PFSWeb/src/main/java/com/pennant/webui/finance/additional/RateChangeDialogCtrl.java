@@ -477,7 +477,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(getFinScheduleData().getFinanceMain().isAllowGrcPeriod() && 
 							curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) == 0
 							&& curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0){
-						//Proceed Furthur
+						//Proceed Further
 					}else{
 						continue;
 					}

@@ -371,11 +371,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		//Check if schedule header is null or not and set the recal type fields.
-		if (aFinSchData.getFinanceMain() != null) {
-				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,");
-
-		}
+		fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+				PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,");
 
 		logger.debug("Leaving");
 	}
@@ -932,8 +929,18 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$cbRepayToDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		fillSchdMethod();
+		
+		int totalCount = this.cbRepayToDate.getItemCount();
 
 		if (this.cbRepayToDate.getSelectedIndex() > 0) {
+			
+			if(this.cbRepayToDate.getSelectedIndex() == totalCount - 1){
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,");
+			}else{
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,");
+			}
 
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
 					(Date) this.cbRepayToDate.getSelectedItem().getValue(), false);
