@@ -44,13 +44,67 @@ public class BusinessCalendarTest {
 	@Test(threadPoolSize = 100, invocationCount = 12)
 	public void testGetBusinessDate() {
 		if (Thread.currentThread().getId() % 2 == 0) {
-			testGetBusinessDate2();
+			testGetBusinessDateV0_2();
 		} else {
-			testGetBusinessDate1();
+			testGetBusinessDateV0_1();
+		}
+	}
+	
+	private void testGetBusinessDateV0_1() {
+		HolidayMasterDAOImpl mockedHolidayMasterDAOImpl = Mockito.mock(HolidayMasterDAOImpl.class);
+		Mockito.when(mockedHolidayMasterDAOImpl.getHolidayMasterCode("DEFAULT")).thenReturn(holidayMasters);
+
+		WeekendMasterDAOImpl mockedWeekendMasterDAOImpl = Mockito.mock(WeekendMasterDAOImpl.class);
+		Mockito.when(mockedWeekendMasterDAOImpl.getWeekendMasterByCode("DEFAULT")).thenReturn(weekendMaster);
+
+		Date[] dates = { DateUtil.getDate(2016, 0, 1), DateUtil.getDate(2016, 1, 1), DateUtil.getDate(2016, 2, 1),
+				DateUtil.getDate(2016, 3, 1), DateUtil.getDate(2016, 4, 1), DateUtil.getDate(2016, 5, 1),
+				DateUtil.getDate(2016, 6, 1), DateUtil.getDate(2016, 7, 1), DateUtil.getDate(2016, 8, 1),
+				DateUtil.getDate(2016, 9, 1), DateUtil.getDate(2016, 10, 1), DateUtil.getDate(2016, 11, 1),
+				DateUtil.getDate(2016, 0, 15), DateUtil.getDate(2016, 1, 15), DateUtil.getDate(2016, 2, 15),
+				DateUtil.getDate(2016, 3, 15), DateUtil.getDate(2016, 4, 15), DateUtil.getDate(2016, 5, 15),
+				DateUtil.getDate(2016, 6, 15), DateUtil.getDate(2016, 7, 15), DateUtil.getDate(2016, 8, 15),
+				DateUtil.getDate(2016, 9, 15), DateUtil.getDate(2016, 10, 15), DateUtil.getDate(2016, 11, 15) };
+
+		BusinessCalendar calendar = new BusinessCalendar();
+		calendar.setHolidayMasterDAO(mockedHolidayMasterDAOImpl);
+		calendar.setWeekendMasterDAO(mockedWeekendMasterDAOImpl);
+
+		for (int j = 0; j < 1000; j++) {
+			for (int i = 0; i < dates.length; i++) {
+				Assert.assertEquals(dates[i], BusinessCalendar.getBusinessDate("", "A", dates[i]).getTime());
+			}
 		}
 	}
 
-	private void testGetBusinessDate1() {
+	private void testGetBusinessDateV0_2() {
+		HolidayMasterDAOImpl mockHolidayMasterDAOImpl = Mockito.mock(HolidayMasterDAOImpl.class);
+		Mockito.when(mockHolidayMasterDAOImpl.getHolidayMasterCode("DEFAULT")).thenReturn(holidayMasters);
+
+		WeekendMasterDAOImpl mockWeekendMasterDAOImpl = Mockito.mock(WeekendMasterDAOImpl.class);
+		Mockito.when(mockWeekendMasterDAOImpl.getWeekendMasterByCode("DEFAULT")).thenReturn(weekendMaster);
+
+		Date[] dates = { DateUtil.getDate(2019, 0, 1), DateUtil.getDate(2019, 1, 1), DateUtil.getDate(2019, 2, 1),
+				DateUtil.getDate(2019, 3, 1), DateUtil.getDate(2019, 4, 1), DateUtil.getDate(2019, 5, 1),
+				DateUtil.getDate(2019, 6, 1), DateUtil.getDate(2019, 7, 1), DateUtil.getDate(2019, 8, 1),
+				DateUtil.getDate(2019, 9, 1), DateUtil.getDate(2019, 10, 1), DateUtil.getDate(2019, 11, 1),
+				DateUtil.getDate(2019, 0, 15), DateUtil.getDate(2019, 1, 15), DateUtil.getDate(2019, 2, 15),
+				DateUtil.getDate(2019, 3, 15), DateUtil.getDate(2019, 4, 15), DateUtil.getDate(2019, 5, 15),
+				DateUtil.getDate(2019, 6, 15), DateUtil.getDate(2019, 7, 15), DateUtil.getDate(2019, 8, 15),
+				DateUtil.getDate(2019, 9, 15), DateUtil.getDate(2019, 10, 15), DateUtil.getDate(2019, 11, 15) };
+
+		BusinessCalendar calendar = new BusinessCalendar();
+		calendar.setHolidayMasterDAO(mockHolidayMasterDAOImpl);
+		calendar.setWeekendMasterDAO(mockWeekendMasterDAOImpl);
+
+		for (int j = 0; j < 1000; j++) {
+			for (int i = 0; i < dates.length; i++) {
+				Assert.assertEquals(dates[i], BusinessCalendar.getBusinessDate("", "A", dates[i]).getTime());
+			}
+		}
+	}
+
+	protected void testGetBusinessDateV1_1() {
 		HolidayMasterDAOImpl mockedHolidayMasterDAOImpl = Mockito.mock(HolidayMasterDAOImpl.class);
 		Mockito.when(mockedHolidayMasterDAOImpl.getHolidayMasterCode("DEFAULT")).thenReturn(holidayMasters);
 
@@ -85,7 +139,7 @@ public class BusinessCalendarTest {
 		}
 	}
 
-	private void testGetBusinessDate2() {
+	protected void testGetBusinessDateV1_2() {
 		HolidayMasterDAOImpl mockHolidayMasterDAOImpl = Mockito.mock(HolidayMasterDAOImpl.class);
 		Mockito.when(mockHolidayMasterDAOImpl.getHolidayMasterCode("DEFAULT")).thenReturn(holidayMasters);
 

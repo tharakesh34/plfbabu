@@ -379,7 +379,14 @@ public class BusinessCalendar implements Serializable {
 		}
 	}
 
-	public synchronized static Calendar getBusinessDate(String holidayCode, String nBDAction, Date date) {
+	public static Calendar getBusinessDate(String holidayCode, String nBDAction, Date date) {
+		if (HolidayHandlerTypes.MOVE_NONE.equals(nBDAction)) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(date.getTime());
+			
+			return calendar;
+		}
+		
 		if (StringUtils.isBlank(holidayCode)) {
 			holidayCode = HolidayHandlerTypes.getHolidayCode("");
 		}
