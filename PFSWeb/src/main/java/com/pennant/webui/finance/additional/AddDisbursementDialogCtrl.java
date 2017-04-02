@@ -91,7 +91,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
@@ -478,6 +477,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (this.fromDate.getValue().compareTo(appDate) <= 0 || this.fromDate.getValue().compareTo(maturityDate) >= 0) {
 					throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_RANGE",
 							new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
+									DateUtility.formatToLongDate(appDate), DateUtility.formatToLongDate(maturityDate) }));
+				}
+				if (this.fromDate.getValue().compareTo(lastPaidDate) <= 0 || this.fromDate.getValue().compareTo(maturityDate) >= 0) {
+					throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_RANGE",
+							new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
 									DateUtility.formatToLongDate(lastPaidDate), DateUtility.formatToLongDate(maturityDate) }));
 				}
 				finMain.setEventFromDate(this.fromDate.getValue());
@@ -699,10 +703,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (this.disbAmount.isVisible()) {
 			this.disbAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_AddDisbursementDialog_Amount.value"), 0, true, false));
 		}
-		if (this.fromDate.isVisible()) {
+		/*if (this.fromDate.isVisible()) {
 			this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AddDisbursementDialog_FromDate.value"), true, 
 					getFinScheduleData().getFinanceMain().getFinStartDate(),getFinScheduleData().getFinanceMain().getMaturityDate(),false));
-		}
+		}*/
 		if (this.disbursementAccount.isVisible()) {
 			this.disbAcctId.setConstraint(new PTStringValidator(Labels.getLabel("label_AddDisbursementDialog_DisbAcctId.value"), null, true));
 		}
@@ -922,7 +926,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeDetail.getFinanceScheduleDetails() != null) {
 			boolean checkForLastPaid = true;
-			Date graceEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 			
 			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail
 					.getFinanceScheduleDetails();
@@ -934,35 +937,27 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (checkForLastPaid) {
 					lastPaidDate = curSchd.getSchDate();
 				}
-				
-				if(graceEndDate.compareTo(curSchd.getSchDate()) >= 0) {
-					continue;
-				}
-				
-				if(!curSchd.isRepayOnSchDate()) {
-					continue;
-				}
 
 				// Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
 
 				// Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
-				}
-
-				// Schedule Date Passed last repay date
-				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayDate())) {
-					continue;
-				}
-
-				// Profit repayment on frequency is TRUE
-				if (getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
-					if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayPftDate())) {
-						continue;
-					}
 				}
 
 				checkForLastPaid = false;
@@ -982,13 +977,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
-				//In Recalculation type if Till Date is selected and for the Same date if the profit Balance is greater than zero then will set the pft bal attribute
-				if(this.cbReCalType.getSelectedIndex()>=0 &&
-						StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(), CalculationConstants.RPYCHG_TILLDATE)
-						&& curSchd.getProfitBalance().compareTo(BigDecimal.ZERO) > 0 && fillAfter!=null){
-					comboitem.setStyle("color:Red;");
-					comboitem.setAttribute("pftBal", curSchd.getProfitBalance());
-				}
 			}
 		}
 		logger.debug("Leaving");

@@ -921,7 +921,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.groupboxWf.setVisible(false);
 		}
 		
-		if(ImplementationConstants.ALLOW_QUICK_DISB){
+		if(ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft){
 			this.row_QuickDisb.setVisible(true);
 		}
 		logger.debug("Leaving");

@@ -1107,8 +1107,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if(this.cbRateChangeFromDate.getSelectedIndex() > 0 ){
 				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
 						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
-				fillSchToDates(this.cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(),
-						(Date) this.cbRateChangeToDate.getSelectedItem().getValue(), true);
+				if(this.cbRateChangeToDate.getSelectedIndex() > 0 ){
+					fillSchToDates(this.cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(),
+							(Date) this.cbRateChangeToDate.getSelectedItem().getValue(), true);
+				}
 			}else if (anyDateRateChangeFromDate.getValue() != null){
 				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
 						anyDateRateChangeFromDate.getValue(), false);

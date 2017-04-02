@@ -2958,11 +2958,16 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				// Check Whether Any Future Payments already done in Schedule or not
 				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+				BigDecimal closingBal = null;
 				boolean futureInstPaid = false;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
 					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0){
 						continue;
+					}
+					
+					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null){
+						closingBal = curSchd.getClosingBalance();
 					}
 
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 
@@ -2980,6 +2985,16 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(futureInstPaid){
 					MessageUtil.showErrorMessage(Labels.getLabel("label_PaymentDialog_PartialSettlement_Future"));
 					return false;
+				}else if(closingBal != null){
+					BigDecimal payAmount = PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(), formatter);
+					if(payAmount.compareTo(closingBal) >= 0){
+						MessageUtil.showErrorMessage(Labels.getLabel(
+								"FIELD_IS_EQUAL_OR_LESSER",
+								new String[] {
+										Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
+										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
+						return false;
+					}
 				}
 			}
 

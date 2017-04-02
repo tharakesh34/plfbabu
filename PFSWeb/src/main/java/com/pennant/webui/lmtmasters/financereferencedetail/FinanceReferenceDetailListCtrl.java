@@ -466,10 +466,10 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 					logger.debug(filter.getOperator());
 				}
 			}
-			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
-			logger.debug("Leaving" );
 		}
+		// Set the ListModel for the articles.
+		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
+		logger.debug("Leaving" );
 	}
 
 	/**
