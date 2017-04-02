@@ -593,7 +593,9 @@ public class DelegationDeviationCtrl {
 			Intbox intbox = new Intbox();
 			intbox.setMaxlength(8);
 			try {
-				intbox.setValue(Integer.parseInt(value));
+				if (!StringUtils.isEmpty(value)) {
+					intbox.setValue(Integer.parseInt(value));
+				}
 			} catch (NumberFormatException e) {
 				logger.debug("Exception: ", e);
 			}
