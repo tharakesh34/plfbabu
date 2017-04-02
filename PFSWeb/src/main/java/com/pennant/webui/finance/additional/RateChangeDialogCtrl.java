@@ -942,7 +942,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					9, false, false, 0, 9999));
 		}
 		if (!this.rate.isMarginReadonly()) {
-			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_RateChangeDialog_MarginRate.value"), 9, false));
+			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_RateChangeDialog_MarginRate.value"), 9, false, true, -9999, 9999));
 		}
 		if(this.baseRateRow.isVisible()) {
 			this.rate.setBaseConstraint(new PTStringValidator(Labels.getLabel("label_RateChangeDialog_BaseRate.value"),null,false, true));

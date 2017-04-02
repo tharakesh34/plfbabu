@@ -247,10 +247,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doSetValidation() {
 		if (!this.repayPftRate.isDisabled()) {
 			this.repayPftRate.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_ReScheduleDialog_RepayPftRate.value"),9, false, false,999));
+					"label_ReScheduleDialog_RepayPftRate.value"),9, false, false,9999));
 		}
 		if (!this.rate.isMarginReadonly()) {
-			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_ReScheduleDialog_MarginRate.value"), 9, false, true));
+			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_ReScheduleDialog_MarginRate.value"), 9, false, true, -9999,9999));
 		}
 		if(this.row_baseRate.isVisible()) {
 			this.rate.setBaseConstraint(new PTStringValidator(Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),null,false, true));

@@ -1691,6 +1691,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.fieldPrec.setReadonly(false);
 			this.fieldMandatory.setChecked(false);
 			this.fieldUnique.setChecked(false);
+			fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 			this.fieldConstraint.setSelectedIndex(0);
 			this.fieldSeqOrder.setText("");
 			this.rowfieldLength.setVisible(true);
@@ -1698,7 +1699,6 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(true);
 			this.rowConstraint.setVisible(true);
-			fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 			this.rowfieldDefaultValue.setVisible(false);
 			this.rowfieldList.setVisible(false);
 			this.rowfieldMinValue.setVisible(false);
@@ -1706,220 +1706,220 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMultilinetxt.setVisible(false);
 			
 		}else{
-		
-		if(this.rowfieldList.getFellowIfAny("SListId") != null){
-			this.combofieldList.getPreviousSibling().detach();
-		}
-		if(this.rowfieldList.getFellowIfAny("RadioList") != null){
-			this.combofieldList.getPreviousSibling().detach();
-		}
 
-		// Set the visibility of fields
-		this.rowfieldLength.setVisible(isTextType() || isNumericType() || isListType());
-		this.rowfieldPrec.setVisible(isNumericType());
-		this.fieldConstraint.removeForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
-		this.rowfieldMultilinetxt.setVisible(false);
-
-		doClearMessage();
-
-		this.rowfieldDefaultValue.setVisible(false);
-		this.fieldDefaultValue.setVisible(false);
-		this.fieldDefaultValue_Boolean.setVisible(false);
-		this.fieldDefaultValue_Date.setVisible(false);
-		this.rowfieldList.setVisible(false);
-		this.rowfieldMinValue.setVisible(false);
-		this.rowfieldMaxValue.setVisible(false);
-		this.rowMandatory.setVisible(true);
-		this.rowUnique.setVisible(false);
-		this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
-		this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
-		this.rowConstraint.setVisible(false);
-		this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);
-		
-		if(newSelection){
-			this.fieldDefaultValue.setValue("");
-		}
-
-		if (isTextType()) {
-			this.rowfieldDefaultValue.setVisible(true);
-			this.fieldDefaultValue.setVisible(true);
-			this.rowConstraint.setVisible(true);
-			if(newSelection){
-				this.fieldConstraint.getItems().clear();
-				fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
+			if(this.rowfieldList.getFellowIfAny("SListId") != null){
+				this.combofieldList.getPreviousSibling().detach();
 			}
-			
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, fieldType)){
-				this.rowfieldMultilinetxt.setVisible(true);
-			}else{
-				this.rowUnique.setVisible(true);
+			if(this.rowfieldList.getFellowIfAny("RadioList") != null){
+				this.combofieldList.getPreviousSibling().detach();
 			}
-		} else if (isNumericType()) {
-			this.rowfieldDefaultValue.setVisible(true);
-			this.fieldDefaultValue.setVisible(true);
-			this.rowfieldMinValue.setVisible(true);
-			this.rowfieldMaxValue.setVisible(true);
-			this.fieldPrec.setReadonly(true);
+
+			// Set the visibility of fields
+			this.rowfieldLength.setVisible(isTextType() || isNumericType() || isListType());
+			this.rowfieldPrec.setVisible(isNumericType());
+			this.fieldConstraint.removeForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
+			this.rowfieldMultilinetxt.setVisible(false);
+
+			doClearMessage();
+
+			this.rowfieldDefaultValue.setVisible(false);
+			this.fieldDefaultValue.setVisible(false);
+			this.fieldDefaultValue_Boolean.setVisible(false);
+			this.fieldDefaultValue_Date.setVisible(false);
+			this.rowfieldList.setVisible(false);
+			this.rowfieldMinValue.setVisible(false);
+			this.rowfieldMaxValue.setVisible(false);
+			this.rowMandatory.setVisible(true);
+			this.rowUnique.setVisible(false);
+			this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
+			this.rowConstraint.setVisible(false);
+			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);
 
 			if(newSelection){
-				// Set the default values
-				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
-					this.fieldLength.setValue(18);
-					this.fieldLength.setReadonly(true);
-					this.fieldPrec.setValue(0);
-				} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)) {
-					this.fieldLength.setValue(13);
-					this.fieldPrec.setValue(9);
-				} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)) {
-					this.fieldLength.setValue(18);
-					this.fieldPrec.setValue(0);
-					this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
-				} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType)) {
-					this.fieldLength.setValue(5);
-					this.fieldPrec.setValue(2);
-					this.fieldLength.setReadonly(true);
-				} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType)){
-					this.fieldLength.setValue(8);
-					this.fieldPrec.setValue(0);
-					this.rowfieldPrec.setVisible(false);
-				} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
-					this.fieldLength.setValue(12);
-					this.fieldPrec.setValue(0);
-					this.rowfieldPrec.setVisible(false);
-				}
-			}else{
-				if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType) || 
-						StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
-					this.fieldLength.setReadonly(true);
-				} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType) || 
-						StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
-					this.rowfieldPrec.setVisible(false);
-				} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)){
-					this.fieldPrec.setReadonly(true);
-				} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)){
-					this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
-				}
+				this.fieldDefaultValue.setValue("");
 			}
 
-
-		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType) || 
-				StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)) {
-			this.rowfieldList.setVisible(true);
-			this.combofieldList.setVisible(true);
-			this.fieldLength.setReadonly(true);
-			this.fieldLength.setValue(20);
-			if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)){
-				this.fieldLength.setValue(220);
-			}
-
-			if (!this.combofieldList.getParent().getLastChild().getId().equals(this.combofieldList.getId())) {
-				this.combofieldList.getParent().getLastChild().setVisible(false);
-			}
-		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO, fieldType)) {
-			this.rowfieldList.setVisible(true);
-			Uppercasebox textbox = new Uppercasebox();
-			textbox.setId("SListId");
-			textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-			if(!newSelection){
-				textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
-				this.fieldLength.setValue(getExtendedFieldDetail().getFieldLength());
-			}else{
-				this.fieldLength.setValue(20);
-			}
-			textbox.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
-					PennantRegularExpressions.REGEX_STATICLIST,true));
-
-			this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
-			this.combofieldList.setVisible(false);
-			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
-			
-		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO, fieldType)) {
-			
-			this.rowfieldList.setVisible(true);
-			Uppercasebox textbox = new Uppercasebox();
-			textbox.setId("SListId");
-			textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-			if(!newSelection){
-				textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
-			}
-			this.fieldLength.setReadonly(true);
-			this.fieldLength.setValue(220);
-			textbox.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
-					PennantRegularExpressions.REGEX_STATICLIST,true));
-			
-			this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
-			this.combofieldList.setVisible(false);
-			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
-
-		} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, fieldType)){
-			this.rowMandatory.setVisible(false);
-			this.rowfieldDefaultValue.setVisible(true);
-			this.fieldDefaultValue_Boolean.setVisible(true);
-
-		} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, fieldType)){
-			this.rowfieldList.setVisible(true);
-			this.fieldLength.setValue(20);
-
-			Uppercasebox textbox = new Uppercasebox();
-			textbox.setId("RadioList");
-			textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-			textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
-
-			textbox.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value") ,
-					PennantRegularExpressions.REGEX_STATICLIST,true));
-
-			this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
-			this.combofieldList.setVisible(false);
-			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
-
-		}else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType)){
-			Uppercasebox textbox = new Uppercasebox();
-			textbox.setId("ExtCmbId");
-			textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
-
-		}else if(isDateType()){
-			this.rowfieldDefaultValue.setVisible(true);
-			this.fieldDefaultValue_Date.setVisible(true);
-			if(newSelection){
-				fillComboBox(fieldDefaultValue_Date, "", getDateDefaultType(fieldType), "");
-			}
-			if(!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fieldType)){
+			if (isTextType()) {
+				this.rowfieldDefaultValue.setVisible(true);
+				this.fieldDefaultValue.setVisible(true);
 				this.rowConstraint.setVisible(true);
 				if(newSelection){
-					this.fieldConstraint.getChildren().clear();
-					while (this.fieldConstraint.getNextSibling() != null) {
-						this.fieldConstraint.getNextSibling().detach();
-					}
-					fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getDateType(),"");
-				}else{
-					onChangeDateConstraint(getExtendedFieldDetail().getFieldConstraint().split(",")[0],false);
+					this.fieldConstraint.getItems().clear();
+					fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getRegexType(),"");
 				}
-				this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
-			}
-		}
 
-		if(this.rowfieldLength.isVisible()){
-			if(isTextType()){
-				this.fieldDefaultValue.setStyle("text-align:left;");
-				this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
-			}else if(isNumericType()){
-				this.fieldDefaultValue.setStyle("text-align:right;");
-				if(StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_INT) || 
-						StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LONG)){
-					
-					this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
+				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT, fieldType)){
+					this.rowfieldMultilinetxt.setVisible(true);
 				}else{
-					this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue()+1);
+					this.rowUnique.setVisible(true);
 				}
-				this.fieldDefaultValue.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
-						PennantRegularExpressions.REGEX_NM_AMOUNT,false));
+			} else if (isNumericType()) {
+				this.rowfieldDefaultValue.setVisible(true);
+				this.fieldDefaultValue.setVisible(true);
+				this.rowfieldMinValue.setVisible(true);
+				this.rowfieldMaxValue.setVisible(true);
+				this.fieldPrec.setReadonly(true);
+
+				if(newSelection){
+					// Set the default values
+					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
+						this.fieldLength.setValue(18);
+						this.fieldLength.setReadonly(true);
+						this.fieldPrec.setValue(0);
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)) {
+						this.fieldLength.setValue(13);
+						this.fieldPrec.setValue(9);
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)) {
+						this.fieldLength.setValue(18);
+						this.fieldPrec.setValue(0);
+						this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
+					} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType)) {
+						this.fieldLength.setValue(5);
+						this.fieldPrec.setValue(2);
+						this.fieldLength.setReadonly(true);
+					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType)){
+						this.fieldLength.setValue(8);
+						this.fieldPrec.setValue(0);
+						this.rowfieldPrec.setVisible(false);
+					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
+						this.fieldLength.setValue(12);
+						this.fieldPrec.setValue(0);
+						this.rowfieldPrec.setVisible(false);
+					}
+				}else{
+					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, fieldType) || 
+							StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_AMOUNT, fieldType)) {
+						this.fieldLength.setReadonly(true);
+					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_INT, fieldType) || 
+							StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LONG, fieldType)){
+						this.rowfieldPrec.setVisible(false);
+					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_ACTRATE, fieldType)){
+						this.fieldPrec.setReadonly(true);
+					} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, fieldType)){
+						this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
+					}
+				}
+
+
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType) || 
+					StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)) {
+				this.rowfieldList.setVisible(true);
+				this.combofieldList.setVisible(true);
+				this.fieldLength.setReadonly(true);
+				this.fieldLength.setValue(20);
+				if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTIEXTENDEDCOMBO, fieldType)){
+					this.fieldLength.setValue(220);
+				}
+
+				if (!this.combofieldList.getParent().getLastChild().getId().equals(this.combofieldList.getId())) {
+					this.combofieldList.getParent().getLastChild().setVisible(false);
+				}
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO, fieldType)) {
+				this.rowfieldList.setVisible(true);
+				Uppercasebox textbox = new Uppercasebox();
+				textbox.setId("SListId");
+				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
+				if(!newSelection){
+					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
+					this.fieldLength.setValue(getExtendedFieldDetail().getFieldLength());
+				}else{
+					this.fieldLength.setValue(20);
+				}
+				textbox.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
+						PennantRegularExpressions.REGEX_STATICLIST,true));
+
+				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.setVisible(false);
+				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
+
+			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO, fieldType)) {
+
+				this.rowfieldList.setVisible(true);
+				Uppercasebox textbox = new Uppercasebox();
+				textbox.setId("SListId");
+				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
+				if(!newSelection){
+					textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
+				}
+				this.fieldLength.setReadonly(true);
+				this.fieldLength.setValue(220);
+				textbox.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value") ,
+						PennantRegularExpressions.REGEX_STATICLIST,true));
+
+				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.setVisible(false);
+				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
+
+			} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BOOLEAN, fieldType)){
+				this.rowMandatory.setVisible(false);
+				this.rowfieldDefaultValue.setVisible(true);
+				this.fieldDefaultValue_Boolean.setVisible(true);
+
+			} else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_RADIO, fieldType)){
+				this.rowfieldList.setVisible(true);
+				this.fieldLength.setValue(20);
+
+				Uppercasebox textbox = new Uppercasebox();
+				textbox.setId("RadioList");
+				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
+				textbox.setValue(StringUtils.trimToEmpty(getExtendedFieldDetail().getFieldList()));
+
+				textbox.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_ExtendedFieldDetailDialog_RadioGroup.value") ,
+						PennantRegularExpressions.REGEX_STATICLIST,true));
+
+				this.combofieldList.getParent().insertBefore(textbox,this.combofieldList);
+				this.combofieldList.setVisible(false);
+				this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(true);
+
+			}else if(StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO, fieldType)){
+				Uppercasebox textbox = new Uppercasebox();
+				textbox.setId("ExtCmbId");
+				textbox.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldList"));
+
+			}else if(isDateType()){
+				this.rowfieldDefaultValue.setVisible(true);
+				this.fieldDefaultValue_Date.setVisible(true);
+				if(newSelection){
+					fillComboBox(fieldDefaultValue_Date, "", getDateDefaultType(fieldType), "");
+				}
+				if(!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_TIME, fieldType)){
+					this.rowConstraint.setVisible(true);
+					if(newSelection){
+						this.fieldConstraint.getChildren().clear();
+						while (this.fieldConstraint.getNextSibling() != null) {
+							this.fieldConstraint.getNextSibling().detach();
+						}
+						fillComboBox(this.fieldConstraint,"",PennantStaticListUtil.getDateType(),"");
+					}else{
+						onChangeDateConstraint(getExtendedFieldDetail().getFieldConstraint().split(",")[0],false);
+					}
+					this.fieldConstraint.addForward("onChange", this.window_ExtendedFieldDetailDialog, "onDateContSelect");
+				}
+			}
+
+			if(this.rowfieldLength.isVisible()){
+				if(isTextType()){
+					this.fieldDefaultValue.setStyle("text-align:left;");
+					this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
+				}else if(isNumericType()){
+					this.fieldDefaultValue.setStyle("text-align:right;");
+					if(StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_INT) || 
+							StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LONG)){
+
+						this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue());
+					}else{
+						this.fieldDefaultValue.setMaxlength(this.fieldLength.intValue()+1);
+					}
+					this.fieldDefaultValue.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldDefaultValue.value"),
+							PennantRegularExpressions.REGEX_NM_AMOUNT,false));
+				}
 			}
 		}
-	}
 		logger.debug("Leaving");
 	}
 

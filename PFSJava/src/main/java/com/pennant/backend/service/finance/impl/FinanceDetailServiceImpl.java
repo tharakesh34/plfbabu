@@ -675,6 +675,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 		
+		// Collateral Details
+		if(ImplementationConstants.COLLATERAL_INTERNAL){
+			financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,FinanceConstants.MODULE_NAME, "_View"));
+		}else{
+			financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_TView"));
+		}
+
+		
 		logger.debug("Leaving");
 		
 		return financeDetail;
