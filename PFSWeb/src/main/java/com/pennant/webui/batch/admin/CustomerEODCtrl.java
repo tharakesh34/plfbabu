@@ -71,9 +71,10 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 		EodDetailDAO eodDetailsDAO = applicationContext.getBean(EodDetailDAO.class);
 
-		EodDetail eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_VALUE));
-		
-		if (eodDetail==null) {
+		EodDetail eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil
+				.getValueAsDate(PennantConstants.APP_DATE_VALUE));
+
+		if (eodDetail == null) {
 			eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST));
 		}
 		if (eodDetail != null) {
@@ -90,13 +91,13 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 		logger.debug("Entering" + event.toString());
 		MultiLineMessageBox.doSetTemplate();
 		int conf = 0;
-		String loggedInUsers = getLoggedInUsers();
-		if (StringUtils.isNotEmpty(loggedInUsers)) {
-			loggedInUsers = "\n" + loggedInUsers;
-			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }),
-					"info", null, null, -1);
-			return;
-		}
+//		String loggedInUsers = getLoggedInUsers();
+//		if (StringUtils.isNotEmpty(loggedInUsers)) {
+//			loggedInUsers = "\n" + loggedInUsers;
+//			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }),
+//					"info", null, null, -1);
+//			return;
+//		}
 
 		String msg = Labels.getLabel("labe_start_job", new String[] { DateUtility.formatToShortDate(SysParamUtil
 				.getValueAsDate(PennantConstants.APP_DATE_NEXT)) });
