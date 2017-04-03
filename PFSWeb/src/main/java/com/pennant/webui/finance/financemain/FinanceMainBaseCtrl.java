@@ -10354,8 +10354,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
 										String.valueOf(aFinanceMain.getFinAssetValue()) }));
 					}
-					limitIncreaseAmt = PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter)
-							.subtract(aFinanceMain.getFinAssetValue());
+					limitIncreaseAmt = limitIncreaseAmt.add(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter)
+							.subtract(aFinanceMain.getFinAssetValue()));
 
 				}
 			}
@@ -14808,13 +14808,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					//FIXME once Siva commits the schedulecalculator changes need to uncomment this line
 					//torebuild the overdraft if any fields are changed
-					/*
-					 * getFinanceDetail().setFinScheduleData(
-					 * ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData
-					 * (),BigDecimal.ZERO,BigDecimal.ZERO));
-					 */
 					getFinanceDetail().setFinScheduleData(
-							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData()));
+							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData(),BigDecimal.ZERO));
+					/*getFinanceDetail().setFinScheduleData(
+							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData()));*/
 				}
 
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
@@ -14948,52 +14945,66 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		//To calculate the over draft schedule Details list
-		boolean isDropline = true;
 		BigDecimal droplineAmt = BigDecimal.ZERO;
-		//Date odFinDate =DateUtility.getUtilDate("2017-01-12", PennantConstants.DBDateFormat);
-		Date odFinDate = DateUtility.getAppDate();
-		List<OverdraftScheduleDetail> odSchd = new ArrayList<>();
-
-		for (OverdraftScheduleDetail odScheduleDetail : finScheduleData.getOverdraftScheduleDetails()) {
-
-			if (DateUtility.compare(odScheduleDetail.getDroplineDate(), financeMain.getFinStartDate()) == 0
-					&& limitIncreaseAmt.compareTo(BigDecimal.ZERO) > 0) {
-				odSchd.add(odScheduleDetail);
-			} else if (DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) >= 0) {
-				if (isDropline
-						&& DateUtility.compare(this.firstDroplineDate.getValue(), financeMain.getFinStartDate()) == 0) {
-					financeMain.setFirstDroplineDate(odScheduleDetail.getDroplineDate());
-					isDropline = false;
-					break;
-				} else {
-					financeMain.setFirstDroplineDate(this.firstDroplineDate.getValue());
-					isDropline = false;
-					break;
-				}
-
-			} else {
-				if (DateUtility.compare(odScheduleDetail.getDroplineDate(), financeMain.getFinStartDate()) != 0) {
+		List<OverdraftScheduleDetail> odSchd = new ArrayList<OverdraftScheduleDetail>() ;
+		OverdraftScheduleDetail limitIncreaseodSchd = null;
+		//Date odFinDate =DateUtility.getAppDate();
+		Date odFinDate =DateUtility.getUtilDate("2016-04-02", PennantConstants.DBDateFormat);
+		boolean isLimitIncreaseSchd = true;
+		/*
+		 * if there is limitIncrease then will check with that date if the limit increase is less than that date then wil add to the odschedule otherwise
+		 * will set the firstdropline date as the odschedule droplinedate and then based on that amount limit drops are being calculated.
+		 * it also checks with the appdate.
+		 */
+		for(OverdraftScheduleDetail odScheduleDetail:finScheduleData.getOverdraftScheduleDetails()){
+			if ((limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0 && DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) > 0) ||
+					(limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0 && DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) >= 0)) {
+				financeMain.setFirstDroplineDate(odScheduleDetail.getDroplineDate());
+				break;
+			} else if (DateUtility.compare(odScheduleDetail.getDroplineDate(), financeMain.getFinStartDate()) != 0) {
 					droplineAmt = droplineAmt.add(odScheduleDetail.getLimitDrop());
-					odScheduleDetail.setODLimit(this.finAssetValue.getActualValue().subtract(
-							odScheduleDetail.getLimitDrop()));
+					if (DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) == 0) {
+						odScheduleDetail.setLimitIncreaseAmt(limitIncreaseAmt);
+						isLimitIncreaseSchd = false;
+					}
 					odSchd.add(odScheduleDetail);
-				}
 			}
 		}
 
 		if (isSchdlRegenerate() && finScheduleData.getOverdraftScheduleDetails() != null) {
 			finScheduleData.getOverdraftScheduleDetails().clear();
 		}
-		//FIXME once Siva commits the schedulecalculator changes need to uncomment this line
-		//recal the overdraft Schedule Details
-		/* finScheduleData = ScheduleCalculator.buildOverdraftSchd(finScheduleData,droplineAmt,limitIncreaseAmt); */
-
+		
+		finScheduleData = ScheduleCalculator.buildOverdraftSchd(finScheduleData,droplineAmt);
+		
+		if(isLimitIncreaseSchd){
+			limitIncreaseodSchd = new OverdraftScheduleDetail();
+			limitIncreaseodSchd.setDroplineDate(odFinDate);
+			limitIncreaseodSchd.setLimitIncreaseAmt(limitIncreaseAmt);
+			odSchd.add(limitIncreaseodSchd);
+		}
+		
 		if (odSchd != null && odSchd.size() > 0) {
 			finScheduleData.getOverdraftScheduleDetails().addAll(odSchd);
+		}
+		if(limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
+			BigDecimal limitIncrement = BigDecimal.ZERO;
+			for(OverdraftScheduleDetail odschdDetail :finScheduleData.getOverdraftScheduleDetails()){
+				limitIncrement  = limitIncrement.add(odschdDetail.getLimitIncreaseAmt());
+			}
+
+			for(OverdraftScheduleDetail odscheduleDetail :finScheduleData.getOverdraftScheduleDetails()){
+				if(DateUtility.compare(odscheduleDetail.getDroplineDate(), financeMain.getFinStartDate())==0 ){
+					odscheduleDetail.setODLimit(odscheduleDetail.getODLimit().subtract(limitIncrement));
+				}else if(DateUtility.compare(odscheduleDetail.getDroplineDate(), odFinDate)==0 && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
+					odscheduleDetail.setLimitIncreaseAmt(limitIncreaseAmt);
+				}
+			}
 		}
 
 		if (finScheduleData.getOverdraftScheduleDetails() != null
 				&& finScheduleData.getOverdraftScheduleDetails().size() > 0) {
+			
 			Collections.sort(finScheduleData.getOverdraftScheduleDetails(), new Comparator<OverdraftScheduleDetail>() {
 				@Override
 				public int compare(OverdraftScheduleDetail odSchd1, OverdraftScheduleDetail odSchd2) {

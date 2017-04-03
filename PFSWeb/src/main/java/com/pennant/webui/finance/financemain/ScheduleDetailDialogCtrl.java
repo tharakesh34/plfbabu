@@ -101,7 +101,6 @@ import com.pennant.backend.model.finance.FinanceGraphReportData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
-import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -1351,11 +1350,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.listheader_ODLimit.setVisible(true);
 			if(financeType.isDroplineOD()){
 				this.listheader_LimitChange.setVisible(true);
-			}
-			for(OverdraftScheduleDetail odSchdDetail:aFinSchData.getOverdraftScheduleDetails()){
-				if(odSchdDetail!=null && odSchdDetail.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0){
-					this.listheader_LimitIncreaseAmt.setVisible(true);
-				}
 			}
 		}
 		
