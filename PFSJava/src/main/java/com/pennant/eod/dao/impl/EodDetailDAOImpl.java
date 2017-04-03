@@ -28,8 +28,8 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 	public void save(EodDetail eodDetail) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("INSERT INTO EodDetails (ProcessDate,StatTime,EndTime)");
-		updateSql.append("  values (:ProcessDate,:StatTime,:EndTime)");
+		StringBuilder updateSql = new StringBuilder("INSERT INTO EodDetails (ProcessDate,StatTime,EndTime,Status)");
+		updateSql.append("  values (:ProcessDate,:StatTime,:EndTime,:Status)");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -43,11 +43,38 @@ public class EodDetailDAOImpl implements EodDetailDAO {
 	@Override
 	public void update(EodDetail eodDetail) {
 		logger.debug("Entering");
-		
-		Date processDate=DateUtility.getDate(DateUtility.formateDate(eodDetail.getProcessDate(),	PennantConstants.DBDateFormat), PennantConstants.DBDateFormat);
+
+		Date processDate = DateUtility.getDate(
+				DateUtility.formateDate(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+				PennantConstants.DBDateFormat);
 		eodDetail.setProcessDate(processDate);
-		
-		StringBuilder selectSql = new StringBuilder("UPDATE EodDetails set EndTime=:EndTime Where ProcessDate=:ProcessDate");
+
+		StringBuilder selectSql = new StringBuilder(
+				"UPDATE EodDetails set EndTime=:EndTime, Status=:Status Where ProcessDate=:ProcessDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
+			this.namedParameterJdbcTemplate.update(selectSql.toString(), beanParameters);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(dae);
+		}
+		logger.debug("Leaving");
+
+	}
+
+	@Override
+	public void updateStatus(EodDetail eodDetail) {
+		logger.debug("Entering");
+
+		Date processDate = DateUtility.getDate(
+				DateUtility.formateDate(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+				PennantConstants.DBDateFormat);
+		eodDetail.setProcessDate(processDate);
+
+		StringBuilder selectSql = new StringBuilder(
+				"UPDATE EodDetails set Status=:Status Where ProcessDate=:ProcessDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
 

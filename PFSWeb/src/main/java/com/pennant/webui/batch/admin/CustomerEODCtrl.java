@@ -30,7 +30,6 @@ import com.pennant.app.util.SessionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
 import com.pennant.policy.model.UserImpl;
@@ -79,12 +78,8 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 		}
 		if (eodDetail != null) {
 			this.startTime.setValue(DateUtility.format(eodDetail.getStatTime(), DateFormat.LONG_TIME));
-			if (eodDetail.getEndTime() != null) {
-				this.completedTime.setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
-				this.batchStatus.setValue(EodConstants.PROGRESS_COMPLETED);
-			} else {
-				this.batchStatus.setValue(EodConstants.STATUS_FAILED);
-			}
+			this.completedTime.setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
+			this.batchStatus.setValue(eodDetail.getStatus());
 		}
 
 		this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
