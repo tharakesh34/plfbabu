@@ -205,7 +205,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.btnPostponement.setLabel(Labels.getLabel("btnUnPlannedEMiH.label"));
 			this.btnPostponement.setTooltiptext(Labels.getLabel("btnUnPlannedEMiH.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
-		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
+		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			this.window_PostponementDialog.setTitle(Labels.getLabel("window_ReAgeHolidayDialog.title"));
 			this.btnPostponement.setLabel(Labels.getLabel("btnReAgeHoliday.label"));
 			this.btnPostponement.setTooltiptext(Labels.getLabel("btnReAgeHoliday.tooltiptext"));

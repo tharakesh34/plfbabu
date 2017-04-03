@@ -1472,6 +1472,21 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinScheduleData(), null, null,
 					feeChargesMap, true);
 			list.add(subList);
+			
+			boolean isSchdFee = false;
+			List<FinFeeDetail> finFeeList = getFinScheduleData().getFinFeeDetailList();
+			for (int i = 0; i < finFeeList.size(); i++) {
+				FinFeeDetail finFeeDetail = finFeeList.get(i);
+				if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+						StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) ||
+						StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)){
+					isSchdFee = true;
+					break;
+				}
+			}
+
+			list.add(isSchdFee);
+			
 			// To get Parent Window i.e Finance main based on product
 			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
 					.getParent().getParent().getParent();

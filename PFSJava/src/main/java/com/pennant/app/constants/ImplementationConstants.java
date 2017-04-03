@@ -31,7 +31,7 @@ public class ImplementationConstants {
 	public static final boolean	VALIDATE_CORE_CUST_UPDATE		= false;
 	public static final boolean	ALLOW_COVENANT_TYPES			= true;						// Covenants Allowed or not
 	public static final boolean	COLLATERAL_INTERNAL				= true;						// Which Collateral We are using Internal or Third Party Collaterals
-	public static final boolean	ALLOW_VAS						= false;						// VAS required or not
+	public static final boolean	ALLOW_VAS						= false;					// VAS required or not
 	// F = Administration/Insurance/Other Fees
 	// C = Past due Penalty
 	// I = Profit
@@ -60,23 +60,23 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_EXPENSE_TRACKING			= true;						// JV Postings
 	public static final boolean	ADD_FEEINFTV_ONCALC				= true;						// Fee Amount Added to Net Finance Amount in Display
 	public static final boolean	ALLOW_FIN_SALARY_PAYMENT		= true;						// Salaried Payment Recording
-	public static final boolean	ALLOW_SPECIALRATE				= false;						// Special Rate Allowed or Not in Referential Rate Component
-	public static final boolean	ACCOUNTS_APPLICABLE				= false;						// Application Level Accounting Component Allowed or not
-	public static final boolean	ALLOW_MANUAL_SCHEDULE			= false;						// Manual Schedule Allowed or not
-	public static final boolean	ALLOW_INDICATIVE_RATE			= false;						// Allow Indicative Rate
+	public static final boolean	ALLOW_SPECIALRATE				= false;					// Special Rate Allowed or Not in Referential Rate Component
+	public static final boolean	ACCOUNTS_APPLICABLE				= false;					// Application Level Accounting Component Allowed or not
+	public static final boolean	ALLOW_MANUAL_SCHEDULE			= false;					// Manual Schedule Allowed or not
+	public static final boolean	ALLOW_INDICATIVE_RATE			= false;					// Allow Indicative Rate
 	public static final boolean	CAPTURE_APPLICATION_NUMBER		= true;						// Allow Separate Application Number in finance main
 	public static final boolean	ALLOW_PLANNED_EMIHOLIDAY		= true;						// Allow Planned EMI holidays 
 	public static final boolean	ALLOW_UNPLANNED_EMIHOLIDAY		= true;						// Allow UnPlanned EMI holidays 
-	public static final boolean	ALLOW_REAGE						= false;						// Allow UnPlanned EMI holidays 
-	public static final boolean	ALLOW_DOWNPAY_SUPPORTPGM		= false;						// Allow DownPay Support Program 
+	public static final boolean	ALLOW_REAGE						= true;						// Allow UnPlanned EMI holidays 
+	public static final boolean	ALLOW_DOWNPAY_SUPPORTPGM		= false;					// Allow DownPay Support Program 
 	public static final boolean	ALLOW_BPI_TREATMENT				= true;						// Allow Broken Period Interest
 	public static final boolean	INTERESTON_PASTDUE_PRINCIPAL	= true;						// Allow Interest on Past Due Principal
-	public static final boolean	ALLOW_PLANNED_DEFERMENTS		= false;						// Allow Planned Deferements
+	public static final boolean	ALLOW_PLANNED_DEFERMENTS		= false;					// Allow Planned Deferments
 
-	public static final boolean	ALLOW_CREDITBUREAU				= false;						// Allow Credit Bureau
-	public static final boolean	ALLOW_BUNDLEDPRODUCT			= false;						// Allow Bundled Product
-	public static final boolean	ALLOW_COMMITMENT				= false;						// Allow Commitment Details
-	public static final boolean	ALLOW_PFTUNCHG					= false;						// Allow Profit Unchanged
+	public static final boolean	ALLOW_CREDITBUREAU				= false;					// Allow Credit Bureau
+	public static final boolean	ALLOW_BUNDLEDPRODUCT			= false;					// Allow Bundled Product
+	public static final boolean	ALLOW_COMMITMENT				= false;					// Allow Commitment Details
+	public static final boolean	ALLOW_PFTUNCHG					= false;					// Allow Profit Unchanged
 
 	//Client Names and Current Client
 	public static final String	CLIENT_AIB						= "AIB";

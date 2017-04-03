@@ -6840,6 +6840,61 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			
+			if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()
+					&& this.downPayBank.getActualValue().compareTo(BigDecimal.ZERO) <= 0) {
+				errorList.add(new ErrorDetails("Frequency", "30543", new String[] {}, new String[] {}));
+			}
+
+			// BPI Validations
+			if (this.alwBpiTreatment.isChecked()
+					&& !StringUtils.equals(FinanceConstants.BPI_NO, getComboboxValue(this.dftBpiTreatment))) {
+				String frqBPI = "";
+				Date frqDate = null;
+
+				if (getFinanceDetail().getFinScheduleData().getFinanceMain().isAllowGrcPeriod()) {
+					frqBPI = this.gracePftFrq.getValue();
+					frqDate = this.nextGrcPftDate_two.getValue();
+				} else {
+					frqBPI = this.repayPftFrq.getValue();
+					frqDate = this.nextRepayPftDate_two.getValue();
+				}
+
+				Date bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(
+						FrequencyUtil.getNextDate(frqBPI, 1, this.finStartDate.getValue(),
+								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
+						PennantConstants.dateFormat));
+
+				if (DateUtility.compare(bpiDate, frqDate) == 0) {
+					errorList.add(new ErrorDetails("30571", null));
+
+				}
+			}
+
+			// Planned EMI Holiday Validations
+			if (this.alwPlannedEmiHoliday.isChecked()) {
+				String rpyFrq = getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayFrq();
+				if (!StringUtils.equals(String.valueOf(rpyFrq.charAt(0)), FrequencyCodeTypes.FRQ_MONTHLY)) {
+					errorList.add(new ErrorDetails("30572", null));
+				}
+			}
+
+			//Validate insurance frequency with repayments frequency ,insfrq must be after repayment frq
+			List<FinInsurances> insurances = getFinanceDetail().getFinScheduleData().getFinInsuranceList();
+			if (insurances != null && !insurances.isEmpty()) {
+				String repayFrqDay = FrequencyUtil.getFrequencyDay(getFinanceDetail().getFinScheduleData()
+						.getFinanceMain().getRepayFrq());
+				for (FinInsurances finInsurance : insurances) {
+					if (StringUtils.isNotEmpty(finInsurance.getInsuranceFrq())) {
+						String insFrqDay = FrequencyUtil.getFrequencyDay(finInsurance.getInsuranceFrq());
+						if (!StringUtils.equals(repayFrqDay, insFrqDay)) {
+							errorList.add(new ErrorDetails("InsuranceFrq", "30545", new String[] { finInsurance
+									.getInsuranceType() }, new String[] {}));
+							break;
+						}
+					}
+				}
+			}
+			
 			// Setting error list to audit header
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorList, getUserWorkspace().getUserLanguage()));
 			auditHeader = ErrorControl.showErrorDetails(window_RetailWIFFinanceMainDialog, auditHeader);

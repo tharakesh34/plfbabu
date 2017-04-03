@@ -2409,6 +2409,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 								data.setSchdPft("");
 								data.setTdsAmount("");
+								data.setSchdFee("");
 								data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));
 								data.setTotalAmount(formatAmt(curDisb.getDisbAmount(),false,false));
 								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(
@@ -2449,6 +2450,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							data.setPftAmount("");
 							data.setSchdPft("");
 							data.setTdsAmount("");
+							data.setSchdFee("");
 							data.setSchdPri("");
 							data.setLimitDrop("");
 							data.setLimitIncreaseAmt("");
@@ -2480,6 +2482,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 										data.setSchdPft("");
 										data.setSchdPri("");
 										data.setTdsAmount("");
+										data.setSchdFee("");
 										data.setLimitDrop("");
 										data.setLimitIncreaseAmt("");
 										data.setTotalLimit(formatAmt(odAvailAmt,false,false));
@@ -2602,6 +2605,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					data.setEndBal("");
+					data.setSchdFee("");
 					data.setTdsAmount("");
 					data.setPftAmount("");				
 					data.setSchdPft("");				
@@ -2663,6 +2667,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
 					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
 					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
@@ -2716,6 +2721,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						data.setSchDate("");
 					}
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setTdsAmount("");
 					data.setSchdPft("");
 					data.setSchdPri("");
@@ -2748,6 +2754,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setSchDate("");
 				}
 				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 				data.setSchdPft("");
 				data.setTdsAmount("");
 				data.setLimitDrop("");
@@ -2777,6 +2784,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						data.setSchDate("");
 					}
 					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
+					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
 					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));				
@@ -2821,6 +2829,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					data.setLimitDrop("");
+					data.setSchdFee("");
 					data.setAvailLimit("");
 					data.setTotalLimit("");
 					data.setLimitIncreaseAmt("");
@@ -2853,6 +2862,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					data.setEndBal("");
+					data.setSchdFee("");
 					data.setTdsAmount("");
 					data.setPftAmount("");				
 					data.setSchdPft("");				
@@ -2889,6 +2899,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setSchdPft(formatAmt(aScheduleDetail.getWriteoffProfit(),false,true));				
 				data.setSchdPri(formatAmt(aScheduleDetail.getWriteoffPrincipal(),false,true));
 				data.setTotalAmount(formatAmt(aScheduleDetail.getWriteoffPrincipal().add(aScheduleDetail.getWriteoffProfit()),false,false));
+				data.setSchdFee(formatAmt(aScheduleDetail.getWriteoffSchFee(),false,false));
 				data.setLimitDrop("");
 				data.setAvailLimit("");
 				data.setTotalLimit("");
@@ -2925,6 +2936,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 				data.setSchdPft("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
@@ -2945,6 +2957,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setSchDate("");
 					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setTdsAmount("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
@@ -2970,6 +2983,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setTdsAmount("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
@@ -2993,6 +3007,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data = new FinanceScheduleReportData();
 					data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
 					data.setSchDate("");
+					data.setSchdFee("");
 					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
 					data.setSchdPft("");
 					data.setTdsAmount("");
@@ -3021,6 +3036,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setSchDate("");
 				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTdsAmount("");
 				data.setTotalAmount("");
@@ -3055,6 +3071,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
 					data.setEndBal("");
@@ -3080,6 +3097,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
 				data.setTdsAmount("");
@@ -3099,6 +3117,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setLabel(Labels.getLabel("label_listcell_totalPftSch.label"));
 				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalProfit().subtract(aFinScheduleData.getFinanceMain().getTotalGracePft()),false,false));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
 				data.setTdsAmount("");
@@ -3115,6 +3134,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setLabel(Labels.getLabel("label_listcell_totalGrcPftSch.label"));
 					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGracePft(),false,true));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTdsAmount("");
 					data.setTotalAmount("");
@@ -3132,6 +3152,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setLabel(Labels.getLabel("label_listcell_totalCpz.label"));
 					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalCpz(),false,true));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setTdsAmount("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
@@ -3149,6 +3170,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setLabel(Labels.getLabel("label_listcell_totalGrossPft.label"));
 					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGrossPft(),false,true));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setTdsAmount("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
@@ -3165,6 +3187,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setLabel(Labels.getLabel("label_listcell_totalRepayAmt.label"));
 				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalRepayAmt(),false,true));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTdsAmount("");
 				data.setTotalAmount("");
@@ -3182,6 +3205,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
 							getFinScheduleData().getFinanceMain().getGrcPeriodEndDate())));
 					data.setSchdPft("");
+					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
 					data.setTdsAmount("");
@@ -3199,6 +3223,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
 						getFinScheduleData().getFinanceMain().getMaturityDate())));
 				data.setSchdPft("");
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTdsAmount("");
 				data.setTotalAmount("");

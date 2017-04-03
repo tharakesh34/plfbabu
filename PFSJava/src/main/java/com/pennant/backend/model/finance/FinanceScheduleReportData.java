@@ -54,6 +54,7 @@ public class FinanceScheduleReportData {
 	private String pftAmount;
 	private String schdPft;
 	private String schdPri;
+	private String schdFee;
 	private String cpzAmount;
 	private String totalAmount;
 	private String endBal;
@@ -192,6 +193,13 @@ public class FinanceScheduleReportData {
 
 	public void setLimitIncreaseAmt(String limitIncreaseAmt) {
 		this.limitIncreaseAmt = limitIncreaseAmt;
+	}
+
+	public String getSchdFee() {
+		return schdFee;
+	}
+	public void setSchdFee(String schdFee) {
+		this.schdFee = schdFee;
 	}
 	
 
