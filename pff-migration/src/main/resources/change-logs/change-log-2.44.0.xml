@@ -45,5 +45,30 @@
 			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'PFSPARAMETER_APPROVER'),(Select RoleID from secRoles where RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	<changeSet id="4" author="satish">
+	<sql>
+insert into SMTparameters select 'EOD_THREAD_COUNT','Number of Threads','int',0,1,1,0,null,null,'Number of Threads',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0;
+
+update SeqSecRoles set seqno=(select MAX(RoleID) from SecRoles);
+update seqSecGroups set seqno=(select MAX(GrpID) from SecGroups);
+update seqSecRights set seqno=(select MAX(RIGHTID) from SecRights);
+update SeqSecRoleGroups set seqno=(select MAX(RoleGrpID) from SecRoleGroups);
+update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
+
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'EOD', 'Eed of day', 0,1000,'2016-10-18 01:16:33',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuItem_EOD_CustomerEOD','MENU',0,1000,'2016-10-18 01:16:33',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select MAX(GrpRIGHTID)+1 from SecGroupRights),(select grpid from secgroups where GrpCode='EOD'), (select RightID from SecRights where RightName='menuItem_EOD_CustomerEOD'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecRoles SELECT (select MAX(RoleID)+1 from SecRoles),1,'EOD','End of day','',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select MAX(RoleGrpID)+1 from SecRoleGroups),(select grpid from secgroups where GrpCode='EOD'), (select RoleID from SecRoles where RoleCd='EOD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+update SeqSecRoles set seqno=(select MAX(RoleID) from SecRoles);
+update seqSecGroups set seqno=(select MAX(GrpID) from SecGroups);
+update seqSecRights set seqno=(select MAX(RIGHTID) from SecRights);
+update SeqSecRoleGroups set seqno=(select MAX(RoleGrpID) from SecRoleGroups);
+update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
+	
+	</sql>
+	</changeSet>
+	
 	
 </databaseChangeLog>
