@@ -242,16 +242,8 @@
 									value="${c:l('label_DirectorDetailDialog_CustAddrPhone.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<textbox id="phoneCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
 									<textbox id="custAddrPhone"
-										width="80px" />
+										width="100px" />
 								</hbox>
 								<label
 									id="label_DirectorDetailDialog_CustAddrHNbr"

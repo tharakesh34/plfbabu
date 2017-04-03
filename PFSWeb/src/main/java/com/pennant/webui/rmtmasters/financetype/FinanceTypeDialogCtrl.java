@@ -816,6 +816,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.grcAdvMargin.setFormat(PennantConstants.rateFormate9);
 		this.grcAdvMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.grcAdvMargin.setScale(9);
+		
 		this.grcAdvPftRate.setMaxlength(13);
 		this.grcAdvPftRate.setFormat(PennantConstants.rateFormate9);
 		this.grcAdvPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -825,6 +826,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyAdvMargin.setFormat(PennantConstants.rateFormate9);
 		this.rpyAdvMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.rpyAdvMargin.setScale(9);
+		
 		this.rpyAdvPftRate.setMaxlength(13);
 		this.rpyAdvPftRate.setFormat(PennantConstants.rateFormate9);
 		this.rpyAdvPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -2528,6 +2530,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			
+			if(this.maxPlanEmi.intValue()>this.maxPlanEmiPerAnnum.intValue()){
+				throw new WrongValueException(this.maxPlanEmi, Labels.getLabel("MAX_HOLIDAY_EXCEED",
+						new String[]{Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmi.value"),
+						Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmiPerAnnum.value")}));
+			}
+			
 		}else{
 			aFinanceType.setPlanEMIHMethod("");
 			aFinanceType.setPlanEMIHMaxPerYear(0);

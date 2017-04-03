@@ -95,6 +95,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -136,8 +137,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	protected ExtendedCombobox					custAddrCountry;														// autowired
 	protected Textbox							custAddrZIP;															// autowired
 	protected Textbox							custAddrPhone;															// autowired
-	protected Textbox							phoneCountryCode;														// autowired			
-	protected Textbox							phoneAreaCode;															// autowired
 	protected Datebox							custAddrFrom;															// autowired
 	protected Textbox							custCIF;																// autowired
 	protected Label								custShrtName;															// autowired
@@ -323,9 +322,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrCountry.setValidateColumns(new String[] { "CountryCode" });
 
 		this.custAddrZIP.setMaxlength(10);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
-		this.custAddrPhone.setMaxlength(8);
+		this.custAddrPhone.setMaxlength(10);
 		this.custAddrFrom.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.designation.setMaxlength(8);
@@ -493,10 +490,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrProvince.setValue(aDirectorDetail.getCustAddrProvince());
 		this.custAddrCountry.setValue(StringUtils.trimToEmpty(aDirectorDetail.getCustAddrCountry()));
 		this.custAddrZIP.setValue(aDirectorDetail.getCustAddrZIP());
-		String[] phone = PennantApplicationUtil.unFormatPhoneNumber(aDirectorDetail.getCustAddrPhone());
-		this.phoneCountryCode.setValue(phone[0]);
-		this.phoneAreaCode.setValue(phone[1]);
-		this.custAddrPhone.setValue(phone[2]);
+		this.custAddrPhone.setValue(aDirectorDetail.getCustAddrPhone());
 		this.custAddrFrom.setValue(aDirectorDetail.getCustAddrFrom());
 		this.custCIF.setValue(aDirectorDetail.getLovDescCustCIF() == null ? "" : aDirectorDetail.getLovDescCustCIF()
 				.trim());
@@ -646,8 +640,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			wve.add(we);
 		}
 		try {
-			aDirectorDetail.setCustAddrPhone(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.custAddrPhone.getValue()));
+			aDirectorDetail.setCustAddrPhone( this.custAddrPhone.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -894,17 +887,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 					.getLabel("label_DirectorDetailDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP,
 					false));
 		}
-		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_DirectorDetailDialog_mobileCountryCode.value"), false, 1));
-		}
-		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_DirectorDetailDialog_mobileAreaCode.value"), false, 2));
-		}
+		
 		if (!this.custAddrPhone.isReadonly()) {
-			this.custAddrPhone.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_DirectorDetailDialog_CustAddrPhone.value"), false, 3));
+			this.custAddrPhone.setConstraint(new PTMobileNumberValidator(Labels
+					.getLabel("label_DirectorDetailDialog_CustAddrPhone.value"), false));
 		}
 		if (!this.idReference.isReadonly()) {
 			this.idReference.setConstraint(new PTStringValidator(Labels
@@ -932,8 +918,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrLine2.setConstraint("");
 		this.custPOBox.setConstraint("");
 		this.custAddrZIP.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
 		this.custAddrPhone.setConstraint("");
 		this.custAddrFrom.setConstraint("");
 		this.designation.setConstraint("");
@@ -992,8 +976,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrProvince.setErrorMessage("");
 		this.custAddrCountry.setErrorMessage("");
 		this.custAddrZIP.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
 		this.custAddrPhone.setErrorMessage("");
 		this.custAddrFrom.setErrorMessage("");
 		this.designation.setErrorMessage("");
@@ -1120,8 +1102,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrCountry.setMandatoryStyle(!(isReadOnly("DirectorDetailDialog_custAddrCountry")));
 		this.custAddrZIP.setReadonly(isReadOnly("DirectorDetailDialog_custAddrZIP"));
 		this.custAddrPhone.setReadonly(isReadOnly("DirectorDetailDialog_custAddrPhone"));
-		this.phoneAreaCode.setReadonly(isReadOnly("DirectorDetailDialog_custAddrPhone"));
-		this.phoneCountryCode.setReadonly(isReadOnly("DirectorDetailDialog_custAddrPhone"));
 		this.custAddrFrom.setDisabled(isReadOnly("DirectorDetailDialog_custAddrFrom"));
 		this.sharePerc.setReadonly(isReadOnly("DirectorDetailDialog_sharePerc"));
 		this.shareholder.setDisabled(isReadOnly("DirectorDetailDialog_shareholder"));
@@ -1193,8 +1173,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrProvince.setReadonly(true);
 		this.custAddrCountry.setReadonly(true);
 		this.custAddrZIP.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
-		this.phoneCountryCode.setReadonly(true);
 		this.custAddrPhone.setReadonly(true);
 		this.custAddrFrom.setDisabled(true);
 		this.shareholder.setDisabled(true);
@@ -1248,8 +1226,6 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrCountry.setValue("");
 		this.custAddrCountry.setDescription("");
 		this.custAddrZIP.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		this.custAddrPhone.setValue("");
 		this.custAddrFrom.setText("");
 		this.shareholder.setChecked(false);

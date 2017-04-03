@@ -660,15 +660,17 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			this.bankName.setReadonly(isReadOnly("CustomerBankInfoDialog_BankName"));
 			this.bankName.setMandatoryStyle(!isReadOnly("CustomerBankInfoDialog_BankName"));
+			this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.bankName.setReadonly(true);
+			this.accountNumber.setReadonly(true);
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
-		this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
+		
 
 
 		if (isWorkFlowEnabled()) {
@@ -848,7 +850,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		String[] errParm = new String[2];
 		
 		valueParm[0] = String.valueOf(aCustomerBankInfo.getId());
-		valueParm[1] = aCustomerBankInfo.getBankName();
+		valueParm[1] = aCustomerBankInfo.getAccountNumber();
 		
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustBank")+ ":" + valueParm[1];
@@ -858,7 +860,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				CustomerBankInfo customerBankInfo = getCustomerDialogCtrl().getCustomerBankInfoDetailList().get(i);
 				
 				
-				if(aCustomerBankInfo.getBankName().equals(customerBankInfo.getBankName())){ // Both Current and Existing list rating same
+				if(aCustomerBankInfo.getAccountNumber().equals(customerBankInfo.getAccountNumber())){ // Both Current and Existing list rating same
 					
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
