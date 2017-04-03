@@ -730,24 +730,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.grcPricingMethod.setValidateColumns(new String[] { "RuleId" });
 		this.grcPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,Filter.OP_EQUAL) });
 
-		
-
 		this.financeGrcBaseRate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
 		this.financeGrcBaseRate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
-		
-		
+
 		this.grcAdvBaseRate.setMaxlength(8);
 		this.grcAdvBaseRate.setModuleName("BaseRateCode");
 		this.grcAdvBaseRate.setValueColumn("BRType");
 		this.grcAdvBaseRate.setDescColumn("BRTypeDesc");
 		this.grcAdvBaseRate.setValidateColumns(new String[] { "BRType" });
-
-		
 		
 		this.financeBaserate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
 		this.financeBaserate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
-
-		
 
 		this.rpyAdvBaseRate.setMaxlength(8);
 		this.rpyAdvBaseRate.setModuleName("BaseRateCode");
@@ -5141,27 +5134,22 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if(changeAction){
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 			readOnlyComponent(false, this.oDChargeCalOn);
-		}else{
-			readOnlyComponent(true, this.oDChargeCalOn);
-			
 		}
-		this.oDChargeAmtOrPerc.setDisabled(true);
 		
-		if(!this.oDChargeAmtOrPerc.isDisabled()){
-			this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
-			this.space_oDChargeCalOn.setSclass(PennantConstants.mandateSclass);
-		}
 		if (getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
 			this.oDChargeAmtOrPerc.setDisabled(true);
 			this.space_oDChargeAmtOrPerc.setSclass("");
 		}else if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT) ||
 				getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH)) {
+			this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
 			this.oDChargeAmtOrPerc.setDisabled(isCompReadonly);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil.getFormat(this.finCcy.getValue())));
 			Clients.clearWrongValue(this.oDChargeCalOn);
 			readOnlyComponent(true, this.oDChargeCalOn);
 			readOnlyComponent(true, this.oDIncGrcDays);
+			
+			this.space_oDChargeCalOn.setSclass("");
 
 			if(changeAction){
 				this.oDChargeCalOn.setSelectedIndex(0);
@@ -5169,10 +5157,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		} else {
 			if(changeAction){
-			this.oDChargeAmtOrPerc.setDisabled(false);
+				this.oDChargeAmtOrPerc.setDisabled(isCompReadonly);
 			}
 			this.oDChargeAmtOrPerc.setMaxlength(6);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
+			this.space_oDChargeCalOn.setSclass(PennantConstants.mandateSclass);
 			if(!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERCONDUEDAYS)){
 				this.oDIncGrcDays.setDisabled(true);
 				if(changeAction){

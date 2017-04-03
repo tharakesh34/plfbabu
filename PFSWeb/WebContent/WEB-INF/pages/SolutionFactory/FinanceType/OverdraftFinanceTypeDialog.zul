@@ -421,13 +421,13 @@
 											</row>
 											<row visible="true">
 												<label
-													id="label_FinanceTypeDialog_ODChargeCalOn"
-													value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeCalOn.value')}" />
+													id="label_FinanceTypeDialog_ODChargeType"
+													value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeType.value')}" />
 												<hbox>
 													<space spacing="2px"
-														id="space_oDChargeCalOn" sclass="mandatory" />
+														id="space_oDChargeType" sclass="mandatory" />
 													<combobox
-														id="oDChargeCalOn" width="200px" readonly="true" />
+														id="oDChargeType" width="200px" readonly="true" />
 												</hbox>
 												<label
 													id="label_FinanceTypeDialog_GraceDays"
@@ -441,13 +441,13 @@
 											</row>
 											<row visible="true">
 												<label
-													id="label_FinanceTypeDialog_ODChargeType"
-													value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeType.value')}" />
+													id="label_FinanceTypeDialog_ODChargeCalOn"
+													value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeCalOn.value')}" />
 												<hbox>
 													<space spacing="2px"
-														id="space_oDChargeType" sclass="mandatory" />
+														id="space_oDChargeCalOn" sclass="mandatory" />
 													<combobox
-														id="oDChargeType" width="200px" readonly="true" />
+														id="oDChargeCalOn" width="200px" readonly="true" />
 												</hbox>
 												<label
 													id="label_FinanceTypeDialog_ODChargeAmtOrPerc"
