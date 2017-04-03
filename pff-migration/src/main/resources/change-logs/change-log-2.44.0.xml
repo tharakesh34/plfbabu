@@ -355,5 +355,19 @@ update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
 			<column name="Status" type="varchar(15)" />
 		</createTable>
 	</changeSet>
-	
+		<changeSet id="16" author="Pruthvi">
+		<sql>
+	update reportlist set ReportFileName='ReportList08'
+where code='OriginationFinanceMain';
+
+update reportlist set ReportHeading='Customers',ModuleType='Customer Enquiry'
+where code='Customer';
+
+update reportlist set ModuleType='Customer Enquiry'
+where code='Mandate';
+
+update reportlist set ModuleType='Customer Enquiry'
+where code='Beneficiary';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
