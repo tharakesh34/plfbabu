@@ -47,7 +47,8 @@
 	</changeSet>
 	<changeSet id="4" author="satish">
 	<sql>
-insert into SMTparameters select 'EOD_THREAD_COUNT','Number of Threads','int',0,1,1,0,null,null,'Number of Threads',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0;
+insert into SMTparameters values('EOD_THREAD_COUNT','Number of Threads','int',0,1,1,0,null,null,'Number of Threads',1,1000,
+CURRENT_TIMESTAMP,'Approved','','','','','',0 );
 
 update SeqSecRoles set seqno=(select MAX(RoleID) from SecRoles);
 update seqSecGroups set seqno=(select MAX(GrpID) from SecGroups);
