@@ -641,16 +641,16 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		}	
 		if (!this.ccySpotRate.isReadonly()){
 			this.ccySpotRate.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_CurrencyDialog_CcySpotRate.value"),9,true));
+					"label_CurrencyDialog_CcySpotRate.value"),9,true,false,9999));
 		}
 		if (!this.ccyUserRateBuy.isReadonly()){
 			this.ccyUserRateBuy.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_CurrencyDialog_CcyUserRateBuy.value"),9,true));
+					"label_CurrencyDialog_CcyUserRateBuy.value"),9,true,false,9999));
 		}
 		
 		if (!this.ccyUserRateSell.isReadonly()){
 			this.ccyUserRateSell.setConstraint(new PTDecimalValidator(Labels.getLabel(
-					"label_CurrencyDialog_CcyUserRateSell.value"),9,true));
+					"label_CurrencyDialog_CcyUserRateSell.value"),9,true,false,9999));
 		}
 		if (!this.ccyCrRateBasisCode.isReadonly()) {
 			this.ccyCrRateBasisCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CurrencyDialog_CcyCrRateBasisCode.value"), null, true,true));
