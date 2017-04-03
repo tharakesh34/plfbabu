@@ -251,6 +251,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	protected Checkbox applyGrcPricing;
 	protected ExtendedCombobox grcPricingMethod;
+	protected Row row_ApplyGracePricingPolicy;
+	protected Row row_ApplyPricingPolicy;
 
 	// Advised Profit Rates
 	protected ExtendedCombobox grcAdvBaseRate; // autoWired
@@ -919,6 +921,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if(ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft){
 			this.row_QuickDisb.setVisible(true);
 		}
+		
+		if(ImplementationConstants.ALLOW_PRICINGPOLICY){
+			row_ApplyPricingPolicy.setVisible(false);
+			row_ApplyGracePricingPolicy.setVisible(false);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -5703,6 +5711,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		if (getFinanceType().isNewRecord()) {
 			this.finODRpyTries.setValue(-1);
+			this.finIsAlwGrcRepay.setChecked(true);
 		}
 		finType.setFinODRpyTries(-1);
 		this.finIsOpenPftPayAcc.setValue(false);

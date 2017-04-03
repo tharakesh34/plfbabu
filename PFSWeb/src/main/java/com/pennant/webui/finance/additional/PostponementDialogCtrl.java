@@ -422,6 +422,11 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if(curSchd.getSchDate().after(curBussDate)){
 					break;
 				}
+				
+				// BPI case not allowed to Re-age
+				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())){
+					continue;
+				}
 
 				//Profit Paid (Partial/Full)
 				if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {

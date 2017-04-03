@@ -640,7 +640,7 @@
 													style="text-align:right" />
 											</hbox>
 										</row>
-										<row visible="true">
+										<row id = "row_ApplyGracePricingPolicy" visible="true">
 											<label
 												id="label_ApplyGrcPricing"
 												value="${c:l('label_FinanceTypeDialog_ApplyGrcPricing.value')}" />
@@ -848,7 +848,7 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row visible="true">
+											<row id = "row_ApplyPricingPolicy" visible="true" >
 												<label
 													id="label_ApplyRpyPricing"
 													value="${c:l('label_FinanceTypeDialog_ApplyRpyPricing.value')}" />

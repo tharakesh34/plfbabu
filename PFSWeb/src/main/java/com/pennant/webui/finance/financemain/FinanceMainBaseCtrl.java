@@ -14808,10 +14808,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					//FIXME once Siva commits the schedulecalculator changes need to uncomment this line
 					//torebuild the overdraft if any fields are changed
-					getFinanceDetail().setFinScheduleData(
-							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData(),BigDecimal.ZERO));
 					/*getFinanceDetail().setFinScheduleData(
-							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData()));*/
+							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData(),BigDecimal.ZERO));*/
+					getFinanceDetail().setFinScheduleData(
+							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData()));
 				}
 
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
@@ -14975,7 +14975,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			finScheduleData.getOverdraftScheduleDetails().clear();
 		}
 		
-		finScheduleData = ScheduleCalculator.buildOverdraftSchd(finScheduleData,droplineAmt);
+	/*	finScheduleData = ScheduleCalculator.buildOverdraftSchd(finScheduleData,droplineAmt);*/
 		
 		if(isLimitIncreaseSchd){
 			limitIncreaseodSchd = new OverdraftScheduleDetail();

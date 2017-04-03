@@ -485,6 +485,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 				}
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,	getFinanceScheduleDetail().getProfitCalc(),getFinanceScheduleDetail().getSuplRent(),getFinanceScheduleDetail().getIncrCost(),
@@ -670,6 +674,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 
 					isEditable = true;
@@ -715,6 +723,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 				String label = Labels.getLabel("label_listcell_capital.label");
 				if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHCpz.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHCpz.label");
 				}
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,
@@ -819,6 +831,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 									}
 								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 									label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+									label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+									label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 								}
 								doFillListBox(getFinanceScheduleDetail(), count, label,
 										getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
@@ -861,6 +877,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 								}
 							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 								label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+								label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+								label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 							}
 							doFillListBox(getFinanceScheduleDetail(), count, label,
 									getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
@@ -1420,6 +1440,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 				}
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,
@@ -1606,6 +1630,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 
 					isEditable = true;
@@ -1651,6 +1679,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 				String label = Labels.getLabel("label_listcell_capital.label");
 				if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHCpz.label");
+				}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHCpz.label");
 				}
 
 				doFillListBox(getFinanceScheduleDetail(), count, label,
@@ -1755,6 +1787,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 									}
 								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 									label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+									label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+								}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+									label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 								}
 								doFillListBox(getFinanceScheduleDetail(), count, label,
 										getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
@@ -1798,6 +1834,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 								}
 							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 								label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+								label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+							}else if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+								label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 							}
 
 							doFillListBox(getFinanceScheduleDetail(), count, label,
@@ -2738,6 +2778,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 
 					data.setLabel(label);
@@ -2793,6 +2837,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 
 					data.setLabel(label);
@@ -2840,6 +2888,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 				String label = Labels.getLabel("label_listcell_capital.label");
 				if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHCpz.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHCpz.label");
 				}
 				data.setLabel(label);
 				if (count == 1){
@@ -2879,6 +2931,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 					data.setLabel(label);
 					if (count == 1){
@@ -3029,6 +3085,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 				}
 
 				data.setLabel(label);

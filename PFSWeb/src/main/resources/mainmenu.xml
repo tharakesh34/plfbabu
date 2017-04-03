@@ -156,7 +156,7 @@
 		<!-- <menuItem id="menu_Item_InsuranceRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/InsuranceRuleList.zul"   rightName="menuItem_RulesFactory_InsuranceRules"/> -->
 		<menuItem id="menu_Item_RateRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RateRuleList.zul" rightName="menuItem_RulesFactory_RateRules" />
 		<menuItem id="menu_Item_LoanDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"  rightName="menuItem_RulesFactory_LoanDedupParm"/>		
-		<!-- <menuItem id="menu_Item_Notifications" zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul" rightName="menuItem_RulesFactory_Notifications"/> -->
+		<menuItem id="menu_Item_Notifications" zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul" rightName="menuItem_RulesFactory_Notifications"/>
 		<menuItem id="menu_Item_PoliceDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"  rightName="menuItem_RulesFactory_PoliceDedupParm"/>
 		<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RulesFactory/OverdueCharge/OverdueChargeList.zul"  rightName="menuItem_RuleFactory_OverdueCharge"/> -->
 		<!-- <menuItem id="menu_Item_ProvisionRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"   rightName="menuItem_RulesFactory_ProvisionRules"/>
@@ -196,8 +196,10 @@
 		<menuItem id="menu_Item_PromotionServiceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=PROMOTION&amp;eventAction=''"  rightName="menuItem_SolutionFactory_PromotionWorkFlow" />		
 		 -->
 		 <!-- <menuItem id="menu_Item_FinanceRepayPriority" zulNavigation="/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityList.zul"  rightName="menuItem_SolutionFactory_FinanceRepayPriority"/>
- -->		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
-	<!-- 	<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/> -->
+ -->		
+ 		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
+ 		<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/>
+ 	 
 		<!-- <menuItem id="menu_Item_Calendar" zulNavigation="/WEB-INF/pages/SolutionFactory/Calendar/HolidayCalendar.zul"  rightName="menuItem_SolutionFactory_Calendar"/> -->
 		<!-- <menuItem id="menu_Item_VASProductCategory" zulNavigation="/WEB-INF/pages/VASProductCategory/VASProductCategoryList.zul"  rightName="menuItem_vasproduct_VASProductCategory"/>
 		<menuItem id="menu_Item_VASProductType" zulNavigation="/WEB-INF/pages/VASProductType/VASProductTypeList.zul"  rightName="menuItem_VASProductType_VASProductType"/>

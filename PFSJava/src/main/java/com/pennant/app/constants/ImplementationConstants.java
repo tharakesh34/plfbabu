@@ -72,7 +72,8 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_BPI_TREATMENT				= true;						// Allow Broken Period Interest
 	public static final boolean	INTERESTON_PASTDUE_PRINCIPAL	= true;						// Allow Interest on Past Due Principal
 	public static final boolean	ALLOW_PLANNED_DEFERMENTS		= false;					// Allow Planned Deferments
-
+	public static final boolean	ALLOW_PRICINGPOLICY				= false;					// Allow pricing policy
+	
 	public static final boolean	ALLOW_CREDITBUREAU				= false;					// Allow Credit Bureau
 	public static final boolean	ALLOW_BUNDLEDPRODUCT			= false;					// Allow Bundled Product
 	public static final boolean	ALLOW_COMMITMENT				= false;					// Allow Commitment Details
