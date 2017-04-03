@@ -70,5 +70,21 @@ update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
 	</sql>
 	</changeSet>
 	
+	<changeSet id="5" author="durgaPrasadG">
+		<addColumn tableName="SecUsers">
+			<column name="AuthType" type="char(3)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6" author="durgaPrasadG">
+		<sql>
+	   Update SecUsers set Authtype = 'DAO';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="7" author="durgaPrasadG">
+		<addNotNullConstraint tableName="SecUsers"
+			columnName="AuthType" columnDataType="char(3)" />
+	</changeSet>
 	
 </databaseChangeLog>
