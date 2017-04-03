@@ -52,6 +52,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -273,5 +274,31 @@ public class AssetTypeDAOImpl extends BasisCodeDAO<AssetType> implements AssetTy
 		parms[0][0] = PennantJavaUtil.getLabel("label_AssetType")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 				parms[0],parms[1]), userLanguage);
+	}
+
+
+	@Override
+	public int getAssignedAssets(String assetType) {
+		logger.debug("Entering");
+
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Select  Count(*) from (SELECT   *  FROM   FinAssetTypes_Temp  UNION ALL ");
+		sql.append("SELECT   *  FROM   FinAssetTypes ");
+		sql.append("WHERE     NOT EXISTS (SELECT  1 FROM  FinAssetTypes_Temp WHERE  AssetType = FinAssetTypes.AssetType)) T ");
+		sql.append("Where T.AssetType = :AssetType");
+
+		source.addValue("AssetType", assetType);
+		logger.debug("sql: " + sql.toString());
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			assetType = null;
+		}
+		logger.debug("Leaving");
+		return 0;
 	}
 }

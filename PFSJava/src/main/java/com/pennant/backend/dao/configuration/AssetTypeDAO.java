@@ -56,4 +56,6 @@ public interface AssetTypeDAO {
 	void delete(AssetType assetType, String type);
 
 	String save(AssetType assetType, String type);
+
+	int getAssignedAssets(String assetType);
 }

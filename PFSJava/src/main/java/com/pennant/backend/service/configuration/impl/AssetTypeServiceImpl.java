@@ -576,8 +576,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
-		valueParm[0]=aAssetType.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_ProductCode")+":"+valueParm[0];
+		valueParm[0]=aAssetType.getAssetType();
+		errParm[0]=PennantJavaUtil.getLabel("label_ProductCode")+": "+valueParm[0];
 
 		if (aAssetType.isNew()){ // for New record or new record into work flow
 
@@ -622,7 +622,15 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 				}
 			}
 		}
-
+		 
+		//Checking the Asset type is used in loan origination while deletion. If used throws error message like 
+		// Asset type is in used.
+		if (PennantConstants.RECORD_TYPE_DEL.equals(aAssetType.getRecordType())) {
+			if (getAssetTypeDAO().getAssignedAssets(aAssetType.getAssetType()) > 0) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if(StringUtils.trimToEmpty(method).equals("doApprove") || !aAssetType.isWorkflow()){
