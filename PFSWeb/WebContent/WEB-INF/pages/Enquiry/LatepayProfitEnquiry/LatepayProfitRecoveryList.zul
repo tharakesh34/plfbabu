@@ -77,6 +77,9 @@
 							<listheader id="listheader_FinODTot"
 								label="${c:l('listheader_FinODTot.label')}" sort="false"
 								hflex="true" />
+							<listheader id="listheader_PenaltyAmtPerc"
+								label="${c:l('listheader_PenaltyAmtPerc.label')}" sort="false"
+								hflex="true" />
 							<listheader id="listheader_FinODCPenalty"
 								label="${c:l('listheader_FinODProfit.label')}" sort="false"
 								hflex="true" />
