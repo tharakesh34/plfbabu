@@ -114,7 +114,7 @@
 								<listbox
 									id="sortOperator_branchSwiftBankCde" width="43px" mold="select"
 									rows="1" />
-								<uppercasebox id="branchSwiftBankCde"
+								<uppercasebox id="branchSwiftBrnCde"
 									width="100px" maxlength="4" />
 							</row>
 							<row>

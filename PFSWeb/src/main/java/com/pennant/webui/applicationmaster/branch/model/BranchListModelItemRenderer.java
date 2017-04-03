@@ -82,7 +82,7 @@ public class BranchListModelItemRenderer implements ListitemRenderer<Branch>, Se
 		lc = new Listcell(StringUtils.trimToEmpty(branch.getBranchCity()) + "-"
 				+ StringUtils.trimToEmpty(branch.getLovDescBranchCityName()));
 		lc.setParent(item);
-		lc = new Listcell(branch.getBranchSwiftBankCde());
+		lc = new Listcell(branch.getBranchSwiftBrnCde());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbBranchIsActive = new Checkbox();

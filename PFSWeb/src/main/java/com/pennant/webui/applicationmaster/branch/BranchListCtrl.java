@@ -87,7 +87,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 	protected Textbox branchCity;
 	protected Textbox branchProvince;
 	protected Textbox branchCountry;
-	protected Textbox branchSwiftBankCde;
+	protected Textbox branchSwiftBrnCde;
 	protected Checkbox branchIsActive;
 
 	protected Listbox sortOperator_branchCode;
@@ -158,7 +158,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 		registerField("lovDescBranchSwiftCountryName");
 		registerField("branchCountry", listheader_BranchCountry, SortOrder.NONE, branchCountry,
 				sortOperator_branchCountry, Operators.STRING);
-		registerField("branchSwiftBankCde", listheader_BranchSwiftBankCde, SortOrder.NONE, branchSwiftBankCde,
+		registerField("branchSwiftBrnCde", listheader_BranchSwiftBankCde, SortOrder.NONE, branchSwiftBrnCde,
 				sortOperator_branchSwiftBankCde, Operators.STRING);
 		registerField("branchIsActive", listheader_BranchIsActive, SortOrder.NONE, branchIsActive,
 				sortOperator_branchIsActive, Operators.SIMPLE);
