@@ -42,17 +42,16 @@ public class Search implements IMutableSearch, Serializable {
 
 	protected Class<?> searchClass;
 
-	protected List<Filter> filters = new ArrayList<Filter>();
+	private List<Filter> filters = new ArrayList<>();
 
 	protected boolean disjunction;
 
-	protected List<Sort> sorts = new ArrayList<Sort>();
-
-	protected List<Field> fields = new ArrayList<Field>();
+	private List<Sort> sorts = new ArrayList<>();
+	private List<Field> fields = new ArrayList<>();
 
 	protected boolean distinct;
 
-	protected List<String> fetches = new ArrayList<String>();
+	private List<String> fetches = new ArrayList<>();
 
 	protected int resultMode = RESULT_AUTO;
 
@@ -62,7 +61,7 @@ public class Search implements IMutableSearch, Serializable {
 	protected String whereClause=null;
 	
 	public Search() {
-
+		super();
 	}
 
 	public Search(Class<?> searchClass) {
