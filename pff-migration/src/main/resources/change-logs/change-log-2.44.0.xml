@@ -87,4 +87,272 @@ update seqSecGroupRights set seqno=(select MAX(GrpRIGHTID) from SecGroupRights);
 			columnName="AuthType" columnDataType="char(3)" />
 	</changeSet>
 	
+	<changeSet id="8" author="satish">
+	<dropTable tableName="FinPftDetails_SnapShot" />
+	</changeSet>
+	<changeSet id="9" author="satish">
+		<createTable tableName="FinPftDetails_SnapShot">
+			<column name="AppDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMdfDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPftSchd" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPftCpz" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPftPaid" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPftBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPftPaidInAdv" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPriPaid" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPriBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPft" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdPftCpz" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPftPaid" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPftBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdPftAccrued" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdPftAccrueSusp" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdPftAmortized" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdPftAmortizedSusp" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPri" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPriPaid" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TdSchdPriBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcrTillNBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcrTillLBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcrTodayToNBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmzTillNBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmzTillLBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmzTodayToNBD" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RepayFrq" type="varchar(5)" />
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinPurpose" type="varchar(8)" />
+			<column name="FinContractDate" type="datetime" />
+			<column name="FinApprovedDate" type="datetime" />
+			<column name="FinStartDate" type="datetime" />
+			<column name="MaturityDate" type="datetime" />
+			<column name="FullPaidDate" type="datetime" />
+			<column name="FinAmount" type="decimal(18, 0)" />
+			<column name="DownPayment" type="decimal(18, 0)" />
+			<column name="CurReducingRate" type="decimal(13, 9)" />
+			<column name="curFlatRate" type="decimal(13, 9)" />
+			<column name="TotalpriSchd" type="decimal(18, 0)" />
+			<column name="EarlyPaidAmt" type="decimal(18, 0)" />
+			<column name="ODPrincipal" type="decimal(18, 0)" />
+			<column name="ODProfit" type="decimal(18, 0)" />
+			<column name="PenaltyPaid" type="decimal(18, 0)" />
+			<column name="PenaltyDue" type="decimal(18, 0)" />
+			<column name="PenaltyWaived" type="decimal(18, 0)" />
+			<column name="NSchdDate" type="datetime" />
+			<column name="NSchdPri" type="decimal(18, 0)" />
+			<column name="NSchdPft" type="decimal(18, 0)" />
+			<column name="NSchdPriDue" type="decimal(18, 0)" />
+			<column name="NSchdPftDue" type="decimal(18, 0)" />
+			<column name="AccruePft" type="decimal(18, 0)" />
+			<column name="EarnedPft" type="decimal(18, 0)" />
+			<column name="Unearned" type="decimal(18, 0)" />
+			<column name="PftInSusp" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="SuspPft" type="decimal(18, 0)" />
+			<column name="PftAccrueTsfd" type="decimal(18, 0)" />
+			<column name="FinStatus" type="varchar(8)" />
+			<column name="FinStsReason" type="varchar(1)" />
+			<column name="FinWorstStatus" type="varchar(8)" />
+			<column name="AdminPaidAmt" type="decimal(18, 0)" />
+			<column name="NOInst" type="bigint" />
+			<column name="NOPaidInst" type="bigint" />
+			<column name="NOODInst" type="bigint" />
+			<column name="FinAccount" type="varchar(50)" />
+			<column name="FinAcType" type="varchar(8)" />
+			<column name="DisbAccountId" type="varchar(50)" />
+			<column name="DisbActCcy" type="char(3)" />
+			<column name="RepayAccountId" type="varchar(50)" />
+			<column name="FinCustPftAccount" type="varchar(50)" />
+			<column name="IncomeAccount" type="varchar(50)" />
+			<column name="UEIncomeSuspAccount" type="varchar(50)" />
+			<column name="FinCommitmentRef" type="varchar(20)" />
+			<column name="FinIsActive" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="NORepayments" type="bigint" />
+			<column name="FirstRepayDate" type="datetime" />
+			<column name="FirstRepayAmt" type="decimal(18, 0)" />
+			<column name="LastRepayAmt" type="decimal(18, 0)" />
+			<column name="ODDays" type="int" />
+			<column name="FirstODDate" type="datetime" />
+			<column name="LastODDate" type="datetime" />
+			<column name="ClosingStatus" type="char(1)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="LastRpySchDate" type="datetime" />
+			<column name="NextRpySchDate" type="datetime" />
+			<column name="LastRpySchPri" type="decimal(18, 0)" />
+			<column name="LastRpySchPft" type="decimal(18, 0)" />
+			<column name="LatestRpyDate" type="datetime" />
+			<column name="LatestRpyPri" type="decimal(18, 0)" />
+			<column name="LatestRpyPft" type="decimal(18, 0)" />
+			<column name="LatestWriteOffDate" type="datetime" />
+			<column name="TotalWriteoff" type="decimal(18, 0)" />
+			<column name="PrvPftAccrueTsfd" type="decimal(18, 0)" />
+			<column name="SuspPftAccrueTsfd" type="decimal(18, 0)" />
+			<column name="AccumulatedDepPri" type="decimal(18, 0)" />
+			<column name="DepreciatePri" type="decimal(18, 0)" />
+			<column name="AcrTsfdInSusp" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CRBFirstODDate" type="datetime" />
+			<column name="CRBLastODDate" type="datetime" />
+			<column name="CRBODPrincipal" type="decimal(18, 0)" />
+			<column name="CRBODProfit" type="decimal(18, 0)" />
+			<column name="CRBODDays" type="int" />
+			<column name="CRBODInst" type="int" />
+			<column name="TotalAdvPftSchd" type="decimal(18, 0)" />
+			<column name="TotalRbtSchd" type="decimal(18, 0)" />
+			<column name="TotalPriPaidInAdv" type="decimal(18, 0)" />
+			<column name="TdSchdAdvPft" type="decimal(18, 0)" />
+			<column name="TdSchdRbt" type="decimal(18, 0)" />
+			<column name="TdPftAmortizedNormal" type="decimal(18, 0)" />
+			<column name="TdPftAmortizedPD" type="decimal(18, 0)" />
+			<column name="AmzTillLBDNormal" type="decimal(18, 0)" />
+			<column name="AmzTillLBDPD" type="decimal(18, 0)" />
+			<column name="AmzTillLBDPIS" type="decimal(18, 0)" />
+			<column name="InsPaidAmt" type="decimal(18, 0)" />
+			<column name="InsCal" type="decimal(18, 0)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="10" author="satish">
+		<addPrimaryKey columnNames="AppDate, FinReference" constraintName="PK_FinPftDetails_SnapShot" tableName="FinPftDetails_SnapShot" />
+	</changeSet>
+	<changeSet id="11" author="Satish">
+		<createTable tableName="FinanceRateReview">
+			<column name="FinReference" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RateType" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Currency" type="varchar(3)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="EffectiveDate" type="datetime" />
+			<column name="EventFromDate" type="datetime" />
+			<column name="EventToDate" type="datetime" />
+			<column name="RecalFromdate" type="datetime" />
+			<column name="RecalToDate" type="datetime" />
+			<column name="EMIAmount" type="decimal(18, 0)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="12" author="satish">
+		<createTable tableName="CustomerQueuing">
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EodDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="Status" type="varchar(15)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="13" author="satish">
+		<createTable tableName="CustomerQueuing_Log">
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EodDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="Status" type="varchar(15)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14" author="satish">
+		<createTable tableName="CustomerDates">
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AppDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="NextBusinessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="15" author="satish">
+		<createTable tableName="EodDetails">
+			<column name="ProcessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="StatTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Status" type="varchar(15)" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
