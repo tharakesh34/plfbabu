@@ -433,7 +433,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setFinReference(finReference);
 	    
-		StringBuilder selectSql = new StringBuilder("Select AcrTillNBD ");
+		StringBuilder selectSql = new StringBuilder("Select AmzTillLBD-TdSchdPftPaid ");
 		selectSql.append(" From FinPftDetails Where FinReference =:FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());

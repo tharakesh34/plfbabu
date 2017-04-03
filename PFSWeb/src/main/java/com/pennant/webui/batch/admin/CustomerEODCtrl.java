@@ -72,7 +72,11 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 		EodDetailDAO eodDetailsDAO = applicationContext.getBean(EodDetailDAO.class);
 
-		EodDetail eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST));
+		EodDetail eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_VALUE));
+		
+		if (eodDetail==null) {
+			eodDetail = eodDetailsDAO.getEodDetailById(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST));
+		}
 		if (eodDetail != null) {
 			this.startTime.setValue(DateUtility.format(eodDetail.getStatTime(), DateFormat.LONG_TIME));
 			if (eodDetail.getEndTime() != null) {

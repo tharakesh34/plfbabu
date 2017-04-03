@@ -102,12 +102,12 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 		 */
 		Component comp = event.getTarget();
 
-		if (BatchMonitor.isEodRunning() && !comp.getId().contains("menu_Item_BatchAdmin")) {
+		if (BatchMonitor.isEodRunning() && (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD")) ) {
 			Clients.showNotification(Labels.getLabel("EOD_RUNNING"), "info", null, null, -1);
 		} else if (!"Y".equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.ALLOW_ACCESS_TO_APP))) {
 			Clients.showNotification(Labels.getLabel("ALLOW_ACCESS_RESTRICTION"), "info", null, null, -1);
 		} else if (SysParamUtil.getValueAsString(PennantConstants.APP_PHASE).equals(PennantConstants.APP_PHASE_EOD)
-				&& !comp.getId().contains("menu_Item_BatchAdmin")) {
+				&& (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD"))) {
 			Clients.showNotification(Labels.getLabel("CHANGE_EOD_PHASE"), "info", null, null, -1);
 		} else {
 			if ((user.getLogonFromTime() != null) && (user.getLogonToTime() != null)) {

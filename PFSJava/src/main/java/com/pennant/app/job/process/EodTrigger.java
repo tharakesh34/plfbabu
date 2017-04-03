@@ -104,6 +104,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 						long stauscount = eod.getCountByStatus(DateUtility.getAppDate(), EodConstants.STATUS_FAILED);
 						if (stauscount > 0) {
 							((Textbox) map.get(7)).setValue("Failed");
+							((Button) map.get(4)).setDisabled(false);
 						} else {
 
 							eod.getPostEodService().doProcess();
@@ -111,11 +112,12 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 							eod.getEodDetailDAO().update(eodDetail);
 							((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(),
 									DateFormat.LONG_TIME));
+							updateCompleteEODStatus();
 						}
 
 						eod.getThreadPoolTaskExecutor().destroy();
 
-						updateCompleteEODStatus();
+				
 						logger.debug("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
 						break;
 					}

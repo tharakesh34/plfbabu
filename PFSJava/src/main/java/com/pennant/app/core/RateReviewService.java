@@ -87,8 +87,8 @@ public class RateReviewService extends ServiceHelper {
 	private FinanceRateReviewDAO	financeRateReviewDAO;
 
 	//fetch rates changed yesterday or effective date is today
-	public static final String		QUERY_BASERATE		= "SELECT BRType,Currency,BREffDate,BRRate FROM RMTBaserates WHERE lastmdfDate >= ? OR BREffDate = ? ";
-	public static final String		QUERY_FINANCE		= "SELECT rv.FinReference FROM  (Select Distinct FSD.FinReference FinReference FROM FinScheduleDetails FSD "
+	public static final String		QUERY_BASERATE		= "SELECT BRType,Currency,BREffDate,BRRate,LastMdfDate FROM RMTBaserates";
+	public static final String		QUERY_FINANCE		= "SELECT rv.FinReference FROM  (Select Distinct FSD.FinReference FinReference FROM FinScheduleDetails FSD WHERE"
 																+ " FSD.RvwOnSchDate = 1 AND FSD.BaseRate = ? ) rv  INNER JOIN Financemain fm ON fm.FinReference = rv.FinReference"
 																+ " WHERE fm.finccy = ? AND fm.finisActive=1 AND fm.custid = ? ";
 
@@ -102,9 +102,6 @@ public class RateReviewService extends ServiceHelper {
 		try {
 
 			sqlStatement = connection.prepareStatement(QUERY_BASERATE);
-			java.sql.Date yesterDay = DateUtility.addDays(date, -1);
-			sqlStatement.setDate(1, yesterDay);
-			sqlStatement.setDate(2, new java.sql.Date(date.getTime()));
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 				BaseRate baseRate = prepareBaseRate(resultSet);
@@ -177,78 +174,123 @@ public class RateReviewService extends ServiceHelper {
 
 		FinScheduleData finScheduleData = getFinSchDataByFinRef(finref, "_AView");
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType finType = finScheduleData.getFinanceType();
 		List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
-
 		String rvwAppFor = StringUtils.trimToEmpty(finType.getFinRvwRateApplFor());
 
-		if (!finType.isFinIsRvwAlw()) {
+		// if not auto rate review 
+		if ("".equals(rvwAppFor) || rvwAppFor.equals(CalculationConstants.RATEREVIEW_NORVW)) {
 			return;
 		}
 
-		if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_NORVW)) {
-			return;
+		if (date.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+			if (!finMain.isAllowGrcPftRvw()) {
+				return;
+			}
+		} else {
+			if (!finMain.isAllowRepayRvw()) {
+				return;
+			}
 		}
 
-		if (!finType.isRateChgAnyDay() && baseRate.getBREffDate().compareTo(date) != 0) {
+		//rate review not allowed after the maturity
+		if (baseRate.getBREffDate().compareTo(finMain.getMaturityDate()) >= 0 || baseRate.getBREffDate().compareTo(finMain.getFinStartDate()) < 0) {
 			return;
 		}
+		
+		if (finMain.getNextRepayRvwDate().compareTo(finMain.getMaturityDate()) == 0) {
+			return;
+		}
+		
+		
+		Date effectiveDate = null;
+
+		//if rate change allowed any date , then check last modified date is grater than yesterday and get the effective date 
+		//else check next review date of the loan is equal to value date.
+		if (finType.isRateChgAnyDay()) {
+
+			java.sql.Date yesterDay = DateUtility.addDays(date, -1);
+
+			if (baseRate.getLastMdfDate().compareTo(yesterDay) > 0) {
+				effectiveDate = baseRate.getBREffDate();
+			} else {
+				return;
+			}
+
+		} else {
+			if (finMain.getNextRepayRvwDate().compareTo(date) == 0 && baseRate.getBREffDate().compareTo(finMain.getNextRepayRvwDate())<=0) {
+				effectiveDate = finMain.getNextRepayRvwDate();
+			} else {
+				return;
+			}
+		}
+
+		if (effectiveDate == null) {
+			return;
+		}
+		
+
+		//Rate review required
 
 		//Log Entry before the schedule change Saving for Total Finance Detail
 		listSave(finScheduleData, "_Log", date);
 
 		Date eventFromDate = null;
-		Date eventToDate = financeMain.getMaturityDate();
-
+		Date eventToDate = finMain.getMaturityDate();
 		String rvwCalon = finType.getFinSchCalCodeOnRvw();
+
+		Date nextReviewDate = null;
+		Date nextUnpaiddate = null;
 
 		for (FinanceScheduleDetail finSchDetail : schList) {
 
 			Date schdate = finSchDetail.getSchDate();
 
-			if (schdate.compareTo(baseRate.getBREffDate()) < 0) {
+			if (schdate.compareTo(effectiveDate) < 0) {
 				continue;
 			}
 
-			if (eventFromDate == null) {
-				if (finSchDetail.isRepayOnSchDate()) {
-
-					if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
-						if ((!finSchDetail.isSchPftPaid() && !finSchDetail.isSchPriPaid())) {
-							eventFromDate = schdate;
-							break;
-						}
-
-					} else if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWALL)) {
-						eventFromDate = schdate;
-						break;
-					}
-				}
+			//grace review
+			if (nextReviewDate == null) {
+				nextReviewDate = schdate;
 			}
+
+			if (nextUnpaiddate == null
+					&& (finSchDetail.isRepayOnSchDate() && !finSchDetail.isSchPftPaid() && !finSchDetail.isSchPriPaid())) {
+				nextUnpaiddate = schdate;
+			}
+
+			if (nextReviewDate != null && nextUnpaiddate != null) {
+				break;
+			}
+
 		}
 
-		financeMain.setEventFromDate(eventFromDate);
-		financeMain.setEventToDate(eventToDate);
-		financeMain.setRecalType(rvwCalon);
+		if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
+			eventFromDate = nextUnpaiddate;
+		} else if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWALL)) {
+			eventFromDate = nextReviewDate;
+		}
+
+		finMain.setEventFromDate(eventFromDate);
+		finMain.setEventToDate(eventToDate);
+		finMain.setRecalType(rvwCalon);
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		// Finance Profit Details
-		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(financeMain, schList, null, date);
+		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(finMain, schList, null, date);
 		// Amount Codes Details Preparation
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(financeMain, profitDetail, date);
+		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finMain, profitDetail, date);
 
 		// DataSet preparation
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_RATCHG, date, date);
-
+		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_RATCHG, date, date);
 		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, finScheduleData.getFinanceType());
 		saveAccounting(list);
-
 		// Update New Finance Schedule Details Data
 		saveOrUpdate(finScheduleData, profitDetail);
-
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finref);
 		rateReview.setRateType(baseRate.getBRType());
@@ -257,8 +299,8 @@ public class RateReviewService extends ServiceHelper {
 		rateReview.setEffectiveDate(baseRate.getBREffDate());
 		rateReview.setEventFromDate(eventFromDate);
 		rateReview.setEventToDate(eventToDate);
-		rateReview.setRecalFromdate(financeMain.getRecalFromDate());
-		rateReview.setRecalToDate(financeMain.getRecalToDate());
+		rateReview.setRecalFromdate(finMain.getRecalFromDate());
+		rateReview.setRecalToDate(finMain.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
 
 	}
@@ -269,6 +311,7 @@ public class RateReviewService extends ServiceHelper {
 		baseRate.setCurrency(resultSet.getString("Currency"));
 		baseRate.setBREffDate(resultSet.getDate("BREffDate"));
 		baseRate.setBRRate(resultSet.getBigDecimal("BRRate"));
+		baseRate.setLastMdfDate(resultSet.getDate("LastMdfDate"));
 
 		return baseRate;
 	}
