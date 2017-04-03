@@ -40,10 +40,10 @@
             <column defaultValueNumeric="0" name="STARTINGROW" type="smallint">
                 <constraints nullable="false"/>
             </column>
-            <column name="SKIPHEADERROW" type="bit"/>
-            <column name="FIELDNAMES" type="varchar(MAX)"/>
-            <column name="HEADER" type="varchar(MAX)"/>
-            <column name="TRAILER" type="varchar(MAX)"/>
+            <column name="SKIPHEADERROW" type="boolean"/>
+            <column name="FIELDNAMES" type="CLOB"/>
+            <column name="HEADER" type="CLOB"/>
+            <column name="TRAILER" type="CLOB"/>
             <column name="UPLOADLOCATION" type="char(1)">
                 <constraints nullable="false"/>
             </column>
@@ -60,8 +60,8 @@
             <column name="CRONEXPRESSION" type="varchar(50)"/>
             <column name="NOTIFICATIONSTATUSEMAIL" type="varchar(254)"/>
             <column name="POSTEVENT" type="varchar(100)"/>
-            <column name="BACKUPFILE" type="bit"/>
-            <column name="ACTIVE" type="bit"/>
+            <column name="BACKUPFILE" type="boolean"/>
+            <column name="ACTIVE" type="boolean"/>
         </createTable>
     </changeSet>
 	<changeSet author="Prasad" id="3" dbms="mssql, postgresql">
@@ -99,8 +99,8 @@
             <column defaultValueNumeric="0" name="RecordLength" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="MultiRow" type="bit"/>
-            <column name="PrepareXML" type="bit"/>
+            <column name="MultiRow" type="boolean"/>
+            <column name="PrepareXML" type="boolean"/>
             <column name="XmlField" type="varchar(30)"/>
         </createTable>
     </changeSet>
@@ -122,19 +122,19 @@
             <column name="Name" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValueNumeric="0" name="Skip" type="bit"/>
+            <column defaultValueNumeric="0" name="Skip" type="boolean"/>
             <column defaultValue="N" name="SeqType" type="char(1)"/>
             <column name="SeqObject" type="varchar(30)"/>
             <column name="DefaultValue" type="varchar(100)"/>
             <column name="DerivedFrom" type="varchar(100)"/>
-            <column defaultValueNumeric="0" name="ChildReference" type="bit"/>
+            <column defaultValueNumeric="0" name="ChildReference" type="boolean"/>
             <column name="ParentName" type="varchar(50)"/>
             <column name="StartIndex" type="varchar(10)"/>
             <column name="EndIndex" type="varchar(10)"/>
             <column name="RuleForValue" type="varchar(2000)"/>
             <column name="QueryForValue" type="varchar(2000)"/>
             <column name="Format" type="varchar(30)"/>
-            <column name="XmlTag" type="bit"/>
+            <column name="XmlTag" type="boolean"/>
         </createTable>
     </changeSet>
     <changeSet author="prasad" id="5.1" dbms="mssql, postgresql">
@@ -157,7 +157,7 @@
             </column>
             <column name="FileName" type="varchar(100)"/>
             <column name="Reference" type="varchar(100)"/>
-            <column name="ValueDate" type="date"/>
+            <column name="ValueDate" type="datetime"/>
             <column defaultValueNumeric="0" name="TotalRecords" type="int">
                 <constraints nullable="false"/>
             </column>
