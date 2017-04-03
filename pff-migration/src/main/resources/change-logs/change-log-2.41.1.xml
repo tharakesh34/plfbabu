@@ -5,14 +5,18 @@
 	<property name="add.schema" value=" " dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
 	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
 	<property name="call.auditdb" value=" " dbms="oracle" />
 	<property name="call.concatenate" value="+" dbms="mssql" />
 	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
 	<property name="call.collength" value="LEN" dbms="mssql" />
 	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
 	<changeSet author="DurgaPrasad G" id="00">
 		<modifyDataType tableName="DATA_ENGINE_TABLE" columnName="StatusUpdate"
