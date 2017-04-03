@@ -119,7 +119,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 			}
 
 			getBorderLayoutHeight();
-			this.listBoxSchedule.setHeight(this.borderLayoutHeight - 250 + "px");
+			this.listBoxSchedule.setHeight(this.borderLayoutHeight - 200 + "px");
 			this.window_OverdraftScheduleDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

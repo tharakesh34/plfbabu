@@ -366,7 +366,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		logger.debug("Entering");
 
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-		String product = financeMain.getProductCategory();
 		this.schdl_finType.setValue(financeMain.getFinType());
 		this.schdl_finCcy.setValue(financeMain.getFinCcy());
 		this.schdl_profitDaysBasis.setValue(PennantAppUtil.getlabelDesc(financeMain.getProfitDaysBasis(),PennantStaticListUtil.getProfitDaysBasis()));
@@ -395,7 +394,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
-		if (product.equals(FinanceConstants.PRODUCT_ISTISNA)) {
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ISTISNA,financeMain.getProductCategory())) {
 			this.row_istisna.setVisible(true);
 			this.label_ScheduleDetailDialog_Graceprofit.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInGrace.value"));
 			this.label_ScheduleDetailDialog_Repayprofit.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInRepay.value"));
@@ -477,24 +476,24 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.label_ScheduleDetailDialog_ODFutureDisb.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODFutureDisb.value"));
 			
 		}
-		if (StringUtils.equals(product, FinanceConstants.PRODUCT_QARDHASSAN)) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_QARDHASSAN, financeMain.getProductCategory())) {
 			this.label_ScheduleDetailDialog_ProfitDaysBasis.setVisible(false);
 			this.schdl_profitDaysBasis.setVisible(false);
 			this.row_totalCost.setVisible(false);
 			this.row_ContractPrice.setVisible(false);
 		}
 
-		if (StringUtils.equals(product, FinanceConstants.PRODUCT_STRUCTMUR)) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, financeMain.getProductCategory())) {
 			this.listheader_ScheduleDetailDialog_SchAdvProfit.setVisible(true);
 			this.listheader_ScheduleDetailDialog_AdvTotal.setVisible(true);
 			this.listheader_ScheduleDetailDialog_Rebate.setVisible(true);
 			this.listheader_ScheduleDetailDialog_Total.setVisible(true);
-		} else if ((StringUtils.equals(product, FinanceConstants.PRODUCT_IJARAH) ||
-				StringUtils.equals(product, FinanceConstants.PRODUCT_FWIJARAH))
-				|| StringUtils.equals(product, FinanceConstants.PRODUCT_ISTISNA)) {
+		} else if ((StringUtils.equals(FinanceConstants.PRODUCT_IJARAH, financeMain.getProductCategory()) ||
+				StringUtils.equals(FinanceConstants.PRODUCT_FWIJARAH, financeMain.getProductCategory()))
+				|| StringUtils.equals(FinanceConstants.PRODUCT_ISTISNA, financeMain.getProductCategory())) {
 			this.listheader_ScheduleDetailDialog_SupplementRent.setVisible(true);
 			this.listheader_ScheduleDetailDialog_IncreasedCost.setVisible(true);
-		} else if (StringUtils.equals(product, FinanceConstants.PRODUCT_MUSHARAKA)) {
+		} else if (StringUtils.equals(FinanceConstants.PRODUCT_MUSHARAKA, financeMain.getProductCategory())) {
 			this.row_Musharak.setVisible(true);
 			this.label_ScheduleDetailDialog_BankShare.setValue(Labels.getLabel("label_ScheduleDetailDialog_BankShare.value"));
 			this.label_ScheduleDetailDialog_NonBankShare.setValue(Labels.getLabel("label_ScheduleDetailDialog_NonBankShare.value"));
@@ -502,7 +501,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		
 		// Structured Murabaha for Enquiry
 		if(isWIF){
-			if(StringUtils.equals(product, FinanceConstants.PRODUCT_STRUCTMUR)){
+			if(StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, financeMain.getProductCategory())){
 				this.btnPostponement.setVisible(false);
 				this.btnUnPlanEMIH.setVisible(false);
 				this.btnReAgeHolidays.setVisible(false);

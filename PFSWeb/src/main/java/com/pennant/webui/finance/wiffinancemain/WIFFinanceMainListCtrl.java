@@ -260,7 +260,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("WIFFinanceMainList");
 		this.button_WIFFinanceMainList_NewWIFFinanceMain.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_NewWIFFinanceMain"));
-		this.button_WIFFinanceMainList_WIFFinanceMainSearchDialog.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_WIFFinanceMainFindDialog"));
+		this.button_WIFFinanceMainList_WIFFinanceMainSearchDialog.setVisible(true);
 		this.button_WIFFinanceMainList_PrintList.setVisible(getUserWorkspace().isAllowed("button_WIFFinanceMainList_PrintList"));
 		logger.debug("Leaving");
 	}

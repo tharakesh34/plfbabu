@@ -1116,12 +1116,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.ifscCode.setReadonly(true);
 		this.ifscCode.setMaxlength(9);
 
-		if (isWorkFlowEnabled()) {
-			this.groupboxWf.setVisible(true);
-		} else {
-			this.groupboxWf.setVisible(false);
-		}
-
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			finDelegationDeviationCtrl.setFormat(finFormatter);
 			finDelegationDeviationCtrl.setUserRole(getRole());
@@ -1177,6 +1171,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(financeType);
+		
+		boolean isOverdraft = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			isOverdraft = true;
+		}
+		if (isOverdraft) {
+			this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+			if (financeType.isDroplineOD() || StringUtils.isNotEmpty(financeMain.getDroplineFrq())) {
+				this.row_DroplineFrq.setVisible(true);
+				this.droplineFrq.setMandatoryStyle(true);
+				this.droplineFrq.setVisible(true);
+				this.firstDroplineDate.setVisible(true);
+				this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+				this.space_DroplineDate.setSclass(PennantConstants.mandateSclass);
+			} else {
+				this.row_DroplineFrq.setVisible(false);
+				this.droplineFrq.setMandatoryStyle(false);
+				this.droplineFrq.setVisible(false);
+				this.firstDroplineDate.setVisible(false);
+				this.space_DroplineDate.setSclass("");
+			}
+		}
+		
+		if (isWorkFlowEnabled()) {
+			this.groupboxWf.setVisible(true);
+		} else {
+			this.groupboxWf.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -3019,6 +3041,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.grcAdvRate.setMarginText("");
 				this.grcAdvPftRate.setText("");
 			}
+			
+			// Effective Rate Setting
+			if(StringUtils.isNotEmpty(this.graceRate.getBaseValue())){
+				calculateRate(this.graceRate.getBaseValue(), this.finCcy.getValue(),
+						this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
+						this.graceRate.getMarginValue(), this.grcEffectiveRate, this.finGrcMinRate, this.finMaxRate);
+			}
 
 			//Advised profit Rates
 			doCheckAdviseRates(aFinanceMain.getGrcAdvBaseRate(), aFinanceMain.getRpyAdvBaseRate(), true,
@@ -3090,20 +3119,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Finance MainDetails Tab ---> 3. Repayment Period Details
-
 		if (isOverdraft) {
-			if (aFinanceDetail.getFinScheduleData().getFinanceType().isDroplineOD()) {
-				this.row_DroplineFrq.setVisible(true);
-				this.droplineFrq.setMandatoryStyle(true);
-				this.droplineFrq.setVisible(true);
-				this.firstDroplineDate.setVisible(true);
+			if (aFinanceDetail.getFinScheduleData().getFinanceType().isDroplineOD() || StringUtils.isNotEmpty(aFinanceMain.getDroplineFrq())) {
 				if (StringUtils.isNotEmpty(aFinanceMain.getDroplineFrq())) {
 					this.droplineFrq.setValue(aFinanceMain.getDroplineFrq());
 				} else {
 					this.droplineFrq.setValue(aFinanceMain.getRepayFrq());
 				}
-				this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-				this.space_DroplineDate.setSclass(PennantConstants.mandateSclass);
 				this.firstDroplineDate.setValue(aFinanceMain.getFirstDroplineDate());
 			} else {
 				this.row_DroplineFrq.setVisible(false);
@@ -3204,6 +3226,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
+		
+		// Effective Rate Setting
+		if (StringUtils.isNotBlank(this.repayRate.getBaseValue())) {
+			calculateRate(this.repayRate.getBaseValue(), this.finCcy.getValue(), this.repayRate.getSpecialComp(),
+					this.repayRate.getBaseComp(), this.repayRate.getMarginValue(), this.repayEffectiveRate,
+					this.finMinRate, this.finMaxRate);
+		}
+					
 		if (this.odMaturityDate.isVisible()) {
 			this.odMaturityDate.setValue(aFinanceMain.getMaturityDate());
 		}
@@ -3700,9 +3730,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isOverDraft && !afinanceDetail.getFinScheduleData().getFinanceType().isDroplineOD()
 				&& StringUtils.isEmpty(moduleDefiner)) {
-			this.btnValidate.setDisabled(true);
 			this.btnBuildSchedule.setDisabled(true);
-			this.btnValidate.setVisible(false);
 			this.btnBuildSchedule.setVisible(false);
 		}
 
@@ -10914,7 +10942,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private void validateFinAssetvalue(CurrencyBox finAllowedAmt, FinanceType financeType, int formatter) {
 		BigDecimal finMinAmount = PennantApplicationUtil.formateAmount(financeType.getFinMinAmount(), formatter);
-
 		BigDecimal finMaxAmount = PennantApplicationUtil.formateAmount(financeType.getFinMaxAmount(), formatter);
 
 		if (finAllowedAmt.getActualValue() != null && finMinAmount.compareTo(BigDecimal.ZERO) > 0
@@ -10923,7 +10950,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Labels.getLabel(
 							"NUMBER_MINVALUE_EQ",
 							new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
-									String.valueOf(finMinAmount) }));
+									PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), formatter)}));
 		}
 		if (finAllowedAmt.getActualValue() != null && finMaxAmount.compareTo(BigDecimal.ZERO) > 0
 				&& finAllowedAmt.getActualValue().compareTo(finMaxAmount) > 0) {
@@ -10931,7 +10958,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Labels.getLabel(
 							"NUMBER_MAXVALUE_EQ",
 							new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
-									String.valueOf(finMaxAmount) }));
+									PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), formatter) }));
 		}
 
 	}

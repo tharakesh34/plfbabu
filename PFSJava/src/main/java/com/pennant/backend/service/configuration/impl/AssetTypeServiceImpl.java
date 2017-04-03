@@ -481,6 +481,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		AssetType assetType = (AssetType) auditDetail.getModelData();
 		String usrLanguage = assetType.getUserDetails().getUsrLanguage();
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		//Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
@@ -577,7 +579,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
 		valueParm[0]=aAssetType.getAssetType();
-		errParm[0]=PennantJavaUtil.getLabel("label_ProductCode")+": "+valueParm[0];
+		errParm[0]=PennantJavaUtil.getLabel("label_AssetType")+": "+valueParm[0];
 
 		if (aAssetType.isNew()){ // for New record or new record into work flow
 

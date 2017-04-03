@@ -458,7 +458,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
 
-				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0){
+				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0 &&
+						getFinanceScheduleDetail().getClosingBalance().compareTo(BigDecimal.ZERO) != 0){
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
 							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
@@ -1346,7 +1347,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 					!getFinanceScheduleDetail().isRvwOnSchDate() && !getFinanceScheduleDetail().isDisbOnSchDate()){
 
-				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0){
+				if(prvSchDetail.getCalculatedRate().compareTo(getFinanceScheduleDetail().getCalculatedRate()) == 0 &&
+						getFinanceScheduleDetail().getClosingBalance().compareTo(BigDecimal.ZERO) != 0){
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
 							getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
@@ -2772,7 +2774,16 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if(!(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0)) {
 					data = new FinanceScheduleReportData();	
 
-					data.setLabel(Labels.getLabel("label_listcell_repay.label"));
+					String label = Labels.getLabel("label_listcell_repay.label");
+					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+						label = Labels.getLabel("label_listcell_BPIAmount.label");
+						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+						}
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}
+					data.setLabel(label);
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 						if( aScheduleDetail.isRvwOnSchDate()){
