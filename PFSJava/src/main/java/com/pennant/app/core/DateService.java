@@ -22,7 +22,8 @@ public class DateService {
 		Date dateValueDate = DateUtility.getValueDate();
 
 		//Value Date Updation 
-		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_VALUE, DateUtility.addDays(dateValueDate, 1).toString());
+		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_VALUE, DateUtility.addDays(dateValueDate, 1)
+				.toString());
 
 		//PURGING_PROCESS Value Updation Based On Month End
 		Date monthEndDate = DateUtility.getMonthEndDate(dateValueDate);
@@ -34,6 +35,7 @@ public class DateService {
 
 	/**
 	 * TO update system parameters before start of the end of day
+	 * 
 	 * @param updatePhase
 	 */
 	public void doUpdatebeforeEod(boolean updatePhase) {
@@ -43,7 +45,8 @@ public class DateService {
 
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		//Reset Next Business Date after updating Calendar with Core System
-		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, DateUtility.getValueDate());
+		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
+				DateUtility.getValueDate());
 		String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat);
 
 		//set System Parameter Value
@@ -58,24 +61,32 @@ public class DateService {
 
 	/**
 	 * TO update system parameters after end of day
+	 * 
 	 * @param updatePhase
 	 * @return
 	 */
-	public boolean doUpdateAftereod(boolean updatePhase) {
+	public boolean doUpdateAftereod(boolean updatePhase, boolean customerEOD) {
 		logger.debug(" Entering ");
 
 		Date valueDate = DateUtility.getValueDate();
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
 		// If NBD is holiday then loop continues, else end process.
-		if (valueDate.compareTo(nextBusinessDate) == 0) {
+		boolean update = true;
+		if (!customerEOD && valueDate.compareTo(nextBusinessDate) != 0) {
+			update = false;
+		}
+
+		if (update) {
 
 			String localccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 
-			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
+			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT,
+					nextBusinessDate).getTime();
 			String nextBussDate = DateUtility.formatUtilDate(tempnextBussDate, PennantConstants.DBDateFormat);
 
-			Date tempprevBussDate = BusinessCalendar.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
+			Date tempprevBussDate = BusinessCalendar.getWorkingBussinessDate(localccy,
+					HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
 			String prevBussDate = DateUtility.formatUtilDate(tempprevBussDate, PennantConstants.DBDateFormat);
 
 			SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);

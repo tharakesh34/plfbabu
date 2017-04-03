@@ -104,7 +104,7 @@ public class LimitDecider implements JobExecutionDecider {
 
 			getPaymentRecoveryService().moveDataToLog(BatchFileUtil.getBatchReference());
 
-			boolean processed = getDateService().doUpdateAftereod(true);
+			boolean processed = getDateService().doUpdateAftereod(true,false);
 
 			if (processed) {
 				SysParamUtil.updateParamDetails(Param.AUTOHUNTING.getCode(), PennantConstants.AUTOHUNT_RUNNING);

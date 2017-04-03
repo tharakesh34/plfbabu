@@ -45,7 +45,7 @@ public class PostEodService {
 		//Update value dates check Holiday 
 		getDateService().doUpdateValueDate();
 
-		getDateService().doUpdateAftereod(true);
+		getDateService().doUpdateAftereod(true,true);
 
 		//clear the data which is loaded in before  end of day
 		getRepayQueueService().clearFinanceRepayPriority();
