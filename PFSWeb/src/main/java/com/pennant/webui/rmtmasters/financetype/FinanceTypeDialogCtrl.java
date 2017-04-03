@@ -2532,14 +2532,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			
 			
-			try {
-				if(this.maxPlanEmi.intValue()>this.maxPlanEmiPerAnnum.intValue()){
-					throw new WrongValueException(this.maxPlanEmi, Labels.getLabel("MAX_HOLIDAY_EXCEED",
-							new String[]{Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmi.value"),
-							Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmiPerAnnum.value")}));
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
+			if(this.maxPlanEmiPerAnnum.intValue()>this.maxPlanEmi.intValue()){
+				throw new WrongValueException(this.maxPlanEmiPerAnnum, Labels.getLabel("MAX_HOLIDAY_EXCEED",
+						new String[]{Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmiPerAnnum.value"),
+						Labels.getLabel("label_FinanceTypeDialog_MaxPlanEmi.value")}));
 			}
 			
 		}else{
