@@ -31,4 +31,11 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="2">
+		<addColumn tableName="AdtFinTypeFees">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
