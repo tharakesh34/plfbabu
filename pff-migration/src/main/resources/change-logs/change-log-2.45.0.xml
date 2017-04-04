@@ -477,4 +477,16 @@ WHERE     (NOT EXISTS
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="17">
+		<addColumn tableName="FinTypeFees_Temp">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="18">
+		<addColumn tableName="FinTypeFees">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
