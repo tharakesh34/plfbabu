@@ -32,6 +32,7 @@ import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
@@ -48,6 +49,7 @@ public class JdbcSearchProcessor {
 	private static final String							SELECT		= "select";
 	private static final String							FROM		= "from";
 	private static final String							DISTINCT	= "distinct";
+	private static final String							WITH_NOLOCK	= " with (nolock)";
 
 	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<DataSource, JdbcSearchProcessor>();
 	private NamedParameterJdbcTemplate					namedParameterJdbcTemplate;
@@ -86,7 +88,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) throws DataAccessException {
+	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) {
 		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
 		}
@@ -100,21 +102,14 @@ public class JdbcSearchProcessor {
 			tableName = ModuleUtil.getTableName(searchClass.getSimpleName());
 		}
 
-		//Build query object
-		SelectQuery selectQuery = new SelectQuery();
-		if (searchClass != null) {
-			logger.debug("Object Name : " + searchClass.getSimpleName());
-			logger.debug("Table Name : " + ModuleUtil.getTableName(searchClass.getSimpleName()));
+		if (App.DATABASE == Database.SQL_SERVER) {
+			tableName = tableName.concat(WITH_NOLOCK);
 		}
 
-		switch (App.DATABASE) {
-		case SQL_SERVER:
-			selectQuery.addCustomFromTable(tableName + " WITH (NOLOCK)");
-			break;
-		default:
-			selectQuery.addCustomFromTable(tableName);
-			break;
-		}
+		// Prepare the query.
+		SelectQuery selectQuery = new SelectQuery();
+
+		selectQuery.addCustomFromTable(tableName);
 
 		// Add the fields to the query from the fields List
 		List<Field> fields = search.getFields();
@@ -192,7 +187,7 @@ public class JdbcSearchProcessor {
 			switch (App.DATABASE) {
 			case SQL_SERVER:
 				selectQuery.addCustomFromTable(
-						ModuleUtil.getTableName(search.getSearchClass().getSimpleName()) + " WITH (NOLOCK)");
+						ModuleUtil.getTableName(search.getSearchClass().getSimpleName()) + WITH_NOLOCK);
 				break;
 			default:
 				selectQuery.addCustomFromTable(ModuleUtil.getTableName(search.getSearchClass().getSimpleName()));
@@ -201,7 +196,7 @@ public class JdbcSearchProcessor {
 		} else {
 			switch (App.DATABASE) {
 			case SQL_SERVER:
-				selectQuery.addCustomFromTable(search.getTabelName() + " WITH (NOLOCK)");
+				selectQuery.addCustomFromTable(search.getTabelName() + WITH_NOLOCK);
 				break;
 			default:
 				selectQuery.addCustomFromTable(search.getTabelName());
@@ -310,7 +305,7 @@ public class JdbcSearchProcessor {
 		if (StringUtils.isBlank(search.getTabelName())) {
 			switch (App.DATABASE) {
 			case SQL_SERVER:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()) + " WITH (NOLOCK)");
+				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()) + WITH_NOLOCK);
 				break;
 			default:
 				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()));
@@ -319,7 +314,7 @@ public class JdbcSearchProcessor {
 		} else {
 			switch (App.DATABASE) {
 			case SQL_SERVER:
-				selectQuery.addCustomFromTable(search.getTabelName() + " WITH (NOLOCK)");
+				selectQuery.addCustomFromTable(search.getTabelName() + WITH_NOLOCK);
 				break;
 			default:
 				selectQuery.addCustomFromTable(search.getTabelName());
