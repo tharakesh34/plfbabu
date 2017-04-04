@@ -19,7 +19,6 @@ import com.pennant.eod.util.EODProperties;
 public class PostEodService {
 	private static Logger				logger	= Logger.getLogger(PostEodService.class);
 
-	private DataSource					dataSource;
 	private DateService					dateService;
 	private RepayQueueService			repayQueueService;
 	private SnapshotService				snapshotService;
@@ -42,24 +41,24 @@ public class PostEodService {
 			Date appDate = DateUtility.getAppDate();
 
 			// Snapshot preparation
-			getSnapshotService().doSnapshotPreparation(appDate);
+			snapshotService.doSnapshotPreparation(appDate);
 
 			// Third party Postings on monthly basis
-			//getThirdPartyPostingService().processThirdPartyPostings(dateAppDate);
+			//	thirdPartyPostingService.processThirdPartyPostings(appDate);
 
 			// Document Archival
-			//getArchivalService().processDocumentArchive(dateAppDate);
+			//	archivalService.processDocumentArchive(appDate);
 
 			// Log the Customer queuing data and threads status
-			getCustomerQueuingDAO().logCustomerQueuing();
+			customerQueuingDAO.logCustomerQueuing();
 
 			//Update value dates check Holiday 
-			getDateService().doUpdateValueDate();
+			dateService.doUpdateValueDate();
 
-			getDateService().doUpdateAftereod(true, true);
+			dateService.doUpdateAftereod(true, true);
 
 			//clear the data which is loaded in before  end of day
-			getRepayQueueService().clearFinanceRepayPriority();
+			repayQueueService.clearFinanceRepayPriority();
 
 			eodProperties.destroy();
 			transactionManager.commit(txStatus);
@@ -72,64 +71,28 @@ public class PostEodService {
 		logger.debug(" Leaving ");
 	}
 
-	private DateService getDateService() {
-		return dateService;
-	}
-
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;
-	}
-
-	public RepayQueueService getRepayQueueService() {
-		return repayQueueService;
 	}
 
 	public void setRepayQueueService(RepayQueueService repayQueueService) {
 		this.repayQueueService = repayQueueService;
 	}
 
-	public SnapshotService getSnapshotService() {
-		return snapshotService;
-	}
-
 	public void setSnapshotService(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public ThirdPartyPostingService getThirdPartyPostingService() {
-		return thirdPartyPostingService;
 	}
 
 	public void setThirdPartyPostingService(ThirdPartyPostingService thirdPartyPostingService) {
 		this.thirdPartyPostingService = thirdPartyPostingService;
 	}
 
-	public ArchivalService getArchivalService() {
-		return archivalService;
-	}
-
 	public void setArchivalService(ArchivalService archivalService) {
 		this.archivalService = archivalService;
 	}
 
-	public CustomerQueuingDAO getCustomerQueuingDAO() {
-		return customerQueuingDAO;
-	}
-
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
-	}
-
-	public EODProperties getEodProperties() {
-		return eodProperties;
 	}
 
 	public void setEodProperties(EODProperties eodProperties) {

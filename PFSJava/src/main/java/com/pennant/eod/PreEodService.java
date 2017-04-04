@@ -32,27 +32,18 @@ public class PreEodService {
 
 		try {
 			eodProperties.init();
-
 			// Save customer level AppDate, ValueDate and NextBussinessDate
 			prepareCustomerDates();
-
 			// dump the total customer Id's with allocated Date
-			getCustomerQueuingService().loadCustIds(date);
-
+			customerQueuingService.loadCustIds(date);
 			//update value and next business date
-			getDateService().doUpdatebeforeEod(true);
-
+			dateService.doUpdatebeforeEod(true);
 			//load fin priority
-			getRepayQueueService().loadFinanceRepayPriority();
-
+			repayQueueService.loadFinanceRepayPriority();
 			//Daily downloads
 			//TODO: Need to use Data-Engine project 
-			
-			
-			
-			
+
 			transactionManager.commit(txStatus);
-			
 		} catch (Exception e) {
 			transactionManager.rollback(txStatus);
 			logger.error("Exception :", e);
@@ -73,35 +64,19 @@ public class PreEodService {
 		Date nextBusinessDate = DateUtility.getNextBusinessdate();
 
 		// save customer business dates when EOD starts
-		getCustomerDatesDAO().saveCustomerDates(appDate, valueDate, nextBusinessDate);
-	}
-
-	private CustomerQueuingService getCustomerQueuingService() {
-		return customerQueuingService;
+		customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
 	}
 
 	public void setCustomerQueuingService(CustomerQueuingService customerQueuingService) {
 		this.customerQueuingService = customerQueuingService;
 	}
 
-	private DateService getDateService() {
-		return dateService;
-	}
-
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;
 	}
 
-	public RepayQueueService getRepayQueueService() {
-		return repayQueueService;
-	}
-
 	public void setRepayQueueService(RepayQueueService repayQueueService) {
 		this.repayQueueService = repayQueueService;
-	}
-
-	public CustomerDatesDAO getCustomerDatesDAO() {
-		return customerDatesDAO;
 	}
 
 	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {

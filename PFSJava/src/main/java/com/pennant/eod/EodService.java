@@ -26,6 +26,7 @@ import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.beans.CustomerDates;
 import com.pennant.eod.dao.CustomerDatesDAO;
 
 public class EodService {
@@ -67,6 +68,14 @@ public class EodService {
 			while (resultSet.next()) {
 				try {
 					custId = resultSet.getLong("CustId");
+					
+					CustomerDates custdate = customerDatesDAO.getCustomerDates(custId);
+					// date has been moved for the customer means EOD is completed
+					// no need to run again
+					if (custdate.getAppDate().getTime() > date.getTime()) {
+						continue;
+					}
+					
 					//Update start
 					customerQueuingService.updateStart(date, custId);
 					//process

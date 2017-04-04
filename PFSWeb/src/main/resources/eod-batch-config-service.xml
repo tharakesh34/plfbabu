@@ -117,11 +117,11 @@
 	</bean>
 	<bean name="eodTrigger" class="com.pennant.app.job.process.EodTrigger">
 		<property name="eod" ref="eod" />
+		<property name="eodDetailDAO" ref="eodDetailDAO" />
 	</bean>
 	<bean name="eod" class="com.pennant.eod.Eod">
 		<property name="preEodService" ref="preEodService" />
 		<property name="postEodService" ref="postEodService" />
-		<property name="eodDetailDAO" ref="eodDetailDAO" />
 		<property name="customerQueuingService" ref="customerQueuingService" />
 		<property name="threadPoolTaskExecutor" ref="threadPoolTaskExecutor" />
 	</bean>

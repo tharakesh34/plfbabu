@@ -11,21 +11,17 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.eod.dao.EodDetailDAO;
-import com.pennant.eod.model.EodDetail;
 
 public class Eod implements ApplicationContextAware {
 
-	private static Logger			logger		= Logger.getLogger(Eod.class);
+	private static Logger			logger	= Logger.getLogger(Eod.class);
 
 	private ApplicationContext		applicationContext;
 	private ThreadPoolTaskExecutor	threadPoolTaskExecutor;
-
 	private PreEodService			preEodService;
 	private PostEodService			postEodService;
 	private CustomerQueuingService	customerQueuingService;
 
-	private EodDetailDAO			eodDetailDAO;
 
 	/**
 	 * @throws Exception
@@ -35,7 +31,7 @@ public class Eod implements ApplicationContextAware {
 
 		Date appDate = DateUtility.getAppDate();
 
-		getPreEodService().doProcess(appDate);
+		preEodService.doProcess(appDate);
 
 		doEod(appDate);
 
@@ -63,9 +59,9 @@ public class Eod implements ApplicationContextAware {
 
 			for (int i = 1; i <= threadCount; i++) {
 				if (i == threadCount) {
-					getCustomerQueuingService().updateAll(date, "Thread" + i);
+					customerQueuingService.updateAll(date, "Thread" + i);
 				} else {
-					getCustomerQueuingService().updateNoofRows(date, noOfRows, "Thread" + i);
+					customerQueuingService.updateNoofRows(date, noOfRows, "Thread" + i);
 				}
 				startThread(date, "Thread" + i);
 				if (recordslessThanThread && i == custIdCount) {
@@ -95,78 +91,49 @@ public class Eod implements ApplicationContextAware {
 	 * @return
 	 */
 	public long getCountbyProgress(Date date, String progress) {
-		return getCustomerQueuingService().getCountbyProgress(date, progress);
+		return customerQueuingService.getCountbyProgress(date, progress);
 	}
-	
+
 	/**
 	 * @param date
 	 * @param progress
 	 * @return
 	 */
 	public long getCountByStatus(Date date, String progress) {
-		return getCustomerQueuingService().getCountByStatus(date, progress);
+		return customerQueuingService.getCountByStatus(date, progress);
 	}
 
-	/**
-	 * @param date
-	 * @return
-	 */
-	public EodDetail getEodDetailById(Date date) {
-		return getEodDetailDAO().getEodDetailById(date);
-	}
-
-	/**
-	 * @param eodDetail
-	 */
-	public void save(EodDetail eodDetail) {
-		getEodDetailDAO().save(eodDetail);
-
-	}
-
-	public CustomerQueuingService getCustomerQueuingService() {
-		return customerQueuingService;
-	}
 
 	public void setCustomerQueuingService(CustomerQueuingService customerQueuingService) {
 		this.customerQueuingService = customerQueuingService;
 	}
 
-	public ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
-		return threadPoolTaskExecutor;
-	}
 
 	public void setThreadPoolTaskExecutor(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
 		this.threadPoolTaskExecutor = threadPoolTaskExecutor;
 	}
 
-	private PreEodService getPreEodService() {
-		return preEodService;
-	}
 
 	public void setPreEodService(PreEodService preEodService) {
 		this.preEodService = preEodService;
 	}
 
-	public PostEodService getPostEodService() {
-		return postEodService;
-	}
 
 	public void setPostEodService(PostEodService postEodService) {
 		this.postEodService = postEodService;
 	}
 
+	public ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
+		return threadPoolTaskExecutor;
+	}
+	
+	public PostEodService getPostEodService() {
+		return postEodService;
+	}
+	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
-
-	}
-
-	public EodDetailDAO getEodDetailDAO() {
-		return eodDetailDAO;
-	}
-
-	public void setEodDetailDAO(EodDetailDAO eodDetailDAO) {
-		this.eodDetailDAO = eodDetailDAO;
 	}
 
 }

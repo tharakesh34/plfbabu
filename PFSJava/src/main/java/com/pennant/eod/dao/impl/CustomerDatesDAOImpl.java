@@ -93,7 +93,7 @@ public class CustomerDatesDAOImpl implements CustomerDatesDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
 		
-		StringBuilder updateSql = new StringBuilder("Select AppDate,ValueDate,NextBusinessDate CustomerDates ");
+		StringBuilder updateSql = new StringBuilder("Select AppDate,ValueDate,NextBusinessDate FROM CustomerDates ");
 		updateSql.append(" WHERE CustID =:CustID");
 		RowMapper<CustomerDates> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDates.class);
 		logger.debug("updateSql: "+ updateSql.toString());

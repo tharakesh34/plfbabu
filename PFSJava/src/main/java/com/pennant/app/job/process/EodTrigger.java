@@ -20,6 +20,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.Eod;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -29,6 +30,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 	private static final Logger				logger				= Logger.getLogger(EodTrigger.class);
 
 	private Eod								eod;
+	private EodDetailDAO					eodDetailDAO;
 
 	public volatile Map<Integer, Component>	map					= new HashMap<Integer, Component>();
 
@@ -60,7 +62,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 		// Fetch the active customer details and process the EOD activities 
 
 		Date date = DateUtility.getAppDate();
-		EodDetail eodDetail = eod.getEodDetailById(date);
+		EodDetail eodDetail = eodDetailDAO.getEodDetailById(date);
 		try {
 
 			boolean startEod = false;
@@ -70,7 +72,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 				eodDetail.setProcessDate(date);
 				eodDetail.setStatTime(DateUtility.getSysDate());
 				eodDetail.setStatus(EodConstants.STATUS_STARTED);
-				eod.save(eodDetail);
+				eodDetailDAO.save(eodDetail);
 				startEod = true;
 				((Textbox) map.get(5)).setValue(DateUtility.format(eodDetail.getStatTime(), DateFormat.LONG_TIME));
 				((Textbox) map.get(7)).setValue(EodConstants.STATUS_STARTED);
@@ -134,7 +136,7 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 
 		eodDetail.setEndTime(DateUtility.getSysDate());
 		eodDetail.setStatus(EodConstants.STATUS_COMPLETED);
-		eod.getEodDetailDAO().update(eodDetail);
+		eodDetailDAO.update(eodDetail);
 		((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
 
 		((Textbox) map.get(1)).setValue(DateUtility.getValueDate(DateFormat.LONG_DATE));
@@ -149,10 +151,14 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 	private void updateFailedEODStatus(EodDetail eodDetail) {
 		eodDetail.setEndTime(DateUtility.getSysDate());
 		eodDetail.setStatus(EodConstants.STATUS_FAILED);
-		eod.getEodDetailDAO().update(eodDetail);
+		eodDetailDAO.update(eodDetail);
 		((Textbox) map.get(7)).setValue(EodConstants.STATUS_FAILED);
 		((Button) map.get(4)).setDisabled(false);
 
+	}
+
+	public void setEodDetailDAO(EodDetailDAO eodDetailDAO) {
+		this.eodDetailDAO = eodDetailDAO;
 	}
 
 }
