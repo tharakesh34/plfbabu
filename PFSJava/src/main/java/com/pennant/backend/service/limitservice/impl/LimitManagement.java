@@ -220,7 +220,7 @@ public class LimitManagement {
 			groupHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(groupId, "");
 		}
 
-		BigDecimal transAmount = repayData.getFinRepayHeader().getRepayAmount();
+		BigDecimal transAmount = repayData.getFinRepayHeader().getPriAmount();
 
 		//Customer limit process
 		if (custHeader != null) {
