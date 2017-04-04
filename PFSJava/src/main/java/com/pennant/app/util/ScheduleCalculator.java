@@ -5547,10 +5547,12 @@ public class ScheduleCalculator {
 		if(finMain.getEventFromDate().compareTo(finMain.getFinStartDate()) == 0){
 			totalOSLimit = finMain.getFinAssetValue();
 			inclStartDate = true;
-			if(finMain.getFirstDroplineDate() != null){
-				startCalFrom = finMain.getFirstDroplineDate();
-			}else{
-				startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate();
+			if(StringUtils.isNotEmpty(finMain.getDroplineFrq())){
+				if(finMain.getFirstDroplineDate() != null){
+					startCalFrom = finMain.getFirstDroplineDate();
+				}else{
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate();
+				}
 			}
 			
 			// Adding Start date Overdraft Schedule
@@ -5579,8 +5581,10 @@ public class ScheduleCalculator {
 			startCalFrom = finMain.getEventFromDate();
 			for (OverdraftScheduleDetail curODSchd : finScheduleData.getOverdraftScheduleDetails()) {
 				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) > 0) {
-					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false).getNextFrequencyDate();
-					inclStartDate = true;
+					if(StringUtils.isNotEmpty(finMain.getDroplineFrq())){
+						startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false).getNextFrequencyDate();
+						inclStartDate = true;
+					}
 					break;
 				} 
 				
@@ -5612,6 +5616,14 @@ public class ScheduleCalculator {
 				oldOverdraftList.add(newOdSchd);
 				totalOSLimit = prvODSchd.getODLimit().add(incrLimit);
 			}
+		}
+		
+		// if Overdraft Dropline Not Exists
+		if(StringUtils.isEmpty(finMain.getDroplineFrq())){
+			finScheduleData.setOverdraftScheduleDetails(sortOverdraftSchedules(oldOverdraftList));
+
+			logger.debug("Leaving");
+			return finScheduleData;
 		}
 		
 		// Building Schedule terms with Dates

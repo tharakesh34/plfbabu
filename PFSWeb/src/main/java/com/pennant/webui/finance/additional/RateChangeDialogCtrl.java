@@ -725,7 +725,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		//Last date
 		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
 		for (int i = 1; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
-			
+
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
 			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || 
 					curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 ||
@@ -735,10 +735,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
 				continue;
+			}else{
+				break;
 			}
-			 if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
-				 break;
-			 }
 		}
 		
 		try {
@@ -1341,11 +1340,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			//As discussed with Pradeep ,include from date has set to true,if any issue should recheck it
 			Date recalFrom  = (Date)this.cbRecalFromDate.getSelectedItem().getValue();
 			if(reviewDates.isChecked()){
-				Date ratechgTo  = (Date)this.cbRateChangeToDate.getSelectedItem().getValue();
-				if(ratechgTo.compareTo(recalFrom) > 0){
-					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo, true);	
-				}else{
-					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom, true);	
+				if(this.cbRateChangeToDate.getSelectedIndex() > 0){
+					Date ratechgTo  = (Date)this.cbRateChangeToDate.getSelectedItem().getValue();
+					if(ratechgTo.compareTo(recalFrom) > 0){
+						fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo, true);	
+					}else{
+						fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom, true);	
+					}
 				}
 			}else if(anyDate.isChecked()){
 					Date ratechgTo  = (Date)this.anyDateRateChangeFromDate.getValue();

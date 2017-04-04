@@ -1518,7 +1518,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if(!this.writeoffDate.isDisabled()){
 				this.writeoffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_WriteoffDate.value"), false, 
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), DateUtility.getAppDate(), true));
+						appStartDate, DateUtility.getAppDate(), true));
 			}
 			
 			if (!recSave && this.finWriteoffPayAccount.isMandatory()) {

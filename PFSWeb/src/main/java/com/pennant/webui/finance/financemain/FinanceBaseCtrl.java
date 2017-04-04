@@ -639,7 +639,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	
 	protected String finDivision="";
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");;
 	
 	public  FinanceBaseCtrl() {
 		super();
@@ -2796,7 +2796,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				this.gracePftFrq.setDisabled(checked ? isReadOnly("WIFFinanceMainDialog_gracePftFrq"):true);
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
 				if(this.finStartDate.getValue() == null){
-					this.finStartDate.setValue(appStartDate);
+					this.finStartDate.setValue(DateUtility.getAppDate());
 				}
 				if(this.allowGrace.isChecked()){
 					this.nextGrcPftDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftFrq.getValue(),1,

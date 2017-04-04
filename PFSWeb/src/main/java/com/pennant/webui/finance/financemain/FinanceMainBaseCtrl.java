@@ -5723,7 +5723,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setStageAccountingList(null);
 		} else {
 			//Finance Accounting Details Tab
-			if (accountingDetailDialogCtrl != null && (!isOverdraft && !finType.isDroplineOD())) {
+			if (accountingDetailDialogCtrl != null && !isOverdraft) {
 				// check if accounting rules executed or not
 				if (!recSave && !accountingDetailDialogCtrl.isAccountingsExecuted()) {
 					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
@@ -8929,7 +8929,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// BPI Validations
-			if (this.alwBpiTreatment.isChecked()
+			if (StringUtils.isEmpty(moduleDefiner) && this.alwBpiTreatment.isChecked()
 					&& !StringUtils.equals(FinanceConstants.BPI_NO, getComboboxValue(this.dftBpiTreatment))) {
 				String frqBPI = "";
 				Date frqDate = null;
@@ -11350,9 +11350,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					AECommitment aeCommitment = new AECommitment();
 					aeCommitment.setCMTAMT(od.getODLimit());
 					aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(
-							finMain.getFinCcy(),
-							commitment.getCmtCcy(),
-							finMain.getFinAssetValue().subtract(
+							finMain.getFinCcy(), commitment.getCmtCcy(), finMain.getFinAssetValue().subtract(
 									finMain.getDownPayment() == null ? BigDecimal.ZERO : finMain.getDownPayment())));
 					aeCommitment.setRPPRI(BigDecimal.ZERO);
 
@@ -14795,7 +14793,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())
-					&& getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
+					&& (StringUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getDroplineFrq())
+							|| StringUtils.isNotEmpty(moduleDefiner))) {
 
 				//Overdraft Schedule Maintenance
 				FinScheduleData scheduleData = null;
