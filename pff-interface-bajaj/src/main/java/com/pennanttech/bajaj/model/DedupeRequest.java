@@ -1,6 +1,6 @@
 package com.pennanttech.bajaj.model;
 
-import java.util.Date;
+//import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
@@ -45,7 +45,7 @@ public class DedupeRequest {
 	@JsonProperty("PIN")
 	private String pinCode;
 	@JsonProperty("DOB")
-	private Date dateOfBirth;
+	private String dateOfBirth;
 	@JsonProperty("LANDLINE_1")
 	private String landLine1;
 	@JsonProperty("LANDLINE_2")
@@ -125,13 +125,13 @@ public class DedupeRequest {
 	@JsonProperty("REQUEST_ID_FIN")
 	private String finRequestId;
 	@JsonProperty("MATCH_PROFILE")
-	private String matchProfile;
+	private String matchProfile = "5";
 	@JsonProperty("SEGMENT")
 	private String segment;
 	@JsonProperty("APPLICANT_TYPE")
 	private String applicatntType;
 	@JsonProperty("DATE_OF_INCORPORATION")
-	private Date dateOfIncorporation;
+	private String dateOfIncorporation;
 	@JsonProperty("LANDMARK_OFFICE")
 	private String officelandMark;
 	@JsonProperty("MOBILE_OFFICE")
@@ -231,10 +231,10 @@ public class DedupeRequest {
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
-	public Date getDateOfBirth() {
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 	public String getLandLine1() {
@@ -489,10 +489,10 @@ public class DedupeRequest {
 	public void setApplicatntType(String applicatntType) {
 		this.applicatntType = applicatntType;
 	}
-	public Date getDateOfIncorporation() {
+	public String getDateOfIncorporation() {
 		return dateOfIncorporation;
 	}
-	public void setDateOfIncorporation(Date dateOfIncorporation) {
+	public void setDateOfIncorporation(String dateOfIncorporation) {
 		this.dateOfIncorporation = dateOfIncorporation;
 	}
 	public String getOfficelandMark() {

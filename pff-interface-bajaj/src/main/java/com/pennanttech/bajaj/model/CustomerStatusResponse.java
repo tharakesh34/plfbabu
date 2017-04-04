@@ -18,6 +18,8 @@ public class CustomerStatusResponse {
 	private double cobrandAvailLimit;
 	private double cobrandCount;
 	private String wipLANMatches;
+	private String rblLanMatches;
+
 	public String getDealId() {
 		return dealId;
 	}
@@ -107,6 +109,12 @@ public class CustomerStatusResponse {
 	}
 	public void setWipLANMatches(String wipLANMatches) {
 		this.wipLANMatches = wipLANMatches;
+	}
+	public String getRblLanMatches() {
+		return rblLanMatches;
+	}
+	public void setRblLanMatches(String rblLanMatches) {
+		this.rblLanMatches = rblLanMatches;
 	}
 
 	

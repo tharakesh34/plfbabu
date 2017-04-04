@@ -1,7 +1,15 @@
 package com.pennanttech.service;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -16,32 +24,55 @@ import com.pennanttech.bajaj.model.DedupeRequest;
 import com.pennanttech.bajaj.model.DedupeResponse;
 import com.pennanttech.bajaj.model.DemographicDetail;
 import com.pennanttech.clients.JSONClient;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 
 public class CustomerDedupService {
 
+	private final static Logger	logger	= Logger.getLogger(CustomerDedupService.class);
+
 	public CustomerDedupService() {
 		super();
 	}
 	
+	private Properties props = null;
+	private SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
 	
-	public DedupeResponse invokeDedup(DedupCustomerDetail  dedupCustomerDetail) throws Exception{
+	public DedupCustomerResponse invokeDedup(DedupCustomerDetail  dedupCustomerDetail) throws Exception{
+		
+		
+		String serviceURL = getProperties("posidex");
+		DedupCustomerResponse customerResponse=null;
 		DedupeResponse response = null;
 		
 		JSONClient client= new JSONClient();
 		try {
-			String serviceURL = "http://192.168.1.203:8080/pff-api/services";	// FIXME fetch from configuration
+			logger.debug("ServiceURL : " + serviceURL);
 			 response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService", prepareRequest(dedupCustomerDetail), DedupeResponse.class);
-			prepareResponse(response);
+			 customerResponse = prepareResponse(response);
 			
-		} catch (Exception e) {
-			throw e;
+		} catch (Exception exception) {
+			logger.error("Error from Dedup Response : " + exception.getMessage(), exception);
+			throw exception;
 		}
-		return response;
+		return customerResponse;
 	}
 
 	
+	public String getProperties(String property) throws IOException {
+		if(props == null) {
+			props = new Properties();
+			PathMatchingResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
+			Resource[] resources = new Resource[0];
+			resources = loader.getResources("classpath:/plf-interface.properties");
+			props.load(resources[0].getInputStream());
+			return props.getProperty(property);
+		}
+		return props.getProperty(property);
+	}
+
+
 	private DedupeRequest prepareRequest(DedupCustomerDetail  dedupCustomerDetail){
 		boolean mobileSelected=false;
 		
@@ -68,7 +99,7 @@ public class CustomerDedupService {
 		//request.setEmployerName(customer.getc);
 		
 		if("CORP".equalsIgnoreCase(customer.getCustTypeCode())){
-			request.setDateOfIncorporation(customer.getCustDOB());
+			request.setDateOfIncorporation(dateFormater.format(customer.getCustDOB()));
 			for (CustomerAddres customerAddres : listAddres) {
 				if("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())){
 					request.setAddress1(customerAddres.getCustAddrType());
@@ -93,7 +124,7 @@ public class CustomerDedupService {
 					
 					if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
 						request.setOfficeMobile(phoneNumber.getPhoneAreaCode() + phoneNumber.getPhoneNumber());
-						request.setMobile(phoneNumber.getPhoneAreaCode() + phoneNumber.getPhoneNumber());
+						request.setMobile(phoneNumber.getPhoneNumber());
 						mobileSelected=true;
 					}
 					
@@ -111,7 +142,7 @@ public class CustomerDedupService {
 			
 			
 		}else{
-			request.setDateOfBirth(customer.getCustDOB());
+			request.setDateOfBirth(dateFormater.format(customer.getCustDOB()));
 			
 			for (CustomerAddres customerAddres : listAddres) {
 				if("CURRES".equalsIgnoreCase(customer.getCustTypeCode())){
@@ -237,7 +268,7 @@ public class CustomerDedupService {
 			details.add(prepareCustomerDetail(detail));
 		}
 		
-		
+		customerResponse.setDedupCustomerDetails(details);
 		return customerResponse;
 	}
 	
@@ -290,12 +321,19 @@ public class CustomerDedupService {
 		customer.setCustCIF(dgDetail.getCustomerId());
 		customer.setCustTypeCode(dgDetail.getCustomerType());
 		customer.setCustShrtName(dgDetail.getCustomerName());
-		//customer.setCustDOB(dgDetail.getDateOfBirth());
+		customer.setCustCRCPR(dgDetail.getPanNumber());
+		try {
+			customer.setCustDOB(DateUtil.parse(dgDetail.getDateOfBirth(), "yyyy-MM-dd HH:mm:ss.S"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		customerDetail.setCustomer(customer);
 		
 		List<CustomerDocument> listDocuments= new ArrayList<CustomerDocument>();
 		if(dgDetail.getPanNumber()!=null){
 			CustomerDocument custpan = new CustomerDocument();
-			custpan.setCustDocCategory("3");
+			custpan.setCustDocCategory("03");
 			listDocuments.add(custpan);
 		}
 		customerDetail.setCustomerDocumentsList(listDocuments);

@@ -1,8 +1,18 @@
 package com.pennanttech.bajaj.model;
 
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+@JsonPropertyOrder({"appscore", "appscoreDP"})
+@JsonSerialize
 public class Appscore {
+	@XmlElement
 	private int appscore;
+	@XmlElement
 	private int appscoreDP;
+	
 	public int getAppscore() {
 		return appscore;
 	}
@@ -15,6 +25,4 @@ public class Appscore {
 	public void setAppscoreDP(int appscoreDP) {
 		this.appscoreDP = appscoreDP;
 	}
-	
-	
 }

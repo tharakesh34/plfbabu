@@ -76,7 +76,7 @@ public class DedupCustomerDetail implements java.io.Serializable {
 	private String						sourceId;
 	
 	private String finReference;
-	private String finType;
+	private String finType = "PO"; // TODO : Default value for testing to be removed.
 	private String applicationNo;
 	private String accountNumber;
 	
