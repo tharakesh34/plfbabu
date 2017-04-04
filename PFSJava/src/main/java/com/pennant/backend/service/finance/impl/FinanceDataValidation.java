@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -345,14 +346,14 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
 			}
-			if (financeType.isLimitRequired()) {
-				if (StringUtils.isBlank(finMain.getFinLimitRef())) {
+			if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_MODULE) {
+				/*if (StringUtils.isBlank(finMain.getFinLimitRef())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "finLimitRef";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 				} else {
 					//TODO 
-				}
+				}*/
 			}
 			if (financeType.isFinCommitmentReq()) {
 				if (StringUtils.isBlank(finMain.getFinCommitmentRef())) {

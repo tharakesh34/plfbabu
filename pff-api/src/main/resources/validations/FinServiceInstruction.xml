@@ -149,7 +149,7 @@
 				<element name="value">0</element>
 			</constraint> -->
 			<constraint annotation="javax.validation.constraints.Min">
-				<message>amount should be positive</message>
+				<message>amount should be greater than zero</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 					<value>com.pennant.validation.ChangeInterestGroup</value>

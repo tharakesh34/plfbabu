@@ -1645,6 +1645,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 		
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ADVRPY, method)) {
+			/*String[] valueParm = new String[2];
+			valueParm[0] = "FromDate "+DateUtility.formatToShortDate(fromDate);
+			valueParm[1] = "Application Date "+DateUtility.formatToShortDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), lang));*/
+		}
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
 		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
