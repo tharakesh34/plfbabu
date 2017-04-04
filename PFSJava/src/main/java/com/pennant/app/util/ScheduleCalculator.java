@@ -209,7 +209,7 @@ public class ScheduleCalculator {
 	}
 
 	public static FinScheduleData buildODSchedule(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator(finScheduleData, PROC_BUILDOVERDRAFTSCHD).getFinScheduleData();
+		return new ScheduleCalculator(finScheduleData , PROC_BUILDOVERDRAFTSCHD).getFinScheduleData();
 	}
 
 	// Constructors
@@ -3967,6 +3967,26 @@ public class ScheduleCalculator {
 		}
 		return repayInstructions;
 	}
+	
+	/*
+	 * ________________________________________________________________________________________________________________
+	 * Method : sortOverdraftSchedules  Description: Sort Overdraft Schedule Details
+	 * ________________________________________________________________________________________________________________
+	 */
+	private List<OverdraftScheduleDetail> sortOverdraftSchedules(List<OverdraftScheduleDetail> overdraftSchedules) {
+
+		if (overdraftSchedules != null && overdraftSchedules.size() > 0) {
+			
+			Collections.sort(overdraftSchedules, new Comparator<OverdraftScheduleDetail>() {
+				@Override
+				public int compare(OverdraftScheduleDetail odSchd1, OverdraftScheduleDetail odSchd2) {
+					return DateUtility.compare(odSchd1.getDroplineDate(), odSchd2.getDroplineDate());
+				}
+			});
+		}
+
+		return overdraftSchedules;
+	}
 
 	/*
 	 * ________________________________________________________________________________________________________________
@@ -5504,89 +5524,154 @@ public class ScheduleCalculator {
 
 	}
 
-	/*
+	/**
 	 * Method to Calculate the Overdraft Schedule Details
 	 */
-	public static FinScheduleData buildOverdraftSchd(FinScheduleData finScheduleData) {
+	private FinScheduleData buildOverdraftSchd(FinScheduleData orgFinScheduleData){
 		logger.debug("Entering");
 
+		Cloner cloner = new Cloner();
+		FinScheduleData finScheduleData = cloner.deepClone(orgFinScheduleData);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FrequencyDetails frequencyDetails;
-
-		// Building Schedule terms with Dates
-		if (finScheduleData.getFinanceType().isDroplineOD()) {
-			if (finMain.getFirstDroplineDate() != null) {
-				frequencyDetails = FrequencyUtil.getTerms(finMain.getDroplineFrq(), finMain.getFirstDroplineDate(),
-						finMain.getMaturityDate(), true, true);
-			} else {
-				frequencyDetails = FrequencyUtil.getTerms(finMain.getDroplineFrq(), finMain.getFinStartDate(),
-						finMain.getMaturityDate(), false, true);
+		
+		// Overdraft Maintenance Changes for calculation
+		BigDecimal prvDropLineAmount = BigDecimal.ZERO;
+		BigDecimal incrLimit = BigDecimal.ZERO;
+		Date startCalFrom = finMain.getFinStartDate();
+		boolean inclStartDate = false;
+		finScheduleData.setOverdraftScheduleDetails(new ArrayList<OverdraftScheduleDetail>());
+		List<OverdraftScheduleDetail> oldOverdraftList = new ArrayList<>();
+		BigDecimal totalOSLimit = BigDecimal.ZERO;
+		OverdraftScheduleDetail prvODSchd = null;
+		
+		if(finMain.getEventFromDate().compareTo(finMain.getFinStartDate()) == 0){
+			totalOSLimit = finMain.getFinAssetValue();
+			inclStartDate = true;
+			if(finMain.getFirstDroplineDate() != null){
+				startCalFrom = finMain.getFirstDroplineDate();
+			}else{
+				startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate();
 			}
-		} else {
-			frequencyDetails = FrequencyUtil.getTerms(finMain.getRepayFrq(), finMain.getFinStartDate(),
-					finMain.getMaturityDate(), false, true);
+			
+			// Adding Start date Overdraft Schedule
+			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
+			curODSchd.setODLimit(finMain.getFinAssetValue());
+			curODSchd.setDroplineDate(finMain.getFinStartDate());
+			curODSchd.setActualRate(finMain.getRepayProfitRate());
+			curODSchd.setBaseRate(finMain.getRepayBaseRate());
+			curODSchd.setSplRate(finMain.getRepaySpecialRate());
+			curODSchd.setMargin(finMain.getRepayMargin());
+			
+			if(StringUtils.isEmpty(curODSchd.getBaseRate())){
+				curODSchd.setDroplineRate(finMain.getRepayProfitRate());
+			}else{
+				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
+						finMain.getRepayMargin(), curODSchd.getDroplineDate(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+				if (rateDetail.getErrorDetails() == null) {
+					curODSchd.setDroplineRate(rateDetail.getNetRefRateLoan());
+				}
+			}
+			prvODSchd = curODSchd;
+			oldOverdraftList.add(curODSchd);
+			
+		}else{
+			boolean limitIncrDateFound = false;
+			startCalFrom = finMain.getEventFromDate();
+			for (OverdraftScheduleDetail curODSchd : finScheduleData.getOverdraftScheduleDetails()) {
+				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) > 0) {
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false).getNextFrequencyDate();
+					inclStartDate = true;
+					break;
+				} 
+				
+				// Calculate sum of all Limit drop lines before Current Application date
+				prvODSchd = curODSchd;
+				prvDropLineAmount = prvDropLineAmount.add(curODSchd.getLimitDrop());
+				incrLimit = finMain.getFinAssetValue().subtract(prvDropLineAmount).subtract(curODSchd.getODLimit());
+				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) == 0 && incrLimit.compareTo(BigDecimal.ZERO)>0) {
+					curODSchd.setLimitIncreaseAmt(curODSchd.getLimitIncreaseAmt().add(incrLimit));
+					curODSchd.setODLimit(curODSchd.getODLimit().add(incrLimit));
+					totalOSLimit = curODSchd.getODLimit().add(incrLimit);
+					limitIncrDateFound = true;
+				}
+				oldOverdraftList.add(curODSchd);
+			}
+			
+			if(DateUtility.compare(startCalFrom, finMain.getFirstDroplineDate()) < 0){
+				startCalFrom = finMain.getFirstDroplineDate();
+				inclStartDate = true;
+			}
+			
+			// Adding New Overdraft Schedule, if not Found in the existing list
+			if(!limitIncrDateFound && incrLimit.compareTo(BigDecimal.ZERO)>0){
+				OverdraftScheduleDetail newOdSchd = prvODSchd;
+				newOdSchd.setDroplineDate(finMain.getEventFromDate());
+				newOdSchd.setLimitIncreaseAmt(incrLimit);
+				newOdSchd.setLimitDrop(BigDecimal.ZERO);
+				newOdSchd.setODLimit(prvODSchd.getODLimit().add(incrLimit));
+				oldOverdraftList.add(newOdSchd);
+				totalOSLimit = prvODSchd.getODLimit().add(incrLimit);
+			}
 		}
+		
+		// Building Schedule terms with Dates
+		FrequencyDetails frequencyDetails =	FrequencyUtil.getTerms(finMain.getDroplineFrq(), startCalFrom, finMain.getMaturityDate(), inclStartDate, true);
 
 		// Validate Frequency Schedule Details
 		if (frequencyDetails.getErrorDetails() != null) {
-			logger.warn("Schedule Error: on condition --->  Validate frequency:" + finMain.getDroplineFrq());
-			finScheduleData.setErrorDetail(frequencyDetails.getErrorDetails());
+			logger.warn("Schedule Error: on condition --->  Validate frequency:"+finMain.getDroplineFrq());
+			orgFinScheduleData.setErrorDetail(frequencyDetails.getErrorDetails());
+			return orgFinScheduleData;
 		}
 
 		// Adding Overdraft Start date to the Schedule terms
-		List<Date> scheduleList = new ArrayList<>();
-		scheduleList.add(finMain.getFinStartDate());
-
+		List<Date> odSchdDateList = new ArrayList<>();
+		Calendar calendar = null;
 		// Rendering all Overdraft schedule details as per Frequency
 		for (int i = 0; i < frequencyDetails.getScheduleList().size(); i++) {
-			Calendar calendar = frequencyDetails.getScheduleList().get(i);
-			scheduleList.add(calendar.getTime());
+			calendar = frequencyDetails.getScheduleList().get(i);
+			odSchdDateList.add(calendar.getTime());
 		}
-		Collections.sort(scheduleList);
-
-		// calculating Limit Drop amount based on Terms (Constant Dropline)
-		BigDecimal limitDrop = finMain.getFinAssetValue().divide(new BigDecimal(frequencyDetails.getTerms()), 0,
-				RoundingMode.HALF_DOWN);
-		finScheduleData.setOverdraftScheduleDetails(new ArrayList<OverdraftScheduleDetail>());
+		Collections.sort(odSchdDateList);
+		
+		// calculating Limit Drop amount based on Terms (Constant Drop line)
+		BigDecimal limitDrop = totalOSLimit.divide(new BigDecimal(frequencyDetails.getTerms()), 0, RoundingMode.HALF_DOWN);
 
 		// Setting Overdraft Schedule details
-		OverdraftScheduleDetail prvSchd = null;
-		for (int i = 0; i < scheduleList.size(); i++) {
-			OverdraftScheduleDetail curSchd = new OverdraftScheduleDetail();
-			curSchd.setDroplineDate(scheduleList.get(i));
+		for (int i = 0; i < odSchdDateList.size(); i++) {
 
-			curSchd.setFinReference(finMain.getFinReference());
-			curSchd.setActualRate(finMain.getRepayProfitRate());
-			curSchd.setBaseRate(finMain.getRepayBaseRate());
-			curSchd.setSplRate(finMain.getRepaySpecialRate());
-			curSchd.setMargin(finMain.getRepayMargin());
+			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
+			curODSchd.setDroplineDate(DateUtility.getDBDate(DateUtility.formatDate(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
+			curODSchd.setActualRate(prvODSchd.getActualRate());
+			curODSchd.setBaseRate(prvODSchd.getBaseRate());
+			curODSchd.setSplRate(prvODSchd.getSplRate());
+			curODSchd.setMargin(prvODSchd.getMargin());
 
 			// Dropline Rate
-			if (StringUtils.isEmpty(curSchd.getBaseRate())) {
-				curSchd.setDroplineRate(finMain.getRepayProfitRate());
-			} else {
-				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(),
-						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), curSchd.getDroplineDate(),
-						finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+			if(StringUtils.isEmpty(curODSchd.getBaseRate())){
+				curODSchd.setDroplineRate(prvODSchd.getActualRate());
+			}else{
+				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
+						finMain.getRepayMargin(), curODSchd.getDroplineDate(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
 				if (rateDetail.getErrorDetails() == null) {
-					curSchd.setDroplineRate(rateDetail.getNetRefRateLoan());
+					curODSchd.setDroplineRate(rateDetail.getNetRefRateLoan());
 				}
 			}
-
-			if (i == 0) {
-				curSchd.setODLimit(finMain.getFinAssetValue());
-				curSchd.setLimitDrop(BigDecimal.ZERO);
-			} else {
-				if (prvSchd.getODLimit().compareTo(limitDrop) < 0 || (i == scheduleList.size() - 1)) {
-					limitDrop = prvSchd.getODLimit();
-				}
-				curSchd.setODLimit(prvSchd.getODLimit().subtract(limitDrop));
-				curSchd.setLimitDrop(limitDrop);
+			
+			// If Last Overdraft schedule or Limit Expiry
+			if(i == (odSchdDateList.size() - 1)){
+				curODSchd.setLimitDrop(prvODSchd.getODLimit());
+				curODSchd.setODLimit(BigDecimal.ZERO);
+			}else{
+				curODSchd.setODLimit(prvODSchd.getODLimit().subtract(limitDrop));
+				curODSchd.setLimitDrop(limitDrop);
 			}
 
-			finScheduleData.getOverdraftScheduleDetails().add(curSchd);
-			prvSchd = curSchd;
+			oldOverdraftList.add(curODSchd);
+			prvODSchd = curODSchd;
 		}
+		
+		finScheduleData.setOverdraftScheduleDetails(sortOverdraftSchedules(oldOverdraftList));
 
 		logger.debug("Leaving");
 		return finScheduleData;

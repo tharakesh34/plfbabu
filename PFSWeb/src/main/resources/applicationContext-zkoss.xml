@@ -1880,6 +1880,7 @@
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="notificationsService" ref="notificationsService" />
 		<property name="dedupValidation" ref="dedupValidation" />
+		<property name="reScheduleService" ref="reScheduleService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

@@ -9,4 +9,7 @@ public interface ReScheduleService {
 	FinScheduleData doReSchedule(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction);
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
+
+	FinScheduleData doResetOverdraftSchd(FinScheduleData finScheduleData);
+	
 }

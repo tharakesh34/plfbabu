@@ -148,6 +148,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -728,6 +729,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerDetailsService							customerDetailsService;
 	private FinanceMainExtService							financeMainExtService;
 	private CollateralMarkProcess							collateralMarkProcess;
+	private ReScheduleService								reScheduleService;
 	private List<ExtendedFieldRender>						extendedFieldRenderList	= new ArrayList<ExtendedFieldRender>();
 
 	//Bean Setters  by application Context
@@ -14791,31 +14793,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					return;
 				}
-			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
-					.getFinanceMain().getProductCategory())
+			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+					getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())
 					&& getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
 
-				//Overdrat Schedule 
+				//Overdraft Schedule Maintenance
+				FinScheduleData scheduleData = null;
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
-
-					getFinanceDetail().setFinScheduleData(rebuildODSchd(getFinanceDetail().getFinScheduleData()));
-
+					scheduleData = rebuildODSchd(getFinanceDetail().getFinScheduleData());
 				} else {
 
-					if (isSchdlRegenerate()
-							&& getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails() != null) {
+					if (getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails() != null) {
 						getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails().clear();
 					}
-					//FIXME once Siva commits the schedulecalculator changes need to uncomment this line
-					//torebuild the overdraft if any fields are changed
-					/*getFinanceDetail().setFinScheduleData(
-							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData(),BigDecimal.ZERO));*/
-					getFinanceDetail().setFinScheduleData(
-							ScheduleCalculator.buildOverdraftSchd(getFinanceDetail().getFinScheduleData()));
+					
+					//To Rebuild the overdraft if any fields are changed
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setEventFromDate(
+							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate());
+					scheduleData = ScheduleCalculator.buildODSchedule(getFinanceDetail().getFinScheduleData());
+				}
+				
+				// Show Error Details in Schedule Calculation
+				if (scheduleData.getErrorDetails() != null
+						&& !scheduleData.getErrorDetails().isEmpty()) {
+					MessageUtil.showErrorMessage(scheduleData.getErrorDetails().get(0));
+					return;
 				}
 
+				getFinanceDetail().setFinScheduleData(scheduleData);
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
-
 				if (getOverdraftScheduleDetailDialogCtrl() != null) {
 					getOverdraftScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
 				} else {
@@ -14935,183 +14941,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/*
+	/**
 	 * Method to Rebuild the Schedule and recalculate the Overdraft Schedule Details
+	 * @throws InterruptedException 
 	 */
-	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) {
-
+	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
 		logger.debug("Entering");
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-
-		//To calculate the over draft schedule Details list
-		BigDecimal droplineAmt = BigDecimal.ZERO;
-		List<OverdraftScheduleDetail> odSchd = new ArrayList<OverdraftScheduleDetail>() ;
-		OverdraftScheduleDetail limitIncreaseodSchd = null;
-		//Date odFinDate =DateUtility.getAppDate();
-		Date odFinDate =DateUtility.getUtilDate("2016-04-02", PennantConstants.DBDateFormat);
-		boolean isLimitIncreaseSchd = true;
-		/*
-		 * if there is limitIncrease then will check with that date if the limit increase is less than that date then wil add to the odschedule otherwise
-		 * will set the firstdropline date as the odschedule droplinedate and then based on that amount limit drops are being calculated.
-		 * it also checks with the appdate.
-		 */
-		for(OverdraftScheduleDetail odScheduleDetail:finScheduleData.getOverdraftScheduleDetails()){
-			if ((limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0 && DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) > 0) ||
-					(limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0 && DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) >= 0)) {
-				financeMain.setFirstDroplineDate(odScheduleDetail.getDroplineDate());
-				break;
-			} else if (DateUtility.compare(odScheduleDetail.getDroplineDate(), financeMain.getFinStartDate()) != 0) {
-					droplineAmt = droplineAmt.add(odScheduleDetail.getLimitDrop());
-					if (DateUtility.compare(odScheduleDetail.getDroplineDate(), odFinDate) == 0) {
-						odScheduleDetail.setLimitIncreaseAmt(limitIncreaseAmt);
-						isLimitIncreaseSchd = false;
-					}
-					odSchd.add(odScheduleDetail);
-			}
-		}
-
-		if (isSchdlRegenerate() && finScheduleData.getOverdraftScheduleDetails() != null) {
-			finScheduleData.getOverdraftScheduleDetails().clear();
-		}
+		// Overdraft Schedule Recalculation
+		finScheduleData.getFinanceMain().setEventFromDate(appDate);
+		finScheduleData = ScheduleCalculator.buildODSchedule(finScheduleData);
 		
-	/*	finScheduleData = ScheduleCalculator.buildOverdraftSchd(finScheduleData,droplineAmt);*/
-		
-		if(isLimitIncreaseSchd){
-			limitIncreaseodSchd = new OverdraftScheduleDetail();
-			limitIncreaseodSchd.setDroplineDate(odFinDate);
-			limitIncreaseodSchd.setLimitIncreaseAmt(limitIncreaseAmt);
-			odSchd.add(limitIncreaseodSchd);
-		}
-		
-		if (odSchd != null && odSchd.size() > 0) {
-			finScheduleData.getOverdraftScheduleDetails().addAll(odSchd);
-		}
-		if(limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
-			BigDecimal limitIncrement = BigDecimal.ZERO;
-			for(OverdraftScheduleDetail odschdDetail :finScheduleData.getOverdraftScheduleDetails()){
-				limitIncrement  = limitIncrement.add(odschdDetail.getLimitIncreaseAmt());
-			}
-
-			for(OverdraftScheduleDetail odscheduleDetail :finScheduleData.getOverdraftScheduleDetails()){
-				if(DateUtility.compare(odscheduleDetail.getDroplineDate(), financeMain.getFinStartDate())==0 ){
-					odscheduleDetail.setODLimit(odscheduleDetail.getODLimit().subtract(limitIncrement));
-				}else if(DateUtility.compare(odscheduleDetail.getDroplineDate(), odFinDate)==0 && limitIncreaseAmt.compareTo(BigDecimal.ZERO)>0){
-					odscheduleDetail.setLimitIncreaseAmt(limitIncreaseAmt);
-				}
-			}
+		//Show Error Details in Schedule Maintenance
+		if(finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()){
+			return finScheduleData;
 		}
 
-		if (finScheduleData.getOverdraftScheduleDetails() != null
-				&& finScheduleData.getOverdraftScheduleDetails().size() > 0) {
-			
-			Collections.sort(finScheduleData.getOverdraftScheduleDetails(), new Comparator<OverdraftScheduleDetail>() {
-				@Override
-				public int compare(OverdraftScheduleDetail odSchd1, OverdraftScheduleDetail odSchd2) {
-					return DateUtility.compare(odSchd1.getDroplineDate(), odSchd2.getDroplineDate());
-				}
-			});
-		}
-
-		//to cal the schedule calculator reschedule method
-
-		BigDecimal schPriDue = BigDecimal.ZERO;
-		BigDecimal schPftDue = BigDecimal.ZERO;
-		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
-		HashMap<Date, FinanceScheduleDetail> mapList = new HashMap<Date, FinanceScheduleDetail>();
-		boolean isCurSchd = true;
-		Date tempStartdate = null;
-		for (int i = 0; i < scheduleList.size(); i++) {
-
-			FinanceScheduleDetail curSchd = scheduleList.get(i);
-
-			if (DateUtility.compare(curSchd.getSchDate(), odFinDate) <= 0) {
-				mapList.put(scheduleList.get(i).getSchDate(), scheduleList.get(i));
-			} else {
-				//when schedule date is greater than app date from there it should be rescheduled and should recalculate the schedules
-
-				if (isCurSchd) {
-					tempStartdate = curSchd.getSchDate();
-					isCurSchd = false;
-				}
-
-				schPftDue = schPftDue.add(scheduleList.get(i).getProfitSchd());
-				schPriDue = schPriDue.add(scheduleList.get(i).getPrincipalSchd());
-			}
-
-		}
-
-		finScheduleData.setScheduleMap(mapList);
-		mapList = null;
-
-		Date startRepayCalDate = null;
-		Date recalToDate = null;
-
-		startRepayCalDate = FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, tempStartdate, "A", false,
-				finScheduleData.getFinanceType().getFddLockPeriod()).getNextFrequencyDate();
-		startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
-				PennantConstants.DBDateFormat));
-
-		financeMain.setMaturityDate(this.odMaturityDate.getValue());
-		financeMain.setEventFromDate(tempStartdate);
-		recalToDate = this.odMaturityDate.getValue();
-
-		// Schedule Dates Generation Process calculation
-		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
-
-		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
-			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-			curSchd.setDefSchdDate(curSchd.getSchDate());
-			curSchd.setPftOnSchDate(true);
-			curSchd.setRvwOnSchDate(true);
-			curSchd.setRepayOnSchDate(true);
-
-			//setting the Schedule method based on the grcperiodEndDate
-			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
-				if (!financeMain.isAllowGrcRepay()) {
-					curSchd.setSchdMethod(CalculationConstants.SCHMTHD_NOPAY);
-				} else {
-					curSchd.setSchdMethod(financeMain.getGrcSchdMthd());
-				}
-			} else {
-				curSchd.setSchdMethod(financeMain.getScheduleMethod());
-			}
-
-			//set the calculated rate to the newly calculated Schedules
-			if (tempStartdate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
-				if (i != 0 && curSchd.getSchDate().compareTo(tempStartdate) > 0) {
-					curSchd.setCalculatedRate(finScheduleData.getFinanceScheduleDetails().get(i - 1)
-							.getCalculatedRate());
-				}
-			} else {
-				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
-					if (i != 0 && curSchd.getSchDate().compareTo(tempStartdate) > 0) {
-						curSchd.setCalculatedRate(finScheduleData.getFinanceScheduleDetails().get(i - 1)
-								.getCalculatedRate());
-					}
-				} else {
-					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
-				}
-			}
-		}
-
-		// Setting Recalculation Type Method
-
-		financeMain.setEventToDate(recalToDate);
-		financeMain.setRecalToDate(financeMain.getMaturityDate());
-		financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-		financeMain.setPftIntact(false);
-		financeMain.setEventFromDate(tempStartdate);
-		financeMain.setRecalFromDate(startRepayCalDate);
-
-		financeMain.setMaturityDate(this.odMaturityDate.getValue());
-
-		//method to recal the Schedule
-
-		finScheduleData = ScheduleCalculator.reCalSchd(finScheduleData, "");
+		// To Recalculate the Schedule based on new Parameters
+		finScheduleData = getReScheduleService().doResetOverdraftSchd(finScheduleData);
 
 		logger.debug("leaving");
-
 		return finScheduleData;
 	}
 
@@ -16228,6 +16077,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLabel_FinanceMainDialog_SalesDepartment(Label label_FinanceMainDialog_SalesDepartment) {
 		this.label_FinanceMainDialog_SalesDepartment = label_FinanceMainDialog_SalesDepartment;
+	}
+
+	public ReScheduleService getReScheduleService() {
+		return reScheduleService;
+	}
+
+	public void setReScheduleService(ReScheduleService reScheduleService) {
+		this.reScheduleService = reScheduleService;
 	}
 
 }

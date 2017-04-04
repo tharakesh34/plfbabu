@@ -1506,7 +1506,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					true);
 			
 			financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
-					+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms()) + " Payments");
+					+ (Integer.parseInt(StringUtils.isEmpty(schdl_noOfTerms.getValue()) ? "0" : schdl_noOfTerms.getValue()) + " Payments"));
 
 			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
 			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),

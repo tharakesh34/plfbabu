@@ -462,6 +462,51 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	}
 	
 	/**
+	 * Method for Resetting Data and Recalculate Schedule when Overdraft Maintained
+	 * @param finScheduleData
+	 * @param newSchdDate
+	 * @param prvIndex
+	 * @return
+	 */
+	@Override
+	public FinScheduleData doResetOverdraftSchd(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+		
+		// Finance Service Instruction Preparation
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
+		serviceInstruction.setFromDate(finMain.getEventFromDate());
+		serviceInstruction.setRepayFrq(finMain.getRepayFrq());
+		
+		Date startCalFrom = finMain.getFinStartDate();
+		FinanceScheduleDetail prvSchd = null;
+		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+			if(DateUtility.compare(curSchd.getSchDate(), finMain.getEventFromDate()) >= 0){
+				startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate(); 
+				if(DateUtility.getDaysBetween(curSchd.getSchDate(), startCalFrom) <= 15){
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate(); 
+				}
+			}
+			prvSchd = curSchd;
+		}
+		
+		int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), startCalFrom, finMain.getMaturityDate(), true, true).getTerms();
+		serviceInstruction.setTerms(terms);
+		serviceInstruction.setPftIntact(false);
+		serviceInstruction.setBaseRate(finMain.getRepayBaseRate());
+		serviceInstruction.setSplRate(finMain.getRepaySpecialRate());
+		serviceInstruction.setMargin(finMain.getRepayMargin());
+		serviceInstruction.setActualRate(finMain.getRepayProfitRate());
+		
+		// Schedule Recalculation
+		finScheduleData = doReSchedule(finScheduleData, serviceInstruction);
+		
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+	
+	/**
 	 * Method for Sorting schedule details
 	 * @param financeScheduleDetail
 	 * @return
