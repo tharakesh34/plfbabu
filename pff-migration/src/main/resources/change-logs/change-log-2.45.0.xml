@@ -497,4 +497,38 @@ WHERE     (NOT EXISTS
       where DrOrCr='C'					
 	</createView>
 </changeSet>
+
+	<changeSet id="20" author="Kesav">
+		<createView viewName="FinTypeFees_AView" replaceIfExists="true">
+			SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+					   T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+					   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees T1 INNER JOIN 
+					   FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="21" author="Kesav">
+		<createView viewName="FinTypeFees_View" replaceIfExists="true">
+			SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+					   T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+					   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees_Temp T1 INNER JOIN 
+					   FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			UNION ALL
+			SELECT     T1.FinType, T1.OriginationFee, T1.FinEvent, T1.FeeTypeID, T1.FeeOrder, T1.FeeScheduleMethod, T1.CalculationType, T1.RuleCode, T1.Amount,
+					   T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.Active, T1.Version, T1.LastMntBy,
+					   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.FeeTypeCode, T2.FeeTypeDesc,T3.RuleCodeDesc RuleDesc
+			FROM       FinTypeFees T1 INNER JOIN 
+					   FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID LEFT OUTER JOIN
+					   Rules T3 ON T1.RuleCode = T3.RuleCode AND T3.RuleModule='FEES' AND T1.FinEvent = T3.RuleEvent
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTypeFees_Temp
+										WHERE  FinType = T1.FinType AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID AND OriginationFee = T1.OriginationFee)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
