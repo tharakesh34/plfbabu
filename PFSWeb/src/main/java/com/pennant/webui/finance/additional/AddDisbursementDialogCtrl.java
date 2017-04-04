@@ -437,8 +437,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				// Validating against Available Limit amount
 				if(this.disbAmount.getValidateValue().compareTo(PennantAppUtil.formateAmount(availableLimit,formatter)) > 0){
-					throw new WrongValueException(this.disbAmount, Labels.getLabel("NUMBER_MAXVALUE_EQ",
-							new String[] {("Disbursement Amount"), PennantApplicationUtil.formateAmount(availableLimit,formatter).toString()+" Available Limit"}));
+					if(availableLimit.compareTo(BigDecimal.ZERO)>0){
+						throw new WrongValueException(this.disbAmount, Labels.getLabel("NUMBER_MAXVALUE_EQ",
+								new String[] {("Disbursement Amount"), PennantApplicationUtil.formateAmount(availableLimit,formatter).toString()+" Available Limit"}));
+					}else{
+						throw new WrongValueException(this.disbAmount,
+								Labels.getLabel("od_DisbAmount_Validation", new String[]{}));
+					}
 				}else{
 					
 					// Checking Total Disbursed amount validate against New disbursement
