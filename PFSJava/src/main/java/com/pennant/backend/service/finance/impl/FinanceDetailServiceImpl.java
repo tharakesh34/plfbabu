@@ -1155,7 +1155,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Finance Type Details
 		scheduleData.setFinanceType(getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView"));
-		FinanceType fintype = scheduleData.getFinanceType();
 
 		//Step Policy Details List
 		if(scheduleData.getFinanceMain().isStepFinance()){
@@ -1163,8 +1162,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Overdraft Details
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory()) && 
-				fintype.isDroplineOD()){
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
 			scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "_Temp", false));
 		}
 
@@ -1311,7 +1309,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, StringUtils.equals(tableType, "") ? type : tableType));
 
 				//Overdraft Schedule Detail
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, scheduleData.getFinanceMain().getProductCategory()) && scheduleData.getFinanceType().isDroplineOD()){
+				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, scheduleData.getFinanceMain().getProductCategory())){
 					scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, tableType, isWIF));
 				}
 
@@ -1664,8 +1662,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Overdraft Details
-			FinanceType fintype = financeDetail.getFinScheduleData().getFinanceType();
-			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&& fintype.isDroplineOD() &&
+			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&&
 					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 				getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), tableType);
 			}
@@ -1689,7 +1686,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Overdraft Details
-			if(financeMain.isLovDescIsSchdGenerated() && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&& financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+			if(financeMain.isLovDescIsSchdGenerated() && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&&
 					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0 ){
 				getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp", isWIF);
 				getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), tableType);
@@ -2843,7 +2840,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			
 			//Delete overdraft Details 
-			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())&& financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) &&
 					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 				getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "", isWIF);
 			}
@@ -2943,7 +2940,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				//Save Finance Premium Details
 				//=======================================
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) && financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())  &&
 						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 					getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), "");
 				}
@@ -3089,7 +3086,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				//Save Finance Premium Details
 				//=======================================
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) && financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) &&
 						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 					getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "", isWIF);
 					getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), "");
@@ -3439,7 +3436,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				//Delete Finance Overdraft Details
 				//=======================================
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())&& financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) &&
 						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 					getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp", isWIF);
 				}
@@ -4135,7 +4132,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		//OverDraft Schedule Details Deletion
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())&& financeDetail.getFinScheduleData().getFinanceType().isDroplineOD() &&
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) &&
 				financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
 			getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp", isWIF);
 		}

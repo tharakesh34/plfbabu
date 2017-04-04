@@ -5426,6 +5426,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							this.moduleDefiner)) && isSchdlRegenerate()) {
 						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
 						return;
+					}else{
+						if(!recSave &&  StringUtils.isEmpty(this.moduleDefiner) && StringUtils.isEmpty(aFinanceMain.getDroplineFrq())){
+							//To Rebuild the overdraft if any fields are changed
+							aFinanceDetail.getFinScheduleData().getFinanceMain().setEventFromDate(
+									aFinanceMain.getFinStartDate());
+							aFinanceDetail.setFinScheduleData(ScheduleCalculator.buildODSchedule(aFinanceDetail.getFinScheduleData()));
+						}
 					}
 				} else {
 					if (isSchdlRegenerate()) {
@@ -5901,7 +5908,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		// save it to database
 		try {
-
+			aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
 			if (doProcess(aFinanceDetail, tranType)) {
 
 				//Mail Alert Notification for Customer/Dealer/Provider...etc
