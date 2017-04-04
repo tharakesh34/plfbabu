@@ -2,8 +2,6 @@ package com.pennant.eod;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -22,8 +20,6 @@ public class PostEodService {
 	private DateService					dateService;
 	private RepayQueueService			repayQueueService;
 	private SnapshotService				snapshotService;
-	private ThirdPartyPostingService	thirdPartyPostingService;
-	private ArchivalService				archivalService;
 	private CustomerQueuingDAO			customerQueuingDAO;
 	private EODProperties				eodProperties;
 	private PlatformTransactionManager	transactionManager;
@@ -42,12 +38,6 @@ public class PostEodService {
 
 			// Snapshot preparation
 			snapshotService.doSnapshotPreparation(appDate);
-
-			// Third party Postings on monthly basis
-			//	thirdPartyPostingService.processThirdPartyPostings(appDate);
-
-			// Document Archival
-			//	archivalService.processDocumentArchive(appDate);
 
 			// Log the Customer queuing data and threads status
 			customerQueuingDAO.logCustomerQueuing();
@@ -81,14 +71,6 @@ public class PostEodService {
 
 	public void setSnapshotService(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
-	}
-
-	public void setThirdPartyPostingService(ThirdPartyPostingService thirdPartyPostingService) {
-		this.thirdPartyPostingService = thirdPartyPostingService;
-	}
-
-	public void setArchivalService(ArchivalService archivalService) {
-		this.archivalService = archivalService;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {

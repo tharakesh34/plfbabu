@@ -12,7 +12,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.eod.constants.EodSql;
 import com.pennant.exception.PFFInterfaceException;
 
 public class CollateralService extends ServiceHelper {
@@ -22,6 +21,13 @@ public class CollateralService extends ServiceHelper {
 	private static Logger			logger				= Logger.getLogger(CollateralService.class);
 
 	private CollateralMarkProcess	collateralMarkProcess;
+
+	public static final String		collateralDemark	= " SELECT T1.FinReference, T1.Reference, T1.Value, T1.Remarks FROM FinCollaterals T1 "
+																+ " INNER JOIN FinanceMain T2 ON T1.FinReference = T2.FinReference "
+																+ " INNER JOIN CollateralMarkLog T3 ON T1.FinReference = T3.FinReference"
+																+ " INNER JOIN FinPftDetails T4 ON T1.FinReference = T4.FinReference"
+																+ " WHERE T2.FinIsActive = ? AND T2.ClosingStatus = ? AND T3.Status = ? "
+																+ " AND T3.Status <> ? AND T4.FullPaidDate = ? AND T2.CustID = ?";
 
 	/**
 	 * Process Collateral request and do below Action<br>
@@ -39,7 +45,7 @@ public class CollateralService extends ServiceHelper {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		try {
-			sqlStatement = connection.prepareStatement(EodSql.collateralDemark);
+			sqlStatement = connection.prepareStatement(collateralDemark);
 			sqlStatement.setBoolean(1, false);
 			sqlStatement.setString(2, EodConstants.FIN_CLOSESTS);
 			sqlStatement.setString(3, EodConstants.COLLT_MARKSTS);
@@ -89,7 +95,6 @@ public class CollateralService extends ServiceHelper {
 
 		logger.debug("Leaving");
 	}
-
 
 	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
 		this.collateralMarkProcess = collateralMarkProcess;

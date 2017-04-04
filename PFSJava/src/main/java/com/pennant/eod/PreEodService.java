@@ -40,8 +40,6 @@ public class PreEodService {
 			dateService.doUpdatebeforeEod(true);
 			//load fin priority
 			repayQueueService.loadFinanceRepayPriority();
-			//Daily downloads
-			//TODO: Need to use Data-Engine project 
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {

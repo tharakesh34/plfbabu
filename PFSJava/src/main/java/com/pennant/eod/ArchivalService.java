@@ -25,7 +25,6 @@ import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PDFConversion;
 import com.pennant.app.util.PathUtil;
-import com.pennant.eod.constants.EodSql;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class ArchivalService extends ServiceHelper {
@@ -33,6 +32,12 @@ public class ArchivalService extends ServiceHelper {
 	private static Logger logger = Logger.getLogger(ArchivalService.class);
 
 	private int	seqNo	= 0;
+	
+	public static final String approvedFinances = " SELECT FinReference, custid FROM FinanceMain WHERE FinApprovedDate = ?  ";
+	public static final String customerDocuments = " SELECT CustDocCategory, CustDocType, CustDocName, CustDocImage FROM CustomerDocuments WHERE CustID = ? ";
+	public static final String financeDocuments = " SELECT DD.Doctype, DD.DocCategory, DD.DocName, DM.DocImage FROM DocumentDetails DD INNER JOIN "
+			+ " DocumentManager DM ON DD.DocRefId = DM.Id WHERE ReferenceId = ? ";
+
 
 	
 	/**
@@ -50,7 +55,7 @@ public class ArchivalService extends ServiceHelper {
 		PreparedStatement financeStatement = null;
 
 		connection = DataSourceUtils.getConnection(getDataSource());
-		financeStatement = connection.prepareStatement(EodSql.approvedFinances);
+		financeStatement = connection.prepareStatement(approvedFinances);
 		financeStatement.setDate(1, DateUtility.getDBDate(dateAppDate.toString()));
 		financeResultSet = financeStatement.executeQuery();
 
@@ -84,7 +89,7 @@ public class ArchivalService extends ServiceHelper {
 			String custID = financeResultSet.getString("custid");
 
 			// Fetch Finance level documents
-			documentStatement = connection.prepareStatement(EodSql.financeDocuments);
+			documentStatement = connection.prepareStatement(financeDocuments);
 			documentStatement.setString(1, refNumber);
 			documentsResultSet = documentStatement.executeQuery();
 			
@@ -98,7 +103,7 @@ public class ArchivalService extends ServiceHelper {
 			}
 
 			// Fetch Customer level documents
-			custDocStatement = connection.prepareStatement(EodSql.customerDocuments);
+			custDocStatement = connection.prepareStatement(customerDocuments);
 			custDocStatement.setString(1, custID);
 			custDocResultSet = custDocStatement.executeQuery();
 			

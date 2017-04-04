@@ -17,7 +17,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.core.ServiceUtil;
@@ -34,15 +33,15 @@ public class EodService {
 	private static Logger				logger	= Logger.getLogger(EodService.class);
 
 	private DataSource					dataSource;
+	private PlatformTransactionManager	transactionManager;
+	private CustomerDatesDAO			customerDatesDAO;
+	private CustomerQueuingService		customerQueuingService;
+
 	private ServiceUtil					serviceUtil;
 	private AccrualService				accrualService;
 	private RateReviewService			rateReviewService;
 	private StatusMovementService		statusMovementService;
-	private CustomerQueuingService		customerQueuingService;
 	private RepayQueueService			repayQueueService;
-	private InstallmentDueService		installmentDueService;
-	private PlatformTransactionManager	transactionManager;
-	private CustomerDatesDAO			customerDatesDAO;
 
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=?";
@@ -61,21 +60,22 @@ public class EodService {
 		PreparedStatement sqlStatement = null;
 		long custId = 0;
 		try {
-			connection = DataSourceUtils.doGetConnection(getDataSource());
+			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(SQL);
 			sqlStatement.setString(1, threadId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 				try {
 					custId = resultSet.getLong("CustId");
-					
+
 					CustomerDates custdate = customerDatesDAO.getCustomerDates(custId);
-					// date has been moved for the customer means EOD is completed
-					// no need to run again
+					/*
+					 * date has been moved for the customer means EOD is completed no need to run again
+					 */
 					if (custdate.getAppDate().getTime() > date.getTime()) {
 						continue;
 					}
-					
+
 					//Update start
 					customerQueuingService.updateStart(date, custId);
 					//process
@@ -96,7 +96,7 @@ public class EodService {
 			if (sqlStatement != null) {
 				sqlStatement.close();
 			}
-			DataSourceUtils.releaseConnection(connection, getDataSource());
+			DataSourceUtils.releaseConnection(connection, dataSource);
 		}
 	}
 
@@ -118,7 +118,7 @@ public class EodService {
 		TransactionStatus txStatus = transactionManager.getTransaction(txDef);
 		Connection connection = null;
 		try {
-			connection = DataSourceUtils.getConnection(getDataSource());
+			connection = DataSourceUtils.getConnection(dataSource);
 			doProcess(connection, custId, date);
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
@@ -126,7 +126,7 @@ public class EodService {
 			logger.error("Exception :", e);
 			throw e;
 		} finally {
-			DataSourceUtils.releaseConnection(connection, getDataSource());
+			DataSourceUtils.releaseConnection(connection, dataSource);
 		}
 	}
 
@@ -135,16 +135,13 @@ public class EodService {
 		repayQueueService.saveQueue(connection, custId, date);
 
 		//process payments from queue
-		getServiceUtil().processQueue(connection, custId, date);
+		serviceUtil.processQueue(connection, custId, date);
 
 		//Accrual
 		accrualService.processAccrual(connection, custId, date);
 
 		//Status movements
 		statusMovementService.processMovements(connection, custId, date);
-
-		//installment date posting
-//		installmentDueService.processDueDatePostings(connection, custId, date);
 
 		//Rate review
 		//FIXE Rate review process should checked after the completion new method in schedule calculator
@@ -157,7 +154,8 @@ public class EodService {
 				date);
 		if (DateUtility.matches(nextDate, nextBusinessDate.getTime())) {
 			//update customer business Dates
-			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,  nextBusinessDate.getTime()).getTime();
+			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
+					nextBusinessDate.getTime()).getTime();
 			customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempnextBussDate);
 		} else {
 			doProcess(connection, custId, nextDate);
@@ -165,16 +163,8 @@ public class EodService {
 
 	}
 
-	public ServiceUtil getServiceUtil() {
-		return serviceUtil;
-	}
-
 	public void setServiceUtil(ServiceUtil serviceUtil) {
 		this.serviceUtil = serviceUtil;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -203,10 +193,6 @@ public class EodService {
 
 	public void setRepayQueueService(RepayQueueService repayQueueService) {
 		this.repayQueueService = repayQueueService;
-	}
-
-	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
-		this.installmentDueService = installmentDueService;
 	}
 
 	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {

@@ -20,7 +20,6 @@ import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.eod.constants.EodSql;
 
 public class RepayQueueService {
 	private static Logger			logger	= Logger.getLogger(RepayQueueService.class);
@@ -30,6 +29,21 @@ public class RepayQueueService {
 	private LatePaymentService		latePaymentService;
 
 	private Map<String, Integer>	priorityMap;
+	
+	public static final String customeFinance = " SELECT F.FinReference, F.FinBranch Branch, F.FinType ,F.CustID CustomerID ,F.LinkedFinRef,  S.SchDate RpyDate,"
+			+ "  S.PrincipalSchd, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal,  S.ProfitSchd, S.SchdPftpaid, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,"
+			+ " S.SuplRent SchdSuplRent, S.SuplRentPaid SchdSuplRentPaid, (S.SuplRent -  S.SuplRentPaid) SchdSuplRentBal,"
+			+ " S.IncrCost SchdIncrCost, S.IncrCostPaid SchdIncrCostPaid, (S.IncrCost - S.IncrCostPaid) SchdIncrCostBal,"
+			+ " S.FeeSchd SchdFee , S.SchdFeePaid , (S.FeeSchd - S.SchdFeePaid) SchdFeeBal, "
+			+ " S.InsSchd SchdIns, S.SchdInsPaid SchdInsPaid, (S.InsSchd - S.SchdInsPaid) SchdInsBal,"
+			+ " S.AdvCalRate, S.AdvProfit, S.CalculatedRate "
+			+ " FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? "
+			//AND  (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))
+			+ " AND F.FinIsActive = 1 "
+			+ " AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
+			+ "   OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
+			+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
+			+ " AND CustID=?  order by F.LinkedFinRef asc";
 
 	public RepayQueueService() {
 		super();
@@ -46,7 +60,7 @@ public class RepayQueueService {
 		PreparedStatement sqlStatement = null;
 		try {
 			deleteByCustID(custId);
-			sqlStatement = connection.prepareStatement(EodSql.customeFinance);
+			sqlStatement = connection.prepareStatement(customeFinance);
 			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();

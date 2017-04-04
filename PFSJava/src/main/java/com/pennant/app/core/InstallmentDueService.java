@@ -15,12 +15,17 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.eod.constants.EodSql;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
 	private Logger				logger				= Logger.getLogger(InstallmentDueService.class);
 
+	public static final String duedatepostings = " SELECT fm.FinReference, fm.FinType,fm.FinBranch, fsd.SchDate, SchdPftPaid, SchdPriPaid FROM "
+			+ " (SELECT FinReference, FinSchdDate FROM FinRepayDetails WHERE FinPostDate < FinSchdDate and FinSchdDate=? "
+			+ " GROUP BY FinReference, FinSchdDate) t  INNER JOIN FinScheduleDetails fsd on t.FinReference=fsd.FinReference and t.FinSchdDate=fsd.SchDate"
+			+ " INNER JOIN FinanceMain fm on t.FinReference=fm.FinReference WHERE fm.CustID= ? ";
+	
+	
 	/**
 	 * @param custId
 	 * @param date
@@ -31,7 +36,7 @@ public class InstallmentDueService extends ServiceHelper {
 		PreparedStatement sqlStatement = null;
 		try {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(EodSql.duedatepostings);
+			sqlStatement = connection.prepareStatement(duedatepostings);
 			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();

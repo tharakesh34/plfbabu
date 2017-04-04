@@ -15,13 +15,17 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.DataSetFiller;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.eod.constants.EodSql;
 
 public class ThirdPartyPostingService extends ServiceHelper {
 
 	private static final long serialVersionUID = -8918958779146455681L;
 
 	private static Logger logger = Logger.getLogger(ThirdPartyPostingService.class);
+	
+	public static final String insurancePostings = " SELECT fm.FinReference, fm.FinType, fm.FinBranch, fsd.SchDate, fsd.InsSchd "
+			+ " FROM FinScheduleDetails fsd INNER JOIN FinanceMain fm on fm.FinReference=fsd.FinReference "
+			+ " WHERE fsd.SchDate >= ? and fsd.SchDate<= ? AND (fsd.InsSchd >0 )";
+
 
 	/**
 	 * Method for process third party postings<br>
@@ -43,7 +47,7 @@ public class ThirdPartyPostingService extends ServiceHelper {
 		
 		try{
 			connection = DataSourceUtils.getConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(EodSql.insurancePostings);//third party can be any type
+			sqlStatement = connection.prepareStatement(insurancePostings);//third party can be any type
 			sqlStatement.setDate(1, DateUtility.getDBDate(monthStartDate.toString()));
 			sqlStatement.setDate(2, DateUtility.getDBDate(monthEndDate.toString()));
 			resultSet = sqlStatement.executeQuery();

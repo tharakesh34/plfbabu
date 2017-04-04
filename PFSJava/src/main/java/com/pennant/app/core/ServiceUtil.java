@@ -22,7 +22,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.PaymentRecoveryService;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
-import com.pennant.eod.constants.EodSql;
 
 public class ServiceUtil {
 
@@ -35,6 +34,20 @@ public class ServiceUtil {
 
 	private PaymentRecoveryService	paymentRecoveryService;
 
+
+	public static final String customerRepayQueue = "	SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch,RQ.LinkedFinRef,"
+			+ "RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid,"
+			+ "(RQ.SchdPftBal+ RQ.SchdPriBal)  RepayQueueBal, PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD, "
+			+ "RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal, RQ.SchdIns, RQ.SchdInsPaid, RQ.SchdInsBal, "
+			+ "RQ.SchdSuplRent, RQ.SchdSuplRentPaid, RQ.SchdSuplRentBal, "
+			+ "RQ.SchdIncrCost, RQ.SchdIncrCostPaid, RQ.SchdIncrCostBal,RQ.AdvProfit,RQ.SchdRate,RQ.Rebate, "
+			+ "FM.ProfitDaysBasis, RQ.PenaltyPayNow, RQ.LatePayPftPayNow "
+			+ " FROM FinRpyQueue RQ  INNER JOIN FinPftDetails PD ON PD.FinReference = RQ.FinReference "
+			+ " INNER JOIN FinanceMain FM ON FM.FinReference = RQ.FinReference "
+			+ " WHERE RQ.CustomerID=? "
+			+ " ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor , RQ.LinkedFinRef ASC ";
+	
+	
 	public ServiceUtil() {
 		super();
 	}
@@ -122,7 +135,7 @@ public class ServiceUtil {
 		PreparedStatement sqlStatement = null;
 		try {
 			//payments
-			sqlStatement = connection.prepareStatement(EodSql.customerRepayQueue);
+			sqlStatement = connection.prepareStatement(customerRepayQueue);
 			sqlStatement.setLong(1, custId);
 			resultSet = sqlStatement.executeQuery();
 

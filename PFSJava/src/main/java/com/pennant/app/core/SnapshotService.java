@@ -16,7 +16,7 @@ public class SnapshotService {
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
-	 private static final String INSERT_QUERY="INSERT INTO FinPftDetails_SnapShot  SELECT :AppDate,FinReference,CustId,FinBranch,FinType,LastMdfDate,"
+	 private static final String snapshotQuery="INSERT INTO FinPftDetails_SnapShot  SELECT :AppDate,FinReference,CustId,FinBranch,FinType,LastMdfDate,"
 	 		+ "TotalPftSchd,TotalPftCpz,TotalPftPaid,TotalPftBal,TotalPftPaidInAdv,TotalPriPaid,TotalPriBal,TdSchdPft,TdPftCpz,TdSchdPftPaid,TdSchdPftBal,"
 	 		+ "TdPftAccrued,TdPftAccrueSusp,TdPftAmortized,TdPftAmortizedSusp,TdSchdPri,TdSchdPriPaid,TdSchdPriBal,AcrTillNBD,AcrTillLBD,AcrTodayToNBD,AmzTillNBD,"
 	 		+ "AmzTillLBD,AmzTodayToNBD,RepayFrq,CustCIF,FinCcy,FinPurpose,FinContractDate,FinApprovedDate,FinStartDate,MaturityDate,FullPaidDate,FinAmount,DownPayment,"
@@ -38,9 +38,9 @@ public class SnapshotService {
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
-		logger.debug("selectSql: "+ INSERT_QUERY);
+		logger.debug("selectSql: "+ snapshotQuery);
 		try {
-			this.namedParameterJdbcTemplate.update(INSERT_QUERY, source);
+			this.namedParameterJdbcTemplate.update(snapshotQuery, source);
 		} catch(EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 			throw dae;

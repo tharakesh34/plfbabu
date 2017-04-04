@@ -53,18 +53,22 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.eod.constants.EodSql;
 
 public class AccrualService extends ServiceHelper {
 
 	private static Logger		logger				= Logger.getLogger(AccrualService.class);
 	private static final long	serialVersionUID	= 6161809223570900644L;
 
+	//P.AcrTillLBD, P.TdPftAmortizedSusp,P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate
+	//INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference
+	public static final String	accrual				= "SELECT F.FinReference FROM "
+															+ "FinanceMain F  WHERE F.FinIsActive = 1  AND F.FinStartDate <=? And F.CustID=? ";
+
 	public void processAccrual(Connection connection, long custId, Date date) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		try {
-			sqlStatement = connection.prepareStatement(EodSql.accrual);
+			sqlStatement = connection.prepareStatement(accrual);
 			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
@@ -103,20 +107,20 @@ public class AccrualService extends ServiceHelper {
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
 		getFinanceProfitDetailDAO().update(finPftDetail, false);
-		
+
 		//post accruals
 		postAccruals(financeMain, finPftDetail, valueDate);
 		logger.debug(" Leaving ");
 	}
-	
 
 	/**
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate) throws Exception {
+	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate)
+			throws Exception {
 		logger.debug(" Entering ");
-		
+
 		List<FinanceProfitDetail> pftDetailList = new ArrayList<FinanceProfitDetail>();
 		String finref = financeMain.getFinReference();
 		//Amount Codes preparation using FinProfitDetails
@@ -136,13 +140,13 @@ public class AccrualService extends ServiceHelper {
 		saveAccounting(list);
 		//posting done update the accrual balance
 		pftDetailList.add(finPftDetail);
-		BigDecimal prevAmzTillLBD=finPftDetail.getAmzTillLBD();
+		BigDecimal prevAmzTillLBD = finPftDetail.getAmzTillLBD();
 		finPftDetail.setAmzTillLBD(finPftDetail.getTdPftAmortized());
 		finPftDetail.setAmzTillLBDNormal(finPftDetail.getTdPftAmortizedNormal());
 		finPftDetail.setAmzTillLBDPD(finPftDetail.getTdPftAmortizedPD());
 		finPftDetail.setAmzTillLBDPIS(finPftDetail.getTdPftAmortizedSusp());
 		finPftDetail.setAmzTodayToNBD(finPftDetail.getTdPftAmortized().subtract(prevAmzTillLBD));
-		
+
 		getFinanceProfitDetailDAO().updateBatchList(pftDetailList, "");
 		logger.debug(" Leaving ");
 	}

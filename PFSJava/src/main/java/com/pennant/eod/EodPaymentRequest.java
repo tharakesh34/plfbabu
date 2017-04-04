@@ -15,7 +15,6 @@ import com.pennant.app.core.ServiceUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
-import com.pennant.eod.constants.EodSql;
 
 public class EodPaymentRequest {
 
@@ -26,6 +25,21 @@ public class EodPaymentRequest {
 	private PaymentRecoveryService	paymentRecoveryService;
 	private RepayQueueService		repayQueueService;
 
+	public static final String customeFinance = " SELECT F.FinReference, F.FinBranch Branch, F.FinType ,F.CustID CustomerID ,F.LinkedFinRef,  S.SchDate RpyDate,"
+			+ "  S.PrincipalSchd, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal,  S.ProfitSchd, S.SchdPftpaid, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,"
+			+ " S.SuplRent SchdSuplRent, S.SuplRentPaid SchdSuplRentPaid, (S.SuplRent -  S.SuplRentPaid) SchdSuplRentBal,"
+			+ " S.IncrCost SchdIncrCost, S.IncrCostPaid SchdIncrCostPaid, (S.IncrCost - S.IncrCostPaid) SchdIncrCostBal,"
+			+ " S.FeeSchd SchdFee , S.SchdFeePaid , (S.FeeSchd - S.SchdFeePaid) SchdFeeBal, "
+			+ " S.InsSchd SchdIns, S.SchdInsPaid SchdInsPaid, (S.InsSchd - S.SchdInsPaid) SchdInsBal,"
+			+ " S.AdvCalRate, S.AdvProfit, S.CalculatedRate "
+			+ " FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? "
+			//AND  (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))
+			+ " AND F.FinIsActive = 1 "
+			+ " AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
+			+ "   OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
+			+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
+			+ " AND CustID=?  order by F.LinkedFinRef asc";
+	
 	public EodPaymentRequest() {
 		super();
 	}
@@ -63,7 +77,7 @@ public class EodPaymentRequest {
 
 			while (resultSetnew.next()) {
 				//payments
-				sqlStatement = connection.prepareStatement(EodSql.customeFinance);
+				sqlStatement = connection.prepareStatement(customeFinance);
 				sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
 				sqlStatement.setLong(2, resultSetnew.getLong("CustID"));
 				resultSet = sqlStatement.executeQuery();

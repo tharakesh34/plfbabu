@@ -138,7 +138,6 @@
 		<property name="customerQueuingService" ref="customerQueuingService" />
 		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
@@ -159,8 +158,6 @@
 		<property name="dateService" ref="dateService" />
 		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="snapshotService" ref="snapshotService" />
-		<property name="thirdPartyPostingService" ref="thirdPartyPostingService" />
-		<property name="archivalService" ref="archivalService" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="eodProperties" ref="eodProperties" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
