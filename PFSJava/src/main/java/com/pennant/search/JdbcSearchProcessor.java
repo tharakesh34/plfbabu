@@ -85,10 +85,19 @@ public class JdbcSearchProcessor {
 	 * 
 	 * @see ISearch
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) throws DataAccessException {
 		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
+		}
+
+		// Get the required attributes.
+		String tableName;
+
+		if (StringUtils.isNotBlank(search.getTabelName())) {
+			tableName = search.getTabelName();
+		} else {
+			tableName = ModuleUtil.getTableName(searchClass.getSimpleName());
 		}
 
 		//Build query object
@@ -98,28 +107,17 @@ public class JdbcSearchProcessor {
 			logger.debug("Table Name : " + ModuleUtil.getTableName(searchClass.getSimpleName()));
 		}
 
-		if (StringUtils.isBlank(search.getTabelName())) {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()) + " WITH (NOLOCK)");
-				break;
-			default:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()));
-				break;
-			}
-		} else {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(search.getTabelName() + " WITH (NOLOCK)");
-				break;
-			default:
-				selectQuery.addCustomFromTable(search.getTabelName());
-				break;
-			}
+		switch (App.DATABASE) {
+		case SQL_SERVER:
+			selectQuery.addCustomFromTable(tableName + " WITH (NOLOCK)");
+			break;
+		default:
+			selectQuery.addCustomFromTable(tableName);
+			break;
 		}
 
 		// Add the fields to the query from the fields List
-		List fields = search.getFields();
+		List<Field> fields = search.getFields();
 		if (fields.size() <= 0) {
 			// If not fields added select all fields
 			selectQuery.addCustomColumns(new CustomSql("*"));
@@ -140,7 +138,7 @@ public class JdbcSearchProcessor {
 		}
 		// Add order by conditions
 		if (search.getFilters() != null) {
-			List sorts = search.getSorts();
+			List<Sort> sorts = search.getSorts();
 
 			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
 				Sort sortField = (Sort) iterator.next();
@@ -176,7 +174,7 @@ public class JdbcSearchProcessor {
 
 			namedParameters = null;
 		}
-		//addPaging(query, search);
+
 		return rowTypes;
 	}
 
@@ -539,7 +537,7 @@ public class JdbcSearchProcessor {
 				.append("select * from ( select ") // nest the main query in an
 				// outer select
 				.append(getRowNumber(sql)); // add the rownnumber bit into the
-									// outer query select list
+		// outer query select list
 
 		if (startRow != 0) {
 			endRow = startRow + endRow;
