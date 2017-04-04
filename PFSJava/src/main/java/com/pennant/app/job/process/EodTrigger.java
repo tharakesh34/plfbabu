@@ -58,10 +58,11 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 
 	private void startEODProcess() {
 		// Fetch the active customer details and process the EOD activities 
+
+		Date date = DateUtility.getAppDate();
+		EodDetail eodDetail = eod.getEodDetailById(date);
 		try {
-			//DateUtility.getDate(DateUtility.getSysDate(PennantConstants.DBDateFormat),PennantConstants.DBDateFormat);
-			Date date = DateUtility.getAppDate();
-			EodDetail eodDetail = eod.getEodDetailById(date);
+
 			boolean startEod = false;
 
 			if (eodDetail == null) {
@@ -83,13 +84,13 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 			}
 
 			if (startEod) {
-				logger.debug("Eod for the day has been started for the date: " + eodDetail.getStatTime());
+				logger.info("Eod for the day has been started for the date: " + eodDetail.getStatTime());
 				eod.getThreadPoolTaskExecutor().initialize();
 				eod.doProcess();
 			}
 
-			if (eodDetail.getEndTime() != null) {
-				logger.debug("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
+			if (StringUtils.trimToEmpty(eodDetail.getStatus()).equals(EodConstants.STATUS_COMPLETED)) {
+				logger.info("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
 				return;
 			}
 
@@ -98,32 +99,24 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 
 				((Textbox) map.get(7)).setValue(EodConstants.STATUS_RUNNING);
 
-				if (eod.getThreadPoolTaskExecutor().getActiveCount() == 0) {
+				int activecount = eod.getThreadPoolTaskExecutor().getActiveCount();
+				if (activecount == 0) {
 
+					//active thread count
 					long count = eod.getCountbyProgress(DateUtility.getAppDate(), EodConstants.PROGRESS_START);
 					if (count == 0) {
 						long stauscount = eod.getCountByStatus(DateUtility.getAppDate(), EodConstants.STATUS_FAILED);
 						if (stauscount > 0) {
-							((Textbox) map.get(7)).setValue(EodConstants.STATUS_FAILED);
-							((Button) map.get(4)).setDisabled(false);
-							eodDetail.setEndTime(DateUtility.getSysDate());
-							eodDetail.setStatus(EodConstants.STATUS_FAILED);
-							eod.getEodDetailDAO().update(eodDetail);
+							updateFailedEODStatus(eodDetail);
 
 						} else {
-
 							eod.getPostEodService().doProcess();
-							eodDetail.setEndTime(DateUtility.getSysDate());
-							eodDetail.setStatus(EodConstants.STATUS_COMPLETED);
-							eod.getEodDetailDAO().update(eodDetail);
-							((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(),
-									DateFormat.LONG_TIME));
-							updateCompleteEODStatus();
+							updateCompleteEODStatus(eodDetail);
 						}
 
 						eod.getThreadPoolTaskExecutor().destroy();
 
-						logger.debug("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
+						logger.info("Eod for the day has been completed for the date: " + eodDetail.getEndTime());
 						break;
 					}
 
@@ -132,11 +125,18 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Eod for the day has been failed for the date: " + eodDetail.getEndTime(), e);
+			updateFailedEODStatus(eodDetail);
 		}
 	}
 
-	private void updateCompleteEODStatus() {
+	private void updateCompleteEODStatus(EodDetail eodDetail) {
+
+		eodDetail.setEndTime(DateUtility.getSysDate());
+		eodDetail.setStatus(EodConstants.STATUS_COMPLETED);
+		eod.getEodDetailDAO().update(eodDetail);
+		((Textbox) map.get(6)).setValue(DateUtility.format(eodDetail.getEndTime(), DateFormat.LONG_TIME));
+
 		((Textbox) map.get(1)).setValue(DateUtility.getValueDate(DateFormat.LONG_DATE));
 		((Textbox) map.get(2)).setValue(DateUtility.formatToLongDate(SysParamUtil
 				.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
@@ -144,6 +144,15 @@ public class EodTrigger extends QuartzJobBean implements StatefulJob, Runnable, 
 				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 		((Button) map.get(4)).setDisabled(false);
 		((Textbox) map.get(7)).setValue(EodConstants.STATUS_COMPLETED);
+	}
+
+	private void updateFailedEODStatus(EodDetail eodDetail) {
+		eodDetail.setEndTime(DateUtility.getSysDate());
+		eodDetail.setStatus(EodConstants.STATUS_FAILED);
+		eod.getEodDetailDAO().update(eodDetail);
+		((Textbox) map.get(7)).setValue(EodConstants.STATUS_FAILED);
+		((Button) map.get(4)).setDisabled(false);
+
 	}
 
 }

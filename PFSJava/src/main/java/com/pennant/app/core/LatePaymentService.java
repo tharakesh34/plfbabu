@@ -309,7 +309,7 @@ public class LatePaymentService extends ServiceHelper {
 		finODDetails.setFinODTillDate(valueDate);
 		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(valueDate, finODDetails.getFinODSchdDate()) + 1);
 		finODDetails.setFinLMdfDate(valueDate);
-		if (finODDetails.getFinODSchdDate().compareTo(DateUtility.getValueDate()) <= 0) {
+		if (finODDetails.getFinODSchdDate().compareTo(valueDate) <= 0) {
 			finODDetailsDAO.save(finODDetails);
 		}
 

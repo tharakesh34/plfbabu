@@ -2,6 +2,11 @@ package com.pennant.eod;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import com.pennant.app.core.DateService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
@@ -10,30 +15,49 @@ import com.pennant.eod.util.EODProperties;
 
 public class PreEodService {
 
-	private CustomerQueuingService	customerQueuingService;
-	private DateService				dateService;
-	private RepayQueueService		repayQueueService;
-	private CustomerDatesDAO		customerDatesDAO;
-	private EODProperties			eodProperties;
+	private static Logger				logger	= Logger.getLogger(PreEodService.class);
+	private CustomerQueuingService		customerQueuingService;
+	private DateService					dateService;
+	private RepayQueueService			repayQueueService;
+	private CustomerDatesDAO			customerDatesDAO;
+	private EODProperties				eodProperties;
+	private PlatformTransactionManager	transactionManager;
 
 	public void doProcess(Date date) {
-		
-		eodProperties.init();
-		
-		// Save customer level AppDate, ValueDate and NextBussinessDate
-		prepareCustomerDates();
 
-		// dump the total customer Id's with allocated Date
-		getCustomerQueuingService().loadCustIds(date);
-		
-		//update value and next business date
-		getDateService().doUpdatebeforeEod(true);
-		
-		//load fin priority
-		getRepayQueueService().loadFinanceRepayPriority();
-		
-		//Daily downloads
-		//TODO: Need to use Data-Engine project 
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setReadOnly(true);
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus = transactionManager.getTransaction(txDef);
+
+		try {
+			eodProperties.init();
+
+			// Save customer level AppDate, ValueDate and NextBussinessDate
+			prepareCustomerDates();
+
+			// dump the total customer Id's with allocated Date
+			getCustomerQueuingService().loadCustIds(date);
+
+			//update value and next business date
+			getDateService().doUpdatebeforeEod(true);
+
+			//load fin priority
+			getRepayQueueService().loadFinanceRepayPriority();
+
+			//Daily downloads
+			//TODO: Need to use Data-Engine project 
+			
+			
+			
+			
+			transactionManager.commit(txStatus);
+			
+		} catch (Exception e) {
+			transactionManager.rollback(txStatus);
+			logger.error("Exception :", e);
+			throw e;
+		}
 
 	}
 
@@ -43,11 +67,11 @@ public class PreEodService {
 	 * @param appDate
 	 */
 	private void prepareCustomerDates() {
-		
+
 		Date appDate = DateUtility.getAppDate();
 		Date valueDate = DateUtility.getValueDate();
 		Date nextBusinessDate = DateUtility.getNextBusinessdate();
-		
+
 		// save customer business dates when EOD starts
 		getCustomerDatesDAO().saveCustomerDates(appDate, valueDate, nextBusinessDate);
 	}
@@ -86,5 +110,9 @@ public class PreEodService {
 
 	public void setEodProperties(EODProperties eodProperties) {
 		this.eodProperties = eodProperties;
+	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 }

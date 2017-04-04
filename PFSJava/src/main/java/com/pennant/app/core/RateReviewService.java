@@ -250,6 +250,10 @@ public class RateReviewService extends ServiceHelper {
 			if (schdate.compareTo(effectiveDate) < 0) {
 				continue;
 			}
+			
+			if (schdate.compareTo(date) < 0) {
+				continue;
+			}
 
 			//grace review
 			if (nextReviewDate == null) {

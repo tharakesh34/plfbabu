@@ -3,7 +3,6 @@ package com.pennant.webui.batch.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.beans.BeansException;
@@ -14,7 +13,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
@@ -26,13 +24,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.job.process.EodTrigger;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SessionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -91,13 +86,6 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 		logger.debug("Entering" + event.toString());
 		MultiLineMessageBox.doSetTemplate();
 		int conf = 0;
-//		String loggedInUsers = getLoggedInUsers();
-//		if (StringUtils.isNotEmpty(loggedInUsers)) {
-//			loggedInUsers = "\n" + loggedInUsers;
-//			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }),
-//					"info", null, null, -1);
-//			return;
-//		}
 
 		String msg = Labels.getLabel("labe_start_job", new String[] { DateUtility.formatToShortDate(SysParamUtil
 				.getValueAsDate(PennantConstants.APP_DATE_NEXT)) });
@@ -145,28 +133,6 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 		logger.debug("Leacing" + event.toString());
 	}
 
-	private String getLoggedInUsers() {
-		StringBuilder builder = new StringBuilder();
-		List<UserImpl> users = SessionUtil.getLoggedInUsers();
-		SecurityUser secUser = null;
-		if (!users.isEmpty()) {
-			for (UserImpl user : users) {
-				if (user.getUserId() != getUserWorkspace().getLoggedInUser().getLoginUsrID()) {
-					if (builder.length() > 0) {
-						builder.append("</br>");
-					}
-					secUser = user.getSecurityUser();
-					builder.append("&bull;")
-							.append("&nbsp;")
-							.append(user.getUserId())
-							.append("&ndash;")
-							.append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " "
-									+ secUser.getUsrLName());
-				}
-			}
-		}
-		return builder.toString();
-	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
