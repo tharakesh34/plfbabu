@@ -2962,7 +2962,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.manualSchedule.isChecked()) {
 				this.gracePeriodEndDate.setValue(aFinanceMain.getGrcPeriodEndDate());
 			} else {
-				this.gracePeriodEndDate.setText("");
+				if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					this.gracePeriodEndDate.setValue(aFinanceMain.getGrcPeriodEndDate());
+				}else{
+					this.gracePeriodEndDate.setText("");
+				}
 			}
 
 			this.gracePeriodEndDate_two.setValue(aFinanceMain.getGrcPeriodEndDate());
