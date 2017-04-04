@@ -124,6 +124,26 @@
 				<pfs.liquibase.password>manager</pfs.liquibase.password>
 			</properties>
 		</profile>
+		<profile>
+			<id>EOD</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://localhost:1433;database=PFFBFS</pfs.liquibase.url>
+				<pfs.liquibase.username>sa</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>EODAudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://localhost:1433;database=PFFBFSAudit</pfs.liquibase.url>
+				<pfs.liquibase.username>sa</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
