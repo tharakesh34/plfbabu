@@ -531,4 +531,24 @@ WHERE     (NOT EXISTS
 										WHERE  FinType = T1.FinType AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID AND OriginationFee = T1.OriginationFee)
 		</createView>
 	</changeSet>
+	<changeSet id="22" author="Pruthvi">
+	<sql>
+	update reportlist set ReportHeading='Mandate Enquiry'
+where code='Mandate';
+
+update reportlist set ReportHeading='Beneficiary Enquiry'
+where code='Beneficiary';
+
+
+  update reportlist set ReportHeading='Customer',ModuleType='Customers'
+  where code='Customer';
+  
+INSERT INTO ReportList  VALUES 
+(N'CustomerEnquiry', N'Customer', 
+N'listheader_CustCIF.label,listheader_CustShrtName.label,listheader_CustCoreBank.label,listheader_CustDftBranch.label,listheader_CustCtgCode.label,listheader_CustTypeCode.label', 
+N'custCIF,custShrtName,custCoreBank,custDftBranch,lovDescCustCtgCodeName,lovDescCustTypeCodeName', 
+N'String,String,String,String,String,String', N'', N'ReportList06', N'Customer Enquiry', N'Customer Enquiry', 3, 1001, CURRENT_TIMESTAMP, 
+N'Approved', N'', N'', N'', N'', N'', 0, 0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
