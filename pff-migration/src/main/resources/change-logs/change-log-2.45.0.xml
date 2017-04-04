@@ -489,4 +489,12 @@ WHERE     (NOT EXISTS
 			<column name="ModuleId" type="int" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="19" author="Prasad">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		 Select LinkedTranId,PostDate,TransOrder,finReference,TranDesc,PostAmount DEBITS,0 CREDITS from Postings
+      where DrOrCr='D'  union
+      Select LinkedTranId,PostDate,TransOrder,finReference,TranDesc,0 DEBITS,PostAmount CREDITS from Postings
+      where DrOrCr='C'					
+	</createView>
+</changeSet>
 </databaseChangeLog>
