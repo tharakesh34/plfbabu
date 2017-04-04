@@ -2541,121 +2541,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			} else {
 				prvSchDetail = aFinScheduleData.getFinanceScheduleDetails().get(i - 1);
 			}
-			if (aScheduleDetail.isDisbOnSchDate()) {
-
-				for (int j = 0; j < 2; j++) {
-
-					if(j == 0){
-						BigDecimal curTotDisbAmt = BigDecimal.ZERO;
-						for (int k = 0; k < aFinScheduleData.getDisbursementDetails().size(); k++) {
-
-							FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(k);
-							if(DateUtility.compare(curDisb.getDisbDate(), aScheduleDetail.getSchDate()) == 0){
-								curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
-
-								data = new FinanceScheduleReportData();	
-								data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
-								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-								data.setSchdPft("");
-								data.setTdsAmount("");
-								data.setSchdFee("");
-								data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));
-								data.setTotalAmount(formatAmt(curDisb.getDisbAmount(),false,false));
-								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(
-										aScheduleDetail.getFeeChargeAmt()==null? BigDecimal.ZERO :aScheduleDetail.getFeeChargeAmt()).subtract(
-												aScheduleDetail.getDisbAmount()).add(curTotDisbAmt)
-										.add(aScheduleDetail.getDownPaymentAmount()),false,false));
-								data.setLimitDrop("");
-								data.setLimitIncreaseAmt(formatAmt(limitIncreaseAmt,false,false));
-								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-								data.setAvailLimit(formatAmt(availLimit,false,false));
-
-								if (count == 1) {
-									if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
-									}else {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
-									}
-									data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								}else{
-									data.setSchDate("");
-								}
-								reportList.add(data);
-							}
-						}
-
-						if (aScheduleDetail.isDownpaymentOnSchDate()) {
-
-							BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
-							data = new FinanceScheduleReportData();
-							data.setLabel(Labels.getLabel("label_listcell_downPayment.label"));
-							if (count == 1){
-								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
-							}else{
-								data.setSchDate("");
-							}
-							data.setPftAmount("");
-							data.setSchdPft("");
-							data.setTdsAmount("");
-							data.setSchdFee("");
-							data.setSchdPri("");
-							data.setLimitDrop("");
-							data.setLimitIncreaseAmt("");
-							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-							BigDecimal odAvailLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-							data.setAvailLimit(formatAmt(odAvailLimit,false,false));
-							data.setTotalAmount(formatAmt(aScheduleDetail.getDownPaymentAmount(),false,false));
-							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt),false,false));
-							reportList.add(data);
-						}		
-
-					}
-					if(j == 1){
-						if(feeRuleDetails != null && aScheduleDetail.getFeeChargeAmt()!= null &&
-								aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0 ){
-
-							if(feeRuleDetails.containsKey(aScheduleDetail.getSchDate())){
-
-								List<FeeRule> feeChargeList = sortFeeRules(feeRuleDetails.get(aScheduleDetail.getSchDate()));
-
-								BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
-								for (FeeRule rule : feeChargeList) {
-
-									if(rule.getFeeAmount().compareTo(BigDecimal.ZERO) >= 0){
-										data = new FinanceScheduleReportData();	
-
-										data.setLabel(rule.getFeeCodeDesc());
-										data.setPftAmount("");
-										data.setSchdPft("");
-										data.setSchdPri("");
-										data.setTdsAmount("");
-										data.setSchdFee("");
-										data.setLimitDrop("");
-										data.setLimitIncreaseAmt("");
-										data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-										BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-										data.setAvailLimit(formatAmt(availLimit,false,false));
-
-										data.setTotalAmount(formatAmt(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount()),false,true));
-										data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
-												.add(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount())),false,false));
-										data.setSchDate("");
-										reportList.add(data);
-										feeChargeAmt = feeChargeAmt.subtract(rule.getFeeAmount());
-									}
-								}
-							}
-						}else{
-							continue;
-						}					
-					}
-
-					count = 2;
-				}
-
-			}
+			
 			//overdraft facility
 			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
 
@@ -2772,6 +2658,121 @@ public class FinScheduleListItemRenderer implements Serializable{
 						BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 						data.setAvailLimit(formatAmt(availLimit,false,false));
 					}
+				}
+			}
+			
+			if (aScheduleDetail.isDisbOnSchDate()) {
+
+				for (int j = 0; j < 2; j++) {
+
+					if(j == 0){
+						BigDecimal curTotDisbAmt = BigDecimal.ZERO;
+						for (int k = 0; k < aFinScheduleData.getDisbursementDetails().size(); k++) {
+
+							FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(k);
+							if(DateUtility.compare(curDisb.getDisbDate(), aScheduleDetail.getSchDate()) == 0){
+								curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+
+								data = new FinanceScheduleReportData();	
+								data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
+								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+								data.setSchdPft("");
+								data.setTdsAmount("");
+								data.setSchdFee("");
+								data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));
+								data.setTotalAmount(formatAmt(curDisb.getDisbAmount(),false,false));
+								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(
+										aScheduleDetail.getFeeChargeAmt()==null? BigDecimal.ZERO :aScheduleDetail.getFeeChargeAmt()).subtract(
+												aScheduleDetail.getDisbAmount()).add(curTotDisbAmt)
+										.add(aScheduleDetail.getDownPaymentAmount()),false,false));
+								data.setLimitDrop("");
+								data.setLimitIncreaseAmt(formatAmt(limitIncreaseAmt,false,false));
+								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+								data.setAvailLimit(formatAmt(availLimit,false,false));
+
+								if (count == 1) {
+									if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+									}else {
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+									}
+									data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+								}else{
+									data.setSchDate("");
+								}
+								reportList.add(data);
+							}
+						}
+
+						if (aScheduleDetail.isDownpaymentOnSchDate()) {
+
+							BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
+							data = new FinanceScheduleReportData();
+							data.setLabel(Labels.getLabel("label_listcell_downPayment.label"));
+							if (count == 1){
+								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							}else{
+								data.setSchDate("");
+							}
+							data.setPftAmount("");
+							data.setSchdPft("");
+							data.setTdsAmount("");
+							data.setSchdFee("");
+							data.setSchdPri("");
+							data.setLimitDrop("");
+							data.setLimitIncreaseAmt("");
+							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+							BigDecimal odAvailLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+							data.setAvailLimit(formatAmt(odAvailLimit,false,false));
+							data.setTotalAmount(formatAmt(aScheduleDetail.getDownPaymentAmount(),false,false));
+							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt),false,false));
+							reportList.add(data);
+						}		
+
+					}
+					if(j == 1){
+						if(feeRuleDetails != null && aScheduleDetail.getFeeChargeAmt()!= null &&
+								aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0 ){
+
+							if(feeRuleDetails.containsKey(aScheduleDetail.getSchDate())){
+
+								List<FeeRule> feeChargeList = sortFeeRules(feeRuleDetails.get(aScheduleDetail.getSchDate()));
+
+								BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
+								for (FeeRule rule : feeChargeList) {
+
+									if(rule.getFeeAmount().compareTo(BigDecimal.ZERO) >= 0){
+										data = new FinanceScheduleReportData();	
+
+										data.setLabel(rule.getFeeCodeDesc());
+										data.setPftAmount("");
+										data.setSchdPft("");
+										data.setSchdPri("");
+										data.setTdsAmount("");
+										data.setSchdFee("");
+										data.setLimitDrop("");
+										data.setLimitIncreaseAmt("");
+										data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+										BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+										data.setAvailLimit(formatAmt(availLimit,false,false));
+
+										data.setTotalAmount(formatAmt(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount()),false,true));
+										data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
+												.add(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount())),false,false));
+										data.setSchDate("");
+										reportList.add(data);
+										feeChargeAmt = feeChargeAmt.subtract(rule.getFeeAmount());
+									}
+								}
+							}
+						}else{
+							continue;
+						}					
+					}
+
+					count = 2;
 				}
 			}
 

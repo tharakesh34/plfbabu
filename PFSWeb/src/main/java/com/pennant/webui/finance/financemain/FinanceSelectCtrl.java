@@ -907,8 +907,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		
 		if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG) ) {
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) "); 
-			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
-			whereClause.append(" OR (ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"' AND  FinCurrAssetValue > 0 ) "); 
+			whereClause.append(" AND FinCurrAssetValue > 0 "); 
 			
 			/*whereClause.append(" OR (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");  */

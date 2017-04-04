@@ -5551,7 +5551,8 @@ public class ScheduleCalculator {
 				if(finMain.getFirstDroplineDate() != null){
 					startCalFrom = finMain.getFirstDroplineDate();
 				}else{
-					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate();
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false)
+							.getNextFrequencyDate();
 				}
 			}
 			
@@ -5559,10 +5560,13 @@ public class ScheduleCalculator {
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
 			curODSchd.setODLimit(finMain.getFinAssetValue());
 			curODSchd.setDroplineDate(finMain.getFinStartDate());
-			curODSchd.setActualRate(finMain.getRepayProfitRate());
-			curODSchd.setBaseRate(finMain.getRepayBaseRate());
-			curODSchd.setSplRate(finMain.getRepaySpecialRate());
-			curODSchd.setMargin(finMain.getRepayMargin());
+			if(StringUtils.isEmpty(finMain.getRepayBaseRate())){
+				curODSchd.setActualRate(finMain.getRepayProfitRate());
+			}else{
+				curODSchd.setBaseRate(finMain.getRepayBaseRate());
+				curODSchd.setSplRate(finMain.getRepaySpecialRate());
+				curODSchd.setMargin(finMain.getRepayMargin());
+			}
 			
 			if(StringUtils.isEmpty(curODSchd.getBaseRate())){
 				curODSchd.setDroplineRate(finMain.getRepayProfitRate());
@@ -5582,7 +5586,9 @@ public class ScheduleCalculator {
 			for (OverdraftScheduleDetail curODSchd : finScheduleData.getOverdraftScheduleDetails()) {
 				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) > 0) {
 					if(StringUtils.isNotEmpty(finMain.getDroplineFrq())){
-						startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false).getNextFrequencyDate();
+						startCalFrom = FrequencyUtil
+								.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false)
+								.getNextFrequencyDate();
 						inclStartDate = true;
 					}
 					break;
@@ -5592,7 +5598,8 @@ public class ScheduleCalculator {
 				prvODSchd = curODSchd;
 				prvDropLineAmount = prvDropLineAmount.add(curODSchd.getLimitDrop());
 				incrLimit = finMain.getFinAssetValue().subtract(prvDropLineAmount).subtract(curODSchd.getODLimit());
-				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) == 0 && incrLimit.compareTo(BigDecimal.ZERO)>0) {
+				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) == 0
+						&& incrLimit.compareTo(BigDecimal.ZERO) > 0) {
 					curODSchd.setLimitIncreaseAmt(curODSchd.getLimitIncreaseAmt().add(incrLimit));
 					curODSchd.setODLimit(curODSchd.getODLimit().add(incrLimit));
 					totalOSLimit = curODSchd.getODLimit().add(incrLimit);
@@ -5607,8 +5614,13 @@ public class ScheduleCalculator {
 			}
 			
 			// Adding New Overdraft Schedule, if not Found in the existing list
-			if(!limitIncrDateFound && incrLimit.compareTo(BigDecimal.ZERO)>0){
-				OverdraftScheduleDetail newOdSchd = prvODSchd;
+			if(!limitIncrDateFound && incrLimit.compareTo(BigDecimal.ZERO) > 0){
+				OverdraftScheduleDetail newOdSchd = new OverdraftScheduleDetail();
+				newOdSchd.setActualRate(prvODSchd.getActualRate());
+				newOdSchd.setBaseRate(prvODSchd.getBaseRate());
+				newOdSchd.setSplRate(prvODSchd.getSplRate());
+				newOdSchd.setMargin(prvODSchd.getMargin());
+				newOdSchd.setDroplineRate(prvODSchd.getDroplineRate());
 				newOdSchd.setDroplineDate(finMain.getEventFromDate());
 				newOdSchd.setLimitIncreaseAmt(incrLimit);
 				newOdSchd.setLimitDrop(BigDecimal.ZERO);
@@ -5620,6 +5632,20 @@ public class ScheduleCalculator {
 		
 		// if Overdraft Dropline Not Exists
 		if(StringUtils.isEmpty(finMain.getDroplineFrq())){
+
+			// Creating Expiry Schedule
+			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
+			curODSchd.setDroplineDate(finMain.getMaturityDate());
+			curODSchd.setActualRate(prvODSchd.getActualRate());
+			curODSchd.setBaseRate(prvODSchd.getBaseRate());
+			curODSchd.setSplRate(prvODSchd.getSplRate());
+			curODSchd.setMargin(prvODSchd.getMargin());
+			curODSchd.setDroplineRate(prvODSchd.getDroplineRate());
+			curODSchd.setLimitIncreaseAmt(BigDecimal.ZERO);
+			curODSchd.setLimitDrop(prvODSchd.getODLimit());
+			curODSchd.setODLimit(BigDecimal.ZERO);
+			oldOverdraftList.add(curODSchd);
+
 			finScheduleData.setOverdraftScheduleDetails(sortOverdraftSchedules(oldOverdraftList));
 
 			logger.debug("Leaving");

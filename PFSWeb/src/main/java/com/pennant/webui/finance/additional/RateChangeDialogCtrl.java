@@ -311,9 +311,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.label_RateChangeDialog_ToDate.setValue(Labels.getLabel("label_RateChangeDialog_ODToDate.value"));
 			this.label_RateChangeDialog_Rate.setValue(Labels.getLabel("label_RateChangeDialog_ODRate.value"));
 			this.recalTypeRow.setVisible(false);
-		}else{
-			fillComboBox(profitDaysBasis, aFinanceMain.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(), "");
 		}
+		fillComboBox(profitDaysBasis, aFinanceMain.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(), "");
 
 		this.baseRateRow.setVisible(true);
 		this.rate.setEffectiveRateVisible(true);
@@ -372,28 +371,26 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,aFinanceMain.getProductCategory())){
 			//Check if schedule header is null or not and set the recal type fields.
-			
-			if (aFinSchData.getFinanceMain() != null) {
-				String schmethod = StringUtils.trimToEmpty(aFinSchData.getFinanceMain().getScheduleMethod());
-				if (schmethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
-					excludeFileds.append("ADJMDT,");
-				}
-				if (getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1) {
-					excludeFileds.append("TILLMDT,");
-					fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
-				} else {
-					fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
-				}
-			}else {
-				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
+
+			String schmethod = StringUtils.trimToEmpty(aFinSchData.getFinanceMain().getScheduleMethod());
+			if (schmethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
+				excludeFileds.append("ADJMDT,");
 			}
-			
+			if (getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1) {
+				excludeFileds.append("TILLMDT,");
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
+			} else {
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
+			}
+
 			changeRecalType();
 
 			this.fromDateRow.setVisible(false);
 			if("TILLMDT".equals(StringUtils.trimToEmpty(aFinSchData.getFinanceMain().getRecalType()))){
 				this.fromDateRow.setVisible(true);
 			}
+		}else{
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		}
 		logger.debug("Leaving");
 	}
@@ -772,6 +769,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if(this.profitDayBasisRow.isVisible()){
 				isValidComboValue(this.profitDaysBasis, Labels.getLabel("label_RateChangeDialog_ProfitDaysBasis.value"));
 				finServiceInstruction.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
+			}else{
+				finServiceInstruction.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -896,6 +895,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			throw new WrongValuesException(wvea);
 		}
+		
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
+			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+			getFinScheduleData().getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		}
+		
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(financeMainDialogCtrl.getFinanceDetail().getModuleDefiner());
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);

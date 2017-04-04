@@ -1437,13 +1437,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Advance Payment Detail Tab Addition
-		if (((StringUtils.isEmpty(moduleDefiner)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner))
-				&& !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))
-				|| (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())
-						&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
+		if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())))
+				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
+				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
 			appendAdvancePaymentsDetailTab(onLoad);
 		}
 
@@ -10417,10 +10414,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
-					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
-							this.finAssetValue.getActualValue(), formatter));
-					aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
-							this.finCurrentAssetValue.getActualValue(), formatter));
 				} else {
 					if (StringUtils.isEmpty(moduleDefiner)) {
 						this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
@@ -10429,6 +10422,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
+			
+			aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+					this.finAssetValue.getActualValue(), formatter));
+			aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
+					this.finCurrentAssetValue.getActualValue(), formatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);

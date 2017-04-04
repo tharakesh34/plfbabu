@@ -665,7 +665,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 		}
 		
-		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ADDDISB) || 
+				StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
 			// Advance Payment Details
 			financeDetail.setAdvancePaymentsList(getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference,"_View"));
 		}
@@ -1663,7 +1664,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Overdraft Details
 			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&&
-					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
+					!financeDetail.getFinScheduleData().getOverdraftScheduleDetails().isEmpty()){
+				
+				for (int i = 0; i < financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size(); i++) {
+					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().get(i).setFinReference(finReference);
+				}
 				getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), tableType);
 			}
 			
@@ -1687,12 +1692,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Overdraft Details
 			if(financeMain.isLovDescIsSchdGenerated() && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())&&
-					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0 ){
+					!financeDetail.getFinScheduleData().getOverdraftScheduleDetails().isEmpty()){
+				
+				// Existing Data deletion
 				getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "_Temp", isWIF);
+				
+				// Save New list of records
+				for (int i = 0; i < financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size(); i++) {
+					financeDetail.getFinScheduleData().getOverdraftScheduleDetails().get(i).setFinReference(finReference);
+				}
 				getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), tableType);
 			}
 		
-			// Update Rolledover Finance Details
+			// Update Rolled over Finance Details
 			if(financeDetail.getRolledoverFinanceHeader() != null){
 				getRolledoverFinanceDAO().updateHeader(financeDetail.getRolledoverFinanceHeader(), tableType);
 
@@ -2941,7 +2953,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//Save Finance Premium Details
 				//=======================================
 				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())  &&
-						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
+						!financeDetail.getFinScheduleData().getOverdraftScheduleDetails().isEmpty()){
+					
+					// Save New list of records
+					for (int i = 0; i < financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size(); i++) {
+						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().get(i).setFinReference(financeMain.getFinReference());
+					}
 					getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), "");
 				}
 				
@@ -3087,8 +3104,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//Save Finance Premium Details
 				//=======================================
 				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory()) &&
-						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size()>0){
+						!financeDetail.getFinScheduleData().getOverdraftScheduleDetails().isEmpty()){
 					getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "", isWIF);
+					
+					// Save New list of records
+					for (int i = 0; i < financeDetail.getFinScheduleData().getOverdraftScheduleDetails().size(); i++) {
+						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().get(i).setFinReference(financeMain.getFinReference());
+					}
 					getOverdraftScheduleDetailDAO().saveList(financeDetail.getFinScheduleData().getOverdraftScheduleDetails(), "");
 				}
 				
