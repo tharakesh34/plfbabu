@@ -300,6 +300,9 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
+		if (enqiryModule) {
+			moduleCode = "CustomerEnquiry";
+		}
 		doPrintResults();
 	}
 
