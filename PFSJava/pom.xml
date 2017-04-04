@@ -198,6 +198,11 @@
 		    <artifactId>hibernate-validator</artifactId>
 		    <version>5.2.4.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>com.pennant.pff</groupId>
+			<artifactId>pff-interface-bajaj</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
