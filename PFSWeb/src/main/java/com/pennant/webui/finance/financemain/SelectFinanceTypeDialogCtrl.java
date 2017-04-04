@@ -123,6 +123,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -1016,51 +1017,51 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		 */
 		if (isWorkFlowEnabled()) {
 
-			StringBuilder fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			StringBuilder fileLocation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			/*
 			 * if screen code is quick data entry (QDE) navigate to QDE screen otherwise navigate to Detail data entry
 			 * screen
 			 */
 			if (StringUtils.equals("QDE",requestSource)) {
-				fileLocaation.append("QDEFinanceMainDialog.zul");
+				fileLocation.append("QDEFinanceMainDialog.zul");
 			} else if (StringUtils.equals(requestSource,FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-				fileLocaation.append("FinancePreApprovalDialog.zul");
+				fileLocation.append("FinancePreApprovalDialog.zul");
 			} else {
 				String productType = StringUtils.trimToEmpty(this.productCategory);
-				if (StringUtils.equals(productType, FinanceConstants.PRODUCT_IJARAH)) {
-					fileLocaation.append("IjarahFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_FWIJARAH)) {
-					fileLocaation.append("FwdIjarahFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ISTISNA)) {
-					fileLocaation.append("IstisnaFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUDARABA)) {
-					fileLocaation.append("MudarabaFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MURABAHA)) {
-					fileLocaation.append("MurabahaFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUSHARAKA)) {
-					fileLocaation.append("MusharakFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_TAWARRUQ)) {
-					fileLocaation.append("TawarruqFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_SUKUK)) {
-					fileLocaation.append("SukukFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_SUKUKNRM)) {
-					fileLocaation.append("SukuknrmFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ISTNORM)) {
-					fileLocaation.append("IstnormFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUSAWAMA)) {
-					fileLocaation.append("MusawamaFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_CONVENTIONAL)) {
-					fileLocaation.append("ConvFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_QARDHASSAN)) {
-					fileLocaation.append("QardHassanFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_STRUCTMUR)) {
-					fileLocaation.append("StructuredMurabahaFinanceMainDialog.zul");
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_WAKALA)) {
-					fileLocaation.append("CorporateWakalaFinanceMainDialog.zul");
+				if (StringUtils.equals(productType, FinanceConstants.PRODUCT_CONVENTIONAL)) {
+					fileLocation.append("ConvFinanceMainDialog.zul");
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ODFACILITY)) {
-					fileLocaation.append("ODFacilityFinanceMainDialog.zul");
+					fileLocation.append("ODFacilityFinanceMainDialog.zul");
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_DISCOUNT)) {
-					fileLocaation.append("DiscountFinanceMainDialog.zul");
+					fileLocation.append("DiscountFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MURABAHA)) {
+					fileLocation.append("MurabahaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_IJARAH)) {
+					fileLocation.append("IjarahFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_FWIJARAH)) {
+					fileLocation.append("FwdIjarahFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_TAWARRUQ)) {
+					fileLocation.append("TawarruqFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUDARABA)) {
+					fileLocation.append("MudarabaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUSHARAKA)) {
+					fileLocation.append("MusharakFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_WAKALA)) {
+					fileLocation.append("CorporateWakalaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_QARDHASSAN)) {
+					fileLocation.append("QardHassanFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_MUSAWAMA)) {
+					fileLocation.append("MusawamaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_SUKUKNRM)) {
+					fileLocation.append("SukuknrmFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ISTNORM)) {
+					fileLocation.append("IstnormFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_STRUCTMUR)) {
+					fileLocation.append("StructuredMurabahaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ISTISNA)) {
+					fileLocation.append("IstisnaFinanceMainDialog.zul");
+				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_SUKUK)) {
+					fileLocation.append("SukukFinanceMainDialog.zul");
 				} else {
 					MessageUtil.showErrorMessage(Labels.getLabel("message.error.productNotFound",
 							new String[] { productType }));
@@ -1075,7 +1076,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				Executions.createComponents(fileLocaation.toString(), null, map);
+				Executions.createComponents(fileLocation.toString(), null, map);
 				this.window_SelectFinanceTypeDialog.onClose();
 			} catch (Exception e) {
 				logger.error("Exception: Opening window", e);
@@ -1355,6 +1356,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
+		boolean isCustFromTemp = true;
+		
 		// Get the data of Customer from Core Banking Customer
 		try {
 			this.custCIF.setConstraint("");
@@ -1370,7 +1373,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				} else {
 
 					//check Customer Data in LOCAL PFF system
-					customer = this.customerDetailsService.getCheckCustomerByCIF(cif);
+					customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
+					
+					if (customer == null) {
+						isCustFromTemp = false;
+						customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
+					}
 				}
 
 				//Interface Core Banking System call
@@ -1387,8 +1395,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 
 				if (customer != null) {
-					customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
-							"_View");
+					
+					if (isCustFromTemp) {
+						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
+								"_TView");	
+					} else {
+						customerDetails = this.customerDetailsService.getCustomerDetailsById(customer.getId(), true,
+								"_AView");
+					}
 				}
 
 			} else if (this.newCust.isChecked()) {

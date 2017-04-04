@@ -89,6 +89,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -503,6 +504,32 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
+			customer = null;
+		}
+		logger.debug("Leaving");
+		return customer;	
+	}
+	
+	public Customer checkCustomerByCIF(String cif,String type) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustCIF(cif);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT CustID");
+		selectSql.append(" FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type) ); 
+		selectSql.append(" Where CustCIF=:CustCIF");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		
+		try{
+			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			if (!type.equals(TableType.TEMP_TAB.getSuffix())) {
+				logger.warn("Exception: ", e);	
+			}
 			customer = null;
 		}
 		logger.debug("Leaving");

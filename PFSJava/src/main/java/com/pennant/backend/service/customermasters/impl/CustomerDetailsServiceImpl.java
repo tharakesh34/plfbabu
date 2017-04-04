@@ -622,6 +622,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public Customer getCheckCustomerByCIF(String cif) {
 		return getCustomerDAO().getCustomerByCIF(cif, "_View");
 	}
+	
+	@Override
+	public Customer checkCustomerByCIF(String cif,String type) {
+		return getCustomerDAO().checkCustomerByCIF(cif, type);
+	}
 
 	/**
 	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and

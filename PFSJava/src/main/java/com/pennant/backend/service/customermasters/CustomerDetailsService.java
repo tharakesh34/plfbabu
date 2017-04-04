@@ -41,7 +41,7 @@ public interface CustomerDetailsService {
 	WIFCustomer getWIFCustomerByCIF(long id);
 
 	Customer getCheckCustomerByCIF(String cif);
-
+	
 	String getNewProspectCustomerCIF();
 
 	CustomerStatusCode getCustStatusByMinDueDays();
@@ -89,5 +89,7 @@ public interface CustomerDetailsService {
 	int getCustomerCountByCIF(String custCIF);
 	
 	boolean getCustomerByCoreBankId(String custCoreBank);
+
+	Customer checkCustomerByCIF(String cif, String type);
 
 }

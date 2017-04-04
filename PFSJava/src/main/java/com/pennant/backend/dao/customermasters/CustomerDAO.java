@@ -72,6 +72,8 @@ public interface CustomerDAO {
 	boolean isDuplicateCif(long custId, String cif);
 
 	Customer getCustomerByCIF(String cifId, String type);
+	
+	Customer checkCustomerByCIF(String cifId, String type);
 
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
 
