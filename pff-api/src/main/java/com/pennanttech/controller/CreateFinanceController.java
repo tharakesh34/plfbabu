@@ -136,6 +136,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(financeDetail);
+			
 			if(financeDetail.getFinScheduleData().getErrorDetails() != null){
 				for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
 					FinanceDetail	response = new FinanceDetail();
@@ -301,6 +302,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				advPayment.setUserDetails(financeMain.getUserDetails());
 				advPayment.setPaymentSeq(paymentSeq);
+				advPayment.setLLDate(null);
 				paymentSeq++;
 
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)

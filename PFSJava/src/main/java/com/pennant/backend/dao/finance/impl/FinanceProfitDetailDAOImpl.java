@@ -241,6 +241,43 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		
 	}
 
+	/**
+	 * Method for get the FinanceProfitDetail Object by Key finReference.<br>
+	 *  Details to be fetched for the purpose of statement summary
+	 * 
+	 * @param finReference
+	 * @return FinanceProfitDetail
+	 */
+	@Override
+	public FinanceProfitDetail getFinProfitDetailsForSummary(String finReference) {
+		logger.debug("Entering");
+
+		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+		finProfitDetails.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, CustId, TotalPftSchd, TotalPftCpz,");
+		selectSql.append(" TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal, FinStartDate,");
+		selectSql.append(" NOInst, MaturityDate, FirstRepayAmt, NSchdDate, NSchdPri, NSchdPft, FirstRepayDate,");
+		selectSql.append(" NextRpySchDate, LastRpySchDate, ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, ");
+		selectSql.append(" TotalPftPaidInAdv, TotalPriPaidInAdv");
+		selectSql.append(" From FinPftDetails");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
+
+		try {
+			finProfitDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finProfitDetails = null;
+		}
+		logger.debug("Leaving");
+		return finProfitDetails;
+	}
+	
 	@Override
 	public void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess) {
 		logger.debug("Entering");

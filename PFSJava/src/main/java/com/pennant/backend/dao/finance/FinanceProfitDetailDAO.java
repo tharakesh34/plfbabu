@@ -74,4 +74,5 @@ public interface FinanceProfitDetailDAO {
 	void saveAccumulates(Date valueDate);
 	void resetAcrTsfdInSusp();
 	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
+	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
 }

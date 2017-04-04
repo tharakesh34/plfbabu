@@ -56,7 +56,8 @@ import javax.xml.bind.annotation.XmlType;
  * Model class for the <b>FinODDetails table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "totPftAmt", "totPftPaid","oDChargeType"})
+@XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "totPftAmt", "totPftPaid",
+		"oDChargeType" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODDetails implements java.io.Serializable {
 	
