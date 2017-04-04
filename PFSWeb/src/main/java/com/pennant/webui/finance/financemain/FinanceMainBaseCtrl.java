@@ -10383,15 +10383,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (!isOverDraft) {
 				if (financeType.isFinIsAlwMD()) {
+					//If max disbursement amount less than prinicpal amount validate the amount
 					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
 						validateFinAssetvalue(this.finAssetValue, financeType, formatter);
-
-						//If max disbursement amount less than prinicpal amount validate the amount
-						aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
-								this.finAssetValue.getActualValue(), formatter));
-						aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
-								this.finCurrentAssetValue.getActualValue(), formatter));
-
 						if (this.row_FinAssetValue.isVisible() && finAssetValue.getActualValue() != null
 								&& this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								&& finAssetValue.getActualValue().compareTo(this.finAmount.getActualValue()) < 0) {
@@ -10412,6 +10406,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
+					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+							this.finAssetValue.getActualValue(), formatter));
+					aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
+							this.finCurrentAssetValue.getActualValue(), formatter));
 				} else {
 					if (StringUtils.isEmpty(moduleDefiner)) {
 						this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
