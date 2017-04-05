@@ -45,7 +45,7 @@ drop table sai_temp;
 		]]>
 		</sql>
 	</changeSet>
-	<changeSet id="1.1" author="Prasad" dbms="oracle">
+	 <changeSet id="1.1" author="Prasad" dbms="oracle">
 		<sql>
 		<![CDATA[
 				alter table FinScheduleDetails_Log modify SchPriPaid default null;
@@ -1568,5 +1568,212 @@ Insert into REPORTFILTERFIELDS
 values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved','','','','','',0,current_Timestamp);
 	</sql>
 </changeSet>	
+			<changeSet  author="Pruthvi" id="57">
+<createTable tableName="CF_CONTROL_DUMP">
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SCHEMEID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BRANCHID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPASTAGEID" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOANSTATUS" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DISBSTATUS" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIRSTDUEDATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MATURITYDATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AMTFIN" type="Number" />
+			<column name="DISBURSEDAMOUNT" type="Number" />
+			<column name="EMIDUE" type="Number" />
+			<column name="PRINCIPALDUE" type="Number" />
+			<column name="INTERESTDUE" type="Number" />
+			<column name="EMIRECEIVED" type="Number" />
+			<column name="PRINCIPALRECEIVED" type="Number" />
+			<column name="INTERESTRECEIVED" type="Number" />
+			<column name="EMIOS" type="Number" />
+			<column name="PRINCIPALOS" type="Number" />
+			<column name="INTERESTOS" type="Number" />
+			<column name="BULKREFUND" type="Number" />
+			<column name="PRINCIPALWAIVED" type="Number" />
+			<column name="EMIPRINCIPALWAIVED" type="Number" />
+			<column name="EMIINTERESTWAIVED" type="Number" />
+			<column name="PRINCIPALATTERM" type="Number" />
+			<column name="ADVANCEEMIBILLED" type="Number" />
+			<column name="MIGRATEDADVANCEEMI" type="Number" />
+			<column name="MIGRATEDADVANCEEMIBILLED" type="Number" />
+			<column name="MIGRATEDADVANCEEMIUNBILLED" type="Number" />
+			<column name="CLOSEDCANADVEMI" type="Number" />
+			<column name="PRINCIPALBALANCE" type="Number" />
+			<column name="INTERESTBALANCE" type="Number" />
+			<column name="SOHBALANCE" type="Number" />
+			<column name="NOOFUNBILLEDEMI" type="Number" />
+			<column name="TOTALINTEREST" type="Number" />
+			<column name="ACCRUEDAMOUNT" type="Number" />
+			<column name="BALANCEUMFC" type="Number" />
+			<column name="EMIINADVANCERECEIVEDMAKER" type="Number" />
+			<column name="EMIINADVANCEBILLED" type="Number" />
+			<column name="EMIINADVANCEUNBILLED" type="Number" />
+			<column name="MIGADVEMIBILLEDPRINCOMP" type="Number" />
+			<column name="MIGADVEMIBILLEDINTCOMP" type="Number" />
+			<column name="MIGADVEMIUNBILLEDPRINCOMP" type="Number" />
+			<column name="EMIINADVBILLEDPRINCOMP" type="Number" />
+			<column name="EMIINADVBILLEDINTCOMP" type="Number" />
+			<column name="EMIINADVUNBILLEDPRINCOMP" type="Number" />
+			<column name="EMIINADVUNBILLEDINTCOMP" type="Number" />
+			<column name="CLOSCANADVEMIPRINCOMP" type="Number" />
+			<column name="CLOSCANADVEMIINTCOMP" type="Number" />
+			<column name="SECURITYDEPOSIT" type="Number" />
+			<column name="SECURITYDEPOSITADJUSTED" type="Number" />
+			<column name="ROUNDINGDIFFRECEIVABLE" type="Number" />
+			<column name="ROUNDINGDIFFRECEIVED" type="Number" />
+			<column name="MIGDIFFERENCERECEIVABLE" type="Number" />
+			<column name="MIGDIFFERENCERECEIVED" type="Number" />
+			<column name="MIGDIFFERENCEPAYABLE" type="Number" />
+			<column name="MIGDIFFERENCEPAID" type="Number" />
+			<column name="WRITEOFFDUE" type="Number" />
+			<column name="WRITEOFFRECEIVED" type="Number" />
+			<column name="SOLDSEIZERECEIVABLE" type="Number" />
+			<column name="SOLDSEIZERECEIVED" type="Number" />
+			<column name="SOLDSEIZEPAYABLE" type="Number" />
+			<column name="SOLDSEIZEPAID" type="Number" />
+			<column name="NETEXCESSRECEIVED" type="Number" />
+			<column name="NETEXCESSADJUSTED" type="Number" />
+			<column name="LPPCHARGESRECEIVABLE" type="Number" />
+			<column name="LPPCHARGESRECEIVED" type="Number" />			
+			<column name="PDCSWAPCHARGESRECEIVABLE" type="Number" />			
+			<column name="PDCSWAPCHARGESRECEIVED" type="Number" />			
+			<column name="REPOCHARGESRECEIVABLE" type="Number" />
+			<column name="REPOCHARGESRECEIVED" type="Number" />
+			<column name="FORECLOSURECHARGESDUE" type="Number" />
+			<column name="FORECLOSURECHARGESRECEIVED" type="Number" />
+			<column name="BOUNCECHARGESDUE" type="Number" />
+			<column name="BOUNCECHARGESRECEIVED" type="Number" />
+			<column name="INSURRENEWCHARGE" type="Number" />
+			<column name="INSURRENEWCHARGERECD" type="Number" />
+			<column name="INSURRECEIVABLE" type="Number" />
+			<column name="INSURRECEIVED" type="Number" />
+			<column name="INSURPAYABLE" type="Number" />
+			<column name="INSURPAID" type="Number" />
+			<column name="CUSTOMERID" type="Number(8)" />
+			<column name="CUSTOMERNAME" type="varchar(300)" />
+			<column name="SANCTIONED_TENURE" type="Number(3)" />
+			<column name="LOANEMI" type="Number(16,2)" />
+			<column name="FLATRATE" type="Number(10,7)" />
+			<column name="EFFECTIVERATE" type="Number(10,7)" />
+			<column name="AGREEMENTDATE" type="datetime" />
+			<column name="DISBURSALDATE" type="datetime" />
+			<column name="CLOSUREDATE" type="datetime" />
+			<column name="NOOFADVANCEEMIS" type="Number(3)" />
+			<column name="ASSETCOST" type="Number(16,2)" />
+			<column name="NOOFEMIOS" type="Number" />
+			<column name="DPD" type="Number(8)" />
+			<column name="CURRENTBUCKET" type="Number(3)" />
+			<column name="BRANCHNAME" type="varchar(600)" />
+			<column name="SCHEMENAME" type="varchar(200)" />
+			<column name="DERIVEDBUCKET" type="Number" />
+			<column name="ASSETDESC" type="varchar(150)" />
+			<column name="MAKE" type="varchar(35)" />
+			<column name="CHASISNUM" type="varchar(50)" />
+			<column name="REGDNUM" type="varchar(30)" />
+			<column name="ENGINENUM" type="varchar(30)" />
+			<column name="INVOICEAMT" type="Number(16,2)" />
+			<column name="SUPPLIERDESC" type="varchar(300)" />
+			<column name="INSTRUMENT" type="varchar(1)" />
+			<column name="REPODATE" type="datetime" />
+			<column name="LOCALOUTSTATIONFLAG" type="varchar(1)" />
+			<column name="FIRSTREPAYDUEDATE" type="datetime" />			
+		</createTable>
+		
+		
+<createTable tableName="ALM">
+			<column name="AGREEMENTID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPASTAGEID" type="varchar(12)"/>
+			<column name="INSTLAMT" type="NUMBER (16,2)"/>
+			<column name="PRINCOMP" type="NUMBER (16,2)"/>
+			<column name="INTCOMP" type="NUMBER (16,2)"/>
+			<column name="DUEDATE" type="datetime" />
+			<column name="ACCRUEDAMT" type="NUMBER (16,2)"/>
+			<column name="ACCRUEDON" type="datetime" />
+			<column name="CUMULATIVEACCRUALAMT" type="NUMBER (16,2)"/>
+			<column name="ADVFLAG" type="varchar(1)"/>
+</createTable>
+
+
+<createTable tableName="DISBURSMENTS">
+           <column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentDetail" type="varchar(8)" />
+			<column name="AmtToBeReleased" type="decimal(18, 0)" />
+			<column name="LiabilityHoldName" type="varchar(100)" />
+			<column name="BeneficiaryName" type="varchar(100)" />
+			<column name="BeneficiaryAccNo" type="varchar(50)" />
+			<column name="Description" type="varchar(500)" />
+			<column name="PaymentType" type="varchar(8)" />
+			<column name="LLReferenceNo" type="varchar(50)" />
+			<column name="LLDate" type="datetime" />
+			<column name="CustContribution" type="decimal(18, 0)" />
+			<column name="SellerContribution" type="decimal(18, 0)" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+	        <column name="BankCode" type="varchar(8)"/>
+			<column name="PayableLoc" type="varchar(50)"/>
+			<column name="PrintingLoc" type="varchar(50)"/>
+			<column name="ValueDate" type="datetime"/>
+			<column name="PhoneCountryCode" type="varchar(5)"/>
+			<column name="PhoneAreaCode" type="varchar(8)"/>
+			<column name="PhoneNumber" type="varchar(12)"/>
+			<column name="ClearingDate" type="datetime"/>
+			<column name="Status" type="varchar(50)"/>
+			<column name="Active" type="char(1)"/>
+			<column name="InputDate" type="datetime"/>
+			<column name="DisbCCy" type="varchar(3)"/>
+			<column name="BankBranchID" type="bigint"/>
+			<column name="POIssued" type="boolean"/>
+			<column name="DisbDate" type="datetime"/>
+			<column name="DisbSeq" type="int"/>
+			<column name="ErrorCode" type="varchar(50)"/>
+			<column name="ErrorDescription" type="varchar(500)"/>
+</createTable>
+
+</changeSet>
 			
 </databaseChangeLog>
