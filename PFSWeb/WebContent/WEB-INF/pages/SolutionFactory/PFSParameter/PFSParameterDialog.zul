@@ -126,7 +126,7 @@
 									<space id="paramDescSpace"
 										spacing="2px" sclass="mandatory" visible="false" />
 									<textbox id="sysParmDescription"
-										maxlength="500" multiline="true" rows="4" width="300%" />
+										maxlength="500" multiline="true" rows="4" width="450px" />
 								</hbox>
 							</row>
 						</rows>
