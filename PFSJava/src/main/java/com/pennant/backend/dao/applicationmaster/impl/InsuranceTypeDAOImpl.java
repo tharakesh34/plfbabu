@@ -250,7 +250,7 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update InsuranceType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set InsuranceType = :InsuranceType,InsuranceTypeDesc = :InsuranceTypeDesc,");
+		updateSql.append(" Set InsuranceTypeDesc = :InsuranceTypeDesc,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");

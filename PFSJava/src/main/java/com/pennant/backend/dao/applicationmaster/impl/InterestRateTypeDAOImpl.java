@@ -228,7 +228,7 @@ public class InterestRateTypeDAOImpl extends BasisCodeDAO<InterestRateType> impl
 
 		updateSql.append("Update BMTInterestRateTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IntRateTypeCode = :IntRateTypeCode, IntRateTypeDesc = :IntRateTypeDesc,");
+		updateSql.append(" Set IntRateTypeDesc = :IntRateTypeDesc,");
 		updateSql.append(" IntRateTypeIsActive = :IntRateTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

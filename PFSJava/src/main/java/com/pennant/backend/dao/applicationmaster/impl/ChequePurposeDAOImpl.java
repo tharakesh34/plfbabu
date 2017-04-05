@@ -213,7 +213,7 @@ public class ChequePurposeDAOImpl extends BasisCodeDAO<ChequePurpose> implements
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update ChequePurpose");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set Code = :Code, Description = :Description, Active = :Active");
+		updateSql.append(" Set Description = :Description, Active = :Active");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Code =:Code");
 

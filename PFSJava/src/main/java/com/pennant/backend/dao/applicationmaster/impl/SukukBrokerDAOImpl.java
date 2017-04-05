@@ -217,7 +217,7 @@ public class SukukBrokerDAOImpl extends BasisCodeDAO<SukukBroker> implements Suk
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SukukBrokers");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BrokerCode = :BrokerCode, BrokerDesc = :BrokerDesc");
+		updateSql.append(" Set BrokerDesc = :BrokerDesc");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BrokerCode =:BrokerCode");
 		

@@ -67,7 +67,7 @@ public class TargetDetailDAOImpl extends BasisCodeDAO<TargetDetail> implements T
 
 		updateSql.append("Update TargetDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set TargetCode = :TargetCode, TargetDesc = :TargetDesc, Active = :Active,");
+		updateSql.append(" Set TargetDesc = :TargetDesc, Active = :Active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

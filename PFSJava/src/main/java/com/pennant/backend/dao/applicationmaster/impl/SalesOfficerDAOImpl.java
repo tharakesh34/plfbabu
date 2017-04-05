@@ -219,7 +219,7 @@ public class SalesOfficerDAOImpl extends BasisCodeDAO<SalesOfficer> implements S
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update SalesOfficers");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SalesOffCode = :SalesOffCode, SalesOffFName = :SalesOffFName, SalesOffMName = :SalesOffMName, SalesOffLName = :SalesOffLName, ");
+		updateSql.append(" Set SalesOffFName = :SalesOffFName, SalesOffMName = :SalesOffMName, SalesOffLName = :SalesOffLName, ");
 		updateSql.append(" SalesOffShrtName = :SalesOffShrtName, SalesOffDept = :SalesOffDept, SalesOffIsActive = :SalesOffIsActive, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

@@ -214,7 +214,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update OtherBankFinanceType");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinType = :FinType, FinTypeDesc = :FinTypeDesc, Active = :Active");
+		updateSql.append(" Set FinTypeDesc = :FinTypeDesc, Active = :Active");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinType =:FinType");
 		

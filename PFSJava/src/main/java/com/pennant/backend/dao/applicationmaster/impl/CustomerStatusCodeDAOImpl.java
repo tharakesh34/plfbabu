@@ -229,7 +229,7 @@ public class CustomerStatusCodeDAOImpl extends BasisCodeDAO<CustomerStatusCode>	
 		
 		updateSql.append("Update BMTCustStatusCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustStsCode = :CustStsCode, CustStsDescription = :CustStsDescription," );
+		updateSql.append(" Set CustStsDescription = :CustStsDescription," );
 		updateSql.append(" DueDays=:DueDays, SuspendProfit=:SuspendProfit,CustStsIsActive = :CustStsIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

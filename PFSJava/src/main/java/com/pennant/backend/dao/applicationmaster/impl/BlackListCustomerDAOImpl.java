@@ -223,7 +223,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinBlackListDetail");
-		updateSql.append(" Set FinReference = :FinReference, CustCIF = :CustCIF, CustFName = :CustFName," );
+		updateSql.append(" Set CustFName = :CustFName," );
 		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, " );
 		updateSql.append(" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality," );
 		updateSql.append(" Employer = :Employer, WatchListRule = :WatchListRule, Override = :Override, OverrideUser = :OverrideUser" );
@@ -264,7 +264,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update BlackListCustomer");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustCIF=:CustCIF , CustFName=:CustFName , CustLName=:CustLName , " );
+		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
 		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
 		updateSql.append(" Employer=:Employer,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

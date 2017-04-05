@@ -228,7 +228,7 @@ public class CustomerCategoryDAOImpl extends BasisCodeDAO<CustomerCategory>	impl
 		
 		updateSql.append("Update BMTCustCategories");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustCtgCode = :CustCtgCode, CustCtgDesc = :CustCtgDesc,CustCtgType = :CustCtgType,");
+		updateSql.append(" Set CustCtgDesc = :CustCtgDesc,CustCtgType = :CustCtgType,");
 		updateSql.append(" CustCtgIsActive = :CustCtgIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

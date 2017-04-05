@@ -367,7 +367,7 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update RMTCheckListDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CheckListId = :CheckListId, AnsSeqNo = :AnsSeqNo, AnsDesc = :AnsDesc, AnsCond = :AnsCond");
+		updateSql.append(" Set AnsDesc = :AnsDesc, AnsCond = :AnsCond");
 		updateSql.append(", RemarksAllow = :RemarksAllow, DocRequired = :DocRequired,DocType=:DocType, RemarksMand = :RemarksMand");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
 		updateSql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");

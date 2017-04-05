@@ -223,7 +223,7 @@ public class FinanceApplicationCodeDAOImpl extends BasisCodeDAO<FinanceApplicati
 
 		updateSql.append("Update BMTFinAppCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinAppType = :FinAppType, FinAppDesc = :FinAppDesc, FinAppIsActive = :FinAppIsActive," );
+		updateSql.append(" Set FinAppDesc = :FinAppDesc, FinAppIsActive = :FinAppIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

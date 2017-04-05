@@ -228,7 +228,7 @@ public class CorpRelationCodeDAOImpl extends BasisCodeDAO<CorpRelationCode>	impl
 
 		updateSql.append("Update BMTCorpRelationCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CorpRelationCode = :CorpRelationCode, CorpRelationDesc = :CorpRelationDesc," );
+		updateSql.append(" Set CorpRelationDesc = :CorpRelationDesc," );
 		updateSql.append(" CorpRelationIsActive = :CorpRelationIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

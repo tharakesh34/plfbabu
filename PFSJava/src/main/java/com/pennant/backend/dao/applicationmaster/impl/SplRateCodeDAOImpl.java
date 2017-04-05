@@ -217,7 +217,7 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTSplRateCodes" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set SRType = :SRType, SRTypeDesc = :SRTypeDesc, SRIsActive = :SRIsActive,");
+		updateSql.append(" Set SRTypeDesc = :SRTypeDesc, SRIsActive = :SRIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

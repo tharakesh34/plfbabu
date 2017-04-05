@@ -325,7 +325,7 @@ public class MMAgreementDAOImpl extends BasisNextidDaoImpl<MMAgreement> implemen
 		logger.debug("Entering ");
 		StringBuilder updateSql = new StringBuilder("Update MMAgreements" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set MMAId = :MMAId, MMAReference = :MMAReference, CustCIF = :CustCIF,");
+		updateSql.append(" Set MMAReference = :MMAReference, CustCIF = :CustCIF,");
 		updateSql.append(" ContractAmt = :ContractAmt ,ContractDate = :ContractDate,PurchRegOffice = :PurchRegOffice,Fax = :Fax," );
 		updateSql.append(" Rate = :Rate , Purchaddress = :Purchaddress, Attention = :Attention,TitleNo = :TitleNo," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );

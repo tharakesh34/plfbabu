@@ -233,7 +233,7 @@ public class InsurancePolicyDAOImpl extends BasisCodeDAO<InsurancePolicy> implem
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update InsurancePolicy");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set PolicyCode =:PolicyCode ,PolicyDesc=:PolicyDesc,InsuranceType=:InsuranceType,");
+		updateSql.append("  Set PolicyDesc=:PolicyDesc,InsuranceType=:InsuranceType,");
 		updateSql.append(" InsuranceProvider=:InsuranceProvider,PolicyRate=:PolicyRate,Features=:Features, active=:active,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");

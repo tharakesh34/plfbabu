@@ -234,7 +234,7 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 		
 		updateSql.append("Update BMTCustNotesTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustNotesTypeCode = :CustNotesTypeCode, CustNotesTypeDesc = :CustNotesTypeDesc,");
+		updateSql.append(" Set CustNotesTypeDesc = :CustNotesTypeDesc,");
 		updateSql.append(" CustNotesTypeIsPerminent = :CustNotesTypeIsPerminent, CustNotesTypeArchiveFrq = :CustNotesTypeArchiveFrq,");
 		updateSql.append(" CustNotesTypeIsActive= :CustNotesTypeIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );

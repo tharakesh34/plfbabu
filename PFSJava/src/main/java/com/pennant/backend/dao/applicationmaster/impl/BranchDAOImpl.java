@@ -235,7 +235,7 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTBranches" );
 		updateSql.append(StringUtils.trimToEmpty(type) );
-		updateSql.append(" Set BranchCode = :BranchCode, BranchDesc = :BranchDesc," );
+		updateSql.append(" Set BranchDesc = :BranchDesc," );
 		updateSql.append(" BranchAddrLine1 = :BranchAddrLine1, BranchAddrLine2 = :BranchAddrLine2,");
 		updateSql.append(" BranchPOBox = :BranchPOBox, BranchCity = :BranchCity," );
 		updateSql.append(" BranchProvince = :BranchProvince, BranchCountry = :BranchCountry," );

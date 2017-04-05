@@ -159,8 +159,7 @@ public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProv
 
 		StringBuilder updateSql = new StringBuilder("Update InsuranceTypeProvider");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set InsuranceType = :InsuranceType, ProviderCode = :ProviderCode,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

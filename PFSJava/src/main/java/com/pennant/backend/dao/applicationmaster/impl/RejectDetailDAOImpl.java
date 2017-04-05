@@ -225,7 +225,7 @@ public class RejectDetailDAOImpl extends BasisCodeDAO<RejectDetail> implements R
 
 		updateSql.append("Update BMTRejectCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RejectCode = :RejectCode, RejectDesc = :RejectDesc, RejectIsActive = :RejectIsActive,RejectType = :RejectType,");
+		updateSql.append(" Set RejectDesc = :RejectDesc, RejectIsActive = :RejectIsActive,RejectType = :RejectType,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

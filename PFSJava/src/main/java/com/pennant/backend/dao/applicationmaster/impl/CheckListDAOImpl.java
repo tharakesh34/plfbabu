@@ -220,7 +220,7 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update BMTCheckList");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CheckListId = :CheckListId, CheckListDesc = :CheckListDesc,");
+		updateSql.append(" Set CheckListDesc = :CheckListDesc,");
 		updateSql.append(" CheckMinCount = :CheckMinCount, CheckMaxCount = :CheckMaxCount,CheckRule=:CheckRule, Active = :Active, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );

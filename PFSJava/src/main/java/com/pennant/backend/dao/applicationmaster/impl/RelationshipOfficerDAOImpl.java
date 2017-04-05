@@ -222,7 +222,7 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 
 		updateSql.append("Update RelationshipOfficers");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ROfficerCode = :ROfficerCode, ROfficerDesc = :ROfficerDesc," );
+		updateSql.append(" Set ROfficerDesc = :ROfficerDesc," );
 		updateSql.append(" ROfficerDeptCode = :ROfficerDeptCode, ROfficerIsActive = :ROfficerIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

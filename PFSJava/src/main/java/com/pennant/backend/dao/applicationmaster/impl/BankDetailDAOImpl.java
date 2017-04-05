@@ -220,7 +220,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 
 		updateSql.append("Update BMTBankDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BankCode = :BankCode, BankName = :BankName, Active = :Active, AccNoLength = :AccNoLength," );
+		updateSql.append(" Set BankName = :BankName, Active = :Active, AccNoLength = :AccNoLength," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

@@ -354,7 +354,7 @@ public class SukukBrokerBondsDAOImpl extends BasisCodeDAO<SukukBrokerBonds> impl
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SukukBroker_Bonds");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BrokerCode = :BrokerCode, BondCode = :BondCode, PaymentMode = :PaymentMode, IssuerAccount = :IssuerAccount, CommissionType = :CommissionType, Commission = :Commission");
+		updateSql.append(" Set PaymentMode = :PaymentMode, IssuerAccount = :IssuerAccount, CommissionType = :CommissionType, Commission = :Commission");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BrokerCode =:BrokerCode and BondCode=:BondCode ");
 		

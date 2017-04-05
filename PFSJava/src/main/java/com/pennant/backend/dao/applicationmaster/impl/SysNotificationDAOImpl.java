@@ -227,7 +227,7 @@ public class SysNotificationDAOImpl extends BasisNextidDaoImpl<SysNotification> 
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SysNotification");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set SysNotificationId = :SysNotificationId, QueryCode = :QueryCode, Description = :Description, TemplateCode = :TemplateCode, Doctype = :Doctype, DocName = :DocName, DocImage = :DocImage,");
+		updateSql.append(" Set QueryCode = :QueryCode, Description = :Description, TemplateCode = :TemplateCode, Doctype = :Doctype, DocName = :DocName, DocImage = :DocImage,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SysNotificationId = :SysNotificationId");
 

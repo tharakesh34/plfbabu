@@ -219,7 +219,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode>  imple
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update BMTTransactionCode");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TranCode = :TranCode, TranDesc = :TranDesc, TranType = :TranType," );
+		updateSql.append(" Set TranDesc = :TranDesc, TranType = :TranType," );
 		updateSql.append(" TranIsActive = :TranIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");

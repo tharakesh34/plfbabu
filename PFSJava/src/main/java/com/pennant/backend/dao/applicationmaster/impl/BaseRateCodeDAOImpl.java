@@ -217,7 +217,7 @@ public class BaseRateCodeDAOImpl extends BasisCodeDAO<BaseRateCode> implements B
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTBaseRateCodes");
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set BRType = :BRType, BRTypeDesc = :BRTypeDesc,");
+		updateSql.append(" Set BRTypeDesc = :BRTypeDesc,");
 		updateSql.append(" Version = :Version ,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

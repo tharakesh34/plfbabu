@@ -304,7 +304,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CcyCode = :CcyCode, CcyNumber = :CcyNumber, CcyDesc = :CcyDesc,");
+		updateSql.append(" Set CcyNumber = :CcyNumber, CcyDesc = :CcyDesc,");
 		updateSql.append(" CcySwiftCode = :CcySwiftCode, CcyEditField = :CcyEditField," );
 		updateSql.append(" CcyMinorCcyUnits =:CcyMinorCcyUnits,CcyDrRateBasisCode = :CcyDrRateBasisCode,");
 		updateSql.append(" CcyCrRateBasisCode = :CcyCrRateBasisCode,CcyIsIntRounding = :CcyIsIntRounding,");

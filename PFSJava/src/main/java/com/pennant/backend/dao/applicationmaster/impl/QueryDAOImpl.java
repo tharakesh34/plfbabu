@@ -221,7 +221,7 @@ public class QueryDAOImpl extends BasisCodeDAO<Query> implements QueryDAO {
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update Queries");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QueryCode = :QueryCode, QueryModule = :QueryModule, QueryDesc = :QueryDesc, SqlQuery = :SqlQuery, ActualBlock = :ActualBlock, SubQuery = :SubQuery");
+		updateSql.append(" Set QueryModule = :QueryModule, QueryDesc = :QueryDesc, SqlQuery = :SqlQuery, ActualBlock = :ActualBlock, SubQuery = :SubQuery");
 		updateSql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, Active = :Active");
 		updateSql.append(" Where QueryCode =:QueryCode");
 		

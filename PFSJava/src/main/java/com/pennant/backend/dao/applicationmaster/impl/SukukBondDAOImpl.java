@@ -216,7 +216,7 @@ public class SukukBondDAOImpl extends BasisCodeDAO<SukukBond> implements SukukBo
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SukukBonds");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BondCode = :BondCode, BondDesc = :BondDesc");
+		updateSql.append(" Set BondDesc = :BondDesc");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BondCode =:BondCode");
 		
