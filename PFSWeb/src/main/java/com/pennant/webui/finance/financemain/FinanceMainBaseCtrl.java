@@ -813,10 +813,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_FinAssetValue;
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
-	BigDecimal												limitIncreaseAmt		= BigDecimal.ZERO;
 	private boolean 										isBranchanged;
-	
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -10369,19 +10366,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
 						.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
 				validateFinAssetvalue(this.finAssetValue, financeType, formatter);
-
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, this.moduleDefiner)) {
-					if (this.finAssetValue.getValidateValue().compareTo(
-							PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
-						throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
-								"NUMBER_MINVALUE_EQ",
-								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
-										String.valueOf(aFinanceMain.getFinAssetValue()) }));
-					}
-					limitIncreaseAmt = limitIncreaseAmt.add(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter)
-							.subtract(aFinanceMain.getFinAssetValue()));
-
-				}
 			}
 			if (this.row_FinAssetValue.isVisible()) {
 				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
@@ -13746,29 +13730,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				this.downPayBank.setValue(PennantAppUtil.formateAmount(reqDwnPay, formatter));
-			}
-		}
-		logger.debug("Leaving");
-	}
-
-	public void onFulfill$finassetValue(Event event) {
-		logger.debug("Entering");
-		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
-				.getFinanceMain().getProductCategory())) {
-			if (this.finAssetValue.getValidateValue() != null
-					&& (this.finAssetValue.getValidateValue().compareTo(finType.getFinMinAmount()) < 0)) {
-				throw new WrongValueException(this.finAssetValue, Labels.getLabel(
-						"NUMBER_MINVALUE_EQ",
-						new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
-								String.valueOf(finType.getFinMinAmount()) }));
-			}
-			if (this.finAssetValue.getValidateValue() != null
-					&& (this.finAssetValue.getValidateValue().compareTo(finType.getFinMaxAmount()) > 0)) {
-				throw new WrongValueException(this.finAssetValue, Labels.getLabel(
-						"NUMBER_MAXVALUE_EQ",
-						new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
-								String.valueOf(finType.getFinMaxAmount()) }));
 			}
 		}
 		logger.debug("Leaving");
