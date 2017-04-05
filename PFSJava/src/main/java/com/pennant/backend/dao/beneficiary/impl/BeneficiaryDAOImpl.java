@@ -294,7 +294,7 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		StringBuilder updateSql = new StringBuilder("Update Beneficiary");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-				.append(" Set BeneficiaryId = :BeneficiaryId, CustID = :CustID, BankBranchID = :BankBranchID, AccNumber = :AccNumber, AccHolderName = :AccHolderName, PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneNumber = :PhoneNumber, Email = :Email");
+				.append(" Set CustID = :CustID, BankBranchID = :BankBranchID, AccNumber = :AccNumber, AccHolderName = :AccHolderName, PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneNumber = :PhoneNumber, Email = :Email");
 		updateSql
 				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BeneficiaryId =:BeneficiaryId");
