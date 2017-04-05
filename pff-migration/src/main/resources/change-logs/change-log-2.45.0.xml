@@ -1798,5 +1798,13 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 			referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID"
 			baseTableName="DATA_ENGINE_DB_DETAILS" baseColumnNames="CONFIGID" />
 </changeSet>
+<changeSet  author="Madhubabu" id="60">
+	<sql>
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuItem_CustomerTemplates_Noc','MENU',0,1000,'2016-10-18 01:16:33',' ',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='Reports') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_CustomerTemplates_Noc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
