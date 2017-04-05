@@ -1888,4 +1888,16 @@ RMTCurrencies RC on Rc.CcyCode=F.DisbCCy Left Join
 RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Status='APPROVED'
 										</createView>
 	</changeSet>
+	<changeSet id="63" author="Srikanth">
+		<sql>
+	Delete from ErrorDetails where ErrorCode in('90261', '90262');
+	INSERT INTO ErrorDetails VALUES('90261','EN','E','{0} date should be a valid repayment date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	Update ErrorDetails set ErrorMessage ='{0} should be greater than or equal to fromDate {1} and less than maurityDate {2}.' where ErrorCode = '91102';
+	Update ErrorDetails set ErrorMessage ='RecalToDate {0} should be greater than or equal to RecalFromDate {1}.' where ErrorCode = '91109';
+	INSERT INTO ErrorDetails VALUES('90262','EN','E','Schedules with Profit balance greater than 0, should not be selected for Recal To Date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90265','EN','E','Extended details should be matched with configured extended details in vas setup.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90266','EN','E','No records found with {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90267','EN','E','Key details and vas reference should be matched.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
