@@ -244,7 +244,7 @@ public class CorporateCustomerDetailDAOImpl extends BasisNextidDaoImpl<Corporate
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update CustomerCorporateDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CustId = :CustId, Name = :Name, PhoneNumber = :PhoneNumber,");
+		updateSql.append(" Set Name = :Name, PhoneNumber = :PhoneNumber,");
 		updateSql.append(" EmailId = :EmailId, BussCommenceDate = :BussCommenceDate," );
 		updateSql.append(" ServCommenceDate = :ServCommenceDate, BankRelationshipDate = :BankRelationshipDate,");
 		updateSql.append(" PaidUpCapital = :PaidUpCapital, AuthorizedCapital = :AuthorizedCapital," );

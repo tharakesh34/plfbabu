@@ -288,8 +288,7 @@ public class CustomerBalanceSheetDAOImpl extends BasisCodeDAO<CustomerBalanceShe
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update CustomerBalanceSheet");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CustId = :CustId, FinancialYear = :FinancialYear," );
-		updateSql.append(" TotalAssets = :TotalAssets, TotalLiabilities = :TotalLiabilities," );
+		updateSql.append(" Set TotalAssets = :TotalAssets, TotalLiabilities = :TotalLiabilities," );
 		updateSql.append(" NetProfit = :NetProfit, NetSales = :NetSales, NetIncome = :NetIncome,");
 		updateSql.append(" OperatingProfit = :OperatingProfit, CashFlow = :CashFlow," );
 		updateSql.append(" BookValue = :BookValue, MarketValue = :MarketValue,");

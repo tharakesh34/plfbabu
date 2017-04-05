@@ -224,7 +224,7 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustEmployeeDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, EmpStatus = :EmpStatus, EmpSector = :EmpSector," );
+		updateSql.append(" Set EmpStatus = :EmpStatus, EmpSector = :EmpSector," );
 		updateSql.append(" Profession = :Profession, EmpName = :EmpName, EmpNameForOthers = :EmpNameForOthers,  EmpDesg = :EmpDesg,");
 		updateSql.append(" EmpDept = :EmpDept, EmpFrom = :EmpFrom, MonthlyIncome = :MonthlyIncome,");
 		updateSql.append(" OtherIncome = :OtherIncome, AdditionalIncome = :AdditionalIncome,");

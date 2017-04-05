@@ -224,7 +224,7 @@ public class CustomerAdditionalDetailDAOImpl extends
 
 		updateSql.append("Update CustAdditionalDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, CustAcademicLevel = :CustAcademicLevel, AcademicDecipline = :AcademicDecipline, " );
+		updateSql.append(" Set CustAcademicLevel = :CustAcademicLevel, AcademicDecipline = :AcademicDecipline, " );
 		updateSql.append(" CustRefCustID = :CustRefCustID, CustRefStaffID = :CustRefStaffID ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
