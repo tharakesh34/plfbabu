@@ -318,7 +318,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update VASRecording");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ProductCode = :ProductCode, PostingAgainst = :PostingAgainst, PrimaryLinkRef = :PrimaryLinkRef, VasReference = :VasReference, Fee = :Fee, RenewalFee = :RenewalFee, FeePaymentMode = :FeePaymentMode, ");
+		updateSql.append(" Set ProductCode = :ProductCode, PostingAgainst = :PostingAgainst, PrimaryLinkRef = :PrimaryLinkRef, Fee = :Fee, RenewalFee = :RenewalFee, FeePaymentMode = :FeePaymentMode, ");
 		updateSql.append(" ValueDate = :ValueDate, AccrualTillDate = :AccrualTillDate, RecurringDate = :RecurringDate, DsaId = :DsaId, DmaId = :DmaId, FulfilOfficerId = :FulfilOfficerId, ReferralId = :ReferralId,");
 		updateSql.append(" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,VasStatus = :VasStatus,FinanceProcess =:FinanceProcess");

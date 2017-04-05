@@ -255,7 +255,7 @@ public class VASConfigurationDAOImpl extends BasisCodeDAO<VASConfiguration> impl
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update VasStructure");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ProductCode = :ProductCode, ProductDesc = :ProductDesc, RecAgainst = :RecAgainst, FeeAccrued = :FeeAccrued, FeeAccounting = :FeeAccounting,");
+		updateSql.append(" Set ProductDesc = :ProductDesc, RecAgainst = :RecAgainst, FeeAccrued = :FeeAccrued, FeeAccounting = :FeeAccounting,");
 		updateSql.append("  AccrualAccounting = :AccrualAccounting, RecurringType = :RecurringType, FreeLockPeriod = :FreeLockPeriod,");
 		updateSql.append("	PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, Active = :Active, Remarks = :Remarks,");
 		updateSql.append("  ProductType= :ProductType , VasFee = :VasFee, AllowFeeToModify = :AllowFeeToModify, ManufacturerId= :ManufacturerId, ");

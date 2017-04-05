@@ -58,7 +58,7 @@ public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update CustomerDedupDetail Set FinReference = :FinReference, CustCIF = :CustCIF, CustFName = :CustFName," );
+		updateSql.append("Update CustomerDedupDetail Set CustFName = :CustFName," );
 		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, " );
 		updateSql.append(" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality," );
 		updateSql.append(" DedupRule = :DedupRule, Override = :Override, OverrideUser = :OverrideUser, Module=:Module " );
