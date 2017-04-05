@@ -232,7 +232,7 @@ public class CommodityInventoryDAOImpl extends BasisNextidDaoImpl<CommodityInven
 		StringBuilder updateSql = new StringBuilder("Update FCMTCommodityInventory");
 		
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CommodityInvId = :CommodityInvId, BrokerCode = :BrokerCode");
+		updateSql.append(" Set BrokerCode = :BrokerCode");
 		updateSql.append(", HoldCertificateNo = :HoldCertificateNo, CommodityCode = :CommodityCode, PurchaseDate = :PurchaseDate");
 		updateSql.append(", UnitPrice =:UnitPrice, FinalSettlementDate = :FinalSettlementDate, PurchaseAmount = :PurchaseAmount, Units = :Units");
 		updateSql.append(", Quantity = :Quantity, Location = :Location, BulkPurchase = :BulkPurchase");

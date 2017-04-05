@@ -396,7 +396,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 
 		StringBuilder updateSql = new StringBuilder("Update Commitments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CmtReference = :CmtReference, custID = :custID, CmtBranch = :CmtBranch, OpenAccount = :OpenAccount, CmtAccount = :CmtAccount, CmtCcy = :CmtCcy, CmtPftRateMin = :CmtPftRateMin");
+		updateSql.append(" Set custID = :custID, CmtBranch = :CmtBranch, OpenAccount = :OpenAccount, CmtAccount = :CmtAccount, CmtCcy = :CmtCcy, CmtPftRateMin = :CmtPftRateMin");
 		updateSql.append(", CmtPftRateMax = :CmtPftRateMax, CmtAmount = :CmtAmount, CmtUtilizedAmount = :CmtUtilizedAmount, CmtAvailable = :CmtAvailable, CmtPromisedDate = :CmtPromisedDate, CmtStartDate = :CmtStartDate");
 		updateSql.append(", CmtExpDate = :CmtExpDate, CmtTitle = :CmtTitle, CmtNotes = :CmtNotes, Revolving = :Revolving, SharedCmt = :SharedCmt, MultiBranch = :MultiBranch");
 		updateSql.append(", CmtCharges=:CmtCharges,ChargesAccount=:ChargesAccount,CmtActive=:CmtActive,CmtStopRateRange=:CmtStopRateRange,NonPerforming=:NonPerforming,FacilityRef=:FacilityRef");

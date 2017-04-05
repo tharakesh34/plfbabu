@@ -299,7 +299,7 @@ public class CommitmentRateDAOImpl extends BasisCodeDAO<CommitmentRate> implemen
 		int recordCount = 0;
 		StringBuilder	sql =new StringBuilder("Update CommitmentRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set CmtReference = :CmtReference, CmtRvwFrq=:CmtRvwFrq, CmtBaseRate=:CmtBaseRate,");
+		sql.append(" Set CmtBaseRate=:CmtBaseRate,");
 		sql.append(" CmtMargin=:CmtMargin, CmtSpecialRate = :CmtSpecialRate, CmtActualRate=:CmtActualRate, CmtCalculatedRate=:CmtCalculatedRate,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );

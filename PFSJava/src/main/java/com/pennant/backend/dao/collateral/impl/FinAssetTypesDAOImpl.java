@@ -90,7 +90,7 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		logger.debug("Entering");
 		StringBuilder updateSql =new StringBuilder("Update FinAssetTypes");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AssetType = :AssetType, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Reference =:Reference AND AssetType =:AssetType AND SeqNo =:SeqNo ");

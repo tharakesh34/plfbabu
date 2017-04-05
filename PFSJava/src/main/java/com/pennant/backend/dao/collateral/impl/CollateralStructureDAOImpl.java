@@ -231,7 +231,7 @@ public class CollateralStructureDAOImpl extends BasisCodeDAO<CollateralStructure
 		
 		StringBuilder sql = new StringBuilder("Update CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set collateralType = :collateralType, collateralDesc = :collateralDesc, ltvType = :ltvType,");
+		sql.append(" Set collateralDesc = :collateralDesc, ltvType = :ltvType,");
 		sql.append(" ltvPercentage = :ltvPercentage, marketableSecurities = :marketableSecurities, preValidationReq = :preValidationReq,");
 		sql.append(" postValidationReq = :postValidationReq, collateralLocReq = :collateralLocReq, collateralValuatorReq = :collateralValuatorReq,");
 		sql.append(" remarks = :remarks, allowLtvWaiver = :allowLtvWaiver, maxLtvWaiver = :maxLtvWaiver,PostValidation = :PostValidation,PreValidation = :PreValidation, Active = :Active, ");

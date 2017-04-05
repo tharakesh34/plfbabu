@@ -265,7 +265,7 @@ public class FacilityDetailDAOImpl extends BasisCodeDAO<FacilityDetail> implemen
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FacilityDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CAFReference = :CAFReference, FacilityRef = :FacilityRef, TermSheetRef=:TermSheetRef,");
+		updateSql.append(" Set CAFReference = :CAFReference, TermSheetRef=:TermSheetRef,");
 		updateSql.append(" FacilityFor = :FacilityFor, FacilityType = :FacilityType, FacilityCCY = :FacilityCCY, Exposure = :Exposure," );
 		updateSql.append(" ExistingLimit = :ExistingLimit, NewLimit = :NewLimit, FinanceAmount = :FinanceAmount, Pricing = :Pricing," );
 		updateSql.append(" Repayments = :Repayments, RateType = :RateType, LCPeriod = :LCPeriod, UsancePeriod = :UsancePeriod,");

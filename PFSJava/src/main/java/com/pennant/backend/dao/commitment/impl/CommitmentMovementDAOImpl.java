@@ -273,7 +273,7 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		StringBuilder updateSql = new StringBuilder("Update CommitmentMovements");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set CmtReference = :CmtReference,FinReference= :FinReference,FinBranch= :FinBranch,FinType= :FinType,MovementDate= :MovementDate,MovementOrder= :MovementOrder,MovementType= :MovementType,MovementAmount= :MovementAmount,CmtAmount= :CmtAmount,CmtCharges=:CmtCharges,CmtUtilizedAmount= :CmtUtilizedAmount,CmtAvailable= :CmtAvailable,LinkedTranId= :LinkedTranId");
+		        .append(" Set FinReference= :FinReference,FinBranch= :FinBranch,FinType= :FinType,MovementDate= :MovementDate,MovementOrder= :MovementOrder,MovementType= :MovementType,MovementAmount= :MovementAmount,CmtAmount= :CmtAmount,CmtCharges=:CmtCharges,CmtUtilizedAmount= :CmtUtilizedAmount,CmtAvailable= :CmtAvailable,LinkedTranId= :LinkedTranId");
 		updateSql
 		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CmtReference =:CmtReference");

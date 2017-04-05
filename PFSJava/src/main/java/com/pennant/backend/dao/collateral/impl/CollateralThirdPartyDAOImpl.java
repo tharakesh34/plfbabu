@@ -107,7 +107,7 @@ public class CollateralThirdPartyDAOImpl implements CollateralThirdPartyDAO {
 
 		sql.append("Update CollateralThirdParty");
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Set CollateralRef = :CollateralRef, CustomerId = :CustomerId,  Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" Set Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where CollateralRef = :CollateralRef AND CustomerId = :CustomerId");

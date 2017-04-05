@@ -228,7 +228,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		logger.debug("Entering");
 		StringBuilder sql = new StringBuilder("Update CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set collateralRef=:collateralRef, depositorId=:depositorId, collateralType=:collateralType,");
+		sql.append(" Set depositorId=:depositorId, collateralType=:collateralType,");
 		sql.append(" collateralCcy=:collateralCcy, maxCollateralValue=:maxCollateralValue, specialLTV=:specialLTV,");
 		sql.append(" collateralLoc=:collateralLoc, valuator=:valuator, expiryDate=:expiryDate,");
 		sql.append(" reviewFrequency=:reviewFrequency, nextReviewDate=:nextReviewDate, multiLoanAssignment=:multiLoanAssignment,");

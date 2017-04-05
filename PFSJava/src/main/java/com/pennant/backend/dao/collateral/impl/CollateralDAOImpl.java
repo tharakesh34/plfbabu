@@ -258,7 +258,7 @@ public class CollateralDAOImpl extends BasisNextidDaoImpl<Collateral> implements
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update Collateral");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CAFReference = :CAFReference, Reference = :Reference, LastReview = :LastReview, Currency = :Currency, Value = :Value, Bankvaluation = :Bankvaluation, Bankmargin = :Bankmargin, ActualCoverage = :ActualCoverage, ProposedCoverage = :ProposedCoverage, Description = :Description, CustID = :CustID");
+		updateSql.append(" Set LastReview = :LastReview, Currency = :Currency, Value = :Value, Bankvaluation = :Bankvaluation, Bankmargin = :Bankmargin, ActualCoverage = :ActualCoverage, ProposedCoverage = :ProposedCoverage, Description = :Description, CustID = :CustID");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CAFReference =:CAFReference and Reference=:Reference");
 		
