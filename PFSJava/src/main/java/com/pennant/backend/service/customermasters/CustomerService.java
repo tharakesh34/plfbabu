@@ -63,7 +63,7 @@ public interface CustomerService {
 	boolean isJointCustExist(long custID);
 	WIFCustomer getWIFCustomerByID(long custId, String custCRCPR);
 	Date getCustBlackListedDate(String custCRCPR);
-	String getCustomerByCRCPR(String custCRCPR,String custCtgCode,String type);
+	String getCustomerByCRCPR(String custCRCPR,String type);
 	void updateCustSuspenseDetails(Customer aCustomer, String tableType);
 	void saveCustSuspMovements(Customer aCustomer);
 	String getCustSuspRemarks(long custID);

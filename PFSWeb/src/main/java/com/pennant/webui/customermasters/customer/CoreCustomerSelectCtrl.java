@@ -341,8 +341,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 
 				if(StringUtils.isNotBlank(custCPRCR)){
-					String custCIF = getCustomerService().getCustomerByCRCPR(custCPRCR, isRetailCustomer ? PennantConstants.PFF_CUSTCTG_INDIV : 
-						PennantConstants.PFF_CUSTCTG_CORP,"_View");
+					String custCIF = getCustomerService().getCustomerByCRCPR(custCPRCR,"_View");
 					if(custCIF != null){
 						MessageUtil.showErrorMessage(Labels.getLabel("label_CoreCustomerDialog_ProspectExist", new String[]{
 								isCustCatIndividual ? Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value") : 

@@ -472,8 +472,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	    return getCustomerDAO().getCustBlackListedDate(custCRCPR, "_View");
     }
 	@Override
-    public String getCustomerByCRCPR(String custCRCPR,String custCtgCode, String type) {
-	    return getCustomerDAO().getCustomerByCRCPR(custCRCPR,custCtgCode,type);
+    public String getCustomerByCRCPR(String custCRCPR, String type) {
+	    return getCustomerDAO().getCustomerByCRCPR(custCRCPR,type);
     }
 
 	@Override
