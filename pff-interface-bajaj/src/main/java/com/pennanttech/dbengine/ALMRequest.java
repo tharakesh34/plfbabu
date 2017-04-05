@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -22,9 +20,8 @@ public class ALMRequest extends DBProcessEngine {
 
 	private static final Logger logger = Logger.getLogger(ALMRequest.class);
 	private Connection destConnection;
-
-	private Map<Integer, Connection> connectionMap = new HashMap<Integer, Connection>();
-
+	private Connection sourceConnection= null;
+	
 	public ALMRequest(DataSource dataSource, String appDBName) {
 		super(dataSource, appDBName);
 	}
@@ -47,6 +44,7 @@ public class ALMRequest extends DBProcessEngine {
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
 			destConnection = getConnection(dbConfiguration);
+			sourceConnection=DataSourceUtils.doGetConnection(appDataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
 
@@ -84,8 +82,8 @@ public class ALMRequest extends DBProcessEngine {
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(destConnection, resultSet, connectionMap);
-			resultSet = null;
+			releaseResorces(null,destConnection);
+			releaseResorces(resultSet,sourceConnection);
 			executionStatus.setRemarks(remarks.toString());
 		}
 
@@ -98,7 +96,7 @@ public class ALMRequest extends DBProcessEngine {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" INSERT INTO AML_DATA (");
-			sb.append("	AGREEMENTID, AGREEMENTNO, PRODUCTFLAG, NPA_STAGEID, INSTLAMT, PRINCOMP,INTCOMP ,DUEDATE ");
+			sb.append("	AGREEMENTID, AGREEMENTNO, PRODUCTFLAG, NPA_STAGEID, INSTLAMT, PRINCOMP,INTCOMP ,DUEDATE, ");
 			sb.append(" ACCRUEDAMT, ACCRUEDON, CUMULATIVE_ACCRUAL_AMT, ADVFLAG)");
 			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 
@@ -133,13 +131,10 @@ public class ALMRequest extends DBProcessEngine {
 
 		ResultSet rs = null;
 		StringBuilder sql = null;
-		Connection con = null;
 		try {
-			con = DataSourceUtils.doGetConnection(appDataSource);
 			sql = new StringBuilder();
 			sql.append(" SELECT * from INT_ALM_VIEW  ");
-
-			PreparedStatement stmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
@@ -147,7 +142,6 @@ public class ALMRequest extends DBProcessEngine {
 			throw e;
 		} finally {
 			sql = null;
-			connectionMap.put(rs.hashCode(), con);
 		}
 		logger.debug("Leaving");
 		return rs;
