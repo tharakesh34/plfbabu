@@ -304,6 +304,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private Timestamp custSuspAprDate;
 	private String ruleCode;
 	private String custSuspMvtType;
+	private String custSwiftBrnCode;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -341,6 +342,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("ruleCode");
 		excludeFields.add("customer");
 		excludeFields.add("returnStatus");
+		excludeFields.add("custSwiftBrnCode");
 		return excludeFields;
 	}
 
@@ -1745,6 +1747,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getCustSwiftBrnCode() {
+		return custSwiftBrnCode;
+	}
+
+	public void setCustSwiftBrnCode(String custSwiftBrnCode) {
+		this.custSwiftBrnCode = custSwiftBrnCode;
 	}
 
 }
