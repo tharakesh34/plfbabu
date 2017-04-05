@@ -1992,4 +1992,40 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 		</createView>
 	</changeSet>
 	
+		
+<changeSet id="72" author="DurgaPrasad G">			
+	<createTable tableName="DISBURSEMENT_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="REFID" type="bigint"/>
+		 <column name="REFNO" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REASON" type="varchar(1000)"/>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDON" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDBY" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+	</createTable>
+</changeSet>
+
+<changeSet id="73" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DES_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
+</changeSet>
+
 </databaseChangeLog>
