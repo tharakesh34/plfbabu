@@ -66,7 +66,7 @@ public class ReferenceGenerator implements Serializable {
 		logger.debug("Entering");
 
 		// Product code
-		String branch = financeMain.getFinBranch();
+		String branch = financeMain.getBflBranchCode();
 
 		if (branch.length() < 3) {
 			branch = StringUtils.leftPad(branch, 3, '0');
