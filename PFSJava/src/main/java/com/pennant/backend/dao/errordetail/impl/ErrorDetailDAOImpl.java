@@ -215,7 +215,7 @@ public class ErrorDetailDAOImpl extends BasisCodeDAO<ErrorDetail> implements Err
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update ErrorDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ErrorCode = :ErrorCode, ErrorLanguage = :ErrorLanguage, ErrorSeverity = :ErrorSeverity, ErrorMessage = :ErrorMessage, ErrorExtendedMessage = :ErrorExtendedMessage");
+		updateSql.append(" Set ErrorLanguage = :ErrorLanguage, ErrorSeverity = :ErrorSeverity, ErrorMessage = :ErrorMessage, ErrorExtendedMessage = :ErrorExtendedMessage");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ErrorCode =:ErrorCode");
 		

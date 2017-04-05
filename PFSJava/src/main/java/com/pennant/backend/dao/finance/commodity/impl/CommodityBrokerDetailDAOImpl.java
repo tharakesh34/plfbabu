@@ -231,7 +231,7 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FCMTBrokerDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BrokerCode = :BrokerCode, BrokerCustID = :BrokerCustID, BrokerFrom = :BrokerFrom,");
+		updateSql.append(" Set BrokerCustID = :BrokerCustID, BrokerFrom = :BrokerFrom,");
 		updateSql.append(" BrokerAddrHNbr = :BrokerAddrHNbr, BrokerAddrFlatNbr = :BrokerAddrFlatNbr, BrokerAddrStreet = :BrokerAddrStreet,");
 		updateSql.append(" BrokerAddrLane1 = :BrokerAddrLane1, BrokerAddrLane2 = :BrokerAddrLane2, BrokerAddrPOBox = :BrokerAddrPOBox,");
 		updateSql.append(" BrokerAddrCountry = :BrokerAddrCountry, BrokerAddrProvince = :BrokerAddrProvince, BrokerAddrCity = :BrokerAddrCity,");

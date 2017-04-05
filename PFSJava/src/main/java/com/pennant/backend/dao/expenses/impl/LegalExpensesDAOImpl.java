@@ -248,7 +248,7 @@ public class LegalExpensesDAOImpl  extends BasisNextidDaoImpl<LegalExpenses> imp
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinLegalExpenses");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ExpReference = :ExpReference,CustomerId = :CustomerId, BookingDate = :BookingDate, Amount = :Amount, FinReference = :FinReference, TransactionType = :TransactionType, Remarks = :Remarks, RecoveredAmount = :RecoveredAmount, Amountdue = :Amountdue, IsRecoverdFromMOPA = :IsRecoverdFromMOPA, TotalCharges = :TotalCharges");
+		updateSql.append(" Set CustomerId = :CustomerId, BookingDate = :BookingDate, Amount = :Amount, FinReference = :FinReference, TransactionType = :TransactionType, Remarks = :Remarks, RecoveredAmount = :RecoveredAmount, Amountdue = :Amountdue, IsRecoverdFromMOPA = :IsRecoverdFromMOPA, TotalCharges = :TotalCharges");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ExpReference =:ExpReference");
 		

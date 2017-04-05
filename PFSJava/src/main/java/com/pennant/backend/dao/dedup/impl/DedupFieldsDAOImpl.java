@@ -264,7 +264,7 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 		
 		StringBuilder	updateSql =new StringBuilder("Update DedupFields");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FieldName = :FieldName, FieldControl = :FieldControl,RefType=:RefType , ");
+		updateSql.append(" Set FieldControl = :FieldControl,RefType=:RefType , ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append("TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

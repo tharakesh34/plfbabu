@@ -230,7 +230,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update FeeTypes");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set feeTypeID=:feeTypeID,feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
+		sql.append(" Set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
 		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where FeeTypeID =:FeeTypeID");

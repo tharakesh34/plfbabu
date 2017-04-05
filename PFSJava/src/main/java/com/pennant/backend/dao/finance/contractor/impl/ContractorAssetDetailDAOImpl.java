@@ -244,7 +244,7 @@ public class ContractorAssetDetailDAOImpl extends BasisCodeDAO<ContractorAssetDe
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinContractorAstDtls");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, ContractorId = :ContractorId, CustID =:CustID, AssetDesc = :AssetDesc, ");
+		updateSql.append(" Set CustID =:CustID, AssetDesc = :AssetDesc, ");
 		updateSql.append(" AssetValue = :AssetValue, TotClaimAmt = :TotClaimAmt, TotAdvanceAmt = :TotAdvanceAmt, ContractorName=:ContractorName , ");
 		updateSql.append(" DftRetentionPerc=:DftRetentionPerc, RetentionTillDate=:RetentionTillDate, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

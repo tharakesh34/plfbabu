@@ -280,8 +280,8 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 
 		StringBuilder	updateSql =new StringBuilder(" Update DedupParams");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QueryId = :QueryId , QueryCode = :QueryCode, QueryModule = :QueryModule," );
-		updateSql.append(" QuerySubCode=:QuerySubCode, QueryDesc=:QueryDesc,SQLQuery = :SQLQuery," );
+		updateSql.append(" Set QueryId = :QueryId ," );
+		updateSql.append(" QueryDesc=:QueryDesc,SQLQuery = :SQLQuery," );
 		updateSql.append(" ActualBlock = :ActualBlock, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );

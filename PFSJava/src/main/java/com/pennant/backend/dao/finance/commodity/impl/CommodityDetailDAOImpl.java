@@ -226,7 +226,7 @@ public class CommodityDetailDAOImpl extends BasisCodeDAO<CommodityDetail> implem
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FCMTCommodityDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CommodityCode = :CommodityCode, CommodityName = :CommodityName, CommodityUnitCode = :CommodityUnitCode, CommodityUnitName = :CommodityUnitName");
+		updateSql.append(" Set CommodityName = :CommodityName, CommodityUnitName = :CommodityUnitName");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 	    updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 	   updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
