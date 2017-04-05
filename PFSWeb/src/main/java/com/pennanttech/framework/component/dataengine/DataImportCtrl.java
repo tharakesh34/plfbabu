@@ -32,6 +32,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
 
 public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
@@ -353,9 +354,14 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			DataEngineStatus status = null;
 			try {
 				status = getPannelExecution(config);
-				DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status);
-				dataEngine.setMedia(media);
-				dataEngine.importData(config.getName());
+				if (ParserNames.DB.name().equals(config.getParserName())) {
+					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
+					dbDataEngine.processDBData(config);
+				} else {
+					DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status);
+					dataEngine.setMedia(media);
+					dataEngine.importData(config.getName());
+				}
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
