@@ -1,25 +1,24 @@
 package com.pennanttech.bajaj.model;
 
-import javax.xml.bind.annotation.XmlElement;
-
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 
 @JsonPropertyOrder({"Customer_ID__c","Customer_Type__c","Name","Fathers_Husband_s_Name__c","DOB__c","PAN__c","Voterid__c"})
 public class CustDGDetail {
-	@XmlElement(name="Customer_ID__c")
+	@JsonProperty("Customer_ID__c")
 	private String customerId;
-	@XmlElement(name="Customer_Type__c")
+	@JsonProperty("Customer_Type__c")
 	private String customerType;
-	@XmlElement(name="Name")
+	@JsonProperty("Name")
 	private String customerName;
-	@XmlElement(name="Fathers_Husband_s_Name__c")
+	@JsonProperty("Fathers_Husband_s_Name__c")
 	private String FatherorHusbandName;
-	@XmlElement(name="DOB__c")
+	@JsonProperty("DOB__c")
 	private String dateOfBirth;
-	@XmlElement(name="PAN__c")
+	@JsonProperty("PAN__c")
 	private String panNumber;
-	@XmlElement(name="Voterid__c")
+	@JsonProperty("Voterid__c")
 	private String voiterId;
 	public String getCustomerId() {
 		return customerId;

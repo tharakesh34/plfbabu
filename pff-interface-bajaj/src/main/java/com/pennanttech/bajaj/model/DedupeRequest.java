@@ -3,10 +3,12 @@ package com.pennanttech.bajaj.model;
 //import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
+
 @JsonPropertyOrder({ "DEAL_ID", "ORG", "REQUEST_TYPE", "DATASOURCE","FIRST_NAME", "MIDDLE_NAME", "LAST_NAME", "ADDRESS_1", "ADDRESS_2",
 	"ADDRESS_3", "AREA", "LANDMARK", "CITY", "PIN", "DOB","LANDLINE_1","LANDLINE_2","MOBILE","STD","PAN","EMAIL","ACCOUNT_NUMBER",
 	"VOTER_ID","CREDIT_CARD_NUMBER","CUSTOMER_NO","LAN_NO","LAN_2","CUSTOMER_TYPE","TAN_NO","CUST_SR_NO","APPLN_NO","FATHER_NAME","EMPOYER_NAME",
@@ -15,6 +17,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 	"AGE","RESIDENT_TYPE","CREDIT_PROGRAM","ASSET_CATEGORY","REQUEST_ID_FIN","MATCH_PROFILE","SEGMENT","APPLICANT_TYPE","DATE_OF_INCORPORATION",
 	"LANDMARK_OFFICE","MOBILE_OFFICE","EMAIL_OFFICE","LOAN_APP_NO","CustomerStatusYN","DemoDtlYN","AppscoreYN"})
 @JsonTypeInfo(include=As.WRAPPER_OBJECT, use=Id.NAME)
+@JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility=JsonAutoDetect.Visibility.NONE, setterVisibility=JsonAutoDetect.Visibility.NONE, creatorVisibility=JsonAutoDetect.Visibility.NONE)
 public class DedupeRequest {
 	@JsonProperty("DEAL_ID")
 	private String dealId;

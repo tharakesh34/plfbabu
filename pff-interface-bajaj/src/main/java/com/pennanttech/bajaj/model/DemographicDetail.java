@@ -2,8 +2,7 @@ package com.pennanttech.bajaj.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -13,71 +12,71 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 	"custDGDetails","custAddressDetails","custEmailDetails","custContactDetails","custLoanDetails","ReportDetails"})
 @JsonSerialize
 public class DemographicDetail {
-	@XmlElement(name="REJ_MATCHED_ID__c")
+	@JsonProperty("REJ_MATCHED_ID__c")
 	private String rejectionMatchid;
-	@XmlElement(name="REJ_MATCHED_PRCNTG__c")
+	@JsonProperty("REJ_MATCHED_PRCNTG__c")
 	private String rejectionPercentage;
-	@XmlElement(name="REJ_RESASON__c")
+	@JsonProperty("REJ_RESASON__c")
 	private String rejectReasion;
-	@XmlElement(name="FRAUD_MATCHED_ID__c")
+	@JsonProperty("FRAUD_MATCHED_ID__c")
 	private String fraudmatchId;
-	@XmlElement(name="FRAUD_MATCHED_PRCNTG__c")
+	@JsonProperty("FRAUD_MATCHED_PRCNTG__c")
 	private String fraudPercentage;
-	@XmlElement(name="Dedupe_Source__c")
+	@JsonProperty("Dedupe_Source__c")
 	private String dedupeSource;
-	@XmlElement(name="Source_Or_Target__c")
+	@JsonProperty("Source_Or_Target__c")
 	private String sourceOrTarget;
-	@XmlElement(name="Loan_Application__c")
+	@JsonProperty("Loan_Application__c")
 	private String applicationNo;
-	@XmlElement(name="Lead__c")
+	@JsonProperty("Lead__c")
 	private String lead;
-	@XmlElement(name="Lead_Applicants__c")
+	@JsonProperty("Lead_Applicants__c")
 	private String leadApplicants;
-	@XmlElement(name="TERR_MATCHED_ID__c")
+	@JsonProperty("TERR_MATCHED_ID__c")
 	private String terrMatchedId;
-	@XmlElement(name="Customer_Status__c")
+	@JsonProperty("Customer_Status__c")
 	private String customerStatus;
-	@XmlElement(name="LAN__c")
+	@JsonProperty("LAN__c")
 	private String customerLan;
-	@XmlElement(name="Product__c")
+	@JsonProperty("Product__c")
 	private String loanProduct;
-	@XmlElement(name="Loan_Status__c")
+	@JsonProperty("Loan_Status__c")
 	private String loanStatus;
-	@XmlElement(name="FDD__c")
+	@JsonProperty("FDD__c")
 	private String firstDueDate;
-	@XmlElement(name="Current_Bucket1__c")
+	@JsonProperty("Current_Bucket1__c")
 	private String currentBucket;
-	@XmlElement(name="Balance_Amount__c")
+	@JsonProperty("Balance_Amount__c")
 	private String loanBalanceAmount;
-	@XmlElement(name="EMI_Amount__c")
+	@JsonProperty("EMI_Amount__c")
 	private String EMIAmount;
-	@XmlElement(name="Bank_Account_No__c")
+	@JsonProperty("Bank_Account_No__c")
 	private String repayBankAccount;
-	@XmlElement(name="DPD_String__c")
+	@JsonProperty("DPD_String__c")
 	private String loanDPDString;
-	@XmlElement(name="Tenure__c")
+	@JsonProperty("Tenure__c")
 	private String tenure;
-	@XmlElement(name="Month_On_Book__c")
+	@JsonProperty("Month_On_Book__c")
 	private String disbursementDate;
-	@XmlElement(name="Loan_Amount__c")
+	@JsonProperty("Loan_Amount__c")
 	private String loanAmount;
 	
-	@XmlElement(name="custDGDetails")
+	@JsonProperty("custDGDetails")
 	private List<CustDGDetail> custDGDetails;
 	
-	@XmlElement(name="custAddressDetails")
+	@JsonProperty("custAddressDetails")
 	List<CustAddressDetail> custAddressDetails;
 	
-	@XmlElement(name="custEmailDetails")
+	@JsonProperty("custEmailDetails")
 	List<CustEmailDetail> custEmailDetails;
 	
-	@XmlElement(name="custContactDetails")
+	@JsonProperty("custContactDetails")
 	List<CustContactDetail> custContactDetails;
 	
-	@XmlElement(name="custLoanDetails")
+	@JsonProperty("custLoanDetails")
 	List<CustLoanDetail> custLoanDetails;
 	
-	@XmlElement(name="ReportDetails")
+	@JsonProperty("reportDetails")
 	ReportDetail reportDetails;
 	
 	public String getRejectionMatchid() {

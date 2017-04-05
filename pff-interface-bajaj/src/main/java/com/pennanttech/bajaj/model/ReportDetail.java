@@ -1,25 +1,24 @@
 package com.pennanttech.bajaj.model;
 
-import javax.xml.bind.annotation.XmlElement;
-
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @JsonPropertyOrder({"FILLER_STRING_1","FILLER_STRING_2","FILLER_STRING_3","FILLER_STRING_4",
 	"FILLER_STRING_5","FILLER_STRING_6","FILLER_STRING_7"})
 public class ReportDetail {
-	@XmlElement(name="FILLER_STRING_1")
+	@JsonProperty("FILLER_STRING_1")
 	private String filler1;
-	@XmlElement(name="FILLER_STRING_2")
+	@JsonProperty("FILLER_STRING_2")
 	private String filler2;
-	@XmlElement(name="FILLER_STRING_3")
+	@JsonProperty("FILLER_STRING_3")
 	private String filler3;
-	@XmlElement(name="FILLER_STRING_4")
+	@JsonProperty("FILLER_STRING_4")
 	private String filler4;
-	@XmlElement(name="FILLER_STRING_5")
+	@JsonProperty("FILLER_STRING_5")
 	private String filler5;
-	@XmlElement(name="FILLER_STRING_6")
+	@JsonProperty("FILLER_STRING_6")
 	private String filler6;
-	@XmlElement(name="FILLER_STRING_7")
+	@JsonProperty("FILLER_STRING_7")
 	private String filler7;
 	public String getFiller1() {
 		return filler1;
