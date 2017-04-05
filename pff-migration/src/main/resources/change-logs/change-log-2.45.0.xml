@@ -1900,4 +1900,13 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 	INSERT INTO ErrorDetails VALUES('90267','EN','E','Key details and vas reference should be matched.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="64" author="Irfan">
+	<createView viewName="RejectFinanceMain_View" replaceIfExists="true">
+	Select F.FinReference, T.FinCategory LovDescProductCodeName , C.CustCIF LovDescCustCIF,
+	F.FinType, F.FinBranch, F.FinStartDate, F.MaturityDate, F.NumberOfTerms, F.FinCcy, F.FinAmount ,
+	F.FeeChargeAmt, F.InsuranceAmt, F.DownPayment, F.FinCurrAssetValue   from RejectFinanceMain F LEFT OUTER JOIN
+	Customers C ON F.CustID = C.CustID  LEFT OUTER JOIN
+	RMTFinanceTypes T ON F.FinType = T.FinType 
+	</createView>
+	</changeSet>
 </databaseChangeLog>
