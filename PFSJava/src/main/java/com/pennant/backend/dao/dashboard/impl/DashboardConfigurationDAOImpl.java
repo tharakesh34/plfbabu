@@ -248,7 +248,7 @@ public class DashboardConfigurationDAOImpl extends BasisCodeDAO<DashboardConfigu
 
 		updateSql.append("Update DashboardConfiguration");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DashboardCode = :DashboardCode, DashboardDesc = :DashboardDesc,DashboardType = :DashboardType,");
+		updateSql.append(" Set DashboardDesc = :DashboardDesc,DashboardType = :DashboardType,");
 		updateSql.append(" Dimension=:Dimension,Caption=:Caption, SubCaption=:SubCaption, Query=:Query, Remarks=:Remarks, DrillDownChart=:DrillDownChart, MultiSeries=:MultiSeries,");
 		updateSql.append(" SeriesType=:SeriesType, SeriesValues=:SeriesValues, FieldQuery=:FieldQuery, DataXML=:DataXML, AdtDataSource=:AdtDataSource,  ");
 		updateSql.append(" Version=:Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");

@@ -299,7 +299,7 @@ public class FinCreditRevSubCategoryDAOImpl extends BasisCodeDAO<FinCreditRevSub
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinCreditRevSubCategory");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set SubCategoryCode = :SubCategoryCode, SubCategorySeque = :SubCategorySeque, CategoryId = :CategoryId, SubCategoryDesc = :SubCategoryDesc, SubCategoryItemType = :SubCategoryItemType, ItemsToCal = :ItemsToCal, ItemRule = :ItemRule, isCreditCCY = :isCreditCCY, mainSubCategoryCode = :mainSubCategoryCode, CalcSeque = :CalcSeque, format = :format, percentCategory = :percentCategory, grand = :grand");
+		updateSql.append(" Set SubCategorySeque = :SubCategorySeque, CategoryId = :CategoryId, SubCategoryDesc = :SubCategoryDesc, SubCategoryItemType = :SubCategoryItemType, ItemsToCal = :ItemsToCal, ItemRule = :ItemRule, isCreditCCY = :isCreditCCY, mainSubCategoryCode = :mainSubCategoryCode, CalcSeque = :CalcSeque, format = :format, percentCategory = :percentCategory, grand = :grand");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SubCategoryCode =:SubCategoryCode");
 		
