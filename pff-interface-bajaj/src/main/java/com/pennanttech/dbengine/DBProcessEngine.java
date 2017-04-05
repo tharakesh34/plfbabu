@@ -152,4 +152,27 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		}
 		logger.debug("Leaving");
 	}
+
+	protected void releaseResorces(ResultSet resultSet, Connection con) {
+		logger.debug("Entering");
+		
+		try {
+			if(resultSet!=null){
+				resultSet.close();
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+			
+		}
+
+		try {
+			if(con!=null){
+				con.close();
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+			
+		}
+				logger.debug("Leaving");
+	}
 }
