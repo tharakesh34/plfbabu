@@ -11,31 +11,34 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CustomerQueuingService {
 
-	private static Logger logger = Logger.getLogger(CustomerQueuingService.class);
+	private static Logger		logger	= Logger.getLogger(CustomerQueuingService.class);
 
-	private CustomerQueuingDAO customerQueuingDAO;
+	private CustomerQueuingDAO	customerQueuingDAO;
 
 	/**
-	 * Delete the existing data and load the active finance customers while running EOD.<br> 
-	 *    Which is one time process per EOD
+	 * Delete the existing data and load the active finance customers while running EOD.<br>
+	 * Which is one time process per EOD
 	 * 
 	 * @param date
 	 */
 	public void loadCustIds(Date date) {
 		logger.debug("Entering");
-		getCustomerQueuingDAO().delete();
-		getCustomerQueuingDAO().prepareCustomerQueue(date);
+
+		long count = getCustomerQueuingDAO().getCountByProgress(date, null);
+		if (count == 0) {
+			getCustomerQueuingDAO().delete();
+			getCustomerQueuingDAO().prepareCustomerQueue(date);
+		}
+
 		logger.debug("Leaving");
 	}
 
-
-	public void updateNoofRows(Date date,long noOfRows,String threadId) {
-		getCustomerQueuingDAO().updateNoofRows(date,noOfRows, threadId);
+	public void updateNoofRows(Date date, long noOfRows, String threadId) {
+		getCustomerQueuingDAO().updateNoofRows(date, noOfRows, threadId);
 	}
 
-
-	public void updateAll(Date date,String threadId) {
-		getCustomerQueuingDAO().updateAll(date,threadId);
+	public void updateAll(Date date, String threadId) {
+		getCustomerQueuingDAO().updateAll(date, threadId);
 	}
 
 	/**
@@ -45,7 +48,7 @@ public class CustomerQueuingService {
 	 * @param status
 	 * @param error
 	 */
-	public void updateStart(Date date,long custId) {
+	public void updateStart(Date date, long custId) {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -53,12 +56,12 @@ public class CustomerQueuingService {
 		customerQueuing.setEodDate(date);
 		customerQueuing.setProgress(EodConstants.PROGRESS_START);
 		customerQueuing.setStartTime(DateUtility.getSysDate());
-		getCustomerQueuingDAO().update(customerQueuing,true);
+		getCustomerQueuingDAO().update(customerQueuing, true);
 
 		logger.debug("Leaving");
 	}
 
-	public void updateEnd(Date date,long custId) {
+	public void updateEnd(Date date, long custId) {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -67,12 +70,12 @@ public class CustomerQueuingService {
 		customerQueuing.setEndTime(DateUtility.getSysDate());
 		customerQueuing.setStatus(EodConstants.STATUS_SUCCESS);
 		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
-		getCustomerQueuingDAO().update(customerQueuing,false);
+		getCustomerQueuingDAO().update(customerQueuing, false);
 
 		logger.debug("Leaving");
 	}
 
-	public void updateSucessFail(Date date,long custId,String error) {
+	public void updateSucessFail(Date date, long custId, String error) {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -82,17 +85,17 @@ public class CustomerQueuingService {
 		customerQueuing.setErrorLog(error);
 		customerQueuing.setEndTime(DateUtility.getSysDate());
 		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
-		getCustomerQueuingDAO().update(customerQueuing,false);
+		getCustomerQueuingDAO().update(customerQueuing, false);
 
 		logger.debug("Leaving");
 	}
 
-	public long getCountbyProgress(Date date,String progress) {
-		return getCustomerQueuingDAO().getCountByProgress(date,progress);
+	public long getCountbyProgress(Date date, String progress) {
+		return getCustomerQueuingDAO().getCountByProgress(date, progress);
 	}
-	
-	public long getCountByStatus(Date date,String progress) {
-		return getCustomerQueuingDAO().getCountByStatus(date,progress);
+
+	public long getCountByStatus(Date date, String progress) {
+		return getCustomerQueuingDAO().getCountByStatus(date, progress);
 	}
 
 	public CustomerQueuingDAO getCustomerQueuingDAO() {
