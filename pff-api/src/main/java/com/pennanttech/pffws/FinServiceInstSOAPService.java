@@ -24,6 +24,9 @@ public interface FinServiceInstSOAPService {
 	public FinanceDetail addTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
 	
 	@WebResult(name = "finance")
+	public FinanceDetail manualPayment(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	@WebResult(name = "finance")
 	public FinanceDetail removeTerms(@WebParam(name = "finance") FinServiceInstruction finServiceInstRequest) throws ServiceException;
 	
 }

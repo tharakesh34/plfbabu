@@ -1644,13 +1644,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
-		
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ADVRPY, method)) {
-			/*String[] valueParm = new String[2];
-			valueParm[0] = "FromDate "+DateUtility.formatToShortDate(fromDate);
-			valueParm[1] = "Application Date "+DateUtility.formatToShortDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), lang));*/
-		}
+
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
 		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
@@ -1661,7 +1655,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				valueParm[1] = "Application Date "+DateUtility.formatToShortDate(DateUtility.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), lang));
 			}
-			
+
 			if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(fromDate);
@@ -1675,6 +1669,23 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				valueParm[0] = "FromDate "+DateUtility.formatToShortDate(fromDate);
 				valueParm[1] = "Application Date "+DateUtility.formatToShortDate(DateUtility.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), lang));
+			}
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_ADVRPY)
+				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if(finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Amount:"+finServiceInstruction.getAmount();
+				valueParm[1] = "Zero";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
+			}
+			
+			// validate Partial Settlement Amount
+			BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(finServiceInstruction.getFinReference());
+			totOutstandingAmt = totOutstandingAmt == null? BigDecimal.ZERO:totOutstandingAmt;
+			if(finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(totOutstandingAmt);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91127", "", valueParm), lang));
 			}
 		} else {
 			// validate recalType
@@ -1693,17 +1704,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", "", valueParm), lang));
 				}
 			}
-			
-			// validate Partial Settlement Amount
-			BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(finServiceInstruction.getFinReference());
-			totOutstandingAmt = totOutstandingAmt == null? BigDecimal.ZERO:totOutstandingAmt;
-			if(finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] =String.valueOf(totOutstandingAmt);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91127", "", valueParm), lang));
-			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}

@@ -59,6 +59,10 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/reScheduling")
 	public FinanceDetail reScheduling(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	
+	@POST
+	@Path("/loanInstructionService/manualPayment")
+	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/updateLoanBasicDetails")

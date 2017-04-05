@@ -1167,6 +1167,33 @@ public class FinServiceInstController {
 
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_EARLYPAY);
+		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
+
+		FinanceDetail response = null;
+		try {
+			response = doProcessPayments(financeDetail, finServiceInst);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		logger.debug("Leaving");
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param finServiceInstruction
+	 * @return
+	 */
+	public FinanceDetail doManualPayment(FinServiceInstruction finServiceInst) {
+		logger.debug("Enteing");
+
+		// fetch finance data
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_REPAY);
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADVRPY);
 
 		FinanceDetail response = null;
@@ -1223,10 +1250,13 @@ public class FinServiceInstController {
 		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
 		if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADVRPY)) {
 			finEvent = AccountEventConstants.ACCEVENT_REPAY;
+			
+			aFinanceDetail = financeDetail;
+		} else if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			finEvent = AccountEventConstants.ACCEVENT_EARLYPAY;
 			if(!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
 				repayData = manualPaymentService.setEarlyRepayEffectOnSchedule(repayData, finServiceInst);
 			}
-			aFinanceDetail = financeDetail;
 		}
 		
 		// call change frequency service
@@ -1760,5 +1790,4 @@ public class FinServiceInstController {
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
 	}
-
 }

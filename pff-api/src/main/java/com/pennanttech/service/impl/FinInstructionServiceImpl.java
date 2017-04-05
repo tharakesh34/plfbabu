@@ -934,7 +934,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_ADVRPY;
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
 		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
 
 		// validate fees
@@ -954,6 +954,65 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// call change repay amount service
 		financeDetail = finServiceInstController.doPartialSettlement(finServiceInstruction);
+
+		logger.debug("Leaving");
+		return financeDetail;
+	}
+	
+
+	/**
+	 * 
+	 * 
+	 */
+	@Override
+	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = null;
+
+		// validate ReqType
+		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+
+			return financeDetail;
+		}
+
+		// service level validations
+		returnStatus = validateFinReference(finServiceInstruction);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+
+			return financeDetail;
+		}
+
+		// validate service instruction data
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_ADVRPY;
+		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
+
+		// validate fees
+		String eventCode = AccountEventConstants.ACCEVENT_REPAY;
+		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
+
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						errorDetail.getError()));
+
+				return financeDetail;
+			}
+		}
+
+		// call change repay amount service
+		financeDetail = finServiceInstController.doManualPayment(finServiceInstruction);
 
 		logger.debug("Leaving");
 		return financeDetail;
@@ -1040,7 +1099,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		if(!StringUtils.equals(reqType, APIConstants.REQTYPE_INQUIRY)
 				&& !StringUtils.equals(reqType, APIConstants.REQTYPE_POST)) {
-			
 			String valueParm[] = new String[1];
 			valueParm[0] = reqType;
 			status = APIErrorHandlerService.getFailedStatus("91113", valueParm);

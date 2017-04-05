@@ -792,7 +792,7 @@ public class FinanceDataDefaulting {
 			
 			//Sorting available list
 			Collections.sort(alwdDays);
-			return frq.substring(0, 3).concat(StringUtils.leftPad(String.valueOf(alwdDays.get(0)), 2, "0"));
+			return frq.substring(0, 3).concat(StringUtils.leftPad(alwdDays.get(0), 2, "0"));
 		}
 		
 		return frq;
@@ -807,7 +807,7 @@ public class FinanceDataDefaulting {
 
 		if(StringUtils.isNotBlank(frq)) {
 			String frqDay = String.valueOf(DateUtility.getDay(frqDate));
-			frqDay = StringUtils.leftPad(String.valueOf(frqDay), 2, "0");
+			frqDay = StringUtils.leftPad(frqDay, 2, "0");
 			frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
 		}
 
