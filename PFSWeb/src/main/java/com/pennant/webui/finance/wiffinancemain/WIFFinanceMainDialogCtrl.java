@@ -1453,7 +1453,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FinanceMain Detail Tab ---> 1. Basic Details
 
 		try {
-			aFinanceMain.setFinBranch(getUserWorkspace().getLoggedInUser().getBranchCode());
+			aFinanceMain.setBflBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 			if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(true, aFinanceMain)));
 			} 
