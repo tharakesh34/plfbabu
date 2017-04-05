@@ -34,16 +34,55 @@
 	<changeSet id="1" author="Prasad" dbms="oracle">
 		<sql>
 		<![CDATA[
-			alter table FinScheduleDetails modify SchPriPaid number(1);
-			alter table FinScheduleDetails modify SchPriPaid number(1) not null;
-			alter table FinScheduleDetails_Log modify SchPriPaid number(1);
-			alter table FinScheduleDetails_Log modify SchPriPaid number(1) not null;
-			alter table FinScheduleDetails_PA modify SchPriPaid number(1);
-			alter table FinScheduleDetails_PA modify SchPriPaid number(1) not null;
-			alter table FinScheduleDetails_Temp modify SchPriPaid number(1);
-			alter table FinScheduleDetails_Temp modify SchPriPaid number(1) not null;
-			alter table RejectFinScheduledetails modify SchPriPaid number(1);	
-			alter table RejectFinScheduledetails modify SchPriPaid number(1) not null;
+			alter table FINSCHEDULEDETAILS modify SchPriPaid default null;
+update FINSCHEDULEDETAILS set SchPriPaid = 0 where SchPriPaid is null;
+create table sai_temp as select * from FINSCHEDULEDETAILS;
+update FINSCHEDULEDETAILS set SchPriPaid = null;
+alter table FINSCHEDULEDETAILS modify SchPriPaid number(1);
+update FINSCHEDULEDETAILS m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+alter table FINSCHEDULEDETAILS modify SchPriPaid number(1) not null;
+drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="1.1" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[
+				alter table FinScheduleDetails_Log modify SchPriPaid default null;
+update FinScheduleDetails_Log set SchPriPaid = 0 where SchPriPaid is null;
+create table sai_temp as select * from FinScheduleDetails_Log;
+update FinScheduleDetails_Log set SchPriPaid = null;
+alter table FinScheduleDetails_Log modify SchPriPaid number(1);
+update FinScheduleDetails_Log m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+alter table FinScheduleDetails_Log modify SchPriPaid number(1) not null;
+drop table sai_temp;
+
+		alter table FinScheduleDetails_PA modify SchPriPaid default null;
+update FinScheduleDetails_PA set SchPriPaid = 0 where SchPriPaid is null;
+create table sai_temp as select * from FinScheduleDetails_PA;
+update FinScheduleDetails_PA set SchPriPaid = null;
+alter table FinScheduleDetails_PA modify SchPriPaid number(1);
+update FinScheduleDetails_PA m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+alter table FinScheduleDetails_PA modify SchPriPaid number(1) not null;
+drop table sai_temp;
+
+		alter table FinScheduleDetails_Temp modify SchPriPaid default null;
+update FinScheduleDetails_Temp set SchPriPaid = 0 where SchPriPaid is null;
+create table sai_temp as select * from FinScheduleDetails_Temp;
+update FinScheduleDetails_Temp set SchPriPaid = null;
+alter table FinScheduleDetails_Temp modify SchPriPaid number(1);
+update FinScheduleDetails_Temp m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+alter table FinScheduleDetails_Temp modify SchPriPaid number(1) not null;
+drop table sai_temp;
+
+		alter table RejectFinScheduledetails modify SchPriPaid default null;
+update RejectFinScheduledetails set SchPriPaid = 0 where SchPriPaid is null;
+create table sai_temp as select * from RejectFinScheduledetails;
+update RejectFinScheduledetails set SchPriPaid = null;
+alter table RejectFinScheduledetails modify SchPriPaid number(1);
+update RejectFinScheduledetails m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+alter table RejectFinScheduledetails modify SchPriPaid number(1) not null;
+drop table sai_temp;
 		]]>
 		</sql>
 	</changeSet>
@@ -407,7 +446,7 @@ WHERE     NOT EXISTS
                   T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
                   T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision, T1.RepayRateBasis,
                    T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate,
-                   COALESCE(T5.RoleDesc, dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+                   COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
 		   T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
               T1.planEMIHAlw,T1.FinCurrAssetValue   
             FROM           FinanceMain_Temp T1 INNER JOIN
@@ -423,7 +462,7 @@ SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMet
                   T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
                   T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision,  T1.RepayRateBasis ,
                    T1.ManualSchedule , T1.TakeOverFinance  , T1.NextRolloverDate,
-                    COALESCE(T5.RoleDesc, dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+                    COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
 		    T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,  T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
 		    T1.planEMIHAlw,T1.FinCurrAssetValue  
             FROM           FinanceMain T1 INNER JOIN
