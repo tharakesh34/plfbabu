@@ -554,7 +554,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		// Fetch Total Process editor Details 
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				collateralType, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
-				"_PEView");
+				"_CLTVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {

@@ -318,7 +318,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		// Fetch Total Process editor Details 
 		List<FinanceReferenceDetail> cmtRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(CommitmentConstants.WF_NEWCOMMITMENT, 
-				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_PEView");
+				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_CMTVIEW");
 
 		if (cmtRefDetails != null && !cmtRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : cmtRefDetails) {

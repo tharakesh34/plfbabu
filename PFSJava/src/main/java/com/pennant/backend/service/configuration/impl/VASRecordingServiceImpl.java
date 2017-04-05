@@ -663,7 +663,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Fetch Total Process editor Details 
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_PEView");
+				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_VASVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {

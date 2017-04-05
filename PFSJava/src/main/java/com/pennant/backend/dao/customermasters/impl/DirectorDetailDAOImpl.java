@@ -62,6 +62,7 @@ import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -161,6 +162,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 			logger.warn("Exception: ", e);
 			directorDetail = null;
 		}
+		
 		logger.debug("Leaving");
 		return directorDetail;
 	}
@@ -187,7 +189,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName," );
 			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
-			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,lovDescDesignationName,");
+			selectSql.append(" lovDescCustAddrCountryName, lovDescDesignationName,");
 			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
@@ -201,7 +203,10 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				DirectorDetail.class);
 		
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);	
+		List<DirectorDetail> directorDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		
+		return 	directorDetails;
 	}
 	
 	/**
@@ -346,7 +351,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update CustomerDirectorDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DirectorId = :DirectorId, CustID = :CustID, FirstName = :FirstName," );
+		updateSql.append(" Set FirstName = :FirstName," );
 		updateSql.append(" MiddleName = :MiddleName, LastName = :LastName, ShortName = :ShortName," );
 		updateSql.append(" CustGenderCode = :CustGenderCode, CustSalutationCode = :CustSalutationCode,");
 		updateSql.append(" SharePerc = :SharePerc, CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );

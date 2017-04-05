@@ -140,7 +140,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
+			selectSql.append(" lovDescBankName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -152,8 +152,11 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerBankInfo.class);
+		
+		List<CustomerBankInfo> custBankInformation = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return custBankInformation;
 	}	
 	
 	
@@ -282,8 +285,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		updateSql.append(" Update CustomerBankInfo");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		
-		updateSql.append(" Set BankId = :BankId,CustID = :CustID, BankName = :BankName," );
-		updateSql.append(" AccountNumber = :AccountNumber, AccountType = :AccountType,SalaryAccount = :SalaryAccount,");
+		updateSql.append(" Set AccountNumber = :AccountNumber, AccountType = :AccountType,SalaryAccount = :SalaryAccount,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -427,9 +429,10 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 		
-		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+			int bankRcdCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			logger.debug("Leaving");
+			return 	bankRcdCount;
 		} catch(Exception e) {
 			logger.error("Exception", e);
 			throw e;

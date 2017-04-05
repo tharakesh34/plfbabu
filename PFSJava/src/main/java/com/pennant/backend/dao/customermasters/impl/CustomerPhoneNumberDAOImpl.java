@@ -101,7 +101,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		selectSql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
-			selectSql.append(" lovDescCustRecordType ,lovDescCustCIF,lovDescCustShrtName, ");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
@@ -231,8 +230,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerPhoneNumbers");
 		updateSql.append( StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PhoneCustID = :PhoneCustID, PhoneTypeCode = :PhoneTypeCode," );
-		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneTypePriority =:PhoneTypePriority," );
+		updateSql.append(" Set PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode, PhoneTypePriority =:PhoneTypePriority," );
 		updateSql.append(" PhoneNumber = :PhoneNumber," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
@@ -269,7 +267,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
-			selectSql.append(" lovDescCustRecordType ,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
@@ -281,8 +278,10 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
+		
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return customerPhoneNumbers;
 	}
 	
 	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id,String type, String phoneType) {
@@ -306,9 +305,10 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
-		
+
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return  customerPhoneNumbers;
 	}
 	
 	/**
@@ -383,8 +383,9 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerPhoneNumber.class);
 		
+		List<CustomerPhoneNumber> customerPhoneNumbers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving ");
-		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return  customerPhoneNumbers;
 	}
 
 	/**

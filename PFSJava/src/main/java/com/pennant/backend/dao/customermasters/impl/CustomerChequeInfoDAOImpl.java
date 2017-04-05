@@ -140,7 +140,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustCIF,lovDescCustShrtName,");
+			selectSql.append(" ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -152,8 +152,10 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
 		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerChequeInfo.class);
+		
+		List<CustomerChequeInfo> custCheques = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return custCheques;
 	}	
 	
 	
@@ -277,8 +279,7 @@ public class CustomerChequeInfoDAOImpl extends BasisCodeDAO<CustomerChequeInfo> 
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerChequeInfo");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, ChequeSeq = :ChequeSeq," );
-		updateSql.append(" MonthYear = :MonthYear, TotChequePayment = :TotChequePayment, Salary = :Salary, Debits = :Debits,");
+		updateSql.append(" Set MonthYear = :MonthYear, TotChequePayment = :TotChequePayment, Salary = :Salary, Debits = :Debits,");
 		updateSql.append(" ReturnChequeAmt = :ReturnChequeAmt, ReturnChequeCount = :ReturnChequeCount, Remarks = :Remarks," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );

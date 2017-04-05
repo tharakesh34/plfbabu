@@ -44,6 +44,7 @@ import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -51,18 +52,18 @@ import com.pennant.backend.util.PennantJavaUtil;
  * DAO methods implementation for the <b>CustomerEmploymentDetail model</b> class.<br>
  * 
  */
-public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<CustomerEmploymentDetail>
-        implements CustomerEmploymentDetailDAO {
+public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<CustomerEmploymentDetail> implements
+		CustomerEmploymentDetailDAO {
 
-	private static Logger logger = Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
+	private static Logger				logger	= Logger.getLogger(CustomerEmploymentDetailDAOImpl.class);
 
 	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public CustomerEmploymentDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Customer Employment Details details by key field
 	 * 
@@ -72,58 +73,18 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 	 *            (String) ""/_Temp/_View
 	 * @return CustomerEmploymentDetail
 	 */
-	/*@Override
-	public CustomerEmploymentDetail getCustomerEmploymentDetailByID(final long id,
-	        long custEmpName, String type) {
-		logger.debug("Entering");
-		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
-		customerEmploymentDetail.setId(id);
-		customerEmploymentDetail.setCustEmpName(custEmpName);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
-		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
-			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
-			selectSql.append(" lovDescCustCIF , lovDescCustShrtName, ");
-		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerEmpDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID and CustEmpName=:CustEmpName");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
-		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(CustomerEmploymentDetail.class);
-
-		try {
-			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(
-			        selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerEmploymentDetail = null;
-		}
-		logger.debug("Leaving");
-		return customerEmploymentDetail;
-	}
-	*/
 	@Override
 	public CustomerEmploymentDetail getCustomerEmploymentDetailByCustEmpId(long custEmpId, String type) {
 		logger.debug("Entering");
 		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
 		customerEmploymentDetail.setCustEmpId(custEmpId);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
 		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
 			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
-			selectSql.append(" lovDescCustCIF , lovDescCustShrtName, ");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
@@ -132,14 +93,13 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		selectSql.append(" Where CustEmpId = :CustEmpId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(CustomerEmploymentDetail.class);
+				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(
-			        selectSql.toString(), beanParameters, typeRowMapper);
+			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerEmploymentDetail = null;
@@ -149,30 +109,32 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 	}
 
 	@Override
-	public int getCustomerEmploymentByCustEmpName(final long id,
-	        long custEmpName,long custEmpId, String type) {
+	public int getCustomerEmploymentByCustEmpName(final long id, long custEmpName, long custEmpId, String type) {
 		logger.debug("Entering");
 		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
 		customerEmploymentDetail.setCustEmpId(custEmpId);
 		customerEmploymentDetail.setId(id);
 		customerEmploymentDetail.setCustEmpName(custEmpName);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From CustomerEmpDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :custID and CustEmpName=:CustEmpName and CustEmpId != :CustEmpId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
-		
-		logger.debug("Leaving");
+
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
-		} catch(Exception e) {
+			int custEmployment = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					Integer.class);
+			logger.debug("Leaving");
+			return custEmployment;
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			throw e;
 		}
 	}
+
 	/**
 	 * Method to return the customer details based on given customer id.
 	 */
@@ -188,14 +150,13 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		selectSql.append(" Where CustID =:custID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(CustomerEmploymentDetail.class);
+				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(
-			        selectSql.toString(), beanParameters, typeRowMapper);
+			customerEmploymentDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
+					beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			customerEmploymentDetail = null;
@@ -235,22 +196,20 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		deleteSql.append(" Where CustEmpId=:CustEmpId ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
-			        beanParameters);
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails = getError("41004", customerEmploymentDetail.getCustID(),
-				        customerEmploymentDetail.getUserDetails().getUsrLanguage());
+						customerEmploymentDetail.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			ErrorDetails errorDetails = getError("41006", customerEmploymentDetail.getCustID(),
-			        customerEmploymentDetail.getUserDetails().getUsrLanguage());
+					customerEmploymentDetail.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -278,7 +237,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 			logger.debug("get NextID:" + customerEmploymentDetail.getCustEmpId());
 		}
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append(" Insert Into CustomerEmpDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CustEmpId,CustID, CustEmpName, CustEmpFrom, CustEmpTo, CustEmpDesg,");
@@ -287,13 +246,11 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustEmpId, :CustID, :CustEmpName, :CustEmpFrom, :CustEmpTo, :CustEmpDesg,");
 		insertSql.append("	:CustEmpDept, :CustEmpType, :CurrentEmployer,");
-		insertSql
-		        .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
@@ -321,8 +278,7 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerEmpDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustEmpId = :CustEmpId, CustID = :CustID, CustEmpName = :CustEmpName, ");
-		updateSql.append(" CustEmpDesg = :CustEmpDesg, CustEmpDept = :CustEmpDept,");
+		updateSql.append(" Set CustEmpDesg = :CustEmpDesg, CustEmpDept = :CustEmpDept,");
 		updateSql.append(" CustEmpType = :CustEmpType,CustEmpFrom = :CustEmpFrom, CurrentEmployer =:CurrentEmployer,");
 		updateSql.append(" CustEmpTo = :CustEmpTo , Version = :Version ,");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
@@ -337,14 +293,13 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :" + recordCount);
 			ErrorDetails errorDetails = getError("41003", customerEmploymentDetail.getCustID(),
-			        customerEmploymentDetail.getUserDetails().getUsrLanguage());
+					customerEmploymentDetail.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -368,8 +323,8 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		parms[1][0] = String.valueOf(customerID);
 		parms[0][0] = PennantJavaUtil.getLabel("label_CustID") + ":" + parms[1][0];
 
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-		        parms[0], parms[1]), userLanguage);
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
+				userLanguage);
 	}
 
 	@Override
@@ -383,7 +338,6 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		if (type.contains("View")) {
 			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
 			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
-			selectSql.append(" lovDescCustCIF , lovDescCustShrtName, ");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
@@ -392,13 +346,15 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		selectSql.append(" Where CustID = :custID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-		        .newInstance(CustomerEmploymentDetail.class);
+				.newInstance(CustomerEmploymentDetail.class);
+
+		List<CustomerEmploymentDetail> custEmploymentDetails = this.namedParameterJdbcTemplate.query(
+				selectSql.toString(), beanParameters, typeRowMapper);
+
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-		        typeRowMapper);
+		return custEmploymentDetails;
 
 	}
 
@@ -412,12 +368,12 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where CustID =:CustID ");
 		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-		        customerEmploymentDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
+
 	/**
 	 * Fetch current version of the record.
 	 * 
@@ -435,14 +391,14 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Version FROM CustomerEmpDetails");
-		
+
 		selectSql.append(" WHERE CustId = :CustId AND CustEmpName = :CustEmpName");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		
+
+		int returnRcds = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
 		logger.debug("Leaving");
-		
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		return returnRcds;
 	}
 
 }

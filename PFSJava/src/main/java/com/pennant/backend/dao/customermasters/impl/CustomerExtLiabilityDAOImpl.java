@@ -105,7 +105,7 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescCustCIF,lovDescCustShrtName,lovDescFinStatus,");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -142,7 +142,7 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		selectSql.append(" SELECT CustID, LiabilitySeq, FinDate, FinType, BankName,  ");
 		selectSql.append(" OriginalAmount, InstalmentAmount, OutStandingBal, FinStatus, ");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,lovDescFinType,lovDescCustCIF,lovDescCustShrtName,lovDescFinStatus,");
+			selectSql.append(" lovDescBankName,lovDescFinType,lovDescFinStatus,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -154,8 +154,10 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
 		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerExtLiability.class);
+		
+		List <CustomerExtLiability> custExtLiabilities = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return custExtLiabilities;
 	}	
 	
 	
@@ -279,8 +281,7 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerExtLiability");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, LiabilitySeq = :LiabilitySeq," );
-		updateSql.append(" FinDate = :FinDate, FinType = :FinType, BankName = :BankName, OriginalAmount = :OriginalAmount,");
+		updateSql.append(" Set FinDate = :FinDate, FinType = :FinType, BankName = :BankName, OriginalAmount = :OriginalAmount,");
 		updateSql.append(" InstalmentAmount = :InstalmentAmount, OutStandingBal = :OutStandingBal, FinStatus = :FinStatus,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );

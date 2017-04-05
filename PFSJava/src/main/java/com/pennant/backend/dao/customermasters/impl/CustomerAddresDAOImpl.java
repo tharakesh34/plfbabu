@@ -102,7 +102,6 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName," );
-			selectSql.append(" lovDescCustRecordType, lovDescCustCIF, lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -141,7 +140,6 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName," );
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName," );
-			selectSql.append(" lovDescCustRecordType, lovDescCustCIF, lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -154,8 +152,9 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerAddres.class);
 
+		List<CustomerAddres> customerAddresses = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper); 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return customerAddresses;
 	}
 
 	/**
@@ -292,8 +291,7 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustomerAddresses");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, CustAddrType = :CustAddrType," );
-		updateSql.append(" CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
+		updateSql.append(" Set CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr," );
 		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1," );
 		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox," );
 		updateSql.append(" CustAddrCountry = :CustAddrCountry, CustAddrProvince = :CustAddrProvince, CustAddrPriority = :CustAddrPriority, " );

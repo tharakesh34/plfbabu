@@ -1283,15 +1283,17 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		mapSqlParameterSource.addValue("CustID", custId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, FinStatus, FinStartDate,FinCcy, ");
-		selectSql.append(" FinAmount, DownPayment,FeeChargeAmt, InsuranceAmt, FinRepaymentAmount, NumberOfTerms, LovDescFinTypeName "); 
- 		selectSql.append(" from FinanceEnquiry_View ");
+		selectSql.append(" FinAmount, DownPayment,FeeChargeAmt, InsuranceAmt, FinRepaymentAmount, NumberOfTerms "); 
+		//selectSql.append(" from FinanceEnquiry_View ");
+		selectSql.append(" from FinanceMain ");
  		selectSql.append(" Where CustId = :CustID");
  		
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 		
+		List<FinanceEnquiry> financesList = this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,typeRowMapper);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,typeRowMapper);
+		return financesList;
 	}
 	
 	@Override

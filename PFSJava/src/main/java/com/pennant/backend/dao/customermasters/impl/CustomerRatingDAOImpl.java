@@ -97,7 +97,6 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType," );
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustRecordType , lovDescCustCIF, lovDescCustShrtName," );
 			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
@@ -133,7 +132,6 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType, " );
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustRecordType , lovDescCustCIF, lovDescCustShrtName," );
 			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode," );
@@ -146,8 +144,9 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
+		List<CustomerRating> customerRatings = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return customerRatings;
 	}
 	
 	/** 
@@ -169,8 +168,10 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
 		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
 
+		List<CustomerRating> customerRatings = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper); 
+
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
+		return customerRatings;
 	}
 
 	/**
@@ -294,7 +295,7 @@ public class CustomerRatingDAOImpl extends BasisCodeDAO<CustomerRating> implemen
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustomerRatings" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CustID = :CustID, CustRatingType = :CustRatingType, CustRatingCode = :CustRatingCode," );
+		updateSql.append(" Set CustRatingCode = :CustRatingCode," );
 		updateSql.append(" CustRating = :CustRating, ValueType = :ValueType ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode,");

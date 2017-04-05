@@ -105,8 +105,8 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
 		selectSql.append(" CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType," );
-			selectSql.append(" lovDescCustCIF, lovDescCustShrtName,DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand,");
+			selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, " );
+			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -151,8 +151,8 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
 		selectSql.append(", DocPurpose, DocUri");
 		if (type.contains("View")) {
-			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType");
-			selectSql.append(", lovDescCustCIF, lovDescCustShrtName,DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand");
+			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
+			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,DocIssuedAuthorityMand");
 		}
 		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -165,8 +165,10 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
 		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerDocument.class);
+		
+		List<CustomerDocument> customerDocuments =  this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		return customerDocuments;
 	}
 	
 	public List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId) {
@@ -178,8 +180,8 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(" SELECT CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn," );
 		selectSql.append(" CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified," );
 		selectSql.append(" CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive,");
-		selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, lovDescCustRecordType, lovDescCustCIF,");
-		selectSql.append(" lovDescCustShrtName,DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, DocPurpose, DocUri,");
+		selectSql.append(" lovDescCustDocCategory, lovDescCustDocIssuedCountry, ");
+		selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, DocPurpose, DocUri,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  CustomerDocuments_AView");
@@ -189,8 +191,11 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(	customerDocument);
 		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(
 				CustomerDocument.class);
+		
+		List<CustomerDocument> customerDocuments =  this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),	beanParameters, typeRowMapper);
+		return customerDocuments;
 	}
 
 	/**
@@ -336,10 +341,10 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustomerDocuments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, CustDocType = :CustDocType, CustDocTitle = :CustDocTitle," );
+		updateSql.append(" Set CustDocType = :CustDocType, CustDocTitle = :CustDocTitle," );
 		updateSql.append(" CustDocSysName = :CustDocSysName, CustDocRcvdOn = :CustDocRcvdOn," );
 		updateSql.append(" CustDocExpDate = :CustDocExpDate, CustDocIssuedOn = :CustDocIssuedOn," );
-		updateSql.append(" CustDocCategory = :CustDocCategory, CustDocName=:CustDocName," );
+		updateSql.append(" CustDocName=:CustDocName," );
 		updateSql.append(" CustDocIssuedCountry = :CustDocIssuedCountry, CustDocIsVerified = :CustDocIsVerified," );
 		updateSql.append(" CustDocVerifiedBy = :CustDocVerifiedBy, CustDocIsAcrive = :CustDocIsAcrive, DocRefId = :DocRefId,");
 		updateSql.append(" DocPurpose = :DocPurpose, DocUri = :DocUri, Version = :Version , LastMntBy = :LastMntBy,");
@@ -377,7 +382,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		selectSql.append(" CustDocType DocType, CustDocName DocName, DocRefId, DocPurpose, DocUri,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescCustDocCategory lovDescDocCategoryName, CustDocTitle, CustDocSysName,");
-			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, lovDescCustCIF, lovDescCustShrtName,");
+			selectSql.append(" custDocRcvdOn, custDocExpDate, custDocIssuedOn, ");
 			selectSql.append(" custDocIssuedCountry, lovDescCustDocIssuedCountry, custDocIsVerified, custDocVerifiedBy, custDocIsAcrive, ");
 			selectSql.append(" DocExpDateIsMand,DocIssueDateMand,DocIdNumMand, ");
 		}
@@ -427,8 +432,10 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		
+		List<DocumentDetails> documentDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);  
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),parameterMap, typeRowMapper);
+		return documentDetails;
 	}
 	
 	/**
@@ -456,8 +463,11 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
 		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		
+		List<DocumentDetails> documentDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		return documentDetails;	
 	}
 	
 	/**

@@ -260,53 +260,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		financeReferenceDetail.setFinType(financeType);
 		financeReferenceDetail.setFinEvent(finEvent);
 		
-		StringBuilder selectSql = new StringBuilder("Select FinRefDetailId, FinType,FinEvent, FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage, ");
-		selectSql.append("OverRide,OverRideValue, AllowDeviation, AllowWaiver, AllowPostpone, AllowExpire, AlertType, ");
-		selectSql.append("Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		
-		if (StringUtils.trimToEmpty(type).contains("PEView")) {
-			selectSql.append(",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage,");
-			selectSql.append("lovDescAggRuleName,AggType,AllowMultiple,ModuleType,lovDescRefDesc, ");
-			selectSql.append("lovDescElgRuleValue,lovDescFinTypeDescName,lovDescFinCcyCode, lovDescProductCodeName,lovDescRuleReturnType,");
-			selectSql.append("lovDescminScore,lovDescisoverride,lovDescoverrideScore,");
-			selectSql.append("lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount ");
-		}
-//		
-//		if (StringUtils.trimToEmpty(type).contains("View")) {
-//			selectSql.append(",lovDescFinTypeDescName, lovDescRefDesc");
-//		}
-//		
-//		if (StringUtils.trimToEmpty(type).contains("_AAView") || StringUtils.trimToEmpty(type).contains("_TAView")) {
-//			selectSql.append(",lovDescAggReportName,lovDescAggReportPath,lovDescCodelov, lovDescNamelov, lovDescAggImage, lovDescAggRuleName,AggType,AllowMultiple,ModuleType");
-//		} else if ("_AEView".equals(StringUtils.trimToEmpty(type)) || "_TEView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(",lovDescElgRuleValue,lovDescCodelov, lovDescNamelov");
-//		} else if ("_ASGView".equals(StringUtils.trimToEmpty(type)) || "_TSGView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov");
-//		} else if ("_ACSGView".equals(StringUtils.trimToEmpty(type)) || "_TCSGView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(",lovDescminScore,lovDescisoverride,lovDescoverrideScore,lovDescCodelov, lovDescNamelov");
-//		} else if ("_AQView".equals(StringUtils.trimToEmpty(type)) || "_TQView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(",lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount, lovDescElgRuleValue, lovDescRuleReturnType ");
-//		} else if ("_ACView".equals(StringUtils.trimToEmpty(type)) || "_TCView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) || "_TTView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov, lovDescCodelov ");
-//		} else if ("_AFDView".equals(StringUtils.trimToEmpty(type)) || "_TFDView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_ACDView".equals(StringUtils.trimToEmpty(type)) || "_TCDView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_ABDView".equals(StringUtils.trimToEmpty(type)) || "_TBDView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_APCView".equals(StringUtils.trimToEmpty(type)) || "_TPCView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_ARCView".equals(StringUtils.trimToEmpty(type)) || "_TRCView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_ALDView".equals(StringUtils.trimToEmpty(type)) || "_TLDView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		} else if ("_TATView".equals(StringUtils.trimToEmpty(type))) {
-//			selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");
-//		}
-		
-		selectSql.append(" From LMTFinRefDetail");
+		StringBuilder selectSql = new StringBuilder("Select * FROM  LMTFINREFDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent ");
 		
@@ -314,8 +268,10 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceReferenceDetail.class);
 		
+		List<FinanceReferenceDetail> financeReferenceDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);  
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return financeReferenceDetails;
 		
 	}
 	
@@ -562,7 +518,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update LMTFinRefDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinRefDetailId = :FinRefDetailId, FinType = :FinType, FinEvent=:FinEvent, FinRefType = :FinRefType, FinRefId = :FinRefId, ");
+		updateSql.append(" Set FinRefId = :FinRefId, ");
 		updateSql.append(" IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, ");
 		updateSql.append(" AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue, ");
 		updateSql.append(" AllowDeviation = :AllowDeviation, AllowWaiver = :AllowWaiver, AllowPostpone = :AllowPostpone,  AllowExpire = :AllowExpire, AlertType = :AlertType, ");

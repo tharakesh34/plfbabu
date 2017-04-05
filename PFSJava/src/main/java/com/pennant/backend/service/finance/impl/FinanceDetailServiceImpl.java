@@ -1351,7 +1351,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 		
 		List<FinanceReferenceDetail>  finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				financeType.getFinType(), StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG :  procEdtEvent, "_PEView");
+				financeType.getFinType(), StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG :  procEdtEvent, "_FINVIEW");
 		
 		if(finRefDetails != null && !finRefDetails.isEmpty()){
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {

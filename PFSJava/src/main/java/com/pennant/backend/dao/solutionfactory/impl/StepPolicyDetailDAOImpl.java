@@ -136,8 +136,9 @@ public class StepPolicyDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> impl
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyDetail);
 		RowMapper<StepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(StepPolicyDetail.class);
 		
+		List<StepPolicyDetail> StepPolicyDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return StepPolicyDetails;
 	}
 	
 	
@@ -238,7 +239,7 @@ public class StepPolicyDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> impl
 		
 		StringBuilder updateSql = new StringBuilder("Update StepPolicyDetail" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PolicyCode = :PolicyCode, StepNumber = :StepNumber, TenorSplitPerc = :TenorSplitPerc,");
+		updateSql.append(" Set TenorSplitPerc = :TenorSplitPerc,");
 		updateSql.append(" RateMargin = :RateMargin,EmiSplitPerc = :EmiSplitPerc,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
