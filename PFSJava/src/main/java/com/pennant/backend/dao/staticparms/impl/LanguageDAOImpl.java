@@ -225,7 +225,7 @@ public class LanguageDAOImpl extends BasisCodeDAO<Language> implements LanguageD
 		
 		updateSql.append("Update BMTLanguage");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set LngCode = :LngCode, LngDesc = :LngDesc, LngNumber = :LngNumber,");
+		updateSql.append(" Set LngDesc = :LngDesc, LngNumber = :LngNumber,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,  RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");

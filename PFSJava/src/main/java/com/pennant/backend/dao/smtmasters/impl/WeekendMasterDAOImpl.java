@@ -278,7 +278,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 
 		StringBuilder updateSql = new StringBuilder("Update SMTWeekendMaster");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set WeekendCode = :WeekendCode, WeekendDesc = :WeekendDesc, Weekend = :Weekend, ");
+		updateSql.append(" Set WeekendDesc = :WeekendDesc, Weekend = :Weekend, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql
 				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

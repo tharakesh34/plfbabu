@@ -232,7 +232,7 @@ public class SponsorBankDAOImpl extends BasisCodeDAO<SponsorBank> implements Spo
 		StringBuilder updateSql = new StringBuilder("Update SponsorBank");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-				.append(" Set SponsorBankCode = :SponsorBankCode, SponsorBankName = :SponsorBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo, AccountType = :AccountType, Active = :Active");
+				.append(" Set SponsorBankName = :SponsorBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo, AccountType = :AccountType, Active = :Active");
 		updateSql
 				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SponsorBankCode =:SponsorBankCode");

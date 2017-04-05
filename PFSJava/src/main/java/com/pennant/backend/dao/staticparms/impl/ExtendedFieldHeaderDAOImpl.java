@@ -266,7 +266,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		
 		StringBuilder	updateSql =new StringBuilder("Update ExtendedFieldHeader");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ModuleId = :ModuleId, ModuleName = :ModuleName, " );
+		updateSql.append(" Set  ModuleName = :ModuleName, " );
 		updateSql.append(" SubModuleName = :SubModuleName, TabHeading = :TabHeading, " );
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );

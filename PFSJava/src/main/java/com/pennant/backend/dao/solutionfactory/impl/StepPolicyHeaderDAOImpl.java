@@ -214,7 +214,7 @@ public class StepPolicyHeaderDAOImpl extends BasisCodeDAO<StepPolicyHeader> impl
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update StepPolicyHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set PolicyCode = :PolicyCode, PolicyDesc = :PolicyDesc, StepType = :StepType,");
+		updateSql.append(" Set PolicyDesc = :PolicyDesc, StepType = :StepType,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

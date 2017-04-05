@@ -219,7 +219,7 @@ public class LovFieldCodeDAOImpl extends BasisCodeDAO<LovFieldCode> implements L
 
 		updateSql.append("Update BMTLovFieldCode");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FieldCode = :FieldCode, FieldCodeDesc = :FieldCodeDesc, FieldCodeType = :FieldCodeType,");
+		updateSql.append(" Set FieldCodeDesc = :FieldCodeDesc, FieldCodeType = :FieldCodeType,");
 		updateSql.append(" FieldEdit=:FieldEdit, isActive = :isActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

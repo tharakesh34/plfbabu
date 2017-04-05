@@ -273,7 +273,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		int recordCount = 0;
 		StringBuilder	updateSql =new StringBuilder("Update ExtendedFieldDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ModuleId = :ModuleId, FieldName = :FieldName, FieldType = :FieldType, " );
+		updateSql.append(" Set FieldType = :FieldType, " );
 		updateSql.append(" FieldLength = :FieldLength, FieldPrec = :FieldPrec, FieldLabel = :FieldLabel, " );
 		updateSql.append(" FieldMandatory = :FieldMandatory, FieldConstraint = :FieldConstraint, " );
 		updateSql.append(" FieldSeqOrder = :FieldSeqOrder, " );

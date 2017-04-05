@@ -231,7 +231,7 @@ public class InterestRateBasisCodeDAOImpl extends BasisCodeDAO<InterestRateBasis
 
 		updateSql.append("Update BMTIntRateBasisCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IntRateBasisCode = :IntRateBasisCode, IntRateBasisDesc = :IntRateBasisDesc,");
+		updateSql.append(" Set IntRateBasisDesc = :IntRateBasisDesc,");
 		updateSql.append(" IntRateBasisIsActive = :IntRateBasisIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

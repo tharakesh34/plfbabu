@@ -217,7 +217,7 @@ public class DeviationParamDAOImpl extends BasisCodeDAO<DeviationParam> implemen
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update DeviationParams");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set Code = :Code, Description = :Description, Type = :Type, Formula = :Formula, DataType = :DataType");
+		updateSql.append(" Set Description = :Description, Type = :Type, Formula = :Formula, DataType = :DataType");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Code =:Code");
 		

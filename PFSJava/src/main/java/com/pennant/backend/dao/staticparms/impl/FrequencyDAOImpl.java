@@ -229,7 +229,7 @@ public class FrequencyDAOImpl extends BasisCodeDAO<Frequency> implements Frequen
 
 		updateSql.append("Update BMTFrequencies");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FrqCode = :FrqCode, FrqDesc = :FrqDesc, FrqIsActive = :FrqIsActive," );
+		updateSql.append(" Set FrqDesc = :FrqDesc, FrqIsActive = :FrqIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

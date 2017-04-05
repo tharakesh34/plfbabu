@@ -259,7 +259,7 @@ public class OverdueChargeDAOImpl extends BasisCodeDAO<OverdueCharge> implements
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinODCHeader");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ODCRuleCode = :ODCRuleCode, ODCPLAccount = :ODCPLAccount, ODCCharityAccount = :ODCCharityAccount,");
+		updateSql.append(" Set ODCPLAccount = :ODCPLAccount, ODCCharityAccount = :ODCCharityAccount,");
 		updateSql.append(" ODCPLSubHead = :ODCPLSubHead, ODCCharitySubHead = :ODCCharitySubHead, ODCPLShare = :ODCPLShare,");
 		updateSql.append(" ODCSweepCharges = :ODCSweepCharges, ODCRuleDescription = :ODCRuleDescription, Version = :Version , ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

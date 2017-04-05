@@ -308,8 +308,8 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 
 		StringBuilder	updateSql =new StringBuilder(" Update LimitParams");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set QueryId = :QueryId , QueryCode = :QueryCode, QueryModule = :QueryModule," );
-		updateSql.append(" QuerySubCode=:QuerySubCode, QueryDesc=:QueryDesc,SQLQuery = :SQLQuery," );
+		updateSql.append(" Set QueryId = :QueryId ," );
+		updateSql.append(" QueryDesc=:QueryDesc,SQLQuery = :SQLQuery," );
 		updateSql.append(" ActualBlock = :ActualBlock, Active =:Active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );

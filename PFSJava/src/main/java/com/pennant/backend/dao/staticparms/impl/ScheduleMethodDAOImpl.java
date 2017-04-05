@@ -228,7 +228,7 @@ public class ScheduleMethodDAOImpl extends BasisCodeDAO<ScheduleMethod> implemen
 
 		updateSql.append("Update BMTSchdMethod");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SchdMethod = :SchdMethod, SchdMethodDesc = :SchdMethodDesc,");
+		updateSql.append(" Set SchdMethodDesc = :SchdMethodDesc,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

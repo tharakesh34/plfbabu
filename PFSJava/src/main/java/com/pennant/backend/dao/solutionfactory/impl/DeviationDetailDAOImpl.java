@@ -317,7 +317,7 @@ public class DeviationDetailDAOImpl extends BasisNextidDaoImpl<DeviationDetail> 
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update DeviationDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DeviationID = :DeviationID, UserRole = :UserRole, DeviatedValue = :DeviatedValue");
+		updateSql.append(" Set DeviatedValue = :DeviatedValue");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DeviationID =:DeviationID and UserRole=:UserRole ");
 		

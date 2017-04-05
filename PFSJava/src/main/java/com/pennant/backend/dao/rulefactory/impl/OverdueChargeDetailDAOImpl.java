@@ -266,7 +266,7 @@ public class OverdueChargeDetailDAOImpl extends BasisCodeDAO<OverdueChargeDetail
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinODCDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ODCRuleCode = :ODCRuleCode, ODCCustCtg = :ODCCustCtg, ODCType = :ODCType, ODCOn = :ODCOn,");
+		updateSql.append(" Set ODCType = :ODCType, ODCOn = :ODCOn,");
 		updateSql.append(" ODCAmount = :ODCAmount, ODCGraceDays = :ODCGraceDays, ODCAllowWaiver = :ODCAllowWaiver, ODCMaxWaiver = :ODCMaxWaiver");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

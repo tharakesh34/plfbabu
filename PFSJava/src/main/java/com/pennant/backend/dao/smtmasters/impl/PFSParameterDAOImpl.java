@@ -229,7 +229,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		logger.debug("Entering ");
 		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SysParmCode = :SysParmCode, SysParmDesc = :SysParmDesc, " );
+		updateSql.append(" Set SysParmDesc = :SysParmDesc, " );
 		updateSql.append(" SysParmType = :SysParmType, SysParmMaint = :SysParmMaint, " );
 		updateSql.append(" SysParmValue = :SysParmValue, SysParmLength = :SysParmLength, " );
 		updateSql.append(" SysParmDec = :SysParmDec, SysParmList = :SysParmList, " );

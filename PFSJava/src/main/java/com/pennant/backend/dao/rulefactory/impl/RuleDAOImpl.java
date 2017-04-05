@@ -418,7 +418,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 
 		updateSql.append("Update Rules");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RuleCode = :RuleCode, RuleModule = :RuleModule, RuleEvent =:RuleEvent,RuleCodeDesc = :RuleCodeDesc," );
+		updateSql.append(" Set RuleCodeDesc = :RuleCodeDesc," );
 		updateSql.append(" WaiverDecider=:WaiverDecider, Waiver =:Waiver, WaiverPerc=:WaiverPerc , SQLRule = :SQLRule,");
 		updateSql.append(" AllowDeviation =:AllowDeviation, CalFeeModify = :CalFeeModify, ActualBlock = :ActualBlock ,SeqOrder=:SeqOrder,");
 		updateSql.append(" ReturnType =:ReturnType,DeviationType =:DeviationType, GroupId=:GroupId,FeeToFinance=:FeeToFinance,  Revolving=:Revolving,FixedOrVariableLimit=:FixedOrVariableLimit,Active =:Active");
