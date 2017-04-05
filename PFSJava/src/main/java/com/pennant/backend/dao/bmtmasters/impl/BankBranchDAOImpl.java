@@ -284,7 +284,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update BankBranches");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set BankBranchID = :BankBranchID, BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
+		updateSql.append(" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
 		updateSql.append(",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BankBranchID =:BankBranchID");

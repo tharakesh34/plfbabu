@@ -219,7 +219,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 
 		updateSql.append("Update BMTProduct");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProductCode = :ProductCode, ProductDesc = :ProductDesc, ProductCategory = :ProductCategory,");
+		updateSql.append(" Set ProductDesc = :ProductDesc, ProductCategory = :ProductCategory,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

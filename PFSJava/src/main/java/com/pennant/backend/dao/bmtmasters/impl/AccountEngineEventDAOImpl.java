@@ -259,7 +259,7 @@ public class AccountEngineEventDAOImpl extends BasisCodeDAO<AccountEngineEvent>	
 
 		updateSql.append("Update BMTAEEvents");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AEEventCode = :AEEventCode, AEEventCodeDesc = :AEEventCodeDesc," );
+		updateSql.append(" Set AEEventCodeDesc = :AEEventCodeDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

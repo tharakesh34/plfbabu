@@ -231,7 +231,7 @@ public class RatingCodeDAOImpl extends BasisCodeDAO<RatingCode> implements Ratin
 		
 		updateSql.append("Update BMTRatingCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RatingType = :RatingType, RatingCode = :RatingCode, RatingCodeDesc = :RatingCodeDesc,");
+		updateSql.append(" Set RatingCodeDesc = :RatingCodeDesc,");
 		updateSql.append(" RatingIsActive = :RatingIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
