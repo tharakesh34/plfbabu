@@ -1279,15 +1279,19 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
 				String label = "";
-				int droplinefrqDay = FrequencyUtil.getIntFrequencyDay(aFinanceMain.getDroplineFrq());
-				int rpyFrqDay =  FrequencyUtil.getIntFrequencyDay(aFinanceMain.getRepayFrq());
+				
+				
 				boolean isSameDropLineDate = false;
 				boolean odAvailable = false;
-				if(StringUtils.isNotEmpty(aFinanceMain.getDroplineFrq())){
+				
+				if(StringUtils.isEmpty(aFinanceMain.getDroplineFrq())){
+					isLimitDrop = false;
+				}else{
+					isLimitDrop = true;
+				}
+				
 					for(OverdraftScheduleDetail odSchedule:getFinScheduleData().getOverdraftScheduleDetails()){
-
-						isLimitDrop = true;
-
+						//overdraft created
 						if(odSchedule.getDroplineDate().compareTo(aFinanceMain.getFinStartDate())==0 && 
 								DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())==0){
 							label = Labels.getLabel("label_limitOverdraft");
@@ -1296,112 +1300,88 @@ public class FinScheduleListItemRenderer implements Serializable{
 							availableLimit = odSchedule.getODLimit();
 							odCount = 0;
 							break;
-						}else if(droplinefrqDay != rpyFrqDay){
-							if(isLimitIncrease){
-								odSchedule = getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
-								odAvailable = true;
-							}else if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 && 
-									DateUtility.compare(odSchedule.getDroplineDate(), getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate())>0){
-								 if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-2 && 
-										DateUtility.compare(odSchedule.getDroplineDate(),aFinanceMain.getMaturityDate())== 0 && 
-										DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())==0 ){
-									label = Labels.getLabel("label_LimitExpiry");
-									odAvailable = true;
-									isSameDropLineDate = true;
-								}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())<= 0){
-									if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate()) == 0){
-										isSameDropLineDate = true;
-									}
-									label = Labels.getLabel("label_LimitDrop");
-									if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0){
-										if(odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)<=0){
-											label = Labels.getLabel("label_LimitIncrease");
-											limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-										}
-									}
-									odAvailable = true;
-								}
-							}
-						}else if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate()) == 0){
+						} 
+						//to check same droplinedate to true
+						if(DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate()) == 0){
 							isSameDropLineDate = true;
-							if(isLimitIncrease){
-								odSchedule = getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
-								odAvailable = true;
-							}else if(DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0){
-								label = Labels.getLabel("label_LimitExpiry");
-								odAvailable = true;
-							}else{
+						}
+						//lIMIT INCREASE
+						if(isLimitIncrease ){
+							odSchedule = getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
+							odAvailable = true;
+						}
+						//for limit expiry
+						
+						if(DateUtility.compare(odSchedule.getDroplineDate(),aFinanceMain.getMaturityDate())== 0 && 
+								DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getDefSchdDate())==0 &&
+								DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0){
+							label = Labels.getLabel("label_LimitExpiry");
+							odAvailable = true;
+							odCount = getFinScheduleData().getOverdraftScheduleDetails().size() - 1;
+							if(!isLimitDrop){
+								label = Labels.getLabel("label_overDraftExpiry");
+								availableLimit = availableLimit.subtract(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getLimitDrop());
+								odLimit = odLimit.subtract(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getLimitDrop());
+								break;
+							}
+						}else if(isLimitDrop){
+							if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 &&
+									DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())<= 0){
 								label = Labels.getLabel("label_LimitDrop");
 								if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0){
-									 if(odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)<=0){
-									label = Labels.getLabel("label_LimitIncrease");
-									limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-									 }
+									if(odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)<=0){
+										label = Labels.getLabel("label_LimitIncrease");
+										limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
+									}
 								}
 								odAvailable = true;
 							}
-						}else{
-							if(droplinefrqDay == rpyFrqDay){
-								if(DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getDefSchdDate()) > 0 && 
-										DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())< 0){
-									label = Labels.getLabel("label_LimitDrop");
-									odAvailable = true;
-								}
+						}
+						
+					if (odAvailable) {
+						//if there is limit increase then need to get the below fields to set the values and then for the odcount increment
+						if (isLimitIncrease || (odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0
+								&& odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) <= 0)) {
+							limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
+							availableLimit = availableLimit.add(limitIncreaseAmt);
+							odLimit = odLimit.add(limitIncreaseAmt);
+							limitDrop = limitIncreaseAmt;
+							odCount = odCount + 1;
+							if (isLimitIncrease) {
+								label = Labels.getLabel("label_LimitIncrease");
+								isLimitIncrease = false;
+							}
+						} else {
+							
+							limitDrop = odSchedule.getLimitDrop();
+							odLimit = odSchedule.getODLimit();
+						
+							if (getFinanceScheduleDetail().isDisbOnSchDate()
+									&& DateUtility.compare(odSchedule.getDroplineDate(),
+											getFinanceScheduleDetail().getDefSchdDate()) == 0) {
+								availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail()
+										.getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount()));
+							} else {
+								availableLimit = odSchedule.getODLimit()
+										.subtract(getFinanceScheduleDetail().getClosingBalance());
+							}
+
+							if (odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0
+									&& odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) > 0) {
+								isLimitIncrease = true;
+							}
+
+							if (DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(),
+									aFinanceMain.getMaturityDate()) != 0) {
+								odCount = odCount + 1;
 							}
 						}
 
-						if(odAvailable){
-							if((odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0 && odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)<0) || isLimitIncrease){
-								limitIncreaseAmt = odSchedule.getLimitIncreaseAmt();
-								availableLimit = availableLimit.add(limitIncreaseAmt);
-								odLimit = odLimit.add(limitIncreaseAmt);
-								limitDrop = limitIncreaseAmt;
-								if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0 && odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)<0){
-									odCount = odCount +1;
-								}else{
-									if(isLimitIncrease){
-										label = Labels.getLabel("label_LimitIncrease");
-										isLimitIncrease = false;
-										odCount = odCount +1;
-									}
-								}
-							}else{
-								limitDrop = odSchedule.getLimitDrop();
-								odLimit = odSchedule.getODLimit();
-								if(getFinanceScheduleDetail().isDisbOnSchDate() && DateUtility.compare(odSchedule.getDroplineDate(),getFinanceScheduleDetail().getDefSchdDate())== 0){
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance().subtract(getFinanceScheduleDetail().getDisbAmount()));
-								}else{
-									availableLimit = odSchedule.getODLimit().subtract(getFinanceScheduleDetail().getClosingBalance());
-								}
-								if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO)>0 && odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO)>0 ){
-									isLimitIncrease = true;
-								}
-								if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate()) != 0){
-									odCount = odCount +1;
-								}else{
-									odCount = getFinScheduleData().getOverdraftScheduleDetails().size()-1;
-								}
-							}
-							
-							break;
-						}
+						break;
 					}
-				}else{
-					isLimitDrop = false;
-					if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getFinStartDate())==0){
-						label = Labels.getLabel("label_limitOverdraft");
 					}
-					odLimit = getFinScheduleData().getFinanceMain().getFinAssetValue();
-					availableLimit = odLimit.subtract(getFinanceScheduleDetail().getClosingBalance().
-							subtract(getFinanceScheduleDetail().getDisbAmount()));
-					if(DateUtility.compare(getFinanceScheduleDetail().getDefSchdDate(), aFinanceMain.getMaturityDate())==0){
-						label = Labels.getLabel("label_overDraftExpiry");
-						odCount = getFinScheduleData().getOverdraftScheduleDetails().size()-1;
-						availableLimit = availableLimit.subtract(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getLimitDrop());
-						odLimit = odLimit.subtract(getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getLimitDrop());
-						isSameDropLineDate = true;
-					}
-				}
+				
+				
 				//to display the limit Increase amount only when the limit is changed
 				if(!StringUtils.equals(label, Labels.getLabel("label_LimitIncrease"))){
 					limitIncreaseAmt = BigDecimal.ZERO;
