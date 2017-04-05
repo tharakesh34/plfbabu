@@ -151,7 +151,7 @@ public class IndicativeTermDetailDAOImpl extends BasisCodeDAO<IndicativeTermDeta
 			updateSql.append(" IndicativeTermDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference=:FinReference, RpsnName=:RpsnName, RpsnDesg=:RpsnDesg, CustId=:CustId, " );
+		updateSql.append(" Set RpsnName=:RpsnName, RpsnDesg=:RpsnDesg, CustId=:CustId, " );
 		updateSql.append(" FacilityType=:FacilityType, Pricing=:Pricing, Repayments=:Repayments, LCPeriod=:LCPeriod, " );
 		updateSql.append(" UsancePeriod=:UsancePeriod, SecurityClean=:SecurityClean, SecurityName=:SecurityName, " );
 		updateSql.append(" Utilization=:Utilization, Commission=:Commission, Purpose=:Purpose, Guarantee=:Guarantee, " );

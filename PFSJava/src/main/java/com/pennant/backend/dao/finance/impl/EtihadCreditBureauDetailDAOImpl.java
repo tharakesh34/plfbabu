@@ -229,7 +229,7 @@ public class EtihadCreditBureauDetailDAOImpl extends BasisCodeDAO<EtihadCreditBu
 		StringBuilder	updateSql =new StringBuilder();
 		updateSql.append(" Update EtihadCreditBureauDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, BureauScore = :BureauScore," );
+		updateSql.append(" Set BureauScore = :BureauScore," );
 		updateSql.append(" TotOutstandingAmt = :TotOutstandingAmt, TotOverdueAmt = :TotOverdueAmt, DefaultContracts = :DefaultContracts, " );
 		updateSql.append(" TotMonthlyInst = :TotMonthlyInst, WorstCurrPayDelay = :WorstCurrPayDelay, WorstPayDelay = :WorstPayDelay, " );
 		updateSql.append(" WorstStatus = :WorstStatus,  OldConStartDate = :OldConStartDate, NewConStartDate = :NewConStartDate, " );

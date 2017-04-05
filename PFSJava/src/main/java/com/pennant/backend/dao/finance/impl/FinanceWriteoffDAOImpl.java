@@ -216,7 +216,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinWriteoffDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference=:FinReference , WriteoffDate=:WriteoffDate , SeqNo=:SeqNo , WrittenoffPri=:WrittenoffPri , " );
+		updateSql.append(" Set WriteoffDate=:WriteoffDate , SeqNo=:SeqNo , WrittenoffPri=:WrittenoffPri , " );
 		updateSql.append(" WrittenoffPft=:WrittenoffPft , CurODPri=:CurODPri , CurODPft=:CurODPft , UnPaidSchdPri=:UnPaidSchdPri , " );
 		updateSql.append(" UnPaidSchdPft=:UnPaidSchdPft , PenaltyAmount=:PenaltyAmount , ProvisionedAmount=:ProvisionedAmount , " );
 		updateSql.append(" WriteoffPrincipal=:WriteoffPrincipal , WriteoffProfit=:WriteoffProfit , AdjAmount=:AdjAmount , Remarks=:Remarks, WrittenoffAcc=:WrittenoffAcc," );
@@ -335,7 +335,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinWriteoffPayment");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, WriteoffPayAmount = :WriteoffPayAmount, WriteoffPayAccount = :WriteoffPayAccount,LinkedTranId=:LinkedTranId,SeqNo=:SeqNo,");
+		updateSql.append(" Set WriteoffPayAmount = :WriteoffPayAmount, WriteoffPayAccount = :WriteoffPayAccount,LinkedTranId=:LinkedTranId,SeqNo=:SeqNo,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");

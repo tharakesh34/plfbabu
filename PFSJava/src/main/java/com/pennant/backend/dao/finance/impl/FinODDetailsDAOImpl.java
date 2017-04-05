@@ -164,8 +164,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set FinReference= :FinReference, FinODSchdDate= :FinODSchdDate, FinODFor= :FinODFor, " );
-		updateSql.append(" FinBranch= :FinBranch, FinType= :FinType, CustID= :CustID, FinODTillDate= :FinODTillDate, " );
+		updateSql.append(" Set FinBranch= :FinBranch, FinType= :FinType, CustID= :CustID, FinODTillDate= :FinODTillDate, " );
 		updateSql.append(" FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, FinMaxODAmt= :FinMaxODAmt,");
 		updateSql.append(" FinMaxODPri= :FinMaxODPri, FinMaxODPft= :FinMaxODPft, GraceDays= :GraceDays, IncGraceDays= :IncGraceDays, " );
 		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, " );

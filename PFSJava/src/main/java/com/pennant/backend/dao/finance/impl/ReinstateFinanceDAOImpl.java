@@ -300,8 +300,7 @@ public class ReinstateFinanceDAOImpl extends BasisCodeDAO<ReinstateFinance> impl
 
 		updateSql.append("Update ReinstateFinance");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference = :FinReference," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
+		updateSql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append("  Where FinReference =:FinReference ");

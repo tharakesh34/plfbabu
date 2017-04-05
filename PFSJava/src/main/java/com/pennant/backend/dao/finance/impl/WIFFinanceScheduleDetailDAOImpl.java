@@ -248,7 +248,7 @@ public class WIFFinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceSchedul
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update WIFFinScheduleDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, SchDate = :SchDate, SchSeq = :SchSeq,");
+		updateSql.append(" Set SchDate = :SchDate, SchSeq = :SchSeq,");
 		updateSql.append(" PftOnSchDate= :PftOnSchDate, CpzOnSchDate = :CpzOnSchDate, RepayOnSchDate= :RepayOnSchDate,");
 		updateSql.append(" RvwOnSchDate= :RvwOnSchDate, DisbOnSchDate= :DisbOnSchDate,");
 		updateSql.append(" DownpaymentOnSchDate = :DownpaymentOnSchDate,");

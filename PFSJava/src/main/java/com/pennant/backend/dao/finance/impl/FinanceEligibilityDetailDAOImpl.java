@@ -89,8 +89,7 @@ public class FinanceEligibilityDetailDAOImpl implements FinanceEligibilityDetail
 		
 		StringBuilder updateSql =new StringBuilder();
 		updateSql.append("Update FinanceEligibilityDetail");
-		updateSql.append(" Set FinReference = :FinReference, ElgRuleCode = :ElgRuleCode," );
-		updateSql.append(" RuleResultType = :RuleResultType, RuleResult = :RuleResult ," );
+		updateSql.append(" Set RuleResultType = :RuleResultType, RuleResult = :RuleResult ," );
 		updateSql.append(" CanOverride = :CanOverride , OverridePerc = :OverridePerc, UserOverride = :UserOverride, " );
 		updateSql.append(" LastMntOn = :LastMntOn , LastMntBy = :LastMntBy " );
 		updateSql.append("  Where FinReference =:FinReference and ElgRuleCode = :ElgRuleCode ");

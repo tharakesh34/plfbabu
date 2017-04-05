@@ -259,7 +259,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinJointAccountDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set JointAccountId = :JointAccountId, FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId");
+		updateSql.append(" Set FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where JointAccountId =:JointAccountId");
 		

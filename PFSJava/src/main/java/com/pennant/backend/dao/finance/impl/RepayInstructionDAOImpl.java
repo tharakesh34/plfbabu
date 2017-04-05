@@ -310,7 +310,7 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 			updateSql.append(" FinRepayInstruction");	
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, RepayDate = :RepayDate, " );
+		updateSql.append(" Set RepayDate = :RepayDate, " );
 		updateSql.append(" RepayAmount = :RepayAmount, RepaySchdMethod= :RepaySchdMethod ");
 		updateSql.append(" Where FinReference =:FinReference");
 		
@@ -346,7 +346,7 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 			updateSql.append(" FinRepayInstruction");	
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, RepayDate = :RepayDate, RepayAmount = :RepayAmount, RepaySchdMethod= :RepaySchdMethod");
+		updateSql.append(" Set RepayDate = :RepayDate, RepayAmount = :RepayAmount, RepaySchdMethod= :RepaySchdMethod");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		

@@ -272,7 +272,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		
 		StringBuilder	updateSql =new StringBuilder("Update FinCovenantType");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append("  Set FinReference = :FinReference, CovenantType = :CovenantType, Description = :Description,");
+		updateSql.append("  Set Description = :Description,");
 		updateSql.append("  MandRole = :MandRole, AlwWaiver = :AlwWaiver, AlwPostpone = :AlwPostpone, PostponeDays = :PostponeDays, ReceivableDate =:ReceivableDate,");
 		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append("  Where FinReference = :FinReference and CovenantType = :CovenantType");

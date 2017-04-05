@@ -267,7 +267,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update FinGuarantorsDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set GuarantorId = :GuarantorId, FinReference = :FinReference, ");
+		updateSql.append(" Set FinReference = :FinReference, ");
 		updateSql.append(" BankCustomer = :BankCustomer, GuarantorCIF = :GuarantorCIF, ");
 		updateSql.append(" GuarantorIDType = :GuarantorIDType, GuarantorIDNumber = :GuarantorIDNumber, ");
 		updateSql.append(" GuarantorCIFName = :GuarantorCIFName, GuranteePercentage = :GuranteePercentage, ");

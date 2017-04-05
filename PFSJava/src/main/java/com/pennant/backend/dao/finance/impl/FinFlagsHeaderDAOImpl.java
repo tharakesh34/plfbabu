@@ -140,8 +140,7 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinFlagsHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference = :FinReference,");
-		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
+		updateSql.append(" Set Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
 		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");
 		updateSql.append(" NextTaskId= :NextTaskId, RecordType= :RecordType, WorkflowId= :WorkflowId");

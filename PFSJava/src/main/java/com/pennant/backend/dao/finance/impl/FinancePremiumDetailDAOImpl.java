@@ -153,7 +153,7 @@ public class FinancePremiumDetailDAOImpl implements FinancePremiumDetailDAO {
 
 		StringBuilder updateSql = new StringBuilder("Update FinancePremiumDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference=:FinReference , IssueNumber=:IssueNumber , NoOfUnits=:NoOfUnits, " );
+		updateSql.append(" Set IssueNumber=:IssueNumber , NoOfUnits=:NoOfUnits, " );
 		updateSql.append(" FaceValue=:FaceValue , PremiumType=:PremiumType , PremiumValue=:PremiumValue, " );
 		updateSql.append(" PricePerUnit=:PricePerUnit , YieldValue=:YieldValue , LastCouponDate=:LastCouponDate , " );
 		updateSql.append(" AccruedProfit=:AccruedProfit , PurchaseDate=:PurchaseDate, FairValuePerUnit=:FairValuePerUnit, FairValueAmount=:FairValueAmount " );

@@ -147,7 +147,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update FinTypeVASProducts");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinType = :FinType, VasProduct = :VasProduct, Mandatory = :Mandatory, Version = :Version," );
+		updateSql.append(" Set Mandatory = :Mandatory, Version = :Version," );
 		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, " );
 		updateSql.append(" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );

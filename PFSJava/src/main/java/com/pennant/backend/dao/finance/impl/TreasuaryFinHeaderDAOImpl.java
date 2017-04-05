@@ -329,7 +329,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasisCodeDAO<InvestmentFinHeader>
 		updateSql = new StringBuilder("Update InvestmentFinHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set InvestmentRef = :InvestmentRef, TotPrincipalAmt = :TotPrincipalAmt, finCcy = :finCcy, ProfitDaysBasis = :ProfitDaysBasis, StartDate = :StartDate, MaturityDate = :MaturityDate, PrincipalInvested = :PrincipalInvested, PrincipalMaturity = :PrincipalMaturity, PrincipalDueToInvest = :PrincipalDueToInvest,");
+		        .append(" Set TotPrincipalAmt = :TotPrincipalAmt, finCcy = :finCcy, ProfitDaysBasis = :ProfitDaysBasis, StartDate = :StartDate, MaturityDate = :MaturityDate, PrincipalInvested = :PrincipalInvested, PrincipalMaturity = :PrincipalMaturity, PrincipalDueToInvest = :PrincipalDueToInvest,");
 		updateSql
 		        .append(" AvgPftRate = :AvgPftRate, ApprovalRequired = :ApprovalRequired, TotalDealsApproved = :TotalDealsApproved, ");
 		updateSql

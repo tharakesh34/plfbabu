@@ -125,7 +125,7 @@ public class RolledoverFinanceDAOImpl implements RolledoverFinanceDAO {
 
 		StringBuilder updateSql = new StringBuilder("Update RolledoverFinanceHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference= :FinReference, CustPayment=:CustPayment, PaymentAccount=:PaymentAccount, ");
+		updateSql.append(" Set CustPayment=:CustPayment, PaymentAccount=:PaymentAccount, ");
 		updateSql.append(" LatePayAmount=:LatePayAmount , LatePayWaiverAmount=:LatePayWaiverAmount ");
 		updateSql.append(" Where FinReference =:FinReference ");
 

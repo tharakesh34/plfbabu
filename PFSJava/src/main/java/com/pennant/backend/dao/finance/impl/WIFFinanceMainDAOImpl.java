@@ -256,7 +256,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update WIFFinanceMain");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, NumberOfTerms = :NumberOfTerms,");
+		updateSql.append(" Set NumberOfTerms = :NumberOfTerms,");
 		updateSql.append(" GrcPeriodEndDate = :GrcPeriodEndDate, AllowGrcPeriod = :AllowGrcPeriod,");
 		updateSql.append(" GraceBaseRate = :GraceBaseRate, GraceSpecialRate = :GraceSpecialRate,");
 		updateSql.append(" GrcPftRate = :GrcPftRate, GrcPftFrq = :GrcPftFrq,");

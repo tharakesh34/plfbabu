@@ -212,7 +212,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		updateSql.append("Update BulkRateChangeDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BulkRateChangeRef = :BulkRateChangeRef, FinReference = :FinReference, FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF, ");
+		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF, ");
 		updateSql.append(" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit, ");
 		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
@@ -299,7 +299,7 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 
 		updateSql.append("Update BulkRateChangeDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BulkRateChangeRef = :BulkRateChangeRef, FinReference = :FinReference, FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF, ");
+		updateSql.append(" Set FinBranch = :FinBranch, FinCCY = :FinCCY,  CustCIF = :CustCIF, ");
 		updateSql.append(" FinAmount = :FinAmount, OldProfitRate = :OldProfitRate, NewProfitRate =  :NewProfitRate, OldProfit = :OldProfit, ");
 		updateSql.append(" NewProfit = :NewProfit, AllowRateChange = :AllowRateChange, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );

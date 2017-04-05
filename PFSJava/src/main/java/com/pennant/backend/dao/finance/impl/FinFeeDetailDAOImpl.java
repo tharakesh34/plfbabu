@@ -316,7 +316,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			updateSql.append("Update FinFeeDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append("  Set FeeID = :FeeID, FinReference = :FinReference, OriginationFee = :OriginationFee, FinEvent = :FinEvent, FeeTypeID = :FeeTypeID,");
+		updateSql.append("  Set FeeID = :FeeID,");
 		updateSql.append("  FeeSeq = :FeeSeq, FeeOrder = :FeeOrder, CalculatedAmount = :CalculatedAmount, ActualAmount = :ActualAmount,");
 		updateSql.append("  WaivedAmount = :WaivedAmount, PaidAmount = :PaidAmount, FeeScheduleMethod = :FeeScheduleMethod, Terms = :Terms,");
 		updateSql.append("  RemainingFee = :RemainingFee, PaymentRef = :PaymentRef, CalculationType = :CalculationType, RuleCode = :RuleCode,");

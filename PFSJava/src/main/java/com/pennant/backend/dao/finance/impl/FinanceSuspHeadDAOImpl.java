@@ -206,7 +206,7 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinSuspHead");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, FinBranch = :FinBranch, FinType = :FinType,");
+		updateSql.append(" Set FinBranch = :FinBranch, FinType = :FinType,");
 		updateSql.append(" CustId = :CustId, FinSuspSeq = :FinSuspSeq, FinIsInSusp = :FinIsInSusp, ManualSusp =:ManualSusp,");
 		updateSql.append(" FinSuspDate = :FinSuspDate, FinSuspTrfDate=:FinSuspTrfDate, FinSuspAmt = :FinSuspAmt, FinCurSuspAmt = :FinCurSuspAmt, " );
 		updateSql.append(" Version =:Version , LastMntOn=:LastMntOn, LastMntBy=:LastMntBy,RecordStatus=:RecordStatus, RoleCode=:RoleCode, " );

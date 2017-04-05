@@ -278,8 +278,7 @@ public class FinContributorDetailDAOImpl extends BasisNextidDaoImpl<FinContribut
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update FinContributorDetail" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FinReference =:FinReference , ContributorBaseNo =:ContributorBaseNo , " );
-		updateSql.append(" CustID =:CustID , ContributorName =:ContributorName , ContributorInvest =:ContributorInvest , " );
+		updateSql.append(" Set CustID =:CustID , ContributorName =:ContributorName , ContributorInvest =:ContributorInvest , " );
 		updateSql.append(" InvestAccount =:InvestAccount , InvestDate =:InvestDate ,RecordDate=:RecordDate, " );
 		updateSql.append(" TotalInvestPerc =:TotalInvestPerc , MudaribPerc =:MudaribPerc , " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );

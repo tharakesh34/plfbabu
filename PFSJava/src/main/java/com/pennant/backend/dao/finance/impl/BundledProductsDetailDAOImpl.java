@@ -230,7 +230,7 @@ public class BundledProductsDetailDAOImpl extends BasisCodeDAO<BundledProductsDe
 		StringBuilder	updateSql =new StringBuilder();
 		updateSql.append(" Update BundledProductsDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, CardProduct = :CardProduct, SalesStaff = :SalesStaff, EmbossingName = :EmbossingName," );
+		updateSql.append(" Set CardProduct = :CardProduct, SalesStaff = :SalesStaff, EmbossingName = :EmbossingName," );
 		updateSql.append(" StatusOfCust = :StatusOfCust, MinRepay = :MinRepay, BillingAcc = :BillingAcc, StmtAddress = :StmtAddress, StmtEmail = :StmtEmail, " );
 		updateSql.append(" PhysicalAddress = :PhysicalAddress, ContactNumber = :ContactNumber, Ref1Name = :Ref1Name, Ref1PhoneNum = :Ref1PhoneNum, " );
 		updateSql.append(" Ref1Email = :Ref1Email,  Ref2Name = :Ref2Name, Ref2PhoneNum = :Ref2PhoneNum, Ref2Email = :Ref2Email, BankName = :BankName," );

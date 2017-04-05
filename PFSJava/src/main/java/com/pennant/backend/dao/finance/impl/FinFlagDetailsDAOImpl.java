@@ -271,7 +271,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update FlagDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Reference = :Reference, FlagCode = :FlagCode, ModuleName = :ModuleName, Version = :Version," );
+		updateSql.append(" Set Version = :Version," );
 		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, " );
 		updateSql.append(" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
@@ -297,7 +297,7 @@ public class FinFlagDetailsDAOImpl implements FinFlagDetailsDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update FlagDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Reference = :Reference, FlagCode = :FlagCode, ModuleName = :ModuleName, Version = :Version," );
+		updateSql.append(" Set Version = :Version," );
 		updateSql.append(" LastMntBy = :LastMntBy , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, " );
 		updateSql.append(" RoleCode= :RoleCode, NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );

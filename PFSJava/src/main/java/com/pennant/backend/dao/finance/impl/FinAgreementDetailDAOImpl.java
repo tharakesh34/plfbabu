@@ -186,7 +186,7 @@ public class FinAgreementDetailDAOImpl  extends BasisCodeDAO<FinAgreementDetail>
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinAgreementDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" SET FinReference =:FinReference ,AgrId =:AgrId ,FinType=:FinType, AgrName =:AgrName ,AgrContent =:AgrContent , " );
+		updateSql.append(" SET FinType=:FinType, AgrName =:AgrName ,AgrContent =:AgrContent , " );
 		updateSql.append(" Version =:Version ,LastMntBy =:LastMntBy ,LastMntOn =:LastMntOn ,RecordStatus =:RecordStatus , " );
 		updateSql.append(" RoleCode =:RoleCode , NextRoleCode =:NextRoleCode ,TaskId =:TaskId ," );
 		updateSql.append(" NextTaskId =:NextTaskId ,RecordType =:RecordType ,WorkflowId =:WorkflowId ");

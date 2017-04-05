@@ -221,7 +221,7 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set FinReference = :FinReference, CollateralSeq = :CollateralSeq, CollateralType = :CollateralType,");
+		        .append(" Set CollateralType = :CollateralType,");
 		updateSql.append(" CustID = :CustID, Reference = :Reference, Ccy = :Ccy,");
 		updateSql.append(" Value = :Value, Coverage = :Coverage, TenorType = :TenorType,");
 		updateSql.append(" Tenor = :Tenor, Rate = :Rate, StartDate = :StartDate,");

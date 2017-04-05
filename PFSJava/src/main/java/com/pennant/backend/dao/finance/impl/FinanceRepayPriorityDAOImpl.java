@@ -237,7 +237,7 @@ public class FinanceRepayPriorityDAOImpl extends BasisCodeDAO<FinanceRepayPriori
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinRpyPriority");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinType = :FinType, FinPriority = :FinPriority");
+		updateSql.append(" Set FinPriority = :FinPriority");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinType =:FinType");
 		

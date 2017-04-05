@@ -233,7 +233,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		StringBuilder	updateSql =new StringBuilder();
 		updateSql.append(" Update FinAssetEvaluation");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, TypeofValuation = :TypeofValuation, CustAwareVisit = :CustAwareVisit, CustRepreName = :CustRepreName," );
+		updateSql.append(" Set TypeofValuation = :TypeofValuation, CustAwareVisit = :CustAwareVisit, CustRepreName = :CustRepreName," );
 		updateSql.append(" Leased = :Leased, TotalRevenue = :TotalRevenue, TenantContactNum = :TenantContactNum, TenantAwareVisit = :TenantAwareVisit, Remarks = :Remarks, " );
 		updateSql.append(" PanelFirm = :PanelFirm, ReuReference = :ReuReference, PropertyDesc = :PropertyDesc, VendorInstructedDate = :VendorInstructedDate, " );
 		updateSql.append(" ReportDeliveredDate = :ReportDeliveredDate,  InspectionDate = :InspectionDate, FinalReportDate = :FinalReportDate, MarketValueAED = :MarketValueAED, " );

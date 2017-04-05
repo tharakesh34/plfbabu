@@ -277,7 +277,7 @@ public class FinContributorHeaderDAOImpl extends BasisCodeDAO<FinContributorHead
 		StringBuilder updateSql = new StringBuilder("Update ");
 		updateSql.append(" FinContributorHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" SET FinReference =:FinReference , MinContributors =:MinContributors , " );
+		updateSql.append(" SET MinContributors =:MinContributors , " );
 		updateSql.append(" MaxContributors =:MaxContributors , MinContributionAmt =:MinContributionAmt , " );
 		updateSql.append(" MaxContributionAmt =:MaxContributionAmt , CurContributors =:CurContributors , " );
 		updateSql.append(" CurContributionAmt =:CurContributionAmt , CurBankInvestment =:CurBankInvestment , " );

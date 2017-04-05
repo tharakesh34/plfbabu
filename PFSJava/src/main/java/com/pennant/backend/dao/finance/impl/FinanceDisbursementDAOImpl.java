@@ -357,8 +357,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 			updateSql.append(" FinDisbursementDetails");	
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, DisbDate = :DisbDate, DisbSeq = :DisbSeq," );
-		updateSql.append(" DisbDesc = :DisbDesc,DisbAccountId = :DisbAccountId, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt,InsuranceAmt=:InsuranceAmt, ");
+		updateSql.append(" Set DisbDesc = :DisbDesc,DisbAccountId = :DisbAccountId, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt,InsuranceAmt=:InsuranceAmt, ");
 		if(!isWIF){
 			updateSql.append(" DisbType=:DisbType, DisbClaim=:DisbClaim, DisbExpType=:DisbExpType, " );
 			updateSql.append(" ContractorId=:ContractorId, DisbRetPerc=:DisbRetPerc, DisbRetAmount=:DisbRetAmount, " );

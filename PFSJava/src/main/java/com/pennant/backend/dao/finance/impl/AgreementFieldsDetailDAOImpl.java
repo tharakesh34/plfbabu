@@ -230,7 +230,7 @@ public class AgreementFieldsDetailDAOImpl extends BasisCodeDAO<AgreementFieldDet
 		StringBuilder	updateSql =new StringBuilder();
 		updateSql.append(" Update AgreementFieldDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, CustCity = :CustCity,SellerName = :SellerName, CustPoBox = :CustPoBox, CustCntAmt = :CustCntAmt,  CustNationality = :CustNationality, PlotOrUnitNo = :PlotOrUnitNo," );
+		updateSql.append(" Set CustCity = :CustCity,SellerName = :SellerName, CustPoBox = :CustPoBox, CustCntAmt = :CustCntAmt,  CustNationality = :CustNationality, PlotOrUnitNo = :PlotOrUnitNo," );
 		updateSql.append(" OtherbankName = :OtherbankName, PropertyType = :PropertyType, SectorOrCommunity = :SectorOrCommunity, FinAmount = :FinAmount, ProprtyDesc = :ProprtyDesc, " );
 		updateSql.append(" PropertyLocation = :PropertyLocation,JointApplicant = :JointApplicant,SellerNationality = :SellerNationality,Area = :Area,");
 		updateSql.append(" SellerPobox = :SellerPobox,PropertyUse = :PropertyUse,Plotareainsqft = :Plotareainsqft,BuiltupAreainSqft = :BuiltupAreainSqft,");

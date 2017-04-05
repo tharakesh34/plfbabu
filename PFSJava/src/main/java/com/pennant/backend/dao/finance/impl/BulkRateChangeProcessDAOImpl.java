@@ -153,7 +153,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 
 		updateSql.append("Update BulkRateChangeHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BulkRateChangeRef = :BulkRateChangeRef, FinType = :FinType, FromDate = :FromDate, ToDate = :ToDate," );
+		updateSql.append(" Set FinType = :FinType, FromDate = :FromDate, ToDate = :ToDate," );
 		updateSql.append(" RateChange = :RateChange, ReCalType = :ReCalType, RuleType = :RuleType," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
