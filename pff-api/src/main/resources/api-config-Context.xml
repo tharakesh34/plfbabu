@@ -140,8 +140,12 @@
 		autowire="byName" scope="prototype">
 	</bean>
 	
-	<!-- SecRoles controller -->
+	<!-- Statement controller -->
 	<bean id="finStatementController" class="com.pennanttech.controller.FinStatementController"
+		autowire="byName" scope="prototype">
+	</bean>
+	<!-- VAS controller -->
+	<bean id="vasController" class="com.pennanttech.controller.VASController"
 		autowire="byName" scope="prototype">
 	</bean>
 </beans>

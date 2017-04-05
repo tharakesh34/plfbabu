@@ -52,9 +52,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -62,6 +69,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -69,26 +77,45 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>VASRecording table</b>.<br>
  * 
  */
+@XmlType(propOrder = { "productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
+		"feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId", "fulfilOfficerId",
+		"referralId","renewalFee","extendedDetails", "documents","returnStatus" })
+@XmlRootElement(name = "vasDetail")
+@XmlAccessorType(XmlAccessType.NONE)
 public class VASRecording extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement(name="product")
 	private String productCode;
 	private String productDesc;
+	@XmlElement
 	private String postingAgainst;
+	@XmlElement
 	private String primaryLinkRef;
+	@XmlElement
 	private String vasReference;
+	@XmlElement
 	private BigDecimal fee;
+	@XmlElement
 	private BigDecimal renewalFee;
+	@XmlElement
 	private String feePaymentMode;
+	@XmlElement
 	private Date valueDate;
+	@XmlElement
 	private Date accrualTillDate;
+	@XmlElement
 	private Date recurringDate;
+	@XmlElement
 	private String dsaId;
 	private String dsaIdDesc;
+	@XmlElement
 	private String dmaId;
 	private String dmaIdDesc;
+	@XmlElement
 	private String fulfilOfficerId;
 	private String fulfilOfficerIdDesc;
+	@XmlElement
 	private String referralId;
 	private String referralIdDesc;
 	private String sourceId;
@@ -114,6 +141,8 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private List<FinanceReferenceDetail>		aggrements			= null;
 	private List<FinanceCheckListReference>		vasCheckLists		= null;
 	private Map<Long, Long>						selAnsCountMap		= new HashMap<Long, Long>(1);
+	@XmlElementWrapper(name="documents")
+	@XmlElement(name="document")
 	private List<DocumentDetails>				documents			= null;
 	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
 	private List<FinanceReferenceDetail>		checkLists			= null;
@@ -121,6 +150,11 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private List<TransactionEntry> 				transactionEntries 	= new ArrayList<TransactionEntry>(1);
 	private List<ReturnDataSet> 				returnDataSetList 	= new ArrayList<ReturnDataSet>(1);
 	private List<FinFeeDetail>					finFeeDetailsList	= new ArrayList<FinFeeDetail>();
+	@XmlElementWrapper(name="extendedDetails")
+	@XmlElement(name="extendedDetail")
+	private List<ExtendedField> extendedDetails = null;
+	@XmlElement
+	private WSReturnStatus returnStatus;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -161,6 +195,8 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("returnDataSetList");
 		excludeFields.add("DISBURSE");
 		excludeFields.add("finBranch");
+		excludeFields.add("extendedDetails");
+		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
 
@@ -519,5 +555,21 @@ public class VASRecording extends AbstractWorkflowEntity {
 	public void setFinFeeDetailsList(List<FinFeeDetail> finFeeDetailsList) {
 		this.finFeeDetailsList = finFeeDetailsList;
 	}
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
 
 }

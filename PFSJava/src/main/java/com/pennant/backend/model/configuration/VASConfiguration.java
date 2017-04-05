@@ -45,11 +45,20 @@ package com.pennant.backend.model.configuration;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -57,20 +66,31 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>VASConfiguration table</b>.<br>
  * 
  */
+@XmlType(propOrder = { "productCode", "productDesc", "productType", "vasFee", "allowFeeToModify", "manufacturerId",
+		"recAgainst", "feeAccrued", "recurringType", "freeLockPeriod", "remarks", "active", "extendedFieldDetailList","returnStatus" })
+@XmlRootElement(name = "vasConfiguration")
+@XmlAccessorType(XmlAccessType.NONE)
 public class VASConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement(name="product")
 	private String productCode;
+	@XmlElement
 	private String productDesc;
+	@XmlElement
 	private String productType;
 	private String productTypeDesc;
 	private String productCategory;
 	private String productCategoryDesc;
+	@XmlElement
 	private BigDecimal vasFee;
+	@XmlElement
 	private boolean allowFeeToModify;
+	@XmlElement
 	private long manufacturerId;
 	private String manufacturerName;
+	@XmlElement
 	private String recAgainst;
+	@XmlElement
 	private boolean feeAccrued;
 	private long feeAccounting;
 	private String feeAccountingName;
@@ -78,14 +98,18 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private long accrualAccounting;
 	private String accrualAccountingName;
 	private String accrualAccountingDesc;
+	@XmlElement
 	private boolean recurringType;
+	@XmlElement
 	private int freeLockPeriod;
 	private boolean preValidationReq;
 	private boolean postValidationReq;
 	private String	preValidation;
 	private String  postValidation;
 
+	@XmlElement
 	private boolean active;
+	@XmlElement
 	private String remarks;
 	@XmlTransient
 	private String lovValue;
@@ -95,9 +119,13 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private VASConfiguration befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
 	private ExtendedFieldHeader	extendedFieldHeader;
-	
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	@XmlElementWrapper(name="extendedFields")
+	@XmlElement(name="extendedField")
+	private List<ExtendedFieldDetail> extendedFieldDetailList;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -122,6 +150,8 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 		excludeFields.add("productCategory");
 		excludeFields.add("productCategoryDesc");
 		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("returnStatus");
+		excludeFields.add("extendedFieldDetailList");
 		return excludeFields;
 	}
 
@@ -370,4 +400,19 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 		this.productCategoryDesc = productCategoryDesc;
 	}
 
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public List<ExtendedFieldDetail> getExtendedFieldDetailList() {
+		return extendedFieldDetailList;
+	}
+
+	public void setExtendedFieldDetailList(List<ExtendedFieldDetail> extendedFieldDetailList) {
+		this.extendedFieldDetailList = extendedFieldDetailList;
+	}
 }

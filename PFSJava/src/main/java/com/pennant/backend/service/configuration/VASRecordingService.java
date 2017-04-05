@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.configuration;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.exception.PFFInterfaceException;
@@ -64,5 +65,7 @@ public interface VASRecordingService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	VASRecording getProcessEditorDetails(VASRecording vASRecording, String role, String finserEventOrg);
+
+	AuditDetail doValidations(VASRecording vasRecording);
 
 }

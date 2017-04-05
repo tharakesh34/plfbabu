@@ -49,6 +49,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -62,6 +64,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -69,6 +72,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -76,8 +80,11 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
@@ -87,9 +94,15 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.staticparms.ExtendedField;
+import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.configuration.VASConfigurationService;
@@ -101,6 +114,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.exception.PFFInterfaceException;
 import com.rits.cloning.Cloner;
@@ -139,8 +153,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private PostingsDAO 					postingsDAO;
 	private PostingsInterfaceService 		postingsInterfaceService;
 	private AccountProcessUtil 				accountProcessUtil;
+	private FinanceMainDAO 					financeMainDAO;
+	private CollateralSetupService 			collateralSetupService;
+	private RelationshipOfficerService		relationshipOfficerService;
 
-	
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -1533,7 +1549,378 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+	//validations For API Specific
+	@Override
+	public AuditDetail doValidations(VASRecording vasRecording) {
+		logger.debug("Entering");
+
+		AuditDetail auditDetail = new AuditDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
+		if (vasRecording != null) {
+			if (StringUtils.isBlank(vasRecording.getProductCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "product";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (StringUtils.isBlank(vasRecording.getPostingAgainst())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "postingAgainst";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			} else if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
+					|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst()) || StringUtils
+						.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "postingAgainst";
+				valueParm[1] = vasRecording.getPostingAgainst();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+
+			}
+			if (StringUtils.isBlank(vasRecording.getPrimaryLinkRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "primaryLinkRef";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (vasRecording.getFee() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Fee";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+
+			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
+					.getProductCode());
+			if (vASConfiguration == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Product";
+				valueParm[1] = vasRecording.getProductCode();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (!StringUtils.equals(vASConfiguration.getRecAgainst(), vasRecording.getPostingAgainst())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "PostingAgainst";
+				valueParm[1] = vasRecording.getProductCode();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())) {
+				Customer customer = customerDetailsService.getCheckCustomerByCIF(vasRecording.getPrimaryLinkRef());
+				if (customer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getPrimaryLinkRef();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst())) {
+				int count = financeMainDAO.getFinanceCountById(vasRecording.getPrimaryLinkRef(), "", false);
+				if (count <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getPrimaryLinkRef();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90201", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_COLLATERAL,
+					vasRecording.getPostingAgainst())) {
+				int count = collateralSetupService.getCountByCollateralRef(vasRecording.getPrimaryLinkRef());
+				if (count <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getPrimaryLinkRef();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (!vASConfiguration.isAllowFeeToModify()) {
+				if (vasRecording.getFee().compareTo(vASConfiguration.getVasFee()) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Fee:" + vasRecording.getFee();
+					valueParm[1] = "VasConfig Fee:" + vASConfiguration.getVasFee();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			} else if (vasRecording.getFee().compareTo(BigDecimal.ZERO) < 1) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fee";
+				valueParm[1] = "Zero";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+
+			// validate FeePaymentMode
+			if (StringUtils.isNotBlank(vasRecording.getFeePaymentMode())) {
+				List<ValueLabel> paymentModes = PennantStaticListUtil.getFeeTypes();
+				boolean paymentSts = false;
+				for (ValueLabel value : paymentModes) {
+					if (StringUtils.equals(value.getValue(), vasRecording.getFeePaymentMode())) {
+						paymentSts = true;
+						break;
+					}
+				}
+				if (!paymentSts) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "paymentMode";
+					valueParm[1] = "paymentModes";
+					valueParm[2] = FinanceConstants.RECFEETYPE_CASH + "," + FinanceConstants.RECFEETYPE_CHEQUE;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90264", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "feePaymentMode";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (vasRecording.getValueDate() == null) {
+				vasRecording.setValueDate(DateUtility.getAppDate());
+			}
+			if (vASConfiguration.isFeeAccrued()) {
+				if (vasRecording.getAccrualTillDate() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "accrualTillDate";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (vASConfiguration.isRecurringType()) {
+				if (vasRecording.getRecurringDate() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "recurringDate";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (StringUtils.isBlank(vasRecording.getDsaId())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "dsaId";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			} else {
+				RelationshipOfficer relationshipOfficer = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(vasRecording.getDsaId());
+				if (relationshipOfficer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getDsaId();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (StringUtils.isBlank(vasRecording.getDmaId())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "dmaId";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			} else {
+				RelationshipOfficer dmaCode = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(vasRecording.getDmaId());
+				if (dmaCode == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getDmaId();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (StringUtils.isBlank(vasRecording.getFulfilOfficerId())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "fulfilOfficerId";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if (StringUtils.isBlank(vasRecording.getReferralId())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "referralId";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			} else {
+				RelationshipOfficer referralId = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(vasRecording.getReferralId());
+				if (referralId == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getReferralId();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+			if (vasRecording.getDocuments() != null || !vasRecording.getDocuments().isEmpty()) {
+
+				for (DocumentDetails detail : vasRecording.getDocuments()) {
+
+					//validate Dates
+					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
+						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = DateUtility.formatDate(detail.getCustDocIssuedOn(),
+									PennantConstants.XMLDateFormat);
+							valueParm[1] = DateUtility.formatDate(detail.getCustDocExpDate(),
+									PennantConstants.XMLDateFormat);
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+
+					if (StringUtils.equals(detail.getDocCategory(), "01")) {
+						Pattern r = Pattern.compile("^[0-9]{12}$");
+						Matcher m = r.matcher(detail.getCustDocTitle());
+						if (m.find() == false) {
+							String[] valueParm = new String[0];
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+
+					if (StringUtils.isBlank(detail.getDocUri())) {
+						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "docContent";
+							valueParm[1] = "docRefId";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+
+					DocumentType docType = documentTypeService.getDocumentTypeById(detail.getDocCategory());
+					if (docType == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = detail.getDocCategory();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+
+					}
+
+					// validate Is Customer document?
+					if (docType.isDocIsCustDoc()) {
+						if (StringUtils.isBlank(detail.getCustDocTitle())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "CustDocTitle";
+							valueParm[1] = docType.getDocTypeCode();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+
+					// validate custDocIssuedCountry
+					if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
+						if (StringUtils.isBlank(detail.getCustDocIssuedCountry())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "CustDocIssuedCountry";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					// validate custDocIssuedOn
+					if (docType.isDocIssueDateMand()) {
+						if (detail.getCustDocIssuedOn() == null) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "CustDocIssuedOn";
+							valueParm[1] = docType.getDocTypeCode();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+
+					// validate custDocExpDate
+					if (docType.isDocExpDateIsMand()) {
+						if (detail.getCustDocExpDate() == null) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "CustDocExpDate";
+							valueParm[1] = docType.getDocTypeCode();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
+
+			}
+			int extendedDetailsCount = 0;
+			if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
+				for (ExtendedFieldDetail detail : vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails()) {
+					if (detail.isFieldMandatory()) {
+						extendedDetailsCount++;
+					}
+				}
+			}
+			if (vasRecording.getExtendedDetails() != null || !vasRecording.getExtendedDetails().isEmpty()) {
+				for (ExtendedField details : vasRecording.getExtendedDetails()) {
+					if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
+							.getExtendedFieldDataList().size()) {
+						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
+							String[] valueParm = new String[1];
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
+						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldName";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+						if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldValue";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+						boolean isFeild = false;
+						if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
+							for (ExtendedFieldDetail detail : vASConfiguration.getExtendedFieldHeader()
+									.getExtendedFieldDetails()) {
+								if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
+									isFeild = true;
+								}
+							}
+							if (!isFeild) {
+								String[] valueParm = new String[1];
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						}
+					}
+				}
+
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetail;
+	}
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -1702,5 +2089,15 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
+		this.relationshipOfficerService = relationshipOfficerService;
+	}
+	
 
 }

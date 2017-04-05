@@ -426,4 +426,30 @@
 	<jaxws:endpoint id="statementSoapService" implementor="#wsStatementService"
 		address="/statementSoap" />
 
+<!-- VAS API gateway -->
+	<bean id="wsVASService" class="com.pennanttech.service.impl.VASWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="vasRestService" address="/vasRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsVASService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="vasSoapService" implementor="#wsVASService"
+		address="/vasSoap" />
+
 </beans>
