@@ -1557,6 +1557,16 @@ WHERE     NOT EXISTS
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerIncomeDialog_custIncome'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 	</sql>
+</changeSet>
+<changeSet  author="Prasad" id="56">
+	<sql>
+		Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from REPORTCONFIGURATION),'No Objection Certificate','No Objection Certificate',1,'NoObjectionCertificate','pfsDatasource',
+0,'menu_Item_NoObjectionCertificate',2,1000,'','','','','','',0,current_Timestamp,0);
+
+Insert into REPORTFILTERFIELDS 
+values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved','','','','','',0,current_Timestamp);
+	</sql>
 </changeSet>	
 			
 </databaseChangeLog>
