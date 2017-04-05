@@ -3134,6 +3134,7 @@
 		<property name="scoringDetailService" ref="finScoringDetailService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 
 	<!--============ WhatIf Murabaha Finance Main Details ============== -->

@@ -77,6 +77,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -87,6 +88,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
@@ -135,6 +137,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	
 	protected Label custShrtName;
 	private String finBranch;
+	private String bflBranchCode;
 	
 	private Row row_EIDNumber;
 	private Textbox eidNumber;
@@ -153,6 +156,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private FinanceType financeType;
 	private WIFCustomer wifcustomer = new WIFCustomer();
 	private String loanType = "";
+	private BranchService branchService;
 	
 	/**
 	 * default constructor.<br>
@@ -420,6 +424,12 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.lovDescCustCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finBranch = customer.getCustDftBranch();
+			
+			Branch branch = this.branchService.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser()
+					.getUsrBranchCode());
+			if (branch != null) {
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setBflBranchCode(branch.getBranchSwiftBrnCde());
+			}
 			BeanUtils.copyProperties(customer, wifcustomer);
 		}
 		logger.debug("Leaving");
@@ -884,5 +894,9 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
+	}
+
 	
 }
