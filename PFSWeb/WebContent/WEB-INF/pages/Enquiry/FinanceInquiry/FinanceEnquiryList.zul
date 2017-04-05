@@ -173,7 +173,7 @@
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
-								<row>
+								<row id="row_RadioGroup" >
 									<label/>
 									<cell colspan="5">
 										<radiogroup>

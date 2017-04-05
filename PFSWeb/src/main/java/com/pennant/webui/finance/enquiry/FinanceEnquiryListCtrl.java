@@ -66,6 +66,7 @@ import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -78,10 +79,13 @@ import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -125,6 +129,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	protected Textbox    enquiryType; 	           // autoWired
 	protected Label 	 label_startDate;		   // autoWired
 	protected Label 	 label_maturityDate;	   // autoWired
+	protected Row		 row_RadioGroup;		   // autoWired
 	
 	protected Label		 label_menu_filter;			   // autoWired
 	protected Menu		 menu_filter;			   // autoWired
@@ -176,6 +181,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	protected Grid      grid_enquiryDetails;       // autoWired
 	
 	private transient boolean  approvedList=false; // autowired
+	private transient boolean rejectedList= false;
 	
 	// not auto wired variables
 	protected JdbcSearchObject<FinanceEnquiry> searchObj;
@@ -185,7 +191,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
 	
 	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters();
-
+	private transient ReinstateFinanceService reinstateFinanceService;
 	/**
 	 * default constructor.<br>
 	 */
@@ -564,6 +570,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.pagingEnquiryList.setActivePage(0);
 
 		doSearch();
+		this.row_RadioGroup.setVisible(true);
 		this.pagingEnquiryList.setDetailed(true);
 		getPagedListWrapper().init(this.searchObj, this.listBoxEnquiryResult, this.pagingEnquiryList);
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
@@ -715,7 +722,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering");
 		
 		this.searchObj = new JdbcSearchObject<FinanceEnquiry>(FinanceEnquiry.class);
-		
+		rejectedList=false;
 		if(!"CHQPRNT".equals(enquiryType.getValue())){
 			if(this.fromApproved.isSelected()){
 				approvedList=true;
@@ -748,6 +755,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		}
 		
 		//Condition checking for Filter selection
+		this.row_RadioGroup.setVisible(true);
 		if("CHQPRNT".equals(this.enquiryType.getValue())) {
 			this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
 		}else{
@@ -770,6 +778,10 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}else if("GPFIN".equals(value)){
 				this.searchObj.addFilter(new Filter("AllowGrcPeriod", 1, Filter.OP_EQUAL));
+			}else if("REJFIN".equals(value)){
+				rejectedList = true;
+				this.row_RadioGroup.setVisible(false);
+				this.searchObj.addTabelName("RejectFinanceMain_View");
 			}
 		}
 
@@ -952,15 +964,16 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}
 		}
-		searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
-		if(getUserWorkspace().isAllowed("isUserSpeicfic_Enquiry") && !approvedList){
-			this.searchObj.removeFiltersOnProperty("FinReference");
-			
-			String whereClause = searchObj.getWhereClause();
-			whereClause = whereClause.concat(setFinReferences());
-			searchObj.addWhereClause(whereClause);
+		if (!rejectedList) {
+			searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
+			if (getUserWorkspace().isAllowed("isUserSpeicfic_Enquiry") && !approvedList) {
+				this.searchObj.removeFiltersOnProperty("FinReference");
+
+				String whereClause = searchObj.getWhereClause();
+				whereClause = whereClause.concat(setFinReferences());
+				searchObj.addWhereClause(whereClause);
+			}
 		}
-		
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxEnquiryResult,this.pagingEnquiryList);
 		logger.debug("Leaving");
@@ -1017,27 +1030,48 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 */
 	public void onLoanItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		
+
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();
 		if (item != null) {
-			
-			final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
-			Map<String, Object> map = getDefaultArguments();
-			map.put("financeEnquiry", aFinanceEnquiry);
-			map.put("financeEnquiryListCtrl", this);
-			map.put("enquiryType", this.enquiryType.getValue());
-			if(!StringUtils.equals(enquiryType.getValue(), "CHQPRNT")) {
-				map.put("fromApproved", this.fromApproved.isChecked());
-			}
 
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",null,map);
-			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+			final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
+			if (!rejectedList) {
+
+				Map<String, Object> map = getDefaultArguments();
+				map.put("financeEnquiry", aFinanceEnquiry);
+				map.put("financeEnquiryListCtrl", this);
+				map.put("enquiryType", this.enquiryType.getValue());
+				if (!StringUtils.equals(enquiryType.getValue(), "CHQPRNT")) {
+					map.put("fromApproved", this.fromApproved.isChecked());
+				}
+
+				// call the ZUL-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					logger.error("Exception: Opening window", e);
+					MessageUtil.showErrorMessage(e);
+				}
+			} else {
+				ReinstateFinance aReinstateFinance = reinstateFinanceService.getFinanceDetailsById(aFinanceEnquiry
+						.getFinReference());
+				Map<String, Object> arg = getDefaultArguments();
+				arg.put("reinstateFinance", aReinstateFinance);
+				arg.put("financeEnquiryListCtrl", this);
+				arg.put("enqModule", true);
+				arg.put("eventCode", FinanceConstants.FINSER_EVENT_REINSTATE);
+				arg.put("rejectedList", rejectedList);
+				try {
+
+					Executions.createComponents("/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceDialog.zul",
+							null, arg);
+
+				} catch (Exception e) {
+					logger.error("Exception: Opening window", e);
+					MessageUtil.showError(e);
+				}
 			}
-			
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1103,5 +1137,12 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 	public void setSearchObj(JdbcSearchObject<FinanceEnquiry> searchObj) {
 		this.searchObj = searchObj;
+	}
+	
+	public void setReinstateFinanceService(ReinstateFinanceService reinstateFinanceService) {
+		this.reinstateFinanceService = reinstateFinanceService;
+	}
+	public ReinstateFinanceService getReinstateFinanceService() {
+		return this.reinstateFinanceService;
 	}
 }

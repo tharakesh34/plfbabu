@@ -833,13 +833,14 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getEnquiryFilters() {
 
 		if(enquiryFilters == null){
-			enquiryFilters = new ArrayList<ValueLabel>(6);
+			enquiryFilters = new ArrayList<ValueLabel>(7);
 			enquiryFilters.add(new ValueLabel("ALLFIN", Labels.getLabel("label_AllFinances")));
 			enquiryFilters.add(new ValueLabel("ACTFIN", Labels.getLabel("label_ActiveFinances")));
 			enquiryFilters.add(new ValueLabel("MATFIN", Labels.getLabel("label_MaturityFinances")));
 			enquiryFilters.add(new ValueLabel("ODCFIN",  Labels.getLabel("label_OverDueFinances")));
 			enquiryFilters.add(new ValueLabel("SUSFIN", Labels.getLabel("label_SuspendFinances")));
 			enquiryFilters.add(new ValueLabel("GPFIN",  Labels.getLabel("label_GracePeriodFinances")));
+			enquiryFilters.add(new ValueLabel("REJFIN", Labels.getLabel("label_RejectedFinance")));
 		}
 		return enquiryFilters;		
 	}

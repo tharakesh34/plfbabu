@@ -173,10 +173,10 @@
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
-								<row>
+								<row id="row_RadioGroup">
 									<label/>
 									<cell colspan="5">
-										<radiogroup>
+										<radiogroup >
 											<radio id="fromApproved"
 												selected="true"
 												label="${c:l('common.fetch.fromapproved')}">

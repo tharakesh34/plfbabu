@@ -3155,6 +3155,7 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
+		<property name="reinstateFinanceService" ref="reinstateFinanceService" />
 		<property name="suspenseService" ref="suspenseService" />
 	</bean>
 

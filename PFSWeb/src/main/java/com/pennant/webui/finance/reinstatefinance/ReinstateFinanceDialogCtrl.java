@@ -93,6 +93,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.enquiry.FinanceEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -136,6 +137,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	// not auto wired variables
 	private ReinstateFinance reinstateFinance; // overHanded per parameter
 	private transient ReinstateFinanceListCtrl reinstateFinanceListCtrl; // overHanded per parameter
+	private FinanceEnquiryListCtrl	     financeEnquiryListCtrl	= null;
+	private transient boolean rejectedList;
+	private Label label_ReinstateFinanceDialog;
 
 	private transient boolean validationOn;
 	
@@ -178,8 +182,6 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		setPageComponents(window_ReinstateFinanceDialog);
 
 		try {
-			/* set components visible dependent of the users rights */
-			doCheckRights();
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
 			} else {
@@ -218,6 +220,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				this.btnCtrl.setBtnStatus_New();
 				btnCancel.setVisible(true);
 			}
+			if (arguments.containsKey("rejectedList")) {
+				this.rejectedList = (Boolean) arguments.get("rejectedList");
+			}
 			
 			// READ OVERHANDED parameters !
 			// we get the ReinstateFinanceListWindow controller. So we have
@@ -231,7 +236,14 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			} else {
 				setReinstateFinanceListCtrl(null);
 			}
+			
+			if (arguments.containsKey("financeEnquiryListCtrl")) {
+				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments
+						.get("financeEnquiryListCtrl"));
+			}
 
+			/* set components visible dependent of the users rights */
+			doCheckRights();
 			// set Field Properties
 			doSetFieldProperties();
 			if(getReinstateFinance().isNewRecord()){
@@ -296,7 +308,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("ReinstateFinanceDialog",getRole());
+		getUserWorkspace().allocateAuthorities("ReinstateFinanceDialog", getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReinstateFinanceDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReinstateFinanceDialog_btnEdit"));
@@ -519,9 +531,16 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				}
 				doEdit();
 			} else {
+				if (rejectedList) {
+					doEdit();
+				}
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
+				if (rejectedList) {
+				this.btnDelete.setVisible(false);
+				this.label_ReinstateFinanceDialog.setValue(Labels.getLabel("label_RejectedFinanceDialog.value"));
+				}
 			}
 		}
 
@@ -667,7 +686,6 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		this.rejectRemarks.setReadonly(true);
 		this.rejectedBy.setReadonly(true);
 		this.rejectedOn.setDisabled(true);
-		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1306,4 +1324,12 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}
+	
+	public void setFinanceEnquiryListCtrl(FinanceEnquiryListCtrl financeEnquiryListCtrl) {
+		this.financeEnquiryListCtrl = financeEnquiryListCtrl;
+	}
+	public FinanceEnquiryListCtrl getFinanceEnquiryListCtrl() {
+		return financeEnquiryListCtrl;
+	}
+
 }

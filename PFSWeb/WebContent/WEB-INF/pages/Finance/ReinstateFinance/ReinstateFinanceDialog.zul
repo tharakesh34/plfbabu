@@ -47,7 +47,7 @@
 						<!-- SEARCH AREA -->
 						<toolbar align="center"
 							sclass="toolbar-center">
-							<label
+							<label id ="label_ReinstateFinanceDialog"
 								value="${c:l('window_ReinstateFinanceDialog.title')}"
 								sclass="label-heading" />
 						</toolbar>
