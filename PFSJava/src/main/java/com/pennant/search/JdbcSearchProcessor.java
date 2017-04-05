@@ -42,16 +42,15 @@ import com.pennanttech.pff.core.util.ModuleUtil;
  * 
  * @author dwolverton
  */
-@SuppressWarnings("static-access")
 public class JdbcSearchProcessor {
-	private final static Logger							logger		= Logger.getLogger(JdbcSearchProcessor.class);
+	private static final Logger							logger		= Logger.getLogger(JdbcSearchProcessor.class);
 
 	private static final String							SELECT		= "select";
 	private static final String							FROM		= "from";
 	private static final String							DISTINCT	= "distinct";
 	private static final String							WITH_NOLOCK	= " with (nolock)";
 
-	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<DataSource, JdbcSearchProcessor>();
+	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<>();
 	private NamedParameterJdbcTemplate					namedParameterJdbcTemplate;
 
 	public static JdbcSearchProcessor getInstanceForDataSource(DataSource dataSource) {
@@ -73,8 +72,8 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings("rawtypes")
-	public List search(DataSource dataSource, ISearch search) {
-		return search == null ? null : search(dataSource, search.getSearchClass(), search);
+	public List search(ISearch search) {
+		return search == null ? null : search(search.getSearchClass(), search);
 	}
 
 	public String getSearchQuery(ISearch search) {
@@ -88,7 +87,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List search(DataSource dataSource, Class<?> searchClass, ISearch search) {
+	public List search(Class<?> searchClass, ISearch search) {
 		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
 		}
@@ -107,29 +106,29 @@ public class JdbcSearchProcessor {
 		}
 
 		// Prepare the query.
-		SelectQuery selectQuery = new SelectQuery();
+		SelectQuery query = new SelectQuery();
 
-		selectQuery.addCustomFromTable(tableName);
+		query.addCustomFromTable(tableName);
 
 		// Add the fields to the query from the fields List
 		List<Field> fields = search.getFields();
 		if (fields.size() <= 0) {
 			// If not fields added select all fields
-			selectQuery.addCustomColumns(new CustomSql("*"));
+			query.addCustomColumns(new CustomSql("*"));
 		} else {
 			// If specific fields added to search object select only required fields
 			for (Iterator iterator = fields.iterator(); iterator.hasNext();) {
 				Field field = (Field) iterator.next();
-				selectQuery.addCustomColumns(new CustomSql(field.property));
+				query.addCustomColumns(new CustomSql(field.property));
 			}
 		}
 
 		// Add where conditions
-		addWhereClause(search, selectQuery);
+		addWhereClause(search, query);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
-			selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
+			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
 		// Add order by conditions
 		if (search.getFilters() != null) {
@@ -137,35 +136,37 @@ public class JdbcSearchProcessor {
 
 			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
 				Sort sortField = (Sort) iterator.next();
-				selectQuery.addCustomOrdering(sortField.getProperty(),
+				query.addCustomOrdering(sortField.getProperty(),
 						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
 			}
 		}
 
-		logger.debug("1SQL : " + selectQuery.toString());
-		selectQuery.validate();
+		logger.trace("1SQL : " + query.toString());
+		query.validate();
 
 		boolean firstResult = false;
 		if (search.getFirstResult() > 0) {
 			firstResult = true;
 		}
-		logger.debug("2SQL : "
-				+ getLimitString(selectQuery.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
+		logger.trace("2SQL : "
+				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
 		List rowTypes = null;
 		if (searchClass != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(searchClass);
 			try {
-				rowTypes = this.namedParameterJdbcTemplate.query(getLimitString(selectQuery.toString(), firstResult,
-						search.getFirstResult(), search.getMaxResults()), rowMapper);
+				rowTypes = this.namedParameterJdbcTemplate.query(
+						getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
+						rowMapper);
 
 			} catch (Exception e) {
 				logger.debug(e);
 			}
 		} else {
 			Map<String, Object> namedParameters = new HashMap<String, Object>();
-			rowTypes = this.namedParameterJdbcTemplate.queryForList(getLimitString(selectQuery.toString(), firstResult,
-					search.getFirstResult(), search.getMaxResults()), namedParameters);
+			rowTypes = this.namedParameterJdbcTemplate.queryForList(
+					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
+					namedParameters);
 
 			namedParameters = null;
 		}
@@ -257,7 +258,7 @@ public class JdbcSearchProcessor {
 						whereClause.append(" or ");
 					}
 
-					if (subFilter.getOperator() == filter.OP_IN || subFilter.getOperator() == filter.OP_NOT_IN) {
+					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
 						whereClause.append(setInCond(subFilter));
 					} else {
 						String andCond = subFilter.toString().trim();
@@ -266,7 +267,7 @@ public class JdbcSearchProcessor {
 				}
 
 				selectQuery.addCondition(new CustomCondition(whereClause.toString()));
-			} else if (filter.getOperator() == filter.OP_IN || filter.getOperator() == filter.OP_NOT_IN) {
+			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
 				selectQuery.addCondition(setInCond(filter));
 			} else {
 				String andCond = filter.toString().trim();
@@ -282,7 +283,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	public int count(DataSource dataSource, ISearch search) {
-		return search == null ? 0 : count(dataSource, search.getSearchClass(), search);
+		return search == null ? 0 : count(search.getSearchClass(), search);
 	}
 
 	/**
@@ -292,7 +293,7 @@ public class JdbcSearchProcessor {
 	 * 
 	 * @see ISearch
 	 */
-	public int count(DataSource dataSource, Class<?> searchClass, ISearch search) {
+	public int count(Class<?> searchClass, ISearch search) {
 
 		int count;
 		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
@@ -351,7 +352,7 @@ public class JdbcSearchProcessor {
 	 */
 	@SuppressWarnings("rawtypes")
 	public SearchResult searchAndCount(DataSource dataSource, ISearch search) {
-		return search == null ? null : searchAndCount(dataSource, search.getSearchClass(), search);
+		return search == null ? null : searchAndCount(search.getSearchClass(), search);
 	}
 
 	/**
@@ -362,17 +363,17 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public SearchResult searchAndCount(DataSource dataSource, Class<?> searchClass, ISearch search) {
+	public SearchResult searchAndCount(Class<?> searchClass, ISearch search) {
 
 		if (searchClass == null || search == null) {
 			return null;
 		}
 
 		SearchResult result = new SearchResult();
-		result.setResult(search(dataSource, searchClass, search));
+		result.setResult(search(searchClass, search));
 
 		if (search.getMaxResults() > 0) {
-			result.setTotalCount(count(dataSource, searchClass, search));
+			result.setTotalCount(count(searchClass, search));
 		} else {
 			result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
 		}
@@ -590,7 +591,7 @@ public class JdbcSearchProcessor {
 	}
 
 	private static String getRowNumber(String sql) {
-		StringBuffer rownumber = new StringBuffer(50).append("rownumber() over(");
+		StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
 		int orderByIndex = sql.toLowerCase().indexOf("order by");
 		if (orderByIndex > 0 && !hasDistinct(sql)) {
 			rownumber.append(sql.substring(orderByIndex));

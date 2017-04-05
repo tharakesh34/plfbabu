@@ -65,7 +65,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 	}
 	
 	public int count(Class<?> searchClass, ISearch search) {
-		return jdbcSearchProcessor.count(dataSource, searchClass, search);
+		return jdbcSearchProcessor.count(searchClass, search);
 	}
 
 	public int count(ISearch search) {
@@ -74,12 +74,12 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	@SuppressWarnings("unchecked")
 	public <T> List<T> search(Class<T> searchClass, ISearch search) {
-		return jdbcSearchProcessor.search(dataSource, searchClass, search);
+		return jdbcSearchProcessor.search(searchClass, search);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> List<T> search(ISearch search) {
-		return jdbcSearchProcessor.search(dataSource, search);
+		return jdbcSearchProcessor.search(search);
 	}
 	
 	public <T> String getSearchQuery(ISearch search) {
@@ -88,7 +88,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	@SuppressWarnings("unchecked")
 	public <T> SearchResult<T> searchAndCount(Class<T> searchClass, ISearch search) {
-		return jdbcSearchProcessor.searchAndCount(dataSource, searchClass, search);
+		return jdbcSearchProcessor.searchAndCount(searchClass, search);
 	}
 
 	@SuppressWarnings("unchecked")
