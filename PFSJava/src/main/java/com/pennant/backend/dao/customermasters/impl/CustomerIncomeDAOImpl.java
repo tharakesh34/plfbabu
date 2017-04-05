@@ -372,7 +372,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerIncomes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustID = :CustID, CustIncomeType = :CustIncomeType, CustIncome = :CustIncome, JointCust = :JointCust, ");
+		updateSql.append(" Set CustIncome = :CustIncome,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType," );

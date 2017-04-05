@@ -252,7 +252,7 @@ public class CustomerGroupDAOImpl extends BasisNextidDaoImpl<CustomerGroup> impl
 
 		updateSql.append("Update CustomerGroups");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set CustGrpID = :CustGrpID, CustGrpCode = :CustGrpCode, CustGrpDesc = :CustGrpDesc, CustGrpRO1 = :CustGrpRO1, " );
+		updateSql.append("  Set CustGrpCode = :CustGrpCode, CustGrpDesc = :CustGrpDesc, CustGrpRO1 = :CustGrpRO1, " );
 		updateSql.append(" CustGrpLimit = :CustGrpLimit, CustGrpIsActive = :CustGrpIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

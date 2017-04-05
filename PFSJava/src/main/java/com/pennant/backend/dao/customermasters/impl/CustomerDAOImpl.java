@@ -968,7 +968,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder(" Update WIFCustomers");
-		updateSql.append(" Set CustID=:CustID , CustCRCPR=:CustCRCPR , CustCtgCode=:CustCtgCode , CustTypeCode=:CustTypeCode , " );
+		updateSql.append(" Set CustCRCPR=:CustCRCPR , CustCtgCode=:CustCtgCode , CustTypeCode=:CustTypeCode , " );
 		updateSql.append(" CustShrtName=:CustShrtName , CustGenderCode=:CustGenderCode , CustDOB=:CustDOB , CustSector=:CustSector , " );
 		updateSql.append(" CustSubSector=:CustSubSector , CustMaritalSts=:CustMaritalSts , CustEmpSts=:CustEmpSts , " );
 		updateSql.append(" CustIsBlackListed=:CustIsBlackListed , CustBlackListDate=:CustBlackListDate , NoOfDependents=:NoOfDependents , " );

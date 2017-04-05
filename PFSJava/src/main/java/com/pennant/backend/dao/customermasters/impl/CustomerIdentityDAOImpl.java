@@ -216,7 +216,7 @@ public class CustomerIdentityDAOImpl extends BasisCodeDAO<CustomerIdentity> impl
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update CustIdentities");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IdCustID = :IdCustID, IdType = :IdType, IdIssuedBy = :IdIssuedBy, IdRef = :IdRef," );
+		updateSql.append(" Set IdIssuedBy = :IdIssuedBy, IdRef = :IdRef," );
 		updateSql.append(" IdIssueCountry = :IdIssueCountry, IdIssuedOn = :IdIssuedOn, IdExpiresOn = :IdExpiresOn, IdLocation = :IdLocation" );
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );

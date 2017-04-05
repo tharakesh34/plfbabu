@@ -286,8 +286,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomersPRelations" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PRCustID = :PRCustID, PRCustPRSNo = :PRCustPRSNo," );
-		updateSql.append(" PRRelationCode = :PRRelationCode, PRRelationCustID = :PRRelationCustID," );
+		updateSql.append(" Set PRRelationCode = :PRRelationCode, PRRelationCustID = :PRRelationCustID," );
 		updateSql.append(" PRisGuardian = :PRisGuardian, PRFName = :PRFName, PRMName = :PRMName," );
 		updateSql.append(" PRLName = :PRLName, PRSName = :PRSName, PRFNameLclLng = :PRFNameLclLng," );
 		updateSql.append(" PRMNameLclLng = :PRMNameLclLng, PRLNameLclLng = :PRLNameLclLng, PRDOB = :PRDOB," );
