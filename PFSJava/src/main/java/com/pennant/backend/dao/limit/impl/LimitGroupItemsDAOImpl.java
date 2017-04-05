@@ -201,7 +201,7 @@ public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implem
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LimitGroupItems");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitGroupCode = :LimitGroupCode, GroupCode = :GroupCode, ItemCode = :ItemCode , ItemCodes = :ItemCodes ,ItemSeq =:ItemSeq");
+		updateSql.append(" Set GroupCode = :GroupCode, ItemCode = :ItemCode , ItemCodes = :ItemCodes ,ItemSeq =:ItemSeq");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		if(limitGroupItems.getGroupCode() != null) {
 			updateSql.append(" Where LimitGroupCode = :LimitGroupCode AND GroupCode = :GroupCode");
