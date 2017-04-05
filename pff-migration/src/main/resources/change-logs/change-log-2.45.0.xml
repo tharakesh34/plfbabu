@@ -551,4 +551,773 @@ N'String,String,String,String,String,String', N'', N'ReportList06', N'Customer E
 N'Approved', N'', N'', N'', N'', N'', 0, 0);
 	</sql>
 	</changeSet>
+	<changeSet id="23" author="Pruthvi">
+		<createView viewName="CUSTOMEREMPDETAILS_AVIEW" replaceIfExists="true">
+			SELECT     CE.CustEmpId,CE.CustID, CE.CustEmpName, CE.CustEmpFrom, CE.CustEmpTo, CE.CustEmpDesg, 
+                      DE.GenDesgDesc lovDescCustEmpDesgName, CE.CustEmpDept, DP.GenDeptDesc lovDescCustEmpDeptName, CE.CustEmpType, 
+                      ET.EmpTypeDesc lovDescCustEmpTypeName, CE.Version, CE.LastMntBy, CE.LastMntOn, CE.RecordStatus, CE.RoleCode, CE.NextRoleCode, CE.TaskId, 
+                      CE.NextTaskId, CE.RecordType, CE.WorkflowId, EMP.EmpName lovDesccustEmpName, CE.CurrentEmployer, 
+                      EMP.EmpAlocationType
+FROM          CustomerEmpDetails CE INNER JOIN
+                       RMTGenDesignations DE ON CE.CustEmpDesg = DE.GenDesignation INNER JOIN
+                       RMTGenDepartments DP ON CE.CustEmpDept = DP.GenDepartment INNER JOIN
+                       RMTEmpTypes ET ON CE.CustEmpType = ET.EmpType INNER JOIN
+                       EmployerDetail EMP ON CE.CustEmpName = EMP.EmployerId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="24" author="Pruthvi">
+		<createView viewName="CUSTOMEREMPDETAILS_VIEW" replaceIfExists="true">
+		SELECT     CE.CustEmpId,CE.CustID, CE.CustEmpName, CE.CustEmpFrom, CE.CustEmpTo, CE.CustEmpDesg, 
+                      DE.GenDesgDesc lovDescCustEmpDesgName, CE.CustEmpDept, DP.GenDeptDesc lovDescCustEmpDeptName, CE.CustEmpType, 
+                      ET.EmpTypeDesc lovDescCustEmpTypeName, CE.Version, CE.LastMntBy, CE.LastMntOn, CE.RecordStatus, CE.RoleCode, CE.NextRoleCode, CE.TaskId, 
+                      CE.NextTaskId, CE.RecordType, CE.WorkflowId, EMP.EmpName lovDesccustEmpName, CE.CurrentEmployer
+FROM          CustomerEmpDetails_temp CE INNER JOIN
+                       RMTGenDesignations DE ON CE.CustEmpDesg = DE.GenDesignation INNER JOIN
+                       RMTGenDepartments DP ON CE.CustEmpDept = DP.GenDepartment INNER JOIN
+                       RMTEmpTypes ET ON CE.CustEmpType = ET.EmpType INNER JOIN
+                       EmployerDetail EMP ON CE.CustEmpName = EMP.EmployerId
+UNION ALL
+SELECT     CE.CustEmpId,CE.CustID, CE.CustEmpName, CE.CustEmpFrom, CE.CustEmpTo, CE.CustEmpDesg, 
+                      DE.GenDesgDesc lovDescCustEmpDesgName, CE.CustEmpDept, DP.GenDeptDesc lovDescCustEmpDeptName, CE.CustEmpType, 
+                      ET.EmpTypeDesc lovDescCustEmpTypeName, CE.Version, CE.LastMntBy, CE.LastMntOn, CE.RecordStatus, CE.RoleCode, CE.NextRoleCode, CE.TaskId, 
+                      CE.NextTaskId, CE.RecordType, CE.WorkflowId, EMP.EmpName lovDesccustEmpName, CE.CurrentEmployer
+FROM          CustomerEmpDetails CE INNER JOIN
+                       RMTGenDesignations DE ON CE.CustEmpDesg = DE.GenDesignation INNER JOIN
+                       RMTGenDepartments DP ON CE.CustEmpDept = DP.GenDepartment INNER JOIN
+                       RMTEmpTypes ET ON CE.CustEmpType = ET.EmpType INNER JOIN
+                       EmployerDetail EMP ON CE.CustEmpName = EMP.EmployerId
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           CustomerEmpDetails_Temp
+                            WHERE      (CustID = CE.CustID)))
+			</createView>
+	</changeSet>
+	
+	<changeSet id="25" author="Pruthvi">
+		<createView viewName="CUSTOMERDIRECTORDETAIL_AVIEW" replaceIfExists="true">
+		SELECT     T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+FROM          CustomerDirectorDetail T1 INNER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="26" author="Pruthvi">
+		<createView viewName="CUSTOMERDIRECTORDETAIL_VIEW" replaceIfExists="true">
+		SELECT	  T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+			FROM         CustomerDirectorDetail_TEMP T1 INNER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		UNION ALL
+		SELECT     T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+		FROM         CustomerDirectorDetail T1 INNER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerDirectorDetail_TEMP
+                            WHERE      DirectorId = T1.DirectorId AND CustID = T1.CustID)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="27" author="Pruthvi">
+		<createView viewName="CUSTOMERRATINGS_AVIEW" replaceIfExists="true">
+		  SELECT     T1.CustID, T1.CustRatingType, T3.RatingTypeDesc lovDescCustRatingTypeName, 
+                      T1.CustRatingCode, T1.CustRating, T1.ValueType, T1.Version, T1.LastMntOn, T1.LastMntBy, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T4.RatingCodeDesc lovDescCustRatingName, 
+                      T5.RatingCodeDesc lovDesccustRatingCodeDesc
+FROM          CustomerRatings T1 INNER JOIN
+                       BMTRatingTypes T3 ON T1.CustRatingType = T3.RatingType LEFT OUTER JOIN
+                       BMTRatingCodes T4 ON T1.CustRatingType = T4.RatingType AND T1.CustRating = T4.RatingCode LEFT OUTER JOIN
+                       BMTRatingCodes T5 ON T1.CustRatingType = T5.RatingType AND T1.CustRatingCode = T5.RatingCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="28" author="Pruthvi">
+		<createView viewName="CUSTOMERRATINGS_VIEW" replaceIfExists="true">
+		SELECT     T1.CustID, T1.CustRatingType, T3.RatingTypeDesc lovDescCustRatingTypeName, 
+                      T1.CustRatingCode, T1.CustRating, T1.ValueType, T1.Version, T1.LastMntOn, T1.LastMntBy, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T4.RatingCodeDesc lovDescCustRatingName, 
+                      T5.RatingCodeDesc lovDesccustRatingCodeDesc
+FROM          CustomerRatings_Temp T1 INNER JOIN
+                       BMTRatingTypes T3 ON T1.CustRatingType = T3.RatingType LEFT OUTER JOIN
+                       BMTRatingCodes T4 ON T1.CustRatingType = T4.RatingType AND T1.CustRating = T4.RatingCode LEFT OUTER JOIN
+                       BMTRatingCodes T5 ON T1.CustRatingType = T5.RatingType AND T1.CustRatingCode = T5.RatingCode
+UNION ALL
+SELECT     T1.CustID, T1.CustRatingType, T3.RatingTypeDesc lovDescCustRatingTypeName, 
+                      T1.CustRatingCode, T1.CustRating, T1.ValueType, T1.Version, T1.LastMntOn, T1.LastMntBy, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T4.RatingCodeDesc lovDescCustRatingName, 
+                      T5.RatingCodeDesc lovDesccustRatingCodeDesc
+FROM          CustomerRatings T1 INNER JOIN
+                       BMTRatingTypes T3 ON T1.CustRatingType = T3.RatingType LEFT OUTER JOIN
+                       BMTRatingCodes T4 ON T1.CustRatingType = T4.RatingType AND T1.CustRating = T4.RatingCode LEFT OUTER JOIN
+                       BMTRatingCodes T5 ON T1.CustRatingType = T5.RatingType AND T1.CustRatingCode = T5.RatingCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerRatings_Temp
+                            WHERE      CustID = T1.CustID AND CustRatingType = T1.CustRatingType)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="29" author="Pruthvi">
+		<createView viewName="CUSTOMERDOCUMENTS_AVIEW" replaceIfExists="true">
+		SELECT T1.CustID,T1.CustDocType,T2.DocTypeDesc lovDescCustDocCategory ,
+          T1.CustDocTitle,T1.CustDocSysName,T1.CustDocRcvdOn,T1.CustDocExpDate,T1.CustDocIssuedOn,T1.CustDocIssuedCountry,
+          T3.CountryDesc lovDescCustDocIssuedCountry,T1.CustDocIsVerified,T1.CustDocVerifiedBy,T1.CustDocIsAcrive,T1.Version,
+          T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,T1.NextRoleCode,T1.CustDocName,T1.CustDocCategory,T1.CustDocImage,
+          T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T2.DocExpDateIsMand,T2.DocIssueDateMand,
+          T2.DocIdNumMand,T2.DocIssuedAuthorityMand,T1.DocRefId,T1.DocPurpose,T1.DocUri
+  FROM CustomerDocuments T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="30" author="Pruthvi">
+		<createView viewName="CUSTOMERDOCUMENTS_VIEW" replaceIfExists="true">
+		SELECT T1.CustID ,
+          T1.CustDocType ,
+          T2.DocTypeDesc lovDescCustDocCategory  ,
+          T1.CustDocTitle ,
+          T1.CustDocSysName ,
+          T1.CustDocRcvdOn ,
+          T1.CustDocExpDate ,
+          T1.CustDocIssuedOn ,
+          T1.CustDocIssuedCountry ,
+          T3.CountryDesc lovDescCustDocIssuedCountry  ,
+          T1.CustDocIsVerified ,
+          T1.CustDocVerifiedBy ,
+          T1.CustDocIsAcrive ,
+          T1.DocPurpose,
+          T1.DocUri,
+          T1.Version ,
+          T1.LastMntBy ,
+          T1.LastMntOn ,
+          T1.RecordStatus ,
+          T1.RoleCode ,
+          T1.NextRoleCode ,
+          T1.CustDocName ,
+          T1.CustDocCategory ,
+          T1.CustDocImage ,
+          T1.TaskId ,
+          T1.NextTaskId ,
+          T1.RecordType ,
+          T1.WorkflowId ,
+T2.DocExpDateIsMand ,
+      T2.DocIssueDateMand ,
+      T2.DocIdNumMand	 ,
+      T2.DocIssuedAuthorityMand	,
+	  T1.DocRefId	  
+     FROM CustomerDocuments_Temp T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+   UNION ALL 
+   SELECT T1.CustID ,
+          T1.CustDocType ,
+          T2.DocTypeDesc lovDescCustDocCategory  ,
+          T1.CustDocTitle ,
+          T1.CustDocSysName ,
+          T1.CustDocRcvdOn ,
+          T1.CustDocExpDate ,
+          T1.CustDocIssuedOn ,
+          T1.CustDocIssuedCountry ,
+          T3.CountryDesc lovDescCustDocIssuedCountry  ,
+          T1.CustDocIsVerified ,
+          T1.CustDocVerifiedBy ,
+          T1.CustDocIsAcrive ,
+          T1.DocPurpose,
+          T1.DocUri,
+          T1.Version ,
+          T1.LastMntBy ,
+          T1.LastMntOn ,
+          T1.RecordStatus ,
+          T1.RoleCode ,
+          T1.NextRoleCode ,
+          T1.CustDocName ,
+          T1.CustDocCategory ,
+          T1.CustDocImage ,
+          T1.TaskId ,
+          T1.NextTaskId ,
+          T1.RecordType ,
+          T1.WorkflowId ,
+		  T2.DocExpDateIsMand ,
+      T2.DocIssueDateMand ,
+      T2.DocIdNumMand,
+      T2.DocIssuedAuthorityMand,
+	  T1.DocRefId
+     FROM CustomerDocuments T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM CustomerDocuments_Temp 
+                          WHERE CustID = T1.CustID
+                                  AND CustDocCategory = T1.CustDocCategory )
+			</createView>
+	</changeSet>
+	
+	<changeSet id="31" author="Pruthvi">
+		<createView viewName="CUSTOMERADDRESSES_AVIEW" replaceIfExists="true">
+		SELECT T1.CustID ,
+          T1.CustAddrType ,
+          T2.AddrTypeDesc lovDescCustAddrTypeName  ,
+          T1.CustAddrHNbr ,
+          T1.CustFlatNbr ,
+          T1.CustAddrStreet ,
+          T1.CustAddrLine1 ,
+          T1.CustAddrLine2 ,
+          T1.CustPOBox ,
+          T1.CustAddrCity ,
+		  T1.TypeOfResidence,
+          T3.PCCityName lovDescCustAddrCityName  ,
+          T1.CustAddrProvince ,
+          T4.CPProvinceName lovDescCustAddrProvinceName  ,
+          T1.CustAddrCountry ,
+          T5.CountryDesc lovDescCustAddrCountryName  ,
+          T1.CustAddrZIP ,
+          T1.CustAddrPhone ,
+          T1.CustAddrFrom ,
+          T1.custAddrPriority ,
+          T1.Version ,
+          T1.LastMntBy ,
+          T1.LastMntOn ,
+          T1.RecordStatus ,
+          T1.RoleCode ,
+          T1.NextRoleCode ,
+          T1.TaskId ,
+          T1.NextTaskId ,
+          T1.RecordType ,
+          T1.WorkflowId
+     FROM CustomerAddresses T1
+            LEFT JOIN BMTAddressTypes T2   ON T1.CustAddrType = T2.AddrTypeCode
+            LEFT JOIN RMTProvinceVsCity T3   ON T1.CustAddrCountry = T3.PCCountry
+            AND T1.CustAddrProvince = T3.PCProvince AND T1.CustAddrCity = T3.PCCity
+            LEFT JOIN RMTCountryVsProvince T4   ON T1.CustAddrCountry = T4.CPCountry
+            AND T1.CustAddrProvince = T4.CPProvince
+            LEFT JOIN BMTCountries T5   ON T1.CustAddrCountry = T5.CountryCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="32" author="Pruthvi">
+		<createView viewName="CUSTOMERADDRESSES_VIEW" replaceIfExists="true">
+		SELECT T1.CustID ,
+          T1.CustAddrType ,
+          T2.AddrTypeDesc lovDescCustAddrTypeName  ,
+          T1.CustAddrHNbr ,
+          T1.CustFlatNbr ,
+          T1.CustAddrStreet ,
+          T1.CustAddrLine1 ,
+          T1.CustAddrLine2 ,
+          T1.CustPOBox ,
+          T1.CustAddrCity ,
+		  T1.TypeOfResidence,
+          T3.PCCityName lovDescCustAddrCityName  ,
+          T1.CustAddrProvince ,
+          T4.CPProvinceName lovDescCustAddrProvinceName  ,
+          T1.CustAddrCountry ,
+          T5.CountryDesc lovDescCustAddrCountryName  ,
+          T1.CustAddrZIP ,
+          T1.CustAddrPhone ,
+          T1.CustAddrFrom ,
+          T1.custAddrPriority ,
+          T1.Version ,
+          T1.LastMntBy ,
+          T1.LastMntOn ,
+          T1.RecordStatus ,
+          T1.RoleCode ,
+          T1.NextRoleCode ,
+          T1.TaskId ,
+          T1.NextTaskId ,
+          T1.RecordType ,
+          T1.WorkflowId
+     FROM CustomerAddresses_Temp T1
+            LEFT JOIN BMTAddressTypes T2   ON T1.CustAddrType = T2.AddrTypeCode
+            LEFT JOIN RMTProvinceVsCity T3   ON T1.CustAddrCountry = T3.PCCountry
+            AND T1.CustAddrProvince = T3.PCProvince AND T1.CustAddrCity = T3.PCCity
+            LEFT JOIN RMTCountryVsProvince T4   ON T1.CustAddrCountry = T4.CPCountry
+            AND T1.CustAddrProvince = T4.CPProvince
+            LEFT JOIN BMTCountries T5   ON T1.CustAddrCountry = T5.CountryCode
+   UNION ALL 
+   SELECT T1.CustID ,
+          T1.CustAddrType ,
+          T2.AddrTypeDesc lovDescCustAddrTypeName  ,
+          T1.CustAddrHNbr ,
+          T1.CustFlatNbr ,
+          T1.CustAddrStreet ,
+          T1.CustAddrLine1 ,
+          T1.CustAddrLine2 ,
+          T1.CustPOBox ,
+          T1.CustAddrCity ,
+		  T1.TypeOfResidence,
+          T3.PCCityName lovDescCustAddrCityName  ,
+          T1.CustAddrProvince ,
+          T4.CPProvinceName lovDescCustAddrProvinceName  ,
+          T1.CustAddrCountry ,
+          T5.CountryDesc lovDescCustAddrCountryName  ,
+          T1.CustAddrZIP ,
+          T1.CustAddrPhone ,
+          T1.CustAddrFrom ,
+          T1.custAddrPriority ,
+          T1.Version ,
+          T1.LastMntBy ,
+          T1.LastMntOn ,
+          T1.RecordStatus ,
+          T1.RoleCode ,
+          T1.NextRoleCode ,
+          T1.TaskId ,
+          T1.NextTaskId ,
+          T1.RecordType ,
+          T1.WorkflowId
+     FROM CustomerAddresses T1
+            LEFT JOIN BMTAddressTypes T2   ON T1.CustAddrType = T2.AddrTypeCode
+            LEFT JOIN RMTProvinceVsCity T3   ON T1.CustAddrCountry = T3.PCCountry
+            AND T1.CustAddrProvince = T3.PCProvince AND T1.CustAddrCity = T3.PCCity
+            LEFT JOIN RMTCountryVsProvince T4   ON T1.CustAddrCountry = T4.CPCountry
+            AND T1.CustAddrProvince = T4.CPProvince
+            LEFT JOIN BMTCountries T5   ON T1.CustAddrCountry = T5.CountryCode
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM CustomerAddresses_Temp 
+                          WHERE CustID = T1.CustID
+                                  AND CustAddrType = T1.CustAddrType )
+			</createView>
+	</changeSet>
+	
+	<changeSet id="33" author="Pruthvi">
+		<createView viewName="CUSTOMERPHONENUMBERS_AVIEW" replaceIfExists="true">
+		SELECT     T1.PhoneCustID, T1.PhoneTypeCode, T1.PhoneCountryCode, T1.PhoneAreaCode, 
+           T1.PhoneNumber, T1.PhoneTypePriority, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+           T1.WorkflowId, T2.PhoneTypeDesc lovDescPhoneTypeCodeName, T3.CountryDesc lovDescPhoneCountryName
+FROM         CustomerPhoneNumbers T1 INNER JOIN
+                      BMTPhoneTypes T2 ON T1.PhoneTypeCode = T2.PhoneTypeCode LEFT OUTER JOIN
+                      BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="34" author="Pruthvi">
+		<createView viewName="CUSTOMERPHONENUMBERS_VIEW" replaceIfExists="true">
+		SELECT     T1.PhoneCustID, T1.PhoneTypeCode, T1.PhoneCountryCode, T1.PhoneAreaCode, 
+                      T1.PhoneNumber, T1.PhoneTypePriority, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                      T1.WorkflowId, T2.PhoneTypeDesc lovDescPhoneTypeCodeName, T3.CountryDesc lovDescPhoneCountryName
+FROM         CustomerPhoneNumbers_TEMP T1 INNER JOIN
+                      BMTPhoneTypes T2 ON T1.PhoneTypeCode = T2.PhoneTypeCode LEFT OUTER JOIN
+                      BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
+UNION ALL
+SELECT     T1.PhoneCustID, T1.PhoneTypeCode, T1.PhoneCountryCode, T1.PhoneAreaCode, 
+                      T1.PhoneNumber, T1.PhoneTypePriority, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                      T1.WorkflowId, T2.PhoneTypeDesc lovDescPhoneTypeCodeName, T3.CountryDesc lovDescPhoneCountryName
+FROM         CustomerPhoneNumbers T1 INNER JOIN
+                      BMTPhoneTypes T2 ON T1.PhoneTypeCode = T2.PhoneTypeCode LEFT OUTER JOIN
+                      BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerPhoneNumbers_TEMP
+                            WHERE      PhoneCustID = T1.PhoneCustID AND PhoneTypeCode = T1.PhoneTypeCode)
+			</createView>
+	</changeSet>
+	
+	
+	<changeSet id="35" author="Pruthvi">
+		<createView viewName="CUSTOMEREMAILS_AVIEW" replaceIfExists="true">
+		SELECT     CE.CustID, CE.CustEMailTypeCode, 
+                      E.EmailTypeDesc lovDescCustEMailTypeCode, CE.CustEMailPriority, CE.CustEMail, CE.Version, CE.LastMntBy, CE.LastMntOn, CE.RecordStatus, 
+                      CE.RoleCode, CE.NextRoleCode, CE.TaskId, CE.NextTaskId, CE.RecordType, CE.WorkflowId
+FROM          CustomerEMails CE INNER JOIN
+                       BMTEMailTypes E ON CE.CustEMailTypeCode = E.EmailTypeCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="36" author="Pruthvi">
+		<createView viewName="CUSTOMEREMAILS_VIEW" replaceIfExists="true">
+		  SELECT     CE.CustID, CE.CustEMailTypeCode, 
+                      E.EmailTypeDesc lovDescCustEMailTypeCode, CE.CustEMailPriority, CE.CustEMail, CE.Version, CE.LastMntBy, CE.LastMntOn, 
+                      CE.RecordStatus, CE.RoleCode, CE.NextRoleCode, CE.TaskId, CE.NextTaskId, CE.RecordType, CE.WorkflowId
+		FROM          CustomerEMails_Temp CE INNER JOIN
+                       BMTEMailTypes E ON CE.CustEMailTypeCode = E.EmailTypeCode
+		UNION ALL
+			SELECT     CE.CustID, CE.CustEMailTypeCode, 
+                      E.EmailTypeDesc lovDescCustEMailTypeCode, CE.CustEMailPriority, CE.CustEMail, CE.Version, CE.LastMntBy, CE.LastMntOn, 
+                      CE.RecordStatus, CE.RoleCode, CE.NextRoleCode, CE.TaskId, CE.NextTaskId, CE.RecordType, CE.WorkflowId
+			FROM          CustomerEMails CE INNER JOIN
+                       BMTEMailTypes E ON CE.CustEMailTypeCode = E.EmailTypeCode
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerEMails_Temp
+                            WHERE      CustID = CE.CustID AND CustEMailTypeCode = CE.CustEMailTypeCode)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="37" author="Pruthvi">
+		<createView viewName="CUSTOMERBANKINFO_AVIEW" replaceIfExists="true">
+		 SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		     T3.BankName lovDescBankName,T4.AcTypeDesc lovDescAccountType
+  FROM       CustomerBankInfo T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             RMTAccountTypes T4 ON T4.AcType = T1.AccountType
+			</createView>
+	</changeSet>
+	
+	<changeSet id="38" author="Pruthvi">
+		<createView viewName="CUSTOMERBANKINFO_VIEW" replaceIfExists="true">
+		  SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		     T3.BankName lovDescBankName,T4.AcTypeDesc lovDescAccountType
+  FROM       CustomerBankInfo_Temp T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             RMTAccountTypes T4 ON T4.AcType = T1.AccountType 
+UNION ALL
+
+  SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		     T3.BankName lovDescBankName,T4.AcTypeDesc lovDescAccountType
+  FROM       CustomerBankInfo T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             RMTAccountTypes T4 ON T4.AcType = T1.AccountType
+WHERE     NOT EXISTS (SELECT 1 FROM CustomerBankInfo_TEMP WHERE BankId = T1.BankId)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="39" author="Pruthvi">
+		<createView viewName="CUSTOMERCHEQUEINFO_AVIEW" replaceIfExists="true">
+		SELECT      T1.CustID, T1.ChequeSeq, T1.MonthYear, T1.TotChequePayment, T1.Salary, T1.Debits, T1.ReturnChequeAmt,
+			T1.ReturnChequeCount, T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId
+FROM         CustomerChequeInfo T1
+			</createView>
+	</changeSet>
+	
+	<changeSet id="40" author="Pruthvi">
+		<createView viewName="CUSTOMERCHEQUEINFO_VIEW" replaceIfExists="true">
+		  SELECT      T1.CustID, T1.ChequeSeq, T1.MonthYear, T1.TotChequePayment, T1.Salary,T1.Debits, T1.ReturnChequeAmt,
+			T1.ReturnChequeCount, T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId
+FROM         CustomerChequeInfo_Temp T1
+UNION ALL
+
+ SELECT      T1.CustID, T1.ChequeSeq, T1.MonthYear, T1.TotChequePayment, T1.Salary,T1.Debits, T1.ReturnChequeAmt,
+			T1.ReturnChequeCount, T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId
+FROM         CustomerChequeInfo T1
+
+WHERE     NOT EXISTS (SELECT 1 FROM CustomerChequeInfo_TEMP WHERE CustID = T1.CustID And ChequeSeq = T1.ChequeSeq)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="41" author="Pruthvi">
+		<createView viewName="CUSTOMEREXTLIABILITY_AVIEW" replaceIfExists="true">
+		SELECT      T1.CustID, T1.LiabilitySeq, T1.FinDate, T1.FinType, T1.BankName, T1.OriginalAmount, T1.InstalmentAmount,
+	        T1.OutStandingBal, T1.FinStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		    T3.BankName lovDescBankName,T4.FinTypeDesc lovDescFinType,T5.CustStsDescription lovDescFinStatus
+FROM         CustomerExtLiability T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             OtherBankFinanceType T4 ON T4.FinType = T1.FinType LEFT OUTER JOIN
+             BMTCustStatusCodes T5 ON T5.CustStsCode = T1.FinStatus
+			</createView>
+	</changeSet>
+	
+	<changeSet id="42" author="Pruthvi">
+		<createView viewName="CUSTOMEREXTLIABILITY_VIEW" replaceIfExists="true">
+		SELECT      T1.CustID, T1.LiabilitySeq, T1.FinDate, T1.FinType, T1.BankName, T1.OriginalAmount, T1.InstalmentAmount,
+	        T1.OutStandingBal, T1.FinStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		    T3.BankName lovDescBankName,T4.FinTypeDesc lovDescFinType, T5.CustStsDescription lovDescFinStatus
+FROM         CustomerExtLiability_Temp T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             OtherBankFinanceType T4 ON T4.FinType = T1.FinType LEFT OUTER JOIN
+             BMTCustStatusCodes T5 ON T5.CustStsCode = T1.FinStatus 
+
+UNION ALL
+
+SELECT      T1.CustID, T1.LiabilitySeq, T1.FinDate, T1.FinType, T1.BankName, T1.OriginalAmount, T1.InstalmentAmount,
+	        T1.OutStandingBal, T1.FinStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		    T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		    T3.BankName lovDescBankName,T4.FinTypeDesc lovDescFinType,T5.CustStsDescription lovDescFinStatus
+FROM         CustomerExtLiability T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             OtherBankFinanceType T4 ON T4.FinType = T1.FinType LEFT OUTER JOIN
+             BMTCustStatusCodes T5 ON T5.CustStsCode = T1.FinStatus 
+
+WHERE     NOT EXISTS (SELECT 1 FROM CustomerExtLiability_TEMP WHERE CustID = T1.CustID  And LiabilitySeq = T1.LiabilitySeq)
+			</createView>
+	</changeSet>
+	
+	<changeSet id="43" author="Pruthvi">
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+		SELECT     T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.CalTerms NumberOfTerms, T1.CustID, T1.FinAmount, 
+                      T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,T1.DownPayment, 
+                      T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate,T1.InsuranceAmt,
+                      T5.FinTypeDesc LovDescFinTypeName, T6.CustCIF LovDescCustCIF, T6.CustShrtName LovDescCustShrtName, T7.BranchDesc LovDescFinBranchName, 
+                      T1.Blacklisted, T5.FinScheduleOn LovDescFinScheduleOn, T1.FeeChargeAmt, T1.ClosingStatus, T8.CustTypeCtg, 
+                      T1.GraceTerms, T5.FinDivision lovDescFinDivision, T5.FinCategory lovDescProductCodeName, 
+                      T1.AlwMultiDisb , T5.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments,
+                       (T1.FinAmount-T1.DownPayment+ T1.FeeChargeAmt+T1.InsuranceAmt) FinancingAmount,
+                      (T1.FinAmount-T1.DownPayment- T1.FinRepaymentAmount+ T1.FeeChargeAmt+T1.InsuranceAmt) CurFinAmount,
+                      T1.FinStatus ,T1.MandateID,T1.FinRepayMethod 
+FROM          FinanceMain T1 INNER JOIN
+                       RMTFinanceTypes T5 ON T1.FinType = T5.FinType INNER JOIN
+                       Customers T6 ON T1.CustID = T6.CustID INNER JOIN
+                       RMTBranches T7 ON T1.FinBranch = T7.BranchCode INNER JOIN
+                       RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="44" author="Pruthvi">
+		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
+		SELECT		T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, 
+					T1.FinContingentAcType, T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, 
+					T1.FinIsAlwMD, T1.FinSchdMthd, T1.FInIsAlwGrace, T1.EqualRepayment, T1.FinRateType, 
+					T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, 
+					T1.FinIsIntCpz, T1.FinCpzFrq, T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, 
+					T1.FinGrcSplRate, T1.FinGrcIntRate, T1.FInGrcMinRate, T1.FinGrcMaxRate, T1.FinGrcDftIntFrq, 
+					T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, T1.FinGrcRvwFrq, T1.FinMinTerm, 
+					T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwDifferment, 
+					T1.FinMaxDifferment, T1.FinIsActive, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, 
+					T1.AlwdStepPolicies, T1.DftStepPolicy, T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,
+					T1.FinAlwRateChangeAnyDate,  T1.FinIsIntCpzAtGrcEnd, T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment, 
+					T1.PlanDeferCount, T1.PftPayAcType, T1.FinIsOpenPftPayAcc, T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, 
+					T1.FinGrcMargin, T1.FinMargin, T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, 
+					T1.FinDepreciationFrq, T1.FinBankContingentAcType, T1.FinProvisionAcType, T1.AllowRIAInvestment, 
+					T1.OverrideLimit, T1.LimitRequired, T1.FinCommitmentOvrride, T1.FinCollateralOvrride, 
+					T1.FinRepayPftOnFrq, T1.FinPftUnChanged, T1.ApplyODPenalty, T1.ODIncGrcDays, T1.ODChargeType, 
+					T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc, T1.ODAllowWaiver, T1.ODMaxWaiverPerc, 
+					T1.FinDivision, T3.DivisionCodeDesc LovDescFinDivisionName, T1.FinSuspAcType, T1.Product, 
+					T1.StartDate, T1.EndDate, T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, T1.Remarks, 
+					T4.PolicyDesc lovDescDftStepPolicyName, T1.PastduePftCalMthd,  T1.AlwAdvanceRent, 
+					T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, 
+					T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule, T1.AlwMultiPartyDisb, 
+					T1.collateralType, T1.TDSApplicable, T5.RuleCode DownPayRuleDesc, T1.ApplyGrcPricing, 
+					T1.ApplyRpyPricing, T6.RuleCode GrcPricingMethodDesc, T7.RuleCode RpyPricingMethodDesc, 
+					T1.DroplineOD, T1.DroppingMethod, T1.RateChgAnyDay, T4.StepType DftStepPolicyType, 
+					T1.ManualSchedule,T8.ProductCategory, T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , 
+					T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax ,T1.PlanEMIHLockPeriod , 
+					T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
+					T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.CalRoundingMode, T1.FrequencyDays, 
+					T1.QuickDisb,T1.AlwReage,T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq
+					FROM			RMTFinanceTypes T1 INNER JOIN
+                    SMTDivisionDetail T3 ON T1.FinDivision = T3.DivisionCode LEFT OUTER JOIN
+					                StepPolicyHeader T4 ON T1.DftStepPolicy = T4.PolicyCode LEFT OUTER JOIN
+					                Rules T5 ON T1.DownPayRule = T5.RuleId LEFT OUTER JOIN
+					                Rules T6 ON T1.GrcPricingMethod = T6.RuleId LEFT OUTER JOIN
+					                Rules T7 ON T1.RpyPricingMethod = T7.RuleId INNER JOIN
+									BMTProduct T8 ON T1.FinCategory = T8.ProductCode
+			</createView>
+	</changeSet>
+	
+	<changeSet id="45" author="Pruthvi">
+		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+				           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+						   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension,  T1.EqualRepayment, T1.FinRateType,
+						   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+				           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+						   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+						   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+						   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+						   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+						   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+						   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+						   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName,
+				           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate, T1.FinGrcRvwRateApplFor, T1.FinIsIntCpzAtGrcEnd,
+						   T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+						   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+				           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+				           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+				           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+				           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired,
+						   T1.FinCommitmentOvrride, T1.FinCollateralOvrride, 
+				           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+						   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName, T1.FinSuspAcType,
+						   T49.AcTypeDesc lovDescFinSuspAcTypeName,T1.Product, T1.StartDate, T1.EndDate,
+						   T1.AllowDownpayPgm, T1.Remarks, 
+						   T1.AlwEarlyPayMethods,T1.PastduePftCalMthd,T1.PastduePftMargin, 
+						   T1.AlwAdvanceRent, T1.GrcAdvBaseRate, 
+				           T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate,  
+				           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+						   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+						   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+						   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+						   T1.RateChgAnyDay, T1.FinRepayPftOnFrq,
+						    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+							T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
+							T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.CalRoundingMode, T1.FrequencyDays, T1.QuickDisb,T1.AlwReage,
+							T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq, T1.FinTypeDesc lovDescPromoFinTypeDesc, T3.ProductDesc lovDescProductCodeDesc,T3.ProductCategory 
+				FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
+				           BMTProduct T3 ON T1.FinCategory = T3.ProductCode LEFT OUTER JOIN
+				           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+				           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+				           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+				           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+				           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+				           Rules T68 ON T1.RpyPricingMethod = T68.RuleId
+			</createView>
+	</changeSet>
+	
+	<changeSet id="46" author="Pruthvi">
+		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
+		SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+			           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+					   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension, T1.EqualRepayment, T1.FinRateType,
+					   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+			           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+					   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+					   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+					   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+					   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+					   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+					   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+					   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName,
+			           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate, T1.FinGrcRvwRateApplFor, T1.FinIsIntCpzAtGrcEnd,
+					  T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+					   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+			           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+			           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+			           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+			           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired,T1.FinCommitmentOvrride, T1.FinCollateralOvrride,
+			           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+					   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName, T1.FinSuspAcType,
+					   T49.AcTypeDesc lovDescFinSuspAcTypeName, T52.ProductDesc lovDescProductCodeDesc,T1.Product, T1.StartDate, T1.EndDate,
+					   T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, 
+			          T1.Remarks, T1.AlwEarlyPayMethods, T1.PastduePftCalMthd,T1.PastduePftMargin, 
+					  T1.AlwAdvanceRent, T1.GrcAdvBaseRate,T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+			           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+					   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+					   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+					   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+					   T1.RateChgAnyDay,T52.ProductCategory , T1.FinRepayPftOnFrq,
+					    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
+						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.CalRoundingMode, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
+						T1.AlwReage,T1.AlwUnPlanEmiHoliday
+			FROM       RMTFinanceTypes_Temp T1 LEFT OUTER JOIN
+			           BMTProduct T52 ON T1.FinCategory = T52.ProductCode LEFT OUTER JOIN
+			           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+			           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+			           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+			           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+			           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+			           Rules T68 ON T1.RpyPricingMethod = T68.RuleId 
+			UNION ALL
+			SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+			           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+					   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension, T1.EqualRepayment, T1.FinRateType,
+					   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+			           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+					   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+					   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+					   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+					   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+					   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+					   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+					   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName, 
+			           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate, T1.FinGrcRvwRateApplFor, T1.FinIsIntCpzAtGrcEnd,
+					  T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+					   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+			           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+			           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+			           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+			           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired, T1.FinCommitmentOvrride, T1.FinCollateralOvrride,
+			           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+					   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName, T1.FinSuspAcType,
+					   T49.AcTypeDesc lovDescFinSuspAcTypeName, T52.ProductDesc lovDescProductCodeDesc,T1.Product, T1.StartDate, T1.EndDate,
+					  T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, T1.Remarks, T1.AlwEarlyPayMethods, T1.PastduePftCalMthd,T1.PastduePftMargin, 
+					   T1.AlwAdvanceRent, T1.GrcAdvBaseRate,  T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+			           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+					   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+					   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+					   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+					   T1.RateChgAnyDay,T52.ProductCategory ,T1.FinRepayPftOnFrq,
+					    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
+						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.CalRoundingMode, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
+						T1.AlwReage,T1.AlwUnPlanEmiHoliday
+			FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
+			           BMTProduct T52 ON T1.FinCategory = T52.ProductCode LEFT OUTER JOIN
+			           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+			           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+			           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+			           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+			           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+			           Rules T68 ON T1.RpyPricingMethod = T68.RuleId 
+			WHERE     (NOT EXISTS
+			                          (SELECT     1 Expr1
+			                            FROM          RMTFinanceTypes_Temp
+			                            WHERE      (FinType = T1.FinType)))
+			</createView>
+	</changeSet>
+	
+	<changeSet id="47" author="Pruthvi">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+		SELECT     T1.AccountSetid, T1.EventCode, T1.AccountSetCode, T1.AccountSetCodeName, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.AEEventCodeDesc lovDescEventCodeName, 
+                      T1.SystemDefault, T1.EntryByInvestment
+
+FROM         RMTAccountingSet_Temp T1 INNER JOIN
+                       BMTAEEvents T2 ON T1.EventCode = T2.AEEventCode
+UNION ALL
+SELECT     T1.AccountSetid, T1.EventCode, T1.AccountSetCode, T1.AccountSetCodeName, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.AEEventCodeDesc lovDescEventCodeName, 
+                      T1.SystemDefault, T1.EntryByInvestment
+
+FROM         RMTAccountingSet T1 INNER JOIN
+                       BMTAEEvents T2 ON T1.EventCode = T2.AEEventCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          RMTAccountingSet_TEMP
+                            WHERE      AccountSetid = T1.AccountSetid)
+			</createView>
+	</changeSet>
+	
+	
 </databaseChangeLog>
