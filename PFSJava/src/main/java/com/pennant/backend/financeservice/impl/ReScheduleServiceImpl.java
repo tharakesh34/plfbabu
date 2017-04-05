@@ -63,7 +63,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		int terms = finServiceInstruction.getTerms();
 
 		List<FinanceScheduleDetail> scheduleList = scheduleData.getFinanceScheduleDetails();
-		if (fromDate != null && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+		if (fromDate != null && financeMain.isAllowGrcPeriod() && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 			calFromGrcPeriod = true;
 		}
 
@@ -282,10 +282,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
 			curSchd.setDefSchdDate(curSchd.getSchDate());
 
-			FinanceScheduleDetail prvSchd = null;
-			if (i != 0) {
-				prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);
+			if (i == 0) {
+				continue;
 			}
+			FinanceScheduleDetail prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);
 			
 			// Profit Days Basis Setting
 			if(StringUtils.isEmpty(curSchd.getPftDaysBasis())){
@@ -483,10 +483,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if(DateUtility.compare(curSchd.getSchDate(), finMain.getEventFromDate()) >= 0){
-				startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate(); 
+				if(prvSchd == null){
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getFinStartDate(), "A", false).getNextFrequencyDate();
+				}else{
+					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate();
+				}
 				if(DateUtility.getDaysBetween(curSchd.getSchDate(), startCalFrom) <= 15){
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate(); 
 				}
+				break;
 			}
 			prvSchd = curSchd;
 		}

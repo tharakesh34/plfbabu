@@ -639,7 +639,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	
 	protected String finDivision="";
-	Date appStartDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");;
+	Date appStartDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	
 	public  FinanceBaseCtrl() {
 		super();

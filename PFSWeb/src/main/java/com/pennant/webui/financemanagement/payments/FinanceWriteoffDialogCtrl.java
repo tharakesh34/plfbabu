@@ -84,6 +84,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -1190,7 +1191,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.writeoffDate.setValue(DateUtility.getAppDate());
 			}else if(!this.writeoffDate.isDisabled()){
 				this.writeoffDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinWriteoffDialog_WriteoffDate.value"), false, 
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), DateUtility.getAppDate(), true));
+						SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), DateUtility.getAppDate(), true));
 			}
 
 			writeoff.setWriteoffDate(this.writeoffDate.getValue());
