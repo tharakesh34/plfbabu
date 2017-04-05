@@ -415,7 +415,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set FileName=:FileName, BatchReference = :BatchReference,AcEntryRef = :AcEntryRef, HostSeqNo = :HostSeqNo, Account = :Account, AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, TxnReference = :TxnReference, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId");
+		        .append(" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account, AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId");
 		updateSql
 		        .append(", Version=:Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql
@@ -470,7 +470,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set FileName=:FileName, BatchReference = :BatchReference, AcEntryRef = :AcEntryRef, HostSeqNo = :HostSeqNo, Account = :Account,  AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, TxnReference = :TxnReference, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId ");
+		        .append(" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account,  AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId ");
 		updateSql
 		        .append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, WorkflowId = :WorkflowId");
 		updateSql
@@ -549,7 +549,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set BatchReference = :BatchReference, LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
+		        .append(" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
 		updateSql
 		        .append(" Where BatchReference =:BatchReference AND Account = :Account AND DeletedFlag = 0");
 
@@ -574,7 +574,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set BatchReference = :BatchReference, LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
+		        .append(" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
 		updateSql
 		        .append(" Where BatchReference =:BatchReference AND DeletedFlag = 1");
 
