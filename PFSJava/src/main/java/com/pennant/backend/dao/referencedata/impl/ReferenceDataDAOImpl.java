@@ -135,7 +135,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update "+tableName);
-		updateSql.append(" Set Code = :Code, Value = :Value, Description = :Description" );
+		updateSql.append(" Set Code = :Code, Description = :Description" );
 		updateSql.append(" Where Value =:Value");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -180,7 +180,7 @@ public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 		logger.debug("Entering ");
 
 		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies" );
-		updateSql.append(" Set CcyCode = :CcyCode, CcyDesc = :CcyDesc ");
+		updateSql.append(" Set CcyDesc = :CcyDesc ");
 		updateSql.append(" Where CcyCode =:CcyCode ");
 
 		logger.debug("updateSql: "+ updateSql.toString());

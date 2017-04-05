@@ -239,7 +239,7 @@ public class ReportListDAOImpl extends BasisCodeDAO<ReportList> implements Repor
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update ReportList");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set Code=:Code, Module = :Module, FieldLabels = :FieldLabels, FieldValues = :FieldValues, FieldType = :FieldType, ");
+		updateSql.append(" Set Module = :Module, FieldLabels = :FieldLabels, FieldValues = :FieldValues, FieldType = :FieldType, ");
 		updateSql.append(" Addfields = :Addfields, ReportFileName = :ReportFileName, ReportHeading = :ReportHeading, ModuleType = :ModuleType,FormatReq=:FormatReq, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

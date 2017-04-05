@@ -317,7 +317,7 @@ public class SystemInternalAccountDefinitionDAOImpl extends BasisCodeDAO<SystemI
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SystemInternalAccountDef");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set SIACode = :SIACode, SIAName = :SIAName, SIAShortName = :SIAShortName, SIAAcType = :SIAAcType, SIANumber = :SIANumber");
+		updateSql.append(" Set SIAName = :SIAName, SIAShortName = :SIAShortName, SIAAcType = :SIAAcType, SIANumber = :SIANumber");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where SIACode =:SIACode");
 		

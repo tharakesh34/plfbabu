@@ -263,7 +263,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		
 		StringBuilder updateSql = new StringBuilder("Update ReportConfiguration" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set ReportID = :ReportID, ReportName = :ReportName, ReportHeading = :ReportHeading,");
+		updateSql.append(" Set ReportName = :ReportName, ReportHeading = :ReportHeading,");
 		updateSql.append(" PromptRequired = :PromptRequired, ReportJasperName = :ReportJasperName," );
 		updateSql.append(" DataSourceName =:DataSourceName,");
 		updateSql.append(" ShowTempLibrary = :ShowTempLibrary, MenuItemCode = :MenuItemCode," );

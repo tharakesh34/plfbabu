@@ -334,7 +334,7 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinRepayHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference=:FinReference , ValueDate=:ValueDate , FinEvent=:FinEvent , RepayAmount=:RepayAmount , " );
+		updateSql.append(" Set ValueDate=:ValueDate , FinEvent=:FinEvent , RepayAmount=:RepayAmount , " );
 		updateSql.append(" PriAmount=:PriAmount , PftAmount=:PftAmount , TotalRefund=:TotalRefund , " );
 		updateSql.append(" TotalWaiver=:TotalWaiver , InsRefund=:InsRefund ,RepayAccountId=:RepayAccountId , EarlyPayEffMtd=:EarlyPayEffMtd , " );
 		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");

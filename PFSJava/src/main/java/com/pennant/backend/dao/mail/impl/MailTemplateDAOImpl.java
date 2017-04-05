@@ -220,7 +220,7 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update Templates");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set TemplateId = :TemplateId, TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, " );
+		updateSql.append(" Set TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, " );
 		updateSql.append(" TemplateDesc = :TemplateDesc, SmsTemplate = :SmsTemplate, SmsContent = :SmsContent, ");
 		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, " );
 		updateSql.append(" EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, " );

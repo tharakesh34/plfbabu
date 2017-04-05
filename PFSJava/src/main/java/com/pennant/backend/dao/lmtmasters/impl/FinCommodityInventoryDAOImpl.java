@@ -60,7 +60,7 @@ public class FinCommodityInventoryDAOImpl extends BasisNextidDaoImpl<FinCommodit
 
 		StringBuilder updateSql =new StringBuilder("Update FinCommodityInventory");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set Finreference =:Finreference, BrokerCode =:BrokerCode, HoldCertificateNo =:HoldCertificateNo,  ");
+		updateSql.append("  Set BrokerCode =:BrokerCode, HoldCertificateNo =:HoldCertificateNo,  ");
 		updateSql.append("  Quantity =:Quantity, SaleQuantity =:SaleQuantity, SalePrice =:SalePrice, UnitSalePrice =:UnitSalePrice, CommodityStatus =:CommodityStatus, ");
 		updateSql.append("  DateOfAllocation =:DateOfAllocation, DateOfSelling =:DateOfSelling, DateCancelled =:DateCancelled, FeeCalculated =:FeeCalculated, ");
 		updateSql.append("  FeePayableDate =:FeePayableDate, FeeBalance =:FeeBalance ");

@@ -281,7 +281,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 
 		updateSql.append("Update Notifications");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set RuleId=:RuleId, RuleCode = :RuleCode," );
+		updateSql.append(" Set RuleId=:RuleId," );
 		updateSql.append(" RuleModule = :RuleModule,TemplateType=:TemplateType, RuleCodeDesc = :RuleCodeDesc , RuleTemplate = :RuleTemplate, ActualBlockTemplate = :ActualBlockTemplate," );
 		updateSql.append(" RuleReciepent = :RuleReciepent , ActualBlockReciepent = :ActualBlockReciepent, RuleAttachment = :RuleAttachment, ActualBlockAtachment = :ActualBlockAtachment, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );

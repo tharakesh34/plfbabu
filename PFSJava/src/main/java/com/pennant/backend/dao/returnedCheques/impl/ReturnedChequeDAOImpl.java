@@ -92,7 +92,7 @@ public class ReturnedChequeDAOImpl extends BasisCodeDAO<ReturnedChequeDetails> i
 
 		StringBuilder updateSql = new StringBuilder("Update ReturnedCheques");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustCIF = :CustCIF, ChequeNo = :ChequeNo, Amount = :Amount,");
+		updateSql.append(" Set Amount = :Amount,");
 		updateSql
 		        .append(" ReturnDate = :ReturnDate,ReturnReason = :ReturnReason,Currency = :Currency,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");

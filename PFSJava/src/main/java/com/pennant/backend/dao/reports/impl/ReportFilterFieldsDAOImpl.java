@@ -318,7 +318,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		
 		StringBuilder updateSql = new StringBuilder("Update ReportFilterFields" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set ReportID = :ReportID, FieldID = :FieldID, FieldName = :FieldName, FieldType = :FieldType, FieldLabel = :FieldLabel");
+		updateSql.append(" Set FieldName = :FieldName, FieldType = :FieldType, FieldLabel = :FieldLabel");
 		updateSql.append(" ,FieldDBName = :FieldDBName, AppUtilMethodName = :AppUtilMethodName, ModuleName = :ModuleName," );
 		updateSql.append(" LovHiddenFieldMethod = :LovHiddenFieldMethod, LovTextFieldMethod = :LovTextFieldMethod,");
 		updateSql.append(" MultiSelectSearch = :MultiSelectSearch, FieldLength = :FieldLength, FieldMaxValue = :FieldMaxValue," );

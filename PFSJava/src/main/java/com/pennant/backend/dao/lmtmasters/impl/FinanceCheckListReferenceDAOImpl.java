@@ -325,8 +325,7 @@ implements FinanceCheckListReferenceDAO {
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinanceCheckListRef");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, QuestionId = :QuestionId, Answer = :Answer");
-		updateSql.append(",Remarks=:Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		updateSql.append(" Set Remarks=:Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
 		updateSql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference AND QuestionId = :QuestionId AND Answer =:Answer");

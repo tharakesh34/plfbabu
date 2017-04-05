@@ -328,7 +328,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		StringBuilder	updateSql =new StringBuilder("Update LMTFinanceWorkFlowDef");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinType = :FinType, FinEvent=:FinEvent, ScreenCode = :ScreenCode, WorkFlowType = :WorkFlowType, ModuleName=:ModuleName");
+		updateSql.append(" Set ScreenCode = :ScreenCode, WorkFlowType = :WorkFlowType, ModuleName=:ModuleName");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");

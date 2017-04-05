@@ -331,7 +331,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		StringBuilder updateSql = new StringBuilder("Update LMTFacilityRefDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-				.append(" Set FinRefDetailId = :FinRefDetailId, FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
+				.append(" Set FinType = :FinType, FinRefType = :FinRefType, FinRefId = :FinRefId, IsActive = :IsActive, ShowInStage = :ShowInStage, MandInputInStage = :MandInputInStage, AllowInputInStage = :AllowInputInStage,OverRide=:OverRide,OverRideValue =:OverRideValue");
 		updateSql
 				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinRefDetailId =:FinRefDetailId");

@@ -295,7 +295,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		StringBuilder updateSql = new StringBuilder("Update JVPostings");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set BatchReference = :BatchReference,PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, "
+		        .append(" Set PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, "
 		        		+ "ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus ,ExpReference =:ExpReference");
 		updateSql
 		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -328,7 +328,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		StringBuilder updateSql = new StringBuilder("Update JVPostings");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set  BatchReference = :BatchReference,PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus");
+		        .append(" Set  PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus");
 		updateSql
 		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BatchReference =:BatchReference");

@@ -145,7 +145,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinPoliceCaseDetail");
-		updateSql.append(" Set FinReference=:FinReference , CustCIF=:CustCIF , CustFName=:CustFName , CustLName=:CustLName , " );
+		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
 		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , " );
 		updateSql.append(" CustNationality=:CustNationality , CustProduct=:CustProduct , PoliceCaseRule=:PoliceCaseRule ,Override=:Override, " );
 		updateSql.append(" OverrideUser=:OverrideUser " );
@@ -199,7 +199,7 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		updateSql.append("Update PoliceCaseCustomers");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		
-		updateSql.append(" Set CustCIF=:CustCIF , CustFName=:CustFName , CustLName=:CustLName , " );
+		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
 		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, CustProduct=:CustProduct, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

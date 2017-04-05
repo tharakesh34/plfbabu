@@ -218,7 +218,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		logger.debug("Entering");
 		StringBuilder	sql =new StringBuilder("Update MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type)); 
-		sql.append(" Set mandateID=:mandateID,status=:status,reason=:reason,");
+		sql.append(" Set status=:status,reason=:reason,");
 		sql.append(" changeDate=:changeDate,fileID=:fileID");
 		sql.append(" Where MandateID =:MandateID");
 		

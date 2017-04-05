@@ -102,7 +102,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update PayOrderIssueHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference = :FinReference,TotalPOAmount = :TotalPOAmount,TotalPOCount = :TotalPOCount,");
+		updateSql.append(" Set TotalPOAmount = :TotalPOAmount,TotalPOCount = :TotalPOCount,");
 		updateSql.append(" IssuedPOAmount = :IssuedPOAmount,IssuedPOCount =:IssuedPOCount,PODueAmount = :PODueAmount,PODueCount = :PODueCount,");
 		updateSql.append(" Version= :Version , LastMntBy=:LastMntBy,");
 		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
