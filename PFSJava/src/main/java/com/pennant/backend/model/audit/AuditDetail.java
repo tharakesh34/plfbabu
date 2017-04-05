@@ -77,7 +77,7 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 	private String lovDescNextRoleCode= "";
 	private Object lovDescAuditRef;
 
-	private List<ErrorDetails> errorDetails;
+	private List<ErrorDetails> errorDetails = new ArrayList<>();
 
 	public AuditDetail() {
 		super();
