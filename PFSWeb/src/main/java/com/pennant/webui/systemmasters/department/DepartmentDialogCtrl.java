@@ -625,7 +625,13 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 				// Close the Existing Dialog
 				closeDialog();
 			}
-		}catch (Exception e) {
+		}
+		
+		catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showErrorMessage(e.getMessage());
+		}
+		catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e);
 		}
