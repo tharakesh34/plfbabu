@@ -226,7 +226,7 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 
 		updateSql.append("Update BMTDispatchModes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DispatchModeCode = :DispatchModeCode, DispatchModeDesc = :DispatchModeDesc," );
+		updateSql.append(" Set DispatchModeDesc = :DispatchModeDesc," );
 		updateSql.append(" DispatchModeIsActive = :DispatchModeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

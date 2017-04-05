@@ -224,7 +224,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 
 		updateSql.append("Update BMTPhoneTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set PhoneTypeCode = :PhoneTypeCode, PhoneTypeDesc = :PhoneTypeDesc,");
+		updateSql.append(" Set PhoneTypeDesc = :PhoneTypeDesc,");
 		updateSql.append(" PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");

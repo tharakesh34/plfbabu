@@ -264,7 +264,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 
 		updateSql.append("Update BMTAcademics");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AcademicID = :AcademicID,AcademicLevel = :AcademicLevel," );
+		updateSql.append(" Set AcademicLevel = :AcademicLevel," );
 		updateSql.append(" AcademicDecipline = :AcademicDecipline, AcademicDesc = :AcademicDesc ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

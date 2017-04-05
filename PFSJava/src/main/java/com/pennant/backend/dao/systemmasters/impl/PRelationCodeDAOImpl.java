@@ -228,7 +228,7 @@ public class PRelationCodeDAOImpl extends BasisCodeDAO<PRelationCode> implements
 
 		updateSql.append("Update BMTPRelationCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set PRelationCode = :PRelationCode, PRelationDesc = :PRelationDesc,");
+		updateSql.append(" Set PRelationDesc = :PRelationDesc,");
 		updateSql.append(" RelationCodeIsActive = :RelationCodeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

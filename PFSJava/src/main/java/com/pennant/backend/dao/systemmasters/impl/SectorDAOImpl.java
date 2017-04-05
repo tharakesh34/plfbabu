@@ -220,7 +220,7 @@ public class SectorDAOImpl extends BasisCodeDAO<Sector> implements SectorDAO {
 		
 		updateSql.append("Update BMTSectors");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SectorCode = :SectorCode, SectorDesc = :SectorDesc, SectorLimit = :SectorLimit,");
+		updateSql.append(" Set SectorDesc = :SectorDesc, SectorLimit = :SectorLimit,");
 		updateSql.append(" SectorIsActive = :SectorIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

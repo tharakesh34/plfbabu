@@ -216,7 +216,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update SMTDivisionDetail");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DivisionCode = :DivisionCode, DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks");
+		updateSql.append(" Set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
 		updateSql.append(" Where DivisionCode =:DivisionCode");

@@ -217,7 +217,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTGenDesignations" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set GenDesignation = :GenDesignation, GenDesgDesc = :GenDesgDesc," );
+		updateSql.append(" Set GenDesgDesc = :GenDesgDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

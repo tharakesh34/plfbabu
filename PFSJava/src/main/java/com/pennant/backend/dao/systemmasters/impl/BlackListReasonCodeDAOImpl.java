@@ -228,7 +228,7 @@ public class BlackListReasonCodeDAOImpl extends BasisCodeDAO<BlackListReasonCode
 		
 		updateSql.append("Update BMTBlackListRsnCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BLRsnCode = :BLRsnCode, BLRsnDesc = :BLRsnDesc, BLIsActive = :BLIsActive," );
+		updateSql.append(" Set BLRsnDesc = :BLRsnDesc, BLIsActive = :BLIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

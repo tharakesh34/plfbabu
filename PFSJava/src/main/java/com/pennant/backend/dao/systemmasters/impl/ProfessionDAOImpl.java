@@ -224,7 +224,7 @@ public class ProfessionDAOImpl extends BasisCodeDAO<Profession> implements Profe
 		
 		updateSql.append("Update BMTProfessions");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProfessionCode = :ProfessionCode, ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,  SelfEmployee = :SelfEmployee, ");
+		updateSql.append(" Set ProfessionDesc = :ProfessionDesc, ProfessionIsActive = :ProfessionIsActive,  SelfEmployee = :SelfEmployee, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

@@ -225,7 +225,7 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 		
 		updateSql.append("Update BMTCountries");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CountryCode = :CountryCode, CountryDesc = :CountryDesc, CountryParentLimit = :CountryParentLimit,");
+		updateSql.append(" Set CountryDesc = :CountryDesc, CountryParentLimit = :CountryParentLimit,");
 		updateSql.append(" CountryResidenceLimit = :CountryResidenceLimit, CountryRiskLimit = :CountryRiskLimit,");
 		updateSql.append(" CountryIsActive = :CountryIsActive, SystemDefault = :SystemDefault,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");

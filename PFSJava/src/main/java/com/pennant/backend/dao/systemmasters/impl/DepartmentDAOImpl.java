@@ -224,7 +224,7 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 
 		updateSql.append("Update BMTDepartments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DeptCode = :DeptCode, DeptDesc = :DeptDesc, DeptIsActive = :DeptIsActive," );
+		updateSql.append(" Set DeptDesc = :DeptDesc, DeptIsActive = :DeptIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

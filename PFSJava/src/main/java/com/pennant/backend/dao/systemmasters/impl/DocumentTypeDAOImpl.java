@@ -226,7 +226,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	
 		updateSql.append("Update BMTDocumentTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DocTypeCode = :DocTypeCode, DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc," );
+		updateSql.append(" Set DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc," );
 		updateSql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

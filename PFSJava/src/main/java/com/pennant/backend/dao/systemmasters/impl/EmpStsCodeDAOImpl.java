@@ -225,7 +225,7 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 		
 		updateSql.append("Update BMTEmpStsCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set EmpStsCode = :EmpStsCode, EmpStsDesc = :EmpStsDesc, EmpStsIsActive = :EmpStsIsActive," );
+		updateSql.append(" Set EmpStsDesc = :EmpStsDesc, EmpStsIsActive = :EmpStsIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

@@ -228,7 +228,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update RMTLovFieldDetail");
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FieldCodeId = :FieldCodeId, FieldCode = :FieldCode," );
+		updateSql.append(" Set FieldCode = :FieldCode," );
 		updateSql.append(" FieldCodeValue =:FieldCodeValue, valueDesc =:valueDesc,isActive =:isActive , SystemDefault=:SystemDefault," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );

@@ -225,7 +225,7 @@ public class AddressTypeDAOImpl extends BasisCodeDAO<AddressType> implements Add
 
 		updateSql.append("Update BMTAddressTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AddrTypeCode = :AddrTypeCode, AddrTypeDesc = :AddrTypeDesc," );
+		updateSql.append(" Set AddrTypeDesc = :AddrTypeDesc," );
 		updateSql.append(" AddrTypePriority = :AddrTypePriority, AddrTypeIsActive = :AddrTypeIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

@@ -225,7 +225,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		
 		updateSql.append("Update BMTMaritalStatusCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set MaritalStsCode = :MaritalStsCode, MaritalStsDesc = :MaritalStsDesc, MaritalStsIsActive = :MaritalStsIsActive, SystemDefault=:SystemDefault,");
+		updateSql.append(" Set  MaritalStsDesc = :MaritalStsDesc, MaritalStsIsActive = :MaritalStsIsActive, SystemDefault=:SystemDefault,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");

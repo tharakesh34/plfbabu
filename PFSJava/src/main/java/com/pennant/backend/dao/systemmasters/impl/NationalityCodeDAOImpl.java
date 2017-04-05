@@ -228,7 +228,7 @@ public class NationalityCodeDAOImpl extends BasisCodeDAO<NationalityCode> implem
 		
 		updateSql.append("Update BMTNationalityCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set NationalityCode = :NationalityCode, NationalityDesc = :NationalityDesc,");
+		updateSql.append(" Set  NationalityDesc = :NationalityDesc,");
 		updateSql.append(" NationalityIsActive = :NationalityIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

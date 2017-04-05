@@ -217,7 +217,7 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments");
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set GenDepartment = :GenDepartment, GenDeptDesc = :GenDeptDesc," );
+		updateSql.append(" Set GenDeptDesc = :GenDeptDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

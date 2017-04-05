@@ -223,7 +223,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		
 		updateSql.append("Update BMTSalutations");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SalutationCode = :SalutationCode, SaluationDesc = :SaluationDesc,");
+		updateSql.append(" Set SaluationDesc = :SaluationDesc,");
 		updateSql.append(" SalutationIsActive = :SalutationIsActive, SalutationGenderCode = :SalutationGenderCode,SystemDefault=:SystemDefault,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

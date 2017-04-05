@@ -227,7 +227,7 @@ public class IdentityDetailsDAOImpl extends BasisCodeDAO<IdentityDetails> implem
 
 		updateSql.append("Update BMTIdentityType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IdentityType = :IdentityType, IdentityDesc = :IdentityDesc," );
+		updateSql.append(" Set IdentityDesc = :IdentityDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

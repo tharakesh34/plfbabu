@@ -230,7 +230,7 @@ public class GroupStatusCodeDAOImpl extends BasisCodeDAO<GroupStatusCode> implem
 
 		updateSql.append("Update BMTGrpStatusCodes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set GrpStsCode = :GrpStsCode, GrpStsDescription = :GrpStsDescription, GrpStsIsActive = :GrpStsIsActive," );
+		updateSql.append(" Set GrpStsDescription = :GrpStsDescription, GrpStsIsActive = :GrpStsIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

@@ -224,7 +224,7 @@ public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTEmpTypes");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set EmpType = :EmpType, EmpTypeDesc = :EmpTypeDesc," );
+		updateSql.append(" Set EmpTypeDesc = :EmpTypeDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

@@ -227,7 +227,7 @@ public class IndustryDAOImpl extends BasisCodeDAO<Industry> implements IndustryD
 		
 		updateSql.append("Update BMTIndustries");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set IndustryCode = :IndustryCode, SubSectorCode = :SubSectorCode, IndustryDesc = :IndustryDesc,");
+		updateSql.append(" Set SubSectorCode = :SubSectorCode, IndustryDesc = :IndustryDesc,");
 		updateSql.append(" IndustryIsActive = :IndustryIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

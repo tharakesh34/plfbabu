@@ -225,8 +225,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTCountryVsProvince");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set CPCountry = :CPCountry, CPProvince = :CPProvince," );
-		updateSql.append(" CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo," );
+		updateSql.append(" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

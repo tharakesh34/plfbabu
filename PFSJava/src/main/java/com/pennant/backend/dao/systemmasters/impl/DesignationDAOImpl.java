@@ -224,7 +224,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		
 		updateSql.append("Update BMTDesignations");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DesgCode = :DesgCode, DesgDesc = :DesgDesc, DesgIsActive = :DesgIsActive," );
+		updateSql.append(" Set DesgDesc = :DesgDesc, DesgIsActive = :DesgIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );

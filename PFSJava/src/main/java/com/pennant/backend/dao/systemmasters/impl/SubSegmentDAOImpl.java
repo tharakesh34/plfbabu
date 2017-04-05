@@ -231,7 +231,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 
 		updateSql.append("Update BMTSubSegments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SegmentCode = :SegmentCode, SubSegmentCode = :SubSegmentCode, SubSegmentDesc = :SubSegmentDesc,");
+		updateSql.append(" Set SegmentCode = :SegmentCode,SubSegmentDesc = :SubSegmentDesc,");
 		updateSql.append(" SubSegmentIsActive = :SubSegmentIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

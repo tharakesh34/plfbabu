@@ -260,7 +260,7 @@ public class SubSectorDAOImpl extends BasisCodeDAO<SubSector> implements SubSect
 		
 		updateSql.append("Update BMTSubSectors");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SectorCode = :SectorCode, SubSectorCode = :SubSectorCode, SubSectorDesc = :SubSectorDesc,");
+		updateSql.append(" Set SubSectorDesc = :SubSectorDesc,");
 		updateSql.append(" SubSectorIsActive = :SubSectorIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

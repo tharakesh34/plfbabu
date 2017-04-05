@@ -222,7 +222,7 @@ public class SegmentDAOImpl extends BasisCodeDAO<Segment> implements SegmentDAO 
 
 		updateSql.append("Update BMTSegments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SegmentCode = :SegmentCode, SegmentDesc = :SegmentDesc, SegmentIsActive = :SegmentIsActive,");
+		updateSql.append(" Set SegmentDesc = :SegmentDesc, SegmentIsActive = :SegmentIsActive,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");

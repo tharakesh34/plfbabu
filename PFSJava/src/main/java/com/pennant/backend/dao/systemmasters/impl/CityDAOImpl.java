@@ -221,8 +221,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTProvinceVsCity" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PCCountry = :PCCountry, PCProvince = :PCProvince, PCCity = :PCCity,");
-		updateSql.append(" PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo," );
+		updateSql.append(" Set PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

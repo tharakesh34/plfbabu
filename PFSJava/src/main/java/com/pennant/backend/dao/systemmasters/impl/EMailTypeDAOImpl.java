@@ -223,7 +223,7 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 
 		updateSql.append("Update BMTEMailTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set EmailTypeCode = :EmailTypeCode, EmailTypeDesc = :EmailTypeDesc," );
+		updateSql.append(" Set EmailTypeDesc = :EmailTypeDesc," );
 		updateSql.append(" EmailTypePriority = :EmailTypePriority, EmailTypeIsActive = :EmailTypeIsActive ," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
