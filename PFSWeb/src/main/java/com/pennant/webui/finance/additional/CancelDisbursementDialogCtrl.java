@@ -408,20 +408,20 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finMain.setEventFromDate(eventFromDate);
 		finMain.setEventToDate(finMain.getMaturityDate());
-		finMain.setRecalFromDate((Date)this.fromDate.getSelectedItem().getValue());
+		finMain.setRecalFromDate(finServiceInstruction.getFromDate());
 		finMain.setRecalToDate(finMain.getMaturityDate());
 
 		BigDecimal addingFeeToFinance = BigDecimal.ZERO;
 		if (getFeeDetailDialogCtrl() != null) {
 			try {
 				setFinScheduleData(getFeeDetailDialogCtrl().doExecuteFeeCharges(true, false, getFinScheduleData(),
-						false, (Date)this.fromDate.getSelectedItem().getValue()));
+						false, finServiceInstruction.getFromDate()));
 
 				// Fee Details fetching based on Schedule Date/ Disbursement
 				// Date
 				List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
 				for (FeeRule feeRule : feeRuleList) {
-					if (feeRule.getSchDate().compareTo((Date)this.fromDate.getSelectedItem().getValue()) == 0) {
+					if (feeRule.getSchDate().compareTo(finServiceInstruction.getFromDate()) == 0) {
 
 						if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
 							addingFeeToFinance = addingFeeToFinance.add(feeRule.getFeeAmount().subtract(
