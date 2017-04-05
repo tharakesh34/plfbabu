@@ -1498,6 +1498,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (isWIF) {
 				reportName = "WIFENQ_ScheduleDetail";
 			}
+			financeMain.setLovDescCustCIF(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
 			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 					true);
 			
