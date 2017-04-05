@@ -106,7 +106,7 @@ public class FinanceDedupeDAOImpl implements FinanceDedupeDAO {
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinDedupDetail");
-		updateSql.append(" Set FinReference  = :FinReference ,DupReference=:DupReference, CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , ChassisNumber = :ChassisNumber, ");
+		updateSql.append(" Set CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , ChassisNumber = :ChassisNumber, ");
 		updateSql.append(" EngineNumber = :EngineNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
 		updateSql.append("  ProfitAmount= :ProfitAmount , Stage = :Stage ,DedupeRule = :DedupeRule,  ");
 		updateSql.append(" OverrideUser = :OverrideUser,FinLimitRef = :FinLimitRef");

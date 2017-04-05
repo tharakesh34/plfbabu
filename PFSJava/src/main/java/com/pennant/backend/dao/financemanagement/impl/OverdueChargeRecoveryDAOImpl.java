@@ -359,8 +359,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference= :FinReference, FinODSchdDate= :FinODSchdDate, FinODFor= :FinODFor, ");
-		updateSql.append(" MovementDate= :MovementDate,SeqNo=:SeqNo, ODDays= :ODDays, FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri,");
+		updateSql.append(" Set SeqNo=:SeqNo, ODDays= :ODDays, FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri,");
 		updateSql.append(" FinCurODPft= :FinCurODPft, PenaltyType= :PenaltyType, PenaltyCalOn= :PenaltyCalOn, PenaltyAmtPerc= :PenaltyAmtPerc,");
 		updateSql.append(" Penalty= :Penalty, MaxWaiver= :MaxWaiver, WaivedAmt= :WaivedAmt, PenaltyPaid= :PenaltyPaid, PenaltyBal= :PenaltyBal, RcdCanDel= :RcdCanDel");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");

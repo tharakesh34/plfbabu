@@ -268,7 +268,7 @@ public class InventorySettlementDAOImpl extends BasisNextidDaoImpl<InventorySett
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update InventorySettlement");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Id = :Id, BrokerCode = :BrokerCode, SettlementDate = :SettlementDate");
+		updateSql.append(" Set BrokerCode = :BrokerCode, SettlementDate = :SettlementDate");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Id =:Id");
 

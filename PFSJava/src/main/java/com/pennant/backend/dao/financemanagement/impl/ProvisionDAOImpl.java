@@ -259,7 +259,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinProvisions");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, FinBranch = :FinBranch,");
+		updateSql.append(" Set FinBranch = :FinBranch,");
 		updateSql.append(" FinType = :FinType, CustID = :CustID, ProvisionCalDate = :ProvisionCalDate,");
 		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, ProvisionAmtCal = :ProvisionAmtCal,");
 		updateSql.append(" ProvisionDue = :ProvisionDue, NonFormulaProv = :NonFormulaProv,");

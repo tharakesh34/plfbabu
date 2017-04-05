@@ -267,7 +267,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		
 		updateSql.append("Update FinSuspHold");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SuspHoldID = :SuspHoldID, Product = :Product, FinType = :FinType, " );
+		updateSql.append(" Set Product = :Product, FinType = :FinType, " );
 		updateSql.append(" FinReference = :FinReference , CustID = :CustID, Active = :Active," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );

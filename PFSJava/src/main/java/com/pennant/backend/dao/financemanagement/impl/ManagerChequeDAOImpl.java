@@ -310,7 +310,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update ManagerCheques");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ChequeID = :ChequeID, ChqPurposeCode = :ChqPurposeCode, ChequeRef = :ChequeRef, ChequeNo = :ChequeNo, BeneficiaryName = :BeneficiaryName");
+		updateSql.append(" Set ChqPurposeCode = :ChqPurposeCode, ChequeRef = :ChequeRef, ChequeNo = :ChequeNo, BeneficiaryName = :BeneficiaryName");
 		updateSql.append(", CustCIF = :CustCIF, DraftCcy = :DraftCcy, FundingCcy = :FundingCcy, FundingAccount = :FundingAccount, NostroAccount = :NostroAccount, NostroFullName = :NostroFullName");
 		updateSql.append(", ChequeAmount = :ChequeAmount, ValueDate = :ValueDate, Narration1 = :Narration1, Narration2 = :Narration2, Reprint = :Reprint, OldChequeID = :OldChequeID, Cancel = :Cancel");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");

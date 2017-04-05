@@ -244,7 +244,7 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LimitStructure");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set StructureCode = :StructureCode, StructureName = :StructureName, Active =:Active,LimitCategory =:LimitCategory, ShowLimitsIn = :ShowLimitsIn");
+		updateSql.append(" Set StructureName = :StructureName, Active =:Active,LimitCategory =:LimitCategory, ShowLimitsIn = :ShowLimitsIn");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where StructureCode =:StructureCode");
 		

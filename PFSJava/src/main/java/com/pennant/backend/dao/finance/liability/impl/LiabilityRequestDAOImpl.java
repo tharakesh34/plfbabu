@@ -255,7 +255,7 @@ public class LiabilityRequestDAOImpl extends BasisCodeDAO<LiabilityRequest> impl
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinLiabilityReq");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set FinReference = :FinReference, FinEvent=:FinEvent, InsPaidStatus=:InsPaidStatus,InsClaimAmount=:InsClaimAmount,InsClaimReason=:InsClaimReason,InitiatedBy = :InitiatedBy");
+		updateSql.append(" Set InsPaidStatus=:InsPaidStatus,InsClaimAmount=:InsClaimAmount,InsClaimReason=:InsClaimReason,InitiatedBy = :InitiatedBy");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference AND FinEvent=:FinEvent " );
 		

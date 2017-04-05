@@ -164,7 +164,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 	        	updateSql.append("WIFFinInsurances");	
 	        }
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set InsId=:InsId,Reference = :Reference, Module=:Module, InsuranceType = :InsuranceType, ");
+		updateSql.append(" Set Reference = :Reference, Module=:Module, InsuranceType = :InsuranceType, ");
 		updateSql.append(" InsuranceReq = :InsuranceReq, Provider = :Provider,PaymentMethod = :PaymentMethod,");
 		updateSql.append(" CalType = :CalType,InsuranceRate =:InsuranceRate,InsReference =:InsReference,");
 		updateSql.append(" WaiverReason=:WaiverReason,InsuranceFrq=:InsuranceFrq,Amount=:Amount,");

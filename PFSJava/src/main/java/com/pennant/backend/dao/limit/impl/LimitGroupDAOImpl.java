@@ -241,7 +241,7 @@ public class LimitGroupDAOImpl extends BasisCodeDAO<LimitGroup> implements Limit
 		logger.debug("Entering");
 		StringBuilder	updateSql = new StringBuilder("Update LimitGroup");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitCategory =:LimitCategory, GroupCode = :GroupCode, GroupName = :GroupName,Active =:Active, GroupOf =:GroupOf");
+		updateSql.append(" Set LimitCategory =:LimitCategory, GroupName = :GroupName,Active =:Active, GroupOf =:GroupOf");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where GroupCode =:GroupCode");
 		

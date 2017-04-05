@@ -164,7 +164,7 @@ public class LimitInterfaceDAOImpl extends BasisNextidDaoImpl<FinanceLimitProces
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("UPDATE CustomerLimitDetails");
-		updateSql.append("  Set CustCIF =:CustCIF, LimitRef =:LimitRef, LimitDesc =:LimitDesc,");
+		updateSql.append("  Set LimitDesc =:LimitDesc,");
 		updateSql.append("  RevolvingType =:RevolvingType, LimitExpiryDate =:LimitExpiryDate, LimitCcy =:LimitCcy, ");
 		updateSql.append("  ApprovedLimitCcy =:ApprovedLimitCcy, ApprovedLimit =:ApprovedLimit,");
 		updateSql.append("  OutstandingAmtCcy =:OutstandingAmtCcy, OutstandingAmt =:OutstandingAmt, BlockedAmtCcy =:BlockedAmtCcy,");

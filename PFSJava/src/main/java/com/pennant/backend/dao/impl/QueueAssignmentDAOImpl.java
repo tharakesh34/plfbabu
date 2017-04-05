@@ -475,7 +475,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 
 		updateSql.append("Update Task_Assignments_Header");
 		updateSql.append(StringUtils.trimToEmpty(tableType));
-		updateSql.append(" SET Module=:Module, UserId=:UserId, UserRoleCode=:UserRoleCode,");
+		updateSql.append(" SET UserId=:UserId,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql
 				.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

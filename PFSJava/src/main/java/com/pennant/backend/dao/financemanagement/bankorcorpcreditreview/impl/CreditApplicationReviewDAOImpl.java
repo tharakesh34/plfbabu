@@ -404,7 +404,7 @@ public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCredit
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinCreditReviewDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DetailId = :DetailId,CreditRevCode = :CreditRevCode,CustomerId = :CustomerId,");
+		updateSql.append(" Set CreditRevCode = :CreditRevCode,CustomerId = :CustomerId,");
 		updateSql.append(" AuditYear = :AuditYear,BankName = :BankName,Auditors = :Auditors,Consolidated = :Consolidated,");
 		updateSql.append(" Location = :Location,ConversionRate = :ConversionRate,AuditedDate = :AuditedDate," );
 		updateSql.append(" NoOfShares = :NoOfShares,MarketPrice = :MarketPrice," );

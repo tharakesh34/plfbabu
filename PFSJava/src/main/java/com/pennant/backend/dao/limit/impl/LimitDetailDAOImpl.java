@@ -222,7 +222,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LimitDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DetailId = :DetailId, LimitHeaderId = :LimitHeaderId, LimitStructureDetailsID =:LimitStructureDetailsID, ExpiryDate = :ExpiryDate,Revolving =:Revolving, LimitSanctioned = :LimitSanctioned,  ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit, LimitCheck = :LimitCheck,LimitChkMethod = :LimitChkMethod");
+		updateSql.append(" Set LimitHeaderId = :LimitHeaderId, LimitStructureDetailsID =:LimitStructureDetailsID, ExpiryDate = :ExpiryDate,Revolving =:Revolving, LimitSanctioned = :LimitSanctioned,  ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit, LimitCheck = :LimitCheck,LimitChkMethod = :LimitChkMethod");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DetailId = :DetailId");
 

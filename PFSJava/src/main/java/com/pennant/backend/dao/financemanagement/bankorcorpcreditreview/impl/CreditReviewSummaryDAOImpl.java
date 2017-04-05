@@ -275,7 +275,7 @@ public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditRevi
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinCreditReviewSummary");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set SummaryId = :SummaryId,DetailId = :DetailId,SubCategoryCode = :SubCategoryCode,ItemValue = :ItemValue," );
+		updateSql.append(" Set SubCategoryCode = :SubCategoryCode,ItemValue = :ItemValue," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
