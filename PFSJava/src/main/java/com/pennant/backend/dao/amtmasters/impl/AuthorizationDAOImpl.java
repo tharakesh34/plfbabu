@@ -244,7 +244,7 @@ public class AuthorizationDAOImpl extends BasisNextidDaoImpl<Authorization> impl
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update AMTAuthorization");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AuthUserId = :AuthUserId, AuthType = :AuthType, AuthName = :AuthName, AuthDept = :AuthDept, AuthDesig = :AuthDesig, AuthSignature = :AuthSignature");
+		updateSql.append(" Set AuthType = :AuthType, AuthName = :AuthName, AuthDept = :AuthDept, AuthDesig = :AuthDesig, AuthSignature = :AuthSignature");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where AuthUserId =:AuthUserId");
 		

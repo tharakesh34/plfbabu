@@ -240,7 +240,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update AMTVehicleDealer");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DealerId = :DealerId, DealerType = :DealerType, DealerName = :DealerName, ");
+		updateSql.append(" Set DealerType = :DealerType, DealerName = :DealerName, ");
 		updateSql.append("DealerTelephone =:DealerTelephone,DealerFax = :DealerFax,DealerAddress1 = :DealerAddress1,");
 		updateSql.append("DealerAddress2 = :DealerAddress2,DealerAddress3 = :DealerAddress3,DealerAddress4 = :DealerAddress4,");
 		updateSql.append(" DealerCountry = :DealerCountry,DealerCity = :DealerCity,DealerProvince = :DealerProvince,");

@@ -234,7 +234,7 @@ public class VehicleVersionDAOImpl extends BasisNextidDaoImpl<VehicleVersion>
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update AMTVehicleVersion");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set VehicleVersionId = :VehicleVersionId, VehicleModelId = :VehicleModelId,");
+		updateSql.append(" Set VehicleModelId = :VehicleModelId,");
 		updateSql.append(" VehicleVersionCode = :VehicleVersionCode, VehicleDoors = :VehicleDoors, VehicleCc = :VehicleCc,");
 		updateSql.append(" VehicleCategory = :VehicleCategory, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");

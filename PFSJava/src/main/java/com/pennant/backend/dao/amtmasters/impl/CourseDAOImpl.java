@@ -220,7 +220,7 @@ public class CourseDAOImpl extends BasisCodeDAO<Course> implements CourseDAO {
 
 		updateSql.append("Update AMTCourse");
 		updateSql.append(StringUtils.trimToEmpty(type));  
-		updateSql.append(" Set CourseName = :CourseName, CourseDesc = :CourseDesc,"); 
+		updateSql.append(" Set CourseDesc = :CourseDesc,"); 
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, " );

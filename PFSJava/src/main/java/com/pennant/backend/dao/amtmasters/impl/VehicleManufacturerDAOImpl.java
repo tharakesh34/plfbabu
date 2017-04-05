@@ -225,7 +225,7 @@ public class VehicleManufacturerDAOImpl extends
 		
 		StringBuilder updateSql = new StringBuilder("Update AMTVehicleManufacturer");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ManufacturerId = :ManufacturerId, ManufacturerName = :ManufacturerName,");
+		updateSql.append(" Set ManufacturerName = :ManufacturerName,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

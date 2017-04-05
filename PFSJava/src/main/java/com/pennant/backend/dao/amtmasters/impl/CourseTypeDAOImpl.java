@@ -216,7 +216,7 @@ public class CourseTypeDAOImpl extends BasisCodeDAO<CourseType> implements Cours
 
 		StringBuilder updateSql = new StringBuilder("Update AMTCourseType");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CourseTypeCode = :CourseTypeCode, CourseTypeDesc = :CourseTypeDesc, " );
+		updateSql.append(" Set CourseTypeDesc = :CourseTypeDesc, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode," );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

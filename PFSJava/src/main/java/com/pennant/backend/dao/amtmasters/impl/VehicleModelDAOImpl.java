@@ -232,7 +232,7 @@ public class VehicleModelDAOImpl extends BasisNextidDaoImpl<VehicleModel>
 		updateSql.append("Update AMTVehicleModel");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set VehicleManufacturerId =:VehicleManufacturerId,");
-		updateSql.append(" VehicleModelId = :VehicleModelId, VehicleModelDesc = :VehicleModelDesc,");
+		updateSql.append(" VehicleModelDesc = :VehicleModelDesc,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
