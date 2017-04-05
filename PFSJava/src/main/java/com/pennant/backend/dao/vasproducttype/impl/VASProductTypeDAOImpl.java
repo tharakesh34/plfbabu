@@ -248,7 +248,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		StringBuilder updateSql = new StringBuilder("Update VasProductType");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-				.append(" Set ProductType = :ProductType, ProductTypeDesc = :ProductTypeDesc, ProductCtg = :ProductCtg, Active = :Active");
+				.append(" Set ProductTypeDesc = :ProductTypeDesc, ProductCtg = :ProductCtg, Active = :Active");
 		updateSql
 				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductType =:ProductType");

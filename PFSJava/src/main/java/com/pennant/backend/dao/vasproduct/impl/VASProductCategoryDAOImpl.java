@@ -249,7 +249,7 @@ public class VASProductCategoryDAOImpl extends BasisCodeDAO<VASProductCategory> 
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update VasProductCategory");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ProductCtg = :ProductCtg, ProductCtgDesc = :ProductCtgDesc, Active = :Active");
+		updateSql.append(" Set ProductCtgDesc = :ProductCtgDesc, Active = :Active");
 		updateSql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductCtg =:ProductCtg");
 
