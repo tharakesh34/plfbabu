@@ -266,7 +266,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 			if(curSchd.isDisbOnSchDate()){
 
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) > 0) {
+				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
 
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 ||
 							curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0  ||curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0  ||
@@ -277,7 +277,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 					//Don't Allow Start date Disbursement cancellation
 					if(curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
-						continue;
+						//continue;
 					}
 					
 					// Adding through Disbursement details
