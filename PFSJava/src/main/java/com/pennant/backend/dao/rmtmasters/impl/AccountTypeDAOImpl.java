@@ -235,7 +235,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AcType = :AcType, AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
+		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
 		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory," );
 		updateSql.append(" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );

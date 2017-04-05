@@ -361,8 +361,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		
 		StringBuilder updateSql = new StringBuilder("Update FinTypeFees" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FinType = :FinType, OriginationFee = :OriginationFee, FinEvent = :FinEvent, FeeTypeID = :FeeTypeID,");
-		updateSql.append(" FeeOrder = :FeeOrder,FeeScheduleMethod = :FeeScheduleMethod, CalculationType = :CalculationType, ");
+		updateSql.append(" Set FeeOrder = :FeeOrder,FeeScheduleMethod = :FeeScheduleMethod, CalculationType = :CalculationType, ");
 		updateSql.append(" RuleCode = :RuleCode, Amount = :Amount,Percentage = :Percentage, CalculateOn = :CalculateOn, AlwDeviation = :AlwDeviation, ");
 		updateSql.append(" MaxWaiverPerc = :MaxWaiverPerc,AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd, Active = :Active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );

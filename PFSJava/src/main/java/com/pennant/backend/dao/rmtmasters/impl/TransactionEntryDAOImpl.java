@@ -623,8 +623,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update RMTTransactionEntry");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AccountSetid = :AccountSetid, TransOrder = :TransOrder," );
-		updateSql.append(" TransDesc = :TransDesc, Debitcredit = :Debitcredit," );
+		updateSql.append(" Set TransDesc = :TransDesc, Debitcredit = :Debitcredit," );
 		updateSql.append(" ShadowPosting = :ShadowPosting, Account = :Account, AccountType = :AccountType," );
 		updateSql.append(" AccountBranch=:AccountBranch,AccountSubHeadRule = :AccountSubHeadRule," );
 		updateSql.append(" TranscationCode = :TranscationCode, RvsTransactionCode = :RvsTransactionCode," );

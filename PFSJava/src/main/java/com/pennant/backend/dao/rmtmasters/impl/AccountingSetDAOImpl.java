@@ -222,7 +222,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountingSet");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-		        .append(" Set AccountSetid = :AccountSetid, EventCode = :EventCode, AccountSetCode = :AccountSetCode, ");
+		        .append(" Set EventCode = :EventCode, AccountSetCode = :AccountSetCode, ");
 		updateSql
 		        .append(" AccountSetCodeName = :AccountSetCodeName ,SystemDefault=:SystemDefault,EntryByInvestment=:EntryByInvestment,  ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");

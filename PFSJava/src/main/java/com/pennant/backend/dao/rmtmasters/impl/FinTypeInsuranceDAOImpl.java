@@ -280,7 +280,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		
 		StringBuilder updateSql = new StringBuilder("Update FinTypeInsurances" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FinType = :FinType, InsuranceType = :InsuranceType,PolicyType = :PolicyType, DftPayType = :DftPayType,");
+		updateSql.append(" Set PolicyType = :PolicyType, DftPayType = :DftPayType,");
 		updateSql.append(" CalType = :CalType,AmountRule = :AmountRule,");
 		updateSql.append(" Mandatory = :Mandatory,AlwRateChange =:AlwRateChange,ConstAmt =:ConstAmt,Percentage =:Percentage,CalculateOn=:CalculateOn,");
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );

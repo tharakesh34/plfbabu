@@ -221,7 +221,7 @@ public class ScoringGroupDAOImpl extends BasisNextidDaoImpl<ScoringGroup> implem
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update RMTScoringGroup");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ScoreGroupId = :ScoreGroupId, ScoreGroupCode = :ScoreGroupCode, ScoreGroupName = :ScoreGroupName,CategoryType=:CategoryType, MinScore = :MinScore, IsOverride = :IsOverride, OverrideScore = :OverrideScore");
+		updateSql.append(" Set ScoreGroupCode = :ScoreGroupCode, ScoreGroupName = :ScoreGroupName,CategoryType=:CategoryType, MinScore = :MinScore, IsOverride = :IsOverride, OverrideScore = :OverrideScore");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ScoreGroupId =:ScoreGroupId");
 		

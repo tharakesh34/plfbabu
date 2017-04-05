@@ -359,7 +359,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		StringBuilder	updateSql =new StringBuilder();
 		updateSql.append("Update RMTProductAssets");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AssetID = :AssetID, ProductCode = :ProductCode, AssetCode = :AssetCode,");
+		updateSql.append(" Set ProductCode = :ProductCode, AssetCode = :AssetCode,");
 		updateSql.append(" AssetDesc = :AssetDesc, AssetIsActive = :AssetIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");

@@ -225,7 +225,7 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTCustTypes");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustTypeCode = :CustTypeCode, CustTypeCtg= :CustTypeCtg, CustTypeDesc = :CustTypeDesc," );
+		updateSql.append(" Set CustTypeCtg= :CustTypeCtg, CustTypeDesc = :CustTypeDesc," );
 		updateSql.append(" CustTypeIsActive = :CustTypeIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");

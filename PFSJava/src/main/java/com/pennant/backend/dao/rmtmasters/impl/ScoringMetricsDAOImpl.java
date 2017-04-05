@@ -264,7 +264,7 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update RMTScoringMetrics");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ScoreGroupId = :ScoreGroupId, ScoringId = :ScoringId, CategoryType =:CategoryType, " );
+		updateSql.append(" Set CategoryType =:CategoryType, " );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, " );
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

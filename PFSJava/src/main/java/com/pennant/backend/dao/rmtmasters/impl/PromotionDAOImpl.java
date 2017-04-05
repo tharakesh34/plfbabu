@@ -230,7 +230,7 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		StringBuilder	sql =new StringBuilder();
 		sql.append("Update Promotions");
 		sql.append(StringUtils.trimToEmpty(type)); 
-		sql.append("  Set promotionCode=:promotionCode,promotionDesc=:promotionDesc,finType=:finType,");
+		sql.append("  Set promotionDesc=:promotionDesc,finType=:finType,");
 		sql.append(" startDate=:startDate,endDate=:endDate,finIsDwPayRequired=:finIsDwPayRequired,");
 		sql.append(" downPayRule=:downPayRule,actualInterestRate=:actualInterestRate,finBaseRate=:finBaseRate,");
 		sql.append(" finSplRate=:finSplRate,finMargin=:finMargin,applyRpyPricing=:applyRpyPricing,");

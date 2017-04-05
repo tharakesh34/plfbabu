@@ -250,8 +250,7 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 		
 		StringBuilder updateSql = new StringBuilder("Update FinTypeAccount" );
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set FinType = :FinType, FinCcy = :FinCcy, Event = :Event,");
-		updateSql.append(" AlwManualEntry = :AlwManualEntry,AlwCustomerAccount = :AlwCustomerAccount,");
+		updateSql.append(" Set AlwManualEntry = :AlwManualEntry,AlwCustomerAccount = :AlwCustomerAccount,");
 		updateSql.append(" AccountReceivable = :AccountReceivable,CustAccountTypes = :CustAccountTypes,");
 		updateSql.append(" DefaultAccNum = :DefaultAccNum, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );

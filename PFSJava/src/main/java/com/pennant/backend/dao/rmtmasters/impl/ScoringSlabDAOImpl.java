@@ -314,7 +314,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update RMTScoringSlab");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set ScoreGroupId = :ScoreGroupId, ScoringSlab = :ScoringSlab, CreditWorthness = :CreditWorthness");
+		updateSql.append(" Set CreditWorthness = :CreditWorthness");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
