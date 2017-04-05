@@ -275,7 +275,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LimitStructureDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitStructureDetailsID =:LimitStructureDetailsID,LimitCategory=:LimitCategory,  LimitStructureCode = :LimitStructureCode, GroupCode = :GroupCode, LimitLine = :LimitLine, ItemSeq = :ItemSeq, Editable = :Editable, DisplayStyle = :DisplayStyle");
+		updateSql.append(" Set LimitStructureDetailsID =:LimitStructureDetailsID,LimitCategory=:LimitCategory, GroupCode = :GroupCode, LimitLine = :LimitLine, ItemSeq = :ItemSeq, Editable = :Editable, DisplayStyle = :DisplayStyle");
 		updateSql.append(" ,ItemPriority =:ItemPriority ,LimitCheck =:LimitCheck,Revolving =:Revolving,ItemLevel = :ItemLevel");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where LimitStructureCode =:LimitStructureCode");
@@ -307,7 +307,7 @@ public class LimitStructureDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update LimitStructureDetails");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set LimitStructureDetailsID =:LimitStructureDetailsID,LimitCategory=:LimitCategory,  LimitStructureCode = :LimitStructureCode, GroupCode = :GroupCode, LimitLine = :LimitLine, ItemSeq = :ItemSeq, Editable = :Editable, DisplayStyle = :DisplayStyle");
+		updateSql.append(" Set LimitCategory=:LimitCategory,  LimitStructureCode = :LimitStructureCode, GroupCode = :GroupCode, LimitLine = :LimitLine, ItemSeq = :ItemSeq, Editable = :Editable, DisplayStyle = :DisplayStyle");
 		updateSql.append(" ,ItemPriority =:ItemPriority ,LimitCheck =:LimitCheck,Revolving =:Revolving,ItemLevel = :ItemLevel");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where LimitStructureDetailsID =:LimitStructureDetailsID");
