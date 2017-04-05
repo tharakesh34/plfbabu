@@ -121,7 +121,7 @@
 		<menuItem id="menu_Item_UpdateCoreCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/UpdateCoreCustomer/UpdateCoreCustomerDialog.zul"  rightName="menuItem_CustomerMasters_UpdateCoreCustomer"/>
 		<menuItem id="menu_Item_Mandate" zulNavigation="/WEB-INF/pages/Mandate/MandateList.zul" rightName="menuItem_Mandate"/>
 		<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/Mandate/MandateRegistrationList.zul" rightName="menuItem_MandateRegistration"/>
-		<menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" rightName="menuItem_MandateFileUpload"/>
+		<!-- <menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" rightName="menuItem_MandateFileUpload"/> -->
 		<menuItem id="menu_Item_Beneficiary" zulNavigation="/WEB-INF/pages/Beneficiary/BeneficiaryList.zul"  rightName="menuItem_Beneficiary"/>
 		
 <!-- 		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
