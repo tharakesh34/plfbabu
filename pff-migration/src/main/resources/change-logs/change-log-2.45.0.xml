@@ -1776,4 +1776,27 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 
 </changeSet>
 			
+			
+<changeSet id="58" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_DB_DETAILS">
+		 <column name="CONFIGID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="TYPE" type="varchar(15)" />
+		 <column name="DRIVERCLASS" type="varchar(100)" />
+		 <column name="URL" type="varchar(100)" />
+		 <column name="USERNAME" type="varchar(50)" />
+		 <column name="PASSWORD" type="varchar(100)" />
+		 <column name="LOCALDB" type="boolean">
+		  	<constraints nullable="false" />
+		 </column>
+	</createTable>
+</changeSet>
+
+<changeSet id="59" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DE_DB_ID"
+			referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_DB_DETAILS" baseColumnNames="CONFIGID" />
+</changeSet>
+	
 </databaseChangeLog>
