@@ -1806,5 +1806,73 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 	</sql>
 </changeSet>
-	
+<changeSet  author="Pruthvi" id="61">
+<createTable tableName="INT_DSBIMPS_REQUEST">
+	        <column name="CHANNELPARTNERID" type="VARCHAR(50)"/>
+			<column name="BCAGENTID" type="VARCHAR(50)"/>
+			<column name="SENDERID" type="VARCHAR(50)"/>
+			 <column name="RECEIVERNAME" type="varchar(300)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEIVERMOBILENO" type="varchar(105)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEIVEREMAILID" type="varchar(105)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IFSCODE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BANK" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEVIERBANKSTATE" type="varchar(105)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEVIERBANKCITY" type="varchar(35)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEVIERBANKBRANCH" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RECEVIERACCOUNTNUMBER" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AMOUNT" type="Number(16,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REMARKS" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CHANNELPARTNERREFNO" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PICKUPFLAG" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTID" type="Number">
+				<constraints nullable="false" />
+			</column>
+			</createTable>
+			
+			
+		<createTable tableName="INT_DSBIMPS_RESPONSE">	
+			
+			<column name="CHANNELPARTNERREFNO" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANSACTIONID" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="STATUS" type="Number(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESSFLAG" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			</createTable>
+	</changeSet>
 </databaseChangeLog>
