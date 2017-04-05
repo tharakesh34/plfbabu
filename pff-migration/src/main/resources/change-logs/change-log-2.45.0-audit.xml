@@ -38,4 +38,16 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="3">
+		<addColumn tableName="AdtFinTypeInsurances">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="4">
+		<addColumn tableName="AdtFinTypeAccounting">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
