@@ -1467,7 +1467,7 @@ WHERE     NOT EXISTS
 			Delete from SecGroupRights where GrpID in (select GrpID from secGroups where GrpCode = 'OD_ODMAINTENANCE_MAKER');
 			Delete from SecGroupRights where GrpID in (select GrpID from secGroups where GrpCode = 'OD_MAINTENANCE_APPROVER');
 			
-			delete from secrolegroups where roleid in (select r-oleid from secroles where rolecd = 'OPERATIONS_OFFICER') and grpid in(select grpid from secgroups where grpcode ='OD_ODMAINTENANCE_MAKER');
+			delete from secrolegroups where roleid in (select roleid from secroles where rolecd = 'OPERATIONS_OFFICER') and grpid in(select grpid from secgroups where grpcode ='OD_ODMAINTENANCE_MAKER');
 			delete from secrolegroups where roleid in (select roleid from secroles where rolecd = 'OPERATIONS_MANAGER') and grpid in(select grpid from secgroups where grpcode ='OD_MAINTENANCE_APPROVER');
 			
 			delete from secgroups where grpid = (select grpid from secgroups where grpcode ='OD_MAINTENANCE_APPROVER');
