@@ -15269,7 +15269,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (fintype.isDroplineOD()) {
 				frq = this.droplineFrq.getValue();
 			} else {
-
 				frq = this.repayFrq.getValue();
 			}
 			int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());

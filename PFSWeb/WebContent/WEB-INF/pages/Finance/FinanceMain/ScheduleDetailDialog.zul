@@ -489,9 +489,6 @@
 												id="listheader_ScheduleDetailDialog_ScheduleEndBal"
 												hflex="min" align="right" />
 											<listheader
-												id="listheader_LimitIncreaseAmt" hflex="min" align="right"
-												visible="false" />
-											<listheader
 												id="listheader_LimitChange" hflex="min" align="right"
 												visible="false" />
 											<listheader

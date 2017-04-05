@@ -241,7 +241,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Listheader listheader_LimitChange;
 	protected Listheader listheader_AvailableLimit;
 	protected Listheader listheader_ODLimit;
-	protected Listheader listheader_LimitIncreaseAmt;
 	
 	// Planned EMI Holiday dates
 	protected Listheader listHeader_planEMIHDates;
@@ -416,7 +415,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_CashFlowEffect"));
 		listHeader_vSProfit.setLabel(Labels.getLabel("listheader_VsProfit"));
 		listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_OrgPrincipalDue"));
-		listheader_LimitIncreaseAmt.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_LimitIncreaseAmt"));
 		listheader_AvailableLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AvailableLimit"));
 		listheader_LimitChange.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_LimitChange"));
 		listheader_ODLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ODLimit"));
@@ -1348,9 +1346,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
 			this.listheader_AvailableLimit.setVisible(true);
 			this.listheader_ODLimit.setVisible(true);
-			if(financeType.isDroplineOD()){
-				this.listheader_LimitChange.setVisible(true);
-			}
+			this.listheader_LimitChange.setVisible(true);
 		}
 		
 		if (financeMain.getFinStartDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {

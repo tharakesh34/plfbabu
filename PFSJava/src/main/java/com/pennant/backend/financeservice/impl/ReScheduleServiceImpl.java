@@ -38,7 +38,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	private static Logger logger = Logger.getLogger(ReScheduleServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-
+	
 	/**
 	 * Method for perform re-schedule action based on given instructions.
 	 * 
@@ -48,6 +48,17 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	 */
 	@Override
 	public FinScheduleData doReSchedule(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction) {
+		return recalScheduleData(finScheduleData, finServiceInstruction, null);
+	}
+
+	/**
+	 * Method for perform re-schedule action based on given instructions.
+	 * 
+	 * @param scheduleData
+	 * @param finServiceInstruction
+	 * @return FinScheduleData
+	 */
+	private FinScheduleData recalScheduleData(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction, Date maturityDate) {
 		logger.debug("Entering");
 
 		// Check Date Status Specifier
@@ -172,15 +183,19 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
 						PennantConstants.DBDateFormat));
 			}
-
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true)
-					.getScheduleList();
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				recalToDate = DateUtility.getDBDate(DateUtility.formatUtilDate(calendar.getTime(),
-						PennantConstants.DBDateFormat));
+			
+			if(maturityDate != null){
+				recalToDate = maturityDate;
+			}else{
+				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true)
+						.getScheduleList();
+				if (scheduleDateList != null) {
+					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+					recalToDate = DateUtility.getDBDate(DateUtility.formatUtilDate(calendar.getTime(),
+							PennantConstants.DBDateFormat));
+				}
+				scheduleDateList = null;
 			}
-			scheduleDateList = null;
 			
 			// Set the limits based on system values table
 			int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
@@ -483,12 +498,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if(DateUtility.compare(curSchd.getSchDate(), finMain.getEventFromDate()) >= 0){
+				Date brforeDate = null; 
 				if(prvSchd == null){
+					brforeDate = finMain.getFinStartDate();
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getFinStartDate(), "A", false).getNextFrequencyDate();
 				}else{
+					brforeDate = prvSchd.getSchDate();
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate();
 				}
-				if(DateUtility.getDaysBetween(curSchd.getSchDate(), startCalFrom) <= 15){
+				if(DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15){
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate(); 
 				}
 				break;
@@ -498,6 +516,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		
 		int terms = FrequencyUtil.getTerms(finMain.getRepayFrq(), startCalFrom, finMain.getMaturityDate(), true, true).getTerms();
 		serviceInstruction.setTerms(terms);
+		serviceInstruction.setNextRepayDate(startCalFrom);
 		serviceInstruction.setPftIntact(false);
 		serviceInstruction.setBaseRate(finMain.getRepayBaseRate());
 		serviceInstruction.setSplRate(finMain.getRepaySpecialRate());
@@ -505,7 +524,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		serviceInstruction.setActualRate(finMain.getRepayProfitRate());
 		
 		// Schedule Recalculation
-		finScheduleData = doReSchedule(finScheduleData, serviceInstruction);
+		finScheduleData = recalScheduleData(finScheduleData, serviceInstruction, finMain.getMaturityDate());
 		
 		logger.debug("Leaving");
 		return finScheduleData;

@@ -5601,10 +5601,16 @@ public class ScheduleCalculator {
 						&& incrLimit.compareTo(BigDecimal.ZERO) > 0) {
 					curODSchd.setLimitIncreaseAmt(curODSchd.getLimitIncreaseAmt().add(incrLimit));
 					curODSchd.setODLimit(curODSchd.getODLimit().add(incrLimit));
-					totalOSLimit = curODSchd.getODLimit().add(incrLimit);
+					totalOSLimit = curODSchd.getODLimit();
 					limitIncrDateFound = true;
 				}
 				oldOverdraftList.add(curODSchd);
+			}
+			
+			// If there is no change in Limit/ No Limit Increase
+			if(incrLimit.compareTo(BigDecimal.ZERO) == 0){
+				logger.debug("Leaving");
+				return orgFinScheduleData;
 			}
 			
 			if(DateUtility.compare(startCalFrom, finMain.getFirstDroplineDate()) < 0){
@@ -5626,6 +5632,7 @@ public class ScheduleCalculator {
 				newOdSchd.setODLimit(prvODSchd.getODLimit().add(incrLimit));
 				oldOverdraftList.add(newOdSchd);
 				totalOSLimit = prvODSchd.getODLimit().add(incrLimit);
+				prvODSchd = newOdSchd;
 			}
 		}
 		

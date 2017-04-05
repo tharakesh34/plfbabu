@@ -648,7 +648,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Finance Reference Details List
-		financeDetail = getFinanceReferenceDetails(financeDetail,userrole, "DDE", eventCodeRef, procEdtEvent, true);
+		//financeDetail = getFinanceReferenceDetails(financeDetail,userrole, "DDE", eventCodeRef, procEdtEvent, true);
 
 		//Finance Document Details
 		List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,FinanceConstants.MODULE_NAME,procEdtEvent, "_View");

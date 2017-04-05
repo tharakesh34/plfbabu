@@ -65,8 +65,6 @@ public class FinanceScheduleReportData {
 	private String availLimit;
 	private String totalLimit;
 	private String tdsAmount;
-	private String limitIncreaseAmt;
-	
 	
 	public FinanceScheduleReportData() {
 		
@@ -185,14 +183,6 @@ public class FinanceScheduleReportData {
 	}
 	public void setTdsAmount(String tdsAmount) {
 		this.tdsAmount = tdsAmount;
-	}
-
-	public String getLimitIncreaseAmt() {
-		return limitIncreaseAmt;
-	}
-
-	public void setLimitIncreaseAmt(String limitIncreaseAmt) {
-		this.limitIncreaseAmt = limitIncreaseAmt;
 	}
 
 	public String getSchdFee() {

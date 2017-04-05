@@ -995,6 +995,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails where DisbDate >= '"+appDate+ "') "); 
 			whereClause.append(" AND ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"' )"); 
 		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+			whereClause.append(" AND FinStartDate < '" + appDate+"' AND MaturityDate > '"+ appDate+"'" );
 			whereClause.append(" AND ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if((moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) || (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN))){
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
