@@ -1933,4 +1933,63 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 			<column name="ModuleId" type="int" />
 		</addColumn>
 	</changeSet>
+	
+	
+	<changeSet id="69" author="Kesav">
+		<createView viewName="FinTypeAccounting_AView" replaceIfExists="true">
+			SELECT     T1.FinType, T1.Event, T1.AccountSetID,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					   T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.AccountSetCode lovDescEventAccountingName,T2.AccountSetCodeName lovDescAccountingName
+			FROM       FinTypeAccounting T1 LEFT OUTER JOIN
+					   RMTAccountingSet T2 ON T1.AccountSetID = T2.AccountSetid		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="70" author="Kesav">
+		<createView viewName="FinTypeAccounting_View" replaceIfExists="true">
+			SELECT     T1.FinType, T1.Event, T1.AccountSetID,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					   T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.AccountSetCode lovDescEventAccountingName,T2.AccountSetCodeName lovDescAccountingName
+			FROM       FinTypeAccounting_Temp T1 LEFT OUTER JOIN
+					   RMTAccountingSet T2 ON T1.AccountSetID = T2.AccountSetid 
+			UNION ALL
+			
+			SELECT     T1.FinType, T1.Event, T1.AccountSetID,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					   T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,T1.RecordType, T1.WorkflowId, T1.ModuleId,
+					   T2.AccountSetCode lovDescEventAccountingName,T2.AccountSetCodeName lovDescAccountingName
+			FROM          FinTypeAccounting T1 LEFT OUTER JOIN
+						  RMTAccountingSet T2 ON T1.AccountSetID = T2.AccountSetid 
+			WHERE     NOT EXISTS (SELECT 1  FROM FinTypeAccounting_Temp 
+									WHERE FinType = T1.FinType AND Event = T1.Event)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="71" author="Kesav">
+		<createView viewName="FinTypeInsurances_View" replaceIfExists="true">			
+			SELECT		T1.FinType, T1.InsuranceType,T1.policyType,T5.policyDesc,T1.AlwRateChange,T5.InsuranceProvider,
+						T5.takafulName,T5.policyRate,T1.Mandatory,T1.DftPayType,T1.CalType,T1.AmountRule,T4.RuleCodeDesc ,
+						T1.ConstAmt,T1.Percentage,T1.CalculateOn,T2.InsuranceTypeDesc,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T1.ModuleId
+			FROM         FinTypeInsurances_temp T1 INNER JOIN
+						 insurancetype T2 ON T2.InsuranceType=T1.InsuranceType LEFT OUTER JOIN
+						 Rules T4 ON T1.AmountRule=T4.RuleCode LEFT OUTER JOIN
+						 InsurancePolicy_view T5 ON T1.policyType=T5.policyCode
+
+
+			UNION ALL
+
+			SELECT		T1.FinType, T1.InsuranceType,T1.policyType,T5.policyDesc,T1.AlwRateChange,T5.InsuranceProvider,
+						T5.TakafulName,T5.policyRate,T1.Mandatory,T1.DftPayType,T1.CalType,T1.AmountRule,T4.RuleCodeDesc,
+						T1.ConstAmt,T1.Percentage,T1.CalculateOn,T2.InsuranceTypeDesc,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ModuleId
+			FROM		FinTypeInsurances T1 INNER JOIN
+						Insurancetype T2 ON T2.InsuranceType = T1.InsuranceType LEFT OUTER JOIN
+						Rules T4 ON T1.AmountRule=T4.RuleCode LEFT OUTER JOIN
+						InsurancePolicy_View T5 ON T1.policyType=T5.policyCode
+
+			WHERE     	NOT EXISTS (SELECT 1 FROM FinTypeInsurances_Temp
+										WHERE FinType= T1.FinType AND  InsuranceType = T1.InsuranceType)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
