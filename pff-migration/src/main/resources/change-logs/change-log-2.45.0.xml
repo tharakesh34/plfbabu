@@ -1909,4 +1909,28 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 	RMTFinanceTypes T ON F.FinType = T.FinType 
 	</createView>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="65">
+		<addColumn tableName="FinTypeInsurances">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="66">
+		<addColumn tableName="FinTypeInsurances_Temp">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="67">
+		<addColumn tableName="FinTypeAccounting">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="68">
+		<addColumn tableName="FinTypeAccounting_Temp">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
