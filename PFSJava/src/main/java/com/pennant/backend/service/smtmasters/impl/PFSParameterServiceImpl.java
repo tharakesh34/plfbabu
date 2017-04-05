@@ -345,7 +345,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		String[] errParm = new String[1];
 
 		valueParm[0] = pFSParameter.getSysParmCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode")+ ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode.value")+ ":"+ valueParm[0];
 
 		if (pFSParameter.isNew()) { // for New record or new record into work
 									// flow
