@@ -3278,7 +3278,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
 						&& custDocument.getCustDocIssuedOn() != null
-						&& custDocument.getCustDocIssuedOn().after(this.custDOB.getValue())) {
+						&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
 					doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
 					return false;
 				}
@@ -4333,6 +4333,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
 					customerDocument.setCustDocImage(PennantAppUtil.getDocumentImage(customerDocument.getDocRefId()));
 				}
+				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
+				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerDocument", customerDocument);
 				map.put("customerDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -4450,6 +4452,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerAddress.setLovDescCustCIF(this.custCIF.getValue());
+				customerAddress.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerAddres", customerAddress);
 				map.put("customerDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -4534,6 +4538,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerPhoneNumber.setLovDescCustCIF(this.custCIF.getValue());
+				customerPhoneNumber.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerPhoneNumber", customerPhoneNumber);
 				map.put("customerDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -4615,6 +4621,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				customerEmail.setLovDescCustCIF(this.custCIF.getValue());
+				customerEmail.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerEMail", customerEmail);
 				map.put("customerDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -4700,6 +4708,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
+				custBankInfo.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerBankInfo", custBankInfo);
 				map.put("customerDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -4786,6 +4796,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custChequeInfo.setLovDescCustCIF(this.custCIF.getValue());
+				custChequeInfo.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerChequeInfo", custChequeInfo);
 				map.put("finFormatter", ccyFormatter);
 				map.put("customerDialogCtrl", this);
@@ -4878,6 +4890,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custExtLiability.setLovDescCustCIF(this.custCIF.getValue());
+				custExtLiability.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerExtLiability", custExtLiability);
 				map.put("finFormatter", ccyFormatter);
 				map.put("customerDialogCtrl", this);
