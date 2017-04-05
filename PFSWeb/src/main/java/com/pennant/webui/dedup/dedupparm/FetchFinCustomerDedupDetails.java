@@ -2,9 +2,11 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -20,7 +22,7 @@ public class FetchFinCustomerDedupDetails {
 	private final static Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);	
 	
 	
-	private static final String CUSTOMERDEDUP_LABELS =  "custCIF,custDOB,custFName,custLName,custCRCPR,"
+	private static  String CUSTOMERDEDUP_LABELS =  "custCIF,custDOB,custFName,custLName,custCRCPR,"
 			+ "custPassportNo,mobileNumber,custNationality,dedupRule,override,overridenby";
 
 	private static DedupParmService dedupParmService;
@@ -54,8 +56,17 @@ public class FetchFinCustomerDedupDetails {
 			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 			CustomerDedup customerDedup = doSetCustomerDedup(customer, aFinanceMain.getFinReference(), mobileNumber);
+			List<CustomerDedup> custDedupData = null;
 
-			List<CustomerDedup> custDedupData = getDedupParmService().fetchCustomerDedupDetails(userRole,customerDedup, curLoginUser, aFinanceMain.getFinType());
+			
+			
+			if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				// get customer dedup details from interface
+				custDedupData = dedupParmService.getDedupCustomerDetails(aFinanceDetail.getCustomerDetails());
+				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,mobileNumber,appScore,override";
+			} else {
+				custDedupData = getDedupParmService().fetchCustomerDedupDetails(userRole,customerDedup, curLoginUser, aFinanceMain.getFinType());
+			}
 
 			if(custDedupData !=null && !custDedupData.isEmpty()) {
 

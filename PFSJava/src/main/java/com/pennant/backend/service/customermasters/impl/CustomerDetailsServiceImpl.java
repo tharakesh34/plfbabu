@@ -4740,8 +4740,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public String getEIDNumberById(String eidNumber, String custCateory, String type) {
-		return getCustomerDAO().getCustomerByCRCPR(eidNumber, custCateory, type);
+	public String getEIDNumberById(String eidNumber , String type) {
+		return getCustomerDAO().getCustomerByCRCPR(eidNumber, type);
 	}
 
 	public CustomerDedupDAO getCustomerDedupDAO() {

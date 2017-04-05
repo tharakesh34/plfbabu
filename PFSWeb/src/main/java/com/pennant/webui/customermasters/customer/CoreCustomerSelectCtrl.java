@@ -352,8 +352,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				String custCIF = null;
 				if(StringUtils.isNotBlank(eidNumbr)){
-					custCIF = getCustomerDetailsService().getEIDNumberById(eidNumbr,isRetailCustomer ? PennantConstants.PFF_CUSTCTG_INDIV : 
-						PennantConstants.PFF_CUSTCTG_CORP, "_View");
+					custCIF = getCustomerDetailsService().getEIDNumberById(eidNumbr, "_View");
 				}
 				if(StringUtils.isNotBlank(custCIF)){
 					MultiLineMessageBox.doSetTemplate();

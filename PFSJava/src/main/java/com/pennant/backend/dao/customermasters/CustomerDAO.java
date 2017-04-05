@@ -109,7 +109,7 @@ public interface CustomerDAO {
 
 	String getCustCRCPRById(long custId, String type);
 
-	String getCustomerByCRCPR(String custCRCPR, String custCateory, String type);
+	String getCustomerByCRCPR(String custCRCPR, String type);
 
 	void updateFromFacility(Customer customer, String type);
 

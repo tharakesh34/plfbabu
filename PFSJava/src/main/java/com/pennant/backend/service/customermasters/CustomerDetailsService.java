@@ -68,7 +68,7 @@ public interface CustomerDetailsService {
 	List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method,
 	        String usrLanguage);
 
-	String getEIDNumberById(String eidNumber,String custCateory, String type);
+	String getEIDNumberById(String eidNumber, String type);
 
 	long getEIDNumberByCustId(String eidNumber, String type);
 

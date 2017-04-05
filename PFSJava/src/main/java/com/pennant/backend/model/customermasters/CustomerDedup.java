@@ -65,6 +65,7 @@ public class CustomerDedup {
 	private String tradeLicenceNo;
 	private String registrationNo;
 	private String titleDeedNo;
+	private int appScore;
 	
 
 
@@ -518,6 +519,14 @@ public class CustomerDedup {
 	public void setTitleDeedNo(String titleDeedNo) {
 	    this.titleDeedNo = titleDeedNo;
     }
+
+	public int getAppScore() {
+		return appScore;
+	}
+
+	public void setAppScore(int appScore) {
+		this.appScore = appScore;
+	}
 
 	
 }

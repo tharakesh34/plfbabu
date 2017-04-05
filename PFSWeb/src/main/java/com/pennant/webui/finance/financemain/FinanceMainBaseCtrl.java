@@ -153,6 +153,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -813,6 +814,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	BigDecimal												limitIncreaseAmt		= BigDecimal.ZERO;
+	private boolean 										isBranchanged;
+	
 
 	/**
 	 * default constructor.<br>
@@ -7721,11 +7724,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onFulfill$finBranch(Event event) {
 		logger.debug("Entering");
+		
+		Branch branch=(Branch)this.finBranch.getObject();
 		if (StringUtils.isBlank(this.finBranch.getValue())) {
-			this.finBranch.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch());
-			this.finBranch.setDescription(getFinanceDetail().getCustomerDetails().getCustomer()
+			this.finBranch.setValue(getFinanceDetail().getCustomerDetails()
+					.getCustomer().getCustDftBranch());
+			this.finBranch.setDescription(getFinanceDetail()
+					.getCustomerDetails().getCustomer()
 					.getLovDescCustDftBranchName());
+		}else{
+			if (branch != null) {
+			getFinanceDetail().getCustomerDetails().getCustomer()
+			.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
+			}
 		}
+		isBranchanged=true;
+
 		this.disbAcctId.setBranchCode(this.finBranch.getValue());
 		this.repayAcctId.setBranchCode(this.finBranch.getValue());
 		this.downPayAccount.setBranchCode(this.finBranch.getValue());
@@ -9199,13 +9213,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
-		aFinanceMain.setFinBranch(getFinanceDetail().getCustomerDetails().getCustomer().getCustDftBranch());
+		aFinanceMain.setBflBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 		Date financeDate = null;
 
 		try {
-			if (StringUtils.isBlank(this.finReference.getValue())) {
-
+			if (isBranchanged || StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(false, aFinanceMain)));
+				isBranchanged=false;
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
 			aFinanceSchData.setFinReference(this.finReference.getValue());

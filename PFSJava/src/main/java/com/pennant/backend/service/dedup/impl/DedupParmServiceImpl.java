@@ -66,6 +66,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -79,6 +80,9 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.model.DedupCustomerDetail;
+import com.pennanttech.model.DedupCustomerResponse;
+import com.pennanttech.service.CustomerDedupService;
 
 /**
  * Service implementation for methods that depends on <b>DedupParm</b>.<br>
@@ -94,6 +98,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private CustomerInterfaceService customerInterfaceService;
 	private PoliceCaseDAO policeCaseDAO;
 	private CustomerDedupDAO customerDedupDAO;
+	private CustomerDedupService customerDedupService;
 
 	public DedupParmServiceImpl() {
 		super();
@@ -146,11 +151,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 	public CustomerInterfaceService getCustomerInterfaceService() {
 		return customerInterfaceService;
-	}
+	} 
 	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
 	}
-
+	public void setCustomerDedupService(CustomerDedupService customerDedupService) {
+		this.customerDedupService = customerDedupService;
+	}
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List validate(String resultQuery,CustomerDedup customerDedup ) {
@@ -1441,6 +1448,70 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 		logger.debug("Leaving");
 		return policeCase;
+	}
+	
+	
+	@Override
+	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails customerDetails) {
+		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(customerDetails);
+		DedupCustomerResponse response = new DedupCustomerResponse();
+		try {
+			response = customerDedupService.invokeDedup(dedupCustomerDetail);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		List<CustomerDedup> customerDedup = getDedupData(response);
+		return customerDedup;
+	}
+	
+	private List<CustomerDedup> getDedupData(DedupCustomerResponse response) {
+		List<CustomerDedup> custDedupList = new ArrayList<CustomerDedup>();
+		if(response != null && response.getDedupCustomerDetails() != null) {
+			for(DedupCustomerDetail dedupDetail:response.getDedupCustomerDetails()) {
+				CustomerDedup customerDedup = new CustomerDedup();
+				customerDedup.setCustCIF(dedupDetail.getCustomer().getCustCIF());
+				customerDedup.setCustShrtName(dedupDetail.getCustomer().getCustShrtName());
+				customerDedup.setCustDOB(dedupDetail.getCustomer().getCustDOB());
+				customerDedup.setCustFName(dedupDetail.getCustomer().getCustFName());
+				customerDedup.setCustCRCPR(dedupDetail.getCustomer().getCustCRCPR());
+
+				custDedupList.add(customerDedup);
+				// Add appScore
+				//if(StringUtils.equals(response.getC, str2))
+			}
+		}
+		return custDedupList;
+	}
+	
+	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails) {
+		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
+		Customer customer = customerDetails.getCustomer();
+		if(customerDetails != null && customer != null) {
+			dedupCustomerDetail.setFinReference("");
+			dedupCustomerDetail.setCustID(customer.getCustID());
+			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
+			
+			dedupCustomerDetail.setCustomer(customer);			
+			// customer documents
+			if(customerDetails.getCustomerDocumentsList() != null) {
+				dedupCustomerDetail.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());
+			}
+			// customer Address
+			if(customerDetails.getAddressList() != null) {
+				dedupCustomerDetail.setAddressList(customerDetails.getAddressList());
+			}
+			// customer phone numbers
+			if(customerDetails.getCustomerPhoneNumList() != null) {
+				dedupCustomerDetail.setCustomerPhoneNumList(customerDetails.getCustomerPhoneNumList());
+			}
+			// customer emails
+			if(customerDetails.getCustomerEMailList() != null) {
+				dedupCustomerDetail.setCustomerEMailList(customerDetails.getCustomerEMailList());
+			}
+		}
+		
+		return dedupCustomerDetail;
 	}
 
 	@Override

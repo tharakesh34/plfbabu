@@ -79,4 +79,5 @@ public interface DedupParmService {
             String queryCode);
 	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws PFFInterfaceException;
 	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws PFFInterfaceException;
+	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails customerDetails); 
 }

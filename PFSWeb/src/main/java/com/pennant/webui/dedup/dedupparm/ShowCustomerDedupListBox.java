@@ -40,6 +40,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.service.PagedListService;
@@ -246,16 +247,26 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_CustCIF.value"),
 				custDedup.getCustCIF(),Labels.getLabel("label_CustomerDedupDialog_DOB.value"),
 				DateUtility.formatToLongDate(custDedup.getCustDOB())));
-		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_CustFName.value"),
-				custDedup.getCustFName()==""?custDedup.getCustShrtName():custDedup.getCustFName()
-						,Labels.getLabel("label_CustomerDedupDialog_CustLName.value"),
-				custDedup.getCustLName()));
-		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_EID.value"),
-				PennantApplicationUtil.formatEIDNumber(custDedup.getCustCRCPR()),
-				Labels.getLabel("label_CustomerDedupDialog_Passport.value"),custDedup.getCustPassportNo()));
-		rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
-				custDedup.getMobileNumber(),Labels.getLabel("label_CustomerDedupDialog_Nationality.value"),
-				custDedup.getCustNationality()));
+		if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_CustShrtName.value"),
+					custDedup.getCustShrtName()==""?custDedup.getCustFName():custDedup.getCustShrtName()
+							,Labels.getLabel("label_CustomerDedupDialog_EID.value"),
+							custDedup.getCustCRCPR()));
+			rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
+					custDedup.getMobileNumber(),Labels.getLabel("label_CustomerDedupDialog_appScore.value"),
+							String.valueOf(custDedup.getAppScore())));
+		} else {
+			rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_CustFName.value"),
+					custDedup.getCustFName()==""?custDedup.getCustShrtName():custDedup.getCustFName()
+							,Labels.getLabel("label_CustomerDedupDialog_CustLName.value"),
+							custDedup.getCustLName()));
+			rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_EID.value"),
+					PennantApplicationUtil.formatEIDNumber(custDedup.getCustCRCPR()),
+					Labels.getLabel("label_CustomerDedupDialog_Passport.value"),custDedup.getCustPassportNo()));
+			rows.appendChild(prepareRow(new Row(),Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
+					custDedup.getMobileNumber(),Labels.getLabel("label_CustomerDedupDialog_Nationality.value"),
+					custDedup.getCustNationality()));
+		}
 
 		// ListBox
 		this.listbox = new Listbox();
@@ -273,6 +284,9 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		final Listhead listhead = new Listhead();
 		listhead.setParent(this.listbox);
 		String headerList = Labels.getLabel("listHeader_CustomerDedup_label");
+		if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			headerList = Labels.getLabel("listHeader_CustomerDedup_label_Bajaj");
+		}
 		this.listHeaders = headerList.split(",");
 		for (int i = 0; i < this.listHeaders.length; i++) {
 			final Listheader listheader = new Listheader();
@@ -341,6 +355,41 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 			setUserAction(0);
 			setObject(null);
 			onClose();
+			
+			if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				setUserAction(1);
+				List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
+				for (int i = 0; i < listbox.getItems().size(); i++) {
+					Listitem listitem = listbox.getItems().get(i);
+					List<Component> componentList = ((Listcell) listitem
+							.getLastChild()).getChildren();
+					if (componentList != null && componentList.size() > 0) {
+						Component component = componentList.get(0);
+						if (component instanceof Checkbox) {
+							if (!((Checkbox) component).isChecked()) {
+								setUserAction(-1);
+							} else {
+								setUserAction(1);
+								CustomerDedup customer = (CustomerDedup) listitem.getAttribute("data");
+									if (customer.isNewCustDedupRecord()) {
+										customer.setOverrideUser(curAccessedUser);
+									}
+									customerDedupList.add(customer);
+									break;
+							}
+						}
+					}
+				}
+
+				if (getUserAction() == -1) {
+					MessageUtil
+							.showErrorMessage(Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
+				} else {
+					setObject(customerDedupList);
+					onClose();
+				}
+			
+			}
 		}
 	}
 
@@ -355,7 +404,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		
 		@Override
 		public void onEvent(Event event) throws Exception {
-
+		logger.debug("Entering : proceed Event");
 			setUserAction(1);
 			List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
@@ -491,6 +540,9 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 						chk.setChecked((Boolean) data.getClass().getMethod(fieldMethod).invoke(data));
 					} else if (!(Boolean) data.getClass().getMethod(fieldMethod).invoke(data)) {
 						chk.setDisabled(true);
+					}
+					if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+						chk.setDisabled(false);
 					}
 					lc = new Listcell();
 					chk.setParent(lc);

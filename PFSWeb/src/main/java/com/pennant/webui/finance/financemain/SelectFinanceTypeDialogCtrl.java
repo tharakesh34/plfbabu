@@ -1246,7 +1246,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (!isRetailCustomer) {
 					custCtg = PennantConstants.PFF_CUSTCTG_CORP;
 				}
-				String custCIF = this.customerDetailsService.getEIDNumberById(eidNum, custCtg, "");
+				String custCIF = this.customerDetailsService.getEIDNumberById(eidNum, "");
 
 				if (custCIF != null) {
 					MultiLineMessageBox.doSetTemplate();
@@ -1513,6 +1513,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (branch != null) {
 			customer.setCustDftBranch(branch.getBranchCode());
 			customer.setLovDescCustDftBranchName(branch.getBranchDesc());
+			customer.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
 		}
 
 		CustomerType customerType = this.customerTypeService

@@ -1047,18 +1047,17 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @return Customer
 	 */
 	@Override
-	public String getCustomerByCRCPR(final String custCRCPR,String custCateory,String type) {
+	public String getCustomerByCRCPR(final String custCRCPR,String type) {
 		logger.debug("Entering");
 		
 		String custCIF = null;
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
-		customer.setCustCtgCode(custCateory);
 		
 		StringBuilder selectSql = new StringBuilder(" SELECT CustCIF ");
 		selectSql.append(" FROM Customers" );
 		selectSql.append(StringUtils.trimToEmpty(type) ); 
-		selectSql.append(" Where CustCRCPR =:CustCRCPR and CustCtgCode = :CustCtgCode  ");
+		selectSql.append(" Where CustCRCPR =:CustCRCPR");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
