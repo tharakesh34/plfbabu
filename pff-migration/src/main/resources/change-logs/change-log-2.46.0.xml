@@ -69,4 +69,238 @@
     <renameColumn   newColumnName="REFERENCECOLUMN"  oldColumnName="PARENTNAME"  tableName="DATA_ENGINE_COLUMN"/>
 </changeSet>
 
+<changeSet  id="04" author="Pruthvi">
+<createTable tableName="DEDUP_EOD_CUST_DEMO_DTL">	
+			
+			<column name="BATCHID" type="NUMBER(12,0)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+	        <column name="SOURCESYSID" type="varchar(5)"/>
+			<column name="FIRSTNAME" type="varchar(90)"/>
+			<column name="MIDDLENAME" type="varchar(90)"/>
+			<column name="LASTNAME" type="varchar(90)"/>
+			<column name="DOB" type="datetime"/>
+			<column name="PAN" type="varchar(30)"/>
+			<column name="DRIVINGLICENSENUMBER" type="varchar(45)"/>
+			<column name="VOTERID" type="varchar(20)"/>
+			<column name="DATEOFINCORPORATION" type="datetime"/>
+			<column name="TANNO" type="varchar(15)"/>					
+			<column name="PROCESSTYPE" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="APPLICANTTYPE" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="EMPOYERNAME" type="varchar(105)"/>
+			<column name="FATHERNAME" type="varchar(105)"/>
+			<column name="PASSPORTNO" type="varchar(45)"/>
+			<column name="ACCOUNTNUMBER" type="varchar(20)"/>
+			<column name="CREDITCARDNUMBER" type="varchar(60)"/>
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+			<column name="UCINFLAG" type="varchar(10)"/>
+			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="INSERTTS" type="datetime">
+			<constraints nullable="false" />
+			</column>			
+			 <column name="GENDER" type="varchar(20)"/>
+			<column name="AADHARNO" type="varchar(12)"/>
+			<column name="CIN" type="varchar(100)"/>
+			<column name="DIN" type="varchar(20)"/>
+			<column name="REGISTRATIONNO" type="varchar(20)"/>
+			<column name="CANUMBER" type="varchar(100)"/>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			</createTable>
+		
+
+<createTable tableName="DEDUP_EOD_CUST_ADDR_DTL">		
+			<column name="BATCHID" type="NUMBER(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESSTYPE" type="varchar(24)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESS1" type="varchar(255)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ADDRESS2" type="varchar(255)"/>
+			<column name="ADDRESS3" type="varchar(255)"/>
+			
+			<column name="STATE" type="varchar(100)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CITY" type="varchar(105)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PIN" type="varchar(24)">
+			<constraints nullable="false" />
+			</column>
+			
+			<column name="LANDLINE1" type="varchar(48)"/>
+			<column name="LANDLINE2" type="varchar(48)"/>
+			<column name="MOBILE" type="varchar(105)"/>
+			<column name="AREA" type="varchar(120)"/>
+			
+			<column name="LANDMARK" type="varchar(105)"/>
+			<column name="STD" type="varchar(48)"/>
+			<column name="PROCESSTYPE" type="varchar(2)"/>
+			<column name="EMAIL" type="varchar(105)"/>
+			
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			
+</createTable>	
+
+
+<createTable tableName="PUSH_PULL_CONTROL_T">	
+<column name="BATCHID" type="NUMBER(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="STATUS" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="INSERTTIMESTAMP" type="datetime">
+			<constraints nullable="false" />
+			</column>
+			<column name="COMPLETIONTIMESTAMP" type="datetime"/>
+			<column name="ERRDESCRIPTION" type="varchar(500)"/>
+			<column name="ERRORCODE" type="varchar(500)"/>
+</createTable>	
+
+<createTable tableName="DEDUP_EOD_CUST_LOAN_DTL">	
+
+<column name="BATCHID" type="NUMBER(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="DEALID" type="varchar(20)"/>
+			<column name="LANNO" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERTYPE" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="APPLNNO" type="NUMBER(10,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTCODE" type="varchar(10)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PROCESSTYPE" type="varchar(2)">
+			<constraints nullable="false" />
+			</column>
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+			<column name="PSXID" type="NUMBER(12,0)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+</createTable>	
+
+
+<createTable tableName="DEDUP_EOD_CUST_REP_DTL">
+<column name="BATCHID" type="NUMBER(12,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSID" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="FILLERSTRING1" type="varchar(255)">
+			<constraints nullable="false" />
+			</column>
+			<column name="FILLERSTRING2" type="varchar(255)"/>
+			<column name="FILLERSTRING3" type="varchar(255)"/>
+			<column name="FILLERSTRING4" type="varchar(255)"/>
+			<column name="FILLERSTRING5" type="varchar(255)"/>
+			<column name="FILLERDATE1" type="datetime"/>
+			<column name="FILLERDATE2" type="datetime"/>
+			
+			<column name="FILLERNUMBER1" type="NUMBER(16,0)"/>
+			<column name="FILLERNUMBER2" type="NUMBER(16,0)"/>
+			<column name="FILLERNUMBER3" type="NUMBER(16,0)"/>
+			<column name="FILLERNUMBER4" type="NUMBER(16,0)"/>
+			<column name="FILLERNUMBER5" type="NUMBER(16,0)"/>
+			
+			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+			<column name="PSXID" type="NUMBER(12,0)"/>
+			<column name="SOURCESYSTEM" type="varchar(20)"/>
+			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="FILLERSTRING6" type="varchar(255)"/>
+			<column name="FILLERSTRING7" type="varchar(255)"/>
+			<column name="FILLERSTRING8" type="varchar(255)"/>
+			<column name="PROCESSTYPE" type="varchar(2)"/>
+			<column name="FILLERSTRING9" type="varchar(255)"/>
+
+</createTable>	
+
+<createTable tableName="POSIDEXCUSTUPDATE">
+<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+<column name="DATASOURCE" type="varchar(3)"/>
+<column name="UCINNO" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+<column name="SEGMENT" type="varchar(5)">
+<constraints nullable="false" />
+			</column>
+<column name="BATCHID" type="varchar(12)"/>
+<column name="BASETYPEFLAG" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+<column name="PROCESSEDFLAG" type="varchar(1)">
+<constraints nullable="false" />
+			</column>
+<column name="CUSTOMERID" type="varchar(20)"/>
+<column name="SOURCESYSID" type="Number"/>
+</createTable>
+</changeSet>
+
 </databaseChangeLog>
