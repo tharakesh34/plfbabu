@@ -56,7 +56,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
  * information about the environment for the system.
  */
 public class CurrencyUtil {
-	private final static Logger					logger				= Logger.getLogger(CurrencyUtil.class);
+	private static final Logger					logger				= Logger.getLogger(CurrencyUtil.class);
 
 	private static CurrencyDAO					currencyDAO;
 	private static HashMap<String, Currency>	currrecnyDetails	= null;
@@ -71,15 +71,15 @@ public class CurrencyUtil {
 	}
 
 	/**
-	 * Get the List of System urrencies
+	 * Get the list of currencies that are available in the system.
 	 * 
 	 * @return HashMap
 	 */
 	public static HashMap<String, Currency> getParmList() {
 		logger.debug("Entering");
-		final List<Currency> currencies = getCurrencyDAO().getCurrencyList();
+		final List<Currency> currencies = currencyDAO.getCurrencyList();
 		if (currencies != null) {
-			currrecnyDetails = new HashMap<String, Currency>(currencies.size());
+			currrecnyDetails = new HashMap<>(currencies.size());
 			for (int i = 0; i < currencies.size(); i++) {
 				currrecnyDetails.put(currencies.get(i).getCcyCode(), currencies.get(i));
 			}
@@ -171,10 +171,6 @@ public class CurrencyUtil {
 			return currecny.getCcySpotRate();
 		}
 		return BigDecimal.ZERO;
-	}
-
-	public static CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
 	}
 
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
