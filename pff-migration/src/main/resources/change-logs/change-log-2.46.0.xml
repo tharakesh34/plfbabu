@@ -628,4 +628,20 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 		BMTBankDetail T4  ON T1.BankCode=T4.BankCode
 </createView>
 </changeSet>
+<changeSet id="20" author="pruthvi">
+<renameColumn 
+            newColumnName="ID"
+            oldColumnName="HeaderID"
+            tableName="Interface_Header"/>
+</changeSet>
+<changeSet id="21" author="pruthvi">
+<addColumn tableName="Interface_Header">
+			<column name="Category" type="char(1)" />
+			</addColumn>
+</changeSet>
+
+<changeSet id="22" author="pruthvi">
+	<addPrimaryKey columnNames="ID" constraintName="pk_Interface_Header"
+			tableName="Interface_Header" />
+</changeSet>
 </databaseChangeLog>
