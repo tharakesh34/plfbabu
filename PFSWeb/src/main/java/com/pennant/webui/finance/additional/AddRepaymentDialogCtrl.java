@@ -675,12 +675,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 				
-				//if schdpftBal greater than zero throw validation
-				if(this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null){
-					throw new WrongValueException(this.cbTillDate, Labels.getLabel("Label_finSchdTillDate"));
+				if(this.cbTillDate.getItemCount() > 0){
+					finServiceInstruction.setRecalToDate((Date) this.cbTillDate.getSelectedItem().getValue());
 				}
-				
-				finServiceInstruction.setRecalToDate((Date) this.cbTillDate.getSelectedItem().getValue());
 
 			} catch (WrongValueException we) {
 				wve.add(we);
