@@ -2714,10 +2714,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 		
-		if (!validateAddressDetails(null)) {
+		if (!validateAddressDetails(this.tabkYCDetails)) {
 			return ;
 		}
-		if (!validatePhoneDetails(null)) {
+		if (!validatePhoneDetails(this.tabkYCDetails)) {
 			return ;
 		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
