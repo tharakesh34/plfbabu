@@ -4000,18 +4000,15 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<!--============ System Parametyer Details ============== -->
-
+	<!--============ System Parameter Details ============== -->
 	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil"
 		init-method="Init">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
-
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil"
-		init-method="Init">
+		init-method="init">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
-
 	<bean id="pFSParameterDAO"
 		class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl"
 		parent="basisCodeDAO">

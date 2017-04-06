@@ -62,10 +62,9 @@ public class CurrencyUtil {
 	private static HashMap<String, Currency>	currrecnyDetails	= null;
 
 	/**
-	 * Initialization of <b>SysParamUtil</b> class.
-	 * 
+	 * Initialize the <b>CurrencyUtil</b> class.
 	 */
-	public static void Init() {
+	public static void init() {
 		currrecnyDetails = null;
 		getParmList();
 	}
