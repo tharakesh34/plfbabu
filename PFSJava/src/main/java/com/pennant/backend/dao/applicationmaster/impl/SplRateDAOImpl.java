@@ -305,6 +305,30 @@ public class SplRateDAOImpl extends BasisCodeDAO<SplRate> implements SplRateDAO 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	public List<SplRate> getSplRateHistByType(String sRType, Date sREffDate) {
+		logger.debug("Entering");
+		
+		SplRate splRate = new SplRate();
+		splRate.setSRType(sRType);
+		splRate.setSREffDate(sREffDate);
+
+		StringBuilder selectSql = new StringBuilder("select SRTYPE, SREFFDATE, SRRATE ");
+		selectSql.append(" FROM RMTSplRates");
+		selectSql.append(" Where srtype = :SRType ");
+		selectSql.append(" AND sreffdate >= (select max(SREffDate) from RMTSPLRATES ");
+		selectSql.append(" Where srtype = :SRType AND sreffdate <= :SREffDate)");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
+		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
+		
+		List<SplRate> splRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		
+		logger.debug("Leaving");
+		return splRates;
+	}
+
 	@Override
 	public List<SplRate> getSRListByMdfDate(Date effDate,String type) {
 		logger.debug("Entering");

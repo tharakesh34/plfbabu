@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,6 +61,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.SplRateCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -112,6 +116,29 @@ public class SplRateCodeDAOImpl extends BasisCodeDAO<SplRateCode> implements Spl
 		}
 		logger.debug("Leaving");
 		return splRateCode;
+	}
+
+	public List<BaseRate> getBaseRateHistByType(String bRType, String currency, Date bREffDate) {
+		logger.debug("Entering");
+		BaseRate baseRate = new BaseRate();
+		baseRate.setBRType(bRType);
+		baseRate.setCurrency(currency);
+		baseRate.setBREffDate(bREffDate);
+
+		StringBuilder selectSql = new StringBuilder("select BRTYPE, BREFFDATE, BRRATE ");
+		selectSql.append(" FROM RMTBaseRates");
+		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND RecordStatus = 'Approved' ");
+		selectSql.append(" AND breffdate >= (select max(BREffDate) from RMTBASERATES ");
+		selectSql.append(" Where brtype = :BRType AND Currency = :Currency AND RecordStatus = 'Approved' AND breffdate <= :BREffDate");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
+		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
+		
+		List<BaseRate> baseRates = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		
+		logger.debug("Leaving");
+		return baseRates;
 	}
 
 	/**

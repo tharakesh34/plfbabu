@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
 
 /**
@@ -60,4 +61,5 @@ public interface SplRateDAO {
 	boolean getSplRateListById(String sRType, Date sREffDate, String type);
 	void deleteByEffDate(SplRate splRate, String type);
 	int getSpecialRateCountById(String repaySpecialRate, String type);
+	List<SplRate> getSplRateHistByType(String sRType, Date sREffDate);
 }

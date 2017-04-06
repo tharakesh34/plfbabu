@@ -60,4 +60,5 @@ public interface BaseRateDAO {
 	List<BaseRate> getBSRListByMdfDate(Date bREffDate, String type);
 	void deleteByEffDate(BaseRate baseRate, String type);
 	int getBaseRateCountById(String bRType, String currency, String type);
+	List<BaseRate> getBaseRateHistByType(String bRType, String currency, Date bREffDate);
 }

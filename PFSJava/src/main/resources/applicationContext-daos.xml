@@ -7787,7 +7787,10 @@
 	</bean>
 
 	<bean id="scheduleGenerator" class="com.pennant.app.util.ScheduleGenerator" />
-	<bean id="scheduleCalculator" class="com.pennant.app.util.ScheduleCalculator" />
+	<bean id="scheduleCalculator" class="com.pennant.app.util.ScheduleCalculator" >
+		<property name="splRateDAO" ref="splRateDAO" />
+		<property name="baseRateDAO" ref="baseRateDAO" />
+	</bean>
 
 	<!--============ CustomerLimitService ============== -->
 

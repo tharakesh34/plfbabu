@@ -65,6 +65,8 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -134,6 +136,8 @@ public class FinScheduleData {
 	//TODO: To be removed(DDP)
 	@XmlElement(name="overdueCharges")
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
+	private List<BaseRate> baseRates = new ArrayList<BaseRate>();
+	private List<SplRate> splRates = new ArrayList<SplRate>();
 	
 
 	@XmlElement
@@ -605,6 +609,22 @@ public class FinScheduleData {
 
 	public void setFinODDetails(List<FinODDetails> finODDetails) {
 		this.finODDetails = finODDetails;
+	}
+
+	public List<BaseRate> getBaseRates() {
+		return baseRates;
+	}
+
+	public void setBaseRates(List<BaseRate> baseRates) {
+		this.baseRates = baseRates;
+	}
+
+	public List<SplRate> getSplRates() {
+		return splRates;
+	}
+
+	public void setSplRates(List<SplRate> splRates) {
+		this.splRates = splRates;
 	}
 
 	
