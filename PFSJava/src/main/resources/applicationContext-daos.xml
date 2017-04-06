@@ -5359,7 +5359,7 @@
 
 	<bean id="finAdvancePaymentsDAO"
 		class="com.pennant.backend.dao.finance.impl.FinAdvancePaymentsDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 

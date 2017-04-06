@@ -53,6 +53,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -64,13 +65,14 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo", "branchBankCode", "branchCode",
 		"iFSC", "beneficiaryAccNo", "beneficiaryName", "phoneCountryCode", "phoneAreaCode", "phoneNumber" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinAdvancePayments extends AbstractWorkflowEntity {
+public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
 	
 	private static final long serialVersionUID = -6234931333270161797L;
 
 	private String finReference;
 	private int paymentSeq;
 	private int disbSeq;
+	private long paymentId;
 	
 	@XmlElement(name="disbParty")
 	private String paymentDetail;
@@ -156,10 +158,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public FinAdvancePayments(String id) {
-		super();
-		this.setId(id);
-	}
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -177,13 +175,18 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	
-	public String getId() {
-		return finReference;
-	}
-	public void setId (String finReference) {
-		this.finReference = finReference;
-	}
+	@Override
+	public long getId() {
+		
+		return paymentId;
 	
+	}
+
+	@Override
+	public void setId(long paymentId) {
+		this.paymentId=paymentId;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -506,6 +509,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	public void setDisbSeq(int disbSeq) {
 		this.disbSeq = disbSeq;
+	}
+
+	public long getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(long paymentId) {
+		this.paymentId = paymentId;
 	}
 
 }

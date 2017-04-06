@@ -207,7 +207,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean preApprovalFinance;
 	private boolean preApprovalExpired;
 	private String	applicationNo;
-	private String 	bflBranchCode;
+	private String 	swiftBranchCode;
 
 	// ===========================================
 	// ==========Grace Period Details=============
@@ -703,7 +703,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("workFlowType");
 		excludeFields.add("firstDisbDate");
 		excludeFields.add("lastDisbDate");
-		excludeFields.add("bflBranchCode");
+		excludeFields.add("swiftBranchCode");
 		
 		return excludeFields;
 	}
@@ -3357,12 +3357,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lastDisbDate = lastDisbDate;
 	}
 
-	public String getBflBranchCode() {
-		return bflBranchCode;
+	public String getSwiftBranchCode() {
+		return swiftBranchCode;
 	}
 
-	public void setBflBranchCode(String bflBranchCode) {
-		this.bflBranchCode = bflBranchCode;
+	public void setSwiftBranchCode(String swiftBranchCode) {
+		this.swiftBranchCode = swiftBranchCode;
 	}
-	
+
 }

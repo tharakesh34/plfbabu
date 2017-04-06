@@ -137,7 +137,6 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	
 	protected Label custShrtName;
 	private String finBranch;
-	private String bflBranchCode;
 	
 	private Row row_EIDNumber;
 	private Textbox eidNumber;
@@ -425,10 +424,9 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finBranch = customer.getCustDftBranch();
 			
-			Branch branch = this.branchService.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser()
-					.getUsrBranchCode());
+			Branch branch = this.branchService.getApprovedBranchById(finBranch);
 			if (branch != null) {
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setBflBranchCode(branch.getBranchSwiftBrnCde());
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setSwiftBranchCode(branch.getBranchSwiftBrnCde());
 			}
 			BeanUtils.copyProperties(customer, wifcustomer);
 		}
@@ -659,6 +657,13 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			financeType.setFinRvwFrq(repayFrq);
 			financeType.setFinCpzFrq(repayFrq);*/
 			//financeType.setFinRepayPftOnFrq(false);
+			//set the default barch for wif with out custoemr selection
+			Branch branch = this.branchService.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser()
+					.getUsrBranchCode());
+			if (branch != null) {
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setSwiftBranchCode(branch.getBranchSwiftBrnCde());
+			}
+			
 			
 			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
 			this.financeDetail.getFinScheduleData().setFinanceMain(financeMain,financeType);
