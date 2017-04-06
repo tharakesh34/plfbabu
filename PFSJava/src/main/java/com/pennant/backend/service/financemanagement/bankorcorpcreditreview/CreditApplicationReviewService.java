@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -26,7 +25,6 @@ public interface CreditApplicationReviewService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<FinCreditReviewSummary> getListCreditReviewSummaryById(final long id, String type,boolean postingProcess);
 	FinCreditRevType getFinCreditRevByRevCode(String creditRevCode);
-	Currency getCurrencyById(final String id);
 	Map<String,List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId(final long id,int noOfYears,int year, String type);
 	Map<String,List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId2(final long id,int noOfYears,int year, String category, String type);
 	Map<String,List<FinCreditReviewSummary>> getListCreditReviewSummaryByCustId2(final long id,int noOfYears,int year, String category, int auditPeriod, boolean isCurrentYear, String type);

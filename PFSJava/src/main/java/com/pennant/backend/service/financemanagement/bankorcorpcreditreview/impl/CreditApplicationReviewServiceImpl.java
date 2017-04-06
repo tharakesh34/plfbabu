@@ -20,7 +20,6 @@ import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditAp
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditReviewSummaryDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -1209,11 +1208,6 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 	public CurrencyDAO getCurrencyDAO() {
 		return currencyDAO;
-	}
-
-	@Override
-	public Currency getCurrencyById(String id) {
-		return currencyDAO.getCurrencyById(id,"");
 	}
 
 	@Override
