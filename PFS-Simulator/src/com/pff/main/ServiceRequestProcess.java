@@ -133,9 +133,9 @@ public class ServiceRequestProcess implements Runnable {
 		LOG.exiting("run");
 	}
 
-	/* Method to Process the Init mesage picked up by the java application.
+	/* Method to Process the first message picked up by the java application.
 	 * <p>
-	 * This method would pick up the init message from queue mentioned in the
+	 * This method would pick up the first message from queue mentioned in the
 	 * config file. The message would be validated for the xml field MsgFormat.
 	 * The message is put on the error queue if it doesnt contain a valid
 	 * message format.
@@ -148,9 +148,6 @@ public class ServiceRequestProcess implements Runnable {
 	 *         none
 	 *
 	 */
-
-
-
 	private String processMessage() {
 		LOG.entering("processMessage");
 		String receivedMessage=null;
