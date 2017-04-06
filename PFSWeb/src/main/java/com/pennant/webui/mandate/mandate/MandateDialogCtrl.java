@@ -267,7 +267,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						this.mandate = new Mandate();
 						mandate.setNewRecord(true);
 						mandate.setCustID(financemain.getCustID());
-						mandate.setCustCIF(financemain.getLovDescCustCIF());
+						mandate.setCustCIF(getCIFForCustomer(financeDetail));
 						mandate.setMandateType(financemain.getFinRepayMethod());
 					}
 					this.mandate.setWorkflowId(0);
@@ -1060,7 +1060,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					aMandate.setMandateRef(obj.toString());
 				}
 			} else {
-				aMandate.setMandateRef("");
+				aMandate.setMandateRef(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1840,6 +1840,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		getMandate().setUserDetails(getUserWorkspace().getLoggedInUser());
 		financeDetail.setMandate(getMandate());
 		logger.debug("Leaving");
+	}
+	
+	private String getCIFForCustomer(FinanceDetail financeDetail){
+		if (financeDetail!=null && financeDetail.getCustomerDetails()!=null && financeDetail.getCustomerDetails().getCustomer() !=null) {
+			return StringUtils.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+		}
+		return "";
 	}
 
 	// ******************************************************//
