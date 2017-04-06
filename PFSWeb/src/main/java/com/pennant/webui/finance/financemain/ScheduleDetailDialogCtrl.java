@@ -460,10 +460,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.row_totalCost.setVisible(false);
 			this.row_purchasePrice.setVisible(false);
 			
+			if(StringUtils.isNotEmpty(financeMain.getDroplineFrq())){
+				this.label_ScheduleDetailDialog_DroplineFrequency.setValue(Labels.getLabel("label_ScheduleDetailDialog_DroplineFrequency.value"));
+				this.schdl_droplineFrequency.setVisible(true);
+			}
 			label_ScheduleDetailDialog_FinType.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODFinType.value"));
 			label_ScheduleDetailDialog_FinReference.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODFinReference.value"));
 			this.label_ScheduleDetailDialog_ODTenor.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODTenor.value"));
-			this.label_ScheduleDetailDialog_DroplineFrequency.setValue(Labels.getLabel("label_ScheduleDetailDialog_DroplineFrequency.value"));
 			this.label_ScheduleDetailDialog_ODStartDate.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODStartDate.value"));
 			this.label_ScheduleDetailDialog_ODLimit.setValue(Labels.getLabel("label_ScheduleDetailDialog_ODLimit.value"));
 			this.label_ScheduleDetailDialog_Customer.setValue(Labels.getLabel("label_ScheduleDetailDialog_Customer.value"));
@@ -769,7 +772,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.schdl_odMnthTenor.setValue(String.valueOf(financeMain.getNumberOfTerms()%12));
 			this.schdl_customer.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
 			this.schdl_odStartDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-			this.schdl_droplineFrequency.setValue(FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
+			if(StringUtils.isNotEmpty(financeMain.getDroplineFrq())){
+				this.schdl_droplineFrequency.setValue(FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
+			}
 			this.schdl_odOtherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
 			this.schdl_odTotalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
 			BigDecimal futTotDisbAmt = BigDecimal.ZERO;
@@ -1077,8 +1082,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
 					if(isOverdraft){
-						this.schdl_odyearlyTenor.setValue(String.valueOf(totRepayTerms/12));
-						this.schdl_odMnthTenor.setValue(String.valueOf(totRepayTerms%12));
+						this.schdl_odyearlyTenor.setValue(String.valueOf(financeMain.getNumberOfTerms()/12));
+						this.schdl_odMnthTenor.setValue(String.valueOf(financeMain.getNumberOfTerms()%12));
 					}
 					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
