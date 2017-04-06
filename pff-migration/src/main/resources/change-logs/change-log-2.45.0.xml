@@ -2027,5 +2027,25 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
 			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
 </changeSet>
-    	
+<changeSet id="74" author="pruthvi">
+<sql>
+update reportlist set moduletype='Customers',Reportheading='Beneficiary' where code='Beneficiary';
+
+update reportlist set moduletype='Customers',ReportHeading='Mandate' where code='Mandate';
+
+INSERT INTO ReportList  VALUES 
+(N'MandateEnquiry', N'Customer', 
+N'listheader_MandateType.label,listheader_CustCIF.label,listheader_BankName.label,listheader_AccNumber.label,listheader_AccType.label,listheader_Amount.label,listheader_ExpiryDate.label,listheader_Status.label,listheader_InputDate.label,listheader_RecordStatus.label,listheader_RecordType.label', 
+N'mandateType,custCIF,bankName,accNumber,accType,maxLimit,expiryDate,status,inputDate,recordStatus,recordType', 
+N'String,String,String,String,String,BigDecimal,Date,String,Date,String,String', N'', N'ReportList11', N'Mandate Enquiry', N'Customer Enquiry', 3, 1001, CURRENT_TIMESTAMP, 
+N'Approved', N'', N'', N'', N'', N'', 0, 0);
+
+INSERT INTO ReportList  VALUES 
+(N'BeneficiaryEnquiry', N'Customer', 
+N'label_BeneficiaryList_CustCIF.value,label_BeneficiaryList_AccNo.value,label_BeneficiaryList_AccHolderName.value,listheader_RecordStatus.label,listheader_RecordType.label', 
+N'custCIF,accNumber,accHolderName,recordStatus,recordType', 
+N'String,String,String,String,String', N'', N'ReportList05', N'Beneficiary Enquiry', N'Customer Enquiry', 3, 1001, CURRENT_TIMESTAMP, 
+N'Approved', N'', N'', N'', N'', N'', 0, 0);
+</sql>
+    	</changeSet>
 </databaseChangeLog>
