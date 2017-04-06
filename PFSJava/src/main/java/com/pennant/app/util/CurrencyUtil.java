@@ -52,8 +52,8 @@ import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 
 /**
- * A suite of utilities surrounding the use of the Currency that contain
- * information about the environment for the system.
+ * A suite of utilities surrounding the use of the Currency that contain information about the environment for the
+ * system.
  */
 public class CurrencyUtil {
 	private static final Logger					logger				= Logger.getLogger(CurrencyUtil.class);
@@ -114,11 +114,11 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static int getFormat(String ccy) {
-		
-		if(ccy == null){
+
+		if (ccy == null) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
-		
+
 		Currency currecny = currrecnyDetails.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcyEditField();
@@ -133,18 +133,18 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static String getCcyDesc(String ccy) {
-		
-		if(ccy == null){
+
+		if (ccy == null) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
-		
+
 		Currency currecny = currrecnyDetails.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcyDesc();
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Method for get minimum currency unit's of Currency
 	 * 
@@ -158,7 +158,7 @@ public class CurrencyUtil {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Method for get the Exchange rate of Currency
 	 * 
