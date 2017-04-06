@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * A suite of utilities surrounding the use of the Currency that contain information about the environment for the
@@ -62,29 +63,19 @@ public class CurrencyUtil {
 	private static HashMap<String, Currency>	currrecnyDetails	= null;
 
 	/**
-	 * Initialize the <b>CurrencyUtil</b> class.
+	 * Initialize the currency map with the list of currencies that are available in the system.
 	 */
 	public static void init() {
-		currrecnyDetails = null;
-		getParmList();
-	}
+		logger.info(Literal.ENTERING);
 
-	/**
-	 * Get the list of currencies that are available in the system.
-	 * 
-	 * @return HashMap
-	 */
-	public static HashMap<String, Currency> getParmList() {
-		logger.debug("Entering");
-		final List<Currency> currencies = currencyDAO.getCurrencyList();
-		if (currencies != null) {
-			currrecnyDetails = new HashMap<>(currencies.size());
-			for (int i = 0; i < currencies.size(); i++) {
-				currrecnyDetails.put(currencies.get(i).getCcyCode(), currencies.get(i));
-			}
+		List<Currency> currencies = currencyDAO.getCurrencyList();
+
+		currrecnyDetails = new HashMap<>(currencies.size());
+		for (int i = 0; i < currencies.size(); i++) {
+			currrecnyDetails.put(currencies.get(i).getCcyCode(), currencies.get(i));
 		}
-		logger.debug("Leaving");
-		return currrecnyDetails;
+
+		logger.info(Literal.LEAVING);
 	}
 
 	public static void setCurrencyDetails(String code, Currency currency) {
