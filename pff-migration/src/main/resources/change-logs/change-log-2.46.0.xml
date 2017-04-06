@@ -438,7 +438,7 @@ Update finadvancepayments set paymentid = row_num from (
 	where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq) where exists (select 1 from finadvancepayments T
   where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq);
 	
-	alter table finadvancepayments modify column paymentid not null;
+	alter table finadvancepayments modify paymentid not null;
 		</sql>
 	</changeSet>
 		<changeSet id="07.1" author="Madhubabu" dbms="oracle">	
@@ -447,7 +447,7 @@ Update finadvancepayments set paymentid = row_num from (
 			 begin
 			
 			  Select MAX(paymentid)+1 into ex from finadvancepayments;
-			 execute 'CREATE SEQUENCE SEQADVPAYMENT START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+			 execute immediate 'CREATE SEQUENCE SEQADVPAYMENT START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
 			 end;  			
      	</sql>
      	</changeSet>
