@@ -298,9 +298,9 @@ public class AEAmounts implements Serializable {
 			BigDecimal tdPftAmortizedNormal = BigDecimal.ZERO;
 			BigDecimal tdPftAmortizedPD = BigDecimal.ZERO;
 			// Amortization
-			if (curSchdDate.after(valueDate)) {
+			if (curSchdDate.compareTo(valueDate)>=0) {
 				// do nothing
-			} else if (valueDate.after(curSchdDate) && valueDate.compareTo(nextSchdDate) < 0) {
+			} else if (valueDate.after(curSchdDate) && valueDate.compareTo(nextSchdDate) <= 0) {
 				int days = getNoDays(valueDate, curSchdDate);
 				int daysInCurPeriod = nextSchd.getNoOfDays();
 				tdPftAmortized = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
@@ -308,7 +308,7 @@ public class AEAmounts implements Serializable {
 				tdPftAmortized = nextSchd.getProfitCalc();
 			}
 
-			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) < 0) {
+			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) <= 0) {
 				if ((!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())) {
 					finState = CalculationConstants.FINSTATE_PD;
 				}
