@@ -2713,7 +2713,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (validateCustDocs && !validateCustomerDocuments(aCustomer, null)) {
 			return;
 		}
-
+		
+		if (!validateAddressDetails(null)) {
+			return ;
+		}
+		if (!validatePhoneDetails(null)) {
+			return ;
+		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
