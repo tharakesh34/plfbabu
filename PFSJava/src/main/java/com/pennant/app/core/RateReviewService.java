@@ -172,6 +172,8 @@ public class RateReviewService extends ServiceHelper {
 
 	private void doRateReview(String finref, Date date, BaseRate baseRate) throws Exception {
 
+		//rate review will be on start Day.
+		Date businessDate = DateUtility.addDays(date, 1);
 		FinScheduleData finScheduleData = getFinSchDataByFinRef(finref, "_AView");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -184,7 +186,7 @@ public class RateReviewService extends ServiceHelper {
 			return;
 		}
 
-		if (date.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+		if (businessDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
 			if (!finMain.isAllowGrcPftRvw()) {
 				return;
 			}
@@ -194,11 +196,12 @@ public class RateReviewService extends ServiceHelper {
 			}
 		}
 
-		//rate review not allowed after the maturity
-		if (baseRate.getBREffDate().compareTo(finMain.getMaturityDate()) >= 0 || baseRate.getBREffDate().compareTo(finMain.getFinStartDate()) < 0) {
+		//the base rate is not applicable for the finance if effective date is after maturity or before loan start
+		if (baseRate.getBREffDate().compareTo(finMain.getMaturityDate()) >= 0
+				|| baseRate.getBREffDate().compareTo(finMain.getFinStartDate()) < 0) {
 			return;
 		}
-		
+
 		if (finMain.getNextRepayRvwDate().compareTo(finMain.getMaturityDate()) == 0) {
 			return;
 		}
@@ -219,7 +222,8 @@ public class RateReviewService extends ServiceHelper {
 			}
 
 		} else {
-			if (finMain.getNextRepayRvwDate().compareTo(date) == 0 && baseRate.getBREffDate().compareTo(finMain.getNextRepayRvwDate())<=0) {
+			if (finMain.getNextRepayRvwDate().compareTo(date) == 0
+					&& baseRate.getBREffDate().compareTo(finMain.getNextRepayRvwDate()) <= 0) {
 				effectiveDate = finMain.getNextRepayRvwDate();
 			} else {
 				return;
@@ -250,8 +254,8 @@ public class RateReviewService extends ServiceHelper {
 			if (schdate.compareTo(effectiveDate) < 0) {
 				continue;
 			}
-			
-			if (schdate.compareTo(date) < 0) {
+
+			if (schdate.compareTo(businessDate) < 0) {
 				continue;
 			}
 
@@ -285,12 +289,12 @@ public class RateReviewService extends ServiceHelper {
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		// Finance Profit Details
-		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(finMain, schList, null, date);
+		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(finMain, schList, null, businessDate);
 		// Amount Codes Details Preparation
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finMain, profitDetail, date);
+		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finMain, profitDetail, businessDate);
 
 		// DataSet preparation
-		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_RATCHG, date, date);
+		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_RATCHG, date, businessDate);
 		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, finScheduleData.getFinanceType());
 		saveAccounting(list);
 		// Update New Finance Schedule Details Data

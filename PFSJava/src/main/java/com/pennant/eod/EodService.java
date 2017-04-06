@@ -17,6 +17,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.core.ServiceUtil;
@@ -42,7 +43,7 @@ public class EodService {
 	private RateReviewService			rateReviewService;
 	private StatusMovementService		statusMovementService;
 	private RepayQueueService			repayQueueService;
-
+	private DateRollOverService			dateRollOverService;
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=?";
 
@@ -144,8 +145,11 @@ public class EodService {
 		statusMovementService.processMovements(connection, custId, date);
 
 		//Rate review
-		//FIXE Rate review process should checked after the completion new method in schedule calculator
+		//FIXME Rate review process should checked after the completion new method in schedule calculator
 		rateReviewService.processRateReview(connection, custId, date);
+		
+		//Date roll over
+		dateRollOverService.process(connection, custId, date);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
@@ -197,5 +201,9 @@ public class EodService {
 
 	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
 		this.customerDatesDAO = customerDatesDAO;
+	}
+
+	public void setDateRollOverService(DateRollOverService dateRollOverService) {
+		this.dateRollOverService = dateRollOverService;
 	}
 }

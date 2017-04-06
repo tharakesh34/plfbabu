@@ -164,7 +164,7 @@ public class RepayQueueCalculation implements Tasklet {
 									+ "  S.PrincipalSchd, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal,  S.ProfitSchd, S.SchdPftpaid, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,"
 									+ " S.SuplRent SchdSuplRent, S.SuplRentPaid SchdSuplRentPaid, (S.SuplRent -  S.SuplRentPaid) SchdSuplRentBal,"
 									+ " S.IncrCost SchdIncrCost, S.IncrCostPaid SchdIncrCostPaid, (S.IncrCost - S.IncrCostPaid) SchdIncrCostBal,"
-									+ " (S.IncrCost  - S.IncrCostPaid) SchdCrInsBal,"
+									+ " (S.IncrCost - S.IncrCostPaid) SchdCrInsBal,"
 									+ " S.FeeSchd SchdFee , S.SchdFeePaid , (S.FeeSchd - S.SchdFeePaid) SchdFeeBal, "
 									+ " S.InsSchd SchdIns, S.SchdInsPaid SchdInsPaid, (S.InsSchd - S.SchdInsPaid) SchdInsBal,"
 									+ " S.AdvCalRate, S.AdvProfit, S.CalculatedRate  FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? "

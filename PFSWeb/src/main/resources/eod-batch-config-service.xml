@@ -86,6 +86,10 @@
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">
 	</bean>
+	
+	<!-- Date rollover-->
+	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
+	</bean>
 	<!-- Repay queue service Service -->
 	<bean id="repayQueueService" class="com.pennant.app.core.RepayQueueService">
 		<property name="latePaymentService" ref="latePaymentService" />
@@ -139,6 +143,7 @@
 		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
+		<property name="dateRollOverService" ref="dateRollOverService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />
