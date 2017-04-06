@@ -1705,7 +1705,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FinanceMain Detail Tab ---> 1. Basic Details
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 		try {
 			if (StringUtils.isEmpty(this.finReference.getValue()) && getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsGenRef()) {
 				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateNewFinRef(true, aFinanceMain)));
