@@ -72,10 +72,10 @@
 <changeSet  id="04" author="Pruthvi">
 <createTable tableName="DEDUP_EOD_CUST_DEMO_DTL">	
 			
-			<column name="BATCHID" type="NUMBER(12,0)">
+			<column name="BATCHID" type="decimal(12,0)">
 				<constraints nullable="false" />
 			</column>
-			 <column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+			 <column name="CUSTOMERNO" type="decimal(8,0)"/>
 	        <column name="SOURCESYSID" type="varchar(5)"/>
 			<column name="FIRSTNAME" type="varchar(90)"/>
 			<column name="MIDDLENAME" type="varchar(90)"/>
@@ -108,9 +108,9 @@
 			<column name="SOURCESYSTEM" type="varchar(20)">
 			<constraints nullable="false" />
 			</column>
-			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
 			<column name="UCINFLAG" type="varchar(10)"/>
-			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
 			<column name="INSERTTS" type="datetime">
 			<constraints nullable="false" />
 			</column>			
@@ -127,10 +127,10 @@
 		
 
 <createTable tableName="DEDUP_EOD_CUST_ADDR_DTL">		
-			<column name="BATCHID" type="NUMBER(12,0)">
+			<column name="BATCHID" type="decimal(12,0)">
 			<constraints nullable="false" />
 			</column>
-			<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+			<column name="CUSTOMERNO" type="decimal(8,0)"/>
 			<column name="SOURCESYSID" type="varchar(5)">
 			<constraints nullable="false" />
 			</column>
@@ -177,14 +177,14 @@
 			<column name="SOURCESYSTEM" type="varchar(20)">
 			<constraints nullable="false" />
 			</column>
-			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
-			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
 			
 </createTable>	
 
 
 <createTable tableName="PUSH_PULL_CONTROL_T">	
-<column name="BATCHID" type="NUMBER(12,0)">
+<column name="BATCHID" type="decimal(12,0)">
 			<constraints nullable="false" />
 			</column>
 			<column name="STATUS" type="varchar(1)">
@@ -200,10 +200,10 @@
 
 <createTable tableName="DEDUP_EOD_CUST_LOAN_DTL">	
 
-<column name="BATCHID" type="NUMBER(12,0)">
+<column name="BATCHID" type="decimal(12,0)">
 			<constraints nullable="false" />
 			</column>
-			<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+			<column name="CUSTOMERNO" type="decimal(8,0)"/>
 			<column name="SOURCESYSID" type="varchar(5)">
 			<constraints nullable="false" />
 			</column>
@@ -217,7 +217,7 @@
 			<column name="CUSTOMERTYPE" type="varchar(1)">
 			<constraints nullable="false" />
 			</column>
-			<column name="APPLNNO" type="NUMBER(10,0)">
+			<column name="APPLNNO" type="decimal(10,0)">
 			<constraints nullable="false" />
 			</column>
 			<column name="PRODUCTCODE" type="varchar(10)">
@@ -231,20 +231,20 @@
 			</column>
 			<column name="ERRORCODE" type="varchar(1)"/>
 			<column name="ERRORDESC" type="varchar(100)"/>
-			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
-			<column name="PSXID" type="NUMBER(12,0)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="PSXID" type="decimal(12,0)"/>
 			<column name="CUSTOMERID" type="varchar(20)">
 			<constraints nullable="false" />
 			</column>
 			<column name="SOURCESYSTEM" type="varchar(20)">
 			<constraints nullable="false" />
 			</column>
-			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
 </createTable>	
 
 
 <createTable tableName="DEDUP_EOD_CUST_REP_DTL">
-<column name="BATCHID" type="NUMBER(12,0)">
+<column name="BATCHID" type="decimal(12,0)">
 			<constraints nullable="false" />
 			</column>
 			<column name="SOURCESYSID" type="varchar(5)">
@@ -263,16 +263,16 @@
 			<column name="FILLERDATE1" type="datetime"/>
 			<column name="FILLERDATE2" type="datetime"/>
 			
-			<column name="FILLERNUMBER1" type="NUMBER(16,0)"/>
-			<column name="FILLERNUMBER2" type="NUMBER(16,0)"/>
-			<column name="FILLERNUMBER3" type="NUMBER(16,0)"/>
-			<column name="FILLERNUMBER4" type="NUMBER(16,0)"/>
-			<column name="FILLERNUMBER5" type="NUMBER(16,0)"/>
+			<column name="FILLERNUMBER1" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER2" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER3" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER4" type="decimal(16,0)"/>
+			<column name="FILLERNUMBER5" type="decimal(16,0)"/>
 			
-			<column name="PSXBATCHID" type="NUMBER(18,0)"/>
-			<column name="PSXID" type="NUMBER(12,0)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="PSXID" type="decimal(12,0)"/>
 			<column name="SOURCESYSTEM" type="varchar(20)"/>
-			<column name="EODBATCHID" type="NUMBER(18,0)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
 			<column name="FILLERSTRING6" type="varchar(255)"/>
 			<column name="FILLERSTRING7" type="varchar(255)"/>
 			<column name="FILLERSTRING8" type="varchar(255)"/>
@@ -282,7 +282,7 @@
 </createTable>	
 
 <createTable tableName="POSIDEXCUSTUPDATE">
-<column name="CUSTOMERNO" type="NUMBER(8,0)"/>
+<column name="CUSTOMERNO" type="decimal(8,0)"/>
 <column name="DATASOURCE" type="varchar(3)"/>
 <column name="UCINNO" type="varchar(20)">
 <constraints nullable="false" />
@@ -294,26 +294,26 @@
 <column name="BASETYPEFLAG" type="varchar(20)">
 <constraints nullable="false" />
 			</column>
-<column name="PSXBATCHID" type="NUMBER(18,0)"/>
+<column name="PSXBATCHID" type="decimal(18,0)"/>
 <column name="PROCESSEDFLAG" type="varchar(1)">
 <constraints nullable="false" />
 			</column>
 <column name="CUSTOMERID" type="varchar(20)"/>
-<column name="SOURCESYSID" type="Number"/>
+<column name="SOURCESYSID" type="decimal"/>
 </createTable>
 </changeSet>
 
-<changeSet  id="05" author="Pruthvi">
+<changeSet  id="06.1" author="Pruthvi">
 <createTable tableName="Disbursement_Payment_Details">
-<column name="HeaderBatchID" type="NUMBER(10,0)">
+<column name="HeaderBatchID" type="decimal(10,0)">
 <constraints nullable="false" />
 			</column>
-<column name="DisbursementReference" type="NUMBER(10,0)">
+<column name="DisbursementReference" type="decimal(10,0)">
 <constraints nullable="false" />
 			</column>
 			<column name="PaymentType" type="varchar(8)"/>
 			<column name="BankCode" type="varchar(8)"/>
-			<column name="DisbursementAmount" type="NUMBER(18,0)">
+			<column name="DisbursementAmount" type="decimal(18,0)">
 <constraints nullable="false" />
 			</column>
 			<column name="InstrumentNumber" type="varchar(12)"/>
@@ -340,7 +340,7 @@
 </createTable>
 
 <createTable tableName="Interface_Header">
-	<column name="HeaderID" type="NUMBER(10,0)">
+	<column name="HeaderID" type="decimal(10,0)">
 <constraints nullable="false" />
 			</column>
 				<column name="InterfaceCategory" type="varchar(1)">
@@ -356,7 +356,7 @@
 <constraints nullable="false" />
 			</column>
 			<column name="Status" type="varchar(1)"/>
-			<column name="NoofRecordsProcessed" type="Number(20,0)"/>
+			<column name="NoofRecordsProcessed" type="decimal(20,0)"/>
 			<column name="InputTime" type="datetime"/>
 			<column name="ProcessedTime" type="datetime"/>
 
