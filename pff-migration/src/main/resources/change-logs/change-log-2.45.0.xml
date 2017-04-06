@@ -2028,4 +2028,58 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
 </changeSet>
 
+
+
+ <changeSet id="74" author="DurgaPrasad G">
+	<dropTable tableName="DISBURSEMENT_LOG" />
+</changeSet>
+		
+<changeSet id="75" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="REFID" type="bigint"/>
+		 <column name="REFNO" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REASON" type="varchar(1000)"/>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDON" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="PROCESSEDBY" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="AddField1" type="varchar(1000)"/>
+		  <column name="AddField2" type="varchar(1000)"/>
+		  <column name="AddField3" type="varchar(1000)"/>
+		  <column name="AddField4" type="varchar(1000)"/>
+		  <column name="AddField5" type="datetime"/>
+		  <column name="AddField6" type="datetime"/>
+		  <column name="AddField7" type="datetime"/>
+		  <column name="AddField8" type="datetime"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="76" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DEPL_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
+</changeSet>
+
+
+<changeSet  id="78" author="DurgaPrasad G">
+    <renameColumn   newColumnName="REFERENCECOLUMN"  oldColumnName="PARENTNAME"  tableName="DATA_ENGINE_COLUMN"/>
+</changeSet>
+
 </databaseChangeLog>
