@@ -400,16 +400,19 @@ public class OtherBankFinanceTypeDialogCtrl extends
 			// setFocus
 			this.finType.focus();
 		} else {
-			this.finTypeDesc.focus();
 			if (isWorkFlowEnabled()) {
-				this.btnNotes.setVisible(true);
+				this.finTypeDesc.focus();
+				if (StringUtils.isNotBlank(aOtherBankFinanceType.getRecordType())) {
+					this.btnNotes.setVisible(true);
+				}
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
 			}
-		}
+		
+			}
 
 		try {
 			// fill the components with the data
