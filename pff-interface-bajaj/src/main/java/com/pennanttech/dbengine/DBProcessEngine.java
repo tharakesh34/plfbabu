@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.model.DBConfiguration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class DBProcessEngine extends DataEngineDBAccess {
 	private static final Logger logger = Logger.getLogger(DBProcessEngine.class);
@@ -23,8 +24,11 @@ public class DBProcessEngine extends DataEngineDBAccess {
 	protected int failedCount;
 	protected int totalRecords;
 	
-	public DBProcessEngine(DataSource dataSource, String appDBName) {
-		super(dataSource, appDBName);
+	protected DataSource appDataSource;
+	
+	public DBProcessEngine(DataSource appDataSource, String appDBName, DataEngineStatus executionStatus) {
+		super(appDataSource, appDBName, executionStatus);
+		this.appDataSource = appDataSource;
 	}
 
 	protected Connection getConnection(DBConfiguration dbConfiguration) throws Exception {

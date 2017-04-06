@@ -35,13 +35,12 @@ public class DataEngineDBProcess {
 
 		Object object;
 		try {
-			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class).newInstance(dataSource, appDBName);
+			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, appDBName, this.executionStatus);
 			Object[] parms = new Object[3];
 			parms[0] = this.userId;
-			parms[1] = this.executionStatus;
-			parms[2] = config;
+			parms[1] = config;
 
-			Method method = object.getClass().getMethod("process", long.class, DataEngineStatus.class, Configuration.class);
+			Method method = object.getClass().getMethod("process", long.class, Configuration.class);
 			method.invoke(object, parms);
 		} catch (Exception e) {
 			executionStatus.setRemarks(e.getMessage());

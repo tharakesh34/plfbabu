@@ -23,12 +23,14 @@ public class ControlDumpRequest extends DBProcessEngine {
 	
 	private Connection destConnection = null;
 	private Connection sourceConnection = null;
+	private DataEngineStatus executionStatus = null;
 
-	public ControlDumpRequest(DataSource dataSource, String appDBName) {
-		super(dataSource, appDBName);
+	public ControlDumpRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
+		super(dataSource, appDBName, executionStatus);
+		this.executionStatus = executionStatus;
 	}
 
-	public void process(long userId, DataEngineStatus executionStatus, Configuration config) {
+	public void process(long userId, Configuration config) {
 		logger.debug("Entering");
 
 		executionStatus.setStartTime(DateUtil.getSysDate());
@@ -41,7 +43,7 @@ public class ControlDumpRequest extends DBProcessEngine {
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
 		try {
-			saveBatchStatus(executionStatus);
+			saveBatchStatus();
 
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
@@ -73,13 +75,11 @@ public class ControlDumpRequest extends DBProcessEngine {
 			if (totalRecords > 0) {
 				remarks.append("Processed successfully with record count: ");
 				remarks.append(totalRecords);
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount,
-						failedCount, totalRecords, executionStatus);
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount,
-					totalRecords, executionStatus);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount, totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
