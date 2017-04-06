@@ -37,8 +37,7 @@ import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
  * 
- * A singleton instance of this class is maintained for each SessionFactory. This should be accessed using
- * {@link JdbcSearchProcessor#getInstanceForSessionFactory(SessionFactory)}.
+ * A singleton instance of this class is maintained for each SessionFactory.
  * 
  * @author dwolverton
  */
@@ -92,23 +91,9 @@ public class JdbcSearchProcessor {
 			return null;
 		}
 
-		// Get the required attributes.
-		String tableName;
-
-		if (StringUtils.isNotBlank(search.getTabelName())) {
-			tableName = search.getTabelName();
-		} else {
-			tableName = ModuleUtil.getTableName(searchClass.getSimpleName());
-		}
-
-		if (App.DATABASE == Database.SQL_SERVER) {
-			tableName = tableName.concat(WITH_NOLOCK);
-		}
-
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-
-		query.addCustomFromTable(tableName);
+		query.addCustomFromTable(getTableName(search, searchClass));
 
 		// Add the fields to the query from the fields List
 		List<Field> fields = search.getFields();
@@ -163,7 +148,7 @@ public class JdbcSearchProcessor {
 				logger.debug(e);
 			}
 		} else {
-			Map<String, Object> namedParameters = new HashMap<String, Object>();
+			Map<String, Object> namedParameters = new HashMap<>();
 			rowTypes = this.namedParameterJdbcTemplate.queryForList(
 					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
 					namedParameters);
@@ -644,5 +629,21 @@ public class JdbcSearchProcessor {
 		inCondString = "(" + inCondString + ")";
 		return new CustomCondition(filter.getProperty() + filter.getSqlOperator() + inCondString);
 
+	}
+
+	private String getTableName(ISearch search, Class<?> clazz) {
+		String tableName;
+
+		if (StringUtils.isNotBlank(search.getTabelName())) {
+			tableName = search.getTabelName();
+		} else {
+			tableName = ModuleUtil.getTableName(clazz.getSimpleName());
+		}
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			tableName = tableName.concat(WITH_NOLOCK);
+		}
+
+		return tableName;
 	}
 }
