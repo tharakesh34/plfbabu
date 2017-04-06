@@ -308,7 +308,7 @@ public class AEAmounts implements Serializable {
 				tdPftAmortized = nextSchd.getProfitCalc();
 			}
 
-			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) <= 0) {
+			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) < 0) {
 				if ((!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())) {
 					finState = CalculationConstants.FINSTATE_PD;
 				}
