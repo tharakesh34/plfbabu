@@ -1164,7 +1164,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_AccrueAmount.label"),
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,
-						BigDecimal.ZERO,BigDecimal.ZERO, accrueValue, BigDecimal.ZERO,false, false,  true, false, false, "#1D883C", "",5, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
+						BigDecimal.ZERO,BigDecimal.ZERO, accrueValue, BigDecimal.ZERO,false, false,  true, false, false, "#1D883C", "",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
 				count = 1;
 			}
 		}
