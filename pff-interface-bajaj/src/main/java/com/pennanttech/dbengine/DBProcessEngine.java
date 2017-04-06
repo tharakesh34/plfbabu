@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -129,50 +128,35 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		return date;
 	}
 	
-	protected void releaseResorces(Connection con, ResultSet resultSet, Map<Integer, Connection> connectionMap) {
+	
+
+	protected void releaseResorces(ResultSet resultSet, Connection destCon, Connection sourceCon) {
 		logger.debug("Entering");
-		
-		try {
-			if (con != null) {
-				con.close();
-			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-		}
 
-		Connection connection = null;
 		try {
-			connection = connectionMap.get(resultSet.hashCode());
-			if (connection != null) {
-				connection.close();
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-		}
-		logger.debug("Leaving");
-	}
-
-	protected void releaseResorces(ResultSet resultSet, Connection con) {
-		logger.debug("Entering");
-		
-		try {
-			if(resultSet!=null){
+			if (resultSet != null) {
 				resultSet.close();
 			}
 		} catch (Exception e) {
 			logger.info("Exception :", e);
-			
 		}
 
 		try {
-			if(con!=null){
-				con.close();
+			if (destCon != null) {
+				destCon.close();
 			}
 		} catch (Exception e) {
 			logger.info("Exception :", e);
-			
 		}
-				logger.debug("Leaving");
+		
+		try {
+			if (sourceCon != null) {
+				sourceCon.close();
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+		}
+		
+		logger.debug("Leaving");
 	}
 }

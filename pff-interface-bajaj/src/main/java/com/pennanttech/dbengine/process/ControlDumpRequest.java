@@ -1,11 +1,9 @@
-package com.pennanttech.dbengine;
+package com.pennanttech.dbengine.process;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -17,13 +15,14 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.dbengine.DBProcessEngine;
 
 public class ControlDumpRequest extends DBProcessEngine {
 
 	private static final Logger logger = Logger.getLogger(ControlDumpRequest.class);
-	private Connection destConnection;
-
-	private Map<Integer, Connection> connectionMap = new HashMap<Integer, Connection>();
+	
+	private Connection destConnection = null;
+	private Connection sourceConnection = null;
 
 	public ControlDumpRequest(DataSource dataSource, String appDBName) {
 		super(dataSource, appDBName);
@@ -84,7 +83,7 @@ public class ControlDumpRequest extends DBProcessEngine {
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(destConnection, resultSet, connectionMap);
+			releaseResorces(resultSet, destConnection, sourceConnection);
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
 		}
@@ -262,13 +261,13 @@ public class ControlDumpRequest extends DBProcessEngine {
 
 		ResultSet rs = null;
 		StringBuilder sql = null;
-		Connection con = null;
+		
 		try {
-			con = DataSourceUtils.doGetConnection(appDataSource);
+			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
 			sql = new StringBuilder();
 			sql.append(" SELECT * from INT_CF_CONTROL_VIEW ");
 
-			PreparedStatement stmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
@@ -276,7 +275,6 @@ public class ControlDumpRequest extends DBProcessEngine {
 			throw e;
 		} finally {
 			sql = null;
-			connectionMap.put(rs.hashCode(), con);
 		}
 		logger.debug("Leaving");
 		return rs;

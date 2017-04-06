@@ -1,4 +1,4 @@
-package com.pennanttech.dbengine;
+package com.pennanttech.dbengine.process;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +15,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.dbengine.DBProcessEngine;
 
 public class ALMRequest extends DBProcessEngine {
 
@@ -82,8 +83,7 @@ public class ALMRequest extends DBProcessEngine {
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(null,destConnection);
-			releaseResorces(resultSet,sourceConnection);
+			releaseResorces(resultSet,destConnection, sourceConnection);
 			executionStatus.setRemarks(remarks.toString());
 		}
 
