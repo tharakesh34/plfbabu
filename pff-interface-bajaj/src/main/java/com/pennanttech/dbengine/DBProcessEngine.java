@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.model.DBConfiguration;
@@ -69,6 +70,11 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		return connection;
 	}
 
+	protected NamedParameterJdbcTemplate getJdbcTemplate(DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	
 	protected String getValue(ResultSet rs, String columnName) {
 		
 		String value = null;
@@ -163,4 +169,5 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		
 		logger.debug("Leaving");
 	}
+	
 }

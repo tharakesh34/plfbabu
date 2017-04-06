@@ -9,6 +9,6 @@ public class DataEngineDBConstants {
 	 * 
 	 */
 	public enum Status {
-		N, Y, C, AC
+		N, Y, C, AC, E, R, I
 	}
 }
