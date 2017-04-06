@@ -439,7 +439,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		if(this.anyDateRateChangeToDate!=null &&DateUtility.compare(this.anyDateRateChangeToDate.getValue(),getFinScheduleData().getFinanceMain().getMaturityDate())>0){
 			throw new WrongValueException(this.anyDateRateChangeToDate,Labels.getLabel("NUMBER_MAXVALUE" ,new String[]{
-					Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),getFinScheduleData().getFinanceMain().getMaturityDate().toString()}));
+					Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
+					DateUtility.formatUtilDate(getFinScheduleData().getFinanceMain().getMaturityDate(), PennantConstants.DBDateFormat)}));
 		}
 		
 		logger.debug("Leaving");
@@ -888,7 +889,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		if (wve.size() > 0) {
-
+			doRemoveValidation();
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
@@ -954,14 +955,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 	
+
 	/**
-	 * Method to clear error messages
-	 * 
-	 * */
-	@Override
-	protected void doClearMessage() {
+	 * Method to clear error message
+	 */
+	private void doRemoveValidation() {
 		logger.debug("Entering");
-		setValidationOn(false);
 		
 		this.rate.setBaseConstraint("");
 		this.rate.setSpecialConstraint("");
@@ -975,6 +974,18 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.remarks.setConstraint("");
 		this.anyDateRateChangeFromDate.setConstraint("");
 		this.anyDateRateChangeToDate.setConstraint("");
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method to clear error messages
+	 * 
+	 * */
+	@Override
+	protected void doClearMessage() {
+		logger.debug("Entering");
+		setValidationOn(false);
 		
 		this.rate.setBaseErrorMessage("");
 		this.rate.setSpecialErrorMessage("");
@@ -1215,7 +1226,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	
 	public void onCheck$reviewDates(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
-	
+		
+		doClearMessage();
+		
 		this.reviewDateFromDateRow.setVisible(true);
 		this.cbRateChangeFromDate.setVisible(true);
 		this.reviewDateToDateRow.setVisible(true);
@@ -1242,6 +1255,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	
 	public void onCheck$anyDate(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
+		
+		doClearMessage();
 		
 		this.reviewDateFromDateRow.setVisible(false);
 		this.reviewDateToDateRow.setVisible(false);
