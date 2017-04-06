@@ -644,4 +644,25 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 	<addPrimaryKey columnNames="ID" constraintName="pk_Interface_Header"
 			tableName="Interface_Header" />
 </changeSet>
+<changeSet id="23" author="pruthvi">
+<renameColumn 
+            newColumnName="ID"
+            oldColumnName="HeaderBatchID"
+            tableName="Disbursement_Payment_Details"/>
+</changeSet>
+<changeSet id="24" author="pruthvi">
+<addColumn tableName="Disbursement_Payment_Details">
+			<column name="SeqNo" type="decimal(10,0)" />
+			<column name="HeaderID" type="decimal(10,0)" />
+			</addColumn>
+</changeSet>
+<changeSet id="25" author="pruthvi">
+		<addPrimaryKey columnNames="ID" constraintName="pk_Disbursement_Payment_Dtls"
+			tableName="Disbursement_Payment_Details" />
+</changeSet>
+<changeSet id="26" author="pruthvi">
+<addForeignKeyConstraint constraintName="FK_P_S"
+			referencedTableName="Interface_Header" referencedColumnNames="ID"
+			baseTableName="Disbursement_Payment_Details" baseColumnNames="HeaderID" />
+</changeSet>
 </databaseChangeLog>
