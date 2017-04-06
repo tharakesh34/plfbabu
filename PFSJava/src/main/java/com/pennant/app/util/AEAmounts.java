@@ -300,7 +300,7 @@ public class AEAmounts implements Serializable {
 			// Amortization
 			if (curSchdDate.after(valueDate)) {
 				// do nothing
-			} else if (valueDate.after(curSchdDate) && valueDate.compareTo(nextSchdDate) <= 0) {
+			} else if (valueDate.after(curSchdDate) && valueDate.compareTo(nextSchdDate) < 0) {
 				int days = getNoDays(valueDate, curSchdDate);
 				int daysInCurPeriod = nextSchd.getNoOfDays();
 				tdPftAmortized = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
