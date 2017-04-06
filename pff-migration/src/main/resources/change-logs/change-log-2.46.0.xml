@@ -757,4 +757,59 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 			<modifyDataType tableName="Disbursement_Payment_Details" columnName="PaymentRemarks4"
 			newDataType="varchar(50)" />
 			</changeSet>
+
+		
+<changeSet id="34" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+         	 execute immediate 'CREATE SEQUENCE DISB_PAY_DET_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="35" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE DISB_PAY_DET_SEQ START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="36" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE DISB_PAY_DET_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
+
+<changeSet id="37" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+         	 execute immediate 'CREATE SEQUENCE INTERFACE_HEADER_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="38" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+			 execute 'CREATE SEQUENCE INTERFACE_HEADER_SEQ START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ <changeSet id="39" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE INTERFACE_HEADER_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+</changeSet>
 </databaseChangeLog>
