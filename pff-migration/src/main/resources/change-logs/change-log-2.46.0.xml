@@ -534,4 +534,18 @@ Update finadvancepayments set paymentid = row_num from (
 			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
 			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
 </changeSet>
+<changeSet id="15" author="Madhubabu" dbms="mssql, postgresql">
+<sql>
+	delete from finadvancepayments_temp;
+	alter table finadvancepayments_temp add paymentid bigint not null;	
+</sql>
+</changeSet>
+
+  <changeSet id="15" author="Madhubabu" dbms="oracle">
+<sql>
+	delete from finadvancepayments_temp;
+	alter table finadvancepayments_temp add paymentid number(19,0);
+	alter table finadvancepayments_temp modify paymentid not null;
+</sql>
+</changeSet> 
 </databaseChangeLog>
