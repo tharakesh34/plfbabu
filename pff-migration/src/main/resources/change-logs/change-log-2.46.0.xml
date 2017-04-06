@@ -303,4 +303,84 @@
 </createTable>
 </changeSet>
 
+<changeSet  id="05" author="Pruthvi">
+<createTable tableName="Disbursement_Payment_Details">
+<column name="HeaderBatchID" type="NUMBER(10,0)">
+<constraints nullable="false" />
+			</column>
+<column name="DisbursementReference" type="NUMBER(10,0)">
+<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="varchar(8)"/>
+			<column name="BankCode" type="varchar(8)"/>
+			<column name="DisbursementAmount" type="NUMBER(18,0)">
+<constraints nullable="false" />
+			</column>
+			<column name="InstrumentNumber" type="varchar(12)"/>
+				<column name="TransactionDate" type="datetime">
+<constraints nullable="false" />
+			</column>
+			<column name="BankReferenceNumber" type="varchar(50)">
+<constraints nullable="false" />
+			</column>
+			<column name="OtherReferenceNumber" type="varchar(50)"/>
+			<column name="TransactionStatus" type="varchar(1)"/>
+			<column name="RejectReason" type="varchar(100)"/>
+			<column name="BeneficaryCode" type="varchar(14)"/>
+			<column name="BeneficaryAccountNo" type="varchar(25)"/>
+			<column name="BeneficaryName" type="varchar(200)"/>
+			<column name="PaymentRemarks1" type="varchar(30)"/>
+			<column name="PaymentRemarks2" type="varchar(30)"/>
+			<column name="PaymentRemarks3" type="varchar(30)"/>
+			<column name="PaymentRemarks4" type="varchar(30)"/>
+			<column name="IFSCCode" type="varchar(15)"/>
+			<column name="MICRCode" type="varchar(15)"/>
+			<column name="PLFStatus" type="varchar(1)"/>
+			<column name="PLFRejectReason" type="varchar(100)"/>
+</createTable>
+
+<createTable tableName="Interface_Header">
+	<column name="HeaderID" type="NUMBER(10,0)">
+<constraints nullable="false" />
+			</column>
+				<column name="InterfaceCategory" type="varchar(1)">
+<constraints nullable="false" />
+			</column>
+				<column name="InterfaceType" type="varchar(20)">
+<constraints nullable="false" />
+			</column>
+				<column name="FileName" type="varchar(50)">
+<constraints nullable="false" />
+			</column>
+				<column name="ConfigID" type="bigint">
+<constraints nullable="false" />
+			</column>
+			<column name="Status" type="varchar(1)"/>
+			<column name="NoofRecordsProcessed" type="Number(20,0)"/>
+			<column name="InputTime" type="datetime"/>
+			<column name="ProcessedTime" type="datetime"/>
+
+</createTable>
+</changeSet>
+
+<changeSet  id="06" author="Pruthvi" dbms="mssql">
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+select Right(F.FinReference,8) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,'' ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+from FinanceMain F
+Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
+<changeSet  id="06" author="Pruthvi" dbms="oracle">
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+select substr(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,'' ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+from FinanceMain F
+Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
 </databaseChangeLog>
