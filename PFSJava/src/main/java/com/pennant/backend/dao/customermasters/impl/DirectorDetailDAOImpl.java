@@ -62,7 +62,6 @@ import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -140,7 +139,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName," );
-			selectSql.append(" lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
+			selectSql.append(" lovDescCustAddrCityName,lovDescCustAddrProvinceName," );
 			selectSql.append(" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,lovDescDesignationName,");
 			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand,");
 		}
@@ -188,7 +187,7 @@ public class DirectorDetailDAOImpl extends BasisNextidDaoImpl<DirectorDetail>
 		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName," );
-			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName,lovDescCustCIF," );
+			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName," );
 			selectSql.append(" lovDescCustAddrCountryName, lovDescDesignationName,");
 			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand,");
 		}
