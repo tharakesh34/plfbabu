@@ -548,4 +548,15 @@ Update finadvancepayments set paymentid = row_num from (
 	alter table finadvancepayments_temp modify paymentid not null;
 </sql>
 </changeSet> 
+<changeSet id="16" author="Irfan">
+	<createView viewName="RejectFinanceMain_View" replaceIfExists="true">
+	Select F.FinReference, T.FinCategory LovDescProductCodeName , C.CustCIF LovDescCustCIF,
+	F.FinType, F.FinBranch, F.FinStartDate, F.MaturityDate, F.NumberOfTerms, F.FinCcy, F.FinAmount,
+	(F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt) FinancingAmount ,
+	(F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt-F.FinRepaymentAmount) CurFinAmount,
+	F.FeeChargeAmt, F.InsuranceAmt, F.DownPayment, F.FinCurrAssetValue   from RejectFinanceMain F LEFT OUTER JOIN
+	Customers C ON F.CustID = C.CustID  LEFT OUTER JOIN
+	RMTFinanceTypes T ON F.FinType = T.FinType  
+	</createView>
+	</changeSet>
 </databaseChangeLog>
