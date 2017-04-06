@@ -568,7 +568,7 @@ public class JavaScriptBuilder extends Groupbox {
 			buttonCalculate.setVisible("1".equals(buildCondition[count]) ? true : false);
 			count++;
 		} else {
-			if (this.ruleType == RuleReturnType.DECIMAL) {
+			if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.CALCSTRING) {
 				buttonCalculate.setVisible(true);
 			} else {
 				buttonCalculate.setVisible(false);
@@ -612,7 +612,7 @@ public class JavaScriptBuilder extends Groupbox {
 		
 		if (this.ruleType == RuleReturnType.OBJECT) {
 			customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
-		} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.STRING) {
+		} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.STRING  || this.ruleType == RuleReturnType.CALCSTRING) {
 			if(this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				customisedComponentCreation(buildCondition, uUID, isMaintain, count, treeCell);
 			} else {
@@ -899,7 +899,7 @@ public class JavaScriptBuilder extends Groupbox {
 						treeItem.getFellowIfAny(parentuUID + "_btn_CALCULATE" + count).setVisible(true);
 					}
 				}
-			} else if (this.ruleType == RuleReturnType.DECIMAL) {  
+			} else if (this.ruleType == RuleReturnType.DECIMAL || this.ruleType == RuleReturnType.CALCSTRING) {  
 				parentItem.getFellowIfAny(parentuUID + "_btn_CALCULATE").setVisible(true);
 			}
 
