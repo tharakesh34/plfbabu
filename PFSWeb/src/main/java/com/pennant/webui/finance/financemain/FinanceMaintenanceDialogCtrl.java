@@ -3572,8 +3572,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.mandateRef.setFilters(filters);
-		StringBuilder whereCaluse=new StringBuilder("(OpenMandate = 1 OR OrgReference IS NULL");
-		if (this.finReference.getValue() !=null) {
+		StringBuilder whereCaluse = new StringBuilder("(OpenMandate = 1 OR MandateRef IS NOT NULL");
+		if (this.finReference.getValue() != null) {
 			whereCaluse.append(" OR OrgReference = '");
 			whereCaluse.append(this.finReference.getValue());
 			whereCaluse.append("'");
