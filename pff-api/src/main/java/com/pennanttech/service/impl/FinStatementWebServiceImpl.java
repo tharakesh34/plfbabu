@@ -150,6 +150,11 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		return response;
 	}
 
+	@Override
+	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException {
+		
+		return null;
+	}
 	/**
 	 * get the List of FinReferences Based on the CustID.
 	 * 

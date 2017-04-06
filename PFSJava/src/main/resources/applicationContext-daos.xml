@@ -4231,7 +4231,6 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="mandateService" ref="mandateService"/>
 		<property name="stepPolicyService" ref="stepPolicyService"/>
-		<property name="commitmentService" ref="commitmentService" />
 		<property name="generalDepartmentService" ref="generalDepartmentService"/>
 		<property name="relationshipOfficerService" ref="relationshipOfficerService"/>
 	</bean>

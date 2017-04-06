@@ -863,7 +863,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 		
 		// service level validations
-		returnStatus = validateFinReference(finServiceInstruction);
+		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
+		if(count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
@@ -923,7 +928,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// service level validations
-		returnStatus = validateFinReference(finServiceInstruction);
+		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
+		if(count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
@@ -982,7 +992,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// service level validations
-		returnStatus = validateFinReference(finServiceInstruction);
+		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
+		if(count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();

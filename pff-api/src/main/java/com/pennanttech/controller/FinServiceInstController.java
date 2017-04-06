@@ -85,7 +85,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
 
-public class FinServiceInstController {
+public class FinServiceInstController extends SummaryDetailService {
 
 	private final static Logger logger = Logger.getLogger(FinServiceInstController.class);
 
@@ -1244,7 +1244,7 @@ public class FinServiceInstController {
 		// Initiate Repay calculations
 		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
 		repayData = repayCalculator.initiateRepay(repayData, financeMain, financeScheduleDetails, "", null, false,
-				null, valueDate, null);
+				finServiceInst.getRecalType(), valueDate, finServiceInst.getModuleDefiner());
 		repayData.setRepayMain(repayData.getRepayMain());
 
 		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
@@ -1256,6 +1256,7 @@ public class FinServiceInstController {
 			finEvent = AccountEventConstants.ACCEVENT_EARLYPAY;
 			if(!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
 				repayData = manualPaymentService.setEarlyRepayEffectOnSchedule(repayData, finServiceInst);
+				aFinanceDetail = repayData.getFinanceDetail();
 			}
 		}
 		
@@ -1427,7 +1428,7 @@ public class FinServiceInstController {
 		response.setFinScheduleData(finScheduleData);
 
 		// Finance Summary details i.e Basic Calculator details
-		FinanceSummary summaryDetail = new FinanceSummary();
+		FinanceSummary summaryDetail = getFinanceSummary(finScheduleData);
 		summaryDetail.setEffectiveRateOfReturn(financeMain.getEffectiveRateOfReturn());
 		summaryDetail.setTotalGracePft(financeMain.getTotalGracePft());
 		summaryDetail.setTotalGraceCpz(financeMain.getTotalGraceCpz());
@@ -1453,6 +1454,12 @@ public class FinServiceInstController {
 
 		logger.debug("Entering");
 		return response;
+	}
+
+	private FinanceSummary getFinanceSummary(FinScheduleData finScheduleData) {
+		FinanceDetail financeDetail = new FinanceDetail();
+		financeDetail.setFinScheduleData(finScheduleData);
+		return getFinanceSummary(financeDetail);
 	}
 
 	/**

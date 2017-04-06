@@ -361,7 +361,6 @@ public class FinanceDataDefaulting {
 		// Default finance branch
 		if (StringUtils.isBlank(finMain.getFinBranch())) {
 			Customer customer = null;
-
 			// Get Customer
 			if (StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
 				customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
@@ -375,6 +374,11 @@ public class FinanceDataDefaulting {
 			}
 		}
 
+		Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "'");
+		if (branch != null) {
+			finMain.setBflBranchCode(branch.getBranchSwiftBrnCde());
+		}
+		
 		//Default Interest Days Basis
 		if (StringUtils.isBlank(finMain.getProfitDaysBasis())) {
 			finMain.setProfitDaysBasis(financeType.getFinDaysCalType());

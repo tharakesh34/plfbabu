@@ -40,7 +40,6 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
-import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -63,7 +62,6 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
-import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -93,7 +91,6 @@ public class FinanceDataValidation {
 	private CollateralSetupService collateralSetupService;
 	private MandateService mandateService;
 	private StepPolicyService stepPolicyService;
-	private CommitmentService commitmentService;
 	private GeneralDepartmentService generalDepartmentService;
 	private RelationshipOfficerService relationshipOfficerService;
 
@@ -355,7 +352,7 @@ public class FinanceDataValidation {
 					//TODO 
 				}*/
 			}
-			if (financeType.isFinCommitmentReq()) {
+	/*		if (financeType.isFinCommitmentReq()) {
 				if (StringUtils.isBlank(finMain.getFinCommitmentRef())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "finCommitmentRef";
@@ -377,7 +374,7 @@ public class FinanceDataValidation {
 					}
 
 				}
-			}
+			}*/
 			if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
 				if (StringUtils.isBlank(finMain.getRepayAccountId())) {
 					String[] valueParm = new String[1];
@@ -2930,9 +2927,6 @@ public class FinanceDataValidation {
 	}
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
-	}
-	public void setCommitmentService(CommitmentService commitmentService) {
-		this.commitmentService = commitmentService;
 	}
 	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
 		this.generalDepartmentService = generalDepartmentService;

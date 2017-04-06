@@ -20,4 +20,8 @@ public interface FinStatementSoapService {
 
 	@WebResult(name = "statement")
 	public FinStatementResponse getNOC(FinStatementRequest statementRequest) throws ServiceException;
+	
+	@WebResult(name = "statement")
+	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException;
+
 }
