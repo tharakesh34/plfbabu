@@ -5644,9 +5644,9 @@ public class ScheduleCalculator {
 						&& incrLimit.compareTo(BigDecimal.ZERO) > 0) {
 					curODSchd.setLimitIncreaseAmt(curODSchd.getLimitIncreaseAmt().add(incrLimit));
 					curODSchd.setODLimit(curODSchd.getODLimit().add(incrLimit));
-					totalOSLimit = curODSchd.getODLimit();
 					limitIncrDateFound = true;
 				}
+				totalOSLimit = curODSchd.getODLimit();
 				oldOverdraftList.add(curODSchd);
 			}
 			
