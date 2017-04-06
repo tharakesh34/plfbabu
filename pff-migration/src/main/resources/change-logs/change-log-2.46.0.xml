@@ -434,9 +434,9 @@ Update finadvancepayments set paymentid = row_num from (
 		<sql>
 			 alter table finadvancepayments add paymentid number(19,0);
 	
-	Update finadvancepayments set paymentid = row_num from (	
-	Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)T
-	where T.finreference = finadvancepayments.finreference and T.Paymentseq=finadvancepayments.Paymentseq;
+		Update finadvancepayments m set paymentid = (Select row_num from ((Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)) T
+	where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq) where exists (select 1 from finadvancepayments T
+  where T.finreference = m.finreference and T.Paymentseq=m.Paymentseq);
 	
 	alter table finadvancepayments modify column paymentid not null;
 		</sql>
