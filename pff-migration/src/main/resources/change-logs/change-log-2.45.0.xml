@@ -2027,5 +2027,23 @@ RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Stat
 			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
 			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
 </changeSet>
+<changeSet id="74" author="Madhubabu" dbms="mssql">
+<sql splitStatements="false">
+		CREATE TABLE SEQADVPAYMENT(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+</sql>
+</changeSet>
+<changeSet id="75" author="Madhubabu" dbms="postgresql">
+<sql splitStatements="false">
+		CREATE SEQUENCE SEQADVPAYMENT START 1 INCREMENT BY 1
+</sql>
+</changeSet>
+<changeSet id="76" author="Madhubabu" dbms="oracle">
+<sql splitStatements="false">
+		CREATE SEQUENCE SEQSECLOGINLOG START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE
+</sql>
+</changeSet>
 
 </databaseChangeLog>
