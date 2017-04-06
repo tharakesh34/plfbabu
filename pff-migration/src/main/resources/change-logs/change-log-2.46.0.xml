@@ -812,4 +812,62 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 			);	
 		</sql>
 </changeSet>
+
+
+ <changeSet id="40" author="DurgaPrasad G">
+	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
+</changeSet>
+		
+<changeSet id="41" author="DurgaPrasad G">			
+	<createTable tableName="DATA_ENGINE_PROCESS_LOG">
+		<column name="ID" type="bigint">
+		 	<constraints primaryKey="true" nullable="false" />
+		 </column>
+		 <column name="SEQNO" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="FILEID" type="bigint">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REFID1" type="bigint"/>
+		 <column name="REFID2" type="bigint"/>
+		 <column name="REFNO1" type="varchar(50)"/>
+		 <column name="REFNO2" type="varchar(50)"/>
+		  <column name="CATEGORY" type="char(10)">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="STATUS" type="char(1)">
+		 	<constraints nullable="false" />
+		 </column>
+		 <column name="REMARKS" type="varchar(1000)"/>
+		 <column name="VALUEDATE" type="datetime">
+		 	<constraints nullable="false" />
+		 </column>
+		  <column name="AddField1" type="varchar(1000)"/>
+		  <column name="AddField2" type="varchar(1000)"/>
+		  <column name="AddField3" type="varchar(1000)"/>
+		  <column name="AddField4" type="varchar(1000)"/>
+		  <column name="AddField5" type="datetime"/>
+		  <column name="AddField6" type="datetime"/>
+		  <column name="AddField7" type="datetime"/>
+		  <column name="AddField8" type="datetime"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="42" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DEPL_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DATA_ENGINE_PROCESS_LOG" baseColumnNames="FILEID" />
+</changeSet>
+
+
+<changeSet  id="43" author="DurgaPrasad G">
+    <renameColumn   newColumnName="HEADERTABLE"  oldColumnName="PREPAREXML"  tableName="DATA_ENGINE_TABLE"/>
+</changeSet>
+
+<changeSet id="44" author="DurgaPrasad G">
+		<dropColumn columnName="XMLFIELD" tableName="DATA_ENGINE_TABLE" />
+</changeSet>
+
+
 </databaseChangeLog>
