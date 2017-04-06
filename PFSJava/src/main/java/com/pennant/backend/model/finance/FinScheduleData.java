@@ -348,7 +348,6 @@ public class FinScheduleData {
 					this.financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 		}
 		this.financeMain.setRepayRateBasis(financeType.getFinRateType().substring(0, 1));
-		this.financeMain.setRecalType(financeType.getFinSchCalCodeOnRvw());
 		this.financeMain.setEqualRepay(financeType.isEqualRepayment());
 		this.financeMain.setNewRecord(true);
 		this.financeMain.setRecordType("");

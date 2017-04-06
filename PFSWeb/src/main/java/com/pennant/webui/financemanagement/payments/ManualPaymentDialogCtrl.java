@@ -2944,18 +2944,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 
-				//Checking Total Allowed Advance Amount must be less than or equal to Total Principal Due.
-				if (this.rpyAmount.getActualValue().compareTo(this.totPriDue.getValue()) > 0) {
-
-					MessageUtil.showErrorMessage(Labels.getLabel(
-							"FIELD_IS_EQUAL_OR_LESSER",
-							new String[] {
-									Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
-									PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(
-											this.totPriDue.getValue(), formatter), formatter) }));
-					return false;
-				}
-				
 				// Check Whether Any Future Payments already done in Schedule or not
 				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
 				BigDecimal closingBal = null;
@@ -2995,6 +2983,20 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
 					}
+				}else {
+					//Checking Total Allowed Advance Amount must be less than or equal to Total Principal Due.
+					if (this.rpyAmount.getActualValue().compareTo(this.totPriDue.getValue()) > 0) {
+
+						MessageUtil.showErrorMessage(Labels.getLabel(
+								"FIELD_IS_EQUAL_OR_LESSER",
+								new String[] {
+										Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
+										PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(
+												this.totPriDue.getValue(), formatter), formatter) }));
+						return false;
+					}
+					
+
 				}
 			}
 

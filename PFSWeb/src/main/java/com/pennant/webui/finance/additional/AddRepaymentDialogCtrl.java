@@ -387,38 +387,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 
-		Date curBussDate = DateUtility.getAppDate();
-		boolean curTermExcluded = false;
-
-		totalAlwRpyAmt = BigDecimal.ZERO;
-
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-				//boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
-				//Not before Current Business date & not Current Schedule Term Date
-				if (curBussDate.compareTo(curSchd.getSchDate()) > 0) {
-					continue;
-				} else if (curBussDate.compareTo(curSchd.getSchDate()) == 0) {
-					curTermExcluded = true;
-				} else {
-					if (!curTermExcluded) {
-						curTermExcluded = true;
-					}
-				}
-
-				//Maximum Outstanding Repay amount Allowed to Change
-				if (!curTermExcluded) {
-					totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd()).add(curSchd.getProfitSchd())
-							.add(curSchd.getFeeSchd()).subtract(curSchd.getSchdPriPaid())
-							.subtract(curSchd.getSchdFeePaid()).subtract(curSchd.getSchdPftPaid());
-				} else {
-					totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
-							.subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getSchdFeePaid());
-				}
-
+				
 				if (i == 0 || i == financeScheduleDetails.size() - 1) {
 					continue;
 				}
@@ -427,22 +401,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				/*if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
-					isRepayPftOnFrq = false;
-				}*/
-
-				/*
-				 * if (isRepayPftOnFrq || ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
-				 * curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) &&
-				 * ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() &&
-				 * !curSchd.isSchPftPaid()) || (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 &&
-				 * curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()) || (curSchd.isRepayOnSchDate() &&
-				 * (curSchd.getFeeSchd().compareTo(curSchd.getSchdFeePaid()) >= 0 ||
-				 * curSchd.getInsSchd().compareTo(curSchd.getSchdInsPaid()) >= 0 ||
-				 * curSchd.getSuplRent().compareTo(curSchd.getSuplRentPaid()) >= 0 ||
-				 * curSchd.getIncrCost().compareTo(curSchd.getIncrCostPaid()) >= 0))))) {
-				 */
-
+				// If maturity Terms, not include in list
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
@@ -454,7 +417,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
-				//}
 			}
 		}
 		logger.debug("Leaving");
@@ -481,11 +443,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-				/*boolean isRepayPftOnFrq = financeMain.isFinRepayPftOnFrq();
-
-				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
-					isRepayPftOnFrq = false;
-				}*/
 
 				if (i == 0 || i == financeScheduleDetails.size() - 1) {
 					continue;
@@ -495,14 +452,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				/*
-				 * if (isRepayPftOnFrq || ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
-				 * curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) &&
-				 * ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() &&
-				 * !curSchd.isSchPftPaid()) || (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 &&
-				 * curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
-				 */
-
+				// If maturity Terms, not include in list
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
@@ -570,20 +524,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 
 		try {
-			//allow zero for Re payment 
-			if (this.wIAmount.getActualValue().compareTo(BigDecimal.ZERO)>0) {
-				BigDecimal amount = PennantApplicationUtil.unFormateAmount(this.wIAmount.getValidateValue(), format);
-				if (amount.compareTo(totalAlwRpyAmt) > 0) {
-					throw new WrongValueException(this.wIAmount.getErrorComp(), Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", 
-							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_RepayAmount.value"), PennantApplicationUtil.amountFormate(totalAlwRpyAmt,
-									format) }));
-				}
-				finServiceInstruction.setAmount(amount);
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
 			if (isValidComboValue(this.cbRepayFromDate, Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"))) {
 				finMain.setEventFromDate((Date) this.cbRepayFromDate.getSelectedItem().getValue());
 			}
@@ -607,6 +547,37 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				finServiceInstruction.setToDate((Date) this.cbRepayToDate.getSelectedItem().getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			//allow zero for Re payment 
+			if (this.wIAmount.getActualValue().compareTo(BigDecimal.ZERO)>0) {
+				BigDecimal amount = PennantApplicationUtil.unFormateAmount(this.wIAmount.getValidateValue(), format);
+				
+				totalAlwRpyAmt = BigDecimal.ZERO;
+				if (getFinScheduleData().getFinanceScheduleDetails() != null && this.cbRepayFromDate.getSelectedIndex() > 0) {
+					for (int i = 0; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
+
+						FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+					
+						//Not before Selected From date
+						if (curSchd.getSchDate().compareTo(finServiceInstruction.getFromDate()) < 0) {
+							continue;
+						}
+
+						//Maximum Outstanding Repay amount Allowed to Change
+						totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd());
+					}
+				}
+				
+				if (amount.compareTo(totalAlwRpyAmt) > 0) {
+					throw new WrongValueException(this.wIAmount.getErrorComp(), Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", 
+							new String[] { Labels.getLabel("label_ChangeRepaymentDialog_RepayAmount.value"), 
+									PennantApplicationUtil.amountFormate(totalAlwRpyAmt, format) }));
+				}
+				finServiceInstruction.setAmount(amount);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

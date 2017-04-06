@@ -2479,12 +2479,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		aFinanceMain.setRepayRateBasis(this.repayRateBasis.getSelectedItem().getValue().toString());
-		if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsRvwAlw()){
-			aFinanceMain.setRecalType(getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchCalCodeOnRvw());
-		}else{
-			aFinanceMain.setRecalType("");
-		}
-
+		aFinanceMain.setRecalType("");
 		aFinanceMain.setCalculateRepay(true);
 
 		if (this.finRepaymentAmount.getValue() != null) {

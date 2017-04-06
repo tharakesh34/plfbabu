@@ -542,7 +542,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnCancelDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
 		this.btnUnPlanEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-		this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+		//this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
 		this.btnRmvTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
 		this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 		this.btnSubSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
@@ -559,7 +559,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnCancelDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
 		this.btnUnPlanEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-		this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+		//this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
 		this.btnRmvTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
 		this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 		this.btnSubSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
@@ -1343,7 +1343,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())) {
-			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
 			this.listheader_AvailableLimit.setVisible(true);
 			this.listheader_ODLimit.setVisible(true);
 			this.listheader_LimitChange.setVisible(true);

@@ -10832,12 +10832,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			aFinanceMain.setRepayRateBasis(this.repayRateBasis.getSelectedItem().getValue().toString());
-			if (financeType.isFinIsRvwAlw()) {
-				aFinanceMain.setRecalType(financeType.getFinSchCalCodeOnRvw());
-			} else {
-				aFinanceMain.setRecalType("");
-			}
-
+			aFinanceMain.setRecalType("");
 			aFinanceMain.setCalculateRepay(true);
 			if (aFinanceMain.isManualSchedule()) {
 				aFinanceMain.setCalculateRepay(false);

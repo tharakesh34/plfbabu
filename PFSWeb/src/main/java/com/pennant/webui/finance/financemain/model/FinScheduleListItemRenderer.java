@@ -500,7 +500,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						//Subtract the available amount with the curDisb amount
 						availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")",
-								getFinanceScheduleDetail().getProfitCalc(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
 										getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 												getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
@@ -611,6 +611,19 @@ public class FinScheduleListItemRenderer implements Serializable{
 						getFinScheduleData().getFinanceType().isFinIsAlwMD()) {
 					ComponentsCtrl.applyForward(listitem, "onDoubleClick=onDisburseItemDoubleClicked");
 				}*/
+				
+				if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
+						!getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().isDisbOnSchDate()){
+
+					if(getFinanceScheduleDetail().getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
+						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
+								getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+								getFinanceScheduleDetail().getClosingBalance(),false, false, false,
+								false, false, "","",0, null,false,BigDecimal.ZERO,availableLimit,odLimit, false);
+						count = 2;
+					}
+				}
 
 			}
 
@@ -1420,7 +1433,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						//Subtract the available amount with the curDisb amount
 						availableLimit = availableLimit.subtract(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+" (Seq : "+curDisb.getDisbSeq()+")",
-								getFinanceScheduleDetail().getProfitCalc(), BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
+								BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 								BigDecimal.ZERO, curDisb.getDisbAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(
 										getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getFeeChargeAmt()).subtract(
 												getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO : getFinanceScheduleDetail().getInsuranceAmt()).subtract(
@@ -1534,6 +1547,18 @@ public class FinScheduleListItemRenderer implements Serializable{
 					ComponentsCtrl.applyForward(listitem, "onDoubleClick=onDisburseItemDoubleClicked");
 				}*/
 
+				if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
+						!getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().isDisbOnSchDate()){
+
+					if(getFinanceScheduleDetail().getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
+						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_profitCalc.label"),
+								getFinanceScheduleDetail().getProfitCalc(),BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO , 
+								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, 
+								getFinanceScheduleDetail().getClosingBalance(),false, false, false,
+								false, false, "","",0, null,false,BigDecimal.ZERO,availableLimit,odLimit, false);
+						count = 2;
+					}
+				}
 			}
 
 			if (getFinanceScheduleDetail().isRepayOnSchDate() ||
@@ -2024,7 +2049,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 			
 			limitDrop = odSchd.getLimitDrop();
-			availableLimit = odSchd.getODLimit().subtract(data.getClosingBalance());
+			BigDecimal closingBal = data.getClosingBalance();
+			if(endBal.compareTo(BigDecimal.ZERO) != 0 && !isODSchdLimit){
+				closingBal = endBal;
+			}else if(odSchd.getDroplineDate().compareTo(data.getSchDate()) < 0 && isODSchdLimit){
+				closingBal = endBal;
+			}
+			availableLimit = odSchd.getODLimit().subtract(closingBal);
 			if(isODSchdLimit && DateUtility.compare(financeMain.getFinStartDate(), odSchd.getDroplineDate()) == 0){
 				availableLimit = odSchd.getODLimit();
 				bgColor = "#8c0453";
@@ -2258,16 +2289,21 @@ public class FinScheduleListItemRenderer implements Serializable{
 						if(fillType == 5){
 							lc = new Listcell("");
 						}
+						
+						if(i == 13 && amountlist[i].compareTo(BigDecimal.ZERO) < 0){
+							lc.setStyle("text-align:right;color:red;");
+						}else{
 
-						if(StringUtils.isNotEmpty(bgColor)) {
-							lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";");
-							if(!isEditable) {
-								lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";cursor:default;");
-							}
-						} else {
-							lc.setStyle("text-align:right;");
-							if(!isEditable) {
-								lc.setStyle("text-align:right;cursor:default;");
+							if(StringUtils.isNotEmpty(bgColor)) {
+								lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";");
+								if(!isEditable) {
+									lc.setStyle("text-align:right;font-weight: bold;color:"+bgColor+";cursor:default;");
+								}
+							} else {
+								lc.setStyle("text-align:right;");
+								if(!isEditable) {
+									lc.setStyle("text-align:right;cursor:default;");
+								}
 							}
 						}
 					}
@@ -2282,15 +2318,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 						if(!isEditable) {
 							lc.setStyle("text-align:right;cursor:default;");
 						}
-						if(availableLimit.compareTo(BigDecimal.ZERO)<0){
-							lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
-						}
 					}else{
 						lc = new Listcell("");
 						lc.setStyle("text-align:right;"); 
-						if(availableLimit.compareTo(BigDecimal.ZERO)<0){
-							lc.setStyle("text-align:right;font-weight: bold;color:#F87217;");
-						}
 					}
 				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)){
 					if(fillType==0 && !lastRec && showZeroEndBal &&(count == 1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
@@ -2622,7 +2652,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 								data = new FinanceScheduleReportData();	
 								data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
-								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+								data.setPftAmount("");
 								data.setSchdPft("");
 								data.setTdsAmount("");
 								data.setSchdFee("");
@@ -2717,6 +2747,64 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					count = 2;
+				}
+				
+				if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
+						!aScheduleDetail.isRvwOnSchDate() && aScheduleDetail.isDisbOnSchDate()){
+
+					if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
+						data = new FinanceScheduleReportData();	
+
+						String label = Labels.getLabel("label_listcell_profitCalc.label");
+						if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+							label = Labels.getLabel("label_listcell_BPIAmount.label");
+							if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+								label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+							}
+						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+							label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+							label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+							label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
+						}
+
+						data.setLabel(label);
+						if (count == 1) {
+							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+							if( aScheduleDetail.isRvwOnSchDate()) {
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+							}else {
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							}
+
+							if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
+								if(DateUtility.compare(aScheduleDetail.getDefSchdDate(), aScheduleDetail.getSchDate()) != 0 && 
+										aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+									if (aScheduleDetail.isRvwOnSchDate() || 
+											aScheduleDetail.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getFinStartDate()) == 0) {
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()) + " [R]");
+									} else {
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+									}	
+								}
+							}
+
+						}else {
+							data.setSchDate("");
+						}
+						data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+						data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+						data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
+						data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
+						data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
+						data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+						data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+						data.setLimitDrop("");
+						data.setAvailLimit("");
+						data.setTotalLimit("");
+						reportList.add(data);
+					}
 				}
 			}
 
