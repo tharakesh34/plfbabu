@@ -346,6 +346,9 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
+		if (enqiryModule) {
+			moduleCode = "MandateEnquiry";
+		}
 		doPrintResults();
 	}
 

@@ -849,10 +849,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 		
-		valueParm[0] = String.valueOf(aCustomerBankInfo.getId());
+		valueParm[0] = String.valueOf(aCustomerBankInfo.getLovDescCustCIF());
 		valueParm[1] = aCustomerBankInfo.getAccountNumber();
 		
-		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":"+ valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_CustomerBankInfoDialog_CustID.value") + ":"+ valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustBank")+ ":" + valueParm[1];
 		
 		if(getCustomerDialogCtrl().getCustomerBankInfoDetailList()!=null && getCustomerDialogCtrl().getCustomerBankInfoDetailList().size()>0){

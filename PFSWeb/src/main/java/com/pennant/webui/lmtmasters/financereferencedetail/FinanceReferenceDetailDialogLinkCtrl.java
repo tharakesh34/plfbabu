@@ -1049,8 +1049,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void onClick$btnSearchAggCode(Event event) {
 		logger.debug("Entering" + event.toString());
 		
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("ModuleName", moduleName, Filter.OP_EQUAL);
+		filters[1] = new Filter("AGGISACTIVE", 1, Filter.OP_EQUAL);
 		
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "AgreementDefinition",filters);
 		if (dataObject instanceof String) {
