@@ -162,6 +162,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 	 *            (String)
 	 * @return secUser (SecUser)
 	 */
+	@Override
 	public SecurityUser getUserByLogin(final String usrLogin) {
 		logger.debug("Entering");
 
@@ -222,6 +223,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 	 * {@link List} of {@link SecurityRole}
 	 * 
 	 */
+	@Override
 	public List<SecurityRole> getUserRolesByUserID(final long userID) {
 		logger.debug("Entering ");
 		SecurityRole secRoles = new SecurityRole();
