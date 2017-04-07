@@ -733,9 +733,7 @@
 									</rows>
 								</grid>
 							</groupbox>
-							<space height="10px" />
-
-							<toolbar align="start"
+							<toolbar align="start" visible="false"
 								style="border-style: none;" width="100%">
 								<button id="btnPrintSchedule"
 									label="${c:l('label_Print')}"
@@ -743,7 +741,6 @@
 									style="float:right;" visible="false" />
 								<space width="2px" />
 							</toolbar>
-
 							<listbox id="listBoxSchedule"
 								emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 								sizedByContent="true" span="true"  width="100%"

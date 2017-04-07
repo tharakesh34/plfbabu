@@ -458,7 +458,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				this.borderlayout_ManualPayment.setHeight(getBorderLayoutHeight());
 				this.listBoxPayment.setHeight(getListBoxHeight(this.grid_Repayment.getRows().getVisibleItemCount()+3));
-				this.listBoxSchedule.setHeight(getListBoxHeight(9));
+				this.listBoxSchedule.setHeight(getListBoxHeight(6));
 				this.repaymentDetailsTab.setSelected(true);
 				this.rpyAmount.setFocus(true);
 				
@@ -1367,6 +1367,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
 			this.listBoxSchedule.setSizedByContent(true);
+			this.listBoxSchedule.setStyle("hflex:min;");
+			
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
