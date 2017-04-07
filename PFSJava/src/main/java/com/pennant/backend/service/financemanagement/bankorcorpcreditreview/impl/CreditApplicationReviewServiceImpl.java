@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.NotesDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
@@ -43,7 +42,6 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	private AuditHeaderDAO auditHeaderDAO;
 	private CreditApplicationReviewDAO creditApplicationReviewDAO;
 	private CreditReviewSummaryDAO creditReviewSummaryDAO;
-	private CurrencyDAO currencyDAO;
 	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 	
@@ -1200,14 +1198,6 @@ public List<AuditDetail> documentListValidation(List<AuditDetail> auditDetails, 
 
 	public FinCreditRevType getFinCreditRevByRevCode(String creditRevCode){
 		return creditApplicationReviewDAO.getFinCreditRevByRevCode(creditRevCode);
-	}
-
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
-	public CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
 	}
 
 	@Override

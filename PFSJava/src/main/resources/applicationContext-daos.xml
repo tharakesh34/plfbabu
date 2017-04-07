@@ -2904,7 +2904,6 @@
 		<property name="creditReviewSummaryDAO" ref="creditReviewSummaryDAO" />
 		<property name="finCreditRevSubCategoryService" ref="finCreditRevSubCategoryService" />
 		<property name="finCreditRevSubCategoryDAO" ref="finCreditRevSubCategoryDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
