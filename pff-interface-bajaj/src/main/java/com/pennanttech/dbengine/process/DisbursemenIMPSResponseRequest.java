@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
@@ -47,6 +48,7 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
+		long headerId = 0;
 		try {
 			saveBatchStatus();
 
@@ -60,8 +62,6 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 
 			this.jdbcTemplate = getJdbcTemplate(appDataSource);
 
-			long headerId;
-
 			if (resultSet != null) {
 				resultSet.last();
 				totalRecords = resultSet.getRow();
@@ -69,12 +69,12 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 				executionStatus.setTotalRecords(totalRecords);
 
 				if (resultSet.getRow() > 0) {
-					headerId = saveHeader();
+					headerId = saveHeader(config.getId(), totalRecords);
 					while (resultSet.next()) {
 						executionStatus.setRemarks("Saving data to destination table...");
 						try {
 							processedCount++;
-							processRecord(resultSet, headerId, processedCount);
+							processRecord(resultSet, headerId);
 							successCount++;
 						} catch (Exception e) {
 							failedCount++;
@@ -101,12 +101,14 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 			releaseResorces(resultSet, destConnection, sourceConnection);
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
+			updateHeader(headerId, processedCount);
 		}
 
 		logger.debug("Leaving");
 	}
 	
-	private void processRecord(ResultSet rs, long headerId, int seqNo) throws Exception {
+
+	private void processRecord(ResultSet rs, long headerId) throws Exception {
 
 		String channelRefNum = getValue(rs, "CHANNELPARTNERREFNO");
 		MapSqlParameterSource insertSource = new MapSqlParameterSource();
@@ -124,14 +126,14 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 			updateSource.addValue("PROCESSFLAG", Status.R.name());
 		}
 		
-		insertSource.addValue("ID", getNextId("DISB_PAY_DET_SEQ", true));//FIXME
-		insertSource.addValue("SeqNo", seqNo);
+		insertSource.addValue("ID", getNextId("DISB_PAY_DET_SEQ", true));
 		insertSource.addValue("HeaderID", headerId);
 		insertSource.addValue("DisbursementReference", Long.valueOf(channelRefNum));
 		insertSource.addValue("DisbursementAmount", 0.00);//FIXME
-		insertSource.addValue("TransactionDate", DateUtil.getSysDate());//FIXME
+		insertSource.addValue("TransactionDate", new Timestamp(System.currentTimeMillis()));//FIXME
 		insertSource.addValue("BankReferenceNumber",  getValue(rs, "TRANSACTIONID"));
 		insertSource.addValue("PLFStatus", Status.I.name());
+		insertSource.addValue("InputTime", new Timestamp(System.currentTimeMillis()));
 		
 		String description = getValue(rs, "DESCRIPTION");
 		if (!description.isEmpty()) {
@@ -160,31 +162,49 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DISBURSEMENT_PAYMENT_DETAILS VALUES (");
-		sql.append(" ID, SeqNo, HeaderID, DisbursementReference, TransactionDate, BankReferenceNumber,");
-		sql.append(" PaymentRemarks1, PaymentRemarks2, PaymentRemarks3, PaymentRemarks4, TransactionStatus, PLFStatus)");
+		sql.append(" ID, HeaderID, DisbursementReference, TransactionDate, BankReferenceNumber,");
+		sql.append(" PaymentRemarks1, PaymentRemarks2, PaymentRemarks3, PaymentRemarks4, TransactionStatus, PLFStatus, InputTime)");
 		sql.append(" Values (");
-		sql.append(" :ID, :SeqNo, :HeaderID, :DisbursementReference, :TransactionDate, :BankReferenceNumber,");
-		sql.append(" :PaymentRemarks1, :PaymentRemarks2, :PaymentRemarks3, :PaymentRemarks4, :TransactionStatus, :PLFStatus)");
+		sql.append(" :ID, :HeaderID, :DisbursementReference, :TransactionDate, :BankReferenceNumber,");
+		sql.append(" :PaymentRemarks1, :PaymentRemarks2, :PaymentRemarks3, :PaymentRemarks4, :TransactionStatus, :PLFStatus, :InputTime)");
 
 		this.jdbcTemplate.update(sql.toString(), insertSource);
 	}
 	
-	private long saveHeader() {
+	private long saveHeader(long configID, int totalRecords) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuffer sql = new StringBuffer();
 		long id = getNextId("INTERFACE_HEADER_SEQ", true);
 
 		source.addValue("ID", id);
-		source.addValue("Category", "A");
-		source.addValue("InterfaceType", "");
-		source.addValue("ConfigID", "");
-		source.addValue("Status", id);
-		source.addValue("NoofRecordsProcessed", "");
-		source.addValue("InputTime", "");
-		source.addValue("ProcessedTime", "");
+		source.addValue("Category", "DB");
+		source.addValue("InterfaceType", "DataBase");
+		source.addValue("FileName", StringUtils.leftPad(String.valueOf(id), 10, '0'));
+		source.addValue("ConfigID", configID);
+		source.addValue("Status", "");
+		source.addValue("TotalCount", totalRecords);
+		source.addValue("InputTime", new Timestamp(System.currentTimeMillis()));
 
+		sql.append(" Insert INTERFACE_HEADER Values (ID, Category, InterfaceType, FileName, ConfigID, Status, TotalCount, InputTime)");
+		sql.append(" VAlues (:ID, :Category, :InterfaceType, :FileName, :ConfigID, :Status, :TotalCount, :InputTime)");
+		
 		this.jdbcTemplate.update(sql.toString(), source);
 		return id;
+	}
+	
+	private void updateHeader(long id, int processedCount) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuffer sql = new StringBuffer();
+
+		source.addValue("NoofRecordsProcessed", processedCount);
+		source.addValue("ProcessedTime",new Timestamp(System.currentTimeMillis()));
+		source.addValue("ID", id);
+
+		sql.append(" Update INTERFACE_HEADER set NoofRecordsProcessed = :NoofRecordsProcessed,");
+		sql.append(" ProcessedTime = :ProcessedTime Where ID = :ID");
+
+		this.jdbcTemplate.update(sql.toString(), source);
+
 	}
 	
 	private boolean isChannelRefExists(String channelRefNum) throws Exception {

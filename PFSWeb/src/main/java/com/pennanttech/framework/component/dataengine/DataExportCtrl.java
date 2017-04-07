@@ -89,7 +89,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "";
+		super.pageRightName = "FileDBInterface";
 	}
 
 	/**
@@ -112,13 +112,18 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		parsers[0] = ParserNames.WRITER.name();
 		parsers[1] = ParserNames.DBWRITER.name();
 		List<Configuration> configList = dataEngineConfig.getMenuList(parsers);
+		
+		getUserWorkspace().allocateAuthorities(super.pageRightName);
+		
 		for (Configuration config : configList) {
 			valueLabel = new ValueLabel(String.valueOf(config.getParser()), config.getName());
-			menuList.add(valueLabel);
-			doFillExePanels(config, dataEngineConfig.getLatestExecution(config.getName()));
-			fillComboBox(fileConfiguration, "", menuList, "");
-			doFillFileNames();
+			if (getUserWorkspace().isAllowed(config.getName())) {
+				menuList.add(valueLabel);
+				doFillExePanels(config,dataEngineConfig.getLatestExecution(config.getName()));
+			}
 		}
+		fillComboBox(fileConfiguration, "", menuList, "");
+		doFillFileNames();
 		doSetFieldProperties();
 	}
 
