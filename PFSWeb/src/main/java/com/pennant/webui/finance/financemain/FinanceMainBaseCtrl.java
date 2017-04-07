@@ -1752,12 +1752,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			createTab(AssetConstants.UNIQUE_ID_AGREEMENT, true);
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_AGREEMENT);
-			if (getFinanceDetail().getAggrementList() != null && getFinanceDetail().getAggrementList().size() > 0) {
-				final HashMap<String, Object> map = getDefaultArguments();
-				map.put("finHeaderList", getFinBasicDetails());
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
-						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
-			}
+		}
+		if (getFinanceDetail().getAggrementList() != null && getFinanceDetail().getAggrementList().size() > 0) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("finHeaderList", getFinBasicDetails());
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
 		}
 		logger.debug("Leaving");
 	}
@@ -13927,7 +13927,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.finRepayMethod.getSelectedItem() != null && this.finRepayMethod.getSelectedItem().getValue() != null) {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
-		getMandateDialogCtrl().checkTabDisplay(repymethod, true);
+		if(getMandateDialogCtrl()!=null){
+			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
