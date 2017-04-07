@@ -131,7 +131,7 @@ public class LimitManagement {
 				LimitReferenceMapping mapping = identifyLine(finMain, finType, custHeader.getHeaderId());
 
 				if (mapping != null) {
-					
+
 					if (mapping.isNewRecord()) {
 						limitReferenceMappingDAO.save(mapping);
 					}
@@ -150,8 +150,7 @@ public class LimitManagement {
 					}
 
 					//log transaction
-					logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, transAmount,
-							limitAmount);
+					logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, transAmount, limitAmount);
 
 				}
 			}
@@ -161,7 +160,7 @@ public class LimitManagement {
 				// check already mapping available or not 
 				LimitReferenceMapping mapping = identifyLine(finMain, finType, groupHeader.getHeaderId());
 				if (mapping != null) {
-					
+
 					if (mapping.isNewRecord()) {
 						limitReferenceMappingDAO.save(mapping);
 					}
@@ -180,8 +179,7 @@ public class LimitManagement {
 					}
 
 					//log transaction
-					logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, transAmount,
-							limitAmount);
+					logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, transAmount, limitAmount);
 				}
 			}
 
@@ -238,8 +236,7 @@ public class LimitManagement {
 				processRepay(mapping, limitAmount, custLimitDetails);
 
 				//log transaction
-				logFinanceTransasction(finMain, custHeader, 0, tranType,
-						overide, transAmount, limitAmount);
+				logFinanceTransasction(finMain, custHeader, 0, tranType, overide, transAmount, limitAmount);
 
 			}
 		}
@@ -253,14 +250,13 @@ public class LimitManagement {
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(),
 						transAmount);
-				
+
 				List<LimitDetails> custLimitDetails = getCustomerLimitDetails(mapping);
 
 				processRepay(mapping, limitAmount, custLimitDetails);
 
 				//log transaction
-				logFinanceTransasction(finMain, groupHeader, 0, tranType,
-						overide, transAmount, limitAmount);
+				logFinanceTransasction(finMain, groupHeader, 0, tranType, overide, transAmount, limitAmount);
 			}
 		}
 
@@ -295,18 +291,19 @@ public class LimitManagement {
 							RuleReturnType.BOOLEAN);
 
 					if (ruleResult) {
-						mapping = getLimitRefMapping(LimitConstants.LIMIT_FINANCE, finRef, details.getLimitLine(), headerId);
+						mapping = getLimitRefMapping(LimitConstants.LIMIT_FINANCE, finRef, details.getLimitLine(),
+								headerId);
 						uncalssifed = false;
 						break;
 					}
 				}
 
 				if (uncalssifed) {
-					mapping = getLimitRefMapping(LimitConstants.LIMIT_FINANCE, finRef, LimitConstants.LIMIT_ITEM_UNCLSFD,
-							headerId);
+					mapping = getLimitRefMapping(LimitConstants.LIMIT_FINANCE, finRef,
+							LimitConstants.LIMIT_ITEM_UNCLSFD, headerId);
 				}
 			}
-		
+
 		}
 
 		logger.debug(" Leaving ");
@@ -364,7 +361,7 @@ public class LimitManagement {
 		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 
 		LimitTransactionDetail limitTranDetail = getFinTransaction(finref, headerId, LimitConstants.LIMIT_TYPE_BLOCK,
-				 disbursement.getDisbSeq());
+				disbursement.getDisbSeq());
 		if (limitTranDetail != null) {
 			boolean block = removePreviuosBlock(limitTranDetail.getLimitAmount(), limitAmount, limitDetails,
 					limitTranDetail.getId());
@@ -406,7 +403,7 @@ public class LimitManagement {
 		long headerId = mapping.getHeaderId();
 
 		LimitTransactionDetail limitTranDetail = getFinTransaction(finref, headerId, LimitConstants.LIMIT_TYPE_BLOCK,
-				 disbursement.getDisbSeq());
+				disbursement.getDisbSeq());
 
 		if (limitTranDetail != null) {
 			for (LimitDetails details : custLimitDetails) {
@@ -437,7 +434,7 @@ public class LimitManagement {
 		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 
 		LimitTransactionDetail limitTranDetail = getFinTransaction(finref, headerId, LimitConstants.LIMIT_TYPE_BLOCK,
-				 disbursement.getDisbSeq());
+				disbursement.getDisbSeq());
 
 		BigDecimal prvBlockAmount = BigDecimal.ZERO;
 		if (limitTranDetail != null) {
@@ -492,17 +489,27 @@ public class LimitManagement {
 
 		logger.debug(" Leaving ");
 	}
-	
+
 	/**
 	 * @param mapping
 	 * @param limitAmount
 	 * @param custLimitDetails
 	 */
-	private void processRepay(LimitReferenceMapping mapping, BigDecimal limitAmount,List<LimitDetails> custLimitDetails) {
+	private void processRepay(LimitReferenceMapping mapping, BigDecimal limitAmount, List<LimitDetails> custLimitDetails) {
 		logger.debug(" Entering ");
-		
+		boolean revolvingLine = false;
 		for (LimitDetails details : custLimitDetails) {
-			if (details.isRevolving()) {
+			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
+				revolvingLine = true;
+				break;
+			}
+		}
+
+		if (!revolvingLine) {
+			return;
+		}
+		for (LimitDetails details : custLimitDetails) {
+			if (revolvingLine) {
 				details.setVersion(details.getVersion() + 1);
 				details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
@@ -652,8 +659,8 @@ public class LimitManagement {
 	 * @param transAmount
 	 * @param cccy
 	 */
-	private void logFinanceTransasction(FinanceMain finMain, LimitHeader header, int disbSeq,
-			String tranType, boolean overide, BigDecimal transAmount, BigDecimal limitAmount) {
+	private void logFinanceTransasction(FinanceMain finMain, LimitHeader header, int disbSeq, String tranType,
+			boolean overide, BigDecimal transAmount, BigDecimal limitAmount) {
 		logger.debug(" Entering ");
 
 		LimitTransactionDetail limittrans = new LimitTransactionDetail();
@@ -714,8 +721,7 @@ public class LimitManagement {
 		return false;
 	}
 
-	private LimitTransactionDetail getFinTransaction(String finref, long headerId, String transType,
-			int schSeq) {
+	private LimitTransactionDetail getFinTransaction(String finref, long headerId, String transType, int schSeq) {
 		return limitTransactionDetailDAO.getTransaction(LimitConstants.LIMIT_FINANCE, finref, transType, headerId,
 				schSeq);
 	}
@@ -777,8 +783,8 @@ public class LimitManagement {
 				limitReferenceMappingDAO.save(mapping);
 			}
 
-			LimitTransactionDetail ltd = prepareTransaction(LimitConstants.LIMIT_COMMITMENT, overide, tranType, transAmount,
-					cmtCcy, limitAmount, header.getLimitCcy());
+			LimitTransactionDetail ltd = prepareTransaction(LimitConstants.LIMIT_COMMITMENT, overide, tranType,
+					transAmount, cmtCcy, limitAmount, header.getLimitCcy());
 
 			logTransasction(commitment.getCmtReference(), header, ltd, commitment.getUserDetails());
 		}

@@ -61,18 +61,19 @@ public class LimitConstants {
 	public static final String				LIMIT_COMMITMENT						= "C";
 
 	private static ArrayList<ValueLabel>	transactionType;
-	
+
 	public static ArrayList<ValueLabel> getTransactionTypeList() {
 
 		if (transactionType != null) {
 			return transactionType;
 		}
-		
+
 		transactionType = new ArrayList<ValueLabel>(4);
 		transactionType.add(new ValueLabel(LIMIT_TYPE_BLOCK, "Reserved"));
 		transactionType.add(new ValueLabel(LIMIT_TYPE_APPROVE, "Approved"));
 		transactionType.add(new ValueLabel(LIMIT_TYPE_UNBLOCK, "Cancelled"));
 		transactionType.add(new ValueLabel(LIMIT_TYPE_CANCIL, "Cancelled"));
+		transactionType.add(new ValueLabel(LIMIT_TYPE_REPAY, "Payment"));
 
 		return transactionType;
 	}

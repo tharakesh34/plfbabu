@@ -358,7 +358,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		source.addValue("LimitHeaderId", headerId);
 
 		StringBuilder	selectSql = new StringBuilder("select DetailId, LimitHeaderId, LimitLine,GroupCode, LimitStructureDetailsID,LimitChkMethod, ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit,");
-		selectSql.append("LimitCheck,   Currency,Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
+		selectSql.append("LimitCheck, Revolving ,  Currency,Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
 		selectSql.append(" LimitLines_View ");
 		selectSql.append(" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes)) AND  LimitHeaderId = :LimitHeaderId ");
 		logger.debug("selectSql: " + selectSql.toString());
