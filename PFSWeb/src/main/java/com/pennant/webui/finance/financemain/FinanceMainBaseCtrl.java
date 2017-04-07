@@ -10065,7 +10065,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							financeType.getFddLockPeriod()).getNextFrequencyDate());
 				}
 			}
-
+			
+			if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,moduleDefiner) || isOverDraft){
+				String frqCode = this.repayFrq.getFrqCodeValue();
+				if(this.odYearlyTerms.intValue()<1){
+					if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) && this.odMnthlyTerms.getValue()< 4){
+						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(4)}));
+					}else if(FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode) && this.odMnthlyTerms.getValue()< 6){
+						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(6)}));
+					}
+				}
+			}
+			
 			if (this.rpyPftFrqRow.isVisible()) {
 				if (!this.nextRepayPftDate.isDisabled() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())) {
 					if (this.nextRepayPftDate.getValue() != null) {
@@ -10694,7 +10705,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 			try {
-
+				//Mandatory Validation
+				if (!this.oDChargeAmtOrPerc.isDisabled()) {
+					if (this.oDChargeAmtOrPerc.getValue() == null
+							|| this.oDChargeAmtOrPerc.getValue().compareTo(BigDecimal.ZERO) == 0) {
+						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("MUST_BE_ENTERED",
+								new String[] { Labels.getLabel("FinanceMainDialog_oDChargeAmtOrPerc.value") }));
+					}
+					if (this.oDChargeAmtOrPerc.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL",
+								new String[] { Labels.getLabel("FinanceMainDialog_oDChargeAmtOrPerc.value"), "0" }));
+					}
+				}
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
@@ -10710,6 +10732,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 			try {
+				
+				if (this.oDAllowWaiver.isChecked()) {
+					if (this.oDMaxWaiverPerc.getValue() == null
+							|| this.oDMaxWaiverPerc.getValue().compareTo(BigDecimal.ZERO) == 0) {
+						throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("MUST_BE_ENTERED",
+								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value") }));
+					}
+					if (this.oDMaxWaiverPerc.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL",
+								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"), "0" }));
+					}
+					if (this.oDMaxWaiverPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
+						throw new WrongValueException(this.oDMaxWaiverPerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMaxWaiver.value"), "100" }));
+					}
+				}
 				penaltyRate.setODAllowWaiver(this.oDAllowWaiver.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -13792,6 +13830,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving " + event.toString());
+	}
+/*
+ * Validation in overdraft Maintenance if the curfinasset value is less than the finasset
+ */
+	public void onFulfill$finAssetValue(Event event) {
+		logger.debug("Entering");
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,moduleDefiner)){
+			BigDecimal minFinAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
+			if(this.finAssetValue.getActualValue().compareTo(minFinAssetValue)<0){
+				throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
+						"NUMBER_MINVALUE_EQ",
+						new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
+								String.valueOf(minFinAssetValue) }));
+			}
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
