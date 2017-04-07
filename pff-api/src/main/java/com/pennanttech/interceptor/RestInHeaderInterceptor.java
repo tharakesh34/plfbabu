@@ -405,7 +405,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	 * Method to add the user details in Spring context for usage in the application.
 	 */
 	private void setContext(SecurityUser userLoginDetails, WebAuthenticationDetails authDetails) {
-		List<SecurityRole> securityRole = userService.getUserRolesByUserID(userLoginDetails.getId());
+		List<SecurityRole> securityRole = new ArrayList<>();
 		Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
 		UserImpl userDetails = new UserImpl(userLoginDetails, grantedAuthorities, securityRole);
