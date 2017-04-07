@@ -866,5 +866,10 @@ delete from SMTWeekendMaster;
 
 </sql>
 </changeSet>
-
+<changeSet author="Irfan" id="46">
+	<addColumn tableName="RejectFinanceMain">
+		<column name="RejectStatus" type="varchar(8)"/>
+		<column name="RejectReason" type="varchar(1000)"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
