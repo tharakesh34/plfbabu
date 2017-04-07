@@ -117,13 +117,21 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 		
 		Boolean newRecord=(Boolean) finHeaderList.get(10);
-		if(!newRecord) {
+		this.finEventCode= String.valueOf(finHeaderList.get(11));
+		
+		if(!newRecord && isActivityLogVisible(finEventCode)) {
 			this.userActivityLog.setVisible(true);
 		}
-		this.finEventCode= String.valueOf(finHeaderList.get(11));
 		logger.debug("Leaving");
 	}
 	
+	private boolean isActivityLogVisible(String finEvent){
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ, finEvent) ||StringUtils.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE, finEvent) ||
+				StringUtils.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, finEvent)){
+			return false;
+		}
+		return true;
+	}
 	public void onClick$userActivityLog(Event event) throws Exception {
 		logger.debug("Entering" +event.toString());
 		doUserActivityLog();
