@@ -2456,7 +2456,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		if (ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY) {
-			if (financeType.isAlwUnPlanEmiHoliday()) {
+			if (financeType.isAlwUnPlanEmiHoliday() || aFinanceMain.getMaxUnplannedEmi() > 0) {
 				this.row_UnPlanEmiHLockPeriod.setVisible(true);
 				this.row_MaxUnPlannedEMIH.setVisible(true);
 				this.unPlannedEmiHLockPeriod.setValue(aFinanceMain.getUnPlanEMIHLockPeriod());
@@ -2475,7 +2475,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		if (ImplementationConstants.ALLOW_REAGE) {
-			if (financeType.isAlwReage()) {
+			if (financeType.isAlwReage() || aFinanceMain.getMaxReAgeHolidays() > 0) {
 				this.row_ReAge.setVisible(true);
 				this.maxReAgeHolidays.setValue(aFinanceMain.getMaxReAgeHolidays());
 				this.cpzAtReAge.setChecked(aFinanceMain.isReAgeCpz());
