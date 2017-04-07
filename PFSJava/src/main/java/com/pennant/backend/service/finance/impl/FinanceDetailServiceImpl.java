@@ -7799,5 +7799,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
 
+	@Override
+	public BigDecimal getFinAssetValue(String finReference) {
+		return getFinanceMainDAO().getFinAssetValue(finReference);
+	}
+
 
 }

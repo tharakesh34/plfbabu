@@ -170,5 +170,6 @@ public interface FinanceDetailService {
 	List<FinanceDisbursement> getFinanceDisbursements(final String id, String type, boolean isWIF);
 	FinanceMain getFinanceMainParms(String finReference);
 	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType);
+	BigDecimal getFinAssetValue(String finReference);
 	
  }

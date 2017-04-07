@@ -2441,4 +2441,20 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return finReferencesList;
 	}
+/***
+ *  Method to get the finassetValue for the comparison with teh
+ *  current asset value in the odMaintenance
+ */
+	@Override
+	public BigDecimal getFinAssetValue(String finReference) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinAssetValue ");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug("selectSql: " + selectSql.toString());
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+	}
 }

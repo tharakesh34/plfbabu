@@ -190,5 +190,7 @@ public interface FinanceMainDAO {
 	List<String> getFinReferencesByMandateId(long mandateId);
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
+	
+	BigDecimal getFinAssetValue(String finReference);
 
 }
