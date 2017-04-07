@@ -669,9 +669,10 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
  <dropTable tableName="Disbursement_Payment_Details" />
  <dropTable tableName="Interface_Header" />
  </changeSet>
+ 
  <changeSet id="28" author="pruthvi">
  <createTable tableName="Interface_Header">
-		<column name="ID" type="decimal(10,0)">
+		<column name="ID" type="bigint">
 		<constraints nullable="false" />
 			</column>
 				<column name="Category" type="varchar(1)">
@@ -694,16 +695,16 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
  </changeSet>
   <changeSet id="29" author="pruthvi">
   <createTable tableName="Disbursement_Payment_Details">
-            <column name="ID" type="decimal(10,0)">
+            <column name="ID" type="bigint">
             <constraints nullable="false" />
 			</column>
-			<column name="SeqNo" type="decimal(10,0)">
+			<column name="SeqNo" type="int">
             <constraints nullable="false" />
 			</column>
-			<column name="HeaderID" type="decimal(10,0)">
+			<column name="HeaderID" type="bigint">
             <constraints nullable="false" />
 			</column>
-            <column name="DisbursementReference" type="decimal(10,0)">
+            <column name="DisbursementReference" type="bigint">
             <constraints nullable="false" />
 			</column>
 			<column name="PaymentType" type="varchar(8)"/>
@@ -724,10 +725,10 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 			<column name="BeneficaryCode" type="varchar(14)"/>
 			<column name="BeneficaryAccountNo" type="varchar(25)"/>
 			<column name="BeneficaryName" type="varchar(200)"/>
-			<column name="PaymentRemarks1" type="varchar(30)"/>
-			<column name="PaymentRemarks2" type="varchar(30)"/>
-			<column name="PaymentRemarks3" type="varchar(30)"/>
-			<column name="PaymentRemarks4" type="varchar(30)"/>
+			<column name="PaymentRemarks1" type="varchar(50)"/>
+			<column name="PaymentRemarks2" type="varchar(50)"/>
+			<column name="PaymentRemarks3" type="varchar(50)"/>
+			<column name="PaymentRemarks4" type="varchar(50)"/>
 			<column name="IFSCCode" type="varchar(15)"/>
 			<column name="MICRCode" type="varchar(15)"/>
 			<column name="PLFStatus" type="varchar(1)"/>
@@ -747,18 +748,9 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 			referencedTableName="Interface_Header" referencedColumnNames="ID"
 			baseTableName="Disbursement_Payment_Details" baseColumnNames="HeaderID" />
 </changeSet>
- <changeSet id="33" author="pruthvi">
-	<modifyDataType tableName="Disbursement_Payment_Details" columnName="PaymentRemarks1"
-			newDataType="varchar(50)" />
-		<modifyDataType tableName="Disbursement_Payment_Details" columnName="PaymentRemarks2"
-			newDataType="varchar(50)" />
-			<modifyDataType tableName="Disbursement_Payment_Details" columnName="PaymentRemarks3"
-			newDataType="varchar(50)" />
-			<modifyDataType tableName="Disbursement_Payment_Details" columnName="PaymentRemarks4"
-			newDataType="varchar(50)" />
-			</changeSet>
 
-		
+ </databaseChangeLog>
+	
 <changeSet id="34" author="DurgaPrasad G" dbms="oracle">	
    		<sql splitStatements="false">
      		 begin
