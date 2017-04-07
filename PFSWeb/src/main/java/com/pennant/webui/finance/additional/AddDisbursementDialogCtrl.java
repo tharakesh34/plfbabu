@@ -453,10 +453,12 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						prvTotDisbValue = prvTotDisbValue.add(finDisbursment.getDisbAmount());
 					}
 					BigDecimal curTotDisbValue = PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter).add(prvTotDisbValue);
-					if(curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0){
+					if(curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0 && finMain.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO)>0){
 						throw new WrongValueException(this.disbAmount.getCcyTextBox(),Labels.getLabel("od_DisbAmount",
 								new String[]{PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(),formatter),
 										PennantApplicationUtil.amountFormate(finMain.getFinAssetValue().subtract(prvTotDisbValue),formatter)}));
+					}else if(curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0 && finMain.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO)<=0){
+						throw new WrongValueException(this.disbAmount.getCcyTextBox(),Labels.getLabel("od_DisAmountExceeded",new String[]{}));
 					}
 				}
 
