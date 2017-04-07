@@ -271,6 +271,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox cpzAtPlanEmi;
 	private Label label_FinanceMainDialog_PlanEmiHolidayMethod;
 	
+	//Unplanned Emi Holidays
+	protected Row						row_UnPlanEmiHLockPeriod;
+	protected Row						row_MaxUnPlannedEMIH;
+	protected Row						row_ReAge;
+	protected Intbox					unPlannedEmiHLockPeriod;
+	protected Intbox					maxUnplannedEmi;
+	protected Intbox					maxReAgeHolidays;
+	protected Checkbox					cpzAtUnPlannedEmi;
+	protected Checkbox					cpzAtReAge;
+	protected Combobox					roundingMode;
+	
 	// Summaries
 	protected Decimalbox				totalDisb;
 	protected Decimalbox				totalDownPayment;
@@ -627,6 +638,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.accountsOfficer.setValueColumn("GenDepartment");
 			this.accountsOfficer.setDescColumn("GenDeptDesc");
 			this.accountsOfficer.setValidateColumns(new String[] { "GenDepartment" });
+			this.unPlannedEmiHLockPeriod.setMaxlength(3);
+			this.maxReAgeHolidays.setMaxlength(3);
+			this.maxUnplannedEmi.setMaxlength(3);
 		}
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
@@ -952,6 +966,35 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.cpzAtPlanEmi.setChecked(false);
 			this.label_FinanceMainDialog_PlanEmiHolidayMethod.setVisible(false);
 		}
+		
+		if (ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY) {
+			if (getFinScheduleData().getFinanceType().isAlwUnPlanEmiHoliday() || aFinanceMain.getMaxUnplannedEmi() > 0) {
+				this.row_UnPlanEmiHLockPeriod.setVisible(true);
+				this.row_MaxUnPlannedEMIH.setVisible(true);
+				this.unPlannedEmiHLockPeriod.setValue(aFinanceMain.getUnPlanEMIHLockPeriod());
+				this.maxUnplannedEmi.setValue(aFinanceMain.getMaxUnplannedEmi());
+				this.cpzAtUnPlannedEmi.setChecked(aFinanceMain.isUnPlanEMICpz());
+			} else {
+				this.row_UnPlanEmiHLockPeriod.setVisible(false);
+				this.row_MaxUnPlannedEMIH.setVisible(false);
+			}
+		} else {
+			this.row_UnPlanEmiHLockPeriod.setVisible(false);
+			this.row_MaxUnPlannedEMIH.setVisible(false);
+		}
+		if (ImplementationConstants.ALLOW_REAGE) {
+			if (getFinScheduleData().getFinanceType().isAlwReage() || aFinanceMain.getMaxReAgeHolidays() > 0) {
+				this.row_ReAge.setVisible(true);
+				this.maxReAgeHolidays.setValue(aFinanceMain.getMaxReAgeHolidays());
+				this.cpzAtReAge.setChecked(aFinanceMain.isReAgeCpz());
+			} else {
+				this.row_ReAge.setVisible(false);
+			}
+		} else {
+			this.row_ReAge.setVisible(false);
+		}
+		
+		fillComboBox(this.roundingMode, aFinanceMain.getCalRoundingMode(), PennantStaticListUtil.getRoundingModes(), "");
 		
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
@@ -1519,6 +1562,19 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPaySupl.setReadonly(true);
 		this.dsaCode.setReadonly(true);
 		this.accountsOfficer.setReadonly(true);
+		this.alwPlannedEmiHoliday.setDisabled(true);;
+		this.planEmiMethod.setReadonly(true);
+		this.maxPlanEmiPerAnnum.setReadonly(true);
+		this.maxPlanEmi.setReadonly(true);
+		this.planEmiHLockPeriod.setReadonly(true);
+		this.cpzAtPlanEmi.setDisabled(true);
+		this.unPlannedEmiHLockPeriod.setReadonly(true);
+		this.maxUnplannedEmi.setReadonly(true);
+		this.maxReAgeHolidays.setReadonly(true);
+		this.cpzAtUnPlannedEmi.setDisabled(true);
+		this.cpzAtReAge.setDisabled(true);
+		readOnlyComponent(true, this.roundingMode);
+		
 	}
 
 	/** ========================================================= */

@@ -943,7 +943,7 @@
 													value="${c:l('label_FinanceMainDialog_MaxPlanEmiPerAnnum.value')}" />
 												<hbox>
 													<space
-														sclass="mandatory" spacing="2px" />
+														 spacing="2px" />
 													<intbox
 														id="maxPlanEmiPerAnnum" width="45px" maxlength="3"
 														style="text-align:right" />
@@ -953,7 +953,7 @@
 													value="${c:l('label_FinanceMainDialog_MaxPlanEmi.value')}" />
 												<hbox>
 													<space
-														sclass="mandatory" spacing="2px" />
+														 spacing="2px" />
 													<intbox
 														id="maxPlanEmi" width="45px" maxlength="3"
 														style="text-align:right" />
@@ -981,6 +981,71 @@
 														id="cpzAtPlanEmi" checked="false" />
 												</hbox>
 											</row>
+											<row id="row_UnPlanEmiHLockPeriod" visible="false">
+													<label
+														id="label_FinanceMainDialog_UnPlannedEmiHolidayLockPeriod"
+														value="${c:l('label_FinanceMainDialog_UnPlannedEmiHolidayLockPeriod.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<intbox
+															id="unPlannedEmiHLockPeriod" width="45px" maxlength="3"
+															style="text-align:right" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_RoundingMode"
+														visible="false"
+														value="${c:l('label_FinanceMainDialog_RoundingMode.value')}" />
+													<hbox
+														visible="false">
+														<space
+															sclass="mandatory" spacing="2px" />
+														<combobox
+															id="roundingMode" width="250px" readonly="true" />
+													</hbox>
+												</row>
+												<row  id="row_MaxUnPlannedEMIH" visible="false">
+													<label
+														id="label_FinanceMainDialog_MaxUnPlannedEmiHoliday"
+														value="${c:l('label_FinanceMainDialog_MaxUnPlannedEmiHoliday.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<intbox
+															id="maxUnplannedEmi" width="45px" maxlength="3"
+															style="text-align:right" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_CpzAtUnPlannedEmi"
+														value="${c:l('label_FinanceMainDialog_CpzAtUnPlannedEmi.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="cpzAtUnPlannedEmi" checked="false" />
+													</hbox>
+												</row>
+												<row id="row_ReAge" visible="false">
+													<label
+														id="label_FinanceMainDialog_MaxReAgeHoliday"
+														value="${c:l('label_FinanceMainDialog_MaxReAgeHoliday.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<intbox
+															id="maxReAgeHolidays" width="45px" maxlength="3"
+															style="text-align:right" />
+													</hbox>
+													<label
+														id="label_FinanceMainDialog_CpzAtReAge"
+														value="${c:l('label_FinanceMainDialog_CpzAtReAge.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="cpzAtReAge" checked="false" />
+													</hbox>
+												</row>
 											<row visible="true">
 												<label
 													id="label_FinanceMainDialog_MaturityDate"
