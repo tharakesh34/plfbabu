@@ -385,7 +385,8 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		logger.debug("Entering ");
 
 		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyDesc, CcyNumber, CcyEditField,");
-		selectSql.append(" CcySpotRate, CcyIsReceprocal, CcyUserRateSell, CcyUserRateBuy");
+		selectSql.append(" CcySpotRate, CcyIsReceprocal, CcyUserRateSell, CcyUserRateBuy, CcyMinorCcyUnits,");
+		selectSql.append(" CcyMinorCcyDesc, CcySymbol");
 		selectSql.append(" FROM  RMTCurrencies");
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
