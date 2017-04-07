@@ -1573,16 +1573,16 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 			<column name="AGREEMENTNO" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AGREEMENTID" type="Number(8)">
+			<column name="AGREEMENTID" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="PRODUCTFLAG" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SCHEMEID" type="Number(8)">
+			<column name="SCHEMEID" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="BRANCHID" type="Number(8)">
+			<column name="BRANCHID" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="NPASTAGEID" type="varchar(8)">
@@ -1672,7 +1672,7 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 			<column name="INSURRECEIVED" type="Number" />
 			<column name="INSURPAYABLE" type="Number" />
 			<column name="INSURPAID" type="Number" />
-			<column name="CUSTOMERID" type="Number(8)" />
+			<column name="CUSTOMERID" type="int" />
 			<column name="CUSTOMERNAME" type="varchar(300)" />
 			<column name="SANCTIONED_TENURE" type="Number(3)" />
 			<column name="LOANEMI" type="Number(16,2)" />
@@ -1684,7 +1684,7 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 			<column name="NOOFADVANCEEMIS" type="Number(3)" />
 			<column name="ASSETCOST" type="Number(16,2)" />
 			<column name="NOOFEMIOS" type="Number" />
-			<column name="DPD" type="Number(8)" />
+			<column name="DPD" type="int" />
 			<column name="CURRENTBUCKET" type="Number(3)" />
 			<column name="BRANCHNAME" type="varchar(600)" />
 			<column name="SCHEMENAME" type="varchar(200)" />
@@ -1704,7 +1704,7 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 		
 		
 <createTable tableName="ALM">
-			<column name="AGREEMENTID" type="Number(8)">
+			<column name="AGREEMENTID" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AGREEMENTNO" type="varchar(20)">
@@ -1714,13 +1714,13 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 				<constraints nullable="false" />
 			</column>
 			<column name="NPASTAGEID" type="varchar(12)"/>
-			<column name="INSTLAMT" type="NUMBER (16,2)"/>
-			<column name="PRINCOMP" type="NUMBER (16,2)"/>
-			<column name="INTCOMP" type="NUMBER (16,2)"/>
+			<column name="INSTLAMT" type="decimal(16,2)"/>
+			<column name="PRINCOMP" type="decimal(16,2)"/>
+			<column name="INTCOMP" type="decimal(16,2)"/>
 			<column name="DUEDATE" type="datetime" />
-			<column name="ACCRUEDAMT" type="NUMBER (16,2)"/>
+			<column name="ACCRUEDAMT" type="decimal(16,2)"/>
 			<column name="ACCRUEDON" type="datetime" />
-			<column name="CUMULATIVEACCRUALAMT" type="NUMBER (16,2)"/>
+			<column name="CUMULATIVEACCRUALAMT" type="decimal(16,2)"/>
 			<column name="ADVFLAG" type="varchar(1)"/>
 </createTable>
 
