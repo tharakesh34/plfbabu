@@ -169,12 +169,12 @@ public class ReinstateFinanceDAOImpl extends BasisCodeDAO<ReinstateFinance> impl
 		selectSql.append(" SELECT T1.FinReference, T2.CustCIF, T2.CustShrtName, T1.FinType, ");
 		selectSql.append(" T3.FinTypeDesc LovDescFinTypeName, T1.FinBranch, T4.BranchDesc LovDescFinBranchName, T1.FinCcy,  ");
 		selectSql.append(" FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, T7.UsrLogin RejectedBy, T1.LastMntOn RejectedOn, ");
-		selectSql.append(" T6.RejectDesc RejectStatus, T1.FinRemarks RejectRemarks ");
+		selectSql.append(" T6.RejectDesc RejectStatus, T1.RejectReason RejectRemarks ");
 		selectSql.append(" From RejectFinanceMain T1 LEFT OUTER JOIN  ");
 		selectSql.append(" Customers T2 ON T1.CustID = T2.CustID LEFT OUTER JOIN  ");
 		selectSql.append(" RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN  ");
 		selectSql.append(" RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN  ");
-		selectSql.append(" BMTRejectCodes T6 ON T1.FinStatus = T6.RejectCode LEFT OUTER JOIN  ");
+		selectSql.append(" BMTRejectCodes T6 ON T1.RejectStatus = T6.RejectCode LEFT OUTER JOIN  ");
 		selectSql.append(" SecUsers T7 ON T1.LastMntBy = T7.UsrID  Where FinReference = :FinReference");
 		
 		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);

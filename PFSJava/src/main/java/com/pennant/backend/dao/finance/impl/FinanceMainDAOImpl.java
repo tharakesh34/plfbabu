@@ -1311,7 +1311,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" Priority, RolloverFrq, NextRolloverDate, ShariaStatus, DsaCode, feeAccountId,MinDownPayPerc, MMAId, InitiateDate,TDSApplicable,AccountsOfficer,ApplicationNo,");
 		insertSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason  )");
 		insertSql.append(" Values(:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		insertSql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		insertSql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -1341,7 +1341,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :Priority,:RolloverFrq, :NextRolloverDate, :ShariaStatus, :DsaCode,:feeAccountId,:MinDownPayPerc,:MMAId,:InitiateDate,:TDSApplicable,:AccountsOfficer, :ApplicationNo,");
 		insertSql.append(" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId )");
+		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);

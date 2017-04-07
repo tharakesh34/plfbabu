@@ -355,12 +355,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox 				unPlannedEmiHLockPeriod;
 	protected Intbox 				maxUnplannedEmi;
 	protected Intbox 				maxReAgeHolidays;
-	protected Row					row_UnPlannedEmiH;
+	protected Row					row_UnPlanEmiHLockPeriod;
+	protected Row					row_MaxUnPlannedEMIH;
+	protected Row					row_ReAge;
 	protected Checkbox 				cpzAtUnPlannedEmi;
 	protected Checkbox 				cpzAtReAge;
 	protected Combobox 				roundingMode;
 	protected Row					row_PlannedEMIH;
-	protected Row					row_ReAge;
 	
 	protected Row					row_supplementRent;						// autoWired
 	protected CurrencyBox 			supplementRent; 				        // autoWired
@@ -2455,24 +2456,34 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		if (ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY) {
-			this.unPlannedEmiHLockPeriod.setValue(aFinanceMain.getUnPlanEMIHLockPeriod());
-			this.maxUnplannedEmi.setValue(aFinanceMain.getMaxUnplannedEmi());
-			this.cpzAtUnPlannedEmi.setChecked(aFinanceMain.isUnPlanEMICpz());
-			this.unPlannedEmiHLockPeriod.setVisible(true);
-			this.maxUnplannedEmi.setVisible(true);
-			this.cpzAtUnPlannedEmi.setDisabled(true);
+			if (financeType.isAlwUnPlanEmiHoliday()) {
+				this.row_UnPlanEmiHLockPeriod.setVisible(true);
+				this.row_MaxUnPlannedEMIH.setVisible(true);
+				this.unPlannedEmiHLockPeriod.setValue(aFinanceMain.getUnPlanEMIHLockPeriod());
+				this.maxUnplannedEmi.setValue(aFinanceMain.getMaxUnplannedEmi());
+				this.cpzAtUnPlannedEmi.setChecked(aFinanceMain.isUnPlanEMICpz());
+				this.unPlannedEmiHLockPeriod.setVisible(true);
+				this.maxUnplannedEmi.setVisible(true);
+				this.cpzAtUnPlannedEmi.setDisabled(true);
+			} else {
+				this.row_UnPlanEmiHLockPeriod.setVisible(false);
+				this.row_MaxUnPlannedEMIH.setVisible(false);
+			}
 		} else {
-			this.unPlannedEmiHLockPeriod.setVisible(false);
-			this.maxUnplannedEmi.setVisible(false);
-			this.cpzAtUnPlannedEmi.setDisabled(true);
+			this.row_UnPlanEmiHLockPeriod.setVisible(false);
+			this.row_MaxUnPlannedEMIH.setVisible(false);
 		}
 		
 		if (ImplementationConstants.ALLOW_REAGE) {
-			this.maxReAgeHolidays.setValue(aFinanceMain.getMaxReAgeHolidays());
-			this.cpzAtReAge.setChecked(aFinanceMain.isReAgeCpz());
+			if (financeType.isAlwReage()) {
+				this.row_ReAge.setVisible(true);
+				this.maxReAgeHolidays.setValue(aFinanceMain.getMaxReAgeHolidays());
+				this.cpzAtReAge.setChecked(aFinanceMain.isReAgeCpz());
+			} else {
+				this.row_ReAge.setVisible(false);
+			}
 		} else {
-			this.maxReAgeHolidays.setVisible(false);
-			this.cpzAtReAge.setDisabled(true);
+			this.row_ReAge.setVisible(false);
 		}
 		fillComboBox(this.roundingMode, aFinanceMain.getCalRoundingMode(),	PennantStaticListUtil.getRoundingModes(), "");
 		

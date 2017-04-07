@@ -378,7 +378,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		listgroup.appendChild(cell);
 
 		cell = new Listcell(aFinanceEnq.getFinCcy());
-		cell.setSpan(7);
+		cell.setSpan(5);
+		cell.setStyle("text-align:right;");
 		listgroup.appendChild(cell);
 		this.listBoxEnquiryResult.appendChild(listgroup);
 		

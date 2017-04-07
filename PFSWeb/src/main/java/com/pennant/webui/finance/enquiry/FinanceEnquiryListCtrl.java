@@ -190,7 +190,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	private SuspenseService suspenseService;
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
 	
-	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters();
+	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryFilters(true);
 	private transient ReinstateFinanceService reinstateFinanceService;
 	/**
 	 * default constructor.<br>
@@ -276,7 +276,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.sortOperator_FinCcy.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.sortOperator_FinCcy.setItemRenderer(new SearchOperatorListModelItemRenderer());
 		
-		if(!"CHQPRNT".equals(enquiryType.getValue())){
+		if (!"CHQPRNT".equals(enquiryType.getValue()) && !"FINENQ".equals(this.enquiryType.getValue())) {
+			doFillFilterList(PennantStaticListUtil.getEnquiryFilters(false));
+		} else {
 			doFillFilterList(enquiryList);
 		}
 
@@ -554,7 +556,11 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.finType.setValue("");
 		this.finRef.setValue("");
 		this.finCcy.setValue("");
-		doFillFilterList(enquiryList);
+		if (!"CHQPRNT".equals(enquiryType.getValue()) && !"FINENQ".equals(this.enquiryType.getValue())) {
+			doFillFilterList(PennantStaticListUtil.getEnquiryFilters(false));
+		} else {
+			doFillFilterList(enquiryList);
+		}
 
 		oldVar_sortOperator_custCIF = -1;    
 		this.oldVar_sortOperator_Branch = -1;      
@@ -759,7 +765,12 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		if("CHQPRNT".equals(this.enquiryType.getValue())) {
 			this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
 		}else{
-			String value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
+			String value = "";
+			if(!"FINENQ".equals(this.enquiryType.getValue())){
+				value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), PennantStaticListUtil.getEnquiryFilters(false));
+			} else {
+				value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
+			}
 			if("ALLFIN".equals(value)){
 				//Nothing to do
 			}else if("ACTFIN".equals(value)){

@@ -1029,8 +1029,7 @@
 															id="planEmiMethod" width="250px" readonly="true" />
 													</hbox>
 												</row>
-												<row id="row_MaxPlanEmi"
-													visible="false">
+												<row id="row_MaxPlanEmi" visible="false">
 													<label
 														id="label_FinanceMainDialog_MaxPlanEmiPerAnnum"
 														value="${c:l('label_FinanceMainDialog_MaxPlanEmiPerAnnum.value')}" />
@@ -1074,7 +1073,7 @@
 															id="cpzAtPlanEmi" checked="false" />
 													</hbox>
 												</row>
-												<row id="row_UnPlannedEmiH" visible="false">
+												<row id="row_UnPlanEmiHLockPeriod" visible="false">
 													<label
 														id="label_FinanceMainDialog_UnPlannedEmiHolidayLockPeriod"
 														value="${c:l('label_FinanceMainDialog_UnPlannedEmiHolidayLockPeriod.value')}" />
@@ -1097,7 +1096,7 @@
 															id="roundingMode" width="250px" readonly="true" />
 													</hbox>
 												</row>
-												<row visible="false">
+												<row id= "row_MaxUnPlannedEMIH"visible="false">
 													<label
 														id="label_FinanceMainDialog_MaxUnPlannedEmiHoliday"
 														value="${c:l('label_FinanceMainDialog_MaxUnPlannedEmiHoliday.value')}" />
@@ -1109,6 +1108,17 @@
 															style="text-align:right" />
 													</hbox>
 													<label
+														id="label_FinanceMainDialog_CpzAtUnPlannedEmi"
+														value="${c:l('label_FinanceMainDialog_CpzAtUnPlannedEmi.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="cpzAtUnPlannedEmi" checked="false" />
+													</hbox>
+												</row>
+												<row id="row_ReAge" visible="false">
+												<label
 														id="label_FinanceMainDialog_MaxReAgeHoliday"
 														value="${c:l('label_FinanceMainDialog_MaxReAgeHoliday.value')}" />
 													<hbox>
@@ -1117,17 +1127,6 @@
 														<intbox
 															id="maxReAgeHolidays" width="45px" maxlength="3"
 															style="text-align:right" />
-													</hbox>
-												</row>
-												<row id="row_ReAge" visible="false">
-													<label
-														id="label_FinanceMainDialog_CpzAtUnPlannedEmi"
-														value="${c:l('label_FinanceMainDialog_CpzAtUnPlannedEmi.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<checkbox
-															id="cpzAtUnPlannedEmi" checked="false" />
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_CpzAtReAge"
