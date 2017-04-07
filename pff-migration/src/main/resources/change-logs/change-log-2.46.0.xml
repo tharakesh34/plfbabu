@@ -688,7 +688,8 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 				<constraints nullable="false" />
 			</column>
 			<column name="Status" type="varchar(1)"/>
-			<column name="NoofRecordsProcessed" type="decimal(20,0)"/>
+			<column name="TotalCount" type="bigint"/>
+			<column name="NoofRecordsProcessed" type="bigint"/>
 			<column name="InputTime" type="datetime"/>
 			<column name="ProcessedTime" type="datetime"/>
 </createTable>
@@ -871,5 +872,10 @@ delete from SMTWeekendMaster;
 		<column name="RejectStatus" type="varchar(8)"/>
 		<column name="RejectReason" type="varchar(1000)"/>
 	</addColumn>
+</changeSet>
+<changeSet author="pruthvi" id="47">
+<sql>
+update reportlist set formatreq='0' where code='ReturnedChequeDetails';
+</sql>
 </changeSet>
 </databaseChangeLog>
