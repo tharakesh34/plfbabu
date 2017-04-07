@@ -878,4 +878,10 @@ delete from SMTWeekendMaster;
 update reportlist set formatreq='0' where code='ReturnedChequeDetails';
 </sql>
 </changeSet>
+<changeSet id="48"  author="Siva" >
+	<sql>
+			delete from ErrorDetails where ErrorCode = '60203';
+		INSERT INTO ErrorDetails VALUES('60203','EN','E','Customer Records in EOD execution process. Not allowed to Maintain this Customer Record.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
