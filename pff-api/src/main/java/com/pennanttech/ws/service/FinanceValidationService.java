@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -131,7 +132,7 @@ public class FinanceValidationService {
 			
 			// validate currency
 			if (StringUtils.isNotBlank(financeMain.getFinCcy())) {
-				Currency currency = currencyDAO.getCurrencyById(financeMain.getFinCcy(), "");
+				Currency currency = CurrencyUtil.getCurrencyObject(financeMain.getFinCcy());
 				if (currency == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getFinCcy();

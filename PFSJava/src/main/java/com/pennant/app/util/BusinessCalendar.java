@@ -193,7 +193,7 @@ public class BusinessCalendar implements Serializable {
 		int endingYear = 0;
 		List<HolidayMaster> holidayList = holidayMasterDAO.getHolidayMasterCode(holidayCode);
 
-		if (holidayList != null && holidayList.size() != 0) {
+		if (!holidayList.isEmpty()) {
 			normalHolidayMasters = new ArrayList<HolidayMaster>();
 			for (int i = 0; i < holidayList.size(); i++) {
 				if (StringUtils.trimToEmpty(holidayList.get(i).getHolidayType()).equalsIgnoreCase(
