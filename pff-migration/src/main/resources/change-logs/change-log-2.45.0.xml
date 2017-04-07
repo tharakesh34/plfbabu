@@ -2060,4 +2060,16 @@ N'Approved', N'', N'', N'', N'', N'', 0, 0);
 			
 			</sql>
 	</changeSet>
+	
+<changeSet id="76" author="DurgaPrasad G">
+		<dropNotNullConstraint tableName="SecUsers_RTemp" columnName="AuthType" columnDataType="char(3)" />
+</changeSet>
+
+<changeSet id="77" author="DurgaPrasad G">
+		<dropNotNullConstraint tableName="SecUsers_Temp" columnName="AuthType" columnDataType="char(3)" />
+</changeSet>
+
+<changeSet id="78" author="DurgaPrasad G">
+		<dropNotNullConstraint tableName="SecUsers" columnName="AuthType" columnDataType="char(3)" />
+</changeSet>
 </databaseChangeLog>
