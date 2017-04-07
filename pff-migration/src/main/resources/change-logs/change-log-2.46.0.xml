@@ -894,4 +894,16 @@ N'String,String,String,String,String', N'', N'ReportList05', N'Sponsor Bank', N'
 N'Approved', N'', N'', N'', N'', N'', 0, 0);
 </sql>
 </changeSet>
+
+<changeSet id="50" author="Durgaprasad G">
+		<addColumn tableName="DISBURSEMENT_PAYMENT_DETAILS">
+			<column name="InputTime"  type="datetime" />
+			<column name="ProcessedTime"  type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="51" author="Durgaprasad G">
+		<dropColumn columnName="SeqNo" tableName="DISBURSEMENT_PAYMENT_DETAILS" />
+	</changeSet>
+	
 </databaseChangeLog>
