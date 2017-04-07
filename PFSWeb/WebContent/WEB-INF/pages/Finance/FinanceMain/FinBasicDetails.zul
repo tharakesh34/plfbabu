@@ -28,7 +28,7 @@
 						<hbox>
 							<label id="finBasic_finCcy"
 								style="font-weight:bold;" />
-							<a id="userActivityLog"
+							<a id="userActivityLog" visible="false"
 								label="Activity Log" style="padding-left:100px;" />
 						</hbox>
 					</row>
