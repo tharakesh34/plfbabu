@@ -12,12 +12,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -37,7 +37,6 @@ public class FinanceDataDefaulting {
 
 	private CustomerDAO		customerDAO;
 	private FinanceTypeDAO	financeTypeDAO;
-	private CurrencyDAO		currencyDAO;
 	private BranchDAO		branchDAO;
 
 	public FinanceDataDefaulting() {
@@ -89,7 +88,7 @@ public class FinanceDataDefaulting {
 			finScheduleData.setFinanceType(financeType);
 			
 			if (StringUtils.isNotBlank(finMain.getFinCcy())) {
-				Currency currency = currencyDAO.getCurrencyById(finMain.getFinCcy(), "");
+				Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 				if (currency == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finMain.getFinCcy();
@@ -993,12 +992,7 @@ public class FinanceDataDefaulting {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
 	}
-
 }

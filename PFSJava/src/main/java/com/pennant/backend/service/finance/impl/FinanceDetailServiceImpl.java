@@ -64,7 +64,6 @@ import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
@@ -203,7 +202,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private AccountingSetDAO accountingSetDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountTypeDAO accountTypeDAO;
-	private CurrencyDAO currencyDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
 	private FinanceWriteoffDAO financeWriteoffDAO;
 	private IndicativeTermDetailDAO indicativeTermDetailDAO;
@@ -5447,7 +5445,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Customer Total Income & Expense Conversion
 			if (StringUtils.isNotBlank(customer.getCustBaseCcy())
 					&& !dftCcy.equals(customer.getCustBaseCcy())) {
-				finCurrency = getCurrencyDAO().getCurrencyById(customer.getCustBaseCcy(), "");
+				finCurrency = CurrencyUtil.getCurrencyObject(customer.getCustBaseCcy());
 				eligibilityCheck.setCustTotalIncome(calculateExchangeRate(customer.getCustTotalIncome(), finCurrency));
 				eligibilityCheck.setCustTotalExpense(calculateExchangeRate(customer.getCustTotalExpense(), finCurrency));
 			}
@@ -5469,7 +5467,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					if (finCurrency != null && finCurrency.getCcyCode().equals(finCcy)) {
 						eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
 					} else {
-						finCurrency = getCurrencyDAO().getCurrencyById(finCcy, "");
+						finCurrency = CurrencyUtil.getCurrencyObject(finCcy);
 						eligibilityCheck.setCurFinRepayAmt(calculateExchangeRate(curFinRpyAmount, finCurrency));
 					}
 				} else {
@@ -5922,12 +5920,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				} else {
 
-					Currency fCurrency = getCurrencyDAO().getCurrencyById(financeMain.getFinCcy(), "");
+					Currency fCurrency = CurrencyUtil.getCurrencyObject(financeMain.getFinCcy());
 					BigDecimal finAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
 
 					Currency lCurrency = null;
 					if (!StringUtils.trimToEmpty(customerLimit.getLimitCurrency()).equals(fCurrency.getCcyCode())) {
-						lCurrency = getCurrencyDAO().getCurrencyById(customerLimit.getLimitCurrency(), "");
+						lCurrency = CurrencyUtil.getCurrencyObject(customerLimit.getLimitCurrency());
 					} else {
 						lCurrency = fCurrency;
 					}
@@ -6002,7 +6000,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeMain.setAmountBD(PennantApplicationUtil.formateAmount(
 						financeMain.getFinAmount(),formatter));
 			} else {
-				Currency fCurrency = getCurrencyDAO().getCurrencyById(financeMain.getFinCcy(), "");
+				Currency fCurrency = CurrencyUtil.getCurrencyObject(financeMain.getFinCcy());
 				BigDecimal actualAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
 				financeMain.setAmountBD(actualAmount);
 			}
@@ -6012,7 +6010,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setAmountUSD(PennantApplicationUtil.formateAmount(
 					financeMain.getFinAmount(), formatter));
 		} else {
-			Currency fCurrency = getCurrencyDAO().getCurrencyById("USD", "");
+			Currency fCurrency = CurrencyUtil.getCurrencyObject("USD");
 			BigDecimal actualAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
 			financeMain.setAmountUSD(actualAmount);
 		}
@@ -6110,12 +6108,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					logger.debug("Leaving");
 				}
 
-				Currency lCurrency = null;
 				if (StringUtils.isNotBlank(limit.getLimitCurrency()) ){
 					if(!StringUtils.trimToEmpty(limit.getLimitCurrency()).equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
-						lCurrency = getCurrencyDAO().getCurrencyById(limit.getLimitCurrency(), "");
-						Currency fCurrency = getCurrencyDAO().getCurrencyById(
-								financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), "");
+						Currency lCurrency = CurrencyUtil.getCurrencyObject(limit.getLimitCurrency());
+						Currency fCurrency = CurrencyUtil
+								.getCurrencyObject(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
 						calcFinAmount = CalculationUtil.getConvertedAmount(fCurrency, lCurrency, finAmount);
 					}  else{
 						calcFinAmount = finAmount;
@@ -6173,7 +6170,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			aFinanceMain.setAmount(finAmount);
 		} else {
 			//Covert Amount into BHD Format 
-			Currency fCurrency = getCurrencyDAO().getCurrencyById(aFinanceMain.getFinCcy(), "");
+			Currency fCurrency = CurrencyUtil.getCurrencyObject(aFinanceMain.getFinCcy());
 			aFinanceMain.setAmount(finAmount.multiply(fCurrency.getCcySpotRate()));
 		}
 
@@ -7564,13 +7561,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
 		this.accountTypeDAO = accountTypeDAO;
-	}
-
-	public CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
-	}
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
 	}
 
 	public void setFinContributorHeaderDAO(FinContributorHeaderDAO finContributorHeaderDAO) {

@@ -24,7 +24,6 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -78,7 +77,6 @@ public class FinanceDataValidation {
 
 	private BaseRateDAO		baseRateDAO;
 	private SplRateDAO		splRateDAO;
-	private CurrencyDAO		currencyDAO;
 	private BranchDAO		branchDAO;
 	private FinanceTypeDAO	financeTypeDAO;
 	private CustomerDAO		customerDAO;
@@ -444,7 +442,7 @@ public class FinanceDataValidation {
 		}
 
 		//Validate Finance Currency
-		Currency currency = currencyDAO.getCurrencyById(finMain.getFinCcy(), "");
+		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 		if (currency == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinCcy();
@@ -1154,7 +1152,7 @@ public class FinanceDataValidation {
 		}
 
 		//Validate Finance Currency
-		Currency currency = currencyDAO.getCurrencyById(finMain.getFinCcy(), "");
+		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 		if (currency == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinCcy();
@@ -2875,10 +2873,6 @@ public class FinanceDataValidation {
 
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
-	}
-
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {

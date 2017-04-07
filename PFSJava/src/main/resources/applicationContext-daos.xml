@@ -4120,7 +4120,6 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="finContributorHeaderDAO" ref="finContributorHeaderDAO" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
@@ -4209,33 +4208,31 @@
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 	</bean>
-	
+
 	<!-- Finance Data Validation Service -->
 	<bean id="financeDataValidation"
 		class="com.pennant.backend.service.finance.impl.FinanceDataValidation">
 		<property name="baseRateDAO" ref="baseRateDAO" />
 		<property name="splRateDAO" ref="splRateDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="financeDetailService" ref="financeDetailService"/>
-		<property name="bankDetailService" ref="bankDetailService"/>
-		<property name="bankBranchService" ref="bankBranchService"/>
-		<property name="documentTypeService" ref="documentTypeService"/>
-		<property name="customerDetailsService" ref="customerDetailsService"/>
-		<property name="flagDAO" ref="flagDAO"/>
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="bankBranchService" ref="bankBranchService" />
+		<property name="documentTypeService" ref="documentTypeService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="flagDAO" ref="flagDAO" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
-		<property name="mandateService" ref="mandateService"/>
-		<property name="stepPolicyService" ref="stepPolicyService"/>
-		<property name="generalDepartmentService" ref="generalDepartmentService"/>
-		<property name="relationshipOfficerService" ref="relationshipOfficerService"/>
+		<property name="mandateService" ref="mandateService" />
+		<property name="stepPolicyService" ref="stepPolicyService" />
+		<property name="generalDepartmentService" ref="generalDepartmentService" />
+		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 	</bean>
-	
+
 	<!-- Finance Data Defaulting Service -->
 	<bean id="financeDataDefaulting"
 		class="com.pennant.backend.service.finance.impl.FinanceDataDefaulting">
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
