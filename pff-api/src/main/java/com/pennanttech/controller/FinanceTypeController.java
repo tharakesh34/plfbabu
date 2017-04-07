@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
+import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -32,6 +33,7 @@ public class FinanceTypeController {
 	private FinanceTypeService financeTypeService;
 	private StepPolicyService stepPolicyService;
 	private ProductDAO productDAO;
+	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	
 	
 	public FinanceTypeResponse getFinanceTypeDetails(FinanceTypeRequest finTypeRequest) {
@@ -101,7 +103,8 @@ public class FinanceTypeController {
 					response.setFinTypeFeesList(financeType.getFinTypeFeesList());
 				}
 			}
-			
+			response.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(finTypeRequest.getFinType(),"_View"));
+
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
 
@@ -224,5 +227,9 @@ public class FinanceTypeController {
 	
 	public void setProductDAO(ProductDAO productDAO) {
 		this.productDAO = productDAO;
+	}
+
+	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
+		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
 }

@@ -20,5 +20,5 @@ public interface VASSoapService {
 	public WSReturnStatus cancelVAS(VASRecording vasRecording) throws ServiceException;
 
 	@WebResult(name = "vasConfiguration")
-	public WSReturnStatus getRecordVAS(VASConfiguration vasConfiguration) throws ServiceException;
+	public VASRecording getRecordVAS(VASRecording vasRecording) throws ServiceException;
 }

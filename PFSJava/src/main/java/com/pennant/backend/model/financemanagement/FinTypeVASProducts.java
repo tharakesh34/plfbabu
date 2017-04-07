@@ -6,17 +6,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
-
+@XmlType(propOrder = { "vasProduct", "mandatory" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeVASProducts extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	private String 				finType;
+	@XmlElement
 	private String 				vasProduct;
 	private String				vasProductDesc;
+	@XmlElement
 	private boolean 			mandatory;
 	private String				mandatoryDesc;
 	private boolean 			newRecord = false;

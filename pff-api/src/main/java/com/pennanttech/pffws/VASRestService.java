@@ -27,6 +27,6 @@ public interface VASRestService {
 
 	@POST
 	@Path("/vasService/getRecordVAS")
-	public WSReturnStatus getRecordVAS(VASConfiguration vasConfiguration) throws ServiceException;
+	public VASRecording getRecordVAS(VASRecording vasRecording) throws ServiceException;
 	
 }

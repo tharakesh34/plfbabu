@@ -50,6 +50,9 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 			FinanceTypeResponse response = new FinanceTypeResponse();
 			if (count > 0) {
 				response = financeTypeController.getFinanceTypeDetails(finTypeReq);
+				response.setPromotionDesc(response.getFinTypeDesc());
+				response.setStartDate(response.getStartDate());
+				response.setEndDate(response.getEndDate());
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = finType;

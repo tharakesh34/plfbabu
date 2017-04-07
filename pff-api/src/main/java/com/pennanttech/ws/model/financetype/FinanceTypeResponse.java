@@ -2,6 +2,7 @@ package com.pennanttech.ws.model.financetype;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,11 +12,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rulefactory.FeeRule;
 
-@XmlType(propOrder = { "finType", "finTypeDesc", "basicDetail", "graceDetail", "repayDetail", "overdueDetail",
-		"overdueProfitDetail", "insurance", "feeRule","finTypeFeesList", "stepDetail", "promotions", "returnStatus" })
+@XmlType(propOrder = { "promotionDesc","startDate","endDate","finType", "finTypeDesc", "basicDetail", "graceDetail", "repayDetail", "overdueDetail",
+		"overdueProfitDetail", "insurance", "feeRule","finTypeFeesList", "stepDetail", "promotions","finTypeVASProductsList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceTypeResponse implements Serializable {
 
@@ -36,6 +38,10 @@ public class FinanceTypeResponse implements Serializable {
 	private Insurance insurance;
 	private FeeRule feeRule;
 	private StepDetail stepDetail;
+	private String promotionDesc;
+	private Date startDate;
+	private Date endDate;
+	
 	
 	@XmlElement(name="promotionDetail")
 	private List<PromotionType> promotions;
@@ -44,6 +50,9 @@ public class FinanceTypeResponse implements Serializable {
 	@XmlElement(name="fee")
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 
+	@XmlElementWrapper(name="vas")
+	@XmlElement(name="vas")
+	private List<FinTypeVASProducts> finTypeVASProductsList;
 	// Return status
 	private WSReturnStatus returnStatus;
 
@@ -149,5 +158,37 @@ public class FinanceTypeResponse implements Serializable {
 
 	public void setFinTypeFeesList(List<FinTypeFees> finTypeFeesList) {
 		this.finTypeFeesList = finTypeFeesList;
+	}
+
+	public String getPromotionDesc() {
+		return promotionDesc;
+	}
+
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public List<FinTypeVASProducts> getFinTypeVASProductsList() {
+		return finTypeVASProductsList;
+	}
+
+	public void setFinTypeVASProductsList(List<FinTypeVASProducts> finTypeVASProductsList) {
+		this.finTypeVASProductsList = finTypeVASProductsList;
 	}
 }
