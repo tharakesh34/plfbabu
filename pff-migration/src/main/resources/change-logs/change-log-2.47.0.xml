@@ -20,5 +20,9 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-
+<changeSet id="1" author="Madhubabu">
+<sql>
+	Delete From smtparameters where sysparmcode = 'AHB_DOWNPAY_AC';
+</sql>
+</changeSet>
 </databaseChangeLog>
