@@ -351,6 +351,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering");
+		doClearMessage();
+		this.finReference.setErrorMessage("");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them
 		 * with a object of the selected item. For handed over these parameter
