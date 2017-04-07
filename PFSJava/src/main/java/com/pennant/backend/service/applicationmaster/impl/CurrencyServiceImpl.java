@@ -127,8 +127,12 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			getCurrencyDAO().update(currency,tableType);
 		}
 
-		CurrencyUtil.setCurrencyDetails(currency.getCcyCode(), currency);
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		if (StringUtils.isEmpty(tableType)) {
+			CurrencyUtil.register(currency, PennantConstants.TRAN_UPD);
+		}
+		
 		logger.debug("Leaving ");
 		return auditHeader;
 
@@ -160,6 +164,9 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		getCurrencyDAO().delete(currency,"");
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
+
+		CurrencyUtil.register(currency, PennantConstants.TRAN_DEL);
+
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
@@ -251,6 +258,9 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(currency);
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		CurrencyUtil.register(currency, tranType);
+		
 		logger.debug("Leaving ");
 		return auditHeader;
 	}

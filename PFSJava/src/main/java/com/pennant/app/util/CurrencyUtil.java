@@ -44,12 +44,12 @@ package com.pennant.app.util;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -57,10 +57,10 @@ import com.pennanttech.pff.core.Literal;
  * system.
  */
 public class CurrencyUtil {
-	private static final Logger					logger				= Logger.getLogger(CurrencyUtil.class);
+	private static final Logger					logger		= Logger.getLogger(CurrencyUtil.class);
 
 	private static CurrencyDAO					currencyDAO;
-	private static HashMap<String, Currency>	currrecnyDetails	= null;
+	private static HashMap<String, Currency>	currencies	= new HashMap<>();
 
 	/**
 	 * Initialize the currency map with the list of currencies that are available in the system.
@@ -68,22 +68,22 @@ public class CurrencyUtil {
 	public static void init() {
 		logger.info(Literal.ENTERING);
 
-		List<Currency> currencies = currencyDAO.getCurrencyList();
-
-		currrecnyDetails = new HashMap<>(currencies.size());
-		for (int i = 0; i < currencies.size(); i++) {
-			currrecnyDetails.put(currencies.get(i).getCcyCode(), currencies.get(i));
+		for (Currency currency : currencyDAO.getCurrencyList()) {
+			currencies.put(currency.getCcyCode(), currency);
 		}
 
 		logger.info(Literal.LEAVING);
 	}
 
-	public static void setCurrencyDetails(String code, Currency currency) {
+	public static void register(Currency currency, String type) {
 		logger.debug("Entering");
-		if (currrecnyDetails != null) {
-			currrecnyDetails.remove(code);
-			currrecnyDetails.put(code, currency);
+
+		if (PennantConstants.TRAN_DEL.equals(type)) {
+			currencies.remove(currency.getCcyCode());
+		} else {
+			currencies.put(currency.getCcyCode(), currency);
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -94,7 +94,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static Currency getCurrencyObject(String ccy) {
-		return currrecnyDetails.get(ccy);
+		return currencies.get(ccy);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class CurrencyUtil {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
-		Currency currecny = currrecnyDetails.get(ccy);
+		Currency currecny = currencies.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcyEditField();
 		}
@@ -128,7 +128,7 @@ public class CurrencyUtil {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
-		Currency currecny = currrecnyDetails.get(ccy);
+		Currency currecny = currencies.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcyDesc();
 		}
@@ -142,7 +142,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static String getCcyNumber(String ccy) {
-		Currency currecny = currrecnyDetails.get(ccy);
+		Currency currecny = currencies.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcyNumber();
 		}
@@ -156,7 +156,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal getExChangeRate(String ccy) {
-		Currency currecny = currrecnyDetails.get(ccy);
+		Currency currecny = currencies.get(ccy);
 		if (currecny != null) {
 			return currecny.getCcySpotRate();
 		}
