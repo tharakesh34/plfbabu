@@ -868,6 +868,12 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 <changeSet id="44" author="DurgaPrasad G">
 		<dropColumn columnName="XMLFIELD" tableName="DATA_ENGINE_TABLE" />
 </changeSet>
+<changeSet id="45" author="satish">
+<sql>
+delete from SMTHolidayMaster;
+delete from SMTWeekendMaster;
 
+</sql>
+</changeSet>
 
 </databaseChangeLog>
