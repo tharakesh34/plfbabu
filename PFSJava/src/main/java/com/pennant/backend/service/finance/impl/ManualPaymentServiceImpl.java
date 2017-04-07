@@ -1395,6 +1395,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		String moduleDefiner = finServiceInst.getModuleDefiner();
 
 		repayData.setFinReference(finServiceInst.getFinReference());
+		
+		// calculate repayments
+		repayData = calculateRepayments(repayData,financeDetail, finServiceInst, false, null);
+
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			Cloner cloner = new Cloner();
 			List<FinanceScheduleDetail> finschDetailList = cloner.deepClone(finScheduleData.getFinanceScheduleDetails());
@@ -1405,9 +1409,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
-		// calculate repayments
-		repayData = calculateRepayments(repayData,financeDetail, finServiceInst, false, null);
-
 		if(repayData != null) {
 			repayData.setFinReference(financeDetail.getFinReference());
 			repayData.setFinanceDetail(financeDetail);

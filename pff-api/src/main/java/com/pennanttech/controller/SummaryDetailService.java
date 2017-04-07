@@ -59,7 +59,7 @@ public class SummaryDetailService {
 				// Total future Installments
 				int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 				summary.setFutureInst(futureInst);
-				summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getLastRpySchDate(),
+				summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNextRpySchDate(),
 						finPftDetail.getMaturityDate()));
 				summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
 				summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());

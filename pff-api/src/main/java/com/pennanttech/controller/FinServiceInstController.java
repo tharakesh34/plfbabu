@@ -17,6 +17,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
@@ -50,6 +51,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -63,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.Insurance;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -72,7 +75,6 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -1222,7 +1224,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws PFFInterfaceException
 	 */
 	@SuppressWarnings("unchecked")
-	private FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst) throws 
+	public FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst) throws 
 	IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 		
@@ -1318,8 +1320,36 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 			boolean isRIAFinance = false;
 			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinPftDetailForBatch(financeMain.getFinReference());
+			Date valuedate=finServiceInst.getFromDate();
+			
+			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
+			AEAmounts.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
+			BigDecimal totPriPayNow = BigDecimal.ZERO;
+			BigDecimal totPftPayNow = BigDecimal.ZERO;
+			BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
+			for(RepayScheduleDetail repayShdData: repaySchdList) {
+				totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
+				totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
+			}
+			totPftPayNow = totPftPayNow.add(tempPftDetail.getTdPftAmortized().subtract(tempPftDetail.getTdSchdPftPaid()));
+			
+			// fore closure details
+			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>(); 
+			ForeClosure foreClosure = new ForeClosure();
+			foreClosure.setValueDate(finServiceInst.getFromDate());
+			foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
+			foreClosure.setAccuredIntTillDate(totPftPayNow);
+			foreClosureList.add(foreClosure);
+			
+			// penalty details
+			List<FinODDetails> finODDetailList = new ArrayList<FinODDetails>();
+			FinODDetails finoDetail = new FinODDetails();
+			finoDetail.setFinCurODAmt(totPenaltyPayNow);
+			finODDetailList.add(finoDetail);
+			
+			
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), isRIAFinance, repayData.getEventCodeRef(),
 					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
@@ -1328,12 +1358,6 @@ public class FinServiceInstController extends SummaryDetailService {
 				String errParm = (String) returnList.get(1);
 				throw new PFFInterfaceException("9999", errParm);
 			}
-
-			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
-			long linkedTranId = (Long) returnList.get(1);
-			boolean partialPay = (Boolean) returnList.get(2);
-			AEAmountCodes aeAmountCodes = (AEAmountCodes) returnList.get(3);
-			finRepayQueues = (List<FinRepayQueue>) returnList.get(5);
 
 			financeMain.setRecordType("");
 
@@ -1345,15 +1369,13 @@ public class FinServiceInstController extends SummaryDetailService {
 			entryDetail.setPostDate(DateUtility.getAppDate());
 			entryDetail.setReversalCompleted(false);
 
-			//Repayment Postings Details Process
-			returnList = repayPostingUtil.UpdateScreenPaymentsProcess(financeMain,
-					scheduleData.getFinanceScheduleDetails(), profitDetail, finRepayQueues, linkedTranId, partialPay,
-					isRIAFinance, aeAmountCodes);
-
 			// ScheduleDetails delete and save
 			//=======================================
 			scheduleData.setFinanceScheduleDetails((List<FinanceScheduleDetail>) returnList.get(4));
 			financeDetail = getServiceInstResponse(scheduleData);
+			
+			financeDetail.setForeClosureDetails(foreClosureList);
+			financeDetail.getFinScheduleData().setFinODDetails(finODDetailList);
 		}
 
 		logger.debug("Leaving");

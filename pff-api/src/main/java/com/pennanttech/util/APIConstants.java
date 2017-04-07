@@ -33,5 +33,6 @@ public class APIConstants {
 	public static final String STMT_ACCOUNT = "STMTACC";
 	public static final String STMT_REPAY_SCHD = "REPYSCHD";
 	public static final String STMT_NOC = "NOC";
+	public static final String STMT_FORECLOSURE = "FORECLOSURE";
 	
 }

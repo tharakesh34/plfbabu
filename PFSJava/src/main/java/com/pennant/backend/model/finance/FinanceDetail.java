@@ -81,10 +81,10 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 
-@XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "customerDetails",
+@XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData","foreClosureDetails", "customerDetails",
 		"advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList", "documentDetailsList",
 		"covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails", "returnDataSetList",
-		"collateralSetup", "returnStatus" })
+		"collateralSetup",  "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -235,7 +235,12 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name="collateralDetail")
 	private List<CollateralSetup> collateralSetup;
 	
-   public FinanceDetail() {
+	// API Foreclosure letter statement purpose
+	@XmlElementWrapper(name="foreClosures")
+	@XmlElement(name="foreClosure")
+	private List<ForeClosure> foreClosureDetails;
+
+	public FinanceDetail() {
 		
 	}
 	
@@ -839,6 +844,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setCollateralSetup(List<CollateralSetup> collateralSetup) {
 		this.collateralSetup = collateralSetup;
+	}
+
+	public List<ForeClosure> getForeClosureDetails() {
+		return foreClosureDetails;
+	}
+
+	public void setForeClosureDetails(List<ForeClosure> foreClosureDetails) {
+		this.foreClosureDetails = foreClosureDetails;
 	}
 
 }

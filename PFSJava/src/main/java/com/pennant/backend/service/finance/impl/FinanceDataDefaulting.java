@@ -374,7 +374,7 @@ public class FinanceDataDefaulting {
 			}
 		}
 
-		Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "'");
+		Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
 		if (branch != null) {
 			finMain.setSwiftBranchCode(branch.getBranchSwiftBrnCde());
 		}

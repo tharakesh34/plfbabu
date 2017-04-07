@@ -129,31 +129,72 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug("Enetring");
 		// service level validations
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
-		if (StringUtils.isBlank(statementRequest.getFinReference())) {
+
+		String finReference = statementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
 		} else {
-			int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference(), "", false);
+			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
 			if (count <= 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = statementRequest.getFinReference();
+				valueParm[0] = finReference;
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return finStatementResponse;
+			}
+		}
+
+		// call controller to get NOC details 
+		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
+
+		logger.debug("Leaving");
+		return response;
+	}
+
+	/**
+	 * Method to fetch fore-closure letter for specific finance.<br>
+	 * 	- Provide fore-closure details for max allowed days of 7.
+	 * 
+	 * @param statementRequest
+	 * @return FinStatementResponse
+	 */
+	@Override
+	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug("Enetring");
+		
+		FinStatementResponse finStatementResponse = new FinStatementResponse();
+		
+		String finReference = statementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return finStatementResponse;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return finStatementResponse;
 			}
 		}
 		
-		List<String> finReferences = getFinanceReferences(statementRequest);
-		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_NOC);
+		if(statementRequest.getDays() <= 0 || statementRequest.getDays() > 7) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Days";
+			valueParm[1] = "1";
+			valueParm[2] = "7";
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90318", valueParm));
+			return finStatementResponse;
+		}
+		
+		// call controller to get fore-closure letter 
+		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
 		logger.debug("Leaving");
 		return response;
-	}
-
-	@Override
-	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException {
-		
-		return null;
 	}
 	/**
 	 * get the List of FinReferences Based on the CustID.

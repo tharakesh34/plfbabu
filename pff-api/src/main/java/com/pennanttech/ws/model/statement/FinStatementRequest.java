@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinStatementRequest {
+	
 	@XmlElement
 	private String	cif;
 	@XmlElement

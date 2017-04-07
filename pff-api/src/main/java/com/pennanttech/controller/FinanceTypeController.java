@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.model.bmtmasters.Product;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -95,14 +94,12 @@ public class FinanceTypeController {
 				BeanUtils.copyProperties(financeType, stepDetail);
 				response.setStepDetail(stepDetail);
 			}
+			
 			// prepare FinanceType Fee details
 			if (finTypeRequest.isFeeReq()) {
-				List<FinTypeFees> feeDetail = new ArrayList<>();
-				if (financeType.getFinTypeFeesList() != null)
-					for (FinTypeFees finTypeFees : financeType.getFinTypeFeesList()) {
-						feeDetail.add(finTypeFees);
-					}
-				response.setFinTypeFeesList(feeDetail);
+				if (financeType.getFinTypeFeesList() != null) {
+					response.setFinTypeFeesList(financeType.getFinTypeFeesList());
+				}
 			}
 			
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
