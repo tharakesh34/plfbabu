@@ -64,6 +64,7 @@ public class PoliceCaseDetail extends AbstractWorkflowEntity {
 		excludeFields.add("likeCustFName");
 		excludeFields.add("likeCustMName");
 		excludeFields.add("likeCustLName");
+		excludeFields.add("override");
 		return excludeFields;
 	}
 	
