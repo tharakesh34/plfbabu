@@ -262,7 +262,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		
 		StringBuilder selectSql = new StringBuilder("Select * FROM  LMTFINREFDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent ");
+		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent and ISACTIVE = 1 ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
