@@ -884,4 +884,14 @@ update reportlist set formatreq='0' where code='ReturnedChequeDetails';
 		INSERT INTO ErrorDetails VALUES('60203','EN','E','Customer Records in EOD execution process. Not allowed to Maintain this Customer Record.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
+<changeSet id="49"  author="pruthvi" >
+<sql>
+INSERT INTO ReportList  VALUES 
+(N'SponsorBank', N'SponsorBank', 
+N'listheader_SponsorBankCode.label,listheader_SponsorBankName.label,listheader_BankBranchCode.label,listheader_RecordStatus.label,listheader_RecordType.label', 
+N'sponsorBankCode,sponsorBankName,bankBranchCode,recordStatus,recordType', 
+N'String,String,String,String,String', N'', N'ReportList05', N'Sponsor Bank', N'Application Masters', 3, 1001, CURRENT_TIMESTAMP, 
+N'Approved', N'', N'', N'', N'', N'', 0, 0);
+</sql>
+</changeSet>
 </databaseChangeLog>
