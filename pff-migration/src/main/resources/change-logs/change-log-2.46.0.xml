@@ -749,8 +749,7 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 			baseTableName="Disbursement_Payment_Details" baseColumnNames="HeaderID" />
 </changeSet>
 
- </databaseChangeLog>
-	
+
 <changeSet id="34" author="DurgaPrasad G" dbms="oracle">	
    		<sql splitStatements="false">
      		 begin
