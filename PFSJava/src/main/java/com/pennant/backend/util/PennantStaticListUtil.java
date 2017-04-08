@@ -1626,8 +1626,8 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_UNPLANEMIH,Labels.getLabel("label_FinSerEvent_UnPlanEmiHolidays")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RESCHD,Labels.getLabel("label_FinSerEvent_ReSchedule")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CHGGRCEND,Labels.getLabel("label_FinSerEvent_ChangeGestation")));
-			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ADVRPY,Labels.getLabel("label_FinSerEvent_SchdlRepayment")));
-			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,Labels.getLabel("label_FinSerEvent_SchdlRepayment")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE,Labels.getLabel("label_FinSerEvent_EarlySettlement")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_WRITEOFF,Labels.getLabel("label_FinSerEvent_WriteOff")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_WRITEOFFPAY,Labels.getLabel("label_FinSerEvent_WriteOffPay")));

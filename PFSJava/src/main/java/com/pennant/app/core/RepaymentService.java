@@ -214,7 +214,7 @@ public class RepaymentService extends ServiceHelper {
 		 */
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 		entryDetail.setFinReference(finMain.getFinReference());
-		entryDetail.setEventAction(FinanceConstants.FINSER_EVENT_ADVRPY);
+		entryDetail.setEventAction(FinanceConstants.FINSER_EVENT_SCHDRPY);
 		entryDetail.setSchdlRecal(false);
 		entryDetail.setPostDate(date);
 		entryDetail.setReversalCompleted(false);

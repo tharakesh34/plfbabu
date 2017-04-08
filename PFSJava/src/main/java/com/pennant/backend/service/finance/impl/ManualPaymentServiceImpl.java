@@ -869,7 +869,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_EARLYSTLMNT);
 			narration = "Early Settlement";
 		} else if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
-				FinanceConstants.FINSER_EVENT_SCHDRPY)) {//Partial Settlement
+				FinanceConstants.FINSER_EVENT_EARLYRPY)) {//Partial Settlement
 			if (StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_NOEFCT)
 					|| StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_RECRPY)
 					|| StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_RECPFI)) {
@@ -886,7 +886,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				narration = "Tenure Reduction";
 			}
 		} else if (StringUtils
-				.equals(repayData.getFinRepayHeader().getFinEvent(), FinanceConstants.FINSER_EVENT_ADVRPY)) {
+				.equals(repayData.getFinRepayHeader().getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_RESCHDPAY);
 			narration = "ReSchedule";
 		}
@@ -1440,8 +1440,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData.setBuildProcess("R");
 		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADVRPY)) {
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
+				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
 		} else {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
@@ -1680,8 +1680,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				valueParm[1] = "Application Date "+DateUtility.formatToShortDate(DateUtility.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), lang));
 			}
-		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_ADVRPY)
-				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			if(finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Amount:"+finServiceInstruction.getAmount();

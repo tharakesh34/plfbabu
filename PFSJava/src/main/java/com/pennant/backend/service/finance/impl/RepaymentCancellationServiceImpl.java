@@ -457,7 +457,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 					repayment.getLinkedTranId(), "");
 			String finEventCode = "";
 			if (repayHeader == null) {
-				finEventCode = FinanceConstants.FINSER_EVENT_SCHDRPY;
+				finEventCode = FinanceConstants.FINSER_EVENT_EARLYRPY;
 			} else {
 				finEventCode = repayHeader.getFinEvent();
 			}
@@ -482,7 +482,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 				detail = new FinLogEntryDetail();
 				detail.setFinReference(finReference);
-				detail.setEventAction(FinanceConstants.FINSER_EVENT_SCHDRPY);
+				detail.setEventAction(FinanceConstants.FINSER_EVENT_EARLYRPY);
 				detail.setSchdlRecal(false);
 				detail.setPostDate(curBDay);
 				detail.setReversalCompleted(false);

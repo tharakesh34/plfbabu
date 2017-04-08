@@ -1169,7 +1169,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_EARLYPAY);
-		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
 
 		FinanceDetail response = null;
 		try {
@@ -1196,7 +1196,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_REPAY);
-		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADVRPY);
+		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
 
 		FinanceDetail response = null;
 		try {
@@ -1250,11 +1250,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		repayData.setRepayMain(repayData.getRepayMain());
 
 		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
-		if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADVRPY)) {
+		if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			finEvent = AccountEventConstants.ACCEVENT_REPAY;
 			
 			aFinanceDetail = financeDetail;
-		} else if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		} else if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			finEvent = AccountEventConstants.ACCEVENT_EARLYPAY;
 			if(!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
 				repayData = manualPaymentService.setEarlyRepayEffectOnSchedule(repayData, finServiceInst);

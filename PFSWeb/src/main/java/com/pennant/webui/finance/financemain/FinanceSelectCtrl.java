@@ -959,9 +959,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND GrcPeriodEndDate >= '" + appDate+"' " );
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COMPOUND)){
 			whereClause.append(" AND (ProductCategory = '"+FinanceConstants.PRODUCT_SUKUK +"')"); 
-		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)){
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
-		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADVRPY)){
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
@@ -1075,8 +1075,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 		}
 		
-		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) && 
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADVRPY) && 
+		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) && 
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && 
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF) &&
@@ -1089,8 +1089,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			openFinanceMainDialog(item);
 			
-		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) || 
-				moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADVRPY) ||
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) || 
+				moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) ||
 				moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) || 
 				moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			
@@ -2203,16 +2203,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_COMPOUND;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_COMPOUND;
 					workflowCode =  FinanceConstants.FINSER_EVENT_COMPOUND;
-				}else if("tab_SchdlRepayment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+				}else if("tab_PartialSettlement".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_EARLYPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
-					workflowCode =  FinanceConstants.FINSER_EVENT_SCHDRPY;
-				}else if("tab_AdvRepayment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_ADVRPY;
+					workflowCode =  FinanceConstants.FINSER_EVENT_EARLYRPY;
+				}else if("tab_SchdRepayment".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_REPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
-					workflowCode =  FinanceConstants.FINSER_EVENT_ADVRPY;
+					workflowCode =  FinanceConstants.FINSER_EVENT_SCHDRPY;
 				}else if("tab_EarlySettlement".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_EARLYSTL;

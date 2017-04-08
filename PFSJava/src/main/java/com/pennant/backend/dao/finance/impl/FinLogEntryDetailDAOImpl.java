@@ -77,7 +77,7 @@ public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
 		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
 		finLogEntryDetail.setFinReference(finReference);
 		finLogEntryDetail.setPostDate(postDate);
-		finLogEntryDetail.setEventAction(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		finLogEntryDetail.setEventAction(FinanceConstants.FINSER_EVENT_EARLYRPY);
 		
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted ");

@@ -944,7 +944,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
 		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
 
 		// validate fees
@@ -1008,7 +1008,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_ADVRPY;
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
 		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
 
 		// validate fees
