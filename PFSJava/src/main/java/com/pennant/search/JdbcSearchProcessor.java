@@ -21,7 +21,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -160,7 +159,7 @@ public class JdbcSearchProcessor {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public String getQuery(ISearch search) throws DataAccessException {
+	public String getQuery(ISearch search) {
 
 		if (search == null || StringUtils.isBlank(search.getTabelName())) {
 			return null;
@@ -267,7 +266,7 @@ public class JdbcSearchProcessor {
 	 * 
 	 * @see ISearch
 	 */
-	public int count(DataSource dataSource, ISearch search) {
+	public int count(ISearch search) {
 		return search == null ? 0 : count(search.getSearchClass(), search);
 	}
 

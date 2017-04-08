@@ -69,7 +69,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 	}
 
 	public int count(ISearch search) {
-		return jdbcSearchProcessor.count(dataSource, search);
+		return jdbcSearchProcessor.count(search);
 	}
 
 	@SuppressWarnings("unchecked")
