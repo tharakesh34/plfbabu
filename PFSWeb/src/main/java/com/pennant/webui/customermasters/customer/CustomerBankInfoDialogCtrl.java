@@ -853,14 +853,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		valueParm[1] = aCustomerBankInfo.getAccountNumber();
 		
 		errParm[0] = PennantJavaUtil.getLabel("label_CustomerBankInfoDialog_CustID.value") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CustBank")+ ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("listheader_CustomerBankInfo_AccountNumber.label")+ ":" + valueParm[1];
 		
 		if(getCustomerDialogCtrl().getCustomerBankInfoDetailList()!=null && getCustomerDialogCtrl().getCustomerBankInfoDetailList().size()>0){
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerBankInfoDetailList().size(); i++) {
 				CustomerBankInfo customerBankInfo = getCustomerDialogCtrl().getCustomerBankInfoDetailList().get(i);
 				
 				
-				if(aCustomerBankInfo.getAccountNumber().equals(customerBankInfo.getAccountNumber())){ // Both Current and Existing list rating same
+				if(aCustomerBankInfo.getAccountNumber().equals(customerBankInfo.getAccountNumber())
+						&& aCustomerBankInfo.getBankName().equals(customerBankInfo.getBankName())){ 
+					// Both Current and Existing list rating same
 					
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
