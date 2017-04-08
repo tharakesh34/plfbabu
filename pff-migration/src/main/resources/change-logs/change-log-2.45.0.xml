@@ -53,7 +53,7 @@ update FinScheduleDetails_Log set SchPriPaid = 0 where SchPriPaid is null;
 create table sai_temp as select * from FinScheduleDetails_Log;
 update FinScheduleDetails_Log set SchPriPaid = null;
 alter table FinScheduleDetails_Log modify SchPriPaid number(1);
-update FinScheduleDetails_Log m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ);
+update FinScheduleDetails_Log m set (m.SchPriPaid) = (select t.SchPriPaid from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ  and t.logkey=m.logkey) where exists (select 1 from sai_temp t where t.FINREFERENCE = m.FINREFERENCE and t.SCHDATE=m.SCHDATE and t.SCHSEQ=m.SCHSEQ and t.logkey=m.logkey);
 alter table FinScheduleDetails_Log modify SchPriPaid number(1) not null;
 drop table sai_temp;
 
