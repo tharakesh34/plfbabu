@@ -103,6 +103,9 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 					remarks.append(successCount + ".");
 				}
 				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
+			} else {
+				remarks.append("No records found for the selected configuration.");
+				updateBatchStatus(ExecutionStatus.F.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);

@@ -44,7 +44,6 @@ public class ControlDumpRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
-		long keyValue = 0;
 		long fileId;
 		try {
 			
@@ -71,10 +70,10 @@ public class ControlDumpRequest extends DBProcessEngine {
 					saveData(resultSet);
 					
 					successCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -306,7 +305,7 @@ public class ControlDumpRequest extends DBProcessEngine {
 		logger.debug("Leaving");
 	}
 	
-	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
+	private void saveBatchLog(int seqNo, long fileId, int ref, String category, String status, String remarks, Date valueDate) throws Exception {
 		
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
@@ -315,7 +314,7 @@ public class ControlDumpRequest extends DBProcessEngine {
 			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
 			source.addValue("SEQNO", Long.valueOf(seqNo));
 			source.addValue("FILEID", fileId);
-			source.addValue("REFID1", ref);
+			source.addValue("REFID1", Long.valueOf(ref));
 			source.addValue("CATEGORY", category);
 			source.addValue("STATUS", status);
 			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
