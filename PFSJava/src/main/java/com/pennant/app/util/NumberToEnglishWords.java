@@ -116,11 +116,11 @@ public class NumberToEnglishWords {
 		int decPos = amount.toPlainString().lastIndexOf("."); 
 		int ccyDecPos = 0;
 		if(StringUtils.isNotEmpty(ccyCode.trim())){
-			Currency currency=getCurrencyDAO().getCurrencyById(ccyCode, "_view");
+			Currency currency = CurrencyUtil.getCurrencyObject(ccyCode);
 			if(currency!=null){
 				/*	if minor currency is more than zero and  minor currency Description is not null in Currency table */
 				if(currency.getCcyMinorCcyDesc()!=null &&(decPos>0)){
-					minorCcyDesc=currency. getCcyMinorCcyDesc();
+					minorCcyDesc=currency.getCcyMinorCcyDesc();
 				}
 				/*if Currency symbol is not null in Currency table*/
 				if(currency.getCcySymbol()!=null ){
