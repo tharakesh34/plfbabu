@@ -495,7 +495,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			listChartSetElement.add(chartSetElement);
 			chartSetElement=new ChartSetElement("Capitalized",capitalized);
 			listChartSetElement.add(chartSetElement);
-			chartSetElement=new ChartSetElement("ScheduleProfit",scheduleProfit);
+			chartSetElement=new ChartSetElement("Schedule interest",scheduleProfit);
 			listChartSetElement.add(chartSetElement);
 			chartSetElement=new ChartSetElement("SchedulePrincipal",schedulePrincipal);
 			listChartSetElement.add(chartSetElement);
