@@ -265,5 +265,32 @@ FROM    	Mandates  T1 INNER JOIN
 	Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
 </createView>
 </changeSet>
-	
+
+
+<changeSet id="12" author="DurgaPrasad G">
+	<dropTable tableName="ALM" />
+</changeSet>
+
+<changeSet id="13" author="DurgaPrasad G">
+<createTable tableName="ALM">
+			<column name="AGREEMENTID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPA_STAGEID" type="varchar(12)"/>
+			<column name="INSTLAMT" type="NUMBER (16,2)"/>
+			<column name="PRINCOMP" type="NUMBER (16,2)"/>
+			<column name="INTCOMP" type="NUMBER (16,2)"/>
+			<column name="DUEDATE" type="datetime" />
+			<column name="ACCRUEDAMT" type="NUMBER (16,2)"/>
+			<column name="ACCRUEDON" type="datetime" />
+			<column name="CUMULATIVE_ACCRUAL_AMT" type="NUMBER (16,2)"/>
+			<column name="ADVFLAG" type="char(1)"/>
+</createTable>
+</changeSet>
 </databaseChangeLog>
