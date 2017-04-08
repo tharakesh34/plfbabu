@@ -367,4 +367,27 @@ FROM    	Mandates  T1 INNER JOIN
 
 </createView>
 </changeSet>
+
+<changeSet id="18" author="DurgaPrasad G">
+	<createTable tableName="PSX_UCIN_REVERSE_FEED">
+				<column name="CUSTOMER_NO" type="int"/>
+				<column name="DATASOURCE" type="varchar(3)"/>
+				<column name="UCIN_NO" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="SEGMENT" type="varchar(5)">
+					<constraints nullable="false" />
+				</column>
+				<column name="BATCH_ID" type="varchar(12)"/>
+				<column name="BASE_TYPE_FLAG" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="PSX_BATCH_ID" type="bigint" />
+				<column name="PROCESSED_FLAG" type="char(1)">
+					<constraints nullable="false" />
+				</column>
+				<column name="CUSTOMER_ID"  type="varchar(20)" />
+				<column name="SOURCE_SYS_ID" type="int"/>
+	</createTable>
+</changeSet>
 </databaseChangeLog>
