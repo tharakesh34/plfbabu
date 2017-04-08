@@ -370,11 +370,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		
 		boolean isValidDate = true;
+		Date maturityDate = finMain.getMaturityDate();
 		try {
 
 			// Closing Balance Maturity Date
 			int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
-			Date maturityDate = finMain.getMaturityDate();
 			if(!isOverdraft){
 				for (int i = sdSize -1; i > 0; i--) {
 					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
@@ -640,8 +640,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			aFinScheduleData.setDisbursementDetails(list);
 		}
 
-		aFinScheduleData.getFinanceMain().setEventToDate(finMain.getMaturityDate());
-		finServiceInstruction.setToDate(finMain.getMaturityDate());
+		aFinScheduleData.getFinanceMain().setEventToDate(maturityDate);
+		finServiceInstruction.setToDate(maturityDate);
 		
 		finMain.setCurDisbursementAmt(finServiceInstruction.getAmount());
 		BigDecimal addingFeeToFinance = BigDecimal.ZERO;
@@ -654,11 +654,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finMain.setEventFromDate(this.fromDate.getValue());
 			finMain.setRecalFromDate(this.fromDate.getValue());
-			finMain.setRecalToDate(finMain.getMaturityDate());
+			finMain.setRecalToDate(maturityDate);
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finServiceInstruction.setFromDate(this.fromDate.getValue());
 			finServiceInstruction.setRecalFromDate(this.fromDate.getValue());
-			finServiceInstruction.setRecalToDate(finMain.getMaturityDate());
+			finServiceInstruction.setRecalToDate(maturityDate);
 		}
 		
 		finServiceInstruction.setFinReference(finMain.getFinReference());
@@ -672,9 +672,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADDRECAL)) {
 				Date fromDate = (Date) this.cbFromDate.getSelectedItem().getValue();
 				finMain.setRecalFromDate(fromDate);
-				finMain.setRecalToDate(finMain.getMaturityDate());
+				finMain.setRecalToDate(maturityDate);
 				finServiceInstruction.setRecalFromDate(fromDate);
-				finServiceInstruction.setRecalToDate(finMain.getMaturityDate());
+				finServiceInstruction.setRecalToDate(maturityDate);
 			} else if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 				finMain.setRecalFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
 				finMain.setRecalToDate((Date) this.cbTillDate.getSelectedItem().getValue());

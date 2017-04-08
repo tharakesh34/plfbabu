@@ -1104,6 +1104,16 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				}
 			}
 		}
+		
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
+
+		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+		if(eodProgressCount > 0){
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+		}
+
 		FinWriteoffPayment finWriteoffPay = financeDetail.getFinwriteoffPayment();
 		if(finWriteoffPay!=null){
 			//Save Finance WriteOff Details

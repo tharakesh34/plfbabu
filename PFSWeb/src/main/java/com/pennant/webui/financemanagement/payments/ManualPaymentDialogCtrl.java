@@ -107,6 +107,7 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountEngineExecutionRIA;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ReportGenerationUtil;
@@ -127,6 +128,7 @@ import com.pennant.backend.model.finance.EarlySettlementReportData;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1245,7 +1247,20 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, repayData.getRepayMain()
 					.getEarlyPayOnSchDate(), repayData.getRepayMain().getEarlyPayNextSchDate(), repayData
 					.getRepayMain().getEarlyPayAmount(), method);
-
+			
+			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
+			List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
+			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
+			for (int i = 0; i < disbList.size(); i++) {
+				FinanceDisbursement curDisb = disbList.get(i);
+				if(curDisb.getDisbDate().compareTo(actualMaturity) >= 0){
+					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+					Events.sendEvent(Events.ON_CLICK, this.btnChangeRepay, null);
+					logger.debug("Leaving");
+					return;
+				}
+			}
+			
 			financeDetail.setFinScheduleData(finScheduleData);
 			aFinanceMain = finScheduleData.getFinanceMain();
 			aFinanceMain.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
@@ -2953,6 +2968,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
 					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0){
+						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
 					
@@ -2977,7 +2993,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					return false;
 				}else if(closingBal != null){
 					BigDecimal payAmount = PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(), formatter);
-					if(payAmount.compareTo(closingBal) >= 0){
+					if(payAmount.compareTo(closingBal) > 0){
 						MessageUtil.showErrorMessage(Labels.getLabel(
 								"FIELD_IS_EQUAL_OR_LESSER",
 								new String[] {
@@ -2997,8 +3013,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 												this.totPriDue.getValue(), formatter), formatter) }));
 						return false;
 					}
-					
-
 				}
 			}
 

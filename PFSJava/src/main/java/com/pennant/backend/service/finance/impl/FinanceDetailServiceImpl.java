@@ -4814,6 +4814,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 		}
+		
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, financeMain.getRecordType())) {
+			int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
+
+			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+			if(eodProgressCount > 0){
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+						PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+			}
+		}
 
 		if(auditDetail.getErrorDetails() == null || auditDetail.getErrorDetails().isEmpty()){
 			if (!isWIF && !method.equals(PennantConstants.method_doReject) && 
@@ -7487,7 +7498,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<String> getUsersLoginList(List<String> nextRoleCodes){
 		return getFinanceMainDAO().getUsersLoginList(nextRoleCodes);
 	}
-	
+
+	// ******************************************************//
+	// *************** EOD PROCESS Details ******************//
+	// ******************************************************//
+
+	@Override
+	public int getProgressCountByCust(long custID) {
+		return getCustomerQueuingDAO().getProgressCountByCust(custID);
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -7794,7 +7813,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public FinTypeVASProductsDAO getFinTypeVASProductsDAO() {
 		return finTypeVASProductsDAO;
 	}
-
 	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
@@ -7803,6 +7821,5 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public BigDecimal getFinAssetValue(String finReference) {
 		return getFinanceMainDAO().getFinAssetValue(finReference);
 	}
-
 
 }

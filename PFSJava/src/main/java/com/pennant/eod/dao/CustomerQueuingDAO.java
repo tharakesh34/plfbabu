@@ -23,4 +23,6 @@ public interface CustomerQueuingDAO {
 
 	long getCountByStatus(Date date, String status);
 
+	int getProgressCountByCust(long custID);
+
 }

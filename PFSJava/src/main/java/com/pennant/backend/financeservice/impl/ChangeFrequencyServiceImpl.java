@@ -210,6 +210,11 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
+		// Setting maturity Date
+		sdSize = scheduleData.getFinanceScheduleDetails().size();
+		if(sdSize > 0){
+			scheduleData.getFinanceMain().setMaturityDate(scheduleData.getFinanceScheduleDetails().get(sdSize-1).getSchDate());
+		}
 
 		logger.debug("Leaving");
 		return scheduleData;

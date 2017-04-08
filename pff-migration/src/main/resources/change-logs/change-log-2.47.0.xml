@@ -85,5 +85,12 @@ FROM    	Mandates  T1 INNER JOIN
 			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode 
 		</createView>
 	</changeSet>
+	
+	<changeSet id="4"  author="Siva" >
+	<sql>
+			delete from ErrorDetails where ErrorCode = '30577';
+		INSERT INTO ErrorDetails VALUES('30577','EN','E','Partial Settlement with more amounts are not allowed as Future Disbursements are being removed.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
 
 </databaseChangeLog>

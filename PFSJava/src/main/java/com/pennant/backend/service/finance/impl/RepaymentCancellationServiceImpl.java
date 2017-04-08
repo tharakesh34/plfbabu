@@ -51,6 +51,7 @@ import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.exception.PFFInterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -75,6 +76,9 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	private FinStatusDetailDAO 				finStatusDetailDAO;
 	private CommitmentDAO 					commitmentDAO;
 	private CommitmentMovementDAO 			commitmentMovementDAO;
+	
+	// EOD Process Checking
+	private CustomerQueuingDAO customerQueuingDAO;
 	
 	public RepaymentCancellationServiceImpl() {
 		super();
@@ -395,6 +399,15 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
+		}
+		
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
+
+		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+		if(eodProgressCount > 0){
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -950,6 +963,14 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 	public void setCommitmentMovementDAO(CommitmentMovementDAO commitmentMovementDAO) {
 		this.commitmentMovementDAO = commitmentMovementDAO;
+	}
+
+	public CustomerQueuingDAO getCustomerQueuingDAO() {
+		return customerQueuingDAO;
+	}
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
 }

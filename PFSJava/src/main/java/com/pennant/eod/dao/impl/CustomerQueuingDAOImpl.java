@@ -65,6 +65,22 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 	
 	@Override
+	public int getProgressCountByCust(long custID) {
+		logger.debug("Entering");
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custID);
+		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Count(CustID),0) from CustomerQueuing ");
+		selectSql.append(" where CustID = :CustID AND Progress != :Progress");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
+	@Override
 	public long getCountByStatus(Date date, String status) {
 		logger.debug("Entering");
 		

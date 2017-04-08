@@ -124,6 +124,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.exception.PFFInterfaceException;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
@@ -207,6 +208,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinInsuranceValidation finInsuranceValidation;
 	private FinAssetTypesValidation finAssetTypesValidation;
 	private FinAssetTypeDAO finAssetTypeDAO;
+	
+	// EOD Process Checking
+	private CustomerQueuingDAO customerQueuingDAO;
 	
 	public GenericFinanceDetailService() {
 		super();
@@ -3003,6 +3007,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 	public void setFinPlanEmiHolidayDAO(FinPlanEmiHolidayDAO finPlanEmiHolidayDAO) {
 		this.finPlanEmiHolidayDAO = finPlanEmiHolidayDAO;
+	}
+
+
+
+	public CustomerQueuingDAO getCustomerQueuingDAO() {
+		return customerQueuingDAO;
+	}
+
+
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 	
 }

@@ -777,6 +777,15 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 				}
 			}
 		}
+		
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
+
+		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+		if(eodProgressCount > 0){
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

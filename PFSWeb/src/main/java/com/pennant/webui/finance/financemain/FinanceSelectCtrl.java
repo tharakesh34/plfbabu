@@ -195,6 +195,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
 	private transient   FinanceWorkFlowService  financeWorkFlowService;
+	
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
 	private boolean isDetailScreen = false;
@@ -1058,6 +1059,20 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 		}else{
 			item = this.getListBoxFinance().getSelectedItem();
+		}
+		
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			int eodProgressCount = getFinanceDetailService().getProgressCountByCust(aFinanceMain.getCustID());
+			
+			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+			if(eodProgressCount > 0){
+				MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("60203", null)));
+				logger.debug("Leaving");
+				return;
+			}
 		}
 		
 		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) && 
