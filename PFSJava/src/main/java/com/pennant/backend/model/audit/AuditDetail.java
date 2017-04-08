@@ -55,29 +55,28 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantJavaUtil;
 
-public class AuditDetail  implements java.io.Serializable,Entity {
-	private final static Logger logger = Logger.getLogger(AuditDetail.class);
-	private static final long serialVersionUID = 4576632220854658678L;
+public class AuditDetail implements java.io.Serializable, Entity {
+	private final static Logger	logger				= Logger.getLogger(AuditDetail.class);
+	private static final long	serialVersionUID	= 4576632220854658678L;
 
-	private long auditId = Long.MIN_VALUE;
-	private Timestamp auditDate;
-	private String auditTranType;
-	private int auditSeq;
-	private String auditField;
-	private String auditValue;
-	private Object befImage;
-	private Object modelData;
-	private boolean extended;
+	private long				auditId				= Long.MIN_VALUE;
+	private Timestamp			auditDate;
+	private String				auditTranType;
+	private int					auditSeq;
+	private String				auditField;
+	private String				auditValue;
+	private Object				befImage;
+	private Object				modelData;
+	private boolean				extended;
 
+	private Timestamp			lovDescRcdInTime;
+	private Timestamp			lovDescRcdOutTime;
+	private String				lovDescRecordStatus;
+	private String				lovDescRoleCode		= "";
+	private String				lovDescNextRoleCode	= "";
+	private Object				lovDescAuditRef;
 
-	private Timestamp lovDescRcdInTime;
-	private Timestamp lovDescRcdOutTime;
-	private String lovDescRecordStatus;
-	private String lovDescRoleCode="";
-	private String lovDescNextRoleCode= "";
-	private Object lovDescAuditRef;
-
-	private List<ErrorDetails> errorDetails = new ArrayList<>();
+	private List<ErrorDetails>	errorDetails		= new ArrayList<>();
 
 	public AuditDetail() {
 		super();
@@ -85,38 +84,38 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 
 	// New methods for copying the properties of AuditHeader
 	public AuditDetail getNewCopyInstance() {
-		AuditDetail auditDetail= new AuditDetail();
+		AuditDetail auditDetail = new AuditDetail();
 		BeanUtils.copyProperties(this, auditDetail);
-		if(this.auditDate != null) {
+		if (this.auditDate != null) {
 			BeanUtils.copyProperties(this.auditDate, auditDetail.auditDate);
 		}
-		if(this.befImage != null) {
+		if (this.befImage != null) {
 			auditDetail.setBefImage(new Object());
 			BeanUtils.copyProperties(this.befImage, auditDetail.befImage);
 		}
-		if(this.modelData != null) {
+		if (this.modelData != null) {
 			auditDetail.setModelData(new Object());
 			BeanUtils.copyProperties(this.modelData, auditDetail.modelData);
 		}
-		if(this.lovDescRcdInTime != null) {
+		if (this.lovDescRcdInTime != null) {
 			BeanUtils.copyProperties(this.lovDescRcdInTime, auditDetail.lovDescRcdInTime);
 		}
-		if(this.lovDescRcdOutTime != null) {
+		if (this.lovDescRcdOutTime != null) {
 			BeanUtils.copyProperties(this.lovDescRcdOutTime, auditDetail.lovDescRcdOutTime);
 		}
-		if(this.lovDescAuditRef != null) {
+		if (this.lovDescAuditRef != null) {
 			auditDetail.setLovDescAuditRef(new Object());
 			BeanUtils.copyProperties(this.lovDescAuditRef, auditDetail.lovDescAuditRef);
 		}
-		if(this.errorDetails != null) {
+		if (this.errorDetails != null) {
 			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 			BeanUtils.copyProperties(this.errorDetails, auditDetail.errorDetails);
 		}
 		return auditDetail;
 	}
 
-	public AuditDetail(long auditId, Timestamp auditDate, String auditTranType, int auditSeq, String auditField,String auditValue,
-			Object befImage,Object modelData) {
+	public AuditDetail(long auditId, Timestamp auditDate, String auditTranType, int auditSeq, String auditField,
+			String auditValue, Object befImage, Object modelData) {
 		super();
 		this.auditId = auditId;
 		this.auditDate = auditDate;
@@ -124,56 +123,54 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 		this.auditSeq = auditSeq;
 		this.auditField = auditField;
 		this.auditValue = auditValue;
-		this.befImage=befImage;
-		this.modelData=modelData;
+		this.befImage = befImage;
+		this.modelData = modelData;
 	}
 
-	public AuditDetail(String auditTranType, int auditSeq, String auditField,String auditValue,Object befImage,Object modelData) {
+	public AuditDetail(String auditTranType, int auditSeq, String auditField, String auditValue, Object befImage,
+			Object modelData) {
 		super();
 		this.auditTranType = auditTranType;
 		this.auditSeq = auditSeq;
 		this.auditField = auditField;
 		this.auditValue = auditValue;
-		this.befImage=befImage;
-		this.modelData=modelData;
+		this.befImage = befImage;
+		this.modelData = modelData;
 	}
 
 	@SuppressWarnings("unchecked")
-    public AuditDetail(String auditTranType, int auditSeq, Object befImage,Object modelData) {
+	public AuditDetail(String auditTranType, int auditSeq, Object befImage, Object modelData) {
 		super();
 		this.auditTranType = auditTranType;
 		this.auditSeq = auditSeq;
-		this.befImage=befImage;
-		this.modelData=modelData;
-		String[] fields=null;
+		this.befImage = befImage;
+		this.modelData = modelData;
+		String[] fields = null;
 
 		try {
 			Method method = modelData.getClass().getMethod("getExcludeFields");
-			Object object= null;
-			if(method!=null){
-				object=method.invoke(modelData);
-				if(object.getClass().isInstance(String.class)){
-					fields = PennantJavaUtil.getFieldDetails(modelData,(String) object);
-				}else  if(object.getClass().isInstance(new HashSet<String>())){
-					fields = PennantJavaUtil.getFieldDetails(modelData,(HashSet<String>) object);
+			Object object = null;
+			if (method != null) {
+				object = method.invoke(modelData);
+				if (object.getClass().isInstance(String.class)) {
+					fields = PennantJavaUtil.getFieldDetails(modelData, (String) object);
+				} else if (object.getClass().isInstance(new HashSet<String>())) {
+					fields = PennantJavaUtil.getFieldDetails(modelData, (HashSet<String>) object);
 				}
 			}
 
-
-
-		} catch (Exception e) {;
+		} catch (Exception e) {
+			;
 			logger.warn("Exception: ", e);
 		}
 
-		if(fields==null){
+		if (fields == null) {
 			fields = PennantJavaUtil.getFieldDetails(modelData);
 		}
 		this.auditField = fields[0];
 		this.auditValue = fields[1];
-		
-		
-	}
 
+	}
 
 	public Object getBefImage() {
 		return befImage;
@@ -203,7 +200,7 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 
 	@Override
 	public void setId(long id) {
-		this.auditId=id;
+		this.auditId = id;
 	}
 
 	public long getAuditId() {
@@ -229,7 +226,6 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 	public void setAuditTranType(String auditTranType) {
 		this.auditTranType = auditTranType;
 	}
-
 
 	public int getAuditSeq() {
 		return auditSeq;
@@ -305,20 +301,19 @@ public class AuditDetail  implements java.io.Serializable,Entity {
 
 	public void setErrorDetail(ErrorDetails errorDetail) {
 
-		if(errorDetail!=null){
-			if (this.errorDetails == null){
-				this.errorDetails= new ArrayList<ErrorDetails>();
+		if (errorDetail != null) {
+			if (this.errorDetails == null) {
+				this.errorDetails = new ArrayList<ErrorDetails>();
 			}
 			this.errorDetails.add(errorDetail);
 		}
 	}
-	
 
-	public void setErrorDetail(ErrorDetails errorDetail,String errorField) {
+	public void setErrorDetail(ErrorDetails errorDetail, String errorField) {
 
-		if(errorDetail!=null){
-			if (this.errorDetails == null){
-				this.errorDetails= new ArrayList<ErrorDetails>();
+		if (errorDetail != null) {
+			if (this.errorDetails == null) {
+				this.errorDetails = new ArrayList<ErrorDetails>();
 			}
 			this.errorDetails.add(errorDetail);
 		}
