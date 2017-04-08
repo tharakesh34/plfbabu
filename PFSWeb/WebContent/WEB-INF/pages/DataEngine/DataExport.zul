@@ -36,7 +36,7 @@
 											width="350px" readonly="true" />
 									</hbox>
 								</row>
-								<row>
+								<row id="row_fileNames">
 									<label value="File Names" />
 									<hbox spacing="2px">
 										<space spacing="2px" />

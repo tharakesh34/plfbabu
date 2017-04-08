@@ -142,7 +142,9 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 				return;
 			}
 			try {
-				fileConfigurationSetup();
+				if (!ParserNames.DB.name().equals(config.getParserName())) {
+					fileConfigurationSetup();
+				}
 			} catch (Exception e) {
 				exceptionTrace(e);
 			}
@@ -261,7 +263,20 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-					pe.getProcess().getStatus();
+					
+					String status = pe.getProcess().getStatus();
+					if (ExecutionStatus.I.name().equals(status)) {
+						this.btnImport.setDisabled(true);
+					} else {
+						this.btnImport.setDisabled(false);
+					}
+					
+					String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
+					if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
+						this.btnImport.setDisabled(false);
+					} else {
+						this.btnImport.setDisabled(true);
+					}
 					pe.render();
 				}
 			}

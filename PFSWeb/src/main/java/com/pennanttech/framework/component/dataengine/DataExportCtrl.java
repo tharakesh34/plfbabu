@@ -66,6 +66,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 
 	protected Row row_Branches;
 	protected Row row_Dates;
+	protected Row row_fileNames;
 
 	protected Button btnExport;
 	protected Button btnFileUpload;
@@ -177,21 +178,18 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				this.btnExport.setDisabled(true);
 				this.row_Branches.setVisible(false);
 				this.row_Dates.setVisible(false);
+				this.row_fileNames.setVisible(true);
 				return;
 			}
-
-			if (ConfigNames.MANDATES_EXPORT.name().equals(config.getName())) {
-				this.row_Branches.setVisible(true);
-				this.row_Dates.setVisible(true);
-			} else {
-				this.row_Branches.setVisible(false);
-				this.row_Dates.setVisible(false);
-			}
+			
+			this.row_Dates.setVisible(ConfigNames.MANDATES_EXPORT.name().equals(config.getName()));
+			this.row_Branches.setVisible(ConfigNames.MANDATES_EXPORT.name().equals(config.getName()));
+			this.row_fileNames.setVisible(!(ParserNames.DB.name().equals(config.getParserName())));
 		} catch (Exception e) {
 			exceptionTrace(e);
 		}
 	}
-
+	
 	private void doClear() {
 		this.btnExport.setDisabled(true);
 		fillComboBox(this.fileNames, "", new ArrayList<ValueLabel>(), "");
@@ -374,10 +372,18 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
 					String status = pe.getProcess().getStatus();
+					
 					if (ExecutionStatus.I.name().equals(status)) {
 						this.btnExport.setDisabled(true);
 					} else {
 						this.btnExport.setDisabled(false);
+					}
+					
+					String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
+					if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
+						this.btnExport.setDisabled(false);
+					} else {
+						this.btnExport.setDisabled(true);
 					}
 					pe.render();
 				}
