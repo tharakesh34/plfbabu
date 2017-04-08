@@ -293,4 +293,78 @@ FROM    	Mandates  T1 INNER JOIN
 			<column name="ADVFLAG" type="char(1)"/>
 </createTable>
 </changeSet>
+
+
+<changeSet  id="15" author="Siva" >
+<createView viewName="CollateralAssignment_View" replaceIfExists="true">
+	
+ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCcy , 
+  CS.CollateralValue,CS.BankValuation,	(TotAssignPerc-CA.AssignPerc)TotAssignPerc, 
+  Coalesce((FinCurrAssetValue-DownPayment+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount),CmtUtilizedAmount)UtilizedAmount, CA.Version,
+   CA.LastMntBy, CA.LastMntOn,   CA.RecordStatus, CA.RoleCode, CA.NextRoleCode, CA.TaskId, 
+   CA.NextTaskId, CA.RecordType, CA.WorkflowId  from CollateralAssignment_Temp CA 
+   inner join CollateralSetUp CS on CA.CollateralRef = CS.CollateralRef   Left join 
+   ( 	Select CollateralRef,SUM(AssignPerc) TotAssignPerc from (Select Reference,CollateralRef, AssignPerc 
+     from CollateralAssignment_Temp	union Select Reference,CollateralRef, AssignPerc  from CollateralAssignment CA  
+     where NOT EXISTS (SELECT 1 FROM CollateralAssignment_Temp  WHERE CollateralRef = CA.CollateralRef and
+       Module =CA.Module and Reference=CA.Reference))T1 group by CollateralRef)T   
+       on T.CollateralRef = CA.CollateralRef   Left Join FinanceMain_Temp FM on CA.Reference = FM.FinReference
+        left join Commitments_Temp CM on CM.CmtReference =CA.Reference
+        union all 
+  Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCcy , 
+  CS.CollateralValue,CS.BankValuation,	(TotAssignPerc-CA.AssignPerc)TotAssignPerc, 
+  Coalesce((FinCurrAssetValue-DownPayment+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount),CmtUtilizedAmount)UtilizedAmount, CA.Version,
+   CA.LastMntBy, CA.LastMntOn,   CA.RecordStatus, CA.RoleCode, CA.NextRoleCode, CA.TaskId, 
+   CA.NextTaskId, CA.RecordType, CA.WorkflowId  from CollateralAssignment CA 
+   inner join CollateralSetUp CS on CA.CollateralRef = CS.CollateralRef   Left join 
+   ( 	Select CollateralRef,SUM(AssignPerc) TotAssignPerc from (Select Reference,CollateralRef, AssignPerc 
+     from CollateralAssignment_Temp	union Select Reference,CollateralRef, AssignPerc  from CollateralAssignment CA  
+     where NOT EXISTS (SELECT 1 FROM CollateralAssignment_Temp  WHERE CollateralRef = CA.CollateralRef and
+       Module =CA.Module and Reference=CA.Reference))T1 group by CollateralRef)T   
+       on T.CollateralRef = CA.CollateralRef   Left Join FinanceMain FM on CA.Reference = FM.FinReference
+        left join Commitments CM on CM.CmtReference =CA.Reference
+	  WHERE     NOT EXISTS
+ (SELECT 1 FROM CollateralAssignment_Temp 
+  WHERE CollateralRef = CA.CollateralRef and Module =CA.Module and Reference=CA.Reference)
+
+</createView>
+</changeSet>
+
+<changeSet  id="16" author="Siva" >
+<createView viewName="CollateralAssignment_TView" replaceIfExists="true">
+	
+ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCcy , 
+  CS.CollateralValue,CS.BankValuation,	(TotAssignPerc-CA.AssignPerc)TotAssignPerc, 
+  (FinCurrAssetValue-DownPayment+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount) UtilizedAmount, CA.Version,
+   CA.LastMntBy, CA.LastMntOn,   CA.RecordStatus, CA.RoleCode, CA.NextRoleCode, CA.TaskId, 
+   CA.NextTaskId, CA.RecordType, CA.WorkflowId  from CollateralAssignment_Temp CA 
+   inner join CollateralSetUp CS on CA.CollateralRef = CS.CollateralRef   Left join 
+   ( 	Select CollateralRef,SUM(AssignPerc) TotAssignPerc from (Select Reference,CollateralRef, AssignPerc 
+     from CollateralAssignment_Temp	union Select Reference,CollateralRef, AssignPerc  from CollateralAssignment CA  
+     where NOT EXISTS (SELECT 1 FROM CollateralAssignment_Temp  WHERE CollateralRef = CA.CollateralRef and
+       Module =CA.Module and Reference=CA.Reference))T1 group by CollateralRef)T   
+       on T.CollateralRef = CA.CollateralRef   Left Join FinanceMain_Temp FM on CA.Reference = FM.FinReference  
+
+
+</createView>
+</changeSet>
+
+<changeSet  id="17" author="Siva" >
+<createView viewName="CollateralAssignment_AView" replaceIfExists="true">
+	
+  Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCcy , 
+  CS.CollateralValue,CS.BankValuation,	(TotAssignPerc-CA.AssignPerc)TotAssignPerc, 
+  Coalesce((FinCurrAssetValue-DownPayment+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount),CmtUtilizedAmount)UtilizedAmount, CA.Version,
+   CA.LastMntBy, CA.LastMntOn,   CA.RecordStatus, CA.RoleCode, CA.NextRoleCode, CA.TaskId, 
+   CA.NextTaskId, CA.RecordType, CA.WorkflowId  from CollateralAssignment CA 
+   inner join CollateralSetUp CS on CA.CollateralRef = CS.CollateralRef   Left join 
+   ( 	Select CollateralRef,SUM(AssignPerc) TotAssignPerc from (Select Reference,CollateralRef, AssignPerc 
+     from CollateralAssignment_Temp	union Select Reference,CollateralRef, AssignPerc  from CollateralAssignment CA  
+     where NOT EXISTS (SELECT 1 FROM CollateralAssignment_Temp  WHERE CollateralRef = CA.CollateralRef and
+       Module =CA.Module and Reference=CA.Reference))T1 group by CollateralRef)T   
+       on T.CollateralRef = CA.CollateralRef   Left Join FinanceMain FM on CA.Reference = FM.FinReference
+        left join Commitments CM on CM.CmtReference =CA.Reference
+
+</createView>
+</changeSet>
 </databaseChangeLog>

@@ -4491,8 +4491,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		
-
 		logger.debug("Leaving");
 		return auditHeader;
 	}

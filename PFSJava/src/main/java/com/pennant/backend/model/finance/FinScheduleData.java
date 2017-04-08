@@ -144,7 +144,7 @@ public class FinScheduleData {
 	private WSReturnStatus returnStatus;
 
 	public FinScheduleData() {
-		//
+		super();
 	}
 
 	public String getFinReference() {
