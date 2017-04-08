@@ -591,4 +591,36 @@ from Customers C
 	 where C.custAddlvar1 is null
 </createView>
 </changeSet>
+
+<changeSet  id="22" author="DurgaPrasad G" >
+<sql>
+	Update SecRights set RightName = 'DISB_HDFC_EXPORT' Where RightName = 'DISB_HDFC_CHQ_EXPORT';
+	Update SecRights set RightName = 'DISB_OTHER_CHEQUE_DD_EXPORT' Where RightName = 'DISB_OTHER_CHQ_EXPORT';
+	Update SecRights set RightName = 'DISB_OTHER_NEFT_RTGS_EXPORT' Where RightName = 'DISB_OTHER_NEFT_EXPORT';
+	
+	Update SecGroups set GrpCode = 'DISB_HDFC_EXPORT' Where GrpCode = 'DISB_HDFC_CHQ_EXPORT';
+	Update SecGroups set GrpCode = 'DISB_OTHER_CHEQUE_DD_EXPORT' Where GrpCode = 'DISB_OTHER_CHQ_EXPORT';
+	Update SecGroups set GrpCode = 'DISB_OTHER_NEFT_RTGS_EXPORT' Where GrpCode = 'DISB_OTHER_NEFT_EXPORT';
+	
+	Update SecRoles set RoleCd = 'DISB_HDFC_EXPORT' Where RoleCd = 'DISB_HDFC_CHQ_EXPORT';
+	Update SecRoles set RoleCd = 'DISB_OTHER_CHEQUE_DD_EXPORT' Where RoleCd = 'DISB_OTHER_CHQ_EXPORT';
+	Update SecRoles set RoleCd = 'DISB_OTHER_NEFT_RTGS_EXPORT' Where RoleCd = 'DISB_OTHER_NEFT_EXPORT';
+	
+	Update SecOperations set OprCode = 'DISB_HDFC_EXPORT' Where OprCode = 'DISB_HDFC_CHQ_EXPORT';
+	Update SecOperations set OprCode = 'DISB_OTHER_CHEQUE_DD_EXPORT' Where OprCode = 'DISB_OTHER_CHQ_EXPORT';
+	Update SecOperations set OprCode = 'DISB_OTHER_NEFT_RTGS_EXPORT' Where OprCode = 'DISB_OTHER_NEFT_EXPORT';
+	
+	
+	Delete from SecOperationRoles Where OprID = (Select OprID from SecOperations Where OprCode = 'DISB_HDFC_NEFT_EXPORT');
+	Delete from SecOperations   Where OprCode = 'DISB_HDFC_NEFT_EXPORT';
+	
+	Delete from SecRoleGroups Where RoleID = (Select RoleID from SecRoles Where RoleCd = 'DISB_HDFC_NEFT_EXPORT');
+	Delete from SecRoles  Where RoleCd = 'DISB_HDFC_NEFT_EXPORT';
+	
+	Delete from SecGroupRights Where GrpID = (Select GrpID from SecGroups Where GrpCode = 'DISB_HDFC_NEFT_EXPORT');
+	Delete from SecGroups  Where GrpCode = 'DISB_HDFC_NEFT_EXPORT';
+	
+	Delete from SecRights  Where RightName = 'DISB_HDFC_NEFT_EXPORT';
+</sql>
+</changeSet>
 </databaseChangeLog>
