@@ -35,7 +35,6 @@ public class PoliceCase implements Serializable {
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("override");
 		excludeFields.add("overrideUser");
 		excludeFields.add("rules");
 		excludeFields.add("newRule");
