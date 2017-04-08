@@ -451,7 +451,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  CustomerBankInfo");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :CustID and BankName = :BankName");
+		selectSql.append(" Where CustID = :CustID and BankName = :BankName and BankId =:BankId");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);

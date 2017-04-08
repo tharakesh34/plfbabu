@@ -869,6 +869,10 @@ public class PennantAppUtil {
 		searchObject.addSort("RejectCode", false);
 		searchObject.addField("RejectCode");
 		searchObject.addField("RejectDesc");
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("RejectIsActive", 1, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
 
 		List<RejectDetail> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {

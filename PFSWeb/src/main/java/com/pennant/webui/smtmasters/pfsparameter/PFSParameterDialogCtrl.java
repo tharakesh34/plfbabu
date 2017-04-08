@@ -80,6 +80,7 @@ import com.pennant.backend.model.staticparms.Language;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -665,7 +666,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		setValidationOn(true);
 
 		if (!this.sysParmCode.isReadonly()) {
-			this.sysParmCode.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmCode.value"),null,true));
+			this.sysParmCode.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmCode.value"),PennantRegularExpressions.REGEX_ALPHA_CODE,true));
 		}
 		if (!this.sysParmDesc.isReadonly()) {
 			this.sysParmDesc.setConstraint(new PTStringValidator( Labels.getLabel("label_PFSParameterDialog_SysParmDesc.value"),null,true));
