@@ -16,8 +16,8 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
+import com.pennanttech.dbengine.util.DateUtil;
 
 public class ALMRequest extends DBProcessEngine {
 
@@ -54,7 +54,7 @@ public class ALMRequest extends DBProcessEngine {
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
 			destConnection = getConnection(dbConfiguration);
-			sourceConnection=DataSourceUtils.doGetConnection(appDataSource);
+			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
 
@@ -71,10 +71,10 @@ public class ALMRequest extends DBProcessEngine {
 					keyValue = getIntValue(resultSet, "AGREEMENTID");
 					saveData(resultSet);
 					successCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
+					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
+					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				
@@ -158,8 +158,11 @@ public class ALMRequest extends DBProcessEngine {
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * from INT_ALM_VIEW  Where DUEDATE >= ? AND DUEDATE < ? ");
+			sql.append(" SELECT * from INT_ALM_VIEW  Where DUEDATE >= ? AND DUEDATE <= ? ");
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			stmt.setDate(1, DateUtil.getMonthStartDate(DateUtil.getPrevMonthDate()));
+			stmt.setDate(2, DateUtil.getMonthEndDate(DateUtil.getPrevMonthDate()));
+			
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
 			logger.error("Exception {}", e);

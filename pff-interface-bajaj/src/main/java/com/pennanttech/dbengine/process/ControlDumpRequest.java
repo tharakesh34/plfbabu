@@ -292,7 +292,6 @@ public class ControlDumpRequest extends DBProcessEngine {
 			ps.setString(111, getValue(rs, "LOCAL_OUTSTATION_FLAG"));
 			ps.setDate(112, getDateValue(rs, "FIRST_REPAYDUE_DATE"));
 			
-			
 			// execute query
 			ps.executeUpdate();
 		} catch (Exception e) {

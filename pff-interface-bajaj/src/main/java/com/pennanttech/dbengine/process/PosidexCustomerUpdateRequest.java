@@ -122,16 +122,21 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 
 		ResultSet rs = null;
 		StringBuilder sql = null;
+		PreparedStatement ps = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT UCIN_NO, CUSTOMER_NO from PSX_UCIN_REVERSE_FEED where PROCESSED_FLAG = 'N' ");
-			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery();
+			sql.append(" SELECT UCIN_NO, CUSTOMER_ID FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = ? ");
+
+			ps = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, getIntValue(rs, Status.N.name()));
+			
+			rs = ps.executeQuery();
+			
 		} catch (SQLException e) {
 			logger.error("Exception {}", e);
 			throw e;
 		} finally {
+			ps = null;
 			sql = null;
 		}
 		logger.debug("Leaving");
@@ -144,12 +149,11 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = ? WHERE CUSTCIF = ?");
-			sb.append(" VALUES (?,?)");
+			sb.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = ? WHERE CUSTID = ? ");
 
 			ps = destConnection.prepareStatement(sb.toString());
 			ps.setInt(1, getIntValue(rs, "UCIN_NO"));
-			ps.setString(2, getValue(rs, "CUSTOMER_NO"));
+			ps.setString(2, getValue(rs, "CUSTOMER_ID"));
 
 			// execute query
 			ps.executeUpdate();
@@ -170,10 +174,8 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" UPDATE PSX_UCIN_REVERSE_FEED SET PROCESSED_FLAG = ? WHERE UCIN_NO = ? ");
-				sb.append(" VALUES (?,?)");
 
 			ps = destConnection.prepareStatement(sb.toString());
-
 			ps.setString(1, Status.Y.name());
 			ps.setString(2, getValue(rs, "UCIN_NO"));
 		

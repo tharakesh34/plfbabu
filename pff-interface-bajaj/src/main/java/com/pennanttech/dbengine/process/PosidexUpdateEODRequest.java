@@ -16,8 +16,8 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
+import com.pennanttech.dbengine.util.DateUtil;
 
 public class PosidexUpdateEODRequest extends DBProcessEngine {
 
@@ -46,6 +46,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		long fileId;
 
 		try {
+			
 			executionStatus.setFileName(getFileName(config.getName()));
 			saveBatchStatus();
 			fileId = executionStatus.getId();
@@ -130,9 +131,11 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * from INT_POSIDEX_UPDATE_EOD_VIEW ");
+			sql.append(" SELECT * from INT_POSIDEX_UPDATE_EOD_VIEW Where LastMntOn = ? ");
 
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			stmt.setDate(1, DateUtil.getSqlDate());
+			
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
 			logger.error("Exception {}", e);
@@ -186,8 +189,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(25, getValue(rs, "PSX_BATCH_ID"));
 			ps.setString(26, getValue(rs, "UCIN_FLAG"));
 			ps.setString(27, getValue(rs, "EOD_BATCH_ID"));
-			//FIXME
-			//ps.setString(28, get(rs, "INSERT_TS"));
+			ps.setString(28, getValue(rs, "INSERTTS"));
 			ps.setString(29, getValue(rs, "GENDER"));
 			ps.setString(30, getValue(rs, "AADHAR_NO"));
 			ps.setString(31, getValue(rs, "CIN"));
