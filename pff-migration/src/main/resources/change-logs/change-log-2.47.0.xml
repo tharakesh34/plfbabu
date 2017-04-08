@@ -226,4 +226,44 @@ FROM    	Mandates  T1 INNER JOIN
 		</sql>
 </changeSet>
 
+
+
+<changeSet id="9" author="DurgaPrasad G">
+	<dropTable tableName="ALM" />
+</changeSet>
+
+<changeSet id="10" author="DurgaPrasad G">
+<createTable tableName="ALM">
+			<column name="AGREEMENTID" type="Number(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPA_STAGEID" type="varchar(12)"/>
+			<column name="INSTLAMT" type="NUMBER (16,2)"/>
+			<column name="PRINCOMP" type="NUMBER (16,2)"/>
+			<column name="INTCOMP" type="NUMBER (16,2)"/>
+			<column name="DUEDATE" type="datetime" />
+			<column name="ACCRUEDAMT" type="NUMBER (16,2)"/>
+			<column name="ACCRUEDON" type="datetime" />
+			<column name="CUMULATIVEACCRUALAMT" type="NUMBER (16,2)"/>
+			<column name="ADVFLAG" type="char(1)"/>
+</createTable>
+</changeSet>
+
+<changeSet  id="11" author="DurgaPrasad G" >
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+	Select Right(F.FinReference,8) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+	(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+	Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,NULL ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+	from FinanceMain F
+	Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+	Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
+	
 </databaseChangeLog>
