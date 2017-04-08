@@ -1265,8 +1265,6 @@ public class ScheduleCalculator {
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 
-		finScheduleData.getFinanceMain().setNumberOfTerms(finScheduleData.getFinanceMain().getNumberOfTerms() + 1);
-
 		return finScheduleData;
 	}
 
