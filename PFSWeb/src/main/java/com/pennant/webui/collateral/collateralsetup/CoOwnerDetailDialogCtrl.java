@@ -88,6 +88,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -123,7 +124,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	protected Button					viewCustInfo;
 	protected Button					btnViewCoOwnerProof;
 
-	protected Textbox					coOwnerIDNumber;
+	protected Uppercasebox				coOwnerIDNumber;
 	protected Textbox					coOwnerCIFName;
 
 	protected Textbox					phoneCountryCode;
@@ -968,19 +969,23 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		if (!this.bankCustomer.isChecked()) {
 			
 			if (!this.coOwnerIDNumber.isReadonly()) {
-				if (!this.coOwnerIDType.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
-					if (this.coOwnerIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-						if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-							this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels
-									.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value"),
-									PennantRegularExpressions.REGEX_TRADELICENSE, true));
+					
+					if(StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(), PennantConstants.CPRCODE)){
+						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels
+								.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+							
+					}else if(StringUtils.equals(this.coOwnerIDType.getSelectedItem().getValue().toString(), PennantConstants.PANNUMBER)){
+						if(this.coOwnerIDNumber.getConstraint()!=null){
+							this.coOwnerIDNumber.setConstraint("");
 						}
-					} else {
-						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_IDNumber.value"),
-								PennantRegularExpressions.REGEX_ALPHANUM, true));
+						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels
+								.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"),
+								PennantRegularExpressions.REGEX_PANNUMBER, true));
+					}else{
+						this.coOwnerIDNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDNumber.value"), null, true));					
 					}
 				}
-			}
 			
 			if (!this.coOwnerIDType.isDisabled()) {
 				this.coOwnerIDType.setConstraint(new StaticListValidator(listCoOwnerIDType, Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")));

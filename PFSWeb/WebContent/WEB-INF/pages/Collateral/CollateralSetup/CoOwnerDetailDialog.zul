@@ -132,7 +132,7 @@
 											id="hlayout_CoOwnerIDNumber" spacing="2px">
 											<space
 												id="space_CoOwnerIDNumber" spacing="2px" sclass="mandatory" />
-											<textbox
+											<uppercasebox
 												id="coOwnerIDNumber" width="200px" />
 										</hlayout>
 									</hlayout>
