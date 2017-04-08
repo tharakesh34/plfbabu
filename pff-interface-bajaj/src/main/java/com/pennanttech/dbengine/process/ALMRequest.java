@@ -1,6 +1,7 @@
 package com.pennanttech.dbengine.process;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -41,9 +43,14 @@ public class ALMRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
+		long keyValue = 0;
+		long fileId;
 		try {
+			
+			executionStatus.setFileName(getFileName(config.getName()));
 			saveBatchStatus();
-
+			fileId = executionStatus.getId();
+			
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
 			destConnection = getConnection(dbConfiguration);
@@ -58,35 +65,53 @@ public class ALMRequest extends DBProcessEngine {
 				executionStatus.setTotalRecords(totalRecords);
 			}
 			while (resultSet.next()) {
-				executionStatus.setRemarks("Saving data to destination table...");
+				executionStatus.setRemarks("Saving data in to destination table...");
 				try {
 					processedCount++;
+					keyValue = getIntValue(resultSet, "AGREEMENTID");
 					saveData(resultSet);
 					successCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
+				
 				executionStatus.setProcessedRecords(processedCount);
 				executionStatus.setSuccessRecords(successCount);
 				executionStatus.setFailedRecords(failedCount);
 			}
 
 			if (totalRecords > 0) {
-				remarks.append("Processed successfully with record count: ");
-				remarks.append(totalRecords);
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount, failedCount, totalRecords);
+				if (failedCount > 0) {
+					remarks.append("Completed with exceptions, Total records:  ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount);
+					remarks.append(", Failure: ");
+					remarks.append(failedCount + ".");
+				} else {
+					remarks.append("Processed successfully , Total records: ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount + ".");
+				}
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount, totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(resultSet,destConnection, sourceConnection);
+			releaseResorces(resultSet, destConnection, sourceConnection);
 			executionStatus.setRemarks(remarks.toString());
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -95,7 +120,7 @@ public class ALMRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT INTO AML_DATA (");
+			sb.append(" INSERT INTO ALM (");
 			sb.append("	AGREEMENTID, AGREEMENTNO, PRODUCTFLAG, NPA_STAGEID, INSTLAMT, PRINCOMP,INTCOMP ,DUEDATE, ");
 			sb.append(" ACCRUEDAMT, ACCRUEDON, CUMULATIVE_ACCRUAL_AMT, ADVFLAG)");
 			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -133,9 +158,8 @@ public class ALMRequest extends DBProcessEngine {
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * from INT_ALM_VIEW  ");
-			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			sql.append(" SELECT * from INT_ALM_VIEW  Where DUEDATE >= ? AND DUEDATE < ? ");
+			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
 			logger.error("Exception {}", e);
@@ -145,5 +169,31 @@ public class ALMRequest extends DBProcessEngine {
 		}
 		logger.debug("Leaving");
 		return rs;
+	}
+	
+	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
+		
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		try {
+			source = new MapSqlParameterSource();
+			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
+			source.addValue("SEQNO", Long.valueOf(seqNo));
+			source.addValue("FILEID", fileId);
+			source.addValue("REFID1", ref);
+			source.addValue("CATEGORY", category);
+			source.addValue("STATUS", status);
+			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
+			source.addValue("VALUEDATE",  DateUtil.getSysDate());
+			
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
+			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
+			
+			saveBatchLog(source, sql.toString());
+		} finally {
+			sql = null;
+			source = null;
+		}
 	}
 }

@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
@@ -138,7 +139,9 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		return date;
 	}
 	
-	
+	protected String getFileName(String configName) {
+		return configName.concat("_").concat(String.valueOf(new Timestamp(System.currentTimeMillis())));
+	}
 
 	protected void releaseResorces(ResultSet resultSet, Connection destCon, Connection sourceCon) {
 		logger.debug("Entering");

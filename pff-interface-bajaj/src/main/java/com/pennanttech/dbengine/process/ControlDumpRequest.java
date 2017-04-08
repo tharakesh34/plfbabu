@@ -1,6 +1,7 @@
 package com.pennanttech.dbengine.process;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -42,8 +44,13 @@ public class ControlDumpRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
+		long keyValue = 0;
+		long fileId;
 		try {
+			
+			executionStatus.setFileName(getFileName(config.getName()));
 			saveBatchStatus();
+			fileId = executionStatus.getId();
 
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
@@ -58,13 +65,16 @@ public class ControlDumpRequest extends DBProcessEngine {
 				executionStatus.setTotalRecords(totalRecords);
 			}
 			while (resultSet.next()) {
-				executionStatus.setRemarks("Saving data to destination table...");
+				executionStatus.setRemarks("Saving data in to destination table...");
 				try {
 					processedCount++;
 					saveData(resultSet);
+					
 					successCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -73,13 +83,28 @@ public class ControlDumpRequest extends DBProcessEngine {
 			}
 
 			if (totalRecords > 0) {
-				remarks.append("Processed successfully with record count: ");
-				remarks.append(totalRecords);
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount, failedCount, totalRecords);
+				if (failedCount > 0) {
+					remarks.append("Completed with exceptions, Total records:  ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount);
+					remarks.append(", Failure: ");
+					remarks.append(failedCount + ".");
+				} else {
+					remarks.append("Processed successfully , Total records: ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount + ".");
+				}
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount, totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
@@ -87,12 +112,37 @@ public class ControlDumpRequest extends DBProcessEngine {
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
 		}
-
 		logger.debug("Leaving");
 	}
 
+	
+	private ResultSet getSourceData() throws Exception {
+		logger.debug("Entering");
+
+		ResultSet rs = null;
+		StringBuilder sql = null;
+		
+		try {
+			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
+			sql = new StringBuilder();
+			sql.append(" SELECT * from INT_CF_CONTROL_VIEW ");
+
+			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery();
+		} catch (SQLException e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			sql = null;
+		}
+		logger.debug("Leaving");
+		return rs;
+	}
+	
 	private void saveData(ResultSet rs) throws Exception {
 		logger.debug("Entering");
+		
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -111,13 +161,11 @@ public class ControlDumpRequest extends DBProcessEngine {
 			sb.append(" INSUR_PAID, CUSTOMERID, CUSTOMERNAME, SANCTIONED_TENURE, LOAN_EMI, FLAT_RATE, EFFECTIVE_RATE, AGREEMENTDATE, DISBURSALDATE, CLOSUREDATE, NO_OF_ADVANCE_EMIS, ASSETCOST," );
 			sb.append(" NO_OF_EMI_OS, DPD, CURRENT_BUCKET, BRANCH_NAME, SCHEME_NAME, , DERIVED_BUCKET, ASSETDESC, MAKE, CHASISNUM, REGDNUM, ENGINENUM, INVOICEAMT, SUPPLIERDESC, INSTRUMENT," );
 			sb.append(" REPO_DATE, LOCAL_OUTSTATION_FLAG, FIRST_REPAYDUE_DATE)" );
-			
 			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,");
 			sb.append(" ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,");
 			sb.append(" ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,");
 			sb.append(" ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
-
 			ps = destConnection.prepareStatement(sb.toString());
 
 			ps.setString(1, getValue(rs, "AGREEMENTNO"));
@@ -255,28 +303,30 @@ public class ControlDumpRequest extends DBProcessEngine {
 		}
 		logger.debug("Leaving");
 	}
-
-	private ResultSet getSourceData() throws Exception {
-		logger.debug("Entering");
-
-		ResultSet rs = null;
-		StringBuilder sql = null;
+	
+	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
 		
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
 		try {
-			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
+			source = new MapSqlParameterSource();
+			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
+			source.addValue("SEQNO", Long.valueOf(seqNo));
+			source.addValue("FILEID", fileId);
+			source.addValue("REFID1", ref);
+			source.addValue("CATEGORY", category);
+			source.addValue("STATUS", status);
+			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
+			source.addValue("VALUEDATE",  DateUtil.getSysDate());
+			
 			sql = new StringBuilder();
-			sql.append(" SELECT * from INT_CF_CONTROL_VIEW ");
-
-			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery();
-		} catch (SQLException e) {
-			logger.error("Exception {}", e);
-			throw e;
+			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
+			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
+			
+			saveBatchLog(source, sql.toString());
 		} finally {
 			sql = null;
+			source = null;
 		}
-		logger.debug("Leaving");
-		return rs;
 	}
 }

@@ -72,15 +72,29 @@ public class PresentationRequest extends DBProcessEngine {
 				executionStatus.setSuccessRecords(successCount);
 				executionStatus.setFailedRecords(failedCount);
 			}
-
 			if (totalRecords > 0) {
-				remarks.append("Processed successfully with record count: ");
-				remarks.append(totalRecords);
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount, failedCount, totalRecords);
+				if (failedCount > 0) {
+					remarks.append("Completed with exceptions, Total records:  ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount);
+					remarks.append(", Failure: ");
+					remarks.append(failedCount + ".");
+				} else {
+					remarks.append("Processed successfully , Total records: ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount + ".");
+				}
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount, totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {

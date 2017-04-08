@@ -36,7 +36,7 @@ public class DataEngineDBProcess {
 		Object object;
 		try {
 			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, appDBName, this.executionStatus);
-			Object[] parms = new Object[3];
+			Object[] parms = new Object[2];
 			parms[0] = this.userId;
 			parms[1] = config;
 

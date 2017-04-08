@@ -1,6 +1,7 @@
 package com.pennanttech.dbengine.process;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -41,14 +43,20 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
+		long keyValue = 0;
+		long fileId;
+		
 		try {
+			executionStatus.setFileName(getFileName(config.getName()));
 			saveBatchStatus();
+			fileId = executionStatus.getId();
 
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
 			destConnection = DataSourceUtils.doGetConnection(appDataSource);
-			sourceConnection=getConnection(dbConfiguration);
+			sourceConnection = getConnection(dbConfiguration);
 			executionStatus.setRemarks("Fetching data from source table...");
+			
 			resultSet = getSourceData();
 
 			if (resultSet != null) {
@@ -58,14 +66,17 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 				executionStatus.setTotalRecords(totalRecords);
 			}
 			while (resultSet.next()) {
-				executionStatus.setRemarks("Saving data to destination table...");
+				executionStatus.setRemarks("Saving data in to destination table...");
 				try {
 					processedCount++;
 					updateCustomer(resultSet);
 					updateDataStatus(resultSet);
+					
 					successCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -74,73 +85,38 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 			}
 
 			if (totalRecords > 0) {
-				remarks.append("Processed successfully with record count: ");
-				remarks.append(totalRecords);
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, processedCount,
-						failedCount, totalRecords);
+				if (failedCount > 0) {
+					remarks.append("Completed with exceptions, Total records:  ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount);
+					remarks.append(", Failure: ");
+					remarks.append(failedCount + ".");
+				} else {
+					remarks.append("Processed successfully , Total records: ");
+					remarks.append(totalRecords);
+					remarks.append(", Processed: ");
+					remarks.append(processedCount);
+					remarks.append(", Sucess: ");
+					remarks.append(successCount + ".");
+				}
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, processedCount, failedCount,
-					totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(null,destConnection,sourceConnection);			
+			releaseResorces(null, destConnection, sourceConnection);		
 			executionStatus.setRemarks(remarks.toString());
 		}
-
 		logger.debug("Leaving");
 	}
 
-	private void updateCustomer(ResultSet rs) throws Exception {
-		logger.debug("Entering");
-		PreparedStatement ps = null;
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append(" UPDATE <<TABLE >> SET <<NEWFIELD>>=? WHERE <<CUSTOMER NUMBER>>=?");
-				sb.append(" VALUES (?,?)");
-
-			ps = destConnection.prepareStatement(sb.toString());
-
-			ps.setInt(1, getIntValue(rs, "UCIN_NO"));
-			ps.setString(2, getValue(rs, "CUSTOMER_NO"));
-
-		
-			// execute query
-			ps.executeUpdate();
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			ps = null;
-		}
-		logger.debug("Leaving");
-	}
-
-	private void updateDataStatus(ResultSet rs) throws Exception {
-		logger.debug("Entering");
-		PreparedStatement ps = null;
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append(" UPDATE PSX_UCIN_REVERSE_FEED SET PROCESSED_FLAG=? WHERE UCIN_NO=?");
-				sb.append(" VALUES (?,?)");
-
-			ps = destConnection.prepareStatement(sb.toString());
-
-			ps.setString(1, Status.Y.name());
-			ps.setString(2, getValue(rs, "UCIN_NO"));
-		
-			// execute query
-			ps.executeUpdate();
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			ps = null;
-		}
-		logger.debug("Leaving");
-	}
+	
 	private ResultSet getSourceData() throws Exception {
 		logger.debug("Entering");
 
@@ -160,5 +136,83 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 		}
 		logger.debug("Leaving");
 		return rs;
+	}
+	
+	private void updateCustomer(ResultSet rs) throws Exception {
+		logger.debug("Entering");
+		
+		PreparedStatement ps = null;
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = ? WHERE CUSTCIF = ?");
+			sb.append(" VALUES (?,?)");
+
+			ps = destConnection.prepareStatement(sb.toString());
+			ps.setInt(1, getIntValue(rs, "UCIN_NO"));
+			ps.setString(2, getValue(rs, "CUSTOMER_NO"));
+
+			// execute query
+			ps.executeUpdate();
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		} finally {
+			ps = null;
+		}
+		
+		logger.debug("Leaving");
+	}
+
+	private void updateDataStatus(ResultSet rs) throws Exception {
+		logger.debug("Entering");
+		
+		PreparedStatement ps = null;
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append(" UPDATE PSX_UCIN_REVERSE_FEED SET PROCESSED_FLAG = ? WHERE UCIN_NO = ? ");
+				sb.append(" VALUES (?,?)");
+
+			ps = destConnection.prepareStatement(sb.toString());
+
+			ps.setString(1, Status.Y.name());
+			ps.setString(2, getValue(rs, "UCIN_NO"));
+		
+			// execute query
+			ps.executeUpdate();
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		} finally {
+			ps = null;
+		}
+		
+		logger.debug("Leaving");
+	}
+
+	
+	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		try {
+			source = new MapSqlParameterSource();
+			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
+			source.addValue("SEQNO", Long.valueOf(seqNo));
+			source.addValue("FILEID", fileId);
+			source.addValue("REFID1", ref);
+			source.addValue("CATEGORY", category);
+			source.addValue("STATUS", status);
+			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
+			source.addValue("VALUEDATE",  DateUtil.getSysDate());
+
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
+			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
+
+			saveBatchLog(source, sql.toString());
+		} finally {
+			sql = null;
+			source = null;
+		}
 	}
 }
