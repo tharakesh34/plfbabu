@@ -6,78 +6,8 @@
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-		
-	<!--Security database DSN -->
-	<bean id="secDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${secjdbc.driverClassName}" />
-		<property name="url" value="${secjdbc.url}" />
-		<property name="username" value="${secjdbc.username}" />
-		<property name="password" value="${secjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
-	</bean>
-
-	<!--PFS Application database DSN -->
-	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-		<property name="url" value="${pfsjdbc.url}" />
-		<property name="username" value="${pfsjdbc.username}" />
-		<property name="password" value="${pfsjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
-	</bean>
-
-	<!--AUDIT Application database DSN -->
-	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-		<property name="url" value="${auditjdbc.url}" />
-		<property name="username" value="${auditjdbc.username}" />
-		<property name="password" value="${auditjdbc.password}" />
-		<property name="maxActive" value="200" />
-		<property name="minIdle" value="0" />
-		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
-	</bean>
-
-	<bean id="equationDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${equationReportsjdbc.driverClassName}" />
-		<property name="url" value="${equationReportsjdbc.url}" />
-		<property name="username" value="${equationReportsjdbc.username}" />
-		<property name="password" value="${equationReportsjdbc.password}" />
-	</bean>
-
-	<!--LDAP Environment -->
-
-	<bean id="ldapEnvironment"
-		class="com.pennant.backend.model.administration.LDAPEnvironment"
-		scope="prototype">
-		<property name="contextFactory" value="${ladp.contextFactory}" />
-		<property name="authentication" value="${ldap.authentication}" />
-		<property name="principal" value="${ldap.principal}" />
-		<property name="credentials" value="${ldap.credentials}" />
-		<property name="providerURL" value="${ldap.provider.url}" />
-		<property name="base" value="${ldap.base}" />
-	</bean>
-
-	<!--PFSEXT Application database DSN -->
-	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
-		<property name="url" value="${pffextjdbc.url}" />
-		<property name="username" value="${pffextjdbc.username}" />
-		<property name="password" value="${pffextjdbc.password}" />
-	</bean>
-	
 	<!-- BEAN FOR GENERATING THE DATA SOURCES -->
-	<!-- <bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFFSEC" />
 		<property name="lookupOnStartup" value="true" />
@@ -101,7 +31,7 @@
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFFEXT" />
 		<property name="lookupOnStartup" value="true" />
-	</bean> -->
+	</bean>
 
 	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
