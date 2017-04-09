@@ -1587,10 +1587,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 											(curDisb.getDisbSeq() == oldDisb.getDisbSeq()) && 
 											StringUtils.equals(oldDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
 										isCancelDisbExists = true;
-										linkedTranId = oldDisb.getLinkedTranId();
 										break;
 									}
 								}
+								linkedTranId = curDisb.getLinkedTranId();
 
 								// If Disbursement not found in Existing List
 								if(isCancelDisbExists){
