@@ -28,7 +28,7 @@ public final class App {
 	public static final long ID = 1;
 	public static final String CODE = "PFF";
 	public static final String NAME = "pennApps Lending Factory";
-	public static final Database DATABASE = Database.ORACLE;
+	public static final Database DATABASE = Database.SQL_SERVER;
 	
 	public enum AuthenticationType {
 		DAO, LDAP, SSO

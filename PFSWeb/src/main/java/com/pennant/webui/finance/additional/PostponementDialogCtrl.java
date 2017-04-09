@@ -636,7 +636,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) ||
 			StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADDTERM);
-			finServiceInstruction.setTerms(adjTerms);
 		}
 		
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());

@@ -623,4 +623,66 @@ from Customers C
 	Delete from SecRights  Where RightName = 'DISB_HDFC_NEFT_EXPORT';
 </sql>
 </changeSet>
+
+ <changeSet author="Siva" id="23">
+	<addColumn tableName="FinDisbursementDetails">
+		<column name="DisbStatus" type="char(1)"/>
+	</addColumn>
+	</changeSet>
+	
+ <changeSet author="Siva" id="24">
+	<addColumn tableName="FinDisbursementDetails_Temp">
+		<column name="DisbStatus" type="char(1)"/>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet  id="25" author="Siva" >
+<createView viewName="FinDisbursementDetails_TView" replaceIfExists="true">
+	
+  SELECT     T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbDesc, T1.DisbAccountId, T1.DisbAmount, T1.DisbReqDate, T1.DisbDisbursed, T1.DisbIsActive, T1.DisbRemarks, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T1.FeeChargeAmt, T1.DisbStatus,  T1.DisbType, T1.DisbClaim, T1.DisbExpType, T1.DisbRetPerc, T1.DisbRetAmount, T1.AutoDisb, T1.NetAdvDue, T1.NetRetDue, T1.DisbRetPaid, T1.RetPaidDate, 
+                    T2.ExpenceTypeName  lovDescDisbExpType, T1.ConsultFeeFrq,T1.ConsultFeeStartDate,T1.ConsultFeeEndDate, T1.ContractorId,T1.InsuranceAmt
+FROM          FinDisbursementDetails_Temp  T1 LEFT OUTER JOIN
+                       AMTExpenseType  T2 ON T2.ExpenceTypeId = T1.DisbExpType
+
+</createView>
+</changeSet>
+
+	<changeSet  id="26" author="Siva" >
+<createView viewName="FinDisbursementDetails_View" replaceIfExists="true">
+	
+SELECT     T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbDesc, T1.DisbAccountId, T1.DisbAmount, T1.DisbReqDate, T1.DisbDisbursed, T1.DisbIsActive, T1.DisbRemarks, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T1.FeeChargeAmt,  T1.DisbStatus, T1.DisbType, T1.DisbClaim, T1.DisbExpType, T1.DisbRetPerc, T1.DisbRetAmount, T1.AutoDisb, T1.NetAdvDue, T1.NetRetDue, T1.DisbRetPaid, T1.RetPaidDate, 
+                    T2.ExpenceTypeName  lovDescDisbExpType, T1.ConsultFeeFrq,T1.ConsultFeeStartDate,T1.ConsultFeeEndDate, T1.ContractorId,T1.InsuranceAmt
+FROM          FinDisbursementDetails_Temp  T1 LEFT OUTER JOIN
+                       AMTExpenseType  T2 ON T2.ExpenceTypeId = T1.DisbExpType 
+UNION ALL
+SELECT     T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbDesc, T1.DisbAccountId, T1.DisbAmount, T1.DisbReqDate, T1.DisbDisbursed, T1.DisbIsActive, T1.DisbRemarks, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T1.FeeChargeAmt,   T1.DisbStatus, T1.DisbType, T1.DisbClaim, T1.DisbExpType, T1.DisbRetPerc, T1.DisbRetAmount, T1.AutoDisb, T1.NetAdvDue, T1.NetRetDue, T1.DisbRetPaid, T1.RetPaidDate, 
+                    T2.ExpenceTypeName  lovDescDisbExpType, T1.ConsultFeeFrq,T1.ConsultFeeStartDate,T1.ConsultFeeEndDate, T1.ContractorId,T1.InsuranceAmt
+FROM          FinDisbursementDetails  T1 LEFT OUTER JOIN
+                       AMTExpenseType  T2 ON T2.ExpenceTypeId = T1.DisbExpType
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          FinDisbursementDetails_Temp
+                            WHERE      FinReference = T1.FinReference)
+
+</createView>
+</changeSet>
+
+	<changeSet  id="27" author="Siva" >
+<createView viewName="FinDisbursementDetails_AView" replaceIfExists="true">
+SELECT     T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbDesc, T1.DisbAccountId, T1.DisbAmount, T1.DisbReqDate, T1.DisbDisbursed, T1.DisbIsActive, T1.DisbRemarks, 
+                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.FeeChargeAmt, 
+                      T1.Version, T1.DisbStatus ,T1.DisbType, T1.DisbClaim, T1.DisbExpType, T1.DisbRetPerc, T1.DisbRetAmount, T1.AutoDisb, T1.NetAdvDue, T1.NetRetDue, T1.DisbRetPaid, 
+                      T1.RetPaidDate, T2.ExpenceTypeName lovDescDisbExpType, 
+                      T1.ConsultFeeFrq,T1.ConsultFeeStartDate,T1.ConsultFeeEndDate, T1.ContractorId,T1.InsuranceAmt
+FROM          FinDisbursementDetails T1  LEFT OUTER JOIN
+                       AMTExpenseType T2 ON T2.ExpenceTypeId = T1.DisbExpType
+
+</createView>
+</changeSet>
 </databaseChangeLog>

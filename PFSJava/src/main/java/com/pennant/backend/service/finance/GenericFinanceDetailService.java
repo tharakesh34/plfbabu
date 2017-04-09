@@ -1243,7 +1243,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				return auditHeader;
 			}
 			
-			
+			// TODO : NED TO DO CLEANUP ON BELOW EXECUTION PROCESS (Execution process calling multiple times(Repeated code- added time being)
 			
 			if (!financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
 				
@@ -1252,12 +1252,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					List<FinanceDisbursement> disbursementDetails = financeDetail.getFinScheduleData().getDisbursementDetails();
 
-					// Loop Repetation for Multiple Disbursement
+					// Loop Repetition for Multiple Disbursement
 					if(disbursementDetails != null && disbursementDetails.size() > 0){
 
 						Map<Long, BigDecimal> advPendingDueMap = new HashMap<Long, BigDecimal>();			
 
-						for (FinanceDisbursement disbursement : financeDetail.getFinScheduleData().getDisbursementDetails()) {
+						for (FinanceDisbursement disbursement : disbursementDetails) {
 							if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
 								if ("B".equals(disbursement.getDisbType())) {
 									continue;
@@ -1307,19 +1307,86 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								netAdvDue = netAdvDue.add(disbursement.getNetAdvDue());
 								advPendingDueMap.put(disbursement.getContractorId(), netAdvDue);
 							}
-							
 
 							List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y",
-									feeRuleDetailsMap,false, financeDetail.getFinScheduleData().getFinanceType());
+									feeRuleDetailsMap,false, financeDetail.getFinScheduleData().getFinanceType(),financeDetail.getPremiumDetail());
 
+							if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+								// Method for validating Postings with interface program and
+								// return results
+								if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+									linkedTranId = getPostingsDAO().getLinkedTransId();
+								} else {
+									linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+								}
+								
+								disbursement.setLinkedTranId(linkedTranId);
+								
+								//Method for Checking for Reverse Calculations Based upon Negative Amounts
+								for (ReturnDataSet returnDataSet : returnSetEntries) {
+									
+									returnDataSet.setLinkedTranId(linkedTranId);
+
+									if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+										String tranCode = returnDataSet.getTranCode();
+										String revTranCode = returnDataSet.getRevTranCode();
+										String debitOrCredit = returnDataSet.getDrOrCr();
+
+										returnDataSet.setTranCode(revTranCode);
+										returnDataSet.setRevTranCode(tranCode);
+
+										returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+										if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+											returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+										} else {
+											returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+										}
+									}
+								}
+
+								//Core Banking Posting Process call
+								returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+								if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+									ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+									boolean isFetchFinAc = false;
+									boolean isFetchCistIntAc = false;
+									for (int i = 0; i < returnSetEntries.size(); i++) {
+										ReturnDataSet set = returnSetEntries.get(i);
+										set.setLinkedTranId(linkedTranId);
+										set.setPostDate(curBDay);
+										if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+											errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+													set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+										} else {
+											set.setPostStatus("S");
+										}
+
+										if (!isFetchFinAc && set.getAccountType().equals(
+												financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
+											isFetchFinAc = true;
+											financeMain.setFinAccount(set.getAccount());
+										}
+										if (!isFetchCistIntAc && set.getAccountType().equals(
+												financeDetail.getFinScheduleData().getFinanceType().getPftPayAcType())) {
+											isFetchCistIntAc = true;
+											financeMain.setFinCustPftAccount(set.getAccount());
+										}
+									}
+									auditHeader.setErrorList(errorDetails);
+								}
+							}
+							
 							list.addAll(returnSetEntries);
 						}
 					}
 					// Finance GraceEnd Posting Details
-					if (StringUtils.trimToEmpty(productType).equalsIgnoreCase(FinanceConstants.PRODUCT_IJARAH)||
-							StringUtils.trimToEmpty(productType).equalsIgnoreCase(FinanceConstants.PRODUCT_FWIJARAH)	) {
-						if(StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW) && 
-								!StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)){
+					if(StringUtils.equals(financeMain.getRecordType(),PennantConstants.RECORD_TYPE_NEW)){
+						if (StringUtils.equals(productType, FinanceConstants.PRODUCT_IJARAH)||
+								StringUtils.equals(productType, FinanceConstants.PRODUCT_FWIJARAH)	) {
 							if(financeMain.getGrcPeriodEndDate() != null && financeMain.getGrcPeriodEndDate().compareTo(curBDay) <= 0){
 								List<ReturnDataSet> returnSetEntries = null;
 								dataSet.setFinEvent(AccountEventConstants.ACCEVENT_GRACEEND);
@@ -1327,23 +1394,344 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								dataSet.setInsAmount(financeMain.getInsuranceAmt() == null ?  BigDecimal.ZERO : financeMain.getInsuranceAmt());
 								returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y",
 										null,false, financeDetail.getFinScheduleData().getFinanceType());	
+								
+								if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+									// Method for validating Postings with interface program and
+									// return results
+									if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+										linkedTranId = getPostingsDAO().getLinkedTransId();
+									} else {
+										linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+									}
+									
+									//Method for Checking for Reverse Calculations Based upon Negative Amounts
+									for (ReturnDataSet returnDataSet : returnSetEntries) {
+										
+										returnDataSet.setLinkedTranId(linkedTranId);
+
+										if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+											String tranCode = returnDataSet.getTranCode();
+											String revTranCode = returnDataSet.getRevTranCode();
+											String debitOrCredit = returnDataSet.getDrOrCr();
+
+											returnDataSet.setTranCode(revTranCode);
+											returnDataSet.setRevTranCode(tranCode);
+
+											returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+											if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+											} else {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+											}
+										}
+									}
+
+									//Core Banking Posting Process call
+									returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+									if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+										ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+										for (int i = 0; i < returnSetEntries.size(); i++) {
+											ReturnDataSet set = returnSetEntries.get(i);
+											set.setLinkedTranId(linkedTranId);
+											set.setPostDate(curBDay);
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+														set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+											} else {
+												set.setPostStatus("S");
+											}
+										}
+										auditHeader.setErrorList(errorDetails);
+									}
+								}
 								list.addAll(returnSetEntries);
 							}
 						}
 					}
 
 				}else{
+					
+					List<ReturnDataSet> returnSetEntries = null;
+					if(StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)){
+						
+						// Get Approved Disbursement Records 
+						List<FinanceDisbursement> oldDisbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(financeMain.getFinReference(), "", false);
+						List<FinanceDisbursement> curDisbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 
-					//Accounting Execution for Maintenance
-					list.addAll(getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y",
-							feeRuleDetailsMap,false, financeDetail.getFinScheduleData().getFinanceType(),financeDetail.getPremiumDetail()));
+						// Loop Repetition for Multiple Disbursement
+						if(curDisbList != null && !curDisbList.isEmpty()){
+							for (int i = 0; i < curDisbList.size(); i++) {
+								FinanceDisbursement curDisb = curDisbList.get(i);
+								if(StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+									continue;
+								}
+								boolean isDisbFound = false;
+								for (int j = 0; j < oldDisbList.size(); j++) {
+									FinanceDisbursement oldDisb = oldDisbList.get(j);
+									if(curDisb.getDisbDate().compareTo(oldDisb.getDisbDate()) == 0 && 
+											(curDisb.getDisbSeq() == oldDisb.getDisbSeq())){
+										isDisbFound = true;
+										break;
+									}
+								}
+
+								// If Disbursement not found in Existing List
+								if(isDisbFound){
+									continue;
+								}
+
+								if (curDisb.getDisbDate().after(DateUtility.getAppDate())) {
+									if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSF);
+									} else {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
+									}
+								} else {
+									dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
+								}
+
+								if(StringUtils.isNotBlank(curDisb.getDisbAccountId())){
+									dataSet.setDisburseAccount(curDisb.getDisbAccountId());
+								}
+								dataSet.setDisburseAmount(curDisb.getDisbAmount());
+								dataSet.setCurDisbRet(curDisb.getDisbRetAmount());
+								dataSet.setNetRetDue(curDisb.getNetRetDue());
+								dataSet.setClaimAmt(curDisb.getDisbClaim());
+								dataSet.setGrcPftTillNow(calculateTillGrcProfit(financeDetail.getFinScheduleData(), curDisb.getDisbDate()));
+
+								returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y",
+										feeRuleDetailsMap,false, financeDetail.getFinScheduleData().getFinanceType(),financeDetail.getPremiumDetail());
+
+								if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+									// Method for validating Postings with interface program and
+									// return results
+									if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+										linkedTranId = getPostingsDAO().getLinkedTransId();
+									} else {
+										linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+									}
+
+									curDisb.setLinkedTranId(linkedTranId);
+									
+									//Method for Checking for Reverse Calculations Based upon Negative Amounts
+									for (ReturnDataSet returnDataSet : returnSetEntries) {
+
+										returnDataSet.setLinkedTranId(linkedTranId);
+
+										if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+											String tranCode = returnDataSet.getTranCode();
+											String revTranCode = returnDataSet.getRevTranCode();
+											String debitOrCredit = returnDataSet.getDrOrCr();
+
+											returnDataSet.setTranCode(revTranCode);
+											returnDataSet.setRevTranCode(tranCode);
+
+											returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+											if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+											} else {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+											}
+										}
+									}
+
+									//Core Banking Posting Process call
+									returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+									if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+										ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+										for (int k = 0; k < returnSetEntries.size(); k++) {
+											ReturnDataSet set = returnSetEntries.get(k);
+											set.setLinkedTranId(linkedTranId);
+											set.setPostDate(curBDay);
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+														set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+											} else {
+												set.setPostStatus("S");
+											}
+										}
+										auditHeader.setErrorList(errorDetails);
+									}
+								}
+
+								list.addAll(returnSetEntries);
+							}
+						}
+						
+						oldDisbList = null;
+					}else if(StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_CANCELDISB)){
+						
+						// Get Approved Disbursement Records 
+						List<FinanceDisbursement> oldDisbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(financeMain.getFinReference(), "", false);
+						List<FinanceDisbursement> curDisbList = financeDetail.getFinScheduleData().getDisbursementDetails();
+
+						// Loop Repetition for Multiple Disbursement
+						if(curDisbList != null && !curDisbList.isEmpty()){
+							for (int i = 0; i < curDisbList.size(); i++) {
+								FinanceDisbursement curDisb = curDisbList.get(i);
+								if(!StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+									continue;
+								}
+								boolean isCancelDisbExists = false;
+								for (int j = 0; j < oldDisbList.size(); j++) {
+									FinanceDisbursement oldDisb = oldDisbList.get(j);
+									if(curDisb.getDisbDate().compareTo(oldDisb.getDisbDate()) == 0 && 
+											(curDisb.getDisbSeq() == oldDisb.getDisbSeq()) && 
+											StringUtils.equals(oldDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+										isCancelDisbExists = true;
+										linkedTranId = oldDisb.getLinkedTranId();
+										break;
+									}
+								}
+
+								// If Disbursement not found in Existing List
+								if(isCancelDisbExists){
+									continue;
+								}
+
+								List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings("", String.valueOf(linkedTranId));
+								logger.debug("Reverse Transaction Success for Transaction ID : "+linkedTranId);
+								if(!(Boolean) returnList.get(0)){
+									logger.debug("Reverse Transaction failed for Transaction ID : "+linkedTranId);
+									throw new PFFInterfaceException("9999",returnList.get(1).toString());
+								}
+								returnList = null;
+							}
+						}
+						oldDisbList = null;
+					}else{
+
+						//Accounting Execution for Maintenance
+						returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y",
+								feeRuleDetailsMap,false, financeDetail.getFinScheduleData().getFinanceType(),financeDetail.getPremiumDetail());
+
+						if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+							// Method for validating Postings with interface program and
+							// return results
+							if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+								linkedTranId = getPostingsDAO().getLinkedTransId();
+							} else {
+								linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+							}
+
+							//Method for Checking for Reverse Calculations Based upon Negative Amounts
+							for (ReturnDataSet returnDataSet : returnSetEntries) {
+
+								returnDataSet.setLinkedTranId(linkedTranId);
+
+								if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+									String tranCode = returnDataSet.getTranCode();
+									String revTranCode = returnDataSet.getRevTranCode();
+									String debitOrCredit = returnDataSet.getDrOrCr();
+
+									returnDataSet.setTranCode(revTranCode);
+									returnDataSet.setRevTranCode(tranCode);
+
+									returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+									if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+										returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+									} else {
+										returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+									}
+								}
+							}
+
+							//Core Banking Posting Process call
+							returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+							if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+								ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+								for (int i = 0; i < returnSetEntries.size(); i++) {
+									ReturnDataSet set = returnSetEntries.get(i);
+									set.setLinkedTranId(linkedTranId);
+									set.setPostDate(curBDay);
+									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+										errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+												set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+									} else {
+										set.setPostStatus("S");
+									}
+								}
+								auditHeader.setErrorList(errorDetails);
+							}
+						}
+
+						list.addAll(returnSetEntries);
+					}
 				}
 
 				//Stage Accounting Process Execution
 				if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
 					dataSet.setFinEvent(AccountEventConstants.ACCEVENT_STAGE);
-					list.addAll(getEngineExecution().getStageExecResults(dataSet, amountCodes, "Y",
-							financeMain.getRoleCode(), feeRuleDetailsMap, financeDetail.getFinScheduleData().getFinanceType(), financeDetail.getPremiumDetail()));
+					List<ReturnDataSet> returnSetEntries = getEngineExecution().getStageExecResults(dataSet, amountCodes, "Y",
+							financeMain.getRoleCode(), feeRuleDetailsMap, financeDetail.getFinScheduleData().getFinanceType(), financeDetail.getPremiumDetail());
+
+					if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+						// Method for validating Postings with interface program and
+						// return results
+						if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+							linkedTranId = getPostingsDAO().getLinkedTransId();
+						} else {
+							linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+						}
+						
+						//Method for Checking for Reverse Calculations Based upon Negative Amounts
+						for (ReturnDataSet returnDataSet : returnSetEntries) {
+							
+							returnDataSet.setLinkedTranId(linkedTranId);
+
+							if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+								String tranCode = returnDataSet.getTranCode();
+								String revTranCode = returnDataSet.getRevTranCode();
+								String debitOrCredit = returnDataSet.getDrOrCr();
+
+								returnDataSet.setTranCode(revTranCode);
+								returnDataSet.setRevTranCode(tranCode);
+
+								returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+								if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+									returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+								} else {
+									returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+								}
+							}
+						}
+
+						//Core Banking Posting Process call
+						returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+						if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+							ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+							for (int i = 0; i < returnSetEntries.size(); i++) {
+								ReturnDataSet set = returnSetEntries.get(i);
+								set.setLinkedTranId(linkedTranId);
+								set.setPostDate(curBDay);
+								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+											set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+								} else {
+									set.setPostStatus("S");
+								}
+							}
+							auditHeader.setErrorList(errorDetails);
+						}
+					}
+					
+					list.addAll(returnSetEntries);
 				}
 
 			} else {
@@ -1364,7 +1752,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					// Loop Repetition for Multiple Disbursement
 					List<FinanceDisbursement> disbursementDetails = financeDetail.getFinScheduleData().getDisbursementDetails();
-					List<ReturnDataSet> returnSetEntries = null;
+					List<ReturnDataSet> returnSetEntries = new ArrayList<>();
 					
 					if(disbursementDetails != null && !disbursementDetails.isEmpty()){
 						for (FinanceDisbursement disbursement : disbursementDetails) {
@@ -1379,11 +1767,65 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								dataSet.setDisburseAmount(disbursement.getDisbAmount());
 								dataSet.setCurDisbRet(disbursement.getDisbRetAmount());
 								dataSet.setNetRetDue(disbursement.getNetRetDue());
-								returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList,feeRuleDetailsMap);
-
-								list.addAll(returnSetEntries);
+								returnSetEntries.addAll(getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList,feeRuleDetailsMap));
 							}
 						}
+						
+						if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+							// Method for validating Postings with interface program and
+							// return results
+							if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+								linkedTranId = getPostingsDAO().getLinkedTransId();
+							} else {
+								linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+							}
+							
+							//Method for Checking for Reverse Calculations Based upon Negative Amounts
+							for (ReturnDataSet returnDataSet : returnSetEntries) {
+								
+								returnDataSet.setLinkedTranId(linkedTranId);
+
+								if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+									String tranCode = returnDataSet.getTranCode();
+									String revTranCode = returnDataSet.getRevTranCode();
+									String debitOrCredit = returnDataSet.getDrOrCr();
+
+									returnDataSet.setTranCode(revTranCode);
+									returnDataSet.setRevTranCode(tranCode);
+
+									returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+									if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+										returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+									} else {
+										returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+									}
+								}
+							}
+
+							//Core Banking Posting Process call
+							returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+							if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+								ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+								for (int i = 0; i < returnSetEntries.size(); i++) {
+									ReturnDataSet set = returnSetEntries.get(i);
+									set.setLinkedTranId(linkedTranId);
+									set.setPostDate(curBDay);
+									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+										errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+												set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+									} else {
+										set.setPostStatus("S");
+									}
+								}
+								auditHeader.setErrorList(errorDetails);
+							}
+						}
+						
+						list.addAll(returnSetEntries);
 					}
 					
 					// Finance GraceEnd Posting Details
@@ -1394,14 +1836,125 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							if(financeMain.getGrcPeriodEndDate() != null && financeMain.getGrcPeriodEndDate().compareTo(curBDay) <= 0){
 								DataSet dataset = AEAmounts.createDataSet(financeMain, financeDetail.getAccountingEventCode(), financeMain.getFinStartDate(), financeMain.getFinStartDate());
 								dataset.setFinEvent(AccountEventConstants.ACCEVENT_GRACEEND);
-								list.addAll(getEngineExecutionRIA().getAccEngineExecResults(dataset, amountCodes, "Y", riaDetailList,feeRuleDetailsMap));
+								returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataset, amountCodes, "Y", riaDetailList,feeRuleDetailsMap);
+								
+								if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+									// Method for validating Postings with interface program and
+									// return results
+									if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+										linkedTranId = getPostingsDAO().getLinkedTransId();
+									} else {
+										linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+									}
+									
+									//Method for Checking for Reverse Calculations Based upon Negative Amounts
+									for (ReturnDataSet returnDataSet : returnSetEntries) {
+										
+										returnDataSet.setLinkedTranId(linkedTranId);
+
+										if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+											String tranCode = returnDataSet.getTranCode();
+											String revTranCode = returnDataSet.getRevTranCode();
+											String debitOrCredit = returnDataSet.getDrOrCr();
+
+											returnDataSet.setTranCode(revTranCode);
+											returnDataSet.setRevTranCode(tranCode);
+
+											returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+											if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+											} else {
+												returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+											}
+										}
+									}
+
+									//Core Banking Posting Process call
+									returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+									if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+										ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+										for (int i = 0; i < returnSetEntries.size(); i++) {
+											ReturnDataSet set = returnSetEntries.get(i);
+											set.setLinkedTranId(linkedTranId);
+											set.setPostDate(curBDay);
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+														set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+											} else {
+												set.setPostStatus("S");
+											}
+										}
+										auditHeader.setErrorList(errorDetails);
+									}
+								}
+								
+								list.addAll(returnSetEntries);
 							}
 						}
 					}
 				}else{
 
-					//Accounting Execution for Maintainance
-					list.addAll( getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList,feeRuleDetailsMap));
+					//Accounting Execution for Maintenance
+					List<ReturnDataSet> returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList,feeRuleDetailsMap);
+					if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+						// Method for validating Postings with interface program and
+						// return results
+						if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+							linkedTranId = getPostingsDAO().getLinkedTransId();
+						} else {
+							linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+						}
+						
+						//Method for Checking for Reverse Calculations Based upon Negative Amounts
+						for (ReturnDataSet returnDataSet : returnSetEntries) {
+							
+							returnDataSet.setLinkedTranId(linkedTranId);
+
+							if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+								String tranCode = returnDataSet.getTranCode();
+								String revTranCode = returnDataSet.getRevTranCode();
+								String debitOrCredit = returnDataSet.getDrOrCr();
+
+								returnDataSet.setTranCode(revTranCode);
+								returnDataSet.setRevTranCode(tranCode);
+
+								returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+								if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+									returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+								} else {
+									returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+								}
+							}
+						}
+
+						//Core Banking Posting Process call
+						returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+						if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+							ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+							for (int i = 0; i < returnSetEntries.size(); i++) {
+								ReturnDataSet set = returnSetEntries.get(i);
+								set.setLinkedTranId(linkedTranId);
+								set.setPostDate(curBDay);
+								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+											set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+								} else {
+									set.setPostStatus("S");
+								}
+							}
+							auditHeader.setErrorList(errorDetails);
+						}
+					}
+					
+					list.addAll(returnSetEntries);
 				}
 			}
 
@@ -1418,11 +1971,66 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), commitment.getCmtCcy(),
 						financeMain.getFinAmount().subtract(financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
-				
-				List<ReturnDataSet> cmtDataSet = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, AccountEventConstants.ACCEVENT_CMTDISB, "Y", null);
-				if(cmtDataSet != null && !cmtDataSet.isEmpty()){
-					list.addAll(cmtDataSet);
+
+				List<ReturnDataSet> returnSetEntries = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, AccountEventConstants.ACCEVENT_CMTDISB, "Y", null);
+				if(returnSetEntries != null && !returnSetEntries.isEmpty() ) {
+
+					// Method for validating Postings with interface program and
+					// return results
+					if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+						linkedTranId = getPostingsDAO().getLinkedTransId();
+					} else {
+						linkedTranId = returnSetEntries.get(0).getLinkedTranId();
+					}
+
+					//Method for Checking for Reverse Calculations Based upon Negative Amounts
+					for (ReturnDataSet returnDataSet : returnSetEntries) {
+
+						returnDataSet.setLinkedTranId(linkedTranId);
+
+						if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+							String tranCode = returnDataSet.getTranCode();
+							String revTranCode = returnDataSet.getRevTranCode();
+							String debitOrCredit = returnDataSet.getDrOrCr();
+
+							returnDataSet.setTranCode(revTranCode);
+							returnDataSet.setRevTranCode(tranCode);
+
+							returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+							if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+								returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+							} else {
+								returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+							}
+						}
+					}
+
+					//Core Banking Posting Process call
+					returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries, financeMain.getFinBranch(), linkedTranId, "Y");
+
+					if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
+						ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+						for (int i = 0; i < returnSetEntries.size(); i++) {
+							ReturnDataSet set = returnSetEntries.get(i);
+							set.setLinkedTranId(linkedTranId);
+							set.setPostDate(curBDay);
+							if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+								errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+										set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
+							} else {
+								set.setPostStatus("S");
+								// Used for Commitment Purpose , Commented for Limit Usage
+								if (AccountEventConstants.ACCEVENT_CMTDISB.equals(set.getFinEvent())) {
+									cmtPostAmt = set.getPostAmount();
+								}
+							}
+						}
+						auditHeader.setErrorList(errorDetails);
+					}
 				}
+				list.addAll(returnSetEntries);
 			}
 
 		} catch (Exception e) {
@@ -1432,80 +2040,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					"Accounting Engine Failed to Create Postings:"+e.getMessage(), new String[] {}, new String[] {}));
 			auditHeader.setErrorList(errorDetails);
 			list = null;
-		}
-
-		if(list != null && !list.isEmpty() ) {
-
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-			
-			//Method for Checking for Reverse Calculations Based upon Negative Amounts
-			for (ReturnDataSet returnDataSet : list) {
-				
-				returnDataSet.setLinkedTranId(linkedTranId);
-
-				if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-					String tranCode = returnDataSet.getTranCode();
-					String revTranCode = returnDataSet.getRevTranCode();
-					String debitOrCredit = returnDataSet.getDrOrCr();
-
-					returnDataSet.setTranCode(revTranCode);
-					returnDataSet.setRevTranCode(tranCode);
-
-					returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-					if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-					} else {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-					}
-				}
-			}
-
-			//Core Banking Posting Process call
-			list = getPostingsInterfaceService().doFillPostingDetails(list, financeMain.getFinBranch(), linkedTranId, "Y");
-
-			if (list != null && list.size() > 0) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				boolean isFetchFinAc = false;
-				boolean isFetchCistIntAc = false;
-				for (int i = 0; i < list.size(); i++) {
-					ReturnDataSet set = list.get(i);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
-								set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus("S");
-						// Used for Commitment Purpose , Commented for Limit Usage
-						if (AccountEventConstants.ACCEVENT_CMTDISB.equals(set.getFinEvent())) {
-							cmtPostAmt = set.getPostAmount();
-						}
-					}
-
-					if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && 
-							!StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)){
-						if (!isFetchFinAc && set.getAccountType().equals(
-								financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
-							isFetchFinAc = true;
-							financeMain.setFinAccount(set.getAccount());
-						}
-						if (!isFetchCistIntAc && set.getAccountType().equals(
-								financeDetail.getFinScheduleData().getFinanceType().getPftPayAcType())) {
-							isFetchCistIntAc = true;
-							financeMain.setFinCustPftAccount(set.getAccount());
-						}
-					}
-				}
-				auditHeader.setErrorList(errorDetails);
-			}
 		}
 
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
@@ -1642,15 +2176,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					getPostingsDAO().saveBatch(list, "", false);
 				}
 
-				//Update disbursement details
-				if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && 
-						!StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)){
-					List<FinanceDisbursement> financeDisbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
-					for (FinanceDisbursement disbursement : financeDisbursements) {
-						disbursement.setLinkedTranId(linkedTranId);
-					}
-				}
-
 				// Save/Update Finance Profit Details
 				FinanceProfitDetail profitDetail = doSave_PftDetails(amountCodes, financeDetail.getFinScheduleData(), pftDetail);
 
@@ -1673,6 +2198,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	/**
+	 * Method for Calling Posting Execution Process
+	 */
+	private void callPostings(){
+		
 	}
 	
 	/**

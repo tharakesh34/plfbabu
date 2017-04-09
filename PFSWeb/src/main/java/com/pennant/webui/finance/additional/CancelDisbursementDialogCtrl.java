@@ -73,6 +73,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.component.Uppercasebox;
@@ -286,6 +287,9 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						
 						for (int j = 0; j < disbList.size(); j++) {
 							FinanceDisbursement curDisb = disbList.get(j);
+							if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+								continue;
+							}
 							if(DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0){
 								comboitem = new Comboitem();
 								comboitem.setLabel(DateUtility.formatDate(curDisb.getDisbDate(),DateFormat.SHORT_DATE.getPattern()) +" , "+curDisb.getDisbSeq());
@@ -375,7 +379,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceDisbursement disbursement = list.get(i);
 			if (disbursement.getDisbDate().compareTo(finServiceInstruction.getFromDate()) == 0
 					&& disbursement.getDisbSeq() == selectedSeq) {
-				list.remove(i);
+				disbursement.setDisbStatus(FinanceConstants.DISB_STATUS_CANCEL);
 				break;
 			}
 		}

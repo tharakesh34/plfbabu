@@ -297,6 +297,9 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					new Filter("LastMntOn", allowedDate.toString(), Filter.OP_GREATER_THAN),
 					new Filter("RcdMaintainSts", "", Filter.OP_EQUAL) });
 		}
+		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
+			this.finReference.setFilters(new Filter[] {	new Filter("FinIsActive", 0, Filter.OP_EQUAL)});
+		}
 
 	}
 

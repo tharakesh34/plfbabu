@@ -95,6 +95,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private BigDecimal feeChargeAmt= BigDecimal.ZERO;
 	private BigDecimal insuranceAmt= BigDecimal.ZERO;
 	private boolean disbIsActive;
+	private String disbStatus;
 	private String disbRemarks;
 	private BigDecimal netAdvDue= BigDecimal.ZERO;
 	private BigDecimal netRetDue= BigDecimal.ZERO;
@@ -364,6 +365,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setInsuranceAmt(BigDecimal insuranceAmt) {
 		this.insuranceAmt = insuranceAmt;
+	}
+
+	public String getDisbStatus() {
+		return disbStatus;
+	}
+
+	public void setDisbStatus(String disbStatus) {
+		this.disbStatus = disbStatus;
 	}
 
 }

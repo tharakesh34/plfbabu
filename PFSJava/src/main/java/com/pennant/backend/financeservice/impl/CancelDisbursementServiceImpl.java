@@ -14,14 +14,9 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 
 	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
-
-		FinScheduleData finSchData = null;
-		//TODO need to add the schedule method
-		finSchData = ScheduleCalculator.reCalSchd(finScheduleData,"");
-
+		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(finScheduleData,"");
 		logger.debug("Leaving");
 		return finSchData;
 	}
-
 
 }

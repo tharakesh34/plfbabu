@@ -311,4 +311,7 @@ public class FinanceConstants {
 	public static final String PLANEMIHMETHOD_FRQ              	= "F";
 	public static final String PLANEMIHMETHOD_ADHOC				= "A";
 	
+	// Finance Disbursement Status
+	public static final String DISB_STATUS_CANCEL				= "C";
+	
 }

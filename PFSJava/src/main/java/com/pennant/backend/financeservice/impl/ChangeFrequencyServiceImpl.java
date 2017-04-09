@@ -127,6 +127,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		for (int k = 0; k < finDisbDetails.size(); k++) {
 			
 			FinanceDisbursement curDisb = finDisbDetails.get(k);
+			if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+				continue;
+			}
 			Date curDisbDate = curDisb.getDisbDate();
 			isDisbDateFoundInSD = false;
 			if(curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0){
