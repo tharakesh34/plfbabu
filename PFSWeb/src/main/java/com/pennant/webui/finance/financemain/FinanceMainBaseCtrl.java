@@ -2538,6 +2538,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				} else {
 					for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
+						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+							continue;
+						}
 						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(
 								curDisb.getFeeChargeAmt().add(curDisb.getInsuranceAmt()));
 					}
@@ -5226,7 +5229,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.nextGrcPftRvwDate_two.setValue(FrequencyUtil.getNextDate(this.gracePftRvwFrq.getValue(), 1,
 							this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false,
 							finType.getFddLockPeriod()).getNextFrequencyDate());
-					if (this.nextGrcPftRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
+					if (this.nextGrcPftRvwDate_two.getValue() != null && this.nextGrcPftRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
 						this.nextGrcPftRvwDate_two.setValue(this.gracePeriodEndDate_two.getValue());
 					}
 					this.nextGrcPftRvwDate.setValue(null);
@@ -5711,6 +5714,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.add(aFinanceMain.getFeeChargeAmt()).add(aFinanceMain.getInsuranceAmt());
 				} else {
 					for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
+						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+							continue;
+						}
 						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(
 								aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
 					}
@@ -11212,6 +11218,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					Map<Long, BigDecimal> advPendingDueMap = new HashMap<Long, BigDecimal>();
 					for (FinanceDisbursement disbursement : disbList) {
+						
+						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
+							continue;
+						}
+						
 						// Stop Posting Process for future Disbursements
 						if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
 							if ("B".equals(disbursement.getDisbType())) {
@@ -11305,6 +11316,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					for (FinanceDisbursement disbursement : getFinanceDetail().getFinScheduleData()
 							.getDisbursementDetails()) {
+						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
+							continue;
+						}
 
 						if (disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -14215,6 +14229,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Setting Total Disbursements as of Date
 
 		for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
+			if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+				continue;
+			}
 			utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount());
 		}
 		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
