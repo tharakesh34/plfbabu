@@ -7741,7 +7741,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$finBranch(Event event) {
 		logger.debug("Entering");
 		
-		Branch branch=(Branch)this.finBranch.getObject();
 		if (StringUtils.isBlank(this.finBranch.getValue())) {
 			this.finBranch.setValue(getFinanceDetail().getCustomerDetails()
 					.getCustomer().getCustDftBranch());
@@ -7749,9 +7748,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getCustomerDetails().getCustomer()
 					.getLovDescCustDftBranchName());
 		}else{
+			Branch branch=(Branch)this.finBranch.getObject();
 			if (branch != null) {
-			getFinanceDetail().getCustomerDetails().getCustomer()
-			.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
+				getFinanceDetail().getCustomerDetails().getCustomer()
+				.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
 			}
 		}
 		isBranchanged=true;
