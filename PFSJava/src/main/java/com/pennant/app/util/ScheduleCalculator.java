@@ -147,18 +147,18 @@ public class ScheduleCalculator {
 		return new ScheduleCalculator(PROC_CHANGEREPAY, finScheduleData, amount, schdMethod).getFinScheduleData();
 	}
 
-	public static FinScheduleData postpone(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
-		return new ScheduleCalculator(PROC_POSTPONE, finScheduleData, amount, schdMethod).getFinScheduleData();
+	public static FinScheduleData postpone(FinScheduleData finScheduleData) {
+		return new ScheduleCalculator(PROC_POSTPONE, finScheduleData).getFinScheduleData();
 	}
 
 	public static FinScheduleData unPlannedEMIH(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
 		return new ScheduleCalculator(PROC_UNPLANEMIH, finScheduleData, amount, schdMethod).getFinScheduleData();
 	}
 
-	public static FinScheduleData reAging(FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
-		return new ScheduleCalculator(PROC_REAGEH, finScheduleData, amount, schdMethod).getFinScheduleData();
+	public static FinScheduleData reAging(FinScheduleData finScheduleData) {
+		return new ScheduleCalculator(PROC_REAGEH, finScheduleData).getFinScheduleData();
 	}
-
+	
 	public static FinScheduleData changeProfit(FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		return new ScheduleCalculator(PROC_CHANGEPROFIT, finScheduleData, desiredPftAmount).getFinScheduleData();
 	}
@@ -227,6 +227,15 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_CHANGEGRACEEND)) {
 			setFinScheduleData(procChangeGraceEnd(finScheduleData));
 		}
+		
+		if (StringUtils.equals(method, PROC_REAGEH)) {
+			setFinScheduleData(procReAgeH(finScheduleData));
+		}
+		
+		if (StringUtils.equals(method, PROC_POSTPONE)) {
+			setFinScheduleData(procPostpone(finScheduleData));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -403,17 +412,10 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_CHANGEREPAY)) {
 			setFinScheduleData(procChangeRepay(finScheduleData, amount, schdMethod));
 		}
-
-		if (StringUtils.equals(method, PROC_POSTPONE)) {
-			setFinScheduleData(procPostpone(finScheduleData, amount, schdMethod));
-		}
+		
 
 		if (StringUtils.equals(method, PROC_UNPLANEMIH)) {
 			setFinScheduleData(procUnPlanEMIH(finScheduleData, amount, schdMethod));
-		}
-
-		if (StringUtils.equals(method, PROC_REAGEH)) {
-			setFinScheduleData(procReAgeH(finScheduleData, amount, schdMethod));
 		}
 
 		if (StringUtils.equals(method, PROC_RECALSCHD)) {
@@ -1391,7 +1393,7 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData procPostpone(FinScheduleData finScheduleData, BigDecimal repayAmount, String schdMethod) {
+	private FinScheduleData procPostpone(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -1399,7 +1401,7 @@ public class ScheduleCalculator {
 
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
-		int adjTerms = finMain.getAdjTerms();
+		int adjTerms = 0;
 		finMain.setCompareToExpected(false);
 		finMain.setRecalSchdMethod(CalculationConstants.RPYCHG_ADJMDT);
 
@@ -1419,6 +1421,8 @@ public class ScheduleCalculator {
 			if (schdDate.compareTo(evtToDate) > 0) {
 				break;
 			}
+			
+			adjTerms = adjTerms + 1;
 
 			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_POSTPONE);
@@ -1437,7 +1441,7 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData procReAgeH(FinScheduleData finScheduleData, BigDecimal repayAmount, String schdMethod) {
+	private FinScheduleData procReAgeH(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -1445,7 +1449,7 @@ public class ScheduleCalculator {
 
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
-		int adjTerms = finMain.getAdjTerms();
+		int adjTerms = 0;
 		finMain.setCompareToExpected(false);
 		finMain.setRecalSchdMethod(CalculationConstants.RPYCHG_ADJMDT);
 
@@ -1465,6 +1469,8 @@ public class ScheduleCalculator {
 			if (schdDate.compareTo(evtToDate) > 0) {
 				break;
 			}
+			
+			adjTerms = adjTerms + 1;
 
 			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_REAGE);

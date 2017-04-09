@@ -593,6 +593,34 @@ public class SrvReducingRateTest {
 			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), -2));
 			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
+		
+		if (srvTestCase.equals("REAGE")) {
+			fm.setRecalType("");
+			
+			fm.setEventFromDate(schedule.getFinanceScheduleDetails().get(2).getSchDate());
+			fm.setEventToDate(schedule.getFinanceScheduleDetails().get(4).getSchDate());
+			
+			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(1561932));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(754213));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(788003));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2686214));
+			
+			schedule = ScheduleCalculator.reAging(schedule);
+		}
+
+		if (srvTestCase.equals("REAGE_C")) {
+			fm.setReAgeCpz(true);
+			fm.setRecalType("");
+			fm.setEventFromDate(schedule.getFinanceScheduleDetails().get(2).getSchDate());
+			fm.setEventToDate(schedule.getFinanceScheduleDetails().get(4).getSchDate());
+
+			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(1561932));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(754213));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(788003));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2686214));
+
+			schedule = ScheduleCalculator.reAging(schedule);
+		}
 
 		return schedule;
 	}

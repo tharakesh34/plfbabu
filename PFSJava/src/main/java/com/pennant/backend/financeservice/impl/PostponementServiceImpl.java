@@ -40,11 +40,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
 		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
 		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
-		finscheduleData.getFinanceMain().setAdjTerms(serviceInstruction.getTerms());
 		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.postpone(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		finscheduleData = ScheduleCalculator.postpone(finscheduleData);
 		logger.debug("Leaving");
 		return finscheduleData;
 	}
@@ -89,11 +88,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
 		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
 		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
-		finscheduleData.getFinanceMain().setAdjTerms(serviceInstruction.getTerms());
 		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.reAging(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		finscheduleData = ScheduleCalculator.reAging(finscheduleData);
 		logger.debug("Leaving");
 		return finscheduleData;
 	}
