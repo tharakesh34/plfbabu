@@ -957,5 +957,47 @@ FROM    	Mandates  T1 INNER JOIN
 			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode 
 		</createView>
 	</changeSet>
-	
+	<changeSet id="53" author="Siva">
+		<createView viewName="CUSTOMERDIRECTORDETAIL_VIEW" replaceIfExists="true">
+ SELECT	  T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+			FROM         CustomerDirectorDetail_TEMP T1 LEFT OUTER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		UNION ALL
+		SELECT     T1.DirectorId, T1.CustID, T1.FirstName, T1.MiddleName, T1.LastName, T1.ShortName, 
+                      T1.CustGenderCode, T1.CustSalutationCode, T1.SharePerc, T1.CustAddrHNbr, T1.CustFlatNbr, T1.CustAddrStreet, T1.CustAddrLine1, T1.CustAddrLine2, T1.CustPOBox, 
+                      T1.CustAddrCity, T1.CustAddrProvince, T1.CustAddrCountry, T1.CustAddrZIP, T1.CustAddrPhone, T1.CustAddrFrom, T1.Shareholder, T1.Director, T1.Designation, 
+                      T1.IDType, T1.IDReference, T1.Nationality, T1.DOB, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T5.PCCityName lovDescCustAddrCityName, 
+                      T6.CPProvinceName lovDescCustAddrProvinceName, T7.CountryDesc lovDescCustAddrCountryName, T3.GenderDesc lovDescCustGenderCodeName, 
+                      T4.SaluationDesc lovDescCustSalutationCodeName, T8.DesgDesc lovDescDesignationName, T9.CountryDesc lovDescNationalityName, 
+                      T10.DocTypeDesc lovDescCustDocCategoryName,COALESCE(T10.DocIdNumMand,0) IDReferenceMand
+		FROM         CustomerDirectorDetail T1 LEFT OUTER JOIN
+                       BMTGenders T3 ON T1.CustGenderCode = T3.GenderCode LEFT OUTER JOIN
+                       BMTSalutations T4 ON T1.CustSalutationCode = T4.SalutationCode LEFT OUTER JOIN
+                       RMTProvinceVsCity T5 ON T1.CustAddrCountry = T5.PCCountry AND T1.CustAddrProvince = T5.PCProvince AND T1.CustAddrCity = T5.PCCity LEFT OUTER JOIN
+                       RMTCountryVsProvince T6 ON T1.CustAddrCountry = T6.CPCountry AND T1.CustAddrProvince = T6.CPProvince INNER JOIN
+                       BMTCountries T7 ON T1.CustAddrCountry = T7.CountryCode LEFT OUTER JOIN
+                       BMTDesignations T8 ON T1.Designation = T8.DesgCode LEFT OUTER JOIN
+                       BMTCountries T9 ON T1.Nationality = T9.CountryCode LEFT OUTER JOIN
+                       BMTDocumentTypes T10 ON T1.IDType = T10.DocTypeCode
+		WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerDirectorDetail_TEMP
+                            WHERE      DirectorId = T1.DirectorId AND CustID = T1.CustID)
+                       </createView>     
+	</changeSet>
 </databaseChangeLog>
