@@ -128,4 +128,11 @@ public class ClassUtilTest {
 
 		Assert.assertEquals(fields.length, 4, "Field Count: ");
 	}
+	
+	@Test
+	public void isMethodExists() {
+		Assert.assertEquals(true, ClassUtil.isMethodExists(new ClassA(), "getA1"));
+		Assert.assertEquals(true, ClassUtil.isMethodExists(new ClassA(), "getA2"));
+		Assert.assertEquals(false, ClassUtil.isMethodExists(new ClassA(), "isSai"));
+	}
 }

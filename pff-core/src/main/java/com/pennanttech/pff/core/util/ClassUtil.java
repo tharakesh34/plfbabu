@@ -12,6 +12,7 @@
 package com.pennanttech.pff.core.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -59,5 +60,28 @@ public final class ClassUtil {
 	 */
 	public static Field[] getAllFields(Object object) {
 		return getAllFields(object.getClass());
+	}
+
+	/**
+	 * Checks whether the specified public member method of the class or interface exists in the object.
+	 * 
+	 * @param object
+	 *            The object to be checked.
+	 * @param name
+	 *            The name of the method.
+	 * @return Whether the specified public member method of the class or interface exists in the object.
+	 */
+	public static boolean isMethodExists(Object object, String name) {
+		boolean result = false;
+
+		for (Method method : object.getClass().getMethods()) {
+			if (method.getName().equals(name)) {
+				result = true;
+
+				break;
+			}
+		}
+
+		return result;
 	}
 }
