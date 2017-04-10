@@ -1134,6 +1134,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 */
 	public String getUsrFinAuthenticationQry(boolean isForReports) {
 		StringBuilder wherQuery = new StringBuilder();
+		boolean isdivChanged=false;
 
 		if (getUserWorkspace().getDivisionBranches() == null) {
 			getUserWorkspace().setDivisionBranches(
@@ -1151,7 +1152,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 
 		String divisionCode = "";
-		String branchCode = "";
 
 		if (getUserWorkspace().getDivisionBranches().isEmpty()) {
 			return " ( " + divisionField + "= '' and (" + branchField + "= '' ))";
@@ -1161,23 +1161,28 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 			if (!StringUtils.isEmpty(divisionCode) && !divisionCode.equals(divisionBranch.getUserDivision())) {
 				divisionCode = divisionBranch.getUserDivision();
 				wherQuery.append("  )) or (( " + divisionField + "= '");
-				wherQuery.append(divisionCode + "' ) And " + branchField + " In( '");
-				branchCode = "";
+				wherQuery.append(divisionCode + "' ) And " + branchField + " In( ");
+				isdivChanged=true;
+				if(isdivChanged){
+					appendWhereQuery(wherQuery, divisionCode);
+					break;
+				}
+				
 			} else if (StringUtils.isEmpty(divisionCode)) {
 				divisionCode = divisionBranch.getUserDivision();
-				wherQuery.append(" ((( " + divisionField + "= '" + divisionCode + "' ) And " + branchField + " In( '");
-			} else if (!StringUtils.isEmpty(branchCode)) {
-				wherQuery.append(", '" + divisionBranch.getUserBranch() + "' ");
+				wherQuery.append(" ((( " + divisionField + "= '" + divisionCode + "' ) And " + branchField + " In( ");
+				appendWhereQuery(wherQuery, divisionCode);
 			}
-			if (StringUtils.isEmpty(branchCode)) {
-				wherQuery.append(divisionBranch.getUserBranch() + "' ");
-			}
-			branchCode = divisionBranch.getUserBranch();
 		}
-
+		
 		wherQuery.append(" ))) ");
 
 		return wherQuery.toString();
+	}
+
+	private void appendWhereQuery(StringBuilder wherQuery, String divisionCode) {
+		wherQuery.append("Select UserBranch from SecurityUserDivBranch where userDivision ="+ 
+				   "'"+divisionCode+"'" +" and usrid ="+ getUserWorkspace().getLoggedInUser().getLoginUsrID());
 	}
 
 	public AuditLogService getAuditLogService() {
