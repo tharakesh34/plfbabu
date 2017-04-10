@@ -135,7 +135,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
-		getAcademicDAO().delete(academic, TableType.MAIN_TAB);
+		getAcademicDAO().delete(academic, TableType.MAIN_TAB, true);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -206,7 +206,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		if (academic.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getAcademicDAO().delete(academic, TableType.MAIN_TAB);
+			getAcademicDAO().delete(academic, TableType.MAIN_TAB, true);
 		} else {
 			academic.setRoleCode("");
 			academic.setNextRoleCode("");
@@ -226,7 +226,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 			}
 		}
 
-		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB, true);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -265,7 +265,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB, false);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -324,7 +324,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(method)) {
+		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(academic.getRecordType())) {
 			auditDetail.setBefImage(academicDAO.getAcademicById(academic.getAcademicID(), ""));
 		}
 

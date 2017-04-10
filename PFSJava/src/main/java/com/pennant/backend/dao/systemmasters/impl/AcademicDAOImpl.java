@@ -141,7 +141,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		paramSource.addValue("id", id);
 		paramSource.addValue("level", level);
 		paramSource.addValue("discipline", discipline);
-		
+
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -168,7 +168,9 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 		sql.append(" :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
-		academic.setAcademicID(getNextidviewDAO().getNextId("SeqBMTAcademics"));
+		if (academic.getAcademicID() <= 0) {
+			academic.setAcademicID(getNextidviewDAO().getNextId("SeqBMTAcademics"));
+		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -208,14 +210,14 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 	}
 
 	@Override
-	public void delete(Academic academic, TableType tableType) {
+	public void delete(Academic academic, TableType tableType, boolean finalize) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTAcademics");
 		sql.append(tableType.getSuffix());
 		sql.append(" where AcademicID = :AcademicID");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(QueryUtil.getConcurrencyCondition(tableType, finalize));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

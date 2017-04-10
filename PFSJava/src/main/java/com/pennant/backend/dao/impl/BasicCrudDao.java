@@ -41,6 +41,8 @@ public interface BasicCrudDao<T> {
 	 *            The model object that contains the parameters.
 	 * @param tableType
 	 *            The type of the table.
+	 * @param finalize
+	 *            Specifies whether the record was finalized or not.
 	 * @throws DependencyFoundException
 	 *             If there are any dependencies for the record.
 	 * @throws ConcurrencyException
@@ -48,5 +50,5 @@ public interface BasicCrudDao<T> {
 	 * @throws DataAccessException
 	 *             If there is any problem issuing the delete.
 	 */
-	void delete(T entity, TableType tableType);
+	void delete(T entity, TableType tableType, boolean finalize);
 }

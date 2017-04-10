@@ -210,18 +210,37 @@ public final class MessageUtil {
 	}
 
 	public static void showError(Exception e) {
+		if (e instanceof AppException) {
+			show((AppException) e);
+		} else if (e instanceof DataAccessException) {
+			show((DataAccessException) e);
+		} else {
+			show(e);
+		}
+	}
+
+	private static void show(AppException e) {
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(e.getMessage(), App.NAME, OK, ERROR);
+	}
+
+	/**
+	 * @deprecated Remove below condition once the validation changes completed through out the application.
+	 * @param e
+	 */
+	@Deprecated
+	private static void show(DataAccessException e) {
+		logger.error("Exception: ", e);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(e.getMessage(), App.NAME, OK, ERROR);
+	}
+
+	private static void show(Exception e) {
+		logger.error("Exception: ", e);
+
 		String title = Labels.getLabel("message.Error");
 		String message = Labels.getLabel("message.SystemError");
-
-		if (e instanceof AppException) {
-			message = e.getMessage();
-			// TODO: Remove below condition once the validation changes completed through out the application.
-		} else if (e instanceof DataAccessException) {
-			message = e.getMessage();
-			logger.error("Exception: ", e);
-		} else {
-			logger.error("Exception: ", e);
-		}
 
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, "ERROR", true,

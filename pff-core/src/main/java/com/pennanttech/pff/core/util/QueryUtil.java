@@ -76,4 +76,16 @@ public final class QueryUtil {
 			return " and Version = :Version - 1";
 		}
 	}
+
+	public static String getConcurrencyCondition(TableType tableType, boolean finalize) {
+		if (TableType.TEMP_TAB.equals(tableType)) {
+			if (finalize) {
+				return "";
+			} else {
+				return " and LastMntOn = :PrevMntOn";
+			}
+		} else {
+			return " and Version = :Version - 1";
+		}
+	}
 }
