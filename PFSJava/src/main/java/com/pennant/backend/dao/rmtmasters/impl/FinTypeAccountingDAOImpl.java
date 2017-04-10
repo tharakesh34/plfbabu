@@ -121,21 +121,22 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 	 * @return FinTypeAccounting List
 	 */
 	@Override
-	public List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, String type) {
+	public List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeAccounting finTypeAccounting = new FinTypeAccounting();
 		finTypeAccounting.setId(id);
+		finTypeAccounting.setModuleId(moduleId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Event, AccountSetID, ");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescEventAccountingName,lovDescAccountingName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeAccounting");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType");
+		selectSql.append(" Where FinType = :FinType And ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
@@ -164,11 +165,11 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		selectSql.append(" lovDescEventAccountingName,lovDescAccountingName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeAccounting");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType And Event = :Event");
+		selectSql.append(" Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
@@ -216,10 +217,10 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		insertSql.append(StringUtils.trimToEmpty(type) );
 		insertSql.append(" (FinType, Event, AccountSetID," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId)" );
 		insertSql.append(" Values(:FinType, :Event, :AccountSetID," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId)");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
@@ -254,8 +255,8 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where FinType=:FinType and Event=:Event");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleId = :ModuleId" );
+		updateSql.append(" Where FinType=:FinType And Event=:Event And ModuleId = :ModuleId");
 		
 		if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");
@@ -293,7 +294,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeAccounting");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append("  Where FinType =:FinType And Event =:Event");
+		deleteSql.append("  Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
@@ -321,13 +322,14 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 	 */
 	
 	@Override
-	public void deleteByFinType(String finType, String type) {
+	public void deleteByFinType(String finType, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeAccounting finTypeAccounting = new FinTypeAccounting();
 		finTypeAccounting.setFinType(finType);
+		finTypeAccounting.setModuleId(moduleId);
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeAccounting");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinType =:FinType");
+		deleteSql.append(" Where FinType =:FinType And ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
@@ -357,7 +359,7 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 
 	
 	@Override
-	public Long getAccountSetID(String finType, String event) {
+	public Long getAccountSetID(String finType, String event, int moduleId) {
 		logger.debug("Entering");
 
 		if(StringUtils.isEmpty(finType) || StringUtils.isEmpty(event)){
@@ -368,9 +370,10 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("Event", event);
+		source.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT AccountSetID  FROM FinTypeAccounting ");
-		selectSql.append(" Where FinType = :FinType And Event = :Event");
+		selectSql.append(" Where FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -385,15 +388,16 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 	}
 
 	@Override
-	public List<String> getFinTypeAccounting(String event,Long accountSetId) {
+	public List<String> getFinTypeAccounting(String event,Long accountSetId, int moduleId) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("Event", event);
 		mapSqlParameterSource.addValue("AccountSetID", accountSetId);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder(" Select FinType FROM FinTypeAccounting");
-		selectSql.append(" Where Event = :Event AND AccountSetID = :AccountSetID " );
+		selectSql.append(" Where Event = :Event AND AccountSetID = :AccountSetID AND ModuleId = :ModuleId" );
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		
@@ -401,15 +405,16 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 	}
 	
 	@Override
-	public List<Long> getFinTypeAccounting(String fintype, List<String> events) {
+	public List<Long> getFinTypeAccounting(String fintype, List<String> events, int moduleId) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinType", fintype);
 		mapSqlParameterSource.addValue("Event", events);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder(" Select AccountSetID FROM FinTypeAccounting");
-		selectSql.append(" Where FinType = :FinType AND Event IN (:Event) " );
+		selectSql.append(" Where FinType = :FinType AND Event IN (:Event)  AND ModuleId = :ModuleId" );
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		

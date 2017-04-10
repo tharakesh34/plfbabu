@@ -79,4 +79,6 @@ public interface FinanceTypeDAO {
 	String getFinanceTypeDesc(String productCode);
 
 	FinanceType getOrgFinanceTypeByID(String finType, String type);
+
+	int getFinTypeCount(String finType, String type);
 }

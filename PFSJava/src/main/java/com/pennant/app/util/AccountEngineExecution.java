@@ -272,7 +272,7 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller	dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, false, isAccrualCal, finType, premiumDetail);
 
 		// Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent());
+		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
 
 		List<TransactionEntry> transactionEntries = null;
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -335,7 +335,7 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller dataSetFiller =	prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
 		
 		//Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent());
+		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
 
 		List<FeeRule> feeRules = new ArrayList<FeeRule>();
 		String ruleEvent= dataSet.getFinEvent();
@@ -405,7 +405,7 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
 		
 		//Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent());
+		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
 
 		//Adding Existing Fees
 		int feeOrder = 0;

@@ -75,6 +75,7 @@ import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
@@ -348,7 +349,7 @@ public class DelegationDeviationCtrl {
 		}
 		accountingsetIds.addAll(listAcc);
 */
-		List<FinTypeFees> feeCodes = getDelegationDeviationService().getFeeCodeList(finType);
+		List<FinTypeFees> feeCodes = getDelegationDeviationService().getFeeCodeList(finType, FinanceConstants.FINTYPEFEES_FINTYPE);
 		
 		if (!feeCodes.isEmpty()) {
 

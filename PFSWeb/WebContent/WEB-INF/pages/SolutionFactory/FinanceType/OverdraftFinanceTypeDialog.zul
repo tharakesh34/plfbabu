@@ -63,7 +63,7 @@
 			<center border="none" autoscroll="false"
 				style="padding:5px;">
 				<tabbox width="100%">
-					<tabs>
+					<tabs id="tabsIndexCenter">
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_BasicDetails.value')}"
 							id="basicDetails" />
@@ -73,12 +73,12 @@
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_RepaymentDetails.value')}"
 							id="repayment" visible="false" />
-						<tab
+						<!-- <tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_Fees.value')}"
 							id="fees" />
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_AccountingEvent.value')}"
-							id="accountingEvent" />
+							id="accountingEvent" /> -->
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_ScheduleDetails.value')}"
 							id="scheduleProfit" visible="false" />
@@ -88,9 +88,9 @@
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_ExtendedDetails.value')}"
 							id="extendedDetails" visible="false" />
-						<tab
+						<!-- <tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_InsuranceDetails.value')}"
-							id="insuranceDetails" />
+							id="insuranceDetails" /> -->
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_FeaturDetails.value')}"
 							id="featureDetails" />
@@ -1348,7 +1348,7 @@
 								</groupbox>
 							</div>
 						</tabpanel>
-						<tabpanel style="overflow:auto"
+						<!-- <tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<tabbox width="100%">
 								<tabs>
@@ -1532,7 +1532,7 @@
 									</listhead>
 								</listbox>
 							</groupbox>
-						</tabpanel>
+						</tabpanel> -->
 						<tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_ScheduleProfit"
@@ -1992,7 +1992,7 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-						<tabpanel style="overflow:auto"
+						<!-- <tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_InsuranceDetails"
 								width="100%" height="100%">
@@ -2051,7 +2051,7 @@
 									</listhead>
 								</listbox>
 							</groupbox>
-						</tabpanel>
+						</tabpanel> -->
 
 						<tabpanel>
 							<groupbox>

@@ -253,6 +253,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
@@ -993,7 +994,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("VASProductType", new ModuleMapping("VASProductType", VASProductType.class,
 				new String[] { "VASProductType", "VasProductType_AView" }, masterWF, new String[] {
 						"ProductType", "ProductTypeDesc" }, null, 300));
-
+		
+		ModuleUtil.register("Promotion", new ModuleMapping("Promotions", Promotion.class,
+				new String[] { "Promotions", "Promotions_AView" }, masterWF, new String[] {
+			"PromotionCode", "PromotionDesc" }, null, 300));
+		
 		/************* Finance *************/
 
 		ModuleUtil.register("WIFFinanceMain", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {

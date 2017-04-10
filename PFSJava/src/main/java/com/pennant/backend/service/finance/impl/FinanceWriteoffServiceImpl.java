@@ -109,7 +109,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 			}
 			//Finance Accounting Posting Details 
 			//=======================================
-			Long accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), AccountEventConstants.ACCEVENT_WRITEOFF);
+			Long accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), AccountEventConstants.ACCEVENT_WRITEOFF, FinanceConstants.FINTYPEFEES_FINTYPE);
 
 			if(accSetId != Long.MIN_VALUE){
 				financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(

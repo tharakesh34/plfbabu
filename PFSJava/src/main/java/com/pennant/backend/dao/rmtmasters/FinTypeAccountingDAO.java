@@ -57,13 +57,13 @@ public interface FinTypeAccountingDAO {
 	FinTypeAccounting getFinTypeAccounting();
 	FinTypeAccounting getNewFinTypeAccounting();
 	FinTypeAccounting getFinTypeAccountingByID(FinTypeAccounting finTypeAccounting, String type); 
-	List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, String type); 
+	List<FinTypeAccounting> getFinTypeAccountingListByID(final String id, int moduleId, String type); 
 	void update(FinTypeAccounting finTypeAccounting, String type);
 	String save(FinTypeAccounting finTypeAccounting, String type);
 	void delete(FinTypeAccounting finTypeAccounting, String type);
-	void deleteByFinType(String finType, String type);
-	Long getAccountSetID(String finType, String event);
-	List<String> getFinTypeAccounting(String event,Long accountSetId);
-	List<Long> getFinTypeAccounting(String fintype, List<String> events);
+	void deleteByFinType(String finType, int moduleId, String type);
+	Long getAccountSetID(String finType, String event, int moduleId);
+	List<String> getFinTypeAccounting(String event,Long accountSetId, int moduleId);
+	List<Long> getFinTypeAccounting(String fintype, List<String> events, int moduleId);
 
 }

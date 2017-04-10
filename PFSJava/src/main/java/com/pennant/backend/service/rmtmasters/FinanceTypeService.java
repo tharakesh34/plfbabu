@@ -49,8 +49,6 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 
@@ -70,9 +68,6 @@ public interface FinanceTypeService {
 	boolean checkRIAFinance(String finType);
 	FinTypeAccount getFinTypeAccount();
 	FinTypeAccount getNewFinTypeAccount();
-	FinTypeFees getFinTypeFees();
-	FinTypeFees getNewFinTypeFees();
-	FinTypeAccounting getNewFinTypeAccounting();
 	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> finAssetTypelist,String type);
 	int getFinanceTypeCountById(String finType);
 	List<FinanceType> getFinanceTypeByProduct(String productCode);
@@ -83,4 +78,6 @@ public interface FinanceTypeService {
 	List<String> fetchFeeCodeList(Long accountSetId);
 	List<FinTypeVASProducts> getFinTypeVasProducts(String finType);
 	FinanceType getOrgFinanceTypeById(String finType);
+	
+	boolean getFinTypeExist(String finType, String type);
 }

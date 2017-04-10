@@ -121,10 +121,11 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 	 * @return FinanceType
 	 */
 	@Override
-	public List<FinTypeInsurances> getFinTypeInsuranceListByID(final String id, String type) {
+	public List<FinTypeInsurances> getFinTypeInsuranceListByID(final String id, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
 		finTypeInsurance.setId(id);
+		finTypeInsurance.setModuleId(moduleId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType,InsuranceType,PolicyType, DftPayType, CalType, ");
 		selectSql.append(" AmountRule, Mandatory,AlwRateChange,ConstAmt,Percentage,CalculateOn,");
@@ -132,7 +133,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 			selectSql.append(" InsuranceTypeDesc,RuleCodeDesc,PolicyDesc,");
 		}
 		selectSql.append("Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId ");
 
 		selectSql.append(" FROM FinTypeInsurances");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -150,7 +151,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 	 * Method for Fetching Mandatory Insurances allowed against Finance Type
 	 */
 	@Override
-	public List<String> getFinTypeInsurances(final String finType) {
+	public List<String> getFinTypeInsurances(final String finType, int moduleId) {
 		logger.debug("Entering");
 		
 		List<String> mandatoryInsurances = null;
@@ -158,6 +159,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		selectSql.append(" from FinTypeInsurances where FinType ='");
 		selectSql.append(finType);
 		selectSql.append("'  and Mandatory = 1 ");
+		selectSql.append(" and ModuleId = " + moduleId);
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
@@ -191,11 +193,11 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 			selectSql.append(" InsuranceTypeDesc,RuleCodeDesc,PolicyDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeInsurances");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType AND InsuranceType = :InsuranceType");
+		selectSql.append(" Where FinType = :FinType AND InsuranceType = :InsuranceType AND ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
@@ -245,11 +247,11 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		insertSql.append(" (FinType, InsuranceType, PolicyType,DftPayType, CalType," );
 		insertSql.append(" AmountRule, Mandatory,AlwRateChange,ConstAmt,Percentage,CalculateOn," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId)" );
 		insertSql.append(" Values(:FinType, :InsuranceType, :PolicyType, :DftPayType, :CalType," );
 		insertSql.append(" :AmountRule, :Mandatory, :AlwRateChange, :ConstAmt, :Percentage, :CalculateOn," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId)");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
@@ -286,8 +288,8 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where FinType =:FinType and InsuranceType=:InsuranceType ");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleId = :ModuleId" );
+		updateSql.append(" Where FinType =:FinType And InsuranceType=:InsuranceType  And ModuleId = :ModuleId");
 		
 		if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");
@@ -324,7 +326,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeInsurances");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append("  Where FinType =:FinType And InsuranceType =:InsuranceType");
+		deleteSql.append("  Where FinType =:FinType And InsuranceType =:InsuranceType And  ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
@@ -352,13 +354,14 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 	 */
 	
 	@Override
-	public void deleteByFinType(String finType, String type) {
+	public void deleteByFinType(String finType, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
 		finTypeInsurance.setFinType(finType);
+		finTypeInsurance.setModuleId(moduleId);
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeInsurances");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinType =:FinType");
+		deleteSql.append(" Where FinType =:FinType And ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
@@ -386,10 +389,11 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 	}
 
 	@Override
-	public List<FinTypeInsurances> getFinTypeInsurances(String policyType, String type) {
+	public List<FinTypeInsurances> getFinTypeInsurances(String policyType, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
 		finTypeInsurance.setPolicyType(policyType);
+		finTypeInsurance.setModuleId(moduleId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType,InsuranceType,PolicyType, DftPayType, CalType, ");
 		selectSql.append(" AmountRule, Mandatory,ConstAmt,Percentage,CalculateOn,");
@@ -397,11 +401,11 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 			selectSql.append(" InsuranceTypeDesc,RuleCodeDesc,PolicyDesc,");
 		}
 		selectSql.append("Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeInsurances");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PolicyType = :PolicyType");
+		selectSql.append(" Where PolicyType = :PolicyType And ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);

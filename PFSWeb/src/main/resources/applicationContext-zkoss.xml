@@ -1639,6 +1639,12 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="financeTypeService" ref="financeTypeService" />
 	</bean>
+	
+	<bean id="selectFinTypeDialogCtrl"
+		class="com.pennant.webui.rmtmasters.financetype.SelectFinTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeTypeService" ref="financeTypeService"/>
+	</bean>
 
 	<bean id="financeTypeDialogCtrl"
 		class="com.pennant.webui.rmtmasters.financetype.FinanceTypeDialogCtrl"
@@ -4484,9 +4490,23 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="promotionService" ref="promotionService" />
 	</bean>
-	<bean id="promotionDialogCtrl" class="com.pennant.webui.rmtmasters.promotion.PromotionDialogCtrl" parent="basisCtrl" scope="prototype">
-		<!-- <property name="pagedListService" ref="pagedListService"/> -->
+	
+	<bean id="selectPromotionDialogCtrl"
+		class="com.pennant.webui.rmtmasters.promotion.SelectPromotionDialogCtrl"
+		parent="basisCtrl" scope="prototype">
 		<property name="promotionService" ref="promotionService"/>
 	</bean>
 	
+	<bean id="promotionDialogCtrl" class="com.pennant.webui.rmtmasters.promotion.PromotionDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="promotionService" ref="promotionService"/>
+	</bean>
+	
+	<bean id="finTypeFeesListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="finTypeInsuranceListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="finTypeAccountingListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>

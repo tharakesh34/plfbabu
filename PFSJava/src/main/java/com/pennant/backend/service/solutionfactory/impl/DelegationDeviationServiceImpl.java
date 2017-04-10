@@ -80,8 +80,8 @@ public class DelegationDeviationServiceImpl implements DelegationDeviationServic
     }
 	
 	@Override
-	public List<FinTypeFees> getFeeCodeList(String finType) {
-	 return  getFinTypeFeesDAO().getFinTypeFeeCodes(finType);
+	public List<FinTypeFees> getFeeCodeList(String finType, int moduleId) {
+	 return  getFinTypeFeesDAO().getFinTypeFeeCodes(finType, moduleId);
     }
 	
 	@Override

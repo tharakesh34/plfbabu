@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DeviationHeaderService.java                                                   * 	  
+ * FileName    		:  FinTypeInsurancesService.java                                        * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  22-06-2015    														*
+ * Creation Date    :  3-04-2017    														*
  *                                                                  						*
- * Modified Date    :  22-06-2015    														*
+ * Modified Date    :  3-04-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 22-06-2015       Pennant	                 0.1                                            * 
+ * 30-06-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,23 +40,29 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.service.solutionfactory;
+
+package com.pennant.backend.service.rmtmasters;
 
 import java.util.List;
 
-import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.solutionfactory.DeviationHeader;
+import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 
-public interface DelegationDeviationService {
-	void processDelegationDeviation(List<DeviationHeader> deviationHeaders, String finType, LoggedInUser user);
-
-	FinanceType getFinanceType(String fintype);
-
-	List<FinTypeFees> getFeeCodeList(String finType, int moduleId);
-
-	List<DeviationHeader> getDeviationsByFinType(String finType);
-
-	List<DeviationHeader> getDeviationsbyModule(String finType, String module);
+/**
+ * Service Declaration for methods that depends on <b>FinanceType</b>.<br>
+ * 
+ */
+public interface FinTypeInsurancesService {
+	
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	List<FinTypeInsurances> getFinTypeInsuranceListByID(String finType, int moduleId);
+	List<FinTypeInsurances> getApprovedFinTypeInsuranceListByID(String finType, int moduleId);
+	AuditHeader doApprove(AuditHeader auditHeader);
+	AuditHeader doReject(AuditHeader auditHeader);
+	List<AuditDetail> setFinTypeInsuranceDetailsAuditData(List<FinTypeInsurances> finTypeInsurancesList, String auditTranType, String method);
+	List<AuditDetail> processFinTypeInsuranceDetails(List<AuditDetail> auditDetails, String type);
+	AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method);
+	
+	List<AuditDetail> delete(List<FinTypeInsurances> finTypeInsurancesList,  String tableType, String auditTranType, String finType, int moduleId);
 }

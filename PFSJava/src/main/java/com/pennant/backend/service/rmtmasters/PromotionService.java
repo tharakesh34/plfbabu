@@ -48,11 +48,11 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 
 public interface PromotionService {
 
-	Promotion getNewPromotion();
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	Promotion getPromotionById(String id);
-	Promotion getApprovedPromotionById(String id);
+	Promotion getPromotionById(String promotionCode, int moduleId);
+	Promotion getApprovedPromotionById(String promotionCode, int moduleId);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	boolean getPromtionExist(String promotionCode, String type);
 }

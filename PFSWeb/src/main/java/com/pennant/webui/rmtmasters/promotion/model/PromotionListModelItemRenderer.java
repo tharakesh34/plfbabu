@@ -78,7 +78,7 @@ public class PromotionListModelItemRenderer implements ListitemRenderer<Promotio
 		lc = new Listcell(PennantJavaUtil.getLabel(promotion.getRecordType()));
 		lc.setParent(item);
 		
-		item.setAttribute("id", promotion.getPromotionCode());
+		item.setAttribute("promotionCode", promotion.getPromotionCode());
 		
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPromotionItemDoubleClicked");
 	}

@@ -56,11 +56,11 @@ public interface FinTypeInsuranceDAO {
 	FinTypeInsurances getFinTypeInsurance();
 	FinTypeInsurances getNewFinTypeInsurance();
 	FinTypeInsurances getFinTypeInsuranceByID(FinTypeInsurances finTypeInsurance, String type); 
-	List<FinTypeInsurances> getFinTypeInsuranceListByID(final String id, String type); 
+	List<FinTypeInsurances> getFinTypeInsuranceListByID(final String id, int moduleId, String type); 
 	void update(FinTypeInsurances finTypeInsurance, String type);
 	String save(FinTypeInsurances finTypeInsurance, String type);
 	void delete(FinTypeInsurances finTypeInsurance, String type);
-	void deleteByFinType(String finType, String type);
-	List<String> getFinTypeInsurances(String id);
-	List<FinTypeInsurances> getFinTypeInsurances(final String id, String type);
+	void deleteByFinType(String finType, int moduleId, String type);
+	List<String> getFinTypeInsurances(String id, int moduleId);
+	List<FinTypeInsurances> getFinTypeInsurances(final String id, int moduleId, String type);
 }

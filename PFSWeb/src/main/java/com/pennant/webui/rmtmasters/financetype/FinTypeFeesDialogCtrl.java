@@ -127,7 +127,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private transient boolean validationOn;
 	
 	private String userRole="";
-	private FinanceTypeDialogCtrl financeTypeDialogCtrl;
+	//private FinanceTypeDialogCtrl financeTypeDialogCtrl;
+	private FinTypeFeesListCtrl finTypeFeesListCtrl;
 	private List<FinTypeFees> finTypeFeesList;
 	private int ccyFormat=0;
 	boolean isOriginationFee = false;
@@ -181,29 +182,26 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				isOverdraft =  (boolean) arguments.get("isOverdraft");
 			}
 			
-			this.finTypeFees.setWorkflowId(0);
-			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(), this.finTypeFees.getNextTaskId());
-			if (isWorkFlowEnabled()) {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinTypeFeesDialog");
+			if (arguments.containsKey("finTypeFeesListCtrl")) {
+				setFinTypeFeesListCtrl((FinTypeFeesListCtrl) arguments.get("finTypeFeesListCtrl"));
+			} else {
+				setFinTypeFeesListCtrl(null);
 			}
+			
 			if (arguments.containsKey("role")) {
 				userRole=arguments.get("role").toString();
-				getUserWorkspace().allocateRoleAuthorities(userRole, "FinTypeFeesDialog");
+				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
+			
+			this.finTypeFees.setWorkflowId(0);
+			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(), this.finTypeFees.getNextTaskId());
+			
+			if (isWorkFlowEnabled()) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
+			}
+			
 			doCheckRights();
-			// READ OVERHANDED params !
-			// we get the finTypeFeeslListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or
-			// delete FinTypeFees here.
-			if (arguments.containsKey("financeTypeDialogCtrl")) {
-				setFinanceTypeDialogCtrl((FinanceTypeDialogCtrl) arguments.get("financeTypeDialogCtrl"));
-			} else {
-				setFinanceTypeDialogCtrl(null);
-			}
-
-			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFinTypeFees());
 		} catch (Exception e) {
@@ -277,12 +275,14 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities("FinTypeFeesDialog",userRole);
+		
+		getUserWorkspace().allocateAuthorities("FinTypeFeesDialog", userRole);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeFeesDialog_btnSave"));
 		this.btnCancel.setVisible(false);
+		
 		logger.debug("Leaving");
 	}
 
@@ -445,6 +445,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
+			if (readIDValueFromExtCombobox(this.feeType) == null) {
+				this.feeType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"),null,true,true));
+			}
 			aFinTypeFees.setFeeTypeID(readIDValueFromExtCombobox(this.feeType));
 			aFinTypeFees.setFeeTypeCode(this.feeType.getValue());
 			aFinTypeFees.setFeeTypeDesc(this.feeType.getDescription());
@@ -673,9 +676,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.YES) {
 			
-			if(!financeTypeDialogCtrl.validateFeeAccounting(aFinTypeFees,false)){
+			/*if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,false)){
 				return;
-			}
+			}*/
 			
 			logger.debug("doDelete: Yes");
 			if (StringUtils.isBlank(aFinTypeFees.getRecordType())) {
@@ -698,9 +701,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					if(this.isOriginationFee){
-						getFinanceTypeDialogCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
+						getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
 					}else{
-						getFinanceTypeDialogCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
+						getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
 					}
 					closeDialog();
 				}
@@ -834,9 +837,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			return;
 		}
 		
-		if(!financeTypeDialogCtrl.validateFeeAccounting(aFinTypeFees,true)){
+		/*if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,true)){
 			return;
-		}
+		}*/
 		
 		// Write the additional validations as per below example
 		// get the selected FinTypeFees object from the listbox
@@ -878,9 +881,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				if(this.isOriginationFee){
-					getFinanceTypeDialogCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
+					getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
 				}else{
-					getFinanceTypeDialogCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
+					getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
 				}
 				closeDialog();
 			}
@@ -908,9 +911,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		errParm[1] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value") + ":" + valueParm[1];
 		List<FinTypeFees> finTypeExistingList = null;
 		if(this.isOriginationFee){
-			finTypeExistingList = getFinanceTypeDialogCtrl().getFinTypeFeesOriginationList();
+			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesOriginationList();
 		}else{
-			finTypeExistingList = getFinanceTypeDialogCtrl().getFinTypeFeesServicingList();
+			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesServicingList();
 		}
 		
 		if (finTypeExistingList != null && finTypeExistingList.size() > 0) {
@@ -936,7 +939,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 							finTypeFeesList.add(aFinTypeFees);
 						} else if (aFinTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							List<FinTypeFees> savedList = getFinanceTypeDialogCtrl().getFinanceType().getFinTypeFeesList();
+							//List<FinTypeFees> savedList = getFinTypeFeesListCtrl().getFinanceType().getFinTypeFeesList();
+							List<FinTypeFees> savedList = getFinTypeFeesListCtrl().getFinTypeFeesList();
 							for (int j = 0; j < savedList.size(); j++) {
 								FinTypeFees accType = savedList.get(j);
 								if (accType.getFinType().equals(aFinTypeFees.getFinType())) {
@@ -1088,21 +1092,26 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 	
 	private void doSetFeeSchdMethodProp(){
-		if (StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, this.feeScheduleMethod.getSelectedItem().getValue().toString())) {
+		String feeScheduleMethodValue = this.feeScheduleMethod.getSelectedItem().getValue();
+		if (StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.ZERO);
 			this.alwModifyFee.setDisabled(true);
 			this.alwModifyFeeSchdMthd.setDisabled(true);
+			this.alwDeviation.setDisabled(true);
+			this.alwDeviation.setChecked(false);
 			this.alwModifyFee.setChecked(false);
 			this.alwModifyFeeSchdMthd.setChecked(false);
-		}else if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, this.feeScheduleMethod.getSelectedItem().getValue().toString())) {
+		} else if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.valueOf(100));
 			this.alwModifyFee.setDisabled(true);
 			this.alwModifyFeeSchdMthd.setDisabled(true);
 			this.alwModifyFee.setChecked(false);
 			this.alwModifyFeeSchdMthd.setChecked(false);
-		}else{
+			this.alwDeviation.setDisabled(true);
+			this.alwDeviation.setChecked(false);
+		} else {
 			readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
 			this.maxWaiver.setValue(getFinTypeFees().getMaxWaiverPerc());
 			this.alwModifyFee.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFee"));
@@ -1114,9 +1123,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private boolean validateFeeOrder(FinTypeFees finTypeFeesTemp){
 		List<FinTypeFees> finTypeExistingList = null;
 		if(this.isOriginationFee){
-			finTypeExistingList = getFinanceTypeDialogCtrl().getFinTypeFeesOriginationList();
+			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesOriginationList();
 		}else{
-			finTypeExistingList = getFinanceTypeDialogCtrl().getFinTypeFeesServicingList();
+			finTypeExistingList = getFinTypeFeesListCtrl().getFinTypeFeesServicingList();
 		}
 		if(finTypeExistingList != null && !finTypeExistingList.isEmpty()){
 			for (FinTypeFees finTypeFees : finTypeExistingList) {
@@ -1204,12 +1213,20 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.finTypeFeesDialogCtrl = finTypeFeesDialogCtrl;
 	}
 
-	public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() {
+	public FinTypeFeesListCtrl getFinTypeFeesListCtrl() {
+		return finTypeFeesListCtrl;
+	}
+
+	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
+		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
+	}
+
+	/*public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() {
 		return financeTypeDialogCtrl;
 	}
 
 	public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) {
 		this.financeTypeDialogCtrl = financeTypeDialogCtrl;
-	}
+	}*/
 
 }

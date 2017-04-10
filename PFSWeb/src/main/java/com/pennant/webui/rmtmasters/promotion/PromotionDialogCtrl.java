@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PromotionDialogCtrl.java                                                   * 	  
+ * FileName    		:  PromotionDialogCtrl.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.rmtmasters.promotion;
 
@@ -48,30 +48,30 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -86,16 +86,15 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.rmtmasters.PromotionService;
+import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -107,6 +106,9 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
+import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
+import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -118,90 +120,71 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(PromotionDialogCtrl.class);
-	
+
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_PromotionDialog; 
- 
-	protected Textbox 		promotionCode; 
-	protected Textbox 		promotionDesc; 
-	protected ExtendedCombobox 		finType; 
-  	protected Datebox 		startDate; 
-  	protected Datebox 		endDate; 
-	protected Checkbox 		finIsDwPayRequired; 
-	protected ExtendedCombobox 		downPayRule; 
-	protected Decimalbox 	actualInterestRate; 
-	protected RateBox 		finBaseRate;
-	protected Checkbox 		applyRpyPricing; 
-	protected ExtendedCombobox 		rpyPricingMethod; 
-	protected Intbox 		finMinTerm; 
-	protected Intbox 		finMaxTerm; 
-	protected CurrencyBox 	finMinAmount;
-	protected CurrencyBox 	finMaxAmount;
-	protected Decimalbox 	finMinRate;
-	protected Decimalbox 	finMaxRate;
-	protected Checkbox 		active; 
-	
+	protected Window window_PromotionDialog;
+
+	protected Textbox promotionCode;
+	protected Textbox promotionDesc;
+	protected ExtendedCombobox finType;
+	protected Datebox startDate;
+	protected Datebox endDate;
+	protected Checkbox finIsDwPayRequired;
+	protected ExtendedCombobox downPayRule;
+	protected Decimalbox actualInterestRate;
+	protected RateBox finBaseRate;
+	protected Checkbox applyRpyPricing;
+	protected ExtendedCombobox rpyPricingMethod;
+	protected Intbox finMinTerm;
+	protected Intbox finMaxTerm;
+	protected CurrencyBox finMinAmount;
+	protected CurrencyBox finMaxAmount;
+	protected Decimalbox finMinRate;
+	protected Decimalbox finMaxRate;
+	protected Checkbox active;
+
+	protected Div basicDetailDiv;
+
+	private Promotion promotion;
+	private transient PromotionListCtrl promotionListCtrl;
+	private transient PromotionService promotionService;
 	private transient boolean validationOn;
+
 	private int format;
 	private String finCcy = "";
+
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+
+	protected String selectMethodName = "onSelectTab";
+	protected Component feeDetailWindow;
+	protected Component insuranceDetailWindow;
+	protected Component accountingDetailWindow;
+
+	protected FinTypeFeesListCtrl finTypeFeesListCtrl;
+	protected FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
+	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 	
-	private Promotion promotion;
-	private transient PromotionListCtrl promotionListCtrl; 
-	private transient PromotionService promotionService;
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////// Child List Starts		///////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	protected Div basicDetailDiv; 
-
-	private Tab basicDetails; 
-	private Tab gracePeriod; 
-	private Tab repayment; 
-	private Tab accountingEvent; 
-	private Tab finTypeAccountDetails; 
-	private Tab extendedDetails; 
-
-	// Fees
-	protected Button btnNew_FinTypeFees_Origination;
-	protected Listbox listBoxFinTypeFeesOrigination;
-	private List<FinTypeFees> finTypeFeesOriginationList = new ArrayList<FinTypeFees>();
-	private List<FinTypeFees> finTypeFeesServicingList = new ArrayList<FinTypeFees>();
-	protected Button btnNew_FinTypeFees_Servicing;
-	protected Listbox listBoxFinTypeFeesServicing;
-
-	// Finance Type Accounting
-	protected Listbox listBoxFinTypeAccounting;
-	private Map<String, FinTypeAccounting> finTypeAccEventMap = new LinkedHashMap<String, FinTypeAccounting>();
-
 	private boolean isCompReadonly = false;
-	protected boolean alwCopyOption = false;
-
-	// Insurance Details
-	protected Button btnNew_insuranceType;
-	private List<FinTypeInsurances> finTypeInsuranceList = new ArrayList<FinTypeInsurances>();
-	private Listbox listBoxInsuranceDetails;
-	private Map<String, String> eventDetailMap = new HashMap<String, String>();
-	private Row row_ManualSchedule;
-
+	
 	/**
 	 * default constructor.<br>
 	 */
 	public PromotionDialogCtrl() {
 		super();
 	}
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "PromotionDialog";
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Promotion object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Promotion object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -211,7 +194,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// Set the page level components.
 		setPageComponents(window_PromotionDialog);
-		
+
 		try {
 			// Get the required arguments.
 			this.promotion = (Promotion) arguments.get("promotion");
@@ -220,34 +203,42 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			if (this.promotion == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-			
-			Promotion befImage =new Promotion();
+
+			Promotion befImage = new Promotion();
 			BeanUtils.copyProperties(this.promotion, befImage);
 			this.promotion.setBefImage(befImage);
-			
-			doLoadWorkFlow(this.promotion.isWorkflow(),this.promotion.getWorkflowId(),this.promotion.getNextTaskId());
-	
+
+			doLoadWorkFlow(this.promotion.isWorkflow(), this.promotion.getWorkflowId(), this.promotion.getNextTaskId());
+
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
-			} 
-			
+			}
+
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
-			this.listBoxFinTypeFeesOrigination.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxFinTypeFeesServicing.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxFinTypeAccounting.setHeight(this.borderLayoutHeight - 120 + "px");
-	
+			
+			this.isCompReadonly = !isMaintainable();
+
 			// set Field Properties
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.promotion);
 		} catch (Exception e) {
 			createException(window_PromotionDialog, e);
-			logger.error("Exception",  e);
+			logger.error("Exception", e);
 		}
-		
-		logger.debug("Leaving" +event.toString());
+
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	private boolean isMaintainable() {
+		// If workflow enabled and not first task owner then cannot maintain. Else can maintain
+		if (isWorkFlowEnabled()) {
+			if (!StringUtils.equals(getRole(), getWorkFlow().firstTaskOwner())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -288,7 +279,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.downPayRule.setValueColumn("RuleCode");
 		this.downPayRule.setDescColumn("RuleCodeDesc");
 		this.downPayRule.setValidateColumns(new String[] { "RuleId", "RuleCode", "RuleCodeDesc" });
-		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
+		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE,
+				Filter.OP_EQUAL) });
 		if (this.promotion.isFinIsDwPayRequired()) {
 			this.downPayRule.setMandatoryStyle(true);
 		} else {
@@ -306,7 +298,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setValueColumn("RuleCode");
 		this.rpyPricingMethod.setDescColumn("RuleCodeDesc");
 		this.rpyPricingMethod.setValidateColumns(new String[] { "RuleId", "RuleCode", "RuleCodeDesc" });
-		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE, Filter.OP_EQUAL) });
+		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,
+				Filter.OP_EQUAL) });
 
 		if (this.promotion.isApplyRpyPricing()) {
 			this.rpyPricingMethod.setMandatoryStyle(true);
@@ -323,18 +316,17 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering") ;
-		
+		logger.debug("Entering");
+
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		
+
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnNew"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnSave"));	
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnSave"));
 
-		logger.debug("Leaving") ;
+		logger.debug("Leaving");
 	}
 
-	
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
@@ -394,7 +386,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	public void onCheck$applyRpyPricing(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -415,7 +407,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onCheck$finIsDwPayRequired(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -434,48 +426,37 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	public void onFulfill$finType(Event event) {
-		logger.debug("Entering" + event.toString());
 
-		Object dataObject = finType.getObject();
-		boolean baseRateFlag = true;
-		
-		if (dataObject instanceof String) {
-			this.finType.setValue(dataObject.toString());
-			this.finType.setDescription("");
-		} else {
-			FinanceType financeType = (FinanceType) dataObject;
-			if (financeType != null) {
-				this.finType.setValue(financeType.getFinCategory());
-				this.finType.setObject(new FinanceType(financeType.getFinType()));
-				this.finType.setDescription(financeType.getFinTypeDesc());
-				this.finCcy = financeType.getFinCcy();
-				this.format = CurrencyUtil.getFormat(this.finCcy);
-				this.finBaseRate.getBaseComp().setReadonly(false);
-				this.finBaseRate.getSpecialComp().setReadonly(false);
-				this.finBaseRate.setReadonly(false);
-				baseRateFlag = false;
-			}
-		}
-		
-		setFinBaseRateProperties(baseRateFlag);
+	/*
+	 * public void onFulfill$finType(Event event) { logger.debug("Entering" + event.toString());
+	 * 
+	 * Object dataObject = finType.getObject(); boolean baseRateFlag = true;
+	 * 
+	 * if (dataObject instanceof String) { this.finType.setValue(dataObject.toString());
+	 * this.finType.setDescription(""); } else { FinanceType financeType = (FinanceType) dataObject; if (financeType !=
+	 * null) { this.finType.setValue(financeType.getFinCategory()); this.finType.setObject(new
+	 * FinanceType(financeType.getFinType())); this.finType.setDescription(financeType.getFinTypeDesc()); this.finCcy =
+	 * financeType.getFinCcy(); this.format = CurrencyUtil.getFormat(this.finCcy);
+	 * this.finBaseRate.getBaseComp().setReadonly(false); this.finBaseRate.getSpecialComp().setReadonly(false);
+	 * this.finBaseRate.setReadonly(false); baseRateFlag = false; } }
+	 * 
+	 * //setFinBaseRateProperties(baseRateFlag);
+	 * 
+	 * appendFeeDetailTab(!baseRateFlag);
+	 * 
+	 * logger.debug("Leaving" + event.toString()); }
+	 */
 
-		logger.debug("Leaving" + event.toString());
-	}
+	/*
+	 * private void setFinBaseRateProperties(boolean baseRateFlag) {
+	 * this.finBaseRate.getBaseComp().setReadonly(baseRateFlag);
+	 * this.finBaseRate.getSpecialComp().setReadonly(baseRateFlag); this.finBaseRate.setReadonly(baseRateFlag);
+	 * this.finBaseRate.getMarginComp().setDisabled(baseRateFlag);
+	 * 
+	 * this.finBaseRate.setEffectiveRateVisible(true); this.finBaseRate.setBaseValue(null);
+	 * this.finBaseRate.setSpecialValue(null); this.finBaseRate.setMarginValue(null); }
+	 */
 
-	private void setFinBaseRateProperties(boolean baseRateFlag) {
-		this.finBaseRate.getBaseComp().setReadonly(baseRateFlag);
-		this.finBaseRate.getSpecialComp().setReadonly(baseRateFlag);
-		this.finBaseRate.setReadonly(baseRateFlag);
-		this.finBaseRate.getMarginComp().setDisabled(baseRateFlag);
-		
-		this.finBaseRate.setEffectiveRateVisible(true);
-		this.finBaseRate.setBaseValue(null);
-		this.finBaseRate.setSpecialValue(null);
-		this.finBaseRate.setMarginValue(null);
-	}
-	
 	public void onFulfill$finBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
@@ -497,11 +478,14 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				if (details != null) {
 					this.finBaseRate.setBaseValue(details.getBRType());
 					RateDetail rateDetail = RateUtil.rates(
-							this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate.getSpecialValue(),
+							this.finBaseRate.getBaseValue(),
+							this.finCcy,
+							this.finBaseRate.getSpecialValue(),
 							this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate
 									.getMarginValue(), this.finMinRate.getValue(), this.finMaxRate.getValue());
 					if (rateDetail.getErrorDetails() == null) {
-						this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+						this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
+								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
 						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
 								getUserWorkspace().getUserLanguage()).getError());
@@ -519,7 +503,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				if (details != null) {
 					this.finBaseRate.setSpecialValue(details.getSRType());
 					RateDetail rateDetail = RateUtil.rates(
-							this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate.getSpecialValue(),
+							this.finBaseRate.getBaseValue(),
+							this.finCcy,
+							this.finBaseRate.getSpecialValue(),
 							this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate
 									.getMarginValue(), this.finMinRate.getValue(), this.finMaxRate.getValue());
 					if (rateDetail.getErrorDetails() == null) {
@@ -538,29 +524,33 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	private void setEffectiveRate() throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		if (StringUtils.isBlank(this.finBaseRate.getBaseValue())) {
 			this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(
-					(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue()).doubleValue(), 2));
+					(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue())
+							.doubleValue(), 2));
 			return;
 		}
-		
-		RateDetail rateDetail = RateUtil.rates(this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate.getSpecialValue(),
+
+		RateDetail rateDetail = RateUtil.rates(this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate
+				.getSpecialValue(),
 				this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue(),
 				this.finMinRate.getValue(), this.finMaxRate.getValue());
 		if (rateDetail.getErrorDetails() == null) {
-			this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+			this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
+					.doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
+					getUserWorkspace().getUserLanguage()).getError());
 			this.finBaseRate.setSpecialValue("");
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -577,7 +567,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -594,14 +584,10 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finIsDwPayRequired.setChecked(aPromotion.isFinIsDwPayRequired());
 		this.actualInterestRate.setValue(aPromotion.getActualInterestRate());
 
-		if (aPromotion.isNewRecord()) {
-			setFinBaseRateProperties(true);
-		} else {
-			this.finBaseRate.setEffectiveRateVisible(true);
-			this.finBaseRate.setBaseValue(aPromotion.getFinBaseRate());
-			this.finBaseRate.setSpecialValue(aPromotion.getFinSplRate());
-			this.finBaseRate.setMarginValue(aPromotion.getFinMargin());
-		}
+		this.finBaseRate.setEffectiveRateVisible(true);
+		this.finBaseRate.setBaseValue(aPromotion.getFinBaseRate());
+		this.finBaseRate.setSpecialValue(aPromotion.getFinSplRate());
+		this.finBaseRate.setMarginValue(aPromotion.getFinMargin());
 
 		this.applyRpyPricing.setChecked(aPromotion.isApplyRpyPricing());
 		this.finMinTerm.setValue(aPromotion.getFinMinTerm());
@@ -612,7 +598,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finType.setDescription(aPromotion.getFinTypeDesc());
 		this.finType.setObject(new FinanceType(aPromotion.getFinType()));
 
-		finCcy = PennantApplicationUtil.getCurrencyCode(aPromotion.getFinType());
+		finCcy = aPromotion.getFinCcy();
 		format = CurrencyUtil.getFormat(finCcy);
 
 		this.finMaxAmount.setMandatory(false);
@@ -624,12 +610,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMinAmount(), format));
 		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMaxAmount(), format));
-		
-		if(!applyRpyPricing.isChecked()) {
+
+		if (!applyRpyPricing.isChecked()) {
 			readOnlyComponent(true, this.rpyPricingMethod);
 		}
-		
-		if(!finIsDwPayRequired.isChecked()) {
+
+		if (!finIsDwPayRequired.isChecked()) {
 			readOnlyComponent(true, this.downPayRule);
 		}
 
@@ -640,7 +626,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setValue(aPromotion.getRpyPricingCode());
 		this.rpyPricingMethod.setDescription(aPromotion.getRpyPricingDesc());
 		this.rpyPricingMethod.setObject(new Rule(aPromotion.getRpyPricingMethod()));
-		
+
 		this.finMinRate.setValue(aPromotion.getFinMinRate());
 		this.finMaxRate.setValue(aPromotion.getFinMaxRate());
 
@@ -652,7 +638,145 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		this.recordStatus.setValue(aPromotion.getRecordStatus());
 
+		if (StringUtils.isNotBlank(aPromotion.getFinCategory())) {
+			appendFeeDetailTab();
+			appendInsuranceDetailsTab();
+			appendAccountingDetailsTab();
+		}
+
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendFeeDetailTab() {
+		logger.debug("Entering");
+
+		try {
+			createTab(AssetConstants.UNIQUE_ID_FEES, true);
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEES));
+			map.put("roleCode", getRole());
+			map.put("finType", this.promotionCode.getValue());
+			map.put("finCcy", this.finCcy);
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeFeesList", this.promotion.getFinTypeFeesList());
+
+			feeDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FEES), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendInsuranceDetailsTab() {
+		logger.debug("Entering");
+
+		try {
+			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
+			map.put("roleCode", getRole());
+			map.put("finType", this.promotionCode.getValue());
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("finTypeDesc", this.promotionDesc.getValue());
+			map.put("finCcy", this.finCcy);
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeInsuranceList", this.promotion.getFinTypeInsurancesList());
+
+			insuranceDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_INSURANCES), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendAccountingDetailsTab() {
+		logger.debug("Entering");
+		
+		try {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+			
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
+			map.put("roleCode", getRole());
+			map.put("finType", this.promotionCode.getValue());
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeAccountingList", this.promotion.getFinTypeAccountingList());
+			
+			accountingDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountingList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+
+		logger.debug("Leaving");
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
 	/**
@@ -676,14 +800,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Description
 		try {
 			aPromotion.setPromotionDesc(this.promotionDesc.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		// Finance Type
-		try {
-			FinanceType FinanceTypeObj = (FinanceType) this.finType.getObject();
-			aPromotion.setFinType(FinanceTypeObj.getId());
-			aPromotion.setFinTypeDesc(this.finType.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -721,19 +837,22 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 		// Base Rate
 		try {
-			aPromotion.setFinBaseRate(StringUtils.isEmpty(this.finBaseRate.getBaseValue()) ? null : this.finBaseRate.getBaseValue());
+			aPromotion.setFinBaseRate(StringUtils.isEmpty(this.finBaseRate.getBaseValue()) ? null : this.finBaseRate
+					.getBaseValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Special Rate
 		try {
-			aPromotion.setFinSplRate(StringUtils.isEmpty(this.finBaseRate.getSpecialValue()) ? null : this.finBaseRate.getSpecialValue());
+			aPromotion.setFinSplRate(StringUtils.isEmpty(this.finBaseRate.getSpecialValue()) ? null : this.finBaseRate
+					.getSpecialValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Margin
 		try {
-			aPromotion.setFinMargin(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue());
+			aPromotion.setFinMargin(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate
+					.getMarginValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -793,7 +912,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		if(getFinTypeFeesListCtrl() != null) {
+			aPromotion.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());
+		}
 
+		if(getFinTypeInsuranceListCtrl() != null) {
+			aPromotion.setFinTypeInsurancesList(getFinTypeInsuranceListCtrl().getFinTypeInsuranceList());
+		}
+		
+		if(wve.isEmpty() && getFinTypeAccountingListCtrl() != null) {
+			aPromotion.setFinTypeAccountingList(getFinTypeAccountingListCtrl().doSave());
+		}
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -836,104 +967,120 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
-		
+
 		// fill the components with the data
 		doWriteBeanToComponents(promotion);
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		
+
 		setValidationOn(true);
-		
-		//Code
-		if (!this.promotionCode.isReadonly()){
-			this.promotionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+
+		// Code
+		if (!this.promotionCode.isReadonly()) {
+			this.promotionCode.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PromotionDialog_PromotionCode.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					true));
 		}
-		//Description
-		if (!this.promotionDesc.isReadonly()){
-			this.promotionDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,false));
+		// Description
+		if (!this.promotionDesc.isReadonly()) {
+			this.promotionDesc.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PromotionDialog_PromotionDesc.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		//Finance Type
-		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null, true, true));
-		
+		// Finance Type
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null,
+				true, true));
+
 		Date appStartDate = DateUtility.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-		//Start Date
+		// Start Date
 		if (!this.startDate.isDisabled()) {
-			this.startDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_FinanceTypeDialog_StartDate.value"), true, appStartDate, appEndDate, true));
+			this.startDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_FinanceTypeDialog_StartDate.value"), true, appStartDate, appEndDate, true));
 		}
-		//end Date
+		// end Date
 		if (!this.endDate.isDisabled()) {
 			try {
 				this.startDate.getValue();
-				this.endDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, this.startDate.getValue(), appEndDate, false));
+				this.endDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, this.startDate.getValue(),
+						appEndDate, false));
 			} catch (WrongValueException we) {
-				this.endDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, true, null, false));
+				this.endDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, true, null, false));
 			}
 		}
-		//Down Payment Rule
+		// Down Payment Rule
 		if (this.finIsDwPayRequired.isChecked() && this.downPayRule.isButtonVisible()) {
 			this.downPayRule.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_DownPayRule.value"), null, this.finIsDwPayRequired.isChecked(), true));
+					.getLabel("label_PromotionDialog_DownPayRule.value"), null, this.finIsDwPayRequired.isChecked(),
+					true));
 		}
-		
-		//Actual Interest Rate
-		if (!this.actualInterestRate.isDisabled()){
+
+		// Actual Interest Rate
+		if (!this.actualInterestRate.isDisabled()) {
 			this.actualInterestRate.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_PromotionDialog_ActualInterestRate.value"), 9, false, false, 9999));
 		}
-		//Base Rate
+		// Base Rate
 		if (!this.finBaseRate.getMarginComp().isDisabled()) {
-			this.finBaseRate.getMarginComp().setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_PromotionDialog_FinMargin.value"), 9, true, true, -9999,9999));
-			this.finBaseRate.getBaseComp().setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinBaseRate.value"), null, true, true));
+			this.finBaseRate.getMarginComp().setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_PromotionDialog_FinMargin.value"), 9, true, true,
+							-9999, 9999));
+			this.finBaseRate.getBaseComp()
+					.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinBaseRate.value"), null,
+									true, true));
 		}
-		//Repay Pricing Method
+		// Repay Pricing Method
 		if (this.applyRpyPricing.isChecked() && this.rpyPricingMethod.isButtonVisible()) {
 			this.rpyPricingMethod.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_RpyPricingMethod.value"), null, this.applyRpyPricing.isChecked(), true));
+					.getLabel("label_PromotionDialog_RpyPricingMethod.value"), null, this.applyRpyPricing.isChecked(),
+					true));
 		}
-		//Minimum Term
-		if (!this.finMinTerm.isReadonly()){
-			this.finMinTerm.setConstraint(new PTNumberValidator(Labels.getLabel("label_PromotionDialog_FinMinTerm.value"),false,false,0));
+		// Minimum Term
+		if (!this.finMinTerm.isReadonly()) {
+			this.finMinTerm.setConstraint(new PTNumberValidator(Labels
+					.getLabel("label_PromotionDialog_FinMinTerm.value"), false, false, 0));
 		}
-		//Maximum Term
-		if (!this.finMaxTerm.isReadonly()){
-			this.finMaxTerm.setConstraint(new PTNumberValidator(Labels.getLabel("label_PromotionDialog_FinMaxTerm.value"),false,false,0));
+		// Maximum Term
+		if (!this.finMaxTerm.isReadonly()) {
+			this.finMaxTerm.setConstraint(new PTNumberValidator(Labels
+					.getLabel("label_PromotionDialog_FinMaxTerm.value"), false, false, 0));
 		}
-		//Minimum Amount
+		// Minimum Amount
 		if (!this.finMinAmount.isReadonly() && this.finMinAmount.getValidateValue().compareTo(BigDecimal.ZERO) != 0) {
 			this.finMinAmount.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_PromotionDialog_FinMinAmount.value"), format, false, false));
 		}
-		//Maximum Amount
+		// Maximum Amount
 		if (!this.finMaxAmount.isReadonly() && this.finMaxAmount.getActualValue().compareTo(BigDecimal.ZERO) != 0) {
 			this.finMaxAmount.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_PromotionDialog_FinMaxAmount.value"), format, false, false));
 		}
-		//Minimum Rate
+		// Minimum Rate
 		if (!this.finMinRate.isDisabled()) {
 			this.finMinRate.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_PromotionDialog_FinMinRate.value"), 9, false, false, 9999));
 		}
-		//Maximum Rate
+		// Maximum Rate
 		if (!this.finMaxRate.isDisabled()) {
 			this.finMaxRate.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_PromotionDialog_FinMaxRate.value"), 9, false, false, 9999));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -974,7 +1121,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 */
 	private void doRemoveLOVValidation() {
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -1002,7 +1149,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Deletes a Promotion object from database.<br>
 	 * 
@@ -1010,17 +1157,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 */
 	private void doDelete() {
 		logger.debug("Entering");
-		
+
 		final Promotion aPromotion = new Promotion();
 		BeanUtils.copyProperties(this.promotion, aPromotion);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aPromotion.getPromotionCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aPromotion.getPromotionCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 
-		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
+		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
+				Messagebox.QUESTION, true));
 
 		if (conf == MultiLineMessageBox.YES) {
 			logger.debug("doDelete: Yes");
@@ -1049,7 +1198,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				showErrorMessage(this.window_PromotionDialog, e);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1059,22 +1208,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private void doEdit() {
 		logger.debug("Entering");
 
+		this.promotionCode.setReadonly(true);
+		readOnlyComponent(true, this.finType);
+
 		if (this.promotion.isNewRecord()) {
-			this.promotionCode.setReadonly(false);
-			readOnlyComponent(false, this.finType);
 			this.btnCancel.setVisible(false);
 			this.active.setDisabled(true);
-			readOnlyComponent(true, this.downPayRule);
-			readOnlyComponent(true, this.rpyPricingMethod);
 		} else {
-			this.promotionCode.setReadonly(true);
-			readOnlyComponent(true, this.finType);
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(isReadOnly("PromotionDialog_Active"), this.active);
-			readOnlyComponent(isReadOnly("PromotionDialog_DownPayRule"), this.downPayRule);
-			readOnlyComponent(isReadOnly("PromotionDialog_RpyPricingMethod"), this.rpyPricingMethod);
 		}
 
+		readOnlyComponent(isReadOnly("PromotionDialog_DownPayRule"), this.downPayRule);
+		readOnlyComponent(isReadOnly("PromotionDialog_RpyPricingMethod"), this.rpyPricingMethod);
 		readOnlyComponent(isReadOnly("PromotionDialog_PromotionDesc"), this.promotionDesc);
 		readOnlyComponent(isReadOnly("PromotionDialog_StartDate"), this.startDate);
 		readOnlyComponent(isReadOnly("PromotionDialog_EndDate"), this.endDate);
@@ -1108,7 +1254,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
@@ -1150,31 +1296,31 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		
+
 		this.promotionCode.setValue("");
 		this.promotionDesc.setValue("");
-	  	this.finType.setValue("");
-	  	this.finType.setDescription("");
+		this.finType.setValue("");
+		this.finType.setDescription("");
 		this.startDate.setText("");
 		this.endDate.setText("");
 		this.finIsDwPayRequired.setChecked(false);
-	  	this.downPayRule.setValue("");
-	  	this.downPayRule.setDescription("");
+		this.downPayRule.setValue("");
+		this.downPayRule.setDescription("");
 		this.actualInterestRate.setValue("");
-		this.finBaseRate.getBaseComp().setValue("", "");		
+		this.finBaseRate.getBaseComp().setValue("", "");
 		this.finBaseRate.getSpecialComp().setValue("");
 		this.finBaseRate.setBaseValue("");
 		this.finBaseRate.setSpecialValue("");
 		this.finBaseRate.setMarginValue(BigDecimal.ZERO);
 		this.applyRpyPricing.setChecked(false);
-	  	this.rpyPricingMethod.setValue("");
-	  	this.rpyPricingMethod.setDescription("");
+		this.rpyPricingMethod.setValue("");
+		this.rpyPricingMethod.setDescription("");
 		this.finMinTerm.setText("");
 		this.finMaxTerm.setText("");
 		this.finMinAmount.setValue("");
@@ -1182,10 +1328,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finMinRate.setValue("");
 		this.finMaxRate.setValue("");
 		this.active.setChecked(false);
-	
+
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Saves the components to table. <br>
@@ -1197,6 +1342,17 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		final Promotion aPromotion = new Promotion();
 		BeanUtils.copyProperties(this.promotion, aPromotion);
 		boolean isNew = false;
+		boolean validate = false;
+		
+		if (isWorkFlowEnabled() &&"Submit".equalsIgnoreCase(userAction.getSelectedItem().getLabel())) {
+			validate = true;// Stop validations in save mode
+		} else {
+			validate = false;// Stop validations in save mode
+		}
+		
+		if (getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setValidate(validate);
+		}
 
 		if (isWorkFlowEnabled()) {
 			aPromotion.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -1208,7 +1364,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			// fill the Promotion object with the components data
 			doWriteComponentsToBean(aPromotion);
 		}
-
+		
 		// Write the additional validations as per below example get the selected branch object from the listbox Do data
 		// level validations here
 
@@ -1260,29 +1416,14 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * @return boolean
 	 * 
 	 */
-	
-	private boolean doProcess(Promotion aPromotion,String tranType){
+
+	private boolean doProcess(Promotion aPromotion, String tranType) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
+		boolean processCompleted = false;
 		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		aPromotion.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aPromotion.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
-		/*if (isWorkFlowEnabled()) {
 
-			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
-				if (PennantConstants.WF_Audit_Notes.equals(getAuditingReq())) {
-					try {
-						if (!isNotes_Entered()){
-							PTMessageUtils.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);;
-					}
-				}
-			}*/
-		
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
@@ -1327,42 +1468,46 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
-			
+
 			aPromotion.setTaskId(taskId);
 			aPromotion.setNextTaskId(nextTaskId);
 			aPromotion.setRoleCode(getRole());
 			aPromotion.setNextRoleCode(nextRoleCode);
-			
+
 			if (StringUtils.trimToEmpty(getOperationRefs()).equals("")) {
-					processCompleted = doSaveProcess(getAuditHeader(aPromotion, tranType),null);
+				processCompleted = doSaveProcess(getAuditHeader(aPromotion, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				AuditHeader auditHeader =  getAuditHeader(aPromotion, PennantConstants.TRAN_WF);
-				
+				AuditHeader auditHeader = getAuditHeader(aPromotion, PennantConstants.TRAN_WF);
+
 				for (int i = 0; i < list.length; i++) {
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
+		} else {
 			processCompleted = doSaveProcess(getAuditHeader(aPromotion, tranType), null);
 		}
-		logger.debug("return value :"+processCompleted);
+		
+		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
+		
 		return processCompleted;
 	}
-	
+
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param  AuditHeader auditHeader
-	 * @param method  (String)
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
-	
+
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -1380,7 +1525,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					} else {
 						auditHeader = this.promotionService.saveOrUpdate(auditHeader);
 					}
-
 				} else {
 					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = this.promotionService.doApprove(auditHeader);
@@ -1388,13 +1532,11 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 						if (PennantConstants.RECORD_TYPE_DEL.equals(aPromotion.getRecordType())) {
 							deleteNotes = true;
 						}
-
 					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
 						auditHeader = this.promotionService.doReject(auditHeader);
 						if (PennantConstants.RECORD_TYPE_NEW.equals(aPromotion.getRecordType())) {
 							deleteNotes = true;
 						}
-
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
@@ -1424,15 +1566,14 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		
+
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
-		
+
 		return processCompleted;
 	}
-	
 
 	/**
 	 * @param aAuthorizedSignatoryRepository
@@ -1442,7 +1583,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	private AuditHeader getAuditHeader(Promotion aPromotion, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPromotion.getBefImage(), aPromotion);
-		return new AuditHeader(aPromotion.getPromotionCode(), null, null, null, auditDetail, aPromotion.getUserDetails(), getOverideMap());
+		return new AuditHeader(aPromotion.getPromotionCode(), null, null, null, auditDetail,
+				aPromotion.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -1477,5 +1619,29 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void setPromotionService(PromotionService promotionService) {
 		this.promotionService = promotionService;
+	}
+
+	public FinTypeFeesListCtrl getFinTypeFeesListCtrl() {
+		return finTypeFeesListCtrl;
+	}
+
+	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
+		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
+	}
+
+	public FinTypeInsuranceListCtrl getFinTypeInsuranceListCtrl() {
+		return finTypeInsuranceListCtrl;
+	}
+
+	public void setFinTypeInsuranceListCtrl(FinTypeInsuranceListCtrl finTypeInsuranceListCtrl) {
+		this.finTypeInsuranceListCtrl = finTypeInsuranceListCtrl;
+	}
+
+	public FinTypeAccountingListCtrl getFinTypeAccountingListCtrl() {
+		return finTypeAccountingListCtrl;
+	}
+
+	public void setFinTypeAccountingListCtrl(FinTypeAccountingListCtrl finTypeAccountingListCtrl) {
+		this.finTypeAccountingListCtrl = finTypeAccountingListCtrl;
 	}
 }

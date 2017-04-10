@@ -121,10 +121,11 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	 * @return FinanceType
 	 */
 	@Override
-	public List<FinTypeFees> getFinTypeFeesListByID(final String id, String type) {
+	public List<FinTypeFees> getFinTypeFeesListByID(final String id, int moduleId, String type) {
 		logger.debug("Entering");
 		FinTypeFees finTypeFees = new FinTypeFees();
 		finTypeFees.setId(id);
+		finTypeFees.setModuleId(moduleId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder,");
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
@@ -133,11 +134,11 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType");
+		selectSql.append(" Where FinType = :FinType And ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
@@ -158,12 +159,13 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	 * @return FinanceType
 	 */
 	@Override
-	public List<FinTypeFees> getFinTypeFeesList(String finType, String finEvent, String type, boolean origination) {
+	public List<FinTypeFees> getFinTypeFeesList(String finType, String finEvent, String type, boolean origination, int moduleId) {
 		logger.debug("Entering");
 		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinType", finType);
 		mapSqlParameterSource.addValue("FinEvent", finEvent);
 		mapSqlParameterSource.addValue("Origination", origination);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder,");
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
@@ -172,12 +174,12 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 		
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType = :FinType AND FinEvent = :FinEvent AND Active = 1");
-			selectSql.append(" AND OriginationFee = :Origination ");
+		selectSql.append(" AND OriginationFee = :Origination  AND ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
@@ -195,11 +197,12 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	 * @return FinanceType
 	 */
 	@Override
-	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type) {
+	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId) {
 		logger.debug("Entering");
 		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinType", finType);
 		mapSqlParameterSource.addValue("FinEvent", finEvents);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder,");
 		selectSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
@@ -208,11 +211,11 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 		
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType AND FinEvent IN (:FinEvent) ");
+		selectSql.append(" Where FinType = :FinType AND FinEvent IN (:FinEvent) AND ModuleId = :ModuleId ");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
@@ -221,15 +224,16 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	}
 	
 	@Override
-	public List<FinTypeFees> getFinTypeFeeCodes(String finType) {
+	public List<FinTypeFees> getFinTypeFeeCodes(String finType, int moduleId) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinType", finType);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT T2.FeeTypeCode,T2.FeeTypeDesc,T1.AlwDeviation  From FinTypeFees T1");
 		selectSql.append("  INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID  ");
-		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType ");
+		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType AND AND T1.ModuleId = :ModuleId");
 		
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -259,11 +263,11 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType And OriginationFee = :OriginationFee And FinEvent = :FinEvent And FeeTypeID = :FeeTypeID");
+		selectSql.append(" Where FinType = :FinType And OriginationFee = :OriginationFee And FinEvent = :FinEvent And FeeTypeID = :FeeTypeID And ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
@@ -325,12 +329,12 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		insertSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage," );
 		insertSql.append(" CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId)" );
 		insertSql.append(" Values(:FinType, :OriginationFee, :FinEvent, :FeeTypeID, :FeeOrder," );
 		insertSql.append(" :FeeScheduleMethod, :CalculationType, :RuleCode, :Amount, :Percentage," );
 		insertSql.append(" :CalculateOn, :AlwDeviation, :MaxWaiverPerc, :AlwModifyFee, :AlwModifyFeeSchdMthd, :Active," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId)");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
@@ -366,8 +370,8 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		updateSql.append(" MaxWaiverPerc = :MaxWaiverPerc,AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd, Active = :Active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where FinType =:FinType and OriginationFee=:OriginationFee and FinEvent=:FinEvent and FeeTypeID=:FeeTypeID");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleId = :ModuleId" );
+		updateSql.append(" Where FinType =:FinType and OriginationFee=:OriginationFee and FinEvent=:FinEvent and FeeTypeID=:FeeTypeID And ModuleId = :ModuleId");
 		
 		if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");
@@ -405,7 +409,7 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeFees");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append("  Where FinType =:FinType And OriginationFee =:OriginationFee And FinEvent =:FinEvent And FeeTypeID =:FeeTypeID");
+		deleteSql.append("  Where FinType =:FinType And OriginationFee =:OriginationFee And FinEvent =:FinEvent And FeeTypeID =:FeeTypeID And ModuleId  = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
@@ -435,19 +439,20 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	 */
 	
 	@Override
-	public void deleteByFinType(String finType, String type) {
+	public void deleteByFinType(String finType, String type, int moduleId) {
 		logger.debug("Entering");
 		FinTypeFees finTypeFees = new FinTypeFees();
 		finTypeFees.setFinType(finType);
+		finTypeFees.setModuleId(moduleId);
 		StringBuilder deleteSql = new StringBuilder("Delete From FinTypeFees");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinType =:FinType");
+		deleteSql.append(" Where FinType =:FinType And ModuleId = :ModuleId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
+		
 		try {
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
@@ -455,15 +460,16 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 	}
 	
 	@Override
-	public List<FinTypeFees> getFinTypeFeesList(String finEvent,List<String> finTypes) {
+	public List<FinTypeFees> getFinTypeFeesList(String finEvent,List<String> finTypes, int moduleId) {
 		logger.debug("Entering");
 		MapSqlParameterSource mapSqlParameterSource=new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FinEvent", finEvent);
 		mapSqlParameterSource.addValue("FinType", finTypes);
+		mapSqlParameterSource.addValue("ModuleId", moduleId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, OriginationFee, FinEvent, FeeTypeID, Active, FeeTypeCode");
 		selectSql.append(" FROM FinTypeFees_AView");
-		selectSql.append(" Where FinType IN (:FinType) AND FinEvent = :FinEvent ");
+		selectSql.append(" Where FinType IN (:FinType) AND FinEvent = :FinEvent AND ModuleId = :ModuleId");
 		
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);

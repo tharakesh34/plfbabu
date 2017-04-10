@@ -72,6 +72,7 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -589,12 +590,12 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 	@Override
 	public List<Long> getFinTypeAccounting(String finType, List<String> events){
-		return getFinTypeAccountingDAO().getFinTypeAccounting(finType,events);
+		return getFinTypeAccountingDAO().getFinTypeAccounting(finType, events, FinanceConstants.FINTYPEFEES_FINTYPE);
 	}
 	
 	@Override
-	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type) {
-		return getFinTypeFeesDAO().getFinTypeFeesList(finType,finEvents,type);
+	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId) {
+		return getFinTypeFeesDAO().getFinTypeFeesList(finType,finEvents,type, moduleId);
 	}
 	
 	@Override

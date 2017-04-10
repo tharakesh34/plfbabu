@@ -267,10 +267,10 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		logger.debug("Entering");
 		// create a new FinanceType object, We GET it from the backEnd.
 		final FinanceType aFinanceType = financeTypeService.getNewFinanceType();
-		
+
 		aFinanceType.setNewRecord(true);
 		aFinanceType.setWorkflowId(getWorkFlowId());
-		
+
 		// aFinanceType.setFinScheduleOn("");
 		boolean isCopyProcess = false;
 		if (event.getData() != null) {
@@ -303,8 +303,23 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 				}
 			}
 		}
-		
-		doShowDialogPage(aFinanceType, isCopyProcess);
+
+		Map<String, Object> map = getDefaultArguments();
+		map.put("financeType", aFinanceType);
+		map.put("isCopyProcess", isCopyProcess);
+		map.put("isPromotion", isPromotion);
+		map.put("alwCopyOption", this.button_FinanceTypeList_NewFinanceType.isVisible());
+		map.put("financeTypeListCtrl", this);
+		map.put("isOverdraft", isOverdraft);
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/SelectFinTypeDialog.zul", null, map);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
+
 		logger.debug("Leaving");
 	}
 

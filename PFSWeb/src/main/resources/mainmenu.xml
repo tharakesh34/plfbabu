@@ -209,6 +209,9 @@
  		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  /> <!-- rightName="menuItem_SolutionFactory_WorkFlowDetail" -->
 		
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
+		
+		<!--Promotions -->
+		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/Promotion/PromotionList.zul" rightName="menuItem_Promotion_Promotion"/>
 	</menu>
 	
 	<!--Finance Menu Tree -->

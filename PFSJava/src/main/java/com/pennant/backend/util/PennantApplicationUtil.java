@@ -15,7 +15,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.search.Filter;
 import com.pennanttech.pff.core.model.ModuleMapping;
@@ -597,15 +596,5 @@ public class PennantApplicationUtil {
 		
 		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : ""; 
  	}
-	
-	public static String getCurrencyCode(String finType){
-		JdbcSearchObject<FinanceType> searchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
-		searchObject.addFilterEqual("FinType", finType);
-		searchObject.addField("finCcy");
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<FinanceType> financeTypeList = pagedListService.getBySearchObject(searchObject);
-		
-		return financeTypeList.size() > 0 ? financeTypeList.get(0).getFinCcy() : ""; 
-	}
 	
  }

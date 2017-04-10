@@ -31,6 +31,8 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 	private FinTypeInsurances	befImage;
 	private LoggedInUser		userDetails;
 	
+	private int 				moduleId;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("insuranceTypeDesc");
@@ -232,6 +234,14 @@ public class FinTypeInsurances extends AbstractWorkflowEntity {
 
 	public void setPolicyRate(String policyRate) {
 		this.policyRate = policyRate;
+	}
+
+	public int getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
 	}
 
 }

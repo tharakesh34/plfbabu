@@ -49,5 +49,5 @@ public interface PromotionDAO {
 	void update(Promotion promotion,String type);
 	void delete(Promotion promotion,String type);
 	String save(Promotion promotion,String type);
-
+	int getPromtionCodeCount(String promotionCode, String type);
 }

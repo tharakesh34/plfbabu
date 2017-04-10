@@ -55,6 +55,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -699,5 +700,31 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		}
 		logger.debug("Leaving");
 		return finTypeDesc;
+	}
+	
+	@Override
+	public int getFinTypeCount(String finType, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From RMTFinanceTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinType = :FinType");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
 	}
 }

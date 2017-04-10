@@ -71,6 +71,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -288,7 +289,7 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		logger.debug("Leaving");
 		
-		return  getFinTypeAccountingDAO().getAccountSetID(dataSet.getFinType(), dataSet.getFinEvent());
+		return  getFinTypeAccountingDAO().getAccountSetID(dataSet.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
 	}
 	
 

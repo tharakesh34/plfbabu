@@ -58,9 +58,6 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -79,7 +76,11 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.FinTypeVasDetailValidation;
+import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
+import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
+import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -94,51 +95,27 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private FinanceTypeDAO financeTypeDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private FinTypeAccountDAO finTypeAccountDAO;
-	private FinTypeFeesDAO finTypeFeesDAO;
-	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private ProductAssetDAO productAssetDAO;
-	private FinTypeInsuranceDAO	finTypeInsuranceDAO;
 	private FinTypeVASProductsDAO 	finTypeVASProductsDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 	// Validation Service Classes
 	private FinTypeVasDetailValidation		finTypeVasDetailValidation;
+	
+	private FinTypeFeesService finTypeFeesService;
+	private FinTypeInsurancesService finTypeInsurancesService;
+	private FinTypeAccountingService finTypeAccountingService;
 	
 
 	public FinanceTypeServiceImpl() {
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
-	}
-
 	@Override
-	public FinanceType getNewFinanceType() {			
+	public FinanceType getNewFinanceType() {
+		logger.debug("Entering");
+		
 		FinanceType financeType = new FinanceType();
 		financeType.setFinCategory("");
 		financeType.setNewRecord(true);
@@ -147,8 +124,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		for (int i = 0; i < accountEngineRules.size(); i++) {
 			financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
 		}		
-		return financeType;
 
+		logger.debug("Leaving");
+		
+		return financeType;
 	}
 	// To get finPurpose details by assestId 
 	@Override
@@ -174,13 +153,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
+		
 		String tableType = "";
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
+		
 		if (financeType.isWorkflow()) {
 			tableType = "_Temp";
 		}
@@ -200,25 +183,25 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(details);
 		}
 
-		//Finance Type Fees
-		if (financeType.getFinTypeFeesList() != null  && financeType.getFinTypeFeesList().size() > 0) {
-			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeFees");
-			details = processFinTypeFeesDetails(financeType, details, tableType);
-			auditDetails.addAll(details);
+		// Finance Type Fees
+		if (financeType.getFinTypeFeesList() != null && financeType.getFinTypeFeesList().size() > 0) {
+			List<AuditDetail> feeDetails = financeType.getAuditDetailMap().get("FinTypeFees");
+			feeDetails = this.finTypeFeesService.processFinTypeFeesDetails(feeDetails, tableType);
+			auditDetails.addAll(feeDetails);
 		}
 		
-		//Finance Type Accounting
-		if (financeType.getFinTypeAccountingList() != null  && financeType.getFinTypeAccountingList().size() > 0) {
-			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeAccounting");
-			details = processFinTypeAccountingDetails(financeType, details, tableType);
-			auditDetails.addAll(details);
-		}
-
-		//FinTypeInsurance
+		// Finance Type Insurances
 		if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
-			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeInsurance");
-			details = processFinTypeInsuranceDetails(financeType, details, tableType);
-			auditDetails.addAll(details);
+			List<AuditDetail> insuranceDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+			insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails, tableType);
+			auditDetails.addAll(insuranceDetails);
+		}
+		
+		// Finance Type Accounting
+		if (financeType.getFinTypeAccountingList() != null && financeType.getFinTypeAccountingList().size() > 0) {
+			List<AuditDetail> accountingDetails = financeType.getAuditDetailMap().get("FinTypeAccounting");
+			accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(accountingDetails, tableType);
+			auditDetails.addAll(accountingDetails);
 		}
 		
 		//FinVasTypeProduct Details
@@ -230,9 +213,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
 		logger.debug("Leaving");
+		
 		return auditHeader;
-
 	}
 
 	/**
@@ -252,18 +236,21 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "delete");
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		getFinanceTypeDAO().delete(financeType, "");
 
 		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(financeType, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
 		logger.debug("Leaving");
+		
 		return auditHeader;
-
 	}
 
 	/**
@@ -277,18 +264,26 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @return FinanceType
 	 */
 	@Override
-	public FinanceType getFinanceTypeById(String id) {
-		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(id, "_View");		
-		List<AccountingSet> accountEngineRules=getAccountingSetDAO().getListAERuleBySysDflt(financeType.isAllowRIAInvestment() , "");
-		for (int i = 0; i < accountEngineRules.size(); i++) {
-			financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
+	public FinanceType getFinanceTypeById(String finType) {
+		logger.debug("Entering");
+		
+		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_View");		
+	
+		if (financeType != null) {
+			List<AccountingSet> accountEngineRules=getAccountingSetDAO().getListAERuleBySysDflt(financeType.isAllowRIAInvestment() , "");
+			for (int i = 0; i < accountEngineRules.size(); i++) {
+				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
+			}
+			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_View"));
+			//FinTypeVasProduct Details
+			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType,"_View"));
+			financeType.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
 		}
-		financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(id, "_View"));
-		financeType.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesListByID(id, "_View"));
-		//FinTypeVasProduct Details
-		financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(id,"_View"));
-		financeType.setFinTypeAccountingList(getFinTypeAccountingDAO().getFinTypeAccountingListByID(id, "_View"));
-		financeType.setFinTypeInsurances(getFinTypeInsuranceDAO().getFinTypeInsuranceListByID(id, "_View"));
+		
+		logger.debug("Leaving");
+		
 		return financeType;
 	}
 	
@@ -310,18 +305,23 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 *            (String)
 	 * @return FinanceType
 	 */
-	public FinanceType getApprovedFinanceTypeById(String id) {
-		FinanceType financeType =  getFinanceTypeDAO().getFinanceTypeByID(id, "_AView");
+	public FinanceType getApprovedFinanceTypeById(String finType) {
+		logger.debug("Entering");
+		
+		FinanceType financeType =  getFinanceTypeDAO().getFinanceTypeByID(finType, "_AView");
 		if(financeType != null) {
 			List<AccountingSet> accountEngineRules=getAccountingSetDAO().getListAERuleBySysDflt(financeType.isAllowRIAInvestment() , "");
 			for (int i = 0; i < accountEngineRules.size(); i++) {
 				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
 			}
-			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(id, "_AView"));
-			financeType.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesListByID(id, "_AView"));
-			financeType.setFinTypeAccountingList(getFinTypeAccountingDAO().getFinTypeAccountingListByID(id, "_AView"));
-			financeType.setFinTypeInsurances(getFinTypeInsuranceDAO().getFinTypeInsuranceListByID(id, "_View"));
+			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_AView"));
+			financeType.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
 		}
+		
+		logger.debug("Leaving");
+		
 		return financeType;
 	}
 	
@@ -364,10 +364,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "doApprove");
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		FinanceType financeType = new FinanceType();
 		BeanUtils.copyProperties((FinanceType) auditHeader.getAuditDetail().getModelData(), financeType);
 
@@ -376,7 +378,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			//List
 			auditDetails.addAll(deleteChilds(financeType, "",tranType));
 			getFinanceTypeDAO().delete(financeType, "");
-
 		} else {
 			financeType.setRoleCode("");
 			financeType.setNextRoleCode("");
@@ -391,13 +392,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 				// Copy of Finance Workflow & Process Editor Details to Promotion by Finance Type(Product Code)
 				if(StringUtils.isNotBlank(financeType.getProduct())){
-
 					//Finance Workflow Details 
 					List<FinanceWorkFlow> financeWorkFlowList = getFinanceWorkFlowDAO().getFinanceWorkFlowListById(financeType.getProduct(), "");
 					
 					if(financeWorkFlowList != null && !financeWorkFlowList.isEmpty()){
 						for (FinanceWorkFlow financeWorkFlow : financeWorkFlowList) {
-
 							financeWorkFlow.setFinType(financeType.getFinType());
 							financeWorkFlow.setModuleName(PennantConstants.WORFLOW_MODULE_PROMOTION);
 							financeWorkFlow.setVersion(0);
@@ -418,9 +417,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 							getFinanceReferenceDetailDAO().save(refDetail, "");
 						}
 					}
-
 				}
-
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				financeType.setRecordType("");
@@ -431,26 +428,40 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				details = processFinTypeCustAccountDetails(financeType,details, "");
 				auditDetails.addAll(details);
 			}
-			if (financeType.getFinTypeFeesList() != null && financeType.getFinTypeFeesList().size() > 0) {
-				List<AuditDetail> details = financeType.getAuditDetailMap().get( "FinTypeFees");
-				details = processFinTypeFeesDetails(financeType,details, "");
-				auditDetails.addAll(details);
-			}
 			//FinTypeVasProduct Details
 			if (financeType.getFinTypeVASProductsList() != null && financeType.getFinTypeVASProductsList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
 				details = processingVasProductDetailList(details, financeType.getFinAcType(),"");
 				auditDetails.addAll(details);
 			}
-			if (financeType.getFinTypeAccountingList() != null && financeType.getFinTypeAccountingList().size() > 0) {
-				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeAccounting");
-				details = processFinTypeAccountingDetails(financeType,details, "");
-				auditDetails.addAll(details);
+			// Fees
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				List<AuditDetail> feeDetails = financeType.getAuditDetailMap().get("FinTypeFees");
+
+				if (feeDetails != null && !feeDetails.isEmpty()) {
+					feeDetails = this.finTypeFeesService.processFinTypeFeesDetails(feeDetails, "");
+					auditDetails.addAll(feeDetails);
+				}
 			}
-			if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
-				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeInsurance");
-				details = processFinTypeInsuranceDetails(financeType, details, "");
-				auditDetails.addAll(details);
+			// Insurances
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				List<AuditDetail> insuranceDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+
+				if (insuranceDetails != null && !insuranceDetails.isEmpty()) {
+					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
+							"");
+					auditDetails.addAll(insuranceDetails);
+				}
+			}
+			// Accounting
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				List<AuditDetail> accountingDetails = financeType.getAuditDetailMap().get("FinTypeAccounting");
+
+				if (accountingDetails != null && !accountingDetails.isEmpty()) {
+					accountingDetails = this.finTypeAccountingService.processFinTypeAccountingDetails(
+							accountingDetails, "");
+					auditDetails.addAll(accountingDetails);
+				}
 			}
 		}
 
@@ -471,6 +482,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
+		
 		return auditHeader;
 	}
 
@@ -491,17 +503,21 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFinanceTypeDAO().delete(financeType, "_Temp");
 		//List
 		auditHeader.setAuditDetails(processChildsAudit(deleteChilds( financeType, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
 		logger.debug("Leaving");
+		
 		return auditHeader;
 	}
 
@@ -517,31 +533,34 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		
+
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = financeType.getUserDetails().getUsrLanguage();
-		
 
-		//List
+		// List
 		auditHeader = prepareChildsAudit(auditHeader, method);
-		auditHeader.setErrorList(validateChilds(auditHeader,auditHeader.getUsrLanguage(),method));
-		
+		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
+
 		if (financeType.getFinTypeVASProductsList() != null && !financeType.getFinTypeVASProductsList().isEmpty()) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
 			details = getFinTypeVasDetailValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
 		auditHeader = nextProcess(auditHeader);
+
 		logger.debug("Leaving");
+
 		return auditHeader;
 	}
 
@@ -557,15 +576,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @return
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-
 		logger.debug("Entering");
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
 		FinanceType financeType = (FinanceType) auditDetail.getModelData();
 		FinanceType tempFinanceType = null;
+		
 		if (financeType.isWorkflow()) {
 			tempFinanceType = getFinanceTypeDAO().getFinanceTypeByID(financeType.getId(), "_Temp");
 		}
+		
 		FinanceType befFinanceType = getFinanceTypeDAO().getFinanceTypeByID(financeType.getId(), "");
 
 		FinanceType oldFinanceType = financeType.getBefImage();
@@ -576,78 +597,47 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
-		if (financeType.isNew()) { // for New record or new record into work
-			// flow
-
-			if (!financeType.isWorkflow()) {// With out Work flow only new
-				// records
-				if (befFinanceType != null) { // Record Already Exists in the
-					// table then error
+		if (financeType.isNew()) { // for New record or new record into work flow
+			if (!financeType.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceType != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
 				}
 			} else { // with work flow
-
-				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-					// records
-					// type
-					// is new
-					if (befFinanceType != null || tempFinanceType != null) { // if
-						// records
-						// already
-						// exists
-						// in the main table
-						auditDetail
-						.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
+				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinanceType != null || tempFinanceType != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceType == null || tempFinanceType != null) {
-						auditDetail
-						.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
-
 		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!financeType.isWorkflow()) { // With out Work flow for update
-				// and delete
-
-				if (befFinanceType == null) { // if records not exists in the
-					// main table
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!financeType.isWorkflow()) { // With out Work flow for update and delete
+				if (befFinanceType == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, null));
-
 				} else {
-
 					if (oldFinanceType != null
 							&& !oldFinanceType.getLastMntOn().equals(befFinanceType.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
-									null));
+							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, null));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
-									null));
+							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, null));
 						}
-
 					}
 				}
-
 			} else {
-				if (tempFinanceType == null) { // if records not exists in the
-					// Work flow table
+				if (tempFinanceType == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempFinanceType != null && oldFinanceType != null
 						&& !oldFinanceType.getLastMntOn().equals(tempFinanceType.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
 			}
-
 		}
 		// To Check Whether the finance type is active or not
 		if (!financeType.isFinIsActive()) {
@@ -663,10 +653,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		
 		if ("doApprove".equals(StringUtils.trimToEmpty(method))	|| !financeType.isWorkflow()) {
 			auditDetail.setBefImage(befFinanceType);
 		}
+		
 		logger.debug("Leaving");
+		
 		return auditDetail;
 	}
 
@@ -678,7 +671,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @return
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-
+		logger.debug("Entering");
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		//HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
@@ -691,6 +685,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		
 		auditHeader.getAuditDetail().setModelData(financeType);
 		auditHeader.setAuditDetails(auditDetails);
+		
+		logger.debug("Leaving");
+		
 		return auditHeader;
 	}
 
@@ -702,11 +699,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
-
 		String auditTranType = "";
 
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)
-				|| "doReject".equals(method)) {
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (financeType.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -715,22 +710,67 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetailMap.put("FinTypeCustAccount", setFinTypeCustAccountsAuditData(financeType, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeCustAccount"));
 		}
+		// Fees
 		if (financeType.getFinTypeFeesList() != null && financeType.getFinTypeFeesList().size() > 0) {
-			auditDetailMap.put("FinTypeFees", setFinTypeFeesAuditData(financeType, auditTranType, method));
+			for (FinTypeFees finTypeFees : financeType.getFinTypeFeesList()) {
+				finTypeFees.setFinType(financeType.getFinType());
+				finTypeFees.setWorkflowId(financeType.getWorkflowId());
+				finTypeFees.setRecordStatus(financeType.getRecordStatus());
+				finTypeFees.setUserDetails(financeType.getUserDetails());
+				finTypeFees.setLastMntOn(financeType.getLastMntOn());
+				finTypeFees.setRoleCode(financeType.getRoleCode());
+				finTypeFees.setNextRoleCode(financeType.getNextRoleCode());
+				finTypeFees.setTaskId(financeType.getTaskId());
+				finTypeFees.setNextTaskId(financeType.getNextTaskId());
+			}
+
+			auditDetailMap.put("FinTypeFees", this.finTypeFeesService.setFinTypeFeesAuditData(
+					financeType.getFinTypeFeesList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeFees"));
 		}
+
+		// Insurance Details
+		if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
+			for (FinTypeInsurances finTypeInsurances : financeType.getFinTypeInsurances()) {
+				finTypeInsurances.setFinType(financeType.getFinType());
+				finTypeInsurances.setWorkflowId(financeType.getWorkflowId());
+				finTypeInsurances.setRecordStatus(financeType.getRecordStatus());
+				finTypeInsurances.setUserDetails(financeType.getUserDetails());
+				finTypeInsurances.setLastMntOn(financeType.getLastMntOn());
+				finTypeInsurances.setRoleCode(financeType.getRoleCode());
+				finTypeInsurances.setNextRoleCode(financeType.getNextRoleCode());
+				finTypeInsurances.setTaskId(financeType.getTaskId());
+				finTypeInsurances.setNextTaskId(financeType.getNextTaskId());
+			}
+
+			auditDetailMap.put("FinTypeInsurance", finTypeInsurancesService.setFinTypeInsuranceDetailsAuditData(
+					financeType.getFinTypeInsurances(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinTypeInsurance"));
+		}
+
+		// Accounting
+		if (financeType.getFinTypeAccountingList() != null && financeType.getFinTypeAccountingList().size() > 0) {
+			for (FinTypeAccounting finTypeAccounting : financeType.getFinTypeAccountingList()) {
+				finTypeAccounting.setFinType(financeType.getFinType());
+				finTypeAccounting.setWorkflowId(financeType.getWorkflowId());
+				finTypeAccounting.setRecordStatus(financeType.getRecordStatus());
+				finTypeAccounting.setUserDetails(financeType.getUserDetails());
+				finTypeAccounting.setLastMntOn(financeType.getLastMntOn());
+				finTypeAccounting.setRoleCode(financeType.getRoleCode());
+				finTypeAccounting.setNextRoleCode(financeType.getNextRoleCode());
+				finTypeAccounting.setTaskId(financeType.getTaskId());
+				finTypeAccounting.setNextTaskId(financeType.getNextTaskId());
+			}
+
+			auditDetailMap.put("FinTypeAccounting", finTypeAccountingService.setFinTypeAccountingAuditData(
+					financeType.getFinTypeAccountingList(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinTypeAccounting"));
+		}
+		
 		//Finance Type VAS Details
 		if (financeType.getFinTypeVASProductsList()!= null && financeType.getFinTypeVASProductsList().size() > 0) {
 			auditDetailMap.put("FinTypeVASProducts", setFinTypeVasProcuctAuditData(financeType, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeVASProducts"));
-		}
-		if (financeType.getFinTypeAccountingList() != null && financeType.getFinTypeAccountingList().size() > 0) {
-			auditDetailMap.put("FinTypeAccounting", setFinTypeAccountingAuditData(financeType, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("FinTypeAccounting"));
-		}
-		if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
-			auditDetailMap.put("FinTypeInsurance",setFinTypeInsuranceDetailsAuditData(financeType, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("FinTypeInsurance"));
 		}
 		
 		financeType.setAuditDetailMap(auditDetailMap);
@@ -738,6 +778,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		auditHeader.setAuditDetails(auditDetails);
 
 		logger.debug("Leaving");
+		
 		return auditHeader;
 	}
 
@@ -757,11 +798,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 			if (object instanceof FinTypeAccount) {
 				rcdType = ((FinTypeAccount) object).getRecordType();
-			}else if (object instanceof FinTypeFees) {
+			} else if (object instanceof FinTypeFees) {
 				rcdType = ((FinTypeFees) object).getRecordType();
-			}else if (object instanceof FinTypeAccounting) {
+			} else if (object instanceof FinTypeAccounting) {
 				rcdType = ((FinTypeAccounting) object).getRecordType();
-			}else if (object instanceof FinTypeInsurances) {
+			} else if (object instanceof FinTypeInsurances) {
 				rcdType = ((FinTypeInsurances) object).getRecordType();
 			}
 
@@ -774,128 +815,132 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				transType = PennantConstants.TRAN_UPD;
 			}
 
-			auditDetails.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(),
-					object));
+			auditDetails.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(), object));
 		}
 
 		logger.debug("Leaving");
+		
 		return auditDetails;
 	}
 
-	public List<AuditDetail> deleteChilds(FinanceType financeType, String tableType,String auditTranType) {
+	public List<AuditDetail> deleteChilds(FinanceType financeType, String tableType, String auditTranType) {
+		logger.debug("Entering");
+		
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (financeType.getFinTypeAccounts() != null && !financeType.getFinTypeAccounts().isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccount(),new FinTypeAccount().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccount(),
+					new FinTypeAccount().getExcludeFields());
 			for (int i = 0; i < financeType.getFinTypeAccounts().size(); i++) {
 				FinTypeAccount finTypeAccount = financeType.getFinTypeAccounts().get(i);
 				if (StringUtils.isNotEmpty(finTypeAccount.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							finTypeAccount.getBefImage(), finTypeAccount));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeAccount
+							.getBefImage(), finTypeAccount));
 				}
 			}
 			getFinTypeAccountDAO().deleteByFinType(financeType.getFinType(), tableType);
 		}
-		if (financeType.getFinTypeFeesList()!= null && !financeType.getFinTypeFeesList().isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeFees(),new FinTypeFees().getExcludeFields());
-			for (int i = 0; i < financeType.getFinTypeFeesList().size(); i++) {
-				FinTypeFees finTypeFees = financeType.getFinTypeFeesList().get(i);
-				if (StringUtils.isNotEmpty(finTypeFees.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							finTypeFees.getBefImage(), finTypeFees));
-				}
-			}
-			getFinTypeFeesDAO().deleteByFinType(financeType.getFinType(), tableType);
-		}
-		if (financeType.getFinTypeAccountingList() != null && !financeType.getFinTypeAccountingList().isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(),new FinTypeAccounting().getExcludeFields());
-			for (int i = 0; i < financeType.getFinTypeAccountingList().size(); i++) {
-				FinTypeAccounting finTypeAccounting = financeType.getFinTypeAccountingList().get(i);
-				if (StringUtils.isNotEmpty(finTypeAccounting.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							finTypeAccounting.getBefImage(), finTypeAccounting));
-				}
-			}
-			getFinTypeAccountingDAO().deleteByFinType(financeType.getFinType(), tableType);
-		}
-		
-		//Finance Type VAS Details
+
+		// Finance Type VAS Details
 		if (financeType.getFinTypeVASProductsList() != null && !financeType.getFinTypeVASProductsList().isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeVASProducts(),new FinTypeVASProducts().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeVASProducts(),
+					new FinTypeVASProducts().getExcludeFields());
 			for (int i = 0; i < financeType.getFinTypeVASProductsList().size(); i++) {
 				FinTypeVASProducts finTypeVASProducts = financeType.getFinTypeVASProductsList().get(i);
 				if (StringUtils.isNotEmpty(finTypeVASProducts.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							finTypeVASProducts.getBefImage(), finTypeVASProducts));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeVASProducts
+							.getBefImage(), finTypeVASProducts));
 				}
 			}
 			getFinTypeVASProductsDAO().deleteList(financeType.getFinType(), tableType);
 		}
-		if (financeType.getFinTypeInsurances() != null && !financeType.getFinTypeInsurances().isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeInsurances(),new FinTypeInsurances().getExcludeFields());
-			for (int i = 0; i < financeType.getFinTypeInsurances().size(); i++) {
-				FinTypeInsurances finTypeInsurance = financeType.getFinTypeInsurances().get(i);
-				if (StringUtils.isNotEmpty(finTypeInsurance.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-							finTypeInsurance.getBefImage(), finTypeInsurance));
-				}
-			}
-			getFinTypeInsuranceDAO().deleteByFinType(financeType.getFinType(), tableType);
+
+		// Fees
+		if (financeType.getFinTypeFeesList() != null && !financeType.getFinTypeFeesList().isEmpty()) {
+			auditDetails.addAll(this.finTypeFeesService.delete(financeType.getFinTypeFeesList(), tableType,
+					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
 		}
+		// Insurance Deatails
+		if (financeType.getFinTypeInsurances() != null && !financeType.getFinTypeInsurances().isEmpty()) {
+			auditDetails.addAll(this.finTypeInsurancesService.delete(financeType.getFinTypeInsurances(), tableType,
+					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
+		}
+		// Accounting Deatails
+		if (financeType.getFinTypeAccountingList() != null && !financeType.getFinTypeAccountingList().isEmpty()) {
+			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), tableType,
+					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
+		}
+		
+		logger.debug("Leaving");
+		
 		return auditDetails;
 	}
 
-	private List<ErrorDetails> validateChilds(AuditHeader auditHeader,String usrLanguage,String method){
-		List<ErrorDetails> errorDetails=new ArrayList<ErrorDetails>();
+	private List<ErrorDetails> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+		logger.debug("Entering");
+		
+		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
-		List<AuditDetail> auditDetails=null;
-		//FinTypeAccount
-		if (financeType.getAuditDetailMap().get("FinTypeCustAccount")!=null) {
-			auditDetails= financeType.getAuditDetailMap().get("FinTypeCustAccount");
+		List<AuditDetail> auditDetails = null;
+		// FinTypeAccount
+		if (financeType.getAuditDetailMap().get("FinTypeCustAccount") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypeCustAccount");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationFinTypeCustAccounts(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
-					errorDetails.addAll(details);
-				}
-			}
-		}
-		if (financeType.getAuditDetailMap().get("FinTypeFees")!=null) {
-			auditDetails= financeType.getAuditDetailMap().get("FinTypeFees");
-			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationFinTypeFees(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
-					errorDetails.addAll(details);
-				}
-			}
-		}
-		if (financeType.getAuditDetailMap().get("FinTypeAccounting")!=null) {
-			auditDetails= financeType.getAuditDetailMap().get("FinTypeAccounting");
-			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details=validationFinTypeAccounting(auditDetail, usrLanguage, method).getErrorDetails();
-				if (details!=null) {
-					errorDetails.addAll(details);
-				}
-			}
-		}
-		if (financeType.getAuditDetailMap().get("FinTypeInsurance") != null) {
-			auditDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
-			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetails> details = validationFinTypeInsurance(auditDetail, usrLanguage, method)
+				List<ErrorDetails> details = validationFinTypeCustAccounts(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
 			}
 		}
+
+		if (financeType.getAuditDetailMap().get("FinTypeFees") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypeFees");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetails> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+
+		if (financeType.getAuditDetailMap().get("FinTypeInsurance") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetails> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+
+		if (financeType.getAuditDetailMap().get("FinTypeAccounting") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypeAccounting");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetails> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		
 		return errorDetails;
 	}
 
 
-	private List<AuditDetail> processFinTypeCustAccountDetails(FinanceType financeType,List<AuditDetail> auditDetails, String type) {
+	private List<AuditDetail> processFinTypeCustAccountDetails(FinanceType financeType, List<AuditDetail> auditDetails,
+			String type) {
 		logger.debug("Entering");
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinTypeAccount finTypeAccount = (FinTypeAccount) auditDetails.get(i).getModelData();
 			saveRecord = false;
@@ -911,8 +956,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeAccount.setTaskId("");
 				finTypeAccount.setNextTaskId("");
 			}
+
 			finTypeAccount.setFinType(financeType.getFinType());
 			finTypeAccount.setWorkflowId(0);
+
 			if (finTypeAccount.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (finTypeAccount.isNewRecord()) {
@@ -948,15 +995,18 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeAccount.setRecordType("");
 				finTypeAccount.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
+			
 			if (saveRecord) {
 				getFinTypeAccountDAO().save(finTypeAccount, type);
 			}
+			
 			if (updateRecord) {
 				getFinTypeAccountDAO().update(finTypeAccount, type);
 			}
 			if (deleteRecord) {
 				getFinTypeAccountDAO().delete(finTypeAccount, type);
 			}
+			
 			if (approveRec) {
 				finTypeAccount.setRecordType(rcdType);
 				finTypeAccount.setRecordStatus(recordStatus);
@@ -965,14 +1015,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		logger.debug("Leaving");
-		return auditDetails;
 
+		return auditDetails;
 	}
+
 	private List<AuditDetail> setFinTypeCustAccountsAuditData(FinanceType financeType, String auditTranType, String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccount(), new FinTypeAccount().getExcludeFields());
+
 		for (int i = 0; i < financeType.getFinTypeAccounts().size(); i++) {
 			FinTypeAccount finTypeAccount = financeType.getFinTypeAccounts().get(i);
 
@@ -980,9 +1032,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				continue;
 			}
 
+			boolean isRcdType = false;
 			finTypeAccount.setFinType(financeType.getFinType());
 			finTypeAccount.setWorkflowId(financeType.getWorkflowId());
-			boolean isRcdType = false;
+
 			if (finTypeAccount.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finTypeAccount.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
@@ -992,9 +1045,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else if (finTypeAccount.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				finTypeAccount.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				finTypeAccount.setNewRecord(true);
 			}
+
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (finTypeAccount.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
@@ -1005,16 +1060,19 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
+
 			finTypeAccount.setRecordStatus(financeType.getRecordStatus());
 			finTypeAccount.setUserDetails(financeType.getUserDetails());
 			finTypeAccount.setLastMntOn(financeType.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],finTypeAccount.getBefImage(), finTypeAccount));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeAccount.getBefImage(), finTypeAccount));
 		}
 
 		logger.debug("Leaving");
+
 		return auditDetails;
 	}
+	
 	/**
 	 * Validation method do the following steps.
 	 * 1)	get the details from the auditHeader. 
@@ -1027,734 +1085,82 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @param boolean onlineRequest
 	 * @return auditHeader
 	 */
-
-	private AuditDetail validationFinTypeCustAccounts(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validationFinTypeCustAccounts(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-		FinTypeAccount finTypeAccount= (FinTypeAccount) auditDetail.getModelData();
 
-		FinTypeAccount tempFinTypeAccount= null;
-		if (finTypeAccount.isWorkflow()){
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		FinTypeAccount finTypeAccount = (FinTypeAccount) auditDetail.getModelData();
+		FinTypeAccount tempFinTypeAccount = null;
+
+		if (finTypeAccount.isWorkflow()) {
 			tempFinTypeAccount = getFinTypeAccountDAO().getFinTypeAccountByID(finTypeAccount, "_Temp");
 		}
-		FinTypeAccount befFinTypeAccount= getFinTypeAccountDAO().getFinTypeAccountByID( finTypeAccount, "");
 
-		FinTypeAccount oldFinTypeAccountReference= finTypeAccount.getBefImage();
-
-
-		String[] errParm= new String[1];
-		String[] valueParm= new String[2];
-		valueParm[0]=finTypeAccount.getFinCcy();
-		valueParm[1]=finTypeAccount.getEvent();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinTypeAccountDialog_FinCcy.value")+":"+valueParm[0]+","+
-				PennantJavaUtil.getLabel("label_FinTypeAccountDialog_Event.value")+":"+valueParm[1];
-
-		if (finTypeAccount.isNew()){ // for New record or new record into work flow
-
-			if (!finTypeAccount.isWorkflow()){// With out Work flow only new records  
-				if (befFinTypeAccount !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinTypeAccount !=null || tempFinTypeAccount!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinTypeAccount ==null || tempFinTypeAccount!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-					}
-				}
-			}
-		}else{
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeAccount.isWorkflow()){	// With out Work flow for update and delete
-
-				if (befFinTypeAccount ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinTypeAccountReference!=null && !oldFinTypeAccountReference.getLastMntOn().equals(befFinTypeAccount.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
-						}
-					}
-				}
-			}else{
-
-				if (tempFinTypeAccount==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-
-				if (tempFinTypeAccount!=null  && oldFinTypeAccountReference!=null && !oldFinTypeAccountReference.getLastMntOn().equals(tempFinTypeAccount.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccount.isWorkflow()){
-			auditDetail.setBefImage(befFinTypeAccount);	
-		}
-
-		return auditDetail;
-	}
-
-	
-	private List<AuditDetail> processFinTypeFeesDetails(FinanceType financeType,List<AuditDetail> auditDetails, String type) {
-		logger.debug("Entering");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-		for (int i = 0; i < auditDetails.size(); i++) {
-			FinTypeFees finTypeFees = (FinTypeFees) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				finTypeFees.setRoleCode("");
-				finTypeFees.setNextRoleCode("");
-				finTypeFees.setTaskId("");
-				finTypeFees.setNextTaskId("");
-			}
-			finTypeFees.setFinType(financeType.getFinType());
-			finTypeFees.setWorkflowId(0);
-			if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (finTypeFees.isNewRecord()) {
-				saveRecord = true;
-				if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (finTypeFees.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-
-			if (approveRec) {
-				rcdType = finTypeFees.getRecordType();
-				recordStatus = finTypeFees.getRecordStatus();
-				finTypeFees.setRecordType("");
-				finTypeFees.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				getFinTypeFeesDAO().save(finTypeFees, type);
-			}
-			if (updateRecord) {
-				getFinTypeFeesDAO().update(finTypeFees, type);
-			}
-			if (deleteRecord) {
-				getFinTypeFeesDAO().delete(finTypeFees, type);
-			}
-			if (approveRec) {
-				finTypeFees.setRecordType(rcdType);
-				finTypeFees.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(finTypeFees);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-	private List<AuditDetail> setFinTypeFeesAuditData(FinanceType financeType, String auditTranType, String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeFees(), new FinTypeFees().getExcludeFields());
-		for (int i = 0; i < financeType.getFinTypeFeesList().size(); i++) {
-			FinTypeFees finTypeFees = financeType.getFinTypeFeesList().get(i);
-
-			if (StringUtils.isEmpty(finTypeFees.getRecordType())) {
-				continue;
-			}
-
-			finTypeFees.setFinType(financeType.getFinType());
-			finTypeFees.setWorkflowId(financeType.getWorkflowId());
-			boolean isRcdType = false;
-			if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
-				finTypeFees.setNewRecord(true);
-			}
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-			finTypeFees.setRecordStatus(financeType.getRecordStatus());
-			finTypeFees.setUserDetails(financeType.getUserDetails());
-			finTypeFees.setLastMntOn(financeType.getLastMntOn());
-
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],finTypeFees.getBefImage(), finTypeFees));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
-	 * @return auditHeader
-	 */
-
-	private AuditDetail validationFinTypeFees(AuditDetail auditDetail,String usrLanguage,String method){
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-		FinTypeFees finTypeFees= (FinTypeFees) auditDetail.getModelData();
-
-		FinTypeFees tempFinTypeFees= null;
-		if (finTypeFees.isWorkflow()){
-			tempFinTypeFees = getFinTypeFeesDAO().getFinTypeFeesByID(finTypeFees, "_Temp");
-		}
-		FinTypeFees befFinTypeFees= getFinTypeFeesDAO().getFinTypeFeesByID( finTypeFees, "");
-
-		FinTypeFees oldFinTypeFeesReference= finTypeFees.getBefImage();
-
-
-		String[] errParm= new String[1];
-		String[] valueParm= new String[2];
-		valueParm[0]=finTypeFees.getFeeTypeCode();
-		valueParm[1]=finTypeFees.getFinEvent();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FeeType.value")+":"+valueParm[0]+","+
-				PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value")+":"+valueParm[1];
-
-		if (finTypeFees.isNew()){ // for New record or new record into work flow
-
-			if (!finTypeFees.isWorkflow()){// With out Work flow only new records  
-				if (befFinTypeFees !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (finTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinTypeFees !=null || tempFinTypeFees!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinTypeFees ==null || tempFinTypeFees!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-					}
-				}
-			}
-		}else{
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeFees.isWorkflow()){	// With out Work flow for update and delete
-
-				if (befFinTypeFees ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinTypeFeesReference!=null && !oldFinTypeFeesReference.getLastMntOn().equals(befFinTypeFees.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
-						}
-					}
-				}
-			}else{
-
-				if (tempFinTypeFees==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-
-				if (tempFinTypeFees!=null  && oldFinTypeFeesReference!=null && !oldFinTypeFeesReference.getLastMntOn().equals(tempFinTypeFees.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeFees.isWorkflow()){
-			auditDetail.setBefImage(befFinTypeFees);	
-		}
-
-		return auditDetail;
-	}
-	
-
-	private List<AuditDetail> processFinTypeAccountingDetails(FinanceType financeType,List<AuditDetail> auditDetails, String type) {
-		logger.debug("Entering");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-		for (int i = 0; i < auditDetails.size(); i++) {
-			FinTypeAccounting finTypeAccounting = (FinTypeAccounting) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				finTypeAccounting.setRoleCode("");
-				finTypeAccounting.setNextRoleCode("");
-				finTypeAccounting.setTaskId("");
-				finTypeAccounting.setNextTaskId("");
-			}
-			finTypeAccounting.setFinType(financeType.getFinType());
-			finTypeAccounting.setWorkflowId(0);
-			if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (finTypeAccounting.isNewRecord()) {
-				saveRecord = true;
-				if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (finTypeAccounting.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-
-			if (approveRec) {
-				rcdType = finTypeAccounting.getRecordType();
-				recordStatus = finTypeAccounting.getRecordStatus();
-				finTypeAccounting.setRecordType("");
-				finTypeAccounting.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				getFinTypeAccountingDAO().save(finTypeAccounting, type);
-			}
-			if (updateRecord) {
-				getFinTypeAccountingDAO().update(finTypeAccounting, type);
-			}
-			if (deleteRecord) {
-				getFinTypeAccountingDAO().delete(finTypeAccounting, type);
-			}
-			if (approveRec) {
-				finTypeAccounting.setRecordType(rcdType);
-				finTypeAccounting.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(finTypeAccounting);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-	private List<AuditDetail> setFinTypeAccountingAuditData(FinanceType financeType, String auditTranType, String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeAccounting(), new FinTypeAccounting().getExcludeFields());
-		for (int i = 0; i < financeType.getFinTypeAccountingList().size(); i++) {
-			FinTypeAccounting finTypeAccounting = financeType.getFinTypeAccountingList().get(i);
-
-			if (StringUtils.isEmpty(finTypeAccounting.getRecordType())) {
-				continue;
-			}
-
-			finTypeAccounting.setFinType(financeType.getFinType());
-			finTypeAccounting.setWorkflowId(financeType.getWorkflowId());
-			boolean isRcdType = false;
-			if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
-				finTypeAccounting.setNewRecord(true);
-			}
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-			finTypeAccounting.setRecordStatus(financeType.getRecordStatus());
-			finTypeAccounting.setUserDetails(financeType.getUserDetails());
-			finTypeAccounting.setLastMntOn(financeType.getLastMntOn());
-
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],finTypeAccounting.getBefImage(), finTypeAccounting));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-	/**
-	 * Validation method do the following steps.
-	 * 1)	get the details from the auditHeader. 
-	 * 2)	fetch the details from the tables
-	 * 3)	Validate the Record based on the record details. 
-	 * 4) 	Validate for any business validation.
-	 * 5)	for any mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6)	if any error/Warnings  then assign the to auditHeader 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean onlineRequest
-	 * @return auditHeader
-	 */
-
-	private AuditDetail validationFinTypeAccounting(AuditDetail auditDetail,String usrLanguage,String method){
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-		FinTypeAccounting finTypeAccounting= (FinTypeAccounting) auditDetail.getModelData();
-
-		FinTypeAccounting tempFinTypeAccounting= null;
-		if (finTypeAccounting.isWorkflow()){
-			tempFinTypeAccounting = getFinTypeAccountingDAO().getFinTypeAccountingByID(finTypeAccounting, "_Temp");
-		}
-		FinTypeAccounting befFinTypeAccounting= getFinTypeAccountingDAO().getFinTypeAccountingByID( finTypeAccounting, "");
-
-		FinTypeAccounting oldFinTypeAccounting= finTypeAccounting.getBefImage();
-
-
-		String[] errParm= new String[1];
-		String[] valueParm= new String[2];
-		valueParm[0]=finTypeAccounting.getEvent();
-		valueParm[1]=finTypeAccounting.getLovDescEventAccountingName();
-		errParm[0]=PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value")+":"+valueParm[0]+","+
-				PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value")+":"+valueParm[1];
-
-		if (finTypeAccounting.isNew()){ // for New record or new record into work flow
-
-			if (!finTypeAccounting.isWorkflow()){// With out Work flow only new records  
-				if (befFinTypeAccounting !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-				}	
-			}else{ // with work flow
-				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befFinTypeAccounting !=null || tempFinTypeAccounting!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm));
-					}
-				}else{ // if records not exists in the Main flow table
-					if (befFinTypeAccounting ==null || tempFinTypeAccounting!=null ){
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-					}
-				}
-			}
-		}else{
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeAccounting.isWorkflow()){	// With out Work flow for update and delete
-
-				if (befFinTypeAccounting ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD, "41002", errParm,valueParm));
-				}else{
-					if (oldFinTypeAccounting!=null && !oldFinTypeAccounting.getLastMntOn().equals(befFinTypeAccounting.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm));
-						}else{
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm));
-						}
-					}
-				}
-			}else{
-
-				if (tempFinTypeAccounting==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-
-				if (tempFinTypeAccounting!=null && oldFinTypeAccounting!=null && !oldFinTypeAccounting.getLastMntOn().equals(tempFinTypeAccounting.getLastMntOn())){ 
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccounting.isWorkflow()){
-			auditDetail.setBefImage(befFinTypeAccounting);	
-		}
-
-		return auditDetail;
-	}
-
-	private List<AuditDetail> processFinTypeInsuranceDetails(FinanceType financeType, List<AuditDetail> auditDetails,
-			String type) {
-		logger.debug("Entering");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-		for (int i = 0; i < auditDetails.size(); i++) {
-			FinTypeInsurances finTypeInsurance = (FinTypeInsurances) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				finTypeInsurance.setRoleCode("");
-				finTypeInsurance.setNextRoleCode("");
-				finTypeInsurance.setTaskId("");
-				finTypeInsurance.setNextTaskId("");
-			}
-			finTypeInsurance.setFinType(financeType.getFinType());
-			finTypeInsurance.setWorkflowId(0);
-			if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (finTypeInsurance.isNewRecord()) {
-				saveRecord = true;
-				if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (finTypeInsurance.isNew()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-
-			if (approveRec) {
-				rcdType = finTypeInsurance.getRecordType();
-				recordStatus = finTypeInsurance.getRecordStatus();
-				finTypeInsurance.setRecordType("");
-				finTypeInsurance.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				getFinTypeInsuranceDAO().save(finTypeInsurance, type);
-			}
-			if (updateRecord) {
-				getFinTypeInsuranceDAO().update(finTypeInsurance, type);
-			}
-			if (deleteRecord) {
-				getFinTypeInsuranceDAO().delete(finTypeInsurance, type);
-			}
-			if (approveRec) {
-				finTypeInsurance.setRecordType(rcdType);
-				finTypeInsurance.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(finTypeInsurance);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-
-	private List<AuditDetail> setFinTypeInsuranceDetailsAuditData(FinanceType financeType, String auditTranType,
-			String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil
-				.getFieldDetails(new FinTypeInsurances(), new FinTypeInsurances().getExcludeFields());
-		for (int i = 0; i < financeType.getFinTypeInsurances().size(); i++) {
-			FinTypeInsurances finTypeInsurance = financeType.getFinTypeInsurances().get(i);
-
-			if (StringUtils.isEmpty(finTypeInsurance.getRecordType())) {
-				continue;
-			}
-
-			finTypeInsurance.setFinType(financeType.getFinType());
-			finTypeInsurance.setWorkflowId(financeType.getWorkflowId());
-			boolean isRcdType = false;
-			if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				finTypeInsurance.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			if ("saveOrUpdate".equals(method) && isRcdType) {
-				finTypeInsurance.setNewRecord(true);
-			}
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finTypeInsurance.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-			finTypeInsurance.setRecordStatus(financeType.getRecordStatus());
-			finTypeInsurance.setUserDetails(financeType.getUserDetails());
-			finTypeInsurance.setLastMntOn(financeType.getLastMntOn());
-
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					finTypeInsurance.getBefImage(), finTypeInsurance));
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-	}
-
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean onlineRequest
-	 * @return auditHeader
-	 */
-
-	private AuditDetail validationFinTypeInsurance(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
-		FinTypeInsurances finTypeInsurance = (FinTypeInsurances) auditDetail.getModelData();
-
-		FinTypeInsurances tempFinTypeInsurance = null;
-		if (finTypeInsurance.isWorkflow()) {
-			tempFinTypeInsurance = getFinTypeInsuranceDAO().getFinTypeInsuranceByID(finTypeInsurance, "_Temp");
-		}
-		FinTypeInsurances befFinTypeInsurance = getFinTypeInsuranceDAO().getFinTypeInsuranceByID(finTypeInsurance, "");
-
-		FinTypeInsurances oldFinTypeinsurance = finTypeInsurance.getBefImage();
+		FinTypeAccount befFinTypeAccount = getFinTypeAccountDAO().getFinTypeAccountByID(finTypeAccount, "");
+		FinTypeAccount oldFinTypeAccountReference = finTypeAccount.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[2];
-		valueParm[0] = finTypeInsurance.getFinType();
-		valueParm[1] = finTypeInsurance.getInsuranceType();
+		valueParm[0] = finTypeAccount.getFinCcy();
+		valueParm[1] = finTypeAccount.getEvent();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountDialog_FinCcy.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountDialog_Event.value") + ":" + valueParm[1];
 
-		if (finTypeInsurance.isNew()) { // for New record or new record into work flow
-
-			if (!finTypeInsurance.isWorkflow()) {// With out Work flow only new records  
-				if (befFinTypeInsurance != null) { // Record Already Exists in the table then error  
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+		if (finTypeAccount.isNew()) { // for New record or new record into work flow
+			if (!finTypeAccount.isWorkflow()) {// With out Work flow only new records
+				if (befFinTypeAccount != null) { // Record Already Exists in the table then error
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (finTypeInsurance.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeInsurance != null || tempFinTypeInsurance != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
+				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinTypeAccount != null || tempFinTypeAccount != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befFinTypeInsurance == null || tempFinTypeInsurance != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
+					if (befFinTypeAccount == null || tempFinTypeAccount != null) {
+						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 					}
 				}
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeInsurance.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befFinTypeInsurance == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+			if (!finTypeAccount.isWorkflow()) { // With out Work flow for update and delete
+				if (befFinTypeAccount == null) { // if records not exists in the main table
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
-					if (oldFinTypeinsurance != null
-							&& !oldFinTypeinsurance.getLastMntOn().equals(befFinTypeInsurance.getLastMntOn())) {
+					if (oldFinTypeAccountReference != null
+							&& !oldFinTypeAccountReference.getLastMntOn().equals(befFinTypeAccount.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
 								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
 						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
+							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
 						}
 					}
 				}
 			} else {
-
-				if (tempFinTypeInsurance == null) { // if records not exists in the Work flow table 
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				if (tempFinTypeAccount == null) { // if records not exists in the Work flow table
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (tempFinTypeInsurance != null && oldFinTypeinsurance != null
-						&& !oldFinTypeinsurance.getLastMntOn().equals(tempFinTypeInsurance.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				if (tempFinTypeAccount != null && oldFinTypeAccountReference != null
+						&& !oldFinTypeAccountReference.getLastMntOn().equals(tempFinTypeAccount.getLastMntOn())) {
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeInsurance.isWorkflow()) {
-			auditDetail.setBefImage(befFinTypeInsurance);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccount.isWorkflow()) {
+			auditDetail.setBefImage(befFinTypeAccount);
 		}
 
+		logger.debug("Leaving");
+		
 		return auditDetail;
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Finance Type VAS Details
 	 * 
@@ -1763,10 +1169,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingVasProductDetailList(List<AuditDetail> auditDetails,
-			String financeType, String type) {
+	private List<AuditDetail> processingVasProductDetailList(List<AuditDetail> auditDetails, String financeType, String type) {
 		logger.debug("Entering");
-
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1781,6 +1185,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			approveRec = false;
 			String rcdType = "";
 			String recordStatus = "";
+			
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				finTypeVASProducts.setRoleCode("");
@@ -1802,7 +1207,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				} else if (finTypeVASProducts.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					finTypeVASProducts.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
-
 			} else if (finTypeVASProducts.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
@@ -1820,22 +1224,25 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					updateRecord = true;
 				}
 			}
+			
 			if (approveRec) {
 				rcdType = finTypeVASProducts.getRecordType();
 				recordStatus = finTypeVASProducts.getRecordStatus();
 				finTypeVASProducts.setRecordType("");
 				finTypeVASProducts.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
+			
 			if (saveRecord) {
 				getFinTypeVASProductsDAO().save(finTypeVASProducts, type);
 			}
 
 			if (updateRecord) {
-				getFinTypeVASProductsDAO().update(finTypeVASProducts,type);
+				getFinTypeVASProductsDAO().update(finTypeVASProducts, type);
 			}
 
 			if (deleteRecord) {
-				getFinTypeVASProductsDAO().delete(finTypeVASProducts.getFinType(),finTypeVASProducts.getVasProduct(), type);
+				getFinTypeVASProductsDAO().delete(finTypeVASProducts.getFinType(), finTypeVASProducts.getVasProduct(),
+						type);
 			}
 
 			if (approveRec) {
@@ -1844,10 +1251,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			}
 			auditDetails.get(i).setModelData(finTypeVASProducts);
 		}
-		
-		logger.debug("Leaving");
-		return auditDetails;
 
+		logger.debug("Leaving");
+
+		return auditDetails;
 	}
 	
 	/**
@@ -1889,7 +1296,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeVASProduct.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && isRcdType ) {
+			if ("saveOrUpdate".equals(method) && isRcdType) {
 				finTypeVASProduct.setNewRecord(true);
 			}
 
@@ -1913,10 +1320,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		logger.debug("Leaving");
+		
 		return auditDetails;
 	}
-
-
 
 	/**
 	 * Method to get FinanceType based on finance type
@@ -1924,16 +1330,22 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public FinanceType getFinanceTypeByFinType(String finType) {	
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinanceTypeDAO().getFinanceTypeByFinType(finType);
 	}
 
 	@Override
 	public boolean checkRIAFinance(String finType) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinanceTypeDAO().checkRIAFinance(finType);
 	}
 	
 	@Override
 	public String getAllowedCollateralTypes(String finType) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinanceTypeDAO().getAllowedCollateralTypes(finType);
 	}
 
@@ -1949,66 +1361,20 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return getFinanceTypeDAO().getFinanceTypeCountById(finType);
 	}
 
-	public FinTypeAccountDAO getFinTypeAccountDAO() {
-		return finTypeAccountDAO;
-	}
-	public void setFinTypeAccountDAO(FinTypeAccountDAO finTypeAccountDAO) {
-		this.finTypeAccountDAO = finTypeAccountDAO;
-	}
-
-	public FinTypeFeesDAO getFinTypeFeesDAO() {
-		return finTypeFeesDAO;
-	}
-	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
-		this.finTypeFeesDAO = finTypeFeesDAO;
-	}
-	
-	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
-		return finTypeAccountingDAO;
-	}
-	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
-		this.finTypeAccountingDAO = finTypeAccountingDAO;
-	}
-
-	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
-		return financeWorkFlowDAO;
-	}
-	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
-		this.financeWorkFlowDAO = financeWorkFlowDAO;
-	}
-
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
 	@Override
 	public FinTypeAccount getFinTypeAccount() {
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinTypeAccountDAO().getFinTypeAccount();
 	}
 
 	@Override
 	public FinTypeAccount getNewFinTypeAccount() {
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinTypeAccountDAO().getNewFinTypeAccount();
 	}
 
-	@Override
-	public FinTypeAccounting getNewFinTypeAccounting() {
-		return getFinTypeAccountingDAO().getNewFinTypeAccounting();
-	}
-	
-	@Override
-	public FinTypeFees getFinTypeFees() {
-		return getFinTypeFeesDAO().getFinTypeFees();
-	}
-
-	@Override
-	public FinTypeFees getNewFinTypeFees() {
-		return getFinTypeFeesDAO().getNewFinTypeFees();
-	}
-	
 	/**
 	 * Fetch the FinanceTypes Based on the Product Code
 	 * 
@@ -2016,6 +1382,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public List<FinanceType> getFinanceTypeByProduct(String productCode) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
 		return getFinanceTypeDAO().getFinanceTypeByProduct(productCode);
 	}
 	
@@ -2026,10 +1394,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public int getPromotionTypeCountById(String finType) {
-		int promotionCount = 0;
 		logger.debug("Entering");
+	
+		int promotionCount = 0;
 		promotionCount =  getFinanceTypeDAO().getPromotionTypeCountById(finType);
+		
 		logger.debug("Leaving");
+		
 		return promotionCount;
 	}
 
@@ -2040,10 +1411,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public int getProductCountById(String productCode) {
-		int productCount = 0;
 		logger.debug("Entering");
+	
+		int productCount = 0;
 		productCount = getFinanceTypeDAO().getProductCountById(productCode);
+		
 		logger.debug("Leaving");
+		
 		return productCount;
 	}
 	
@@ -2055,10 +1429,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	@Override
 	public List<String> fetchFeeCodeList(Long accountSetId) {
 		logger.debug("Entering");
+		
 		List<Long> accSetIdList = new ArrayList<Long>();
 		accSetIdList.add(accountSetId);
 		List<String> feeCodeList = getTransactionEntryDAO().getFeeCodeList(accSetIdList);
+		
 		logger.debug("Leaving");
+		
 		return  feeCodeList;
 	}
 
@@ -2067,46 +1444,31 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public String getFinanceTypeDesc(String productCode) {
-		String finTypeDesc = "";
 		logger.debug("Entering");
+		
+		String finTypeDesc = "";
 		finTypeDesc = getFinanceTypeDAO().getFinanceTypeDesc(productCode);
+		
 		logger.debug("Leaving");
+		
 		return finTypeDesc;
 	}
 	
-	public ProductAssetDAO getProductAssetDAO() {
-		return productAssetDAO;
-	}
+	@Override
+	public boolean getFinTypeExist(String finType, String type) {
+		logger.debug("Entering");
+		
+		boolean finTypeExist = false;
 
-	public void setProductAssetDAO(ProductAssetDAO productAssetDAO) {
-		this.productAssetDAO = productAssetDAO;
-	}
+		if (getFinanceTypeDAO().getFinTypeCount(finType, type) != 0) {
+			finTypeExist = true;
+		}
 
-	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
-		return finTypeInsuranceDAO;
-	}
+		logger.debug("Leaving");
 
-	public void setFinTypeInsuranceDAO(FinTypeInsuranceDAO finTypeInsuranceDAO) {
-		this.finTypeInsuranceDAO = finTypeInsuranceDAO;
+		return finTypeExist;
 	}
 	
-	public FinTypeVASProductsDAO getFinTypeVASProductsDAO() {
-		return finTypeVASProductsDAO;
-	}
-
-	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
-		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
-	}
-	
-	// Validation Service Classes
-
-	public TransactionEntryDAO getTransactionEntryDAO() {
-		return transactionEntryDAO;
-	}
-	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
-		this.transactionEntryDAO = transactionEntryDAO;
-	}
-
 	/**
 	 * FinTypeVasDetail Validation
 	 * 
@@ -2119,4 +1481,103 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return this.finTypeVasDetailValidation;
 	}
 
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+	
+	public FinTypeAccountDAO getFinTypeAccountDAO() {
+		return finTypeAccountDAO;
+	}
+	
+	public void setFinTypeAccountDAO(FinTypeAccountDAO finTypeAccountDAO) {
+		this.finTypeAccountDAO = finTypeAccountDAO;
+	}
+
+	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
+		return financeWorkFlowDAO;
+	}
+	
+	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
+		this.financeWorkFlowDAO = financeWorkFlowDAO;
+	}
+
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+		return financeReferenceDetailDAO;
+	}
+	
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public ProductAssetDAO getProductAssetDAO() {
+		return productAssetDAO;
+	}
+
+	public void setProductAssetDAO(ProductAssetDAO productAssetDAO) {
+		this.productAssetDAO = productAssetDAO;
+	}
+
+	public FinTypeVASProductsDAO getFinTypeVASProductsDAO() {
+		return finTypeVASProductsDAO;
+	}
+
+	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
+		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
+	}
+	
+	public TransactionEntryDAO getTransactionEntryDAO() {
+		return transactionEntryDAO;
+	}
+	
+	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
+		this.transactionEntryDAO = transactionEntryDAO;
+	}
+
+	public AccountingSetDAO getAccountingSetDAO() {
+		return accountingSetDAO;
+	}
+	
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	public FinTypeFeesService getFinTypeFeesService() {
+		return finTypeFeesService;
+	}
+
+	public void setFinTypeFeesService(FinTypeFeesService finTypeFeesService) {
+		this.finTypeFeesService = finTypeFeesService;
+	}
+
+	public FinTypeInsurancesService getFinTypeInsurancesService() {
+		return finTypeInsurancesService;
+	}
+
+	public void setFinTypeInsurancesService(FinTypeInsurancesService finTypeInsurancesService) {
+		this.finTypeInsurancesService = finTypeInsurancesService;
+	}
+
+	public FinTypeAccountingService getFinTypeAccountingService() {
+		return finTypeAccountingService;
+	}
+
+	public void setFinTypeAccountingService(FinTypeAccountingService finTypeAccountingService) {
+		this.finTypeAccountingService = finTypeAccountingService;
+	}
 }

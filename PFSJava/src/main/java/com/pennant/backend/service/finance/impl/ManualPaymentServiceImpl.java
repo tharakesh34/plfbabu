@@ -224,11 +224,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		// Execute entries depend on Finance Event
 		Long accountingSetId = Long.MIN_VALUE;
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYSTL)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL);
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.FINTYPEFEES_FINTYPE);
 		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYPAY)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY);
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
 		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_REPAY)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY);
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
 		}
 		logger.debug("Leaving");
 		return accountingSetId;
@@ -248,11 +248,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		Long accountSetId = Long.MIN_VALUE;
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL);
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.FINTYPEFEES_FINTYPE);
 		} else if (AccountEventConstants.ACCEVENT_EARLYPAY.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY);
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
 		} else {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY);
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
 		}
 
 		financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(

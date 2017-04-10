@@ -61,6 +61,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.rmtmasters.PromotionService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.rmtmasters.promotion.model.PromotionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -137,6 +138,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 				sortOperator_PromotionCode, Operators.STRING);
 		registerField("PromotionDesc", listheader_PromotionDesc, SortOrder.ASC, promotionDesc,
 				sortOperator_PromotionDesc, Operators.STRING);
+		registerField("finType");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -177,9 +179,18 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		Promotion promotion = new Promotion();
 		promotion.setNewRecord(true);
 		promotion.setWorkflowId(getWorkFlowId());
+		
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("promotion", promotion);
+		arg.put("promotionListCtrl", this);
+		arg.put("role", getRole());
 
-		// Display the dialog page.
-		doShowDialogPage(promotion);
+		try {
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -198,8 +209,8 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		Listitem selectedItem = this.listBoxPromotion.getSelectedItem();
 
 		// Get the selected entity.
-		String id = (String) selectedItem.getAttribute("id");
-		Promotion promotion = promotionService.getPromotionById(id);
+		String promotionCode = (String) selectedItem.getAttribute("promotionCode");
+		Promotion promotion = promotionService.getPromotionById(promotionCode, FinanceConstants.FINTYPEFEES_PROMOTION);
 
 		if (promotion == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -207,8 +218,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PromotionCode='" + promotion.getPromotionCode() + "' AND version="
-				+ promotion.getVersion() + " ";
+		String whereCond = " AND PromotionCode='" + promotion.getPromotionCode() + "' AND version=" + promotion.getVersion() + " ";
 
 		if (doCheckAuthority(promotion, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

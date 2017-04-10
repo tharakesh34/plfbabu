@@ -69,6 +69,8 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinTypeAccounting befImage;
 	
+	private int moduleId;
+	
 	@XmlTransient
 	private LoggedInUser userDetails;
 	
@@ -176,6 +178,14 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	}
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public int getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
 	}
 
 }

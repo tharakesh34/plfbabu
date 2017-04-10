@@ -39,24 +39,29 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.rmtmasters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Promotion table</b>.<br>
- *
+ * 
  */
 public class Promotion extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private String promotionCode;
 	private String promotionDesc;
@@ -80,11 +85,10 @@ private static final long serialVersionUID = 1L;
 	private BigDecimal finMinRate;
 	private BigDecimal finMaxRate;
 	private boolean active = true;
-	private boolean newRecord=false;
-	private String lovValue;
+	private boolean newRecord = false;
 	private Promotion befImage;
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	private String finCategory;
 	private String finTypeDesc;
 	private String finCcy;
@@ -93,6 +97,12 @@ private static final long serialVersionUID = 1L;
 	private String rpyPricingCode;
 	private String rpyPricingDesc;
 	
+	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
+	private List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<FinTypeInsurances>();
+	private List<FinTypeAccounting>	finTypeAccountingList = new ArrayList<FinTypeAccounting>();
+	
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -105,9 +115,10 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
+
 		excludeFields.add("finCategory");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("finCcy");
@@ -120,168 +131,195 @@ private static final long serialVersionUID = 1L;
 
 		return excludeFields;
 	}
+	
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
 
 	public String getId() {
 		return promotionCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.promotionCode = id;
 	}
+
 	public String getPromotionCode() {
 		return promotionCode;
 	}
+
 	public void setPromotionCode(String promotionCode) {
 		this.promotionCode = promotionCode;
 	}
-	
+
 	public String getPromotionDesc() {
 		return promotionDesc;
 	}
+
 	public void setPromotionDesc(String promotionDesc) {
 		this.promotionDesc = promotionDesc;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	
+
 	public Date getEndDate() {
 		return endDate;
 	}
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	
+
 	public boolean isFinIsDwPayRequired() {
 		return finIsDwPayRequired;
 	}
+
 	public void setFinIsDwPayRequired(boolean finIsDwPayRequired) {
 		this.finIsDwPayRequired = finIsDwPayRequired;
 	}
-	
+
 	public long getDownPayRule() {
 		return downPayRule;
 	}
+
 	public void setDownPayRule(long downPayRule) {
 		this.downPayRule = downPayRule;
 	}
-	
+
 	public BigDecimal getActualInterestRate() {
 		return actualInterestRate;
 	}
+
 	public void setActualInterestRate(BigDecimal actualInterestRate) {
 		this.actualInterestRate = actualInterestRate;
 	}
-	
+
 	public String getFinBaseRate() {
 		return finBaseRate;
 	}
+
 	public void setFinBaseRate(String finBaseRate) {
 		this.finBaseRate = finBaseRate;
 	}
+
 	public String getFinBaseRateName() {
 		return this.finBaseRateName;
 	}
 
-	public void setFinBaseRateName (String finBaseRateName) {
+	public void setFinBaseRateName(String finBaseRateName) {
 		this.finBaseRateName = finBaseRateName;
 	}
-	
+
 	public String getFinSplRate() {
 		return finSplRate;
 	}
+
 	public void setFinSplRate(String finSplRate) {
 		this.finSplRate = finSplRate;
 	}
+
 	public String getFinSplRateName() {
 		return this.finSplRateName;
 	}
 
-	public void setFinSplRateName (String finSplRateName) {
+	public void setFinSplRateName(String finSplRateName) {
 		this.finSplRateName = finSplRateName;
 	}
-	
+
 	public BigDecimal getFinMargin() {
 		return finMargin;
 	}
+
 	public void setFinMargin(BigDecimal finMargin) {
 		this.finMargin = finMargin;
 	}
-	
+
 	public boolean isApplyRpyPricing() {
 		return applyRpyPricing;
 	}
+
 	public void setApplyRpyPricing(boolean applyRpyPricing) {
 		this.applyRpyPricing = applyRpyPricing;
 	}
-	
+
 	public long getRpyPricingMethod() {
 		return rpyPricingMethod;
 	}
+
 	public void setRpyPricingMethod(long rpyPricingMethod) {
 		this.rpyPricingMethod = rpyPricingMethod;
 	}
-	
+
 	public int getFinMinTerm() {
 		return finMinTerm;
 	}
+
 	public void setFinMinTerm(int finMinTerm) {
 		this.finMinTerm = finMinTerm;
 	}
-	
+
 	public int getFinMaxTerm() {
 		return finMaxTerm;
 	}
+
 	public void setFinMaxTerm(int finMaxTerm) {
 		this.finMaxTerm = finMaxTerm;
 	}
-	
+
 	public BigDecimal getFinMinAmount() {
 		return finMinAmount;
 	}
+
 	public void setFinMinAmount(BigDecimal finMinAmount) {
 		this.finMinAmount = finMinAmount;
 	}
-	
+
 	public BigDecimal getFinMaxAmount() {
 		return finMaxAmount;
 	}
+
 	public void setFinMaxAmount(BigDecimal finMaxAmount) {
 		this.finMaxAmount = finMaxAmount;
 	}
-	
+
 	public BigDecimal getFinMinRate() {
 		return finMinRate;
 	}
+
 	public void setFinMinRate(BigDecimal finMinRate) {
 		this.finMinRate = finMinRate;
 	}
-	
+
 	public BigDecimal getFinMaxRate() {
 		return finMaxRate;
 	}
+
 	public void setFinMaxRate(BigDecimal finMaxRate) {
 		this.finMaxRate = finMaxRate;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -289,28 +327,20 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
-	public String getLovValue() {
-		return lovValue;
-	}
 
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
-	public Promotion getBefImage(){
+	public Promotion getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Promotion beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Promotion beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -370,5 +400,36 @@ private static final long serialVersionUID = 1L;
 		this.rpyPricingDesc = rpyPricingDesc;
 	}
 
-}
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
 
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
+	public List<FinTypeFees> getFinTypeFeesList() {
+		return finTypeFeesList;
+	}
+
+	public void setFinTypeFeesList(List<FinTypeFees> finTypeFeesList) {
+		this.finTypeFeesList = finTypeFeesList;
+	}
+
+	public List<FinTypeInsurances> getFinTypeInsurancesList() {
+		return finTypeInsurancesList;
+	}
+
+	public void setFinTypeInsurancesList(List<FinTypeInsurances> finTypeInsurancesList) {
+		this.finTypeInsurancesList = finTypeInsurancesList;
+	}
+
+	public List<FinTypeAccounting> getFinTypeAccountingList() {
+		return finTypeAccountingList;
+	}
+
+	public void setFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
+		this.finTypeAccountingList = finTypeAccountingList;
+	}
+
+}

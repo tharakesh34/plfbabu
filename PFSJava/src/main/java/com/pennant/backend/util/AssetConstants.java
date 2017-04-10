@@ -75,6 +75,7 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_AGREEMENTFIELDS   = "AGMNTFLDS";
 	public static final String 	UNIQUE_ID_STAGEACCOUNTING 	= "STAGEACC";
 	public static final String 	UNIQUE_ID_ACCOUNTING 	    = "ACCNTNG";
+	public static final String 	UNIQUE_ID_INSURANCES 	    = "INSURANCES";
 
 	public static final int 	DEFAULT_ITEMNO 			= 1;
 

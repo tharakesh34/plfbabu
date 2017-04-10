@@ -1105,7 +1105,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode);
+		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
 		
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
@@ -1230,7 +1230,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 			}
 		}
-		Long accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), eventCode);
+		Long accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
 		transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountSetId, "_AEView", true);
 		
 		logger.debug("Leaving "); 

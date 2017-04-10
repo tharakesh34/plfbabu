@@ -63,7 +63,7 @@
 			<center border="none" autoscroll="false"
 				style="padding:5px;">
 				<tabbox width="100%">
-					<tabs>
+					<tabs id="tabsIndexCenter">
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_BasicDetails.value')}"
 							id="basicDetails" />
@@ -73,11 +73,11 @@
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_RepaymentDetails.value')}"
 							id="repayment" />
-						<tab
-							label="${c:l('tab_FinanceTypeDialog_Fees.value')}" id="fees" />
+						<!-- <tab
+							label="${c:l('tab_FinanceTypeDialog_Fees.value')}" id="fees" /> 
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_AccountingEvent.value')}"
-							id="accountingEvent" />
+							id="accountingEvent" />-->
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_ScheduleDetails.value')}"
 							id="scheduleProfit" visible="false" />
@@ -87,9 +87,9 @@
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_ExtendedDetails.value')}"
 							id="extendedDetails" />
-						<tab visible="false"
+						<!-- <tab visible="false"
 							label="${c:l('tab_FinanceTypeDialog_InsuranceDetails.value')}"
-							id="insuranceDetails" />
+							id="insuranceDetails" /> -->
 						<tab
 							label="${c:l('tab_FinanceTypeDialog_FeaturDetails.value')}"
 							id="featureDetails" />
@@ -1357,7 +1357,7 @@
 								</groupbox>
 							</div>
 						</tabpanel>
-						<tabpanel style="overflow:auto"
+						<!-- <tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<tabbox width="100%">
 								<tabs>
@@ -1497,7 +1497,7 @@
 									</tabpanel>
 								</tabpanels>
 							</tabbox>
-						</tabpanel>
+						</tabpanel> 
 						<tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_AccountingDetails"
@@ -1541,7 +1541,7 @@
 									</listhead>
 								</listbox>
 							</groupbox>
-						</tabpanel>
+						</tabpanel> -->
 						<tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_ScheduleProfit"
@@ -1973,7 +1973,7 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-						<tabpanel style="overflow:auto"
+						<!-- <tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_InsuranceDetails"
 								width="100%" height="100%">
@@ -2032,7 +2032,7 @@
 									</listhead>
 								</listbox>
 							</groupbox>
-						</tabpanel>
+						</tabpanel> -->
 						<tabpanel>
 							<groupbox>
 								<ptCKeditor id="remarks" width="99%"

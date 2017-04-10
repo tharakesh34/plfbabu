@@ -669,7 +669,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setAdvancePaymentsList(getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference,"_View"));
 		}
 		
-		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false));
+		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_FINTYPE));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
@@ -1066,7 +1066,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode);
+		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
 
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
@@ -1437,7 +1437,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// TODO: Better to Remove from Here and add it in Tab Selection
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode);
+		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
 		if(accSetId != Long.MIN_VALUE){
 
 			//Finance Accounting Posting Details
@@ -4884,7 +4884,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			//Finance Insurance Validation
 			//validate the Insurances against the finance Type having list of configured insurances
-			List<String> mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType());
+			List<String> mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
 			if (mandPolicyList != null && !mandPolicyList.isEmpty()){
 				
 				boolean notValidEntry = false;
@@ -6412,7 +6412,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(
-				financeDetail.getFinScheduleData().getFinanceType().getFinType(), eventCode);
+				financeDetail.getFinScheduleData().getFinanceType().getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
 
 		//Finance Accounting Posting Details
 		if(accSetId != Long.MIN_VALUE){
@@ -7737,7 +7737,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	public List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination){
-		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination);
+		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, FinanceConstants.FINTYPEFEES_FINTYPE);
 	}
 
 	public FinTypeFeesDAO getFinTypeFeesDAO() {

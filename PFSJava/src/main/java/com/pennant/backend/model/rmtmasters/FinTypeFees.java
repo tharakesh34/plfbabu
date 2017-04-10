@@ -89,6 +89,8 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private boolean alwModifyFeeSchdMthd;
 	private boolean active;
 	
+	private int moduleId;
+	
 	private boolean newRecord=false;
 	private String lovValue;
 	private FinTypeFees befImage;
@@ -293,6 +295,14 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	}
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public int getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
 	}
 }
 

@@ -48,15 +48,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.apache.commons.beanutils.converters.DateConverter;
@@ -67,7 +63,6 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -89,12 +84,14 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -116,7 +113,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -125,14 +121,11 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.AccountType;
-import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -465,17 +458,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private Tab basicDetails; // autoWired
 	private Tab gracePeriod; // autoWired
 	private Tab repayment; // autoWired
-	private Tab accountingEvent; // autoWired
+	//private Tab accountingEvent; // autoWired
 	private Tab finTypeAccountDetails; // autoWired
 	private Tab extendedDetails; // autoWired
 	
 	//Fees 
-	protected Button btnNew_FinTypeFees_Origination;
-	protected Listbox listBoxFinTypeFeesOrigination;
-	private List<FinTypeFees> finTypeFeesOriginationList = new ArrayList<FinTypeFees>();
-	private List<FinTypeFees> finTypeFeesServicingList = new ArrayList<FinTypeFees>();
-	protected Button btnNew_FinTypeFees_Servicing;
-	protected Listbox listBoxFinTypeFeesServicing;
+	//protected Button btnNew_FinTypeFees_Origination;
+	//protected Listbox listBoxFinTypeFeesOrigination;
+	//private List<FinTypeFees> finTypeFeesOriginationList = new ArrayList<FinTypeFees>();
+	//private List<FinTypeFees> finTypeFeesServicingList = new ArrayList<FinTypeFees>();
+	//protected Button btnNew_FinTypeFees_Servicing;
+	//protected Listbox listBoxFinTypeFeesServicing;
 
 	//Customer Accounts
 	protected Button btnNew_FinTypeAccount;
@@ -483,16 +476,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private List<FinTypeAccount> finTypeAccountList = new ArrayList<FinTypeAccount>();
 
 	//Finance Type Accounting
-	protected Listbox listBoxFinTypeAccounting;
-	private Map<String,FinTypeAccounting> finTypeAccEventMap = new LinkedHashMap<String,FinTypeAccounting>();
+	//protected Listbox listBoxFinTypeAccounting;
+	//private Map<String,FinTypeAccounting> finTypeAccEventMap = new LinkedHashMap<String,FinTypeAccounting>();
 
 	private boolean isCompReadonly = false;
 	protected boolean alwCopyOption = false;
 
 	//Insurance Details
-	protected Button						btnNew_insuranceType;
-	private List<FinTypeInsurances>			finTypeInsuranceList	= new ArrayList<FinTypeInsurances>();
-	private Listbox							listBoxInsuranceDetails;
+	//protected Button						btnNew_insuranceType;
+	//private List<FinTypeInsurances>			finTypeInsuranceList	= new ArrayList<FinTypeInsurances>();
+	//private Listbox							listBoxInsuranceDetails;
 	private Map<String,String> eventDetailMap = new HashMap<String,String>();
 	private Row row_ManualSchedule;
 	
@@ -509,6 +502,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row							row_RoundingMode;
 	protected Checkbox						quickDisb;
 	protected Row							row_QuickDisb;
+	
+	protected Tabs 							tabsIndexCenter;
+	protected Tabpanels 					tabpanelsBoxIndexCenter;
+
+	protected String 						selectMethodName = "onSelectTab";
+	protected Component 					feeDetailWindow;
+	protected FinTypeFeesListCtrl 			finTypeFeesListCtrl;
+	
+	protected Component insuranceDetailWindow;
+	protected Component accountingDetailWindow;
+	
+	protected FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
+	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 
 	/** default constructor.<br> */
 	public FinanceTypeDialogCtrl() {
@@ -536,7 +542,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		setPageComponents(window_FinanceTypeDialog);
 
 		try {
-
 			/* READ OVERHANDED params ! */
 			if (arguments.containsKey("financeType")) {
 				this.financeType = (FinanceType) arguments.get("financeType");
@@ -547,18 +552,27 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				setFinanceType(null);
 			}
+			
+			if (arguments.containsKey("financeTypeListCtrl")) {
+				setFinanceTypeListCtrl((FinanceTypeListCtrl) arguments.get("financeTypeListCtrl"));
+			} else {
+				setFinanceTypeListCtrl(null);
+			}
+			
 			if (arguments.containsKey("isCopyProcess")) {
 				this.isCopyProcess = (Boolean) arguments.get("isCopyProcess");
 			}
+			
 			if (arguments.containsKey("isPromotion")) {
 				this.isPromotion = (Boolean) arguments.get("isPromotion");
 			}
+			
 			if (arguments.containsKey("alwCopyOption")) {
 				this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
 			}
+			
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
-
 			}
 
 			doLoadWorkFlow(this.financeType.isWorkflow(), this.financeType.getWorkflowId(),
@@ -567,35 +581,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				//getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceTypeDialog");
 			}
-			/*
-			 * READ OVERHANDED params ! we get the financeTypeListWindow controller. So we have access to it and can
-			 * synchronize the shown data when we do insert, edit or delete financeType here.
-			 */
-			if (arguments.containsKey("financeTypeListCtrl")) {
-				setFinanceTypeListCtrl((FinanceTypeListCtrl) arguments.get("financeTypeListCtrl"));
-			} else {
-				setFinanceTypeListCtrl(null);
-			}
 
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
 			this.repayDetailDiv.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
-			this.listBoxFinTypeFeesOrigination.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxFinTypeFeesServicing.setHeight(this.borderLayoutHeight - 145 + "px");
 			this.listBoxFinTypeAccounts.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 145 + "px");
-			this.listBoxFinTypeAccounting.setHeight(this.borderLayoutHeight - 120 + "px");
+			
+			//this.listBoxFinTypeFeesOrigination.setHeight(this.borderLayoutHeight - 145 + "px");
+			//this.listBoxFinTypeFeesServicing.setHeight(this.borderLayoutHeight - 145 + "px");
+			//this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 145 + "px");
+			//this.listBoxFinTypeAccounting.setHeight(this.borderLayoutHeight - 120 + "px");
 
 			this.isCompReadonly = !isMaintainable();
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
-
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFinanceType());
-
-
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e);
@@ -719,7 +722,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setValueColumn("DivisionCode");
 		this.finDivision.setDescColumn("DivisionCodeDesc");
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
-
 	
 		//modify
 		this.grcPricingMethod.setInputAllowed(false);
@@ -1011,15 +1013,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.finType.setValue(aFinanceType.getFinType());
 		this.finTypeDesc.setValue(aFinanceType.getFinTypeDesc());
-		if (aFinanceType.isNewRecord()) {
-			PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
-			this.finCcy.setValue(parameter.getSysParmValue().trim());
-			this.finCcy.setDescription(parameter.getSysParmDescription());
-			aFinanceType.setFinCcy(parameter.getSysParmValue().trim());
-		} else {
-			this.finCcy.setValue(StringUtils.trimToEmpty(aFinanceType.getFinCcy()));
-			this.finCcy.setDescription(CurrencyUtil.getCcyDesc(aFinanceType.getFinCcy()));
-		}
+		
+		this.finCcy.setValue(StringUtils.trimToEmpty(aFinanceType.getFinCcy()));
+		this.finCcy.setDescription(CurrencyUtil.getCcyDesc(aFinanceType.getFinCcy()));
 
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
 			this.finAcType.setDescription(aFinanceType.getLovDescFinAcTypeName());
@@ -1037,6 +1033,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finBankContingentAcType.setDescription(aFinanceType.getLovDescFinBankContAcTypeName());
 			this.finIsOpenPftPayAcc.setChecked(aFinanceType.isFinIsOpenPftPayAcc());
 		}
+		
 		this.finDivision.setDescription(aFinanceType.getLovDescFinDivisionName());
 		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(), PennantStaticListUtil.getProfitDaysBasis(), "");
 		this.finDivision.setValue(aFinanceType.getFinDivision());
@@ -1425,10 +1422,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setRateLabels(aFinanceType);
 		}
 		doStoreEventDetails();
-		doFillFinTypeFeesOrigination(getFinTypeFeesByModule(aFinanceType.getFinTypeFeesList(),true));
-		doFillFinTypeFeesServicing(getFinTypeFeesByModule(aFinanceType.getFinTypeFeesList(),false));
-		// ======== Tab4
-		doFillFinTypeAccounting(aFinanceType);
 		// ======== Tab5
 		doFillCustAccountTypes(aFinanceType.getFinTypeAccounts());
 		
@@ -1453,9 +1446,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doSetCollateralProp();
 
 		//============Tab 7
-		doFillFinInsuranceTypes(aFinanceType.getFinTypeInsurances());
+		//doFillFinInsuranceTypes(aFinanceType.getFinTypeInsurances());
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
+		
+		appendFeeDetailTab();
+		appendInsuranceDetailsTab();
+		appendAccountingDetailsTab();
+		
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
 
@@ -1463,6 +1461,139 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// To Set Default Values in new mode
 		this.financeGrcBaseRate.setSpecialValue(aFinanceType.getFinGrcSplRate());
 		
+	}
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendInsuranceDetailsTab() {
+		logger.debug("Entering");
+
+		try {
+			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
+			map.put("roleCode", getRole());
+			map.put("finType", this.finType.getValue());
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("finTypeDesc", this.finTypeDesc.getValue());
+			map.put("finCcy", this.finCcy.getValue());
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeInsuranceList", this.financeType.getFinTypeInsurances());
+
+			insuranceDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_INSURANCES), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendAccountingDetailsTab() {
+		logger.debug("Entering");
+		
+		try {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+			
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
+			map.put("roleCode", getRole());
+			map.put("finType", this.finType.getValue());
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("allowRIAInvestment", this.allowRIAInvestment.isChecked());
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeAccountingList", this.financeType.getFinTypeAccountingList());
+			
+			accountingDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountingList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 */
+	protected void appendFeeDetailTab() {
+		logger.debug("Entering");
+
+		try {
+			createTab(AssetConstants.UNIQUE_ID_FEES, true);
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEES));
+			map.put("roleCode", getRole());
+			map.put("finType", finType.getValue());
+			map.put("finCcy", this.finCcy.getValue());
+			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("mainController", this);
+			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeFeesList", this.financeType.getFinTypeFeesList());
+
+			feeDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FEES), map);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			Messagebox.show(e.toString());
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+
+		logger.debug("Leaving");
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+	
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+	
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
 	}
 
 	/**
@@ -2616,12 +2747,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		// **************** End of Tab 3 ********************//
 		
-		//************** Start of Tab 4 *******************//
-		
-		processAccountingDetails(aFinanceType);
-		
-		// ************** End of Tab 4 *******************//
-		
 		// ************** Start of Tab 5 *******************//
 		try {
 			// to Check frequency code and frequency month
@@ -2892,17 +3017,26 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		
-		List<FinTypeFees> finTypeFeesListTemp =  new ArrayList<FinTypeFees>();
-		finTypeFeesListTemp.addAll(getFinTypeFeesOriginationList());
-		finTypeFeesListTemp.addAll(getFinTypeFeesServicingList());
-		aFinanceType.setFinTypeFeesList(finTypeFeesListTemp);
+		//Fees
+		if(getFinTypeFeesListCtrl() != null) {
+			aFinanceType.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());
+		}
+		//Insurances
+		if(getFinTypeInsuranceListCtrl() != null) {
+			aFinanceType.setFinTypeInsurances(getFinTypeInsuranceListCtrl().getFinTypeInsuranceList());
+		}
+		//Accounting
+		if(wve.isEmpty() && getFinTypeAccountingListCtrl() != null) {
+			aFinanceType.setFinTypeAccountingList(getFinTypeAccountingListCtrl().doSave());
+		}
+		
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
 
 		//****************End of Tab 6********************//
 		
 		//****************Start of Tab 7********************//
 		
-		aFinanceType.setFinTypeInsurances(getFinTypeInsuranceList());
+		//aFinanceType.setFinTypeInsurances(getFinTypeInsuranceList());
 		
 		//****************End of Tab 7********************//
 
@@ -2984,7 +3118,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			onCheckODPenalty(false);
 			changeFinRateType();
-			doSetAccountingMandatory();
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -3391,29 +3524,31 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+
 		if (isCompReadonly) {
 			doSetReadOnly(true);
 		} else {
 			doSetReadOnly(false);
 		}
+
 		if (getFinanceType().isNewRecord()) {
 			this.btnDelete.setVisible(false);
-		}else{
+		} else {
 			if (isWorkFlowEnabled()) {
-				if(isFirstTask()){
+				if (isFirstTask()) {
 					this.btnDelete.setVisible(true);
-				}else{
+				} else {
 					this.btnDelete.setVisible(false);
 				}
 			}
 		}
-		if (getFinanceType().isNewRecord()) {
 
+		if (getFinanceType().isNewRecord()) {
 			if (isPromotion) {
 				this.row_Product.setVisible(true);
 				this.row_PromoDates.setVisible(true);
 			}
-			this.finType.setReadonly(false);
+			// this.finType.setReadonly(false);
 			this.finIsOpenNewFinAc.setChecked(true);
 			this.finHistRetension.setValue(12);
 			this.btnCopyTo.setVisible(false);
@@ -3424,10 +3559,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.row_Product.setVisible(true);
 				this.row_PromoDates.setVisible(true);
 			}
-			this.finType.setReadonly(true);
+			// this.finType.setReadonly(true);
 			this.space_finType.setSclass("");
 			this.btnCopyTo.setVisible(!isCompReadonly && alwCopyOption);
-			//TBD: PV: Additional conditions required. if no deals found in the system it can be maintainable.
+			// TBD: PV: Additional conditions required. if no deals found in the system it can be maintainable.
 			this.finDivision.setReadonly(true);
 			this.finDivision.setMandatoryStyle(false);
 		}
@@ -3439,14 +3574,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.startDate.setDisabled(true);
 			this.endDate.setDisabled(true);
 		}
-		
+
 		this.label_FinanceTypeDialog_EqualRepayment.setVisible(false);
 		this.equalRepayment.setVisible(false);
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -3463,9 +3600,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.product.setReadonly(isTrue);
 		this.startDate.setDisabled(isTrue);
 		this.endDate.setDisabled(isTrue);
-		this.finType.setReadonly(isTrue);
+		//this.finType.setReadonly(isTrue);
+		//this.finCcy.setReadonly(isTrue);
+		this.finType.setReadonly(true);
+		this.finCcy.setReadonly(true);
 		this.finTypeDesc.setReadonly(isTrue);
-		this.finCcy.setReadonly(isTrue);
 		this.finDivision.setReadonly(isTrue);
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
 			row_finAcType.setVisible(true);
@@ -3652,9 +3791,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-		this.btnNew_FinTypeFees_Origination.setVisible(!isTrue);
-		this.btnNew_FinTypeFees_Servicing.setVisible(!isTrue);
-		this.btnNew_insuranceType.setVisible(!isTrue);
+		//this.btnNew_FinTypeFees_Origination.setVisible(!isTrue);
+		//this.btnNew_FinTypeFees_Servicing.setVisible(!isTrue);
+		//this.btnNew_insuranceType.setVisible(!isTrue);
 		
 		if(isTrue){
 			this.space_finType.setSclass("");
@@ -3891,7 +4030,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			validate = false;// Stop validations in save mode
 		}
-
+		
+		if (getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setValidate(validate);
+		}	
 
 		// force validation, if on, than execute by component.getValue()
 		doClearMessages();
@@ -4468,43 +4610,51 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$allowRIAInvestment(Event event) {
 		logger.debug("Entering" + event.toString());
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSP);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSF);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSN);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_CMTDISB);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZPD);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ_MON);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PD);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PIS);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_NORM);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_PIS);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_PD);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_NORM);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_RATCHG);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_REPAY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_LATEPAY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_INSTDATE);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_GRACEEND);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PROVSN);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_SCDCHG);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_DPRCIATE);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFFRQ);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFRPY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_COMPOUND);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEOFF);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEBK);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_MATURITY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_PRGCLAIM);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYSTL);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYPAY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMENDMENT);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_SEGMENT);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_CANCELFIN);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_EMIHOLIDAY);
-		setRIAAccountingProps(AccountEventConstants.ACCEVENT_REAGING);
+		
+		boolean allowRIAInvestmentFlag = this.allowRIAInvestment.isChecked();
+		
+		if(getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setAllowRIAInvestment(allowRIAInvestmentFlag);
+			
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSF, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_CMTDISB, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZPD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ_MON, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PIS, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_NORM, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_PIS, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_PD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_NORM, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_RATCHG, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_REPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_LATEPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_INSTDATE, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_GRACEEND, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PROVSN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_SCDCHG, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DPRCIATE, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFFRQ, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFRPY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_COMPOUND, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEOFF, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEBK, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_MATURITY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PRGCLAIM, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYSTL, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMENDMENT, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_SEGMENT, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_CANCELFIN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EMIHOLIDAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_REAGING, allowRIAInvestmentFlag);
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -4529,6 +4679,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onChange$cbfinProductType(Event event) {
 		logger.debug("Entering" + event.toString());
+		
 		if (this.cbfinProductType.getSelectedItem() != null) {
 			this.allowRIAInvestment.setChecked(false);
 			doSetProductBasedLabels(cbfinProductType.getSelectedItem().getValue().toString());
@@ -4540,13 +4691,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.fInIsAlwGrace.setDisabled(true);
 				this.gracePeriod.setDisabled(false);
 				dodisableGracePeriod();
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
+				if (getFinTypeAccountingListCtrl() != null) {
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
+				}
 			} else {
 				this.fInIsAlwGrace.setDisabled(isCompReadonly);
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
+				if (getFinTypeAccountingListCtrl() != null) {
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
+				}
 			}
 		}
+		
 		doCheckAdvisedRates();
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -4826,14 +4983,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$finGrcIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
+		
 		doCheckGrcPftCpzFrq();
+		
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);
+				if(getFinTypeAccountingListCtrl() != null) {
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);	
+				}
 			}
 		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
+			if(getFinTypeAccountingListCtrl() != null) {
+				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);	
+			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -4889,25 +5053,34 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 	public void onCheck$finIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
+		
 		doCheckPftCpzFrq();
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);
+				if(getFinTypeAccountingListCtrl() != null) {
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);	
+				}
 			}
 		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
+			if(getFinTypeAccountingListCtrl() != null) {
+				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);	
+			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onCheck$finIsRvwAlw(Event event) {
 		logger.debug("Entering" + event.toString());
+		
 		doCheckRpeayReview(true);
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onChange$cbfinSchdMthd(Event event) {
 		logger.debug("Entering" + event.toString());
+	
 		if (!"M".equals(getComboboxValue(cbfinRateType))) {
 			if (this.finIsRvwAlw.isChecked()) {
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PRI_PFT)
@@ -5449,24 +5622,30 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$finIsAlwDifferment(Event event) {
 		logger.debug("Entering onCheck$finIsAlwDifferment()");
-		doDisableOrEnableDifferments(this.finIsAlwDifferment.isChecked(), this.finMaxDifferment,isCompReadonly, space_finMaxDifferment);
-		if (this.finIsAlwDifferment.isChecked()) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, true);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, false);
+		
+		boolean finIsAlwDiffermentFlag = this.finIsAlwDifferment.isChecked();
+		
+		doDisableOrEnableDifferments(finIsAlwDiffermentFlag, this.finMaxDifferment,isCompReadonly, space_finMaxDifferment);
+		
+		if(getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, finIsAlwDiffermentFlag);	
 		}
+		
 		logger.debug("Leaving onCheck$finIsAlwDifferment()");
 
 	}
 
 	public void onCheck$alwPlanDeferment(Event event) {
-		logger.debug("Entering onCheck$alwPlanDeferment()");
-		doDisableOrEnableDifferments(this.alwPlanDeferment.isChecked(), this.planDeferCount,isCompReadonly, space_planDeferCount);
-		if(this.alwPlanDeferment.isChecked()){
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, true);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, false);
+		logger.debug("Entering");
+		
+		boolean alwPlanDefermentFlag = this.alwPlanDeferment.isChecked();
+		
+		doDisableOrEnableDifferments(alwPlanDefermentFlag, this.planDeferCount,isCompReadonly, space_planDeferCount);
+		
+		if(getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, alwPlanDefermentFlag);	
 		}
+		
 		logger.debug("Leaving onCheck$alwPlanDeferment()");
 	}
 
@@ -5890,7 +6069,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
-	public void onClick$btnNew_FinTypeFees_Origination(Event event) throws InterruptedException {
+	/*public void onClick$btnNew_FinTypeFees_Origination(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.listBoxFinTypeFeesOrigination);
 		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
@@ -6466,7 +6645,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 		return "";
-	}
+	}*/
 
 	/*
 	 * onCheck Event For stepFinance
@@ -6717,11 +6896,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$finDepreciationReq(Event event) {
 		logger.debug("Entering : " + event.toString());
-		if(finDepreciationReq.isChecked()){
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, false);
+		
+		boolean finDepreciationReqFlag = this.finDepreciationReq.isChecked();
+		
+		if(getFinTypeAccountingListCtrl() != null) {
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, finDepreciationReqFlag);	
 		}
+		
 		logger.debug("Leaving : " + event.toString());
 	}
 
@@ -6737,7 +6918,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		return true;
 	}
 
-	public void onClick$btnNew_insuranceType(Event event) throws InterruptedException {
+	/*public void onClick$btnNew_insuranceType(Event event) throws InterruptedException {
 		FinTypeInsurances finTypeInsurances = new FinTypeInsurances();
 		finTypeInsurances.setNewRecord(true);
 		finTypeInsurances.setFinType(this.financeType.getFinType());
@@ -6840,7 +7021,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				MessageUtil.showErrorMessage(e);
 			}
 		logger.debug("Leaving" + event.toString());
-	}
+	}*/
 	
 	/**
 	 * Method for selecting Mandatory Vas products for the Loan Type
@@ -7127,7 +7308,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 	
-	public boolean validateFeeAccounting(FinTypeFees aFinTypeFees,boolean isSave){
+	/*public boolean validateFeeAccounting(FinTypeFees aFinTypeFees,boolean isSave){
 		
 		if(!aFinTypeFees.isNewRecord() && aFinTypeFees.isActive()){
 			return true;
@@ -7195,7 +7376,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 		return true;
-	}
+	}*/
 	
 	public List<FinTypeAccount> getFinTypeAccountList() {
 		return finTypeAccountList;
@@ -7204,7 +7385,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finTypeAccountList = finTypeAccountList;
 	}
 	
-	public List<FinTypeFees> getFinTypeFeesOriginationList() {
+	/*public List<FinTypeFees> getFinTypeFeesOriginationList() {
 		return finTypeFeesOriginationList;
 	}
 	public void setFinTypeFeesOriginationList(
@@ -7225,7 +7406,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 	public void setFinTypeInsuranceList(List<FinTypeInsurances> finTypeInsuranceList) {
 		this.finTypeInsuranceList = finTypeInsuranceList;
-	}
+	}*/
 
 	public List<FinTypeVASProducts> getFinTypeVASProductsList() {
 		return finTypeVASProductsList;
@@ -7233,5 +7414,29 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void setFinTypeVASProductsList(List<FinTypeVASProducts> finTypeVASProductsList) {
 		this.finTypeVASProductsList = finTypeVASProductsList;
+	}
+
+	public FinTypeFeesListCtrl getFinTypeFeesListCtrl() {
+		return finTypeFeesListCtrl;
+	}
+
+	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
+		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
+	}
+	
+	public FinTypeInsuranceListCtrl getFinTypeInsuranceListCtrl() {
+		return finTypeInsuranceListCtrl;
+	}
+
+	public void setFinTypeInsuranceListCtrl(FinTypeInsuranceListCtrl finTypeInsuranceListCtrl) {
+		this.finTypeInsuranceListCtrl = finTypeInsuranceListCtrl;
+	}
+
+	public FinTypeAccountingListCtrl getFinTypeAccountingListCtrl() {
+		return finTypeAccountingListCtrl;
+	}
+
+	public void setFinTypeAccountingListCtrl(FinTypeAccountingListCtrl finTypeAccountingListCtrl) {
+		this.finTypeAccountingListCtrl = finTypeAccountingListCtrl;
 	}
 }

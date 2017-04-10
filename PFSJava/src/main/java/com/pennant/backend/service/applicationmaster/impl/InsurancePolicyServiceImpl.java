@@ -61,6 +61,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InsurancePolicyService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -409,7 +410,7 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 				&& StringUtils.equals(insurancePolicy.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 
 			List<FinTypeInsurances> finTypeInsurance = getFinTypeInsuranceDAO().getFinTypeInsurances(
-					insurancePolicy.getPolicyCode(), "_view");
+					insurancePolicy.getPolicyCode(), FinanceConstants.FINTYPEFEES_FINTYPE, "_view");
 			if (!finTypeInsurance.isEmpty()) {
 				String[][] parms = new String[2][1];
 				parms[1][0] = insurancePolicy.getPolicyCode();

@@ -3773,14 +3773,14 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="finTypeAccountDAO" ref="finTypeAccountDAO" />
-	    <property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 		<property name="productAssetDAO" ref="productAssetDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO"/>
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+		<property name="finTypeFeesService" ref="finTypeFeesService" />
+	    <property name="finTypeInsurancesService" ref="finTypeInsurancesService" />
+	    <property name="finTypeAccountingService" ref="finTypeAccountingService" />
 	</bean>
 
 	<bean id="finTypeAccountDAO"
@@ -9112,10 +9112,82 @@
 		<property name="nextidviewDAO" ref="nextidviewDAO" />
 	</bean>
 	
-	<!-- Promotions -->
-	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="basisCodeDAO">
-			<property name="dataSource" ref="pfsDatasource" />
+	<bean id="finTypeFeesService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finTypeFeesServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
 	</bean>
+	
+	<bean name="finTypeFeesServiceTarget"
+		class="com.pennant.backend.service.rmtmasters.impl.FinTypeFeesServiceImpl">
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean id="finTypeInsurancesService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finTypeInsurancesServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="finTypeInsurancesServiceTarget"
+		class="com.pennant.backend.service.rmtmasters.impl.FinTypeInsurancesServiceImpl">
+		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean id="finTypeAccountingService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finTypeAccountingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="finTypeAccountingServiceTarget"
+		class="com.pennant.backend.service.rmtmasters.impl.FinTypeAccountingServiceImpl">
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<!-- Promotions -->
 	<bean id="promotionService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
        <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
 	   <property name="target"><ref bean="promotionServiceTarget"/></property>
@@ -9131,15 +9203,20 @@
    </bean>
 
  	<bean name="promotionServiceTarget" class="com.pennant.backend.service.rmtmasters.impl.PromotionServiceImpl">
-       <property name="promotionDAO" ref="promotionDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+       <property name="promotionDAO" ref="promotionDAO" />
+	   <property name="finTypeFeesService" ref="finTypeFeesService" />
+	   <property name="finTypeInsurancesService" ref="finTypeInsurancesService" />
+	   <property name="finTypeAccountingService" ref="finTypeAccountingService" />
    </bean>
-	
-		<bean id="financeRateReviewDAO"
+   
+	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+   
+	<bean id="financeRateReviewDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	
 </beans>

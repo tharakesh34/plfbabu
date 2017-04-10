@@ -75,7 +75,7 @@
 							<column />
 						</columns>
 						<rows>
-							<row visible="true">
+							<row>
 								<label
 									id="label_FinTypeInsuranceDialog_FinanceType"
 									value="${c:l('label_FinTypeInsuranceDialog_FinanceType.value')}" />
@@ -87,13 +87,13 @@
 										style="margin-left:10px;display:inline-block;padding-top:3px;"/>
 								</hbox>
 							</row>
-							<row visible="true">
+							<row>
 								<label
 									id="label_FinTypeInsuranceDialog_InsuranceType"
 									value="${c:l('label_FinTypeInsuranceDialog_InsuranceType.value')}" />
 								<extendedcombobox id="insuranceType" />
 							</row>
-							<row visible="true">
+							<row id="row_PolicyType" visible="true">
 								<label
 									id="label_FinTypeInsuranceDialog_PolicyType"
 									value="${c:l('label_FinTypeInsuranceDialog_PolicyType.value')}" />
