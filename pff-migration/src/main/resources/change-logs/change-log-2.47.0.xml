@@ -1439,8 +1439,24 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 	<changeSet author="Kesav" id="80"> 
 		<dropView viewName="PromotionInsurances_AView"/>
 	</changeSet>
+	
 	<changeSet author="Kesav" id="81"> 
 		<dropView viewName="PromotionInsurances_View"/>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="82"> 
+		<dropTable tableName="PromotionAccounting" /> 
+		<dropTable tableName="PromotionAccounting_Temp" /> 
+	</changeSet>
+	
+	<changeSet author="Kesav" id="83"> 
+		<dropTable tableName="PromotionFees" /> 
+		<dropTable tableName="PromotionFees_Temp" /> 
+	</changeSet>	
+	
+	<changeSet author="Kesav" id="84"> 
+		<dropTable tableName="PromotionInsurances" /> 
+		<dropTable tableName="PromotionInsurances_Temp" /> 
+	</changeSet>	
 	
 </databaseChangeLog>
