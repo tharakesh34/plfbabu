@@ -685,13 +685,16 @@ FROM          FinDisbursementDetails T1  LEFT OUTER JOIN
 
 </createView>
 </changeSet>
+<changeSet id="28" author="Chaitanya.ch">
+<dropForeignKeyConstraint baseTableName="CustomerBankInfo" constraintName="FK_CustBankInfo_RMTAccTypes"/>
+</changeSet>
 
-	<changeSet  id="29" author="Kesav" >
-		<sql>
-			Update FinTypeFees set ModuleId = 1 where ModuleId is null;
-			Update FinTypeInsurances set ModuleId = 1 where ModuleId is null;
-			Update FinTypeAccounting set ModuleId = 1 where ModuleId is null;	
-		</sql>
-	</changeSet>
+<changeSet  id="29" author="Kesav" >
+	<sql>
+		Update FinTypeFees set ModuleId = 1 where ModuleId is null;
+		Update FinTypeInsurances set ModuleId = 1 where ModuleId is null;
+		Update FinTypeAccounting set ModuleId = 1 where ModuleId is null;	
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
