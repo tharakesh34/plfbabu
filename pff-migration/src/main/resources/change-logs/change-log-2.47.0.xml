@@ -1371,4 +1371,12 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
  Update WIFFinanceMain_Temp set FeeChargeAmt=0; 
  </sql>
 </changeSet>
+
+	<changeSet author="Kesav" id="63">
+		<dropPrimaryKey tableName="FinTypeFees" constraintName="PK_FINTYPEFEES"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="64">
+		<addPrimaryKey tableName="FinTypeFees" constraintName="PK_FINTYPEFEES" columnNames="FinType, OriginationFee, FinEvent, FeeTypeID, ModuleId"/>
+	</changeSet>
 </databaseChangeLog>
