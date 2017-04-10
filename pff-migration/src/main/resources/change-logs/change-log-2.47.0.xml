@@ -1420,4 +1420,27 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 		<addPrimaryKey tableName="FinTypeInsurances_Temp" constraintName="PK_FinTypeInsurances_Temp" columnNames="FinType, InsuranceType, ModuleId"/>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="76"> 
+		<dropView viewName="PromotionFees_TView"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="77"> 
+		<dropView viewName="PromotionFees_AView"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="78"> 
+		<dropView viewName="PromotionFees_View"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="79"> 
+		<dropView viewName="PromotionInsurances_TView"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="80"> 
+		<dropView viewName="PromotionInsurances_AView"/>
+	</changeSet>
+	<changeSet author="Kesav" id="81"> 
+		<dropView viewName="PromotionInsurances_View"/>
+	</changeSet>
+	
 </databaseChangeLog>
