@@ -700,7 +700,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 				if (isNewCustomer()) {
 					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerPhoneNumber, tranType);
+					AuditHeader auditHeader = newCustomerPhoneProcess(aCustomerPhoneNumber, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -903,7 +903,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		try {
 
 			if (isNewCustomer()) {
-				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerPhoneNumber, tranType);
+				AuditHeader auditHeader = newCustomerPhoneProcess(aCustomerPhoneNumber, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPhoneNumberDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
@@ -927,7 +927,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	/**
 	 * Method for Creating list of Details
 	 */
-	private AuditHeader newFinanceCustomerProcess(CustomerPhoneNumber aCustomerPhoneNumber, String tranType) {
+	private AuditHeader newCustomerPhoneProcess(CustomerPhoneNumber aCustomerPhoneNumber, String tranType) {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(aCustomerPhoneNumber, tranType);
@@ -948,13 +948,19 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				CustomerPhoneNumber customerPhoneNumber = getCustomerDialogCtrl().getCustomerPhoneNumberDetailList()
 						.get(i);
 
-				if (customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) { // Both
-																												// Current
-																												// and
-																												// Existing
-																												// list
-																												// PhoneNumber
-																												// same
+				if (isNewRecord()) {
+					
+					if (customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
+						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();
+						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":"+valueParm[1];
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
+								.getUserLanguage()));
+						return auditHeader;
+					}
+				}
+
+				if (customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) { 
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(

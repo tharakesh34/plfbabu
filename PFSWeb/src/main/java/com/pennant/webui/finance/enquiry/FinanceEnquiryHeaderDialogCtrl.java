@@ -308,22 +308,22 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View",true);
 			}
 			if(finScheduleData.getFinanceMain()!=null){
-			FinContributorHeader contributorHeader = getFinanceDetailService().getFinContributorHeaderById(this.finReference);
-			financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
-			map.put("financeSummary", financeSummary);
+				FinContributorHeader contributorHeader = getFinanceDetailService().getFinContributorHeaderById(this.finReference);
+				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
+				map.put("financeSummary", financeSummary);
 
-			// finance Contract Asset Details
-			List<ContractorAssetDetail> assetDetails = null;
-			if(FinanceConstants.PRODUCT_ISTISNA.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())){
-				assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
+				// finance Contract Asset Details
+				List<ContractorAssetDetail> assetDetails = null;
+				if(FinanceConstants.PRODUCT_ISTISNA.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())){
+					assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
+				}
+
+				map.put("assetDetailList", assetDetails);
+				map.put("finScheduleData", finScheduleData);
+				map.put("contributorHeader", contributorHeader);
+				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
+				this.btnPrint.setVisible(true);
 			}
-
-			map.put("assetDetailList", assetDetails);
-			map.put("finScheduleData", finScheduleData);
-			map.put("contributorHeader", contributorHeader);
-			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
-			this.btnPrint.setVisible(true);
-		}
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScheduleEnquiry.value"));

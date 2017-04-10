@@ -34,7 +34,7 @@ public class FinApprovalStsInquiryListModelItemRenderer implements ListitemRende
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getFinTypeDesc());
 		lc.setParent(item);
-		BigDecimal finAmount = enquiry.getFinAmount().subtract(enquiry.getDownPayment()).add(enquiry.getFeeChargeAmt());
+		BigDecimal finAmount = enquiry.getFinAmount();
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);

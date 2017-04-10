@@ -67,6 +67,8 @@ public interface CollateralAssignmentDAO {
 	BigDecimal getAssignedPerc(String collateralRef, String reference,	String type);
 
 	int getAssignedCollateralCount(String collateralRef, String type);
+
+	void deLinkCollateral(String finReference);
 	
 }
 

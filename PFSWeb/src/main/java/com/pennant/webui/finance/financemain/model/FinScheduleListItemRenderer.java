@@ -320,41 +320,41 @@ public class FinScheduleListItemRenderer implements Serializable{
 				boolean odRcdExistsOnDate = false;
 
 				for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
-					
+
 					//overdraft created
 					if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) == 0){
-						
+
 						// Check Drop line exists or not in Same schedule Date
 						limitRcdOnSchDate = true;
-						
+
 						if(DateUtility.compare(odSchedule.getDroplineDate() , aFinanceMain.getFinStartDate()) == 0){
 							label = Labels.getLabel("label_limitOverdraft");
 							odCount = 0;
 							break;
 						}
 					}
-					
+
 					// if Limit Increase exists after previous Schedule date
 					if(isLimitIncrease){
 						odSchedule = getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
 						odRcdExistsOnDate = true;
 					}
-					
+
 					//for limit Expiry
 					if(DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0 && 
 							DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getSchDate())==0 &&
 							DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getSchDate()) > 0){
-						
+
 						label = Labels.getLabel("label_LimitExpiry");
 						odRcdExistsOnDate = true;
 						odCount = getFinScheduleData().getOverdraftScheduleDetails().size() - 1;
-						
+
 						// If Limit Drops not exists in Schedule
 						if(StringUtils.isEmpty(aFinanceMain.getDroplineFrq())){
 							label = Labels.getLabel("label_overDraftExpiry");
 							break;
 						}
-						
+
 					}else {
 
 						// Rendering Limit Drop Details
@@ -362,7 +362,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) <= 0){
 
 							label = Labels.getLabel("label_LimitDrop");
-							
+
 							// If Limit Drop Amount not exists and Limit Increase exists on date
 							if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0 && 
 									odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) == 0){
@@ -374,17 +374,17 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					// If Record exists on Drop line date/Schedule date
 					if (odRcdExistsOnDate) {
-						
+
 						//if there is limit increase then need to get the below fields to set the values and then for the odcount increment
 						if (isLimitIncrease || (odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0
 								&& odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) == 0)) {
 							odCount = odCount + 1;
-							
+
 							if (isLimitIncrease) {
 								label = Labels.getLabel("label_LimitIncrease");
 								isLimitIncrease = false;
 							}
-							
+
 						} else {
 
 							// Setting Limit Increase flag to True for rendering Limit Increase on Next Loop  
@@ -610,7 +610,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						getFinScheduleData().getFinanceType().isFinIsAlwMD()) {
 					ComponentsCtrl.applyForward(listitem, "onDoubleClick=onDisburseItemDoubleClicked");
 				}*/
-				
+
 				if(!getFinanceScheduleDetail().isPftOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
 						!getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().isDisbOnSchDate()){
 
@@ -1253,41 +1253,41 @@ public class FinScheduleListItemRenderer implements Serializable{
 				boolean odRcdExistsOnDate = false;
 
 				for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
-					
+
 					//overdraft created
 					if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) == 0){
-						
+
 						// Check Drop line exists or not in Same schedule Date
 						limitRcdOnSchDate = true;
-						
+
 						if(DateUtility.compare(odSchedule.getDroplineDate() , aFinanceMain.getFinStartDate()) == 0){
 							label = Labels.getLabel("label_limitOverdraft");
 							odCount = 0;
 							break;
 						}
 					}
-					
+
 					// if Limit Increase exists after previous Schedule date
 					if(isLimitIncrease){
 						odSchedule = getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
 						odRcdExistsOnDate = true;
 					}
-					
+
 					//for limit Expiry
 					if(DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0 && 
 							DateUtility.compare(odSchedule.getDroplineDate(), getFinanceScheduleDetail().getSchDate())==0 &&
 							DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getSchDate()) > 0){
-						
+
 						label = Labels.getLabel("label_LimitExpiry");
 						odRcdExistsOnDate = true;
 						odCount = getFinScheduleData().getOverdraftScheduleDetails().size() - 1;
-						
+
 						// If Limit Drops not exists in Schedule
 						if(StringUtils.isEmpty(aFinanceMain.getDroplineFrq())){
 							label = Labels.getLabel("label_overDraftExpiry");
 							break;
 						}
-						
+
 					}else {
 
 						// Rendering Limit Drop Details
@@ -1295,7 +1295,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) <= 0){
 
 							label = Labels.getLabel("label_LimitDrop");
-							
+
 							// If Limit Drop Amount not exists and Limit Increase exists on date
 							if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0 && 
 									odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) == 0){
@@ -1307,17 +1307,17 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					// If Record exists on Drop line date/Schedule date
 					if (odRcdExistsOnDate) {
-						
+
 						//if there is limit increase then need to get the below fields to set the values and then for the odcount increment
 						if (isLimitIncrease || (odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0
 								&& odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) == 0)) {
 							odCount = odCount + 1;
-							
+
 							if (isLimitIncrease) {
 								label = Labels.getLabel("label_LimitIncrease");
 								isLimitIncrease = false;
 							}
-							
+
 						} else {
 
 							// Setting Limit Increase flag to True for rendering Limit Increase on Next Loop  
@@ -2032,13 +2032,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 		}else if(isDropLine && !lastRec){
 			isODSchdLimit = true;
 		}
-		
+
 		// Resetting Limit Details
 		limitDrop = BigDecimal.ZERO;
 		availableLimit = BigDecimal.ZERO;
 		odLimit = BigDecimal.ZERO;
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory()) && !lastRec){
-			
+
 			OverdraftScheduleDetail odSchd =  getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
 			if(isODSchdLimit){
 				strDate = DateUtility.formatToLongDate(odSchd.getDroplineDate());
@@ -2046,7 +2046,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					strDate = DateUtility.formatToLongDate(odSchd.getDroplineDate()) + " [R]";
 				}
 			}
-			
+
 			limitDrop = odSchd.getLimitDrop();
 			BigDecimal closingBal = data.getClosingBalance();
 			if(endBal.compareTo(BigDecimal.ZERO) != 0 && !isODSchdLimit){
@@ -2060,20 +2060,20 @@ public class FinScheduleListItemRenderer implements Serializable{
 				bgColor = "#8c0453";
 				lcColor = "color_Limit";
 			}
-			
+
 			odLimit = odSchd.getODLimit();
 			if(StringUtils.equals(eventName, Labels.getLabel("label_LimitIncrease"))){
 				limitDrop = odSchd.getLimitIncreaseAmt();
 				bgColor = "#8c0453";
 				lcColor = "color_Limit";
 			}
-			
+
 			if (isODSchdLimit && data.isDisbOnSchDate()
 					&& DateUtility.compare(financeMain.getFinStartDate(), odSchd.getDroplineDate()) != 0
 					&& DateUtility.compare(odSchd.getDroplineDate(), data.getSchDate()) == 0) {
 				availableLimit = availableLimit.add(data.getDisbAmount());
 			}
-			
+
 			if(!isODSchdLimit){
 				limitDrop = BigDecimal.ZERO;
 				if(data.getSchDate().compareTo(financeMain.getMaturityDate()) == 0){
@@ -2284,11 +2284,11 @@ public class FinScheduleListItemRenderer implements Serializable{
 						} else {
 							lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i],finFormatter));
 						} 
-						
+
 						if(fillType == 5){
 							lc = new Listcell("");
 						}
-						
+
 						if(i == 13 && amountlist[i].compareTo(BigDecimal.ZERO) < 0){
 							lc.setStyle("text-align:right;color:red;");
 						}else{
@@ -2519,7 +2519,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			} else {
 				prvSchDetail = aFinScheduleData.getFinanceScheduleDetails().get(i - 1);
 			}
-			
+
 			//overdraft facility
 			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
 
@@ -2555,7 +2555,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 									DateUtility.compare(odSchedule.getDroplineDate() , aScheduleDetail.getSchDate()) <= 0){
 
 								data.setLabel(Labels.getLabel("label_LimitDrop"));
-								
+
 								// If Limit Drop Amount not exists and Limit Increase exists on date
 								if(odSchedule.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0 && 
 										odSchedule.getLimitDrop().compareTo(BigDecimal.ZERO) == 0){
@@ -2565,12 +2565,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 								}
 								odlimitDrop = odSchedule.getLimitDrop();
 								odAvailAmt = odSchedule.getODLimit();
-								
+
 							}
 						}
 					}
 				}
-				
+
 				if(data.getLabel()!=null){
 
 					BigDecimal availLimit = BigDecimal.ZERO;
@@ -2613,7 +2613,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					count = 2;
 				}
 			}
-			
+
 			if (aScheduleDetail.isDisbOnSchDate()) {
 
 				for (int j = 0; j < 2; j++) {
@@ -2685,37 +2685,34 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					}
 					if(j == 1){
-						if(feeRuleDetails != null && aScheduleDetail.getFeeChargeAmt()!= null &&
+						if(aFinScheduleData.getFinFeeDetailList() != null && !aFinScheduleData.getFinFeeDetailList().isEmpty() &&
 								aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0 ){
 
-							if(feeRuleDetails.containsKey(aScheduleDetail.getSchDate())){
+							List<FinFeeDetail> feeChargeList = aFinScheduleData.getFinFeeDetailList();
 
-								List<FeeRule> feeChargeList = sortFeeRules(feeRuleDetails.get(aScheduleDetail.getSchDate()));
+							BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
+							for (FinFeeDetail rule : feeChargeList) {
 
-								BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
-								for (FeeRule rule : feeChargeList) {
+								if(rule.getActualAmount().compareTo(BigDecimal.ZERO) >= 0){
+									data = new FinanceScheduleReportData();	
 
-									if(rule.getFeeAmount().compareTo(BigDecimal.ZERO) >= 0){
-										data = new FinanceScheduleReportData();	
+									data.setLabel(rule.getFeeTypeDesc());
+									data.setPftAmount("");
+									data.setSchdPft("");
+									data.setSchdPri("");
+									data.setTdsAmount("");
+									data.setSchdFee("");
+									data.setLimitDrop("");
+									data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+									BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+									data.setAvailLimit(formatAmt(availLimit,false,false));
 
-										data.setLabel(rule.getFeeCodeDesc());
-										data.setPftAmount("");
-										data.setSchdPft("");
-										data.setSchdPri("");
-										data.setTdsAmount("");
-										data.setSchdFee("");
-										data.setLimitDrop("");
-										data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-										BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-										data.setAvailLimit(formatAmt(availLimit,false,false));
-
-										data.setTotalAmount(formatAmt(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount()),false,true));
-										data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
-												.add(rule.getFeeAmount().subtract(rule.getWaiverAmount()).subtract(rule.getPaidAmount())),false,false));
-										data.setSchDate("");
-										reportList.add(data);
-										feeChargeAmt = feeChargeAmt.subtract(rule.getFeeAmount());
-									}
+									data.setTotalAmount(formatAmt(rule.getActualAmount().subtract(rule.getWaivedAmount()).subtract(rule.getPaidAmount()),false,true));
+									data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
+											.add(rule.getActualAmount().subtract(rule.getWaivedAmount()).subtract(rule.getPaidAmount())),false,false));
+									data.setSchDate("");
+									reportList.add(data);
+									feeChargeAmt = feeChargeAmt.subtract(rule.getActualAmount());
 								}
 							}
 						}else{
@@ -2725,7 +2722,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 					count = 2;
 				}
-				
+
 				if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
 						!aScheduleDetail.isRvwOnSchDate() && aScheduleDetail.isDisbOnSchDate()){
 

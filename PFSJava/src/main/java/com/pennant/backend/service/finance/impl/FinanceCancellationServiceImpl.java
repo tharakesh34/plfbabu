@@ -490,12 +490,15 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
-		
-		// send Collateral DeMark request to Interface
+		// Delinking collateral Assigned to Finance
 		//==========================================
-		List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
-		if(collateralList != null && !collateralList.isEmpty()) {
-			getCollateralMarkProcess().deMarkCollateral(financeDetail.getFinanceCollaterals());
+		if(ImplementationConstants.COLLATERAL_INTERNAL){
+			getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+		}else{
+			List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
+			if(collateralList != null && !collateralList.isEmpty()) {
+				getCollateralMarkProcess().deMarkCollateral(financeDetail.getFinanceCollaterals());
+			}
 		}
 		
 		// send DDA Cancellation Request to Interface
@@ -505,7 +508,6 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
-		
 		if (ImplementationConstants.LIMIT_MODULE) {
 			getLimitManagement().processLoanLimit(financeDetail, false, LimitConstants.LIMIT_TYPE_CANCIL);
 		}else{

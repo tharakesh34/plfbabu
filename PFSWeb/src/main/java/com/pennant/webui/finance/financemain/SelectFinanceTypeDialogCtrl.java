@@ -1449,6 +1449,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
+			MessageUtil.showErrorMessage(Labels.getLabel("error.unhandled"));
+			customerDetails = null;
 		}
 		logger.debug("Leaving");
 		return customerDetails;

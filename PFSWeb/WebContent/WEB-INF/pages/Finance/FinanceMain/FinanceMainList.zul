@@ -245,8 +245,8 @@
 								hflex="min" visible="false" />
 							<listheader id="listheader_FinAmount"
 								label="${c:l('listheader_FinAmount.label')}" sort="auto"
-								hflex="min" align="right" visible="false" />
-							<listheader id="listheader_FinancingAmount"
+								hflex="min" align="right" />
+							<listheader id="listheader_FinancingAmount" visible="false" 
 								label="${c:l('listheader_FinancingAmount.label')}" sort="false"
 								hflex="min" align="right" />
 							<listheader id="listheader_InitiateDate"

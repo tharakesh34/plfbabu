@@ -946,6 +946,10 @@ public class PennantAppUtil {
 		searchObject.addField("MaritalStsCode");
 		searchObject.addField("MaritalStsDesc");
 		
+		Filter [] filters = new Filter[1];
+		filters[0] = new Filter("MaritalStsIsActive",1, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+		
 		List<MaritalStatusCode> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
 			ValueLabel maritalSts = new ValueLabel(String.valueOf(appList.get(i).getMaritalStsCode()), appList.get(i).getMaritalStsDesc());

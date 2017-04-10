@@ -117,7 +117,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 			customerPhoneNumber = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
 					beanParameters, typeRowMapper);	
 		}catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn("Exception: ", e);
 			customerPhoneNumber = null;
 		}
 		logger.debug("Leaving");

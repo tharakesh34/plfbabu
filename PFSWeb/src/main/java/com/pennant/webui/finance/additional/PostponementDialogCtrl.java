@@ -419,8 +419,14 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				
+				// Dont allow after Current Date(Future Schedules)
 				if(curSchd.getSchDate().after(curBussDate)){
 					break;
+				}
+				
+				// Dont allow Grace period Schedules
+				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate)<=0){
+					continue;
 				}
 				
 				// BPI case not allowed to Re-age
@@ -428,21 +434,14 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full)
-				if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
-					continue;
-				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0) {
+				//Profit && Paid (Partial/Full)
+				if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0 && 
+						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0) {
 					continue;
 				}
 				
+				// If no Payment at Term, not allowed to render
 				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-					continue;
-				}
-				
-				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate)<=0){
 					continue;
 				}
 				

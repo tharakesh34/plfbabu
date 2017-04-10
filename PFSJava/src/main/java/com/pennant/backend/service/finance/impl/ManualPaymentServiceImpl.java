@@ -822,8 +822,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			// send Collateral DeMark request to Interface
 			//==========================================
-			if (repayData.getFinanceDetail().getFinanceCollaterals() != null) {
-				getCollateralMarkProcess().deMarkCollateral(repayData.getFinanceDetail().getFinanceCollaterals());
+			if(ImplementationConstants.COLLATERAL_INTERNAL){
+				getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+			}else{
+				if (repayData.getFinanceDetail().getFinanceCollaterals() != null) {
+					getCollateralMarkProcess().deMarkCollateral(repayData.getFinanceDetail().getFinanceCollaterals());
+				}
 			}
 		}
 

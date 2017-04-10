@@ -174,9 +174,9 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		
 		StringBuilder query =new StringBuilder("Insert Into CollateralAssignment");
 		query.append(StringUtils.trimToEmpty(type));
-		query.append(" (Reference, Module, CollateralRef, AssignPerc ,");
+		query.append(" (Reference, Module, CollateralRef, AssignPerc ,Active, ");
 		query.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		query.append(" Values(:Reference, :Module, :CollateralRef, :AssignPerc,");
+		query.append(" Values(:Reference, :Module, :CollateralRef, :AssignPerc,:Active,");
 		query.append(" :Version ,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + query.toString());
@@ -204,7 +204,7 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update CollateralAssignment");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AssignPerc = :AssignPerc, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(" Set AssignPerc = :AssignPerc, Active= :Active, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where Reference =:Reference and Module = :Module and CollateralRef = :CollateralRef ");
@@ -237,7 +237,7 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		collateralAssignment.setReference(reference);
 		collateralAssignment.setModule(moduleName);
 
-		StringBuilder selectSql = new StringBuilder("Select Module , Reference , CollateralRef , AssignPerc ,  ");
+		StringBuilder selectSql = new StringBuilder("Select Module , Reference , CollateralRef , AssignPerc , Active, ");
 		if(type.contains("View")){
 			selectSql.append(" CollateralCcy , CollateralValue , BankValuation , TotAssignPerc TotAssignedPerc , UtilizedAmount,");
  		}
@@ -296,7 +296,7 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		logger.debug("Entering");
 
 		CollateralAssignment collAssignment = null;
-		StringBuilder selectSql = new StringBuilder(" Select Reference, Module, CollateralRef, AssignPerc,");
+		StringBuilder selectSql = new StringBuilder(" Select Reference, Module, CollateralRef, AssignPerc, Active, ");
 		if(type.contains("View")){
  		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -362,7 +362,7 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		StringBuilder selectSql = new StringBuilder(" select COALESCE(SUM(AssignPerc),0) AssignPerc");
 		selectSql.append(" From CollateralAssignment");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CollateralRef = :CollateralRef ");
+		selectSql.append(" Where CollateralRef = :CollateralRef AND Active = 1 ");
 		if(StringUtils.isNotEmpty(reference)){
 			selectSql.append(" AND Reference != :Reference "); 
 		}
@@ -381,6 +381,27 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 	}
 	
 	/**
+	 * Method for Delinking Collaterals Details Assigned to Finance after Maturity
+	 */
+	@Override
+	public void deLinkCollateral(String finReference) {
+		logger.debug("Entering");
+
+		CollateralAssignment collateralAssignment = new CollateralAssignment();
+		collateralAssignment.setReference(finReference);
+
+		StringBuilder sql = new StringBuilder("Update CollateralAssignment Set Active = 0 ");
+		sql.append(" Where Reference = :Reference");
+
+		logger.debug("deleteSql: " + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
+		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+	
+	
+	/**
 	 * 
 	 * @param errorId
 	 * @param assignmentId
@@ -393,6 +414,5 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		parms[0][0] = PennantJavaUtil.getLabel("label_CollateralRef")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
-	
-	
+
 }

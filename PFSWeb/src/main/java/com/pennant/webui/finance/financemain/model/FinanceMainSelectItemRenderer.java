@@ -93,13 +93,12 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
-		BigDecimal finAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,format));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if(financeMain.getFinRepaymentAmount()!=null){
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(financeMain.getDownPayment())
-					.subtract(financeMain.getFinRepaymentAmount()),format));
+			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(financeMain.getFinRepaymentAmount()),format));
 			lc.setStyle("text-align:right");
 		}else{
 			lc = new Listcell("");

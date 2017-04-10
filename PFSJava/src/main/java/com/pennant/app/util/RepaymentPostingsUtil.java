@@ -494,7 +494,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(rpyPri));
 		financeMain.setFinStatus(curFinStatus);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
-		BigDecimal totalFinAmt = financeMain.getFinCurrAssetValue().subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+		BigDecimal totalFinAmt = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
 		
 		if(ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP)) {
 			if(totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0){

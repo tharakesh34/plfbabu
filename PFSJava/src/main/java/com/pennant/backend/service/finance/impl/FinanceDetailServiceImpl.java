@@ -5698,9 +5698,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,finSchData.getFinanceMain().getProductCategory())){
 			finSchData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "_Temp", false));
 		}
-		if(logKey != 0){
-			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
-		}
+		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		if(logKey == 0){

@@ -1479,7 +1479,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 
 			list.add(isSchdFee);
-			list.add(getFinanceDetail().getCustomerDetails().getCustomer());
 			
 			// To get Parent Window i.e Finance main based on product
 			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()

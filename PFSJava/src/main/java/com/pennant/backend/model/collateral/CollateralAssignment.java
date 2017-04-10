@@ -78,6 +78,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private BigDecimal assignedValue = BigDecimal.ZERO;
 	private BigDecimal availableAssignValue = BigDecimal.ZERO;
 	private BigDecimal totAssignedPerc = BigDecimal.ZERO;
+	private boolean active = true;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -212,6 +213,13 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	}
 	public void setTotAssignedPerc(BigDecimal totAssignedPerc) {
 		this.totAssignedPerc = totAssignedPerc;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 }

@@ -8,5 +8,17 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+
+	<changeSet author="Siva" id="1">
+		<addColumn tableName="AdtCollateralAssignment">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="Siva" id="2">
+		<sql>
+			Update AdtCollateralAssignment Set Active = 1;
+		</sql>
+	</changeSet>
  
 </databaseChangeLog>

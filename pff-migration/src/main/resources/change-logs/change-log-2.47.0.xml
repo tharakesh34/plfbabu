@@ -697,4 +697,22 @@ FROM          FinDisbursementDetails T1  LEFT OUTER JOIN
 	</sql>
 </changeSet>
 	
+	<changeSet author="Siva" id="30">
+		<addColumn tableName="CollateralAssignment">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="Siva" id="31">
+		<addColumn tableName="CollateralAssignment_Temp">
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="Siva" id="32">
+		<sql>
+			Update CollateralAssignment Set Active = 1;
+			Update CollateralAssignment_Temp Set Active = 1;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

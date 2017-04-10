@@ -666,7 +666,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 
 				if (isNewCustomer()) {
 					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinanceCustomerProcess(
+					AuditHeader auditHeader = newCustomerEmailProcess(
 							aCustomerEMail, tranType);
 					auditHeader = ErrorControl.showErrorDetails(
 							this.window_CustomerEMailDialog, auditHeader);
@@ -878,7 +878,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		try {
 
 			if (isNewCustomer()) {
-				AuditHeader auditHeader = newFinanceCustomerProcess(
+				AuditHeader auditHeader = newCustomerEmailProcess(
 						aCustomerEMail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(
 						this.window_CustomerEMailDialog, auditHeader);
@@ -903,7 +903,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader newFinanceCustomerProcess(CustomerEMail aCustomerEMail,
+	private AuditHeader newCustomerEmailProcess(CustomerEMail aCustomerEMail,
 			String tranType) {
 		logger.debug("Entering");
 		boolean recordAdded = false;
@@ -928,6 +928,18 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					.getCustomerEmailDetailList().size(); i++) {
 				CustomerEMail customerEMail = getCustomerDialogCtrl()
 						.getCustomerEmailDetailList().get(i);
+				
+				if (isNewRecord()) {
+
+					if (customerEMail.getCustEMailPriority() == aCustomerEMail.getCustEMailPriority()) {
+						valueParm[1]=this.custEMailPriority.getSelectedItem().getLabel();
+						errParm[1] = PennantJavaUtil.getLabel("label_CustEMailPriority") + ":"+valueParm[1];
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
+								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
+								.getUserLanguage()));
+						return auditHeader;
+					}
+				}
 
 				if (aCustomerEMail.getCustEMailTypeCode().equals(
 						customerEMail.getCustEMailTypeCode())) { // Both Current
