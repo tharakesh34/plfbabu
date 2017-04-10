@@ -3284,14 +3284,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					doShowValidationMessage(custTab, 5, custDocument.getLovDescCustDocCategory());
 					return false;
 				}
-				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
+				if (StringUtils.equals(PennantConstants.CPRCODE, custDocument.getCustDocCategory())) {
 					if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
 							&& custDocument.getCustDocIssuedOn() != null
 							&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
 						doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
 						return false;
 					}
-				 } 
+				 } else if(StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())){
+						if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
+								&& custDocument.getCustDocIssuedOn() != null
+								&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
+							doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
+							return false;
+						}
+				 }
 					if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
 						isMandateIDDocExist = true;
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
