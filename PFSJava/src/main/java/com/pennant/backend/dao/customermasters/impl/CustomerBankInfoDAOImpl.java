@@ -140,7 +140,7 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		StringBuilder selectSql = new StringBuilder();	
 		selectSql.append(" SELECT BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
 		if(type.contains("View")){
-			selectSql.append(" lovDescBankName,");
+			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
