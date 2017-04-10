@@ -948,7 +948,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				Combobox feeSchdMethCombo = new Combobox();
 				String excludeFields = "";
 				
-				if ((detail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) == 0)
+				if(!(StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK) || 
+						StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER))) {
+					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+				} else if ((detail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) == 0)
 						&& (!StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK))) {
 					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
 				}
