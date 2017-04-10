@@ -715,4 +715,37 @@ FROM          FinDisbursementDetails T1  LEFT OUTER JOIN
 			Update CollateralAssignment_Temp Set Active = 1;
 		</sql>
 	</changeSet>
+	
+		
+	<changeSet  id="33" author="Kesav">
+		<sql>
+			Update FinTypeFees_Temp set ModuleId = 1 where ModuleId is null;
+			Update FinTypeAccounting_Temp set ModuleId = 1 where ModuleId is null;
+			Update FinTypeInsurances_Temp set ModuleId = 1 where ModuleId is null;	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="34" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeFees_Temp" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
+	<changeSet id="35" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeAccounting_Temp" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
+	<changeSet id="36" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeInsurances_Temp" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
+	<changeSet id="37" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeFees" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
+	<changeSet id="38" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeInsurances" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
+	<changeSet id="39" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeAccounting" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
 </databaseChangeLog>
