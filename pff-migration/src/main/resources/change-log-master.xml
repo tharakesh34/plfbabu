@@ -34,4 +34,5 @@
 	<include file="change-logs/change-log-2.45.0.xml" />
 	<include file="change-logs/change-log-2.46.0.xml" />
 	<include file="change-logs/change-log-2.47.0.xml" />
+	<include file="change-logs/change-log-Dataengine.xml" />
 </databaseChangeLog>
