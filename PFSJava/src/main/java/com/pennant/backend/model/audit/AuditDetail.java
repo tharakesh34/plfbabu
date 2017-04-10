@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.audit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -54,9 +55,10 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.util.ClassUtil;
 
 public class AuditDetail implements java.io.Serializable, Entity {
-	private final static Logger	logger				= Logger.getLogger(AuditDetail.class);
+	private static final Logger	logger				= Logger.getLogger(AuditDetail.class);
 	private static final long	serialVersionUID	= 4576632220854658678L;
 
 	private long				auditId				= Long.MIN_VALUE;
@@ -80,6 +82,51 @@ public class AuditDetail implements java.io.Serializable, Entity {
 
 	public AuditDetail() {
 		super();
+	}
+
+	@SuppressWarnings("unchecked")
+	public AuditDetail(String auditTranType, int auditSeq, Object befImage, Object modelData) {
+		super();
+
+		this.auditTranType = auditTranType;
+		this.auditSeq = auditSeq;
+		this.befImage = befImage;
+		this.modelData = modelData;
+
+		String[] fields = { "", "" };
+
+		if (ClassUtil.isMethodExists(modelData, "getExcludeFields")) {
+			try {
+				Method method = modelData.getClass().getMethod("getExcludeFields");
+				Object object = method.invoke(modelData);
+
+				if (object.getClass().isInstance(String.class)) {
+					fields = PennantJavaUtil.getFieldDetails(modelData, (String) object);
+				} else if (object.getClass().isInstance(new HashSet<String>())) {
+					fields = PennantJavaUtil.getFieldDetails(modelData, (HashSet<String>) object);
+				}
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				logger.warn("Unable to fetch the excluded fields.", e);
+			}
+		} else {
+			fields = PennantJavaUtil.getFieldDetails(modelData);
+		}
+
+		this.auditField = fields[0];
+		this.auditValue = fields[1];
+	}
+
+	public AuditDetail(String auditTranType, int auditSeq, String auditField, String auditValue, Object befImage,
+			Object modelData) {
+		super();
+
+		this.auditTranType = auditTranType;
+		this.auditSeq = auditSeq;
+		this.auditField = auditField;
+		this.auditValue = auditValue;
+		this.befImage = befImage;
+		this.modelData = modelData;
 	}
 
 	// New methods for copying the properties of AuditHeader
@@ -112,64 +159,6 @@ public class AuditDetail implements java.io.Serializable, Entity {
 			BeanUtils.copyProperties(this.errorDetails, auditDetail.errorDetails);
 		}
 		return auditDetail;
-	}
-
-	public AuditDetail(long auditId, Timestamp auditDate, String auditTranType, int auditSeq, String auditField,
-			String auditValue, Object befImage, Object modelData) {
-		super();
-		this.auditId = auditId;
-		this.auditDate = auditDate;
-		this.auditTranType = auditTranType;
-		this.auditSeq = auditSeq;
-		this.auditField = auditField;
-		this.auditValue = auditValue;
-		this.befImage = befImage;
-		this.modelData = modelData;
-	}
-
-	public AuditDetail(String auditTranType, int auditSeq, String auditField, String auditValue, Object befImage,
-			Object modelData) {
-		super();
-		this.auditTranType = auditTranType;
-		this.auditSeq = auditSeq;
-		this.auditField = auditField;
-		this.auditValue = auditValue;
-		this.befImage = befImage;
-		this.modelData = modelData;
-	}
-
-	@SuppressWarnings("unchecked")
-	public AuditDetail(String auditTranType, int auditSeq, Object befImage, Object modelData) {
-		super();
-		this.auditTranType = auditTranType;
-		this.auditSeq = auditSeq;
-		this.befImage = befImage;
-		this.modelData = modelData;
-		String[] fields = null;
-
-		try {
-			Method method = modelData.getClass().getMethod("getExcludeFields");
-			Object object = null;
-			if (method != null) {
-				object = method.invoke(modelData);
-				if (object.getClass().isInstance(String.class)) {
-					fields = PennantJavaUtil.getFieldDetails(modelData, (String) object);
-				} else if (object.getClass().isInstance(new HashSet<String>())) {
-					fields = PennantJavaUtil.getFieldDetails(modelData, (HashSet<String>) object);
-				}
-			}
-
-		} catch (Exception e) {
-			;
-			logger.warn("Exception: ", e);
-		}
-
-		if (fields == null) {
-			fields = PennantJavaUtil.getFieldDetails(modelData);
-		}
-		this.auditField = fields[0];
-		this.auditValue = fields[1];
-
 	}
 
 	public Object getBefImage() {
@@ -300,7 +289,6 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	}
 
 	public void setErrorDetail(ErrorDetails errorDetail) {
-
 		if (errorDetail != null) {
 			if (this.errorDetails == null) {
 				this.errorDetails = new ArrayList<ErrorDetails>();
@@ -310,7 +298,6 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	}
 
 	public void setErrorDetail(ErrorDetails errorDetail, String errorField) {
-
 		if (errorDetail != null) {
 			if (this.errorDetails == null) {
 				this.errorDetails = new ArrayList<ErrorDetails>();
