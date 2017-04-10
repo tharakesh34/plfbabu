@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	
 		
 
+<changeSet id="0.1" author="DurgaPrasad G">
+	<dropForeignKeyConstraint baseTableName="DISBURSEMENT_LOG"
+			constraintName="FK_DES_ID" />
+	</changeSet> 
 	<changeSet id="0" author="prasad">
-	<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS" />
-	<dropTable tableName="DATA_ENGINE_TABLES" />
-	<dropTable tableName="DATA_ENGINE_LOG" />
-	<dropTable tableName="DATA_ENGINE_STATUS" />
+	<!-- <dropTable tableName="DATA_ENGINE_TABLES" />
+	<dropTable tableName="DATA_ENGINE_LOG" /> 
+	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
+	<dropTable tableName="DATA_ENGINE_DB_DETAILS" />
 	<dropTable tableName="DATA_ENGINE_COLUMN" />
 	<dropTable tableName="DATA_ENGINE_TABLE" />
 	<dropTable tableName="DATA_ENGINE_CONFIG" />
@@ -15,8 +20,11 @@
 	<dropTable tableName="SEQ_DATA_ENGINE_CONFIG" />
 	<dropTable tableName="SEQ_DATA_ENGINE_TABLE" />
 	<dropTable tableName="SEQ_DATA_ENGINE_COLUMN" />
-	<dropTable tableName="SEQ_DATA_ENGINE_STATUS" />	
+	<dropTable tableName="SEQ_DATA_ENGINE_STATUS" />-->	
+	<dropTable tableName="DATA_ENGINE_STATUS" />		
 </changeSet>
+
+
 
 <changeSet id="1" author="prasad" >
 	<createTable tableName="DATA_ENGINE_PARSERS">
@@ -220,6 +228,11 @@
 </changeSet>
 <changeSet id="6.1" author="prasad" >
 	<addPrimaryKey columnNames="Id" constraintName="PK_DES_ID" tableName="DATA_ENGINE_STATUS"/>
+</changeSet>
+<changeSet id="0.2" author="DurgaPrasad G">
+		<addForeignKeyConstraint constraintName="FK_DES_ID"
+			referencedTableName="DATA_ENGINE_STATUS" referencedColumnNames="ID"
+			baseTableName="DISBURSEMENT_LOG" baseColumnNames="FILEID" />
 </changeSet>
 <changeSet id="7" author="prasad">
 	<createTable tableName="DATA_ENGINE_LOG">
