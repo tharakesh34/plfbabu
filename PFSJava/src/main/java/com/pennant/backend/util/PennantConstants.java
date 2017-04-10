@@ -55,6 +55,7 @@ public class PennantConstants {
 	public static final String List_Select = "#";
 	public static final int borderlayoutMainNorth = 100;
 	public static final String mandateSclass = "mandatory";
+	public static final int accNo_maxValue = 25;
 
 	// Date Formats
 	public static final String dateFormat = "dd/MM/yyyy"; // DateFormat.SHORT_DATE.getPattern()

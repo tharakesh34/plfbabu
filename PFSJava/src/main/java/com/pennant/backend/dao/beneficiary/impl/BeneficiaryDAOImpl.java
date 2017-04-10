@@ -367,5 +367,22 @@ public class BeneficiaryDAOImpl extends BasisNextidDaoImpl<Beneficiary> implemen
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
 				userLanguage);
 	}
+	
+	@Override
+	public int getBranch(long bankBranchID, String type) {
+		Beneficiary beneficiary = new Beneficiary();
+		beneficiary.setBankBranchID(bankBranchID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Beneficiary");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankBranchID =:BankBranchID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 }

@@ -61,4 +61,6 @@ public interface BeneficiaryDAO {
 	List<Beneficiary> getApprovedBeneficiaryByCustomerId(long custID, String type);
 
 	int getBeneficiaryByBankBranchId(String accNumber, long bankBranchId, String type);
+
+	int getBranch(long bankBranchID, String type);
 }

@@ -56,4 +56,5 @@ public interface FinAdvancePaymentsDAO {
 	String save(FinAdvancePayments finAdvancePaymentsDAO,String type);
 	List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String id, String type);
 	void deleteByFinRef(String finReference, String tableType);
+	int getBranch(long bankBranchID, String type);
 }

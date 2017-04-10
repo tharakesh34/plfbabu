@@ -50,7 +50,10 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,6 +72,9 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankBranchDAO bankBranchDAO;
+	private MandateDAO mandateDAO;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private BeneficiaryDAO beneficiaryDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -399,6 +405,14 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errParm,valueParm), usrLanguage));
 
 			}
+			if (StringUtils.trimToEmpty(bankBranch.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+				int mandateCount = getMandateDAO().getBranch(bankBranch.getBankBranchID(),"");
+				int disbursementCount = getFinAdvancePaymentsDAO().getBranch(bankBranch.getBankBranchID(),"");
+				int beneficiaryCount = getBeneficiaryDAO().getBranch(bankBranch.getBankBranchID(),"");
+				if (mandateCount != 0 && disbursementCount != 0 && beneficiaryCount != 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+				}
+			}
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			if(StringUtils.trimToEmpty(method).equals("doApprove") || !bankBranch.isWorkflow()){
@@ -429,6 +443,30 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		@Override
 		public BankBranch getBankBrachByCode(String bankCode, String branchCode) {
 			return getBankBranchDAO().getBankBrachByCode(bankCode, branchCode, "");
+		}
+
+		public MandateDAO getMandateDAO() {
+			return mandateDAO;
+		}
+
+		public void setMandateDAO(MandateDAO mandateDAO) {
+			this.mandateDAO = mandateDAO;
+		}
+
+		public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
+			return finAdvancePaymentsDAO;
+		}
+
+		public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+			this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+		}
+
+		public BeneficiaryDAO getBeneficiaryDAO() {
+			return beneficiaryDAO;
+		}
+
+		public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
+			this.beneficiaryDAO = beneficiaryDAO;
 		}
 
 }

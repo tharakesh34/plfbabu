@@ -8207,6 +8207,9 @@
 	<bean name="bankBranchServiceTarget"
 		class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl">
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

@@ -435,7 +435,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		}
 		
 		if (!this.accNoLength.isReadonly()){
-			this.accNoLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),true,false));
+			this.accNoLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),true,false,PennantConstants.accNo_maxValue));
 		}
 
 		logger.debug("Leaving");

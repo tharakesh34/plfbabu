@@ -75,4 +75,6 @@ public interface MandateDAO {
 	void updateOrgReferecne(long mandateID, String orgReference, String type);
 
 	Mandate getMandateByOrgReference(String orgReference, String status, String type);
+
+	int getBranch(long bankBranchID, String type);
 }

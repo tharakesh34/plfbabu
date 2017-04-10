@@ -572,4 +572,21 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("Leaving");
 
 	}
+
+	@Override
+	public int getBranch(long bankBranchID, String type) {
+		Mandate mandate = new Mandate();
+		mandate.setBankBranchID(bankBranchID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Mandates");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankBranchID =:BankBranchID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

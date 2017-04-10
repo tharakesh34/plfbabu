@@ -44,7 +44,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 
-import java.util.List;
+import java.util.List; 
 
 import javax.sql.DataSource;
 
@@ -330,6 +330,22 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		logger.debug("Leaving");
 	    
     }
-	
+
+	@Override
+	public int getBranch(long bankBranchID, String type) {
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setBankBranchID(bankBranchID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinAdvancePayments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankBranchID =:BankBranchID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 	
 }
