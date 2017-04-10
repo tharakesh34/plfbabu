@@ -14,11 +14,11 @@ public interface BasicCrudDao<T> {
 	 *            The model object that contains the parameters.
 	 * @param tableType
 	 *            The type of the table.
-	 * @return Identity sequence number of the saved record.
+	 * @return Identity sequence number as string or primary key code of the saved record.
 	 * @throws DataAccessException
 	 *             If there is any problem issuing the save.
 	 */
-	long save(T entity, TableType tableType);
+	String save(T entity, TableType tableType);
 
 	/**
 	 * Updates the record.
