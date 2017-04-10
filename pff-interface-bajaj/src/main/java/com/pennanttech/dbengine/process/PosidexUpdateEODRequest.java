@@ -222,8 +222,8 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT DEDUP_EOD_CUST_ADDR_DTL (");
-			sb.append(" BATCHID, CUSTOMER_NO,, SOURCE_SYS_ID, SEGMENT, ADDRESS_TYPE, ADDRESS_1, ADDRESS_2, ADDRESS_3, STATE,");
+			sb.append(" INSERT INTO DEDUP_EOD_CUST_ADDR_DTL (");
+			sb.append(" BATCHID, CUSTOMER_NO, SOURCE_SYS_ID, SEGMENT, ADDRESS_TYPE, ADDRESS_1, ADDRESS_2, ADDRESS_3, STATE,");
 			sb.append(" CITY, PIN, LANDLINE_1, LANDLINE_2, MOBILE, AREA, LANDMARK, STD, PROCESS_TYPE, EMAIL,");
 			sb.append(" PROCESS_FLAG, ERROR_CODE, ERROR_DESC, CUSTOMER_ID, SOURCE_SYSTEM, PSX_BATCH_ID, EOD_BATCH_ID)");
 			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -276,7 +276,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT PUSH_PULL_CONTROL_T (");
+			sb.append(" INSERT INTO  PUSH_PULL_CONTROL_T (");
 			sb.append(" BATCHID, STATUS, INSERT_TIMESTAMP, COMPLETION_TIMESTAMP, ERR_DESCRIPTION, ERROR_CODE)");
 			sb.append(" VALUES (?,?,?,?,?,?)");
 			
@@ -307,10 +307,10 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT DEDUP_EOD_CUST_LOAN_DTL (");
+			sb.append(" INSERT INTO DEDUP_EOD_CUST_LOAN_DTL (");
 			sb.append(" BATCHID, CUSTOMER_NO, SOURCE_SYS_ID, SEGMENT, DEAL_ID, LAN_NO, CUSTOMER_TYPE, APPLN_NO,PRODUCT_CODE,)");
 			sb.append(" PROCESS_TYPE, PROCESS_FLAG, ERROR_CODE, ERROR_DESC, PSX_BATCH_ID, PSX_ID, CUSTOMER_ID, SOURCE_SYSTEM, EOD_BATCH_ID)");
-			sb.append(" VALUES (?,?,?,?,?,?)");
+			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps = destConnection.prepareStatement(sb.toString());
 
@@ -323,6 +323,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(7, getValue(rs, "CUSTOMER_TYPE"));
 			ps.setInt(8, getIntValue(rs, "APPLN_NO"));
 			ps.setString(9, getValue(rs, "PRODUCT_CODE"));
+			
 			ps.setString(10, getValue(rs, "PROCESS_TYPE"));
 			ps.setString(11, getValue(rs, "PROCESS_FLAG"));
 			ps.setString(12, getValue(rs, "ERROR_CODE"));
