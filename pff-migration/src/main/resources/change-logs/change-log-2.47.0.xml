@@ -1459,4 +1459,8 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 		<dropTable tableName="PromotionInsurances_Temp" /> 
 	</changeSet>	
 	
+	<changeSet id="85" author="Kesav">
+		<addNotNullConstraint tableName="FinTypeInsurances_Temp" columnName="ModuleId" columnDataType="int"/>
+	</changeSet>
+	
 </databaseChangeLog>
