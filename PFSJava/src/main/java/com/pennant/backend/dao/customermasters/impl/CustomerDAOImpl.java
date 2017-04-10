@@ -488,13 +488,14 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		Customer customer = new Customer();
 		customer.setCustCIF(cifId);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustFName, CustMName, CustLName, CustShrtName, custDftBranch, Version,custBaseCcy");
+		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustFName, CustMName, CustLName, CustShrtName, CustCRCPR, ");
+		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy");
 		if(type.contains("View")){
 			selectSql.append(" ,LovDescCustStsName");
 		}
 		selectSql.append(" FROM  Customers");
 		selectSql.append(StringUtils.trimToEmpty(type) ); 
-		selectSql.append(" Where CustCIF=:CustCIF");
+		selectSql.append(" Where CustCIF = :CustCIF");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
