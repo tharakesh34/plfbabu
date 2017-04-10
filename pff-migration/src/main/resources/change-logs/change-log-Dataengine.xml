@@ -9,7 +9,7 @@
 			constraintName="FK_DES_ID" />
 	</changeSet> 
 	<changeSet id="0" author="prasad">
-	<!-- <dropTable tableName="DATA_ENGINE_TABLES" />
+	 <dropTable tableName="DATA_ENGINE_TABLES" />
 	<dropTable tableName="DATA_ENGINE_LOG" /> 
 	<dropTable tableName="DATA_ENGINE_PROCESS_LOG" />
 	<dropTable tableName="DATA_ENGINE_DB_DETAILS" />
@@ -20,7 +20,7 @@
 	<dropTable tableName="SEQ_DATA_ENGINE_CONFIG" />
 	<dropTable tableName="SEQ_DATA_ENGINE_TABLE" />
 	<dropTable tableName="SEQ_DATA_ENGINE_COLUMN" />
-	<dropTable tableName="SEQ_DATA_ENGINE_STATUS" />-->	
+	<dropTable tableName="SEQ_DATA_ENGINE_STATUS" />
 	<dropTable tableName="DATA_ENGINE_STATUS" />		
 </changeSet>
 
