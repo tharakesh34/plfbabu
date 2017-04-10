@@ -1353,4 +1353,22 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 
 </createView>
 </changeSet>
+<changeSet id="62" author="Irfan">
+<sql>
+ Update FinanceMain set BpiAmount=0;
+ Update FinanceMain set DeductFeeDisb=0; 
+ Update FinanceMain_Temp set BpiAmount=0;
+ Update FinanceMain_Temp set DeductFeeDisb=0;
+ Update FinanceMain_PA set BpiAmount=0;
+ Update FinanceMain_PA set DeductFeeDisb=0; 
+ Update RejectFinanceMain set BpiAmount=0;
+ Update RejectFinanceMain set DeductFeeDisb=0; 
+ Update WIFFinanceMain set BpiAmount=0;
+ Update WIFFinanceMain set DeductFeeDisb=0;
+ Update WIFFinanceMain set FeeChargeAmt=0;
+ Update WIFFinanceMain_Temp set BpiAmount=0;
+ Update WIFFinanceMain_Temp set DeductFeeDisb=0; 
+ Update WIFFinanceMain_Temp set FeeChargeAmt=0; 
+ </sql>
+</changeSet>
 </databaseChangeLog>
