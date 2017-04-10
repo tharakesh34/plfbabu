@@ -442,8 +442,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -574,7 +573,6 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -59,6 +60,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.AppException;
 
 /**
  * <p>
@@ -208,18 +210,30 @@ public final class MessageUtil {
 	}
 
 	public static void showError(Exception e) {
-		final String title = Labels.getLabel("message.Error");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(Labels.getLabel("message.SystemError"), title, MultiLineMessageBox.OK, "ERROR", true,
-				new org.zkoss.zk.ui.event.EventListener<Event>() {
-					public void onEvent(Event evt) throws InterruptedException {
-						Collection<Component> list = Executions.getCurrent().getDesktop().getComponents();
+		String title = Labels.getLabel("message.Error");
+		String message = Labels.getLabel("message.SystemError");
 
-						for (Component component : list) {
+		if (e instanceof AppException) {
+			message = e.getMessage();
+			// TODO: Remove below condition once the validation changes completed through out the application.
+		} else if (e instanceof DataAccessException) {
+			message = e.getMessage();
+			logger.error("Exception: ", e);
+		} else {
+			logger.error("Exception: ", e);
+		}
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, "ERROR", true,
+				new org.zkoss.zk.ui.event.EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws InterruptedException {
+						for (Component component : Executions.getCurrent().getDesktop().getComponents()) {
 							if (component instanceof Tab) {
 								Tab tab = (Tab) component;
 								if (tab.isSelected()) {
 									tab.close();
+
 									break;
 								}
 							}
