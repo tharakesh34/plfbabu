@@ -737,7 +737,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		detail.setFinReference(curFinReference);
 
 		StringBuilder selectSql = new StringBuilder("Select CustId CustCif,TotalRepayAmt,MaturityDate,FinStartDate,FinCcy,");
-		selectSql.append("(SELECT SysParmValue FROM SMTParameters WHERE SysParmCode='APP_DFT_CURR') toCcy");
+		selectSql.append("'"+SysParamUtil.getAppCurrency()+"'"+" toCcy");
 		selectSql.append(" FROM FinanceMain_Temp WHERE FinIsActive = 1 and CustID=:CustCif");
 
 		if (StringUtils.isNotEmpty(curFinReference)) {
