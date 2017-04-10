@@ -333,13 +333,6 @@
 		</column>
 	</createTable>
 </changeSet>
-<changeSet id="14" author="prasad" dbms="oracle">	
-   		<sql splitStatements="false">
-     		 begin
-         	 execute immediate 'CREATE SEQUENCE SEQ_DATA_ENGINE_PROCESS_LOG START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
-     		 end;  
-     	 </sql>
- </changeSet>
  
  <changeSet id="15" author="prasad" dbms="postgresql">	
    		<sql splitStatements="false">
