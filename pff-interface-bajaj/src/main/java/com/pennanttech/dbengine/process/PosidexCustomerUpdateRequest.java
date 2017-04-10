@@ -29,6 +29,7 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 	
 	public PosidexCustomerUpdateRequest(DataSource dataSource, String appDBName , DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
+		this.executionStatus = executionStatus;
 	}
 
 	public void process(long userId, Configuration config) {
@@ -43,7 +44,6 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
-		long keyValue = 0;
 		long fileId;
 		
 		try {
@@ -73,10 +73,10 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 					updateDataStatus(resultSet);
 					
 					successCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -152,10 +152,10 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = ? WHERE CUSTID = ? ");
+			sb.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = ? WHERE CustCIF = ? ");
 
 			ps = destConnection.prepareStatement(sb.toString());
-			ps.setInt(1, getIntValue(rs, "UCIN_NO"));
+			ps.setString(1, getValue(rs, "UCIN_NO"));
 			ps.setString(2, getValue(rs, "CUSTOMER_ID"));
 
 			// execute query

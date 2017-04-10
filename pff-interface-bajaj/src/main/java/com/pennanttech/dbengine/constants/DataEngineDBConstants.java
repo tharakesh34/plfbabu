@@ -11,4 +11,6 @@ public class DataEngineDBConstants {
 	public enum Status {
 		N, Y, C, AC, E, R, I
 	}
+
+	public static final String DBDateFormat = "yyyy-MM-dd";
 }

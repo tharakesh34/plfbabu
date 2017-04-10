@@ -28,6 +28,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 
 	public PosidexUpdateEODRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
+		this.executionStatus = executionStatus;
 	}
 
 	public void process(long userId, Configuration config) {
@@ -42,7 +43,6 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
-		long keyValue = 0;
 		long fileId;
 
 		try {
@@ -77,13 +77,12 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 					saveCustAddress(resultSet, batchId);
 					saveCustControl(resultSet, batchId);					
 					saveCustLoan(resultSet, batchId);
-					//FIXME Update the status 
 
 					successCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "S", "Success.", null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBExport", "F", e.getMessage(), null);
+					saveBatchLog(processedCount, fileId, processedCount, "DBExport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -134,10 +133,11 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * from INT_POSIDEX_UPDATE_EOD_VIEW Where LastMntOn = ? ");
+			sql.append(" SELECT * from INT_POSIDEX_UPDATE_EOD_VIEW Where LastMntOn > ? AND LastMntOn < ?");
 
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stmt.setDate(1, DateUtil.getSqlDate());
+			stmt.setDate(1, new java.sql.Date(DateUtil.getPreviousDate().getTime()));
+			stmt.setDate(2, new java.sql.Date(DateUtil.getAfterDate().getTime()));
 			
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
@@ -156,7 +156,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT DEDUP_EOD_CUST_DEMO_DTL (");
+			sb.append(" INSERT INTO DEDUP_EOD_CUST_DEMO_DTL (");
 			sb.append("	BATCHID, CUSTOMER_NO, SOURCE_SYS_ID, FIRST_NAME, MIDDLE_NAME, LAST_NAME,DOB ,PAN, DRIVING_LICENSE_NUMBER, VOTER_ID, ");
 			sb.append(" DATE_OF_INCORPORATION, TAN_NO, PROCESS_TYPE, APPLICANT_TYPE, EMPOYER_NAME, FATHER_NAME, PASSPORT_NO, ACCOUNT_NUMBER,CREDIT_CARD_NUMBER,");
 			sb.append(" PROCESS_FLAG, ERROR_CODE,ERROR_DESC, CUSTOMER_ID, SOURCE_SYSTEM, PSX_BATCH_ID, UCIN_FLAG, EOD_BATCH_ID, INSERT_TS, GENDER, ");
@@ -175,8 +175,9 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(8, getValue(rs, "PAN"));
 			ps.setString(9, getValue(rs, "DRIVING_LICENSE_NUMBER"));
 			ps.setString(10, getValue(rs, "VOTER_ID"));
+			
 			ps.setDate(11, getDateValue(rs, "DATE_OF_INCORPORATION"));
-			ps.setString(12, getValue(rs, "ERROR_DESC"));
+			ps.setString(12, getValue(rs, "TAN_NO"));
 			ps.setString(13, getValue(rs, "PROCESS_TYPE"));
 			ps.setString(14, getValue(rs, "APPLICANT_TYPE"));
 			ps.setString(15, getValue(rs, "EMPOYER_NAME"));
@@ -184,6 +185,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(17, getValue(rs, "PASSPORT_NO"));
 			ps.setString(18, getValue(rs, "ACCOUNT_NUMBER"));
 			ps.setString(19, getValue(rs, "CREDIT_CARD_NUMBER"));
+			
 			ps.setString(20, getValue(rs, "PROCESS_FLAG"));
 			ps.setString(21, getValue(rs, "ERROR_CODE"));
 			ps.setString(22, getValue(rs, "ERROR_DESC"));
@@ -192,8 +194,9 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(25, getValue(rs, "PSX_BATCH_ID"));
 			ps.setString(26, getValue(rs, "UCIN_FLAG"));
 			ps.setString(27, getValue(rs, "EOD_BATCH_ID"));
-			ps.setString(28, getValue(rs, "INSERTTS"));
+			ps.setDate(28, getDateValue(rs, "INSERT_TS"));
 			ps.setString(29, getValue(rs, "GENDER"));
+			
 			ps.setString(30, getValue(rs, "AADHAR_NO"));
 			ps.setString(31, getValue(rs, "CIN"));
 			ps.setString(32, getValue(rs, "DIN"));
@@ -203,6 +206,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 
 			// execute query
 			ps.executeUpdate();
+			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -235,6 +239,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(7, getValue(rs, "ADDRESS_2"));
 			ps.setString(8, getValue(rs, "ADDRESS_3"));
 			ps.setString(9, getValue(rs, "STATE"));
+			
 			ps.setString(10, getValue(rs, "CITY"));
 			ps.setString(11, getValue(rs, "PIN"));
 			ps.setString(12, getValue(rs, "LANDLINE_1"));
@@ -245,13 +250,14 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(17, getValue(rs, "STD"));
 			ps.setString(18, getValue(rs, "PROCESS_TYPE"));
 			ps.setString(19, getValue(rs, "EMAIL"));
+			
 			ps.setString(20, getValue(rs, "PROCESS_FLAG"));
 			ps.setString(21, getValue(rs, "ERROR_CODE"));
 			ps.setString(22, getValue(rs, "ERROR_DESC"));
 			ps.setString(23, getValue(rs, "CUSTOMER_ID"));
 			ps.setString(24, getValue(rs, "SOURCE_SYSTEM"));
-			ps.setString(25, getValue(rs, "PSX_BATCH_ID"));
-			ps.setString(26, getValue(rs, "EOD_BATCH_ID"));
+			ps.setBigDecimal(25, getBigDecimal(rs, "PSX_BATCH_ID"));
+			ps.setBigDecimal(26, getBigDecimal(rs, "EOD_BATCH_ID"));
 			
 			// execute query
 			ps.executeUpdate();
@@ -278,8 +284,8 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 
 			ps.setLong(1, batchId);
 			ps.setString(2, getValue(rs, "STATUS"));
-			ps.setString(3, getValue(rs, "INSERT_TIMESTAMP"));
-			ps.setString(4, getValue(rs, "COMPLETION_TIMESTAMP"));
+			ps.setDate(3, getDateValue(rs, "INSERT_TIMESTAMP"));
+			ps.setDate(4, getDateValue(rs, "COMPLETION_TIMESTAMP"));
 			ps.setString(5, getValue(rs, "ERR_DESCRIPTION"));
 			ps.setString(6, getValue(rs, "ERROR_CODE"));
 			
@@ -309,7 +315,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps = destConnection.prepareStatement(sb.toString());
 
 			ps.setLong(1, batchId);
-			ps.setString(2, getValue(rs, "CUSTOMER_NO"));
+			ps.setBigDecimal(2, getBigDecimal(rs, "CUSTOMER_NO"));
 			ps.setString(3, getValue(rs, "SOURCE_SYS_ID"));
 			ps.setString(4, getValue(rs, "SEGMENT"));
 			ps.setString(5, getValue(rs, "DEAL_ID"));
@@ -321,11 +327,11 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(11, getValue(rs, "PROCESS_FLAG"));
 			ps.setString(12, getValue(rs, "ERROR_CODE"));
 			ps.setString(13, getValue(rs, "ERROR_DESC"));
-			ps.setInt(14, getIntValue(rs, "PSX_BATCH_ID"));
-			ps.setInt(15, getIntValue(rs, "PSX_ID"));
+			ps.setBigDecimal(14, getBigDecimal(rs, "PSX_BATCH_ID"));
+			ps.setBigDecimal(15, getBigDecimal(rs, "PSX_ID"));
 			ps.setString(16, getValue(rs, "CUSTOMER_ID"));
 			ps.setString(17, getValue(rs, "SOURCE_SYSTEM"));
-			ps.setInt(18, getIntValue(rs, "EOD_BATCH_ID"));
+			ps.setBigDecimal(18, getBigDecimal(rs, "EOD_BATCH_ID"));
 
 			// execute query
 			ps.executeUpdate();

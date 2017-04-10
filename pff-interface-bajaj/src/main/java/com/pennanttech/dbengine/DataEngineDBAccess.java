@@ -21,4 +21,14 @@ public class DataEngineDBAccess extends DataAccess {
 	protected void saveBatchLog(MapSqlParameterSource source, String sql) throws Exception {
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
+	
+	protected String getApplicationDate() throws Exception {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuffer sql = new StringBuffer();
+
+		sql.append(" Select SysParmValue from SMTparameters Where SysParmCode = :SysParmCode ");
+		source.addValue("SysParmCode", "APP_DATE");
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+	}
 }

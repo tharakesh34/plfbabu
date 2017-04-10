@@ -1,11 +1,19 @@
 package com.pennanttech.dbengine.util;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.apache.log4j.Logger;
+
+import com.pennanttech.dbengine.constants.DataEngineDBConstants;
+
 public class DateUtil {
 
+	private static final Logger logger = Logger.getLogger(DateUtil.class);
+	
 	/**
 	 * Returns the last date of the month
 	 * 
@@ -141,4 +149,47 @@ public class DateUtil {
 		return cal.getTime();
 	}
 
+	
+	/**
+	 * Take String Date and return UTIL Date in DB Format
+	 * 
+	 * @param date
+	 *            (Date)
+	 * 
+	 * @return Date
+	 */
+	public static Date getDBDate(String date) {
+		if (date == null) {
+			return null;
+		}
+		return parseDate(date, DataEngineDBConstants.DBDateFormat);
+	}
+	
+	private static Date parseDate(String date, String format) {
+		logger.debug("Entering");
+		
+		SimpleDateFormat df = new SimpleDateFormat(format);
+		java.util.Date uDate = null;
+		try {
+			uDate = df.parse(date);
+		} catch (ParseException e) {
+			logger.error("Parsing date: ", e);
+			getSqlDate();
+		}
+		
+		logger.debug("Leaving");
+		return new Date(uDate.getTime());
+	}
+
+	public static java.util.Date getPreviousDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+		return cal.getTime();
+	}
+
+	public static java.util.Date getAfterDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, +1);
+		return cal.getTime();
+	}
 }
