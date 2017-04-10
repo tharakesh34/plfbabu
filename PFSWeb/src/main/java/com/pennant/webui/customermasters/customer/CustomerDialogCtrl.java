@@ -2714,11 +2714,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 		
-		if (!validateAddressDetails(this.tabkYCDetails)) {
-			return ;
-		}
-		if (!validatePhoneDetails(this.tabkYCDetails)) {
-			return ;
+		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())) {
+			if (!validateAddressDetails(this.tabkYCDetails)) {
+				return;
+			}
+			if (!validatePhoneDetails(this.tabkYCDetails)) {
+				return;
+			}
 		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
@@ -3282,12 +3284,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					doShowValidationMessage(custTab, 5, custDocument.getLovDescCustDocCategory());
 					return false;
 				}
-				if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
-						&& custDocument.getCustDocIssuedOn() != null
-						&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
-					doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
-					return false;
-				}
+				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
+					if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
+							&& custDocument.getCustDocIssuedOn() != null
+							&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
+						doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
+						return false;
+					}
+				 } 
 					if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
 						isMandateIDDocExist = true;
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
