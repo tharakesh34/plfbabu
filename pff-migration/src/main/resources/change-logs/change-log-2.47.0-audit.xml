@@ -26,5 +26,10 @@
 		<column name="DeductFeeDisb" type="decimal(18,0)"/>
 	</addColumn>
 </changeSet>
+	
+	<changeSet author="Kesav" id="4"> 
+		<dropTable tableName="AdtPromotionFees" /> 
+		<dropTable tableName="AdtPromotionInsurances" /> 
+	</changeSet>	
  
 </databaseChangeLog>
