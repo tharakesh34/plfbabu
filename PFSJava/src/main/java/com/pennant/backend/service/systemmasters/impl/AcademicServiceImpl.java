@@ -11,9 +11,6 @@
  */
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -28,6 +25,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.AcademicService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Academic</b>.<br>
@@ -90,16 +88,16 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 			return auditHeader;
 		}
 
-		String tableType = "";
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (academic.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (academic.isNew()) {
-			academic.setAcademicID(getAcademicDAO().save(academic, tableType));
+			academic.setAcademicID(Long.parseLong(getAcademicDAO().save(academic, tableType)));
 			auditHeader.getAuditDetail().setModelData(academic);
 			auditHeader.setAuditReference(String.valueOf(academic.getAcademicID()));
 		} else {
@@ -137,7 +135,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
-		getAcademicDAO().delete(academic, "");
+		getAcademicDAO().delete(academic, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -208,7 +206,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		if (academic.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getAcademicDAO().delete(academic, "");
+			getAcademicDAO().delete(academic, TableType.MAIN_TAB);
 		} else {
 			academic.setRoleCode("");
 			academic.setNextRoleCode("");
@@ -220,15 +218,15 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				academic.setRecordType("");
-				getAcademicDAO().save(academic, "");
+				getAcademicDAO().save(academic, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				academic.setRecordType("");
-				getAcademicDAO().update(academic, "");
+				getAcademicDAO().update(academic, TableType.MAIN_TAB);
 			}
 		}
 
-		getAcademicDAO().delete(academic, "_Temp");
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -267,7 +265,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAcademicDAO().delete(academic, "_Temp");
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -297,103 +295,37 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
-		
+
+		// Get the model object.
 		Academic academic = (Academic) auditDetail.getModelData();
 
-		Academic tempAcademic = null;
-		if (academic.isWorkflow()) {
-			tempAcademic = getAcademicDAO().getAcademic(
-					academic.getAcademicLevel(),
-					academic.getAcademicDecipline(), "_Temp");
+		// Check the unique keys.
+		if (academic.isNew() && academicDAO.isDuplicateKey(academic.getAcademicID(), academic.getAcademicLevel(),
+				academic.getAcademicDecipline(), academic.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_AcademicLevel") + ": " + academic.getAcademicLevel();
+			parameters[1] = PennantJavaUtil.getLabel("label_AcademicDecipline") + ": "
+					+ academic.getAcademicDecipline();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		Academic befAcademic = getAcademicDAO().getAcademic(
-				academic.getAcademicLevel(), academic.getAcademicDecipline(),
-				" ");
-		Academic oldAcademic = academic.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-		
-		valueParm[0] = academic.getAcademicLevel();
-		valueParm[1] = academic.getAcademicDecipline();
-
-		errParm[0] = PennantJavaUtil.getLabel("label_AcademicLevel") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_AcademicDecipline") + ":"+valueParm[1];
-
-		if (academic.isNew()) { // for New record or new record into work flow
-
-			if (!academic.isWorkflow()) {// With out Work flow only new records
-				if (befAcademic != null) { // Record Already Exists in the table
-											// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-				}
-			} else { // with work flow
-				if (academic.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befAcademic != null || tempAcademic != null) { // if records already exists in
-												// the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befAcademic == null || tempAcademic != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!academic.isWorkflow()) { // With out Work flow for update and
-											// delete
-				if (befAcademic == null) { // if records not exists in the main
-											// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				} else {
-					if (oldAcademic != null
-							&& !oldAcademic.getLastMntOn().equals(
-									befAcademic.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-			} else {
-				if (tempAcademic == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-				
-				if ( tempAcademic != null &&  oldAcademic != null
-						&& !oldAcademic.getLastMntOn().equals(
-								tempAcademic.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-			}
-		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !academic.isWorkflow()) {
-			auditDetail.setBefImage(befAcademic);
+
+		if ("doApprove".equals(method)) {
+			auditDetail.setBefImage(academicDAO.getAcademicById(academic.getAcademicID(), ""));
 		}
 
 		logger.debug("Leaving");

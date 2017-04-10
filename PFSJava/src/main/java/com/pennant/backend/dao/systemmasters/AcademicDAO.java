@@ -11,21 +11,30 @@
  */
 package com.pennant.backend.dao.systemmasters;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Academic;
+import com.pennanttech.pff.core.TableType;
 
 /**
- * DAO methods declaration for the <b>Academic model</b> class.<br>
+ * Data access layer for <code>Academic</code> with set of CRUD operations.
  * 
+ * @param <T>
  */
-public interface AcademicDAO {
-
+public interface AcademicDAO extends BasicCrudDao<Academic> {
 	Academic getAcademicById(long academicID, String type);
 
-	void update(Academic academic, String type);
-
-	void delete(Academic academic, String type);
-
-	long save(Academic academic, String type);
-
-	Academic getAcademic(String academicLevel, String academicDecipline, String type);
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param id
+	 *            Id of the academic.
+	 * @param level
+	 *            Level of the academic.
+	 * @param discipline
+	 *            Discipline of the academic.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(long id, String level, String discipline, TableType tableType);
 }

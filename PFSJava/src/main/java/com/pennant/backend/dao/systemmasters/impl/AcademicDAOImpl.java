@@ -50,33 +50,32 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.AcademicDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Academic;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>Academic model</b> class.<br>
- * 
+ * Data access layer implementation for <code>Academic</code> with set of CRUD operations.
  */
 public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements AcademicDAO {
+	private static Logger				logger	= Logger.getLogger(AcademicDAOImpl.class);
 
-	private static Logger logger = Logger.getLogger(AcademicDAOImpl.class);
-
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public AcademicDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -87,221 +86,163 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 	 * @return Academic
 	 */
 	@Override
-	public Academic getAcademicById(final long academicID, String type) {
-		logger.debug("Entering");
+	public Academic getAcademicById(long academicID, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Academic academic = new Academic();
 		academic.setAcademicID(academicID);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append(" Select AcademicID,AcademicLevel, AcademicDecipline, AcademicDesc," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append(" Select AcademicID,AcademicLevel, AcademicDecipline, AcademicDesc,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTAcademics");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AcademicID =:AcademicID") ;
+		selectSql.append(" Where AcademicID =:AcademicID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
 		RowMapper<Academic> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Academic.class);
 
 		try {
-			academic = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			academic = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			academic = null;
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return academic;
 	}
 
-	/**
-	 * Fetch the Record Academic Details details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return Academic
-	 */
 	@Override
-	public Academic getAcademic(String academicLevel, String academicDecipline, String type) {
-		logger.debug("Entering");
-		Academic academic = new Academic();
-		academic.setAcademicLevel(academicLevel);
-		academic.setAcademicDecipline(academicDecipline);
-		StringBuilder selectSql = new StringBuilder();
+	public boolean isDuplicateKey(long id, String level, String discipline, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 
-		selectSql.append(" Select AcademicID,AcademicLevel, AcademicDecipline, AcademicDesc," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		selectSql.append(" FROM  BMTAcademics");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AcademicLevel =:AcademicLevel AND  AcademicDecipline=:AcademicDecipline") ;
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "AcademicID != :id and AcademicLevel = :level and AcademicDecipline = :discipline";
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
-		RowMapper<Academic> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Academic.class);
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTAcademics", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTAcademics_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTAcademics_Temp", "BMTAcademics" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("id", id);
+		paramSource.addValue("level", level);
+		paramSource.addValue("discipline", discipline);
+		
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+	@Override
+	public String save(Academic academic, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTAcademics");
+		sql.append(tableType.getSuffix());
+		sql.append(" (AcademicID, AcademicLevel, AcademicDecipline, AcademicDesc, Version,");
+		sql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values (:AcademicID, :AcademicLevel, :AcademicDecipline, :AcademicDesc, :Version,");
+		sql.append(" :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
+
+		// Get the identity sequence number.
+		academic.setAcademicID(getNextidviewDAO().getNextId("SeqBMTAcademics"));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(academic);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		logger.debug(Literal.LEAVING);
+		return String.valueOf(academic.getAcademicID());
+	}
+
+	@Override
+	public void update(Academic academic, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTAcademics");
+		sql.append(tableType.getSuffix());
+		sql.append(" set AcademicLevel = :AcademicLevel, AcademicDecipline = :AcademicDecipline,");
+		sql.append(" AcademicDesc = :AcademicDesc, Version = :Version, LastMntBy = :LastMntBy,");
+		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where AcademicID = :AcademicID");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(academic);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void delete(Academic academic, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from BMTAcademics");
+		sql.append(tableType.getSuffix());
+		sql.append(" where AcademicID = :AcademicID");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(academic);
+		int recordCount = 0;
 
 		try {
-			academic = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			academic = null;
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
-		return academic;
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
+	 * Sets a new <code>JDBC Template</code> for the given data source.
+	 * 
 	 * @param dataSource
-	 *            the dataSource to set
+	 *            The JDBC data source to access.
 	 */
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the BMTAcademics or
-	 * BMTAcademics_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Academic Details by key AcademicLevel
-	 * 
-	 * @param Academic
-	 *            Details (academic)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(Academic academic, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql =new StringBuilder();
-		deleteSql.append("Delete From BMTAcademics");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where  AcademicID =:AcademicID ");
-
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", academic.getAcademicLevel(), 
-						academic.getAcademicDecipline(), academic.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", academic.getAcademicLevel(), 
-					academic.getAcademicDecipline(), academic.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTAcademics or BMTAcademics_Temp.
-	 * 
-	 * save Academic Details
-	 * 
-	 * @param Academic
-	 *            Details (academic)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public long save(Academic academic, String type) {
-		logger.debug("Entering");
-		if (academic.getId() == Long.MIN_VALUE) {
-			academic.setAcademicID(getNextidviewDAO().getNextId("SeqBMTAcademics"));
-		}
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append("Insert Into BMTAcademics");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (AcademicID,AcademicLevel, AcademicDecipline, AcademicDesc," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:AcademicID,:AcademicLevel, :AcademicDecipline, :AcademicDesc, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId)");
-
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return academic.getAcademicID();
-	}
-
-	/**
-	 * This method updates the Record BMTAcademics or BMTAcademics_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Academic Details by key AcademicLevel and Version
-	 * 
-	 * @param Academic
-	 *            Details (academic)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(Academic academic, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-
-		updateSql.append("Update BMTAcademics");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AcademicLevel = :AcademicLevel," );
-		updateSql.append(" AcademicDecipline = :AcademicDecipline, AcademicDesc = :AcademicDesc ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append("  Where AcademicID =:AcademicID ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41003", academic.getAcademicLevel(), 
-					academic.getAcademicDecipline(), academic.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String academicLevel,String academicDecipline, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = academicLevel;
-		parms[1][1] = academicDecipline;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_AcademicLevel")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_AcademicDecipline")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }
