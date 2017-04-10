@@ -687,7 +687,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		detail.setCustID(custID);
 
 		StringBuilder selectSql = new StringBuilder("Select CustId,TotalRepayAmt,MaturityDate,FinStartDate,FinCcy,");
-		selectSql.append("(SELECT SysParmValue FROM SMTParameters WHERE SysParmCode='APP_DFT_CURR') toCcy");
+		selectSql.append("'"+SysParamUtil.getAppCurrency()+"'"+" toCcy");
 		selectSql.append(" FROM FinanceMain WHERE FinIsActive = 1 and CustID=:CustID");
 
 		logger.debug("selectSql: " + selectSql.toString());
