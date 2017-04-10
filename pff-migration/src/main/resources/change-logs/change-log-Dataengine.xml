@@ -23,7 +23,7 @@
 		<column name="ID" type="smallint">
 			<constraints nullable="false"/>
 		</column>
-		<column name="TYPE" type="char(6)">
+		<column name="TYPE" type="char(10)">
 			<constraints nullable="false"/>
 		</column>
 		<column name="NAME" type="varchar(10)">
@@ -291,10 +291,6 @@
 <changeSet id="9.1" author="prasad">
 	<addPrimaryKey columnNames="Id" constraintName="PK_DATA_ENGINE_PROCESS_LOG" tableName="DATA_ENGINE_PROCESS_LOG"/>
 </changeSet>
-<changeSet author="prasad" id="9.2" >
-	<addForeignKeyConstraint baseColumnNames="FILEID" baseTableName="DATA_ENGINE_LOG" constraintName="FK_DEPL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="Id" referencedTableName="DATA_ENGINE_STATUS"/>
-</changeSet>
-
 
 <changeSet id="10" author="prasad">
 	<createTable tableName="SEQ_DATA_ENGINE_CONFIG">
