@@ -1388,4 +1388,20 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 		<addPrimaryKey tableName="FinTypeFees_Temp" constraintName="PK_FINTYPEFEES_TEMP" columnNames="FinType, OriginationFee, FinEvent, FeeTypeID, ModuleId"/>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="67">
+		<dropPrimaryKey tableName="FinTypeAccounting" constraintName="PK_FinTypeAccounting"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="68">
+		<addPrimaryKey tableName="FinTypeAccounting" constraintName="PK_FinTypeAccounting" columnNames="FinType, Event, ModuleId"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="69">
+		<dropPrimaryKey tableName="FinTypeAccounting_Temp" constraintName="PK_FinTypeAccounting_Temp"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="70">
+		<addPrimaryKey tableName="FinTypeAccounting_Temp" constraintName="PK_FinTypeAccounting_Temp" columnNames="FinType, Event, ModuleId"/>
+	</changeSet>
+	
 </databaseChangeLog>
