@@ -438,7 +438,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal custDSR = BigDecimal.ZERO;
 	private BigDecimal curFinAmount = BigDecimal.ZERO;
 	private BigDecimal financingAmount = BigDecimal.ZERO;
-
+	private BigDecimal bpiAmount = BigDecimal.ZERO;
+	
 	// ManagerCheques
 	private BigDecimal lovDescFinancingAmount = BigDecimal.ZERO;
 
@@ -681,7 +682,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("schPftDue");
 		excludeFields.add("preApprovalFinance");
 		excludeFields.add("preApprovalExpired");
-		excludeFields.add("deductFeeDisb");
 		excludeFields.add("scheduleChange");
 		excludeFields.add("productCategory");
 		excludeFields.add("stepDetailList");
@@ -3363,6 +3363,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSwiftBranchCode(String swiftBranchCode) {
 		this.swiftBranchCode = swiftBranchCode;
+	}
+
+	public BigDecimal getBpiAmount() {
+		return bpiAmount;
+	}
+
+	public void setBpiAmount(BigDecimal bpiAmount) {
+		this.bpiAmount = bpiAmount;
 	}
 
 }
