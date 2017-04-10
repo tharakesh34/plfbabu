@@ -20,5 +20,11 @@
 			Update AdtCollateralAssignment Set Active = 1;
 		</sql>
 	</changeSet>
+	<changeSet author="Irfan" id="3">
+	<addColumn tableName="AdtFinanceMain">
+		<column name="BpiAmount" type="decimal(18,0)"/>
+		<column name="DeductFeeDisb" type="decimal(18,0)"/>
+	</addColumn>
+</changeSet>
  
 </databaseChangeLog>
