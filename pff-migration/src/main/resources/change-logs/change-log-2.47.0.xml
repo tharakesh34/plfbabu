@@ -1404,4 +1404,20 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 		<addPrimaryKey tableName="FinTypeAccounting_Temp" constraintName="PK_FinTypeAccounting_Temp" columnNames="FinType, Event, ModuleId"/>
 	</changeSet>
 	
+	<changeSet author="Kesav" id="71">
+		<dropPrimaryKey tableName="FinTypeInsurances" constraintName="PK_FinTypeInsurances"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="72">
+		<addPrimaryKey tableName="FinTypeInsurances" constraintName="PK_FinTypeInsurances" columnNames="FinType, InsuranceType, ModuleId"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="73">
+		<dropPrimaryKey tableName="FinTypeInsurances_Temp" constraintName="PK_FinTypeInsurances_Temp"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="74">
+		<addPrimaryKey tableName="FinTypeInsurances_Temp" constraintName="PK_FinTypeInsurances_Temp" columnNames="FinType, InsuranceType, ModuleId"/>
+	</changeSet>
+	
 </databaseChangeLog>
