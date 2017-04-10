@@ -525,10 +525,9 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
+		
 		doClearMessage();
-		this.customerCif.setConstraint(new PTStringValidator(Labels
-				.getLabel("label_CollateralThirdPartyDialog_CustomerCif.value"),
-				PennantRegularExpressions.REGEX_ALPHANUM, true));
+		this.customerCif.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralThirdPartyDialog_CustomerCif.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
 
 		logger.debug("Leaving");
 	}
@@ -631,16 +630,6 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 
-		// Customer Cross check against DB
-		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
-			Customer customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
-			if(customer == null){
-				MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), 
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
-				return;
-			}
-		}
-
 		final CollateralThirdParty acollateralThirdParty = new CollateralThirdParty();
 		BeanUtils.copyProperties(getCollateralThirdParty(), acollateralThirdParty);
 		boolean isNew = false;
@@ -653,6 +642,28 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
+		
+		// Customer Cross check against DB
+		Customer customer = null;
+		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
+			 customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
+				if (customer == null) {
+					MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+					return;
+				}
+		}
+		
+		if (this.customerId.longValue() == 0) {
+			getCollateralThirdParty().setCustomerId(customer.getCustID());
+			getCollateralThirdParty().setCustCIF(customer.getCustCIF());
+			getCollateralThirdParty().setCustShrtName(customer.getCustShrtName());
+			getCollateralThirdParty().setCustCRCPR(customer.getCustCRCPR());
+			getCollateralThirdParty().setCustPassportNo(customer.getCustPassportNo());
+			getCollateralThirdParty().setCustCtgCode(customer.getCustCtgCode());
+			getCollateralThirdParty().setCustNationality(customer.getCustNationality());
+			this.customerCif.setValue(customer.getCustCIF());
+			this.customerId.setValue(customer.getCustID());
+		} 
 
 		isNew = acollateralThirdParty.isNew();
 		String tranType = "";
