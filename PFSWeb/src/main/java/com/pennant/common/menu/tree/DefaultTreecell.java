@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
@@ -68,7 +67,6 @@ import org.zkoss.zul.Treecell;
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.common.menu.util.ILabelElement;
@@ -100,15 +98,17 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 		 * This condition checks whether current system time is between user signOnFrom to signOnTo time .if not show
 		 * message box to prevent operations
 		 */
-		Component comp = event.getTarget();
+//		Component comp = event.getTarget();
+//		
+//		if (BatchMonitor.isEodRunning() && (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD")) ) {
+//			Clients.showNotification(Labels.getLabel("EOD_RUNNING"), "info", null, null, -1);
+//		} else  if (SysParamUtil.getValueAsString(PennantConstants.APP_PHASE).equals(PennantConstants.APP_PHASE_EOD)
+//				&& (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD"))) {
+//			Clients.showNotification(Labels.getLabel("CHANGE_EOD_PHASE"), "info", null, null, -1);
+//		}
 
-		if (BatchMonitor.isEodRunning() && (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD")) ) {
-			Clients.showNotification(Labels.getLabel("EOD_RUNNING"), "info", null, null, -1);
-		} else if (!"Y".equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.ALLOW_ACCESS_TO_APP))) {
+		if (!"Y".equalsIgnoreCase(SysParamUtil.getValueAsString(PennantConstants.ALLOW_ACCESS_TO_APP))) {
 			Clients.showNotification(Labels.getLabel("ALLOW_ACCESS_RESTRICTION"), "info", null, null, -1);
-		} else if (SysParamUtil.getValueAsString(PennantConstants.APP_PHASE).equals(PennantConstants.APP_PHASE_EOD)
-				&& (!comp.getId().contains("menu_Item_BatchAdmin") && !comp.getId().contains("menu_Item_CustomerEOD"))) {
-			Clients.showNotification(Labels.getLabel("CHANGE_EOD_PHASE"), "info", null, null, -1);
 		} else {
 			if ((user.getLogonFromTime() != null) && (user.getLogonToTime() != null)) {
 				if ((DateUtility.compareTime(new Date(System.currentTimeMillis()), user.getLogonFromTime(), false) == -1)
