@@ -46,6 +46,9 @@ public class AEAmountCodes {
 	private BigDecimal rpPft = BigDecimal.ZERO;
 	private BigDecimal rpPri = BigDecimal.ZERO;
 	private BigDecimal rpTot = BigDecimal.ZERO;
+	private BigDecimal instpft = BigDecimal.ZERO;
+	private BigDecimal instpri = BigDecimal.ZERO;
+	private BigDecimal insttot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
 	private BigDecimal insRefund = BigDecimal.ZERO;
@@ -432,6 +435,30 @@ public class AEAmountCodes {
 	}
 	public void setRpTot(BigDecimal rpTot) {
 		this.rpTot = rpTot;
+	}
+
+	public BigDecimal getInstpft() {
+		return instpft;
+	}
+
+	public void setInstpft(BigDecimal instpft) {
+		this.instpft = instpft;
+	}
+
+	public BigDecimal getInstpri() {
+		return instpri;
+	}
+
+	public void setInstpri(BigDecimal instpri) {
+		this.instpri = instpri;
+	}
+
+	public BigDecimal getInsttot() {
+		return insttot;
+	}
+
+	public void setInsttot(BigDecimal insttot) {
+		this.insttot = insttot;
 	}
 
 	public BigDecimal getRefund() {

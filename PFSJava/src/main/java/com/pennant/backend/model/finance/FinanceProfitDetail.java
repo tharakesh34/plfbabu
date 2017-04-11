@@ -44,6 +44,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			amzTillLBDPD			= BigDecimal.ZERO;		//new
 	private BigDecimal			amzTillLBDPIS			= BigDecimal.ZERO;		//new
 	private BigDecimal			amzTodayToNBD			= BigDecimal.ZERO;
+	
 	// others
 	private String				RepayFrq;
 	private String				CustCIF;

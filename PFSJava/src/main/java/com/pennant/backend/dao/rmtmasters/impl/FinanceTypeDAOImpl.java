@@ -266,8 +266,9 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 
+		List<FinanceType> finTypes = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return finTypes;
     }
 
 	/**

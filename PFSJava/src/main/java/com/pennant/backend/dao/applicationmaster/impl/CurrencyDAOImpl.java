@@ -391,8 +391,9 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
+		List<Currency> currencies = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return currencies;
 	}
 
 

@@ -249,16 +249,14 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("Entering");
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT RuleCode Label, SQLRule Value From Rules ");
-		/*selectSql.append(" WHERE RuleCode IN(SELECT Distinct AccountSubHeadRule from RMTTransactionEntry where Account = '" );
-		selectSql.append(PennantConstants.GLNPL);
-		selectSql.append("')");*/
+		selectSql.append(" SELECT RuleCode Label, SQLRule Value From Rules Where RuleModule = 'SUBHEAD'");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
 		
+		List<ValueLabel> valueLables = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		return valueLables;
     }
 	
 	/**

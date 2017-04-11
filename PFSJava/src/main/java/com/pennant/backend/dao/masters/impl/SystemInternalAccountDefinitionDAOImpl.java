@@ -215,8 +215,9 @@ public class SystemInternalAccountDefinitionDAOImpl extends BasisCodeDAO<SystemI
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
 
+		List<ValueLabel> valueLabels = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);	 
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);	
+		return valueLabels;
 	}
 	
 	/**

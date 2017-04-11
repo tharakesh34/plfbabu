@@ -224,8 +224,10 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		selectSql.append(" From RMTTransactionEntry");
 		
 		logger.debug("selectSql: " + selectSql.toString());
+		
+		List<Long> accountSetIDs = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), new BeanPropertySqlParameterSource(""), Long.class);	
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), new BeanPropertySqlParameterSource(""), Long.class);	
+		return accountSetIDs;
 	}
 	
 	/**

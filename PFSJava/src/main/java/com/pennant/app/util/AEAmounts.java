@@ -381,8 +381,8 @@ public class AEAmounts implements Serializable {
 			if ((i != 0) && (valueDate.compareTo(curSchd.getSchDate()) <= 0 || (i == schdDetails.size() - 1)) && pftDetail.getNextRpySchDate() == null) {
 				pftDetail.setNextRpySchDate(curSchdDate);
 				pftDetail.setLastRpySchDate(prvSchdDate);
-				pftDetail.setLastRpySchPft(prvSchd.getPrincipalSchd());
-				pftDetail.setLastRpySchPri(prvSchd.getProfitSchd());
+				pftDetail.setLastRpySchPft(prvSchd.getProfitSchd());
+				pftDetail.setLastRpySchPri(prvSchd.getPrincipalSchd());
 			}
 
 			if (curSchdDate.compareTo(valueDate) == 0) {
