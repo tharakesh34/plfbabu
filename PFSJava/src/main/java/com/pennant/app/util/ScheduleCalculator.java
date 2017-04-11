@@ -2659,6 +2659,10 @@ public class ScheduleCalculator {
 			if (i == 0) {
 				curSchd.setSchdMethod(finScheduleDetails.get(i + 1).getSchdMethod());
 			}
+			
+			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+				finMain.setBpiAmount(curSchd.getProfitSchd());
+			}
 
 			if (schdDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
 				finMain.setTotalGraceCpz(finMain.getTotalGraceCpz().add(curSchd.getCpzAmount()));

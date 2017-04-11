@@ -39,22 +39,32 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 
-
 public interface FinAdvancePaymentsDAO {
 
 	FinAdvancePayments getFinAdvancePayments();
+
 	FinAdvancePayments getNewFinAdvancePayments();
+
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
-	void update(FinAdvancePayments finAdvancePaymentsDAO,String type);
-	void delete(FinAdvancePayments finAdvancePaymentsDAO,String type);
-	String save(FinAdvancePayments finAdvancePaymentsDAO,String type);
+
+	void update(FinAdvancePayments finAdvancePaymentsDAO, String type);
+
+	void delete(FinAdvancePayments finAdvancePaymentsDAO, String type);
+
+	String save(FinAdvancePayments finAdvancePaymentsDAO, String type);
+
 	List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String id, String type);
+
 	void deleteByFinRef(String finReference, String tableType);
+
+	void updateStatus(FinAdvancePayments finAdvancePayments, String type);
+
 	int getBranch(long bankBranchID, String type);
 }

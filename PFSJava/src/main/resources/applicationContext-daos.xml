@@ -5391,6 +5391,8 @@
 	<bean name="finAdvancePaymentsServiceTarget"
 		class="com.pennant.backend.service.finance.impl.FinAdvancePaymentsServiceImpl">
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
+		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -5495,8 +5497,9 @@
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 

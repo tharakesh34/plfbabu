@@ -109,7 +109,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
-import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -145,7 +144,6 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -1930,7 +1928,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				auditDetails.addAll(processQuickDisbursment(financeDetail,tableType,auditTranType));
+				auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,tableType,auditTranType));
 			}else{
 				if (financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
 					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(financeDetail.getAdvancePaymentsList(), tableType, auditTranType));
@@ -3227,8 +3225,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Advance Payment Details
 				//=======================================
 				if (financeDetail.getAdvancePaymentsList() != null) {
-					getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(), "", tranType);
-					processDisbursments(financeDetail);
+					if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+						getFinAdvancePaymentsService().doCancel(financeDetail);
+					}else{
+						getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(), "", tranType);
+					}
+					
+					getFinAdvancePaymentsService().processDisbursments(financeDetail);
 				}
 				
 				// Covenant Type Details
@@ -7342,107 +7345,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return aAuditHeader;
 	}
 	
-	private List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail,String tableType,String auditTranType) {
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
-		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
-			return auditDetails;
-		}
-
-		FinanceMain finmain = financeDetail.getFinScheduleData().getFinanceMain();
-		String nextrole = finmain.getNextRoleCode();
-		String role = finmain.getRoleCode();
-		boolean process = false;
-
-		if (!financeDetail.isActionSave() && !StringUtils.equals(nextrole, role)) {
-			// Checking Authority i.e Is current Role contains authority (or) Not
-			List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails()
-					.doLimitChek(role, finmain.getFinType());
-
-			if (limitCheckList != null && !limitCheckList.isEmpty()) {
-
-				for (FinanceReferenceDetail finRefDetail : limitCheckList) {
-					if (StringUtils.equals(finRefDetail.getLovDescNamelov(), FinanceConstants.QUICK_DISBURSEMENT)) {
-						process = true;
-						break;
-					}
-				}
-			}
-		}
-
-		if (process) {
-			processDisbursments(financeDetail);
-			auditDetails.addAll(getFinAdvancePaymentsService().doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
-			getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),"_Temp", "");
-		}else{
-			auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(finAdvancePayList, tableType, auditTranType));
-		}
-
-		return auditDetails;
-	}
 	
-	private void processDisbursments(FinanceDetail financeDetail) {
-		logger.debug("Entering");
-
-		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
-
-		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
-			return;
-		}
-
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		boolean save = false;
-		PayOrderIssueHeader payOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(finMain.getFinReference(), "");
-		if (payOrderIssueHeader == null) {
-			save = true;
-			payOrderIssueHeader = new PayOrderIssueHeader();
-			payOrderIssueHeader.setFinReference(finMain.getFinReference());
-			payOrderIssueHeader.setVersion(1);
-			payOrderIssueHeader.setLastMntBy(finMain.getLastMntBy());
-			payOrderIssueHeader.setLastMntOn(finMain.getLastMntOn());
-			payOrderIssueHeader.setRoleCode("");
-			payOrderIssueHeader.setNextRoleCode("");
-			payOrderIssueHeader.setTaskId("");
-			payOrderIssueHeader.setNextTaskId("");
-			payOrderIssueHeader.setRecordType("");
-			payOrderIssueHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		}
-		//get total amount from disbursement details
-		BigDecimal totPOAmount = BigDecimal.ZERO;
-		FinScheduleData schd = financeDetail.getFinScheduleData();
-		if (schd != null && schd.getDisbursementDetails() != null) {
-			for (FinanceDisbursement disbursement : schd.getDisbursementDetails()) {
-				totPOAmount = totPOAmount.add(disbursement.getDisbAmount());
-			}
-		}
-
-		BigDecimal totPOdueAmt = BigDecimal.ZERO;
-		int totpoCount = 0;
-		int totdueCount = 0;
-
-		for (FinAdvancePayments finAdvancePayment : finAdvancePayList) {
-			if (!finAdvancePayment.ispOIssued()) {
-				totPOdueAmt = totPOdueAmt.add(finAdvancePayment.getAmtToBeReleased());
-				totdueCount++;
-			}
-			
-			totpoCount++;
-		}
-
-		payOrderIssueHeader.setTotalPOCount(totpoCount);
-		payOrderIssueHeader.setpODueCount(totdueCount);
-		payOrderIssueHeader.setTotalPOAmount(totPOAmount);
-		payOrderIssueHeader.setpODueAmount(totPOdueAmt);
-		if (save) {
-			getPayOrderIssueHeaderDAO().save(payOrderIssueHeader, "");
-		} else {
-			payOrderIssueHeader.setVersion(payOrderIssueHeader.getVersion() + 1);
-			getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, "");
-		}
-
-		logger.debug("Leaving");
-	}
 	
 
 	@Override

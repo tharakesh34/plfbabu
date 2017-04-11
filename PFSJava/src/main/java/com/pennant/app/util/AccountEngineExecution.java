@@ -1565,7 +1565,7 @@ public class AccountEngineExecution implements Serializable {
 					throws IllegalAccessException, InvocationTargetException{
 		
 		//System Internal Account Number Fetching
-		String sysIntAcNum = sysIntAccMap.get(accountType);
+		String sysIntAcNum =StringUtils.trimToEmpty( sysIntAccMap.get(accountType));
 
 		String currencyNymber =CurrencyUtil.getCcyNumber(dataSet.getFinCcy());
 		

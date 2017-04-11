@@ -72,44 +72,70 @@
 									<hbox>
 										<decimalbox id="payOrderIssue_FinAmount" tabindex="-1" readonly="true" width="150px" style="border:none; background-color:white ;font-weight:bold;" />
 									</hbox>
-									<label value="${c:l('label_PaymentOrderIssueDialog_QuickDisb.value')}"  visible="false"/>
+									<label value="${c:l('label_PaymentOrderIssueDialog_QuickDisb.value')}" visible="false" />
 									<hbox>
-										<checkbox id="payOrderIssue_quickDisb" disabled="true" visible="false" ></checkbox>
+										<checkbox id="payOrderIssue_quickDisb" disabled="true" visible="false"></checkbox>
 									</hbox>
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
-					<groupbox id="gb_PayOrderIssueDialog" mold="3d">
-						<div sclass="z-toolbar" height="auto">
-							<hbox pack="stretch" widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
-								<!-- COMMON BUTTONS -->
-								<toolbar align="start" sclass="toolbar-start">
-									<label id="label_AdvancePayments_Title" value="${c:l('PayOrderIssueDialog')}" style="font-weight:bold; font-size: 11px;" />
-								</toolbar>
-								<!-- SEARCH AREA -->
-								<toolbar align="center" sclass="toolbar-center" />
-								<!-- CRUD BUTTONS -->
-								<toolbar align="end" sclass="toolbar-end">
-									<button id="button_PayOrderIssueDialog_NewDisbursement" visible="false" label="${c:l('label_New')}" tooltiptext="${c:l('button_PayOrderIssueDialog_NewDisbursement.tooltiptext')}" />
-								</toolbar>
-							</hbox>
-						</div>
-						<listbox id="listboxPayOrderIssue" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" sizedByContent="true" span="true">
-							<listhead sizable="true">
-								<listheader id="listheader_AdvancePayments_PaymentSeq" label="${c:l('listheader_AdvancePayments_PaymentSeq.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_PaymentDetail" label="${c:l('listheader_PayOrderIssueDialog_PaymentDetail.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_PaymentType" label="${c:l('listheader_PayOrderIssueDialog_PaymentType.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_FavoringBank" label="${c:l('listheader_PayOrderIssueDialog_FavoringBank.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_FavoringName" label="${c:l('listheader_PayOrderIssueDialog_FavoringName.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_AccountNumber" label="${c:l('listheader_PayOrderIssueDialog_AccountNumber.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_AmtToBeReleased" label="${c:l('listheader_PayOrderIssueDialog_AmtToBeReleased.label')}" sort="false" hflex="min" align="right" />
-								<listheader id="listheader_PayOrderIssueDialog_POStatus" label="${c:l('listheader_PayOrderIssueDialog_POStatus.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_PayOrderIssueDialog_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
-							</listhead>
-						</listbox>
-					</groupbox>
+					<tabbox>
+						<tabs>
+							<tab label="Disbursement Instruction"></tab>
+							<tab id="tabPostings" label="Posting details"></tab>
+						</tabs>
+						<tabpanels>
+							<tabpanel>
+								<groupbox id="gb_PayOrderIssueDialog" mold="3d">
+									<div sclass="z-toolbar" height="auto">
+										<hbox pack="stretch" widths="35%,30%,35%" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:0px;">
+											<!-- COMMON BUTTONS -->
+											<toolbar align="start" sclass="toolbar-start">
+												<label id="label_AdvancePayments_Title" value="${c:l('PayOrderIssueDialog')}" style="font-weight:bold; font-size: 11px;" />
+											</toolbar>
+											<!-- SEARCH AREA -->
+											<toolbar align="center" sclass="toolbar-center" />
+											<!-- CRUD BUTTONS -->
+											<toolbar align="end" sclass="toolbar-end">
+												<button id="button_PayOrderIssueDialog_NewDisbursement" visible="false" label="${c:l('label_New')}" tooltiptext="${c:l('button_PayOrderIssueDialog_NewDisbursement.tooltiptext')}" />
+											</toolbar>
+										</hbox>
+									</div>
+									<listbox id="listboxPayOrderIssue" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" sizedByContent="true" span="true">
+										<listhead sizable="true">
+											<listheader id="listheader_AdvancePayments_PaymentSeq" label="${c:l('listheader_AdvancePayments_PaymentSeq.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_PaymentDetail" label="${c:l('listheader_PayOrderIssueDialog_PaymentDetail.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_PaymentType" label="${c:l('listheader_PayOrderIssueDialog_PaymentType.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_FavoringBank" label="${c:l('listheader_PayOrderIssueDialog_FavoringBank.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_FavoringName" label="${c:l('listheader_PayOrderIssueDialog_FavoringName.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_AccountNumber" label="${c:l('listheader_PayOrderIssueDialog_AccountNumber.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_AmtToBeReleased" label="${c:l('listheader_PayOrderIssueDialog_AmtToBeReleased.label')}" sort="false" hflex="min" align="right" />
+											<listheader id="listheader_PayOrderIssueDialog_POStatus" label="${c:l('listheader_PayOrderIssueDialog_POStatus.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+											<listheader id="listheader_PayOrderIssueDialog_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+							<tabpanel>
+								<!-- posting -->
+								<listbox id="listBoxFinAccountings" fixedLayout="true" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
+									<listhead sizable="false">
+										<listheader id="listheader_Acc_DebitOrCredit" label="${c:l('listheader_Acc_DebitOrCredit.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_EntryDesc" label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_TranCode" label="${c:l('listheader_Acc_TranCode.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false" hflex="min" visible="false" />
+										<listheader id="listheader_Acc_AccountType" label="${c:l('listheader_Acc_AccountType.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_Amount" label="${c:l('listheader_Acc_Amount.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_Error" label="${c:l('listheader_Acc_Error.label')}" sort="false" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
 				</div>
 			</center>
 			<south sclass="south-dialog">

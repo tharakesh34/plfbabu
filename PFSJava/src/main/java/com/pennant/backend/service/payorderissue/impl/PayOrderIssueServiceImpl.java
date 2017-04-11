@@ -42,33 +42,41 @@
  */
 package com.pennant.backend.service.payorderissue.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
-import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>PayOrderIssueHeader</b>.<br>
@@ -82,7 +90,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private FinAdvancePaymentsDAO	finAdvancePaymentsDAO;
 	private BeneficiaryDAO			beneficiaryDAO;
 	private FinanceDisbursementDAO	financeDisbursementDAO;
-	private FinFeeDetailDAO			finFeeDetailDAO;
+	private PostingsPreparationUtil	postingsPreparationUtil;
+	private FinanceMainDAO			financeMainDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -202,25 +211,24 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Override
 	public PayOrderIssueHeader getPayOrderIssueHeaderById(String id) {
 		logger.debug("Entering");
-		PayOrderIssueHeader payOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(id, "_View");
-		payOrderIssueHeader.setFinAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(
-				payOrderIssueHeader.getFinReference(), "_View"));
-		List<FinanceDisbursement> list = null;
-		if (payOrderIssueHeader.isLoanApproved()) {
-			list = financeDisbursementDAO.getFinanceDisbursementDetails(payOrderIssueHeader.getFinReference(), "",
-					false);
-			payOrderIssueHeader.setFinFeeDetails(finFeeDetailDAO.getFinFeeDetailByFinRef(payOrderIssueHeader.getFinReference(), false, ""));
-			
-		} else {
-			list = financeDisbursementDAO.getFinanceDisbursementDetails(payOrderIssueHeader.getFinReference(), "_Temp",
-					false);
-			payOrderIssueHeader.setFinFeeDetails(finFeeDetailDAO.getFinFeeDetailByFinRef(payOrderIssueHeader.getFinReference(), false, "_Temp"));
+		PayOrderIssueHeader issueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(id, "_View");
+		FinanceMain finMian = getFinanceMainDAO().getDisbursmentFinMainById(issueHeader.getFinReference(),
+				TableType.MAIN_TAB);
+		issueHeader.setLoanApproved(true);
+		if (finMian == null) {
+			finMian = getFinanceMainDAO().getDisbursmentFinMainById(id, TableType.TEMP_TAB);
+			issueHeader.setLoanApproved(false);
 		}
-		
-		
-		payOrderIssueHeader.setFinanceDisbursements(list);
+		issueHeader.setFinanceMain(finMian);
+
+		issueHeader.setFinAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(
+				issueHeader.getFinReference(), "_View"));
+		issueHeader.setFinanceDisbursements(financeDisbursementDAO.getFinanceDisbursementDetails(
+				issueHeader.getFinReference(), "", false));
+		issueHeader.setApprovedFinanceDisbursements(financeDisbursementDAO.getFinanceDisbursementDetails(
+				issueHeader.getFinReference(), "_Temp", false));
 		logger.debug("Leaving");
-		return payOrderIssueHeader;
+		return issueHeader;
 	}
 
 	/**
@@ -273,8 +281,29 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
+
+			List<Object> list = processPostings(payOrderIssueHeader, tranType);
+			//FIXME Accounting			
+			//			if (list == null || (!(Boolean) list.get(0))) {
+			//				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
+			//
+			//				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
+			//				return auditHeader;
+			//			}
+
 			getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
 		} else {
+
+			//Posting Process For Commodity inventory
+			List<Object> list = processPostings(payOrderIssueHeader, tranType);
+			//FIXME Accounting
+			//			if (list == null || (!(Boolean) list.get(0))) {
+			//				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
+			//
+			//				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
+			//				return auditHeader;
+			//			}
+
 			payOrderIssueHeader.setRoleCode("");
 			payOrderIssueHeader.setNextRoleCode("");
 			payOrderIssueHeader.setTaskId("");
@@ -602,6 +631,41 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 	}
 
+	public List<Object> processPostings(PayOrderIssueHeader issueHeader, String tranType) {
+		logger.debug(" Entering ");
+		//get Accounting set and prepared return data set
+		List<Object> returnList = null;
+		try {
+
+			List<ReturnDataSet> returnDataSetList = getPostingsPreparationUtil().prepareAccountingDataSet(issueHeader,
+					AccountEventConstants.ACCEVENT_DISBINS, "Y");
+
+			if (returnDataSetList != null) {
+				return getPostingsPreparationUtil().processPostings(returnDataSetList);
+			} else {
+				returnList = new ArrayList<Object>();
+				returnList.add(false);
+				returnList.add("Accounting not defined");
+				return returnList;
+			}
+
+		} catch (PFFInterfaceException e) {
+			logger.debug(e);
+			returnList = new ArrayList<Object>();
+			returnList.add(false);
+			returnList.add(e.getErrorMessage());
+		} catch (IllegalAccessException e) {
+			logger.debug(e);
+		} catch (InvocationTargetException e) {
+			logger.debug(e);
+		} catch (AccountNotFoundException e) {
+			logger.debug(e);
+		}
+		logger.debug(" Leaving ");
+		return returnList;
+
+	}
+
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
@@ -614,7 +678,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 }

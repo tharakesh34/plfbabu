@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentsById(String id,String type);
@@ -54,4 +55,8 @@ public interface FinAdvancePaymentsService {
 	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	void processDisbursments(FinanceDetail financeDetail);
+	List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
+	void doCancel(FinanceDetail financeDetail);
+	
 }

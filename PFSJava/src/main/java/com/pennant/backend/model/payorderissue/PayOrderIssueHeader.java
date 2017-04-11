@@ -11,8 +11,8 @@ import java.util.Set;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 public class PayOrderIssueHeader extends AbstractWorkflowEntity {
@@ -30,6 +30,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private LoggedInUser						userDetails;
 	private HashMap<String, List<AuditDetail>>	auditDetailMap			= new HashMap<String, List<AuditDetail>>();
 	private List<FinAdvancePayments>			finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
+	private FinanceMain							financeMain;
 
 	//others
 	private String								custCIF;
@@ -38,34 +39,14 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private String								finType;
 	private String								finTypeDesc;
 	private String								finCcy;
-	private String								finBranch;
-	private String								finBranchDesc;
-	private String								profitDaysBasis;
-	private int									numberOfTerms			= 0;
-	private int									graceTerms				= 0;
-	private Date								finStartDate;
-	private Date								maturityDate;
-	private BigDecimal							finAmount				= BigDecimal.ZERO;
-	private BigDecimal							downPayBank				= BigDecimal.ZERO;
-	private BigDecimal							downPaySupl				= BigDecimal.ZERO;
-	private BigDecimal							feeChargeAmt			= BigDecimal.ZERO;
-	private BigDecimal							finRepaymentAmount		= BigDecimal.ZERO;
-	private BigDecimal							totalProfit				= BigDecimal.ZERO;
-	private BigDecimal							effectiveRateOfReturn;
-	private long								custID;
-	private boolean								alwMultiPartyDisb;
-	private boolean								quickDisb;
+	
+	
 	private boolean								loanApproved;
-	private boolean 							finIsActive;
+	private boolean								finIsActive;
+	private boolean								alwMultiPartyDisb;
 
 	private List<FinanceDisbursement>			financeDisbursements;
-	private List<FinFeeDetail>					finFeeDetails;
-
-	//FIXME TO be removed from view	
-	//	finCategory
-	//	custEIDNumber
-	//	mobileNumber
-	//	financeDetail
+	private List<FinanceDisbursement>			approvedFinanceDisbursements;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -88,28 +69,13 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		excludeFields.add("finType");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("finCcy");
-		excludeFields.add("finBranch");
-		excludeFields.add("finBranchDesc");
-		excludeFields.add("profitDaysBasis");
-		excludeFields.add("numberOfTerms");
-		excludeFields.add("graceTerms");
-		excludeFields.add("finStartDate");
-		excludeFields.add("maturityDate");
-		excludeFields.add("finAmount");
-		excludeFields.add("downPayBank");
-		excludeFields.add("downPaySupl");
-		excludeFields.add("feeChargeAmt");
-		excludeFields.add("finRepaymentAmount");
-		excludeFields.add("totalProfit");
-		excludeFields.add("effectiveRateOfReturn");
 		excludeFields.add("finAdvancePaymentsList");
-		excludeFields.add("custID");
-		excludeFields.add("alwMultiPartyDisb");
-		excludeFields.add("quickDisb");
 		excludeFields.add("loanApproved");
 		excludeFields.add("financeDisbursements");
-		excludeFields.add("finFeeDetails");
+		excludeFields.add("approvedFinanceDisbursements");
 		excludeFields.add("finIsActive");
+		excludeFields.add("financeMain");
+		excludeFields.add("alwMultiPartyDisb");
 		return excludeFields;
 	}
 
@@ -217,118 +183,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		this.finCcy = finCcy;
 	}
 
-	public String getFinBranch() {
-		return finBranch;
-	}
-
-	public void setFinBranch(String finBranch) {
-		this.finBranch = finBranch;
-	}
-
-	public String getFinBranchDesc() {
-		return finBranchDesc;
-	}
-
-	public void setFinBranchDesc(String finBranchDesc) {
-		this.finBranchDesc = finBranchDesc;
-	}
-
-	public String getProfitDaysBasis() {
-		return profitDaysBasis;
-	}
-
-	public void setProfitDaysBasis(String profitDaysBasis) {
-		this.profitDaysBasis = profitDaysBasis;
-	}
-
-	public int getNumberOfTerms() {
-		return numberOfTerms;
-	}
-
-	public void setNumberOfTerms(int numberOfTerms) {
-		this.numberOfTerms = numberOfTerms;
-	}
-
-	public int getGraceTerms() {
-		return graceTerms;
-	}
-
-	public void setGraceTerms(int graceTerms) {
-		this.graceTerms = graceTerms;
-	}
-
-	public Date getFinStartDate() {
-		return finStartDate;
-	}
-
-	public void setFinStartDate(Date finStartDate) {
-		this.finStartDate = finStartDate;
-	}
-
-	public Date getMaturityDate() {
-		return maturityDate;
-	}
-
-	public void setMaturityDate(Date maturityDate) {
-		this.maturityDate = maturityDate;
-	}
-
-	public BigDecimal getFinAmount() {
-		return finAmount;
-	}
-
-	public void setFinAmount(BigDecimal finAmount) {
-		this.finAmount = finAmount;
-	}
-
-	public BigDecimal getDownPayBank() {
-		return downPayBank;
-	}
-
-	public void setDownPayBank(BigDecimal downPayBank) {
-		this.downPayBank = downPayBank;
-	}
-
-	public BigDecimal getDownPaySupl() {
-		return downPaySupl;
-	}
-
-	public void setDownPaySupl(BigDecimal downPaySupl) {
-		this.downPaySupl = downPaySupl;
-	}
-
-	public BigDecimal getFeeChargeAmt() {
-		return feeChargeAmt;
-	}
-
-	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
-		this.feeChargeAmt = feeChargeAmt;
-	}
-
-	public BigDecimal getFinRepaymentAmount() {
-		return finRepaymentAmount;
-	}
-
-	public void setFinRepaymentAmount(BigDecimal finRepaymentAmount) {
-		this.finRepaymentAmount = finRepaymentAmount;
-	}
-
-	public BigDecimal getTotalProfit() {
-		return totalProfit;
-	}
-
-	public void setTotalProfit(BigDecimal totalProfit) {
-		this.totalProfit = totalProfit;
-	}
-
-	public BigDecimal getEffectiveRateOfReturn() {
-		return effectiveRateOfReturn;
-	}
-
-	public void setEffectiveRateOfReturn(BigDecimal effectiveRateOfReturn) {
-		this.effectiveRateOfReturn = effectiveRateOfReturn;
-	}
-
 	public BigDecimal getTotalPOAmount() {
 		return totalPOAmount;
 	}
@@ -369,29 +223,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public long getCustID() {
-		return custID;
-	}
-
-	public void setCustID(long custID) {
-		this.custID = custID;
-	}
-
-	public boolean isAlwMultiPartyDisb() {
-		return alwMultiPartyDisb;
-	}
-
-	public void setAlwMultiPartyDisb(boolean alwMultiPartyDisb) {
-		this.alwMultiPartyDisb = alwMultiPartyDisb;
-	}
-
-	public boolean isQuickDisb() {
-		return quickDisb;
-	}
-
-	public void setQuickDisb(boolean quickDisb) {
-		this.quickDisb = quickDisb;
-	}
 
 	public boolean isLoanApproved() {
 		return loanApproved;
@@ -417,11 +248,27 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		this.finIsActive = finIsActive;
 	}
 
-	public List<FinFeeDetail> getFinFeeDetails() {
-		return finFeeDetails;
+	public List<FinanceDisbursement> getApprovedFinanceDisbursements() {
+		return approvedFinanceDisbursements;
 	}
 
-	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
-		this.finFeeDetails = finFeeDetails;
+	public void setApprovedFinanceDisbursements(List<FinanceDisbursement> approvedFinanceDisbursements) {
+		this.approvedFinanceDisbursements = approvedFinanceDisbursements;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
+	}
+
+	public boolean isAlwMultiPartyDisb() {
+		return alwMultiPartyDisb;
+	}
+
+	public void setAlwMultiPartyDisb(boolean alwMultiPartyDisb) {
+		this.alwMultiPartyDisb = alwMultiPartyDisb;
 	}
 }

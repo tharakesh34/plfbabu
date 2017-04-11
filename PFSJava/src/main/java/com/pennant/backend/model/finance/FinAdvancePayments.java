@@ -69,10 +69,10 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	
 	private static final long serialVersionUID = -6234931333270161797L;
 
+	private long paymentId=Long.MIN_VALUE;
 	private String finReference;
 	private int paymentSeq;
 	private int disbSeq;
-	private long paymentId;
 	
 	@XmlElement(name="disbParty")
 	private String paymentDetail;

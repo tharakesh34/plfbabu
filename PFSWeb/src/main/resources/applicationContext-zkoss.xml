@@ -2704,6 +2704,7 @@
 		class="com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="payOrderIssueService" ref="payOrderIssueService" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!-- ====================================================== -->

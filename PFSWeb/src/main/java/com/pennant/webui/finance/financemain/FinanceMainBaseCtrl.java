@@ -2041,7 +2041,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS));
 				map.put("moduleDefiner", moduleDefiner);
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) || 
+						StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
 					FinanceMain finmain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 					map.put("approvedDisbursments",
 							getFinanceDetailService().getFinanceDisbursements(finmain.getFinReference(), "", false));

@@ -138,9 +138,9 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		paymentOrderIssue.setFinReference(finReference);
 		StringBuilder selectSql = new StringBuilder(" Select FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" FinType,CustCIF,CustID,PhoneNumber,CustshrtName,CustCRCPR,FinCategory, FinTypeDesc, FinCcy,LoanApproved, ");
-			selectSql.append(" NumberOfTerms, GraceTerms, FinStartDate, MaturityDate, FinAmount, FeeChargeAmt,alwMultiPartyDisb, ");
-			selectSql.append(" DownPaySupl, TotalProfit, EffectiveRateOfReturn, ProfitDaysBasis,FinIsActive, ");
+			selectSql.append(" FinType,CustCIF,CustID,CustshrtName, FinTypeDesc, FinCcy, ");
+			selectSql.append(" alwMultiPartyDisb, ");
+			selectSql.append(" FinIsActive, ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");

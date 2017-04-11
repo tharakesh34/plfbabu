@@ -86,6 +86,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -197,9 +198,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private List<FinanceDisbursement>			financeDisbursement	= null;
 	private List<FinanceDisbursement>			approvedDisbursments;
 
-	protected int									accNoLength;
-	private transient BankDetailService				bankDetailService;
-	private FinanceMain								financeMain;
+	protected int								accNoLength;
+	private transient BankDetailService			bankDetailService;
+	private FinanceMain							financeMain;
 
 	/**
 	 * default constructor.<br>
@@ -225,12 +226,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinAdvancePaymentsDialog(Event event) throws Exception {
 		logger.debug("Entering");
-
 		// Set the page level components.
 		setPageComponents(window_FinAdvancePaymentsDialog);
 
 		try {
-
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
@@ -666,8 +665,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneAreaCode.setWidth("50px");
 		this.phoneNumber.setMaxlength(8);
 		this.phoneNumber.setWidth("100px");
-		
-		if(StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())){
+
+		if (StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
 		}
 
@@ -774,18 +773,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * @param value
 	 * @param list
 	 */
-	public void fillComboBox(Combobox combobox, int seq, List<FinanceDisbursement> list,
-			boolean execuledApprove) {
+	public void fillComboBox(Combobox combobox, int seq, List<FinanceDisbursement> list, boolean execuledApprove) {
 		logger.debug("Entering fillComboBox()");
 		combobox.getChildren().clear();
-		boolean seqRequired = false;
-		for (FinanceDisbursement financeDisbursement : list) {
-			if (financeDisbursement.getDisbSeq() != 1) {
-				seqRequired = true;
-				break;
-			}
-		}
-
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
@@ -796,12 +786,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (execuledApprove && isContainsInAppList(disbursement)) {
 				continue;
 			}
+			//cancelled disbursement should not be allowed to process
+			if (StringUtils.trimToEmpty(disbursement.getDisbStatus()).equals(FinanceConstants.DISB_STATUS_CANCEL)) {
+				continue;
+			}
 
 			comboitem = new Comboitem();
 			String label = DateUtility.formatToLongDate(disbursement.getDisbDate());
-			if (seqRequired) {
-				label = label.concat(" , ") + disbursement.getDisbSeq();
-			}
+			label = label.concat(" , ") + disbursement.getDisbSeq();
 			comboitem.setLabel(label);
 			comboitem.setValue(disbursement.getDisbDate());
 			comboitem.setAttribute("data", disbursement);
@@ -819,9 +811,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (disbursement.getDisbDate().getTime() == financeDisbursement.getDisbDate().getTime()
 						&& disbursement.getDisbSeq() == financeDisbursement.getDisbSeq()) {
 					return true;
-
 				}
-
 			}
 		}
 		return false;
@@ -845,7 +835,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 */
 	public void doWriteComponentsToBean(FinAdvancePayments aFinAdvancePayments) throws InterruptedException {
 		logger.debug("Entering");
-		doSetLOVValidation();
 		String paymentType = "";
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -963,20 +952,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						FinanceDisbursement disbursement = (FinanceDisbursement) data;
 						if (this.llDate.getValue().compareTo(disbursement.getDisbDate()) < 0) {
 							throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
-									new String[] {Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), Labels.getLabel("label_FinAdvancePaymentsDialog_DisbDate.value")
-											 }));
+									new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
+											Labels.getLabel("label_FinAdvancePaymentsDialog_DisbDate.value") }));
 						}
 					}
 				}
-				
-				if (financeMain !=null && financeMain.getMaturityDate() !=null) {
+
+				if (financeMain != null && financeMain.getMaturityDate() != null) {
 					if (this.llDate.getValue().compareTo(financeMain.getMaturityDate()) > 0) {
-						 String val=Labels.getLabel("label_MaturityDate")+":"+DateUtility.formatToLongDate(financeMain.getMaturityDate());
+						String val = Labels.getLabel("label_MaturityDate") + ":"
+								+ DateUtility.formatToLongDate(financeMain.getMaturityDate());
 						throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-								new String[] {Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),val}));
+								new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), val }));
 					}
 				}
-				
 
 				aFinAdvancePayments.setLLDate(this.llDate.getValue());
 			}
@@ -1087,7 +1076,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -1183,7 +1171,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (!this.beneficiaryAccNo.isReadonly()) {
 				this.beneficiaryAccNo.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-						PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true,accNoLength));
+						PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, accNoLength));
 			}
 		}
 
@@ -1218,21 +1206,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set Validations for LOV Fields
-	 */
 
-	private void doSetLOVValidation() {
-
-	}
-
-	/**
-	 * Remove the Validation by setting empty constraints.
-	 */
-
-	private void doRemoveLOVValidation() {
-
-	}
 
 	/**
 	 * Remove Error Messages for Fields
@@ -1502,7 +1476,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		List<FinAdvancePayments> listAdvance = null;
 		if (this.moduleType.equals("LOAN")) {
-			listAdvance = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsDetailList();
+			listAdvance = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
 		} else {
 			listAdvance = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
@@ -1608,7 +1582,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.city.setValue(details.getCity());
 				this.branch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
-				if(StringUtils.isNotBlank(details.getBankCode())){
+				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
 			}
@@ -1725,7 +1699,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.phoneCountryCode.setValue(details.getPhoneCountryCode());
 				this.phoneAreaCode.setValue(details.getPhoneAreaCode());
 				this.phoneNumber.setValue(details.getPhoneNumber());
-				if(StringUtils.isNotBlank(details.getBankCode())){
+				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
 			}

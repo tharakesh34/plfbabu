@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailFinance;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceMainDAO {
 	FinanceMain getFinanceMain(boolean isWIF);
@@ -192,5 +193,7 @@ public interface FinanceMainDAO {
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
 	
 	BigDecimal getFinAssetValue(String finReference);
+
+	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
 
 }

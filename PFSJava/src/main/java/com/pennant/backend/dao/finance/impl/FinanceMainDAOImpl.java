@@ -71,6 +71,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
@@ -298,6 +299,46 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return null;
 	}
+	
+	
+	/**
+	 * Fetch the Record Finance Main Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinanceMain
+	 */
+	@Override
+	public FinanceMain getDisbursmentFinMainById(final String finReference, TableType tableType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT T1.FinCcy,T1.FinType,T1.CustID,T1.FinStartDate,");
+		selectSql.append(" T1.FinReference,T1.MaturityDate,T1.FeeChargeAmt,T1.DownPayment,T1.DeductFeeDisb, ");
+		selectSql.append(" T1.BpiAmount,T1.DeductInsDisb,T1.FinisActive, T2.alwMultiPartyDisb,T2.FinTypeDesc,");
+		selectSql.append(" T1.BpiTreatment,T3.CustCIF,T3.CustShrtName,T1.quickDisb From FinanceMain");
+		selectSql.append(tableType.getSuffix());
+		selectSql.append(" T1 INNER JOIN RMTFinanceTypes T2 ON T1.FinType=T2.FinType ");
+		selectSql.append(" INNER JOIN Customers T3 ON T1.CustID = T3.CustID ");
+		selectSql.append(" Where T1.FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source.addValue("FinReference", finReference);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
 	
 	/**
 	 * Fetch the Record Finance Main Detail details by key field

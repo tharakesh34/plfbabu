@@ -66,6 +66,7 @@ import com.pennant.backend.model.finance.FinancePremiumDetail;
 import com.pennant.backend.model.inventorysettlement.InventorySettlement;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
@@ -293,6 +294,32 @@ public class PostingsPreparationUtil implements Serializable {
 		dataSet.setSETTLEAMT(inventory.getSettleAmt());
 		dataSet.setUNSOLDFEE(inventory.getUnSoldFee());
 
+		//Create Data set filler
+		DataSetFiller dataSetFiller = new DataSetFiller();
+		dataSetFiller.setReqFinBranch(PennantConstants.IBD_Branch);
+		dataSetFiller.setBrokerAccount(dataSet.getBrokerAccount());
+		dataSetFiller.setPURAMOUNT(dataSet.getPURAMOUNT());
+		dataSetFiller.setQUANTITY(dataSet.getQUANTITY());
+		dataSetFiller.setUNITPRICE(dataSet.getUNITPRICE());
+		dataSetFiller.setSETTLEAMT(dataSet.getSETTLEAMT());
+		dataSetFiller.setUNSOLDFEE(dataSet.getUNSOLDFEE());
+		return getEngineExecution().processAccountingByEvent(dataSet, dataSetFiller, acSetEvent, createNow);
+	}
+	
+	public List<ReturnDataSet> prepareAccountingDataSet(PayOrderIssueHeader inventory, String acSetEvent, String createNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		DataSet dataSet = new DataSet();
+		//dataSet.setFinReference();
+		dataSet.setPostDate(DateUtility.getSysDate());
+		dataSet.setValueDate(DateUtility.getSysDate());
+		dataSet.setFinCcy(SysParamUtil.getAppCurrency());
+//		dataSet.setCustId(inventory.getBrokerCustID());
+		//post reference
+//		dataSet.setFinReference(inventory.getId() + inventory.getBrokerCode());
+		dataSet.setFinBranch(PennantConstants.IBD_Branch);
+//		dataSet.setBrokerAccount(inventory.getAccountNumber());
+//		dataSet.setSETTLEAMT(inventory.getSettleAmt());
+//		dataSet.setUNSOLDFEE(inventory.getUnSoldFee());
+		
 		//Create Data set filler
 		DataSetFiller dataSetFiller = new DataSetFiller();
 		dataSetFiller.setReqFinBranch(PennantConstants.IBD_Branch);
