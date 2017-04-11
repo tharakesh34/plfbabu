@@ -95,7 +95,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		String[] parsers = new String[2];
 		parsers[0] = ParserNames.READER.name();
 		parsers[1] = ParserNames.DBREADER.name();
-		List<Configuration> configList = dataEngineConfig.getMenuList(parsers);
+		List<Configuration> configList = dataEngineConfig.getMenuList(parsers, true);
 		
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		

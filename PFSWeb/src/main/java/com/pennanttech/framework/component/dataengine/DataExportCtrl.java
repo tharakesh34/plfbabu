@@ -112,7 +112,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		String[] parsers = new String[2];
 		parsers[0] = ParserNames.WRITER.name();
 		parsers[1] = ParserNames.DBWRITER.name();
-		List<Configuration> configList = dataEngineConfig.getMenuList(parsers);
+		List<Configuration> configList = dataEngineConfig.getMenuList(parsers, false);
 		
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
