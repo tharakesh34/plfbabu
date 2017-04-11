@@ -40,6 +40,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  implements FinanceWriteoffService {
@@ -186,7 +187,6 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		String tableType = "";
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		
@@ -205,11 +205,12 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		String finReference = financeMain.getFinReference();
 		Date curBDay = DateUtility.getAppDate();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_WRITEOFF);
-		if(StringUtils.isEmpty(tableType)){
+		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
 		
@@ -252,13 +253,13 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 			//Save Finance Writeoff Details
 			int seqNo = getFinanceWriteoffDAO().getMaxFinanceWriteoffSeq(finReference, financeWriteoff.getWriteoffDate(), "");
 			financeWriteoff.setSeqNo(seqNo+1);
-			getFinanceWriteoffDAO().save(financeWriteoff, tableType);
+			getFinanceWriteoffDAO().save(financeWriteoff, tableType.getSuffix());
 			
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType, false);
+			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 			
 			//Update Writeoff Details depends on Workflow
-			getFinanceWriteoffDAO().update(financeWriteoff, tableType);
+			getFinanceWriteoffDAO().update(financeWriteoff, tableType.getSuffix());
 		}
 		
 		// Save schedule details
@@ -290,25 +291,25 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 				}
 			}*/
 
-			listDeletion(finReference, tableType);
-			listSave(scheduleData, tableType, 0);
+			listDeletion(finReference, tableType.getSuffix());
+			listSave(scheduleData, tableType.getSuffix(), 0);
 		} else {
-			listDeletion(finReference, tableType);
-			listSave(scheduleData, tableType, 0);
+			listDeletion(finReference, tableType.getSuffix());
+			listSave(scheduleData, tableType.getSuffix(), 0);
 		}
 		
 		// Save Fee Charges List
 		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), header.getFinanceDetail().getModuleDefiner() ,false, tableType);
+		if (tableType == TableType.TEMP_TAB) {
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), header.getFinanceDetail().getModuleDefiner() ,false, tableType.getSuffix());
 		}
-		saveFeeChargeList(header.getFinanceDetail().getFinScheduleData(),header.getFinanceDetail().getModuleDefiner(), false,tableType);
+		saveFeeChargeList(header.getFinanceDetail().getFinScheduleData(),header.getFinanceDetail().getModuleDefiner(), false,tableType.getSuffix());
 		
 		// Save Document Details
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType,
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),
 					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),header.getFinanceDetail().getModuleDefiner());
 			auditDetails.addAll(details);
 		}
@@ -316,7 +317,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (header.getFinanceDetail().getFinanceCheckList() != null && !header.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType.getSuffix()));
 		}
 		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

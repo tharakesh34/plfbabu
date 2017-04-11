@@ -79,6 +79,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>TreasuaryFinance</b>.<br>
@@ -222,26 +223,26 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			return auditHeader;
 		}
 
-		String type="";
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		List<FinanceDetail> finDetailList = new ArrayList<FinanceDetail>();
 		finDetailList.add(financeDetail);
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			type = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (financeDetail.isNew()) {
-			getFinanceMainDAO().save(financeMain, type, false);
+			getFinanceMainDAO().save(financeMain, tableType, false);
 		}else{
-			getFinanceMainDAO().update(financeMain, type, false);
+			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 		}
 		
 		saveScheduleDetails(financeDetail, "_Temp", false);
 
-		auditDetails.addAll(saveOrUpdateDetails(finDetailList, type, auditHeader.getAuditTranType()));
+		auditDetails.addAll(saveOrUpdateDetails(finDetailList, tableType.getSuffix(), auditHeader.getAuditTranType()));
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
@@ -409,7 +410,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {	
 				tranType = PennantConstants.TRAN_ADD;
 				financeMain.setRecordType("");
-				getFinanceMainDAO().save(financeMain, "", false);
+				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, false);
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				financeMain.setRecordType("");
@@ -841,7 +842,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			}
 			financeMain.setLastMntBy(header.getLastMntBy());
 			if (saveRecord) {
-				getFinanceMainDAO().save(financeMain, type, false);
+				getFinanceMainDAO().save(financeMain, TableType.valueOf(type), false);
 			}
 
 			if (updateRecord) {

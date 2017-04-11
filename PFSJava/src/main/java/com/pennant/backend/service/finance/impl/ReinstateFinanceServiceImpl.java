@@ -65,6 +65,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>ReinstateFinance</b>.<br>
@@ -284,7 +285,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		financeMain.setTaskId(reinstateFinance.getLovDescTaskId());
 		financeMain.setNextTaskId(reinstateFinance.getLovDescNextTaskId());
 		
-		getFinanceMainDAO().save(financeMain, "_Temp", false); 
+		getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false); 
 		
 		getReinstateFinanceDAO().processReInstateFinance(financeMain);  //Moving finance details from rejected tables to actual finance tables
 		

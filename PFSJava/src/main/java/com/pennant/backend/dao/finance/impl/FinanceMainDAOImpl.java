@@ -587,7 +587,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	}
 	
 	@Override
-	public String save(FinanceMain financeMain, String type, boolean isWIF) {
+	public String save(FinanceMain financeMain, TableType tableType, boolean isWIF) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ");
@@ -596,7 +596,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		} else {
 			insertSql.append(" FinanceMain");
 		}
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (FinReference, GraceTerms,  NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
 		insertSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
 		insertSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");

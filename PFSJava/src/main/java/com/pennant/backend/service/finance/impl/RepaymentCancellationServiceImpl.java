@@ -53,6 +53,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain> implements
@@ -137,15 +138,15 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		String tableType = "";
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELRPY);
-		if (StringUtils.isEmpty(tableType)) {
+		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
 
@@ -162,7 +163,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			if (financeMain.isNew()) {
 				getFinanceMainDAO().save(financeMain, tableType, false);
 			} else {
-				getFinanceMainDAO().update(financeMain, tableType, false);
+				getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 			}
 		}
 

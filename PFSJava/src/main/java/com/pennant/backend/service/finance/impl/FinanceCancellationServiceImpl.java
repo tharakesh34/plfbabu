@@ -50,6 +50,7 @@ import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService  implements FinanceCancellationService {
@@ -188,16 +189,16 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		String tableType = "";
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		
 		String finReference = financeMain.getFinReference();
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELFIN);
-		if(StringUtils.isEmpty(tableType)){
+		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 			financeMain.setFinIsActive(false);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
@@ -207,7 +208,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//=======================================
 		if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
 
-			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
+			List<ReturnDataSet> list = new ArrayList<>();
 			auditHeader = executeStageAccounting(auditHeader, list);
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 				return auditHeader;
@@ -249,27 +250,27 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType, false);
+			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 		}
 		
 		// Save Fee Charges List
 		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, tableType);
+		if (tableType == TableType.TEMP_TAB) {
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner() ,false, tableType.getSuffix());
 		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), false,tableType);
+		saveFeeChargeList(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), false,tableType.getSuffix());
 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix()));
 		}
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null
 				&& financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType,financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 		}
 		

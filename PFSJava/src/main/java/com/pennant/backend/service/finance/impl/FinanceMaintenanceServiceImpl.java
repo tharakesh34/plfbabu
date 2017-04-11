@@ -52,6 +52,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements
@@ -227,7 +228,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		String tableType = "";
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -244,10 +244,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			list = null;
 		}
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
-		if (StringUtils.isEmpty(tableType)) {
+		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
 
@@ -276,7 +277,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			//Finance Penalty OD Rate Details
 			if (penaltyRate != null) {
-				getFinODPenaltyRateDAO().save(penaltyRate, tableType);
+				getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
 			}
 			if(finWriteoffPay!=null){
 				finWriteoffPay.setFinReference(financeMain.getFinReference());
@@ -285,15 +286,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				getFinanceWriteoffDAO().saveFinWriteoffPayment(finWriteoffPay, "_Temp");
 			}
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType, false);
+			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 
 			//Finance Penalty OD Rate Details
 			if (penaltyRate != null) {
-				if (StringUtils.isEmpty(tableType)) {
-					getFinODPenaltyRateDAO().save(penaltyRate, tableType);
+				if (tableType == TableType.MAIN_TAB) {
+					getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
 					getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
 				} else {
-					getFinODPenaltyRateDAO().update(penaltyRate, tableType);
+					getFinODPenaltyRateDAO().update(penaltyRate, tableType.getSuffix());
 				}
 			}
 			if(finWriteoffPay!=null){
@@ -304,18 +305,18 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		// Save Fee Charges List
 		//=======================================
-		if (StringUtils.isNotBlank(tableType)) {
+		if (tableType == TableType.TEMP_TAB) {
 			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-			        financeDetail.getModuleDefiner(), false, tableType);
+			        financeDetail.getModuleDefiner(), false, tableType.getSuffix());
 		}
 		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(),
-		        false, tableType);
+		        false, tableType.getSuffix());
 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null
 		        && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix()));
 		}
 
 		// set Guarantor Details Audit
@@ -325,7 +326,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		        && !financeDetail.getGurantorsDetailList().isEmpty() && financeDetail.getGurantorsDetailList().size() > 0) {
 			financeDetail.setGurantorsDetailList(financeDetail.getGurantorsDetailList());
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details, tableType,financeMain.getFinReference());
+			details = processingGuarantorDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
 			auditDetails.addAll(details);
 		}
 
@@ -336,7 +337,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		        && !financeDetail.getJountAccountDetailList().isEmpty() && financeDetail.getJountAccountDetailList().size() > 0) {
 			financeDetail.setJountAccountDetailList(financeDetail.getJountAccountDetailList());
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details, tableType,financeMain.getFinReference());
+			details = processingJointAccountDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
 			auditDetails.addAll(details);
 		}
 
@@ -344,7 +345,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getDocumentDetailsList() != null
 		        && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType,
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),
 			        financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 		}
@@ -354,7 +355,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			//=======================================
 			if (financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, tableType, financeDetail.getFinScheduleData().getFinanceMain());
+				details = processingCollateralAssignmentList(details, tableType.getSuffix(), financeDetail.getFinScheduleData().getFinanceMain());
 				auditDetails.addAll(details);
 			}
 		}else{
@@ -364,7 +365,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			        && !financeDetail.getFinanceCollaterals().isEmpty()) {
 				financeDetail.setFinanceCollaterals(financeDetail.getFinanceCollaterals());
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinCollateral");
-				details = processingFinCollateralDetailList(details, tableType,financeMain.getFinReference());
+				details = processingFinCollateralDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
 				auditDetails.addAll(details);
 			}
 		}
@@ -372,7 +373,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// =======================================
 		if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
-			details = processingFinFlagDetailList(details, financeDetail, tableType);
+			details = processingFinFlagDetailList(details, financeDetail, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 					

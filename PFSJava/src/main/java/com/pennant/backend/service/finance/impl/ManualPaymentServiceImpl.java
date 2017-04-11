@@ -78,6 +78,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
@@ -313,7 +314,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
-		String tableType = "";
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 
 		//Finance Stage Accounting Process
@@ -337,11 +337,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		String actualRepayAcc = financeMain.getRepayAccountId();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		financeMain.setRcdMaintainSts(finRepayHeader.getFinEvent());
-		if (StringUtils.isEmpty(tableType)) {
+		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
 
@@ -389,20 +390,20 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			//Save FinRepayHeader Details
 			finRepayHeader.setLinkedTranId(linkedTranId);
-			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType);
+			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType.getSuffix());
 
 			//Save Repay Schedule Details
-			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
+			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
 
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType, false);
+			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
 
 			//Save/Update FinRepayHeader Details depends on Workflow
-			if (StringUtils.isNotEmpty(tableType)) {
+			if (tableType == TableType.TEMP_TAB) {
 				finRepayHeader.setLinkedTranId(linkedTranId);
-				getFinanceRepaymentsDAO().updateFinRepayHeader(finRepayHeader, tableType);
-				getFinanceRepaymentsDAO().deleteRpySchdList(finReference, tableType);
-				getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
+				getFinanceRepaymentsDAO().updateFinRepayHeader(finRepayHeader, tableType.getSuffix());
+				getFinanceRepaymentsDAO().deleteRpySchdList(finReference, tableType.getSuffix());
+				getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
 			}
 		}
 
@@ -410,7 +411,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (!financeMain.isNewRecord()) {
 
-			if (StringUtils.isEmpty(tableType) && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+			if (tableType == TableType.MAIN_TAB && financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				//Fetch Existing data before Modification
 
 				FinScheduleData oldFinSchdData = null;
@@ -437,21 +438,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Finance Schedule Details
-		listDeletion(finReference, tableType, emptyRepayInstructions);
-		listSave(scheduleData, tableType, 0);
+		listDeletion(finReference, tableType.getSuffix(), emptyRepayInstructions);
+		listSave(scheduleData, tableType.getSuffix(), 0);
 
 		//Fee Charge Details Clearing before 
-		if (StringUtils.isNotBlank(tableType)) {
-			getFinFeeChargesDAO().deleteChargesBatch(finReference, finRepayHeader.getFinEvent(), false, tableType);
+		if (tableType == TableType.TEMP_TAB) {
+			getFinFeeChargesDAO().deleteChargesBatch(finReference, finRepayHeader.getFinEvent(), false, tableType.getSuffix());
 		}
 
-		saveFeeChargeList(repayData, repayData.getFinRepayHeader().getFinEvent(), tableType);
+		saveFeeChargeList(repayData, repayData.getFinRepayHeader().getFinEvent(), tableType.getSuffix());
 
 		// Save Document Details
 		if (repayData.getFinanceDetail().getDocumentDetailsList() != null
 				&& repayData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			auditDetails.addAll(processingDocumentDetailsList(details, tableType, financeMain,
+			auditDetails.addAll(processingDocumentDetailsList(details, tableType.getSuffix(), financeMain,
 					finRepayHeader.getFinEvent()));
 		}
 
@@ -459,7 +460,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		if (repayData.getFinanceDetail().getFinanceCheckList() != null
 				&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(), tableType));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(), tableType.getSuffix()));
 		}
 
 		//Process Updations For Postings
@@ -469,13 +470,13 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, finRepayQueues, linkedTranId, partialPay, isRIAFinance, aeAmountCodes);
 
-			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType);
+			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType.getSuffix());
 
 			//Update Linked Transaction ID after Repayments Postings Process if workflow not found
 			for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 				rpySchd.setLinkedTranId(linkedTranId);
 			}
-			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
+			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
 		}
 
 		//Reset Repay Account ID On Finance Main for Correcting Audit Data
