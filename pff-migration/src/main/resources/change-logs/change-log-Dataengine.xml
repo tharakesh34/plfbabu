@@ -667,5 +667,10 @@ WHERE DISB.STATUS='APPROVED' AND DISB.PAYMENTTYPE IN ('CHEQUE', 'DD') AND BANK.B
 		UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
 </sql>
 </changeSet>
+<changeSet id="23" author="surekha">
+<sql>
+	ALTER TABLE DATA_ENGINE_TABLE ALTER COLUMN Operation int;
+</sql>
+</changeSet>
 
 </databaseChangeLog>
