@@ -48,8 +48,6 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -60,7 +58,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.util.PTDateFormat;
 import com.pennant.webui.util.WindowBaseCtrl;
 
