@@ -349,6 +349,26 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		logger.debug("Leaving");
 	}
 	
+	
+	@Override
+	public List<String> getFinanceWorkFlowRoles(String finEvent){
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinEvent", finEvent);
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT DISTINCT WD.WorkFlowRoles ");
+		selectSql.append(" FROM  LMTFinanceWorkFlowDef AS FWD INNER JOIN ");
+		selectSql.append(" WorkFlowDetails AS WD ON FWD.WorkFlowType = WD.WorkFlowType ");
+		selectSql.append(" Where FWD.FinEvent =:FinEvent");
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(),source,String.class);
+	}
+	
+	
+	
 	private ErrorDetails  getError(String errorId, String finType, String userLanguage){
 		String[][] parms= new String[2][1];
 		parms[1][0] = finType;

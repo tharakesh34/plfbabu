@@ -60,6 +60,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRight;
@@ -91,7 +92,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private LoginLoggingService loginLoggingService;
 	private Set<String> grantedAuthoritySet = null;
 	private LoggedInUser loggedInUser;
-	private Set<String> userRoleSet = null;
+	private Set<String> userRoleSet = new HashSet<String>();
 	private HashMap<String, Integer> accessType = null;
 	private Set<String> roleRights = null;
 	private Collection<GrantedAuthority> grantedAuthorities;
@@ -162,8 +163,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 			for (final GrantedAuthority grantedAuthority : grantedAuthorities) {
 				grantedAuthoritySet.add(grantedAuthority.getAuthority());
 			}
-
-			userRoleSet = new HashSet<String>(securityRoles.size());
 
 			for (SecurityRole role : securityRoles) {
 				userRoleSet.add(role.getRoleCd());
@@ -373,17 +372,28 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 	public ArrayList<String> getUserRoles() {
 		ArrayList<String> arrayRoleCode = null;
-		if (this.userRoleSet != null) {
 			arrayRoleCode = new ArrayList<String>();
 			Object[] object = this.userRoleSet.toArray();
 
 			for (int i = 0; i < object.length; i++) {
 				arrayRoleCode.add(object[i].toString());
 			}
-		}
 		return arrayRoleCode;
 	}
 
+	public ArrayList<String> getUserFinanceRoles(String finEvent) {
+		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(finEvent);
+		ArrayList<String> arrayRoleCode = new ArrayList<String>();;
+		Object[] roles= this.userRoleSet.toArray();
+		for (Object role : roles) {
+			if(finRoleSet.contains(role.toString())){
+				arrayRoleCode.add(role.toString());
+			}
+		}
+		return arrayRoleCode;
+	}
+	
+	
 	public Set<String> getUserRoleSet() {
 		return userRoleSet;
 	}

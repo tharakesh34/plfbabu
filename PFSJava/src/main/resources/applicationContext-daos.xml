@@ -4008,6 +4008,9 @@
 		init-method="init">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
+	<bean id="FinanceWorkflowRoleUtil" class="com.pennant.app.util.FinanceWorkflowRoleUtil">
+		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
+	</bean>
 	<bean id="pFSParameterDAO"
 		class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl"
 		parent="basisCodeDAO">
