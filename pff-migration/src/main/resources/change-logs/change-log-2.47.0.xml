@@ -1591,9 +1591,19 @@ from Customers C
 	 </createView>
 	 </changeSet>
 		
-	<changeSet  id="88" author="DurgaPrasad G" >
+	<changeSet  id="88" author="DurgaPrasad G" dbms="mssql">
 <createView viewName="INT_ALM_VIEW" replaceIfExists="true">
 	Select Right(F.FinReference,8) AGREEMENTID,F.FinReference AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+	(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+	Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,NULL ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+	from FinanceMain F
+	Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+	Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+</createView>
+</changeSet>
+<changeSet  id="88" author="DurgaPrasad G" dbms="oracle">
+<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+	Select substr(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID,F.FinReference AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
 	(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
 	Fp.AccruePft/CcyMinorCcyUnits ACCRUEDAMT,NULL ACCRUEDON,Fp.AccruePft/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
 	from FinanceMain F
