@@ -1565,7 +1565,7 @@ FROM          Customers_Temp T1 LEFT OUTER JOIN
 	   C.custcif CUSTOMER_ID_2, '' SOURCE_SYSTEM_2,cast(null as numeric(18,0)) PSX_BATCH_ID_2,cast(null as numeric(18,0)) EOD_BATCH_ID_2,
 	   cast(null as numeric(12,0)) BATCHID_3,'' STATUS,${call.date} INSERT_TIMESTAMP,${call.date} COMPLETION_TIMESTAMP,'' ERR_DESCRIPTION,
 	   '' ERROR_CODE_3,cast(null as numeric(12,0)) BATCHID_4,C.CustID CUSTOMER_NO_3,'' SOURCE_SYS_ID_3,'CF' SEGMENT_3,
-	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, cast(FM.FinReference as numeric(10,0)) APPLN_NO,
+	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, cast(null as numeric(10,0)) APPLN_NO,
 	   FM.FinType PRODUCT_CODE, '' PROCESS_TYPE_3,'N' PROCESS_FLAG_3,'' ERROR_CODE_4,
 	   '' ERROR_DESC_3,cast(null as numeric(18,0)) PSX_BATCH_ID_3, cast(null as numeric(12,0)) PSX_ID, c.CustCIF CUSTOMER_ID_3,
 	   '' SOURCE_SYSTEM_3,cast(null as numeric(18,0)) EOD_BATCH_ID_3,C.LastMntOn	   
