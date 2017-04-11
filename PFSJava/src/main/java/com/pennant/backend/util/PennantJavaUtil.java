@@ -451,7 +451,7 @@ public class PennantJavaUtil {
 				"IndustryIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("LovFieldDetail", new ModuleMapping("LovFieldDetail", LovFieldDetail.class, new String[] {
-				"RMTLovFieldDetail", "RMTLovFieldDetail_AView" }, masterWF, new String[] { "FieldCode", "FieldCodeValue" },
+				"RMTLovFieldDetail", "RMTLovFieldDetail_AView" }, masterWF, new String[] { "FieldCode", "FieldCodeValue" ,"ValueDesc" },
 				null, 300));
 
 		ModuleUtil.register("MaritalStatusCode", new ModuleMapping("MaritalStatusCode", MaritalStatusCode.class,
