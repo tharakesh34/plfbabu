@@ -668,9 +668,7 @@ WHERE DISB.STATUS='APPROVED' AND DISB.PAYMENTTYPE IN ('CHEQUE', 'DD') AND BANK.B
 </sql>
 </changeSet>
 <changeSet id="23" author="surekha">
-<sql>
-	ALTER TABLE DATA_ENGINE_TABLE ALTER COLUMN Operation int;
-</sql>
+<modifyDataType tableName="DATA_ENGINE_TABLE" columnName="Operation" newDataType="int" />
 </changeSet>
 
 </databaseChangeLog>
