@@ -1565,7 +1565,7 @@ FROM          Customers_Temp T1 LEFT OUTER JOIN
 	   C.custcif CUSTOMER_ID_2, '' SOURCE_SYSTEM_2,cast(null as numeric(18,0)) PSX_BATCH_ID_2,cast(null as numeric(18,0)) EOD_BATCH_ID_2,
 	   cast(null as numeric(12,0)) BATCHID_3,'' STATUS,${call.date} INSERT_TIMESTAMP,${call.date} COMPLETION_TIMESTAMP,'' ERR_DESCRIPTION,
 	   '' ERROR_CODE_3,cast(null as numeric(12,0)) BATCHID_4,C.CustID CUSTOMER_NO_3,'' SOURCE_SYS_ID_3,'CF' SEGMENT_3,
-	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, cast(null as numeric(10,0)) APPLN_NO,
+	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, cast(FM.FinReference as numeric(10,0)) APPLN_NO,
 	   FM.FinType PRODUCT_CODE, '' PROCESS_TYPE_3,'N' PROCESS_FLAG_3,'' ERROR_CODE_4,
 	   '' ERROR_DESC_3,cast(null as numeric(18,0)) PSX_BATCH_ID_3, cast(null as numeric(12,0)) PSX_ID, c.CustCIF CUSTOMER_ID_3,
 	   '' SOURCE_SYSTEM_3,cast(null as numeric(18,0)) EOD_BATCH_ID_3,C.LastMntOn	   
@@ -1667,6 +1667,27 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 	</createView>
 	
 	</changeSet>
-	
+	<changeSet id="91" author="madhubabu">
+	<sql>
+	insert into BMTLovFieldCode values ('CA','Current Account','String',0,1,1,1007,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	insert into BMTLovFieldCode values ('SA','Savings Account','String',0,1,1,1007,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	<changeSet id="92" author="madhubabu">
+	<sql>
+		delete from BMTLovFieldCode where FieldCode in('CA','SA')
+	</sql>
+	</changeSet>
+	<changeSet id="93" author="madhubabu">
+	<sql>
+		insert into BMTLovFieldCode values ('ACC_TYPE',' Account Types','String',0,1,1,1007,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	<changeSet id="94" author="madhubabu">
+	<sql>
+		insert into RMTLovFieldDetail  values((select max(fieldcodeid)+1 from RMTLovFieldDetail),'ACC_TYPE','SA','Savings Account',1,1,1000,current_timestamp,'Approved','','','','','',0,0);
+		insert into RMTLovFieldDetail  values((select max(fieldcodeid)+1 from RMTLovFieldDetail),'ACC_TYPE','CA','Current Account',1,1,1000,current_timestamp,'Approved','','','','','',0,0);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
