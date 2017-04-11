@@ -1633,9 +1633,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 	
 		//FIXME as discussed should be added in finance main table
+		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner())) {
 		finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
         finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
-		
+		}
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 		
 		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());

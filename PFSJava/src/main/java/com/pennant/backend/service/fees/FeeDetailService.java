@@ -184,9 +184,10 @@ public class FeeDetailService {
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 					.subtract(finFeeDetail.getWaivedAmount()));
 		}
-
-		finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
-		finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
+		if (StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
+			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
+		}
 
 		//doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 

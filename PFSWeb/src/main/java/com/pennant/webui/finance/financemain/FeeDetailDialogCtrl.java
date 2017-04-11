@@ -451,10 +451,13 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 				}
 			}
 		}
+		
+		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner())) {
+			//Fee Amounts
+			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisb);
+			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisb);
+		}
 
-		//Fee Amounts
-		finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisb);
-		finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisb);
 		//Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);

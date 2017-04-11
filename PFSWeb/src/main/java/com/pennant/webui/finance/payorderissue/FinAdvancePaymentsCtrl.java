@@ -305,14 +305,14 @@ public class FinAdvancePaymentsCtrl {
 
 				if (subtotalRequired) {
 					//sub total Display Totals On Footer
-					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal);
+					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal,true);
 				}
 			}
 
 			//group total
 			if (listbox != null && listbox.getItems().size() > 0) {
 				// Display Totals On Footer
-				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal);
+				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal,false);
 			}
 		}
 		logger.debug("Leaving");
@@ -386,29 +386,43 @@ public class FinAdvancePaymentsCtrl {
 
 	}
 
-	private void addListItem(Listbox listbox, String lable, BigDecimal total) {
+	private void addListItem(Listbox listbox, String lable, BigDecimal total, boolean footer) {
 		//sub total Display Totals On Footer
 		Listgroupfoot item = new Listgroupfoot();
+		Listitem listitem=new Listitem();
+		
 		Listcell listcell;
 
 		listcell = new Listcell();
 		listcell.setSpan(5);
-		listcell.setParent(item);
+		setParent(footer, listcell, item, listitem);
 
 		listcell = new Listcell(lable);
 		listcell.setStyle("font-weight:bold");
-		listcell.setParent(item);
+		setParent(footer, listcell, item, listitem);
 
 		listcell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyFormat));
 		listcell.setStyle("text-align:right;font-weight:bold");
-		listcell.setParent(item);
+		setParent(footer, listcell, item, listitem);
 
 		listcell = new Listcell();
 		listcell.setSpan(3);
-		listcell.setParent(item);
+		setParent(footer, listcell, item, listitem);
 
-		listbox.appendChild(item);
+		if (footer) {
+			listbox.appendChild(item);
+		}else{
+			listbox.appendChild(listitem);
+		}
 
+	}
+	
+	private void setParent(boolean footer,Listcell listcell,Listgroupfoot item,Listitem listitem){
+		if (footer) {
+			listcell.setParent(item);
+		}else{
+			listcell.setParent(listitem);
+		}
 	}
 
 	private Map<Integer, List<FinAdvancePayments>> groupPayments(List<FinAdvancePayments> finAdvancePayDetails) {
@@ -562,10 +576,11 @@ public class FinAdvancePaymentsCtrl {
 				if (group && seq != financeDisbursement.getDisbSeq()) {
 					continue;
 				}
-
+				date = financeDisbursement.getDisbDate();
+				
 				//check is first disbursement
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
-					date = financeDisbursement.getDisbDate();
+				
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
