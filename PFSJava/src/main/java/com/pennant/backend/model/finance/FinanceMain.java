@@ -43,6 +43,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -3373,4 +3374,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.bpiAmount = bpiAmount;
 	}
 
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }
