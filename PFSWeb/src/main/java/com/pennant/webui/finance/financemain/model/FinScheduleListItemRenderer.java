@@ -2166,7 +2166,12 @@ public class FinScheduleListItemRenderer implements Serializable{
 		space.setWidth("10px");
 		space.setStyle(getTermColor(lcColor));
 		hbox.appendChild(space);
-		if(count == 1){
+		
+		Date droplineDate = null;
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+			droplineDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
+		}
+		if(count == 1 && (!isODSchdLimit || (isODSchdLimit && DateUtility.compare(droplineDate, data.getSchDate()) == 0))){
 			hbox.appendChild(new Label(String.valueOf((data.getInstNumber() == 0 || lastRec )? "" : data.getInstNumber())));
 		}
 		lc.appendChild(hbox);
