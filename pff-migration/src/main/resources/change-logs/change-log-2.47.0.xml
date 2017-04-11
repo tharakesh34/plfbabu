@@ -1614,4 +1614,10 @@ from Customers C
 	Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
 </createView>
 </changeSet>
+<changeSet id="89" author="madhubabu">
+	<sql>
+	INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),3,'SecurityUserDialog_UsrAcExpDt','SecurityUserDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='SECURITYUSER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='SecurityUserDialog_UsrAcExpDt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
