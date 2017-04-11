@@ -35,6 +35,16 @@ public class ConcurrencyException extends AppException {
 	}
 
 	/**
+	 * Constructs a {@code ConcurrencyException} with the default detail message and cause.
+	 *
+	 * @param cause
+	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
+	public ConcurrencyException(Throwable cause) {
+		super(ErrorCode.PPS_00101.getMessage(), cause);
+	}
+
+	/**
 	 * Constructs a {@code ConcurrencyException} with the specified detail message and cause.
 	 *
 	 * @param message

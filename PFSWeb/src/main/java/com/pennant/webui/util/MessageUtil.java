@@ -61,6 +61,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * <p>
@@ -220,6 +221,10 @@ public final class MessageUtil {
 	}
 
 	private static void show(AppException e) {
+		if (e.getCause() != null) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(e.getMessage(), App.NAME, OK, ERROR);
 	}
