@@ -2834,7 +2834,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		if ("".equals(nextTaskId)) {
-			nextTaskId = getWorkFlow().getNextTaskIds(taskId, aCustomer);
+			nextTaskId = getNextTaskIds(taskId, aCustomer);
 		}
 		// Set the role codes for the next tasks
 		String nextRoleCode = "";
@@ -2935,9 +2935,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Object object = auditHeader.getAuditDetail().getModelData();
 			if (object instanceof CustomerDetails) {
 				CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-				nextTaskId = getWorkFlow().getNextTaskIds(taskId, tCustomerDetails.getCustomer());
+				nextTaskId = getNextTaskIds(taskId, tCustomerDetails.getCustomer());
 			} else {
-				nextTaskId = getWorkFlow().getNextTaskIds(taskId, object);
+				nextTaskId = getNextTaskIds(taskId, object);
 			}
 			if (processCompleted && nextTaskId.equals(taskId + ";")) {
 				processCompleted = false;
