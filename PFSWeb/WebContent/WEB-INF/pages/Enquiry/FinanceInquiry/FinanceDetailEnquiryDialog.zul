@@ -253,14 +253,17 @@
 													</hbox>
 												</row>
 												<row id="row_downPayBank" visible="false">
+													
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
+													<hbox>
 													<currencyBox id="downPayBank" />
 													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
 													<accountSelectionBox id="downPayAccount" />
-												</row>
-												<row id="row_downPaySupl" visible="false">
+													</hbox>
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
+													<hbox>
 													<currencyBox id="downPaySupl" />
+													</hbox>
 												</row>
 											<row id="row_FinAcctId" visible="true">
 												<label
@@ -387,6 +390,19 @@
 												<extendedcombobox
 													id="stepPolicy" readonly="true" />
 											</row>
+											<row
+												id="row_accountsOfficer">
+												<label
+													id="label_FinanceMainDialog_AccountsOfficer"
+													value="${c:l('label_FinanceMainDialog_AccountsOfficer.value')}" />
+												<extendedcombobox
+													id="accountsOfficer" />
+												<label
+													id="label_FinanceMainDialog_DSACode"
+													value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
+												<extendedcombobox
+													id="dsaCode" />
+											</row>
 											<row id="row_ReferralId">
 												<label
 														id="label_FinanceMainDialog_ReferralId"
@@ -405,6 +421,13 @@
 												</row>
 											<row>
 												<label
+													id="label_FinanceMainDialog_SalesDepartment"
+													value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
+												<hbox>
+													<extendedcombobox
+														id="salesDepartment" readonly="true" />
+												</hbox>
+												<label
 													id="label_FinanceMainDialog_QuickDisb"
 													value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
 												<hbox>
@@ -412,13 +435,6 @@
 														id="space_QuickDisb" spacing="2px" />
 													<checkbox
 														id="quickDisb" checked="false" disabled="true" />
-												</hbox>
-												<label
-													id="label_FinanceMainDialog_SalesDepartment"
-													value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
-												<hbox>
-													<extendedcombobox
-														id="salesDepartment" readonly="true" />
 												</hbox>
 											</row>
 											<row id="row_manualSteps"
@@ -467,31 +483,6 @@
 														id="finRemarks" maxlength="50" width="250px" rows="2" />
 												</hbox>
 											</row>
-											<row
-												id="row_accountsOfficer">
-												<label
-													id="label_FinanceMainDialog_AccountsOfficer"
-													value="${c:l('label_FinanceMainDialog_AccountsOfficer.value')}" />
-												<extendedcombobox
-													id="accountsOfficer" />
-												<label
-													id="label_FinanceMainDialog_DSACode"
-													value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
-												<extendedcombobox
-													id="dsaCode" />
-											</row>
-											<row id="row_LinkedFinRef"
-												visible="false">
-												<label
-													id="label_FinanceMainDialog_LinkedFinRef"
-													value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="linkedFinRef" width="250px" readonly="true" />
-												</hbox>
-											</row>
 											<row id="row_ManualSchedule"
 												visible="true">
 												<label
@@ -526,7 +517,18 @@
 															id="applicationNo" width="170px" visible="true" />
 													</hbox>
 											</row>
-											
+											<row id="row_LinkedFinRef"
+												visible="false">
+												<label
+													id="label_FinanceMainDialog_LinkedFinRef"
+													value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="linkedFinRef" width="250px" readonly="true" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

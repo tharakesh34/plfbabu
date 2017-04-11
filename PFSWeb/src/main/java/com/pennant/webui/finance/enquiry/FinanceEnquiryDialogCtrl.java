@@ -84,13 +84,17 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.Interface.service.AccountInterfaceService;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -102,7 +106,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -426,7 +432,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row							row_FinAssetValue;
 	protected Label							netFinAmount;
 	protected CurrencyBox					downPaySupl;	// autoWired
-	protected Row							row_downPaySupl;
 	protected CurrencyBox					downPayBank;
 	protected Row							row_downPayBank;
 	protected AccountSelectionBox			downPayAccount;
@@ -443,6 +448,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox      		dsaCode;
 	protected Row                  			row_accountsOfficer;
 	protected ExtendedCombobox      		accountsOfficer;
+	
+	private	  CustomerService				customerService;
+	private   FinFlagDetailsDAO             finFlagDetailsDAO;
+	private	  List<FinFlagsDetail>			finFlagsDetailList		= null;
+	protected Label							label_FinanceMainDialog_DownPayAccount;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -641,6 +651,21 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.unPlannedEmiHLockPeriod.setMaxlength(3);
 			this.maxReAgeHolidays.setMaxlength(3);
 			this.maxUnplannedEmi.setMaxlength(3);
+			this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+					LengthConstants.LEN_MASTER_CODE);
+			this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+					LengthConstants.LEN_MASTER_CODE);
+			this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
+					LengthConstants.LEN_MASTER_CODE);
+			this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
+			this.downPayAccount.setAccountDetails(getFinScheduleData().getFinanceMain().getFinType(), AccountConstants.FinanceAccount_DWNP, getFinScheduleData().getFinanceType().getFinCcy());
+			this.downPayAccount.setFormatter(formatter);
+			this.downPayAccount.setBranchCode(StringUtils.trimToEmpty(getFinScheduleData().getFinanceMain().getFinBranch()));
+			
+			this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+			this.downPayBank.setScale(formatter);
+			this.downPayBank.setTextBoxWidth(200);
+
 		}
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
@@ -693,6 +718,32 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	/**
+	 * Method Used for set list of values been class to components finance flags list
+	 * 
+	 * @param Collateral
+	 */
+	private void doFillFinFlagsList(List<FinFlagsDetail> finFlagsDetailList) {
+		logger.debug("Entering");
+		setFinFlagsDetailList(finFlagsDetailList);
+		if (finFlagsDetailList == null || finFlagsDetailList.isEmpty()) {
+			return;
+		}
+
+		String tempflagcode = "";
+		for (FinFlagsDetail finFlagsDetail : finFlagsDetailList) {
+			if (!StringUtils.equals(finFlagsDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.isEmpty(tempflagcode)) {
+					tempflagcode = finFlagsDetail.getFlagCode();
+				} else {
+					tempflagcode = tempflagcode.concat(",").concat(finFlagsDetail.getFlagCode());
+				}
+			}
+		}
+		this.flagDetails.setValue(tempflagcode);
+		logger.debug("Entering");
+	}
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -705,13 +756,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
 		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
+		Customer customer = null;
+		customer = customerService.getCustomerById(aFinanceMain.getCustID());
+		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinReference(),FinanceConstants.MODULE_NAME,"");
 		
 		if (aFinanceMain != null) {
 			if (aFinanceMain.isMigratedFinance()) {
 				this.label_migrated.setValue("Migrated");
 			}
-			this.custCIF.setValue(aFinanceMain.getLovDescCustCIF());
-			this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
+			this.custCIF.setValue(customer.getCustCIF());
+			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
 			this.curFinAmountValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount()
 					.add(aFinanceMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : aFinanceMain.getFeeChargeAmt())
@@ -727,7 +781,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					+ aFinanceMain.getLovDescFinPurposeName());
 			this.finReference_graph.setValue(aFinanceMain.getFinReference());
 			this.finStatus_graph.setValue(aFinanceMain.getFinStatus() + "-" + aFinanceMain.getCustStsDescription());
-			this.custCIF_graph.setValue(aFinanceMain.getLovDescCustCIF());
+			this.custCIF_graph.setValue(customer.getCustShrtName());
 			this.finType_graph.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 			this.finCcy_graph.setValue(aFinanceMain.getFinCcy());
 			this.scheduleMethod_graph.setValue(aFinanceMain.getScheduleMethod());
@@ -937,6 +991,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			this.row_disbAcctId.setVisible(false);
 			this.row_FinAcctId.setVisible(false);
+			this.downPayAccount.setVisible(false);
+			this.label_FinanceMainDialog_DownPayAccount.setVisible(false);
 		}
 		
 		this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
@@ -995,7 +1051,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		fillComboBox(this.roundingMode, aFinanceMain.getCalRoundingMode(), PennantStaticListUtil.getRoundingModes(), "");
-		
+
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
 		if (financeSummary != null) {
@@ -1170,41 +1226,67 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setValue(aFinanceMain.getDsaCode());
 		this.dsaCode.setDescription(aFinanceMain.getDsaCodeDesc());
 
-		if (getFinScheduleData().getFinanceType().isManualSchedule()) {
+		if (aFinanceMain.isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
 			this.manualSchedule.setChecked(aFinanceMain.isManualSchedule());
+			this.manualSchedule.setDisabled(true);
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
 		
-		if (getFinScheduleData().getFinanceType().isFinIsDwPayRequired()
-				&& aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
-			this.row_downPaySupl.setVisible(true);
-			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), formatter));
+		if (aFinanceMain.getReferralId() != null) {
+			this.referralId.setValue(aFinanceMain.getReferralId());
+			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
 		}
-		this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
-		this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(),
-				formatter));
-		this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
-				formatter));
-		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+		if (aFinanceMain.getDmaCode() != null) {
+			this.dmaCode.setValue(aFinanceMain.getDmaCode());
+			this.dmaCode.setDescription(aFinanceMain.getDmaCodeDesc());
+		}
+
+		if (aFinanceMain.getSalesDepartment() != null) {
+			this.salesDepartment.setValue(aFinanceMain.getSalesDepartment());
+			this.salesDepartment.setDescription(aFinanceMain.getSalesDepartmentDesc());
+		}
+
+		this.quickDisb.setChecked(aFinanceMain.isQuickDisb());
 		//TDSApplicable Visiblitly based on Financetype Selection
-		if (getFinScheduleData().getFinanceType().isTDSApplicable()) {
+		if (aFinanceMain.isTDSApplicable()) {
 			this.hbox_tdsApplicable.setVisible(true);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
+			this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+			this.tDSApplicable.setDisabled(true);
 		} else {
 			this.hbox_tdsApplicable.setVisible(false);
+			this.tDSApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
 		}
-		
-		this.downPayAccount.setMandatoryStyle(false);
-		if (this.downPayBank.isReadonly() && aFinanceMain.getDownPayBank().compareTo(BigDecimal.ZERO) == 0) {
-			this.downPayAccount.setMandatoryStyle(false);
-		}
-		this.downPayAccount.setCustCIF(aFinanceMain.getLovDescCustCIF());
-		
+
 		setNetFinanceAmount(true);
 		
+		// fill the components with the Finance Flags Data and Display
+		doFillFinFlagsList(finFlagsDetailList);
+		
+		this.applicationNo.setValue(aFinanceMain.getApplicationNo());
+		
+		if (aFinanceMain.getDownPayment().compareTo(BigDecimal.ZERO) > 0
+				|| aFinanceMain.getDownPaySupl().compareTo(BigDecimal.ZERO) > 0) {
+			this.row_downPayBank.setVisible(true);
+			this.downPayAccount.setMandatoryStyle(false);
+			this.downPayBank.setMandatory(false);
+			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
+			this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(), formatter));
+			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), formatter));
+			if (aFinanceMain.isNewRecord()) {
+				this.downPayAccount.setValue("");
+			} else {
+				this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
+			}
+
+		} else {
+			this.downPayAccount.setMandatoryStyle(false);
+			this.row_downPayBank.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 	}
 	
@@ -1574,6 +1656,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.cpzAtUnPlannedEmi.setDisabled(true);
 		this.cpzAtReAge.setDisabled(true);
 		readOnlyComponent(true, this.roundingMode);
+		this.downPayBank.setReadonly(true);
+		this.downPaySupl.setReadonly(true);
+		this.downPayAccount.setReadonly(true);
 		
 	}
 
@@ -1957,5 +2042,29 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setLabel_FinanceMainDialog_PromoProduct(Label label_FinanceMainDialog_PromoProduct) {
 		this.label_FinanceMainDialog_PromoProduct = label_FinanceMainDialog_PromoProduct;
 	}
+	
+	public CustomerService getCustomerService() {
+		return customerService;
+	}
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+	public FinFlagDetailsDAO getFinFlagDetailsDAO() {
+		return finFlagDetailsDAO;
+	}
+
+	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
+		this.finFlagDetailsDAO = finFlagDetailsDAO;
+	}
+
+	public List<FinFlagsDetail> getFinFlagsDetailList() {
+		return finFlagsDetailList;
+	}
+
+	public void setFinFlagsDetailList(List<FinFlagsDetail> finFlagsDetailList) {
+		this.finFlagsDetailList = finFlagsDetailList;
+	}
+
 
 }

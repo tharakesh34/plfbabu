@@ -3185,6 +3185,8 @@
 		class="com.pennant.webui.finance.enquiry.FinanceEnquiryDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
+		<property name="customerService" ref="customerService" />
+		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl"
