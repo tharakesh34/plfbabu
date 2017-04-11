@@ -63,15 +63,15 @@ public interface FinanceMainDAO {
 
 	FinanceMain getNewFinanceMain(boolean isWIF);
 
-	FinanceMain getFinanceMain(String id, String nextRoleCode,String type);
-	
-	FinanceMain getFinanceMainById(String id, String type, boolean isWIF);
+	FinanceMain getFinanceMain(String id, String nextRoleCode, String type);
 
-	void update(FinanceMain financeMain, String type, boolean isWIF);
+	FinanceMain getFinanceMainById(String id, String type, boolean isWIF);
 
 	void delete(FinanceMain financeMain, String type, boolean isWIF);
 
 	String save(FinanceMain financeMain, TableType tableType, boolean wif);
+
+	void update(FinanceMain financeMain, String type, boolean isWIF);
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
 
@@ -151,47 +151,47 @@ public interface FinanceMainDAO {
 	List<DDAPayments> getDDAPaymentsList(String repaymthAutodda, Date appDate);
 
 	FinanceMain getFinanceMainForManagerCheque(String finReference, String type);
-	
+
 	void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount);
-	
-	void updateStatus(String finReference, String status,String statusReason);
+
+	void updateStatus(String finReference, String status, String statusReason);
 
 	String getApprovedRepayMethod(String finReference, String type);
-	
+
 	String getCurrencyByAccountNo(String accountNo);
 
 	void updateMaturity(String finReference, String closingStatus, boolean finIsActive);
-	
+
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
-	
-	boolean updateSeqNumber(long oldNumber,long newNumber);
-	
+
+	boolean updateSeqNumber(long oldNumber, long newNumber);
+
 	List<FinanceMain> getFinanceMainbyCustId(long id);
 
 	int getFinanceCountById(String finReference, String type, boolean isWIF);
 
 	int getFinanceCountByMandateId(long mandateID);
-	
+
 	int getFinanceCountById(String finReference, long mandateID);
-	
+
 	int loanMandateSwapping(String finReference, long newMandateID);
 
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
-	
-	int updateFinanceBasicDetails(FinanceMain finacneMain,String type);
-	
+
+	int updateFinanceBasicDetails(FinanceMain finacneMain, String type);
+
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
-	
+
 	FinanceMain getFinanceMainParms(String finReference);
-	
+
 	List<FinanceMain> getFinanceByCustId(long custId);
-	
+
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
-	
+
 	List<String> getFinReferencesByMandateId(long mandateId);
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
-	
+
 	BigDecimal getFinAssetValue(String finReference);
 
 	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);

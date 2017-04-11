@@ -695,71 +695,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	 * @throws DataAccessException
 	 * 
 	 */
-
-	@SuppressWarnings("serial")
-		public void updateInvestmentFinance(FinanceMain financeMain, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update ");
-		 
-		updateSql.append(" FinanceMain");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinType = :FinType,  FinCcy = :FinCcy, FinBranch = :FinBranch,");
-		updateSql.append(" FinAmount = :FinAmount, FinStartDate = :FinStartDate, ");
-		updateSql.append(" MaturityDate = :MaturityDate, CustID = :CustID,");
-		updateSql.append(" RepayProfitRate = :RepayProfitRate, TotalRepayAmt= :TotalRepayAmt, ");
-		updateSql.append(" TotalProfit = :TotalProfit, ProfitDaysBasis= :ProfitDaysBasis, ");
-		updateSql.append(" ScheduleMethod = :ScheduleMethod, ");
-		updateSql.append(" DisbAccountId = :DisbAccountId, RepayAccountId= :RepayAccountId, ");
-		updateSql.append(" LastRepayDate = :LastRepayDate, LastRepayPftDate = :LastRepayPftDate, ");
-		updateSql.append(" LastRepayRvwDate = :LastRepayRvwDate, LastRepayCpzDate = :LastRepayCpzDate, ");
-		updateSql.append(" NumberOfTerms = :NumberOfTerms, GraceTerms=:GraceTerms, AllowGrcPeriod = :AllowGrcPeriod, ");
-		updateSql.append(" AllowGrcPftRvw = :AllowGrcPftRvw, AllowGrcCpz = :AllowGrcCpz, ");
-		updateSql.append(" AllowRepayRvw = :AllowRepayRvw, AllowRepayCpz = :AllowRepayCpz, ");
-		updateSql.append(" CpzAtGraceEnd = :CpzAtGraceEnd, CalTerms = :CalTerms, ");
-		updateSql.append(" Defferments = :Defferments, PlanDeferCount = :PlanDeferCount, ");
-		updateSql.append(" AllowedDefRpyChange = :AllowedDefRpyChange, AvailedDefRpyChange = :AvailedDefRpyChange, ");
-		updateSql.append(" AllowedDefFrqChange = :AllowedDefFrqChange, AvailedDefFrqChange = :AvailedDefFrqChange, ");
-		updateSql.append(" FinIsActive = :FinIsActive, AllowGrcRepay = :AllowGrcRepay, ");
-		updateSql.append(" FinRepayPftOnFrq = :FinRepayPftOnFrq, ");
-		updateSql.append(" MigratedFinance = :MigratedFinance, ScheduleMaintained = :ScheduleMaintained, ");
-		updateSql.append(" ScheduleRegenerated = :ScheduleRegenerated, Blacklisted = :Blacklisted, GrcProfitDaysBasis = :GrcProfitDaysBasis,");
-		updateSql.append(" StepFinance = :StepFinance, StepPolicy = :StepPolicy, AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, StepType = :StepType, DsaCode = :DsaCode, ");
-		updateSql.append(" DroplineFrq= :DroplineFrq,FirstDroplineDate = :FirstDroplineDate,PftServicingODLimit = :PftServicingODLimit,");
-		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority, MinDownPayPerc=:MinDownPayPerc");
-		updateSql.append(" Where FinReference =:FinReference");
-		if (!type.endsWith("_Temp") ) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
-	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceMain financeMain, String type, boolean isWIF) {
@@ -834,6 +769,70 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_Temp") && !isWIF) {
+			updateSql.append("  AND Version= :Version-1");
+		}
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) { };
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
+	 * 
+	 * @param Finance
+	 *            Main Detail (financeMain)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+
+	@SuppressWarnings("serial")
+		public void updateInvestmentFinance(FinanceMain financeMain, String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder updateSql = new StringBuilder("Update ");
+		 
+		updateSql.append(" FinanceMain");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set FinType = :FinType,  FinCcy = :FinCcy, FinBranch = :FinBranch,");
+		updateSql.append(" FinAmount = :FinAmount, FinStartDate = :FinStartDate, ");
+		updateSql.append(" MaturityDate = :MaturityDate, CustID = :CustID,");
+		updateSql.append(" RepayProfitRate = :RepayProfitRate, TotalRepayAmt= :TotalRepayAmt, ");
+		updateSql.append(" TotalProfit = :TotalProfit, ProfitDaysBasis= :ProfitDaysBasis, ");
+		updateSql.append(" ScheduleMethod = :ScheduleMethod, ");
+		updateSql.append(" DisbAccountId = :DisbAccountId, RepayAccountId= :RepayAccountId, ");
+		updateSql.append(" LastRepayDate = :LastRepayDate, LastRepayPftDate = :LastRepayPftDate, ");
+		updateSql.append(" LastRepayRvwDate = :LastRepayRvwDate, LastRepayCpzDate = :LastRepayCpzDate, ");
+		updateSql.append(" NumberOfTerms = :NumberOfTerms, GraceTerms=:GraceTerms, AllowGrcPeriod = :AllowGrcPeriod, ");
+		updateSql.append(" AllowGrcPftRvw = :AllowGrcPftRvw, AllowGrcCpz = :AllowGrcCpz, ");
+		updateSql.append(" AllowRepayRvw = :AllowRepayRvw, AllowRepayCpz = :AllowRepayCpz, ");
+		updateSql.append(" CpzAtGraceEnd = :CpzAtGraceEnd, CalTerms = :CalTerms, ");
+		updateSql.append(" Defferments = :Defferments, PlanDeferCount = :PlanDeferCount, ");
+		updateSql.append(" AllowedDefRpyChange = :AllowedDefRpyChange, AvailedDefRpyChange = :AvailedDefRpyChange, ");
+		updateSql.append(" AllowedDefFrqChange = :AllowedDefFrqChange, AvailedDefFrqChange = :AvailedDefFrqChange, ");
+		updateSql.append(" FinIsActive = :FinIsActive, AllowGrcRepay = :AllowGrcRepay, ");
+		updateSql.append(" FinRepayPftOnFrq = :FinRepayPftOnFrq, ");
+		updateSql.append(" MigratedFinance = :MigratedFinance, ScheduleMaintained = :ScheduleMaintained, ");
+		updateSql.append(" ScheduleRegenerated = :ScheduleRegenerated, Blacklisted = :Blacklisted, GrcProfitDaysBasis = :GrcProfitDaysBasis,");
+		updateSql.append(" StepFinance = :StepFinance, StepPolicy = :StepPolicy, AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, StepType = :StepType, DsaCode = :DsaCode, ");
+		updateSql.append(" DroplineFrq= :DroplineFrq,FirstDroplineDate = :FirstDroplineDate,PftServicingODLimit = :PftServicingODLimit,");
+		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority, MinDownPayPerc=:MinDownPayPerc");
+		updateSql.append(" Where FinReference =:FinReference");
+		if (!type.endsWith("_Temp") ) {
 			updateSql.append("  AND Version= :Version-1");
 		}
 
