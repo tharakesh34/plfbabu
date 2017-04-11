@@ -2111,7 +2111,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 			OverdraftScheduleDetail odSchd =  getFinScheduleData().getOverdraftScheduleDetails().get(odCount);
 			if(isODSchdLimit){
 				strDate = DateUtility.formatToLongDate(odSchd.getDroplineDate());
-				if (data.isRvwOnSchDate() || data.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
+				if ((data.isRvwOnSchDate() && data.getSchDate().compareTo(odSchd.getDroplineDate()) == 0) || 
+						data.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
 					strDate = DateUtility.formatToLongDate(odSchd.getDroplineDate()) + " [R]";
 				}
 			}
