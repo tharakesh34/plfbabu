@@ -1458,11 +1458,8 @@ Select CA.Module, CA.Reference, CA.CollateralRef, CA.AssignPerc, CS.CollateralCc
 		<dropTable tableName="PromotionInsurances" /> 
 		<dropTable tableName="PromotionInsurances_Temp" /> 
 	</changeSet>	
-	
-	<changeSet id="85" author="Kesav">
-		<addNotNullConstraint tableName="FinTypeInsurances_Temp" columnName="ModuleId" columnDataType="int"/>
-	</changeSet>
-	
+
+
 	<changeSet id="86" author="madhubabu">
 		<createView replaceIfExists="true" viewName="Customers_TView">
 SELECT     T1.CustID, T1.CustCIF, T1.CustCoreBank, T1.CustCtgCode, T1.CustTypeCode, T1.CustSalutationCode, T1.CustFName, T1.CustMName, T1.CustLName, 
