@@ -70,6 +70,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Constraint;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
@@ -118,6 +119,7 @@ import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityUser/SecurityUserDialog.zul file.
@@ -184,6 +186,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
 	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
 	protected boolean newRecord = false;
+	protected Datebox UsrAcExpDt;
 
 	/**
 	 * default constructor.<br>
@@ -306,6 +309,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setValueColumn("DesgCode");
 		this.usrDesg.setDescColumn("DesgDesc");
 		this.usrDesg.setValidateColumns(new String[] { "DesgCode" });
+		this.UsrAcExpDt.setFormat(DateFormat.SHORT_DATE.getPattern());
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			// this.statusRow.setVisible(true);
@@ -452,6 +456,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrAcExp.setChecked(aSecurityUser.isUsrAcExp());
 		this.usrCredentialsExp.setChecked(aSecurityUser.isUsrCredentialsExp());
 		this.usrAcLocked.setChecked(aSecurityUser.isUsrAcLocked());
+		this.UsrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
 
 		if (securityUser.isNew()) {
 			this.usrDftAppId.setSelectedIndex(0);
@@ -580,6 +585,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			if (this.usrCanSignonTo != null) {
 				aSecurityUser.setUsrCanSignonTo(PennantAppUtil.getTime(this.usrCanSignonTo.getValue()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.UsrAcExpDt != null) {
+				aSecurityUser.setUsrAcExpDt(this.UsrAcExpDt.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1042,6 +1054,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
 		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
 		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrDesg"));
+		this.UsrAcExpDt.setDisabled(isReadOnly("SecurityUserDialog_UsrAcExpDt"));
+		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1091,6 +1105,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setReadonly(true);
 		this.phoneAreaCode.setReadonly(true);
 		this.phoneCountryCode.setReadonly(true);
+		this.UsrAcExpDt.setDisabled(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);

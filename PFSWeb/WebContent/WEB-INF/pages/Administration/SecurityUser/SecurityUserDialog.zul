@@ -305,14 +305,23 @@
 													<hbox>
 														<extendedcombobox id="usrLanguage" />
 													</hbox>
+													
 													<label
+														id="label_SecurityUserDialog_UsrAcExpDt"
+														value="${c:l('label_SecurityUserDialog_UsrAcExpDt.value')}" />
+													<hbox>
+													<space
+															spacing="2px" />
+														<datebox id="UsrAcExpDt" />
+													</hbox>
+												</row>
+												<row visible="true">
+												<label
 														id="label_SecurityUserDialog_UsrBranchCode"
 														value="${c:l('label_SecurityUserDialog_UsrBranchCode.value')}" />
 													<hbox>
 														<extendedcombobox id="usrBranchCode" />
 													</hbox>
-												</row>
-												<row visible="true">
 													<label
 														id="label_SecurityUserDialog_UsrDftAppCode"
 														value="${c:l('label_SecurityUserDialog_UsrDftAppCode.value')}" />
@@ -324,14 +333,15 @@
 															readonly="true">
 														</combobox>
 													</hbox>
-													<label
+													
+												</row>
+												<row visible="true">
+												<label
 														id="label_SecurityUserDialog_UsrDeptCode"
 														value="${c:l('label_SecurityUserDialog_UsrDeptCode.value')}" />
 													<hbox>
 														<extendedcombobox id="usrDeptCode" />
 													</hbox>
-												</row>
-												<row visible="true">
 													<label
 														id="label_SecurityUserDialog_UsrDesg"
 														value="${c:l('label_SecurityUserDialog_UsrDesg.value')}" />
