@@ -381,8 +381,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 		return arrayRoleCode;
 	}
 
-	public ArrayList<String> getUserFinanceRoles(String finEvent) {
-		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(finEvent);
+	public ArrayList<String> getUserFinanceRoles(String[] moduleNames,String finEvent) {
+		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames,finEvent);
 		ArrayList<String> arrayRoleCode = new ArrayList<String>();;
 		Object[] roles= this.userRoleSet.toArray();
 		for (Object role : roles) {

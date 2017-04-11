@@ -28,10 +28,12 @@ public class FinanceWorkflowRoleUtil {
 			});
 	
 	
-	private static Set<String> getfinanceRoles(String finEvent){
+	private static Set<String> getfinanceRoles(String financeRoleKey){
 		Set<String> roleSet=new HashSet<String>();
 		
-		List<String> rolesList = getFinanceWorkFlowDAO().getFinanceWorkFlowRoles(finEvent);
+		String[] parmList = financeRoleKey.split("@");
+
+		List<String> rolesList = getFinanceWorkFlowDAO().getFinanceWorkFlowRoles(parmList[0], parmList[1]);
 		for (String roles : rolesList) {
 			String[] arrRoles = roles.split(";");
 			for (String role : arrRoles) {
@@ -41,16 +43,18 @@ public class FinanceWorkflowRoleUtil {
 		return roleSet;
 	} 
 
-	
-	public static Set<String> getFinanceRoles(String finEvent){
+	public static Set<String> getFinanceRoles(String[] moduleNames,String finEvent){
 		
 		Set<String> finRolesSet = new HashSet<String>();
-		
-		try {
-			finRolesSet = financeRoleCache.get(finEvent);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from cache: ", e);
-			finRolesSet = getfinanceRoles(finEvent);
+	
+		for (String module : moduleNames) {
+			String financeRoleKey = module+"@"+finEvent;
+			try {
+				finRolesSet.addAll(financeRoleCache.get(financeRoleKey));
+			} catch (ExecutionException e) {
+				logger.warn("Unable to load data from cache: ", e);
+				finRolesSet.addAll(getfinanceRoles(financeRoleKey));
+			}
 		}
 		
 		return finRolesSet;

@@ -351,18 +351,18 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 	
 	
 	@Override
-	public List<String> getFinanceWorkFlowRoles(String finEvent){
+	public List<String> getFinanceWorkFlowRoles(String module,String finEvent){
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ModuleName", module);
 		source.addValue("FinEvent", finEvent);
 		StringBuilder selectSql = new StringBuilder();
 		
 		selectSql.append(" SELECT DISTINCT WD.WorkFlowRoles ");
 		selectSql.append(" FROM  LMTFinanceWorkFlowDef AS FWD INNER JOIN ");
 		selectSql.append(" WorkFlowDetails AS WD ON FWD.WorkFlowType = WD.WorkFlowType ");
-		selectSql.append(" Where FWD.FinEvent =:FinEvent");
-
+		selectSql.append(" Where FWD.ModuleName=:ModuleName and FWD.FinEvent =:FinEvent ");
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(),source,String.class);
 	}
