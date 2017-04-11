@@ -313,18 +313,18 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 		} else {
 			
-			//OverdraftSchedule drop Limits
-			boolean isLoopRepeat = true;
-			Date prvODDate = null;
-			while(isLoopRepeat){
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+				//OverdraftSchedule drop Limits
+				boolean isLoopRepeat = true;
+				Date prvODDate = null;
+				while(isLoopRepeat){
 
 					String label = "";
 					boolean limitRcdOnSchDate = false;
 					boolean odRcdExistsOnDate = false;
 
 					for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
-						
+
 						// If loop repeated when schedule date is more than existing dropline date
 						if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
 							continue;
@@ -436,27 +436,27 @@ public class FinScheduleListItemRenderer implements Serializable{
 							count = 2;
 						}
 					}
-				}
-				
-				// If loop repeated when schedule date is more than existing dropline date
-				prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
-				if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
-					isLoopRepeat = false;
-					break;
-				}
-				for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
 
 					// If loop repeated when schedule date is more than existing dropline date
-					if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
-						continue;
-					}
-
-					if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) > 0){
+					prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
+					if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
 						isLoopRepeat = false;
+						break;
 					}
-					break;
+					for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
+
+						// If loop repeated when schedule date is more than existing dropline date
+						if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
+							continue;
+						}
+
+						if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) > 0){
+							isLoopRepeat = false;
+						}
+						break;
+					}
 				}
-				
+
 			}
 
 			if (getFinanceScheduleDetail().isPftOnSchDate() && !(getFinanceScheduleDetail().isRepayOnSchDate() ||
@@ -1281,17 +1281,17 @@ public class FinScheduleListItemRenderer implements Serializable{
 		} else {
 
 			//OverdraftSchedule drop Limits
-			boolean isLoopRepeat = true;
-			Date prvODDate = null;
-			while(isLoopRepeat){
-				if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+				boolean isLoopRepeat = true;
+				Date prvODDate = null;
+				while(isLoopRepeat){
 
 					String label = "";
 					boolean limitRcdOnSchDate = false;
 					boolean odRcdExistsOnDate = false;
 
 					for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
-						
+
 						// If loop repeated when schedule date is more than existing dropline date
 						if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
 							continue;
@@ -1403,27 +1403,27 @@ public class FinScheduleListItemRenderer implements Serializable{
 							count = 2;
 						}
 					}
-				}
-				
-				// If loop repeated when schedule date is more than existing dropline date
-				prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
-				if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
-					isLoopRepeat = false;
-					break;
-				}
-				for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
 
 					// If loop repeated when schedule date is more than existing dropline date
-					if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
-						continue;
-					}
-
-					if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) > 0){
+					prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
+					if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
 						isLoopRepeat = false;
+						break;
 					}
-					break;
+					for(OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()){
+
+						// If loop repeated when schedule date is more than existing dropline date
+						if(prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate() , prvODDate) <= 0){
+							continue;
+						}
+
+						if(DateUtility.compare(odSchedule.getDroplineDate() , getFinanceScheduleDetail().getSchDate()) > 0){
+							isLoopRepeat = false;
+						}
+						break;
+					}
 				}
-				
+
 			}
 
 			if (getFinanceScheduleDetail().isPftOnSchDate() && !(getFinanceScheduleDetail().isRepayOnSchDate() ||

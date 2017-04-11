@@ -7511,13 +7511,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onSelectCode$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		processFrqChange(this.repayFrq);
-		// To set the Maturitydate when fincategory is Overdraft and it is not dropline
-		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeType.getProductCategory())
-				&& !financeType.isDroplineOD()) {
-			calMaturityDate();
-		}
-
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -7578,7 +7571,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 		this.droplineFrq.setFrqCodeDetails();
 		processFrqChange(this.droplineFrq);
-		calMaturityDate();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -7590,12 +7582,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onSelectDay$repayFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		resetFrqDay(this.repayFrq.getDaySelectedIndex(), false);
-		// To set the Maturitydate when fincategory is Overdraft and it is not dropline
-		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeType.getProductCategory())
-				&& !financeType.isDroplineOD()) {
-			calMaturityDate();
-		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -7651,7 +7637,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onSelectDay$droplineFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 		resetFrqDay(this.droplineFrq.getDaySelectedIndex(), false);
-		calMaturityDate();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -15176,12 +15161,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onChange$droplineDate(Event event) {
-		logger.debug("Entering" + event.toString());
-		calMaturityDate();
-		logger.debug("Leaving" + event.toString());
-	}
-
 	/*
 	 * method to show pop up where user adds account and priority
 	 */
@@ -15305,29 +15284,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Date calMaturityDate() {
 
 		String frq = "";
-		FinanceType fintype = getFinanceDetail().getFinScheduleData().getFinanceType();
+		if(this.finStartDate.getValue() == null){
+			return null;
+		}
+		int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());
+		if(tenorMonths <= 0){
+			return null;
+		}
+		
+		frq = "M00" + StringUtils.leftPad(String.valueOf(DateUtility.getDay(this.finStartDate.getValue())), 2, "0");
+		List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, tenorMonths,
+				this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
 
-		if (this.odMaturityDate.getValue() == null || isSchdlRegenerate()) {
-
-			if (fintype.isDroplineOD()) {
-				frq = this.droplineFrq.getValue();
-			} else {
-				frq = this.repayFrq.getValue();
-			}
-			int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());
-			if (StringUtils.isNotBlank(frq)) {
-				frq = "M00" + frq.substring(3);
-
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, tenorMonths,
-						this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
-
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					readOnlyComponent(true, this.odMaturityDate);
-					this.odMaturityDate.setValue(calendar.getTime());
-					this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-				}
-			}
+		if (scheduleDateList != null) {
+			Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+			readOnlyComponent(true, this.odMaturityDate);
+			this.odMaturityDate.setValue(calendar.getTime());
+			this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		}
 		return odMaturityDate.getValue();
 	}
