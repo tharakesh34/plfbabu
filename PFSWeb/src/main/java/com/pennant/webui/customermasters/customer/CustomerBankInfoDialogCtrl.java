@@ -237,17 +237,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.accountType.setMaxlength(8);
 		this.accountType.setMandatoryStyle(true);
 		this.accountType.setTextBoxWidth(110);
-		this.accountType.setModuleName("LovFieldCode");
-		this.accountType.setValueColumn("FieldCode");
-		this.accountType.setDescColumn("FieldCodeDesc");
-		this.accountType.setValidateColumns(new String[] { "FieldCode" });
-		
+		this.accountType.setModuleName("LovFieldDetail");
+		this.accountType.setValueColumn("FieldCodeValue");
+		this.accountType.setDescColumn("ValueDesc");
+		this.accountType.setValidateColumns(new String[] { "FieldCodeValue" });
 
-		String[] acntTypes = new String[2];
-		acntTypes[0]=PennantConstants.ACCOUNTTYPE_CA;
-		acntTypes[1]=PennantConstants.ACCOUNTTYPE_SA;
 		Filter filter[] = new Filter[1];
-		filter[0] = new Filter("FieldCode", Arrays.asList(acntTypes), Filter.OP_IN);
+		filter[0] = new Filter("FieldCode", "ACC_TYPE", Filter.OP_EQUAL);
 		this.accountType.setFilters(filter);
 		
 		this.accountNumber.setMaxlength(50);
@@ -665,15 +661,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			this.bankName.setReadonly(isReadOnly("CustomerBankInfoDialog_BankName"));
 			this.bankName.setMandatoryStyle(!isReadOnly("CustomerBankInfoDialog_BankName"));
-			this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
+			
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.bankName.setReadonly(true);
-			this.accountNumber.setReadonly(true);
+			
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
+		this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
 		
 
