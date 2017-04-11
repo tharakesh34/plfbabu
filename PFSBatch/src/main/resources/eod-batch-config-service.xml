@@ -145,6 +145,7 @@
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
+		<property name="installmentDueService" ref="installmentDueService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />

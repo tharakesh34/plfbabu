@@ -45,7 +45,8 @@ public class EodService {
 	private StatusMovementService		statusMovementService;
 	private RepayQueueService			repayQueueService;
 	private DateRollOverService			dateRollOverService;
-	private InstallmentDueService installmentDueService;
+	private InstallmentDueService		installmentDueService;
+
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=?";
 
@@ -149,7 +150,7 @@ public class EodService {
 		//Rate review
 		//FIXME Rate review process should checked after the completion new method in schedule calculator
 		rateReviewService.processRateReview(connection, custId, date);
-		
+
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
 		//Date roll over
@@ -209,5 +210,9 @@ public class EodService {
 
 	public void setDateRollOverService(DateRollOverService dateRollOverService) {
 		this.dateRollOverService = dateRollOverService;
+	}
+	
+	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
+		this.installmentDueService = installmentDueService;
 	}
 }
