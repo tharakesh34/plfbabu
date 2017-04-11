@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -205,7 +206,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private String							CREATE_CIF			= "CREATECIF";
 	private String							CREATE_ACCOUNT		= "CREATACCOUNT";
-
+	private List<String> 					usrfinRolesList= new ArrayList<String>(); 
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -234,7 +236,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (arguments.containsKey("requestSource")) {
 			requestSource = (String) arguments.get("requestSource");
 		}
-
+		
+		usrfinRolesList = getUserWorkspace().getUserFinanceRoles(new String[]{"FINANCE","PROMOTION"},requestSource);
+		
 		this.sortOperator_finReference.setModel(new ListModelList<SearchOperators>(new SearchOperators()
 				.getAlphaNumOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -282,7 +286,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_finRequestStage.setModel(new ListModelList<SearchOperators>(new SearchOperators()
 				.getEqualOrNotOperators()));
 		Filter[] filters = new Filter[1];
-		filters[0] = Filter.in("RoleCd", getUserWorkspace().getUserRoles());
+		filters[0] = Filter.in("RoleCd", usrfinRolesList);
 		fillComboBox(this.finRequestStage, "", PennantAppUtil.getSecRolesList(filters), "");
 		this.sortOperator_finRequestStage.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
@@ -395,7 +399,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * if (accessToCreateNewFin) { button_FinanceMainList_NewFinanceMain.setVisible(true); } else {
 		 * button_FinanceMainList_NewFinanceMain.setVisible(false); }
 		 */
-
 		this.searchObj.addTabelName("FinanceMain_LView");
 		setSearchObj(this.searchObj);
 		doSearch();
@@ -494,7 +497,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					for (int i = 0; i < nextTasks.length; i++) {
 						String baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
 						if (!"".equals(baseRole)
-								&& getUserWorkspace().getUserRoles().contains(baseRole)
+								&& usrfinRolesList.contains(baseRole)
 								&& aFinanceMain.getNextUserId() != null
 								&& aFinanceMain.getNextUserId().contains(
 										String.valueOf(getUserWorkspace().getLoggedInUser().getLoginUsrID()))) {
@@ -697,7 +700,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		map.put("financeMainListCtrl", this);
 		map.put("searchObject", this.searchObj);
 		map.put("requestSource", this.requestSource);
-		map.put("role", getUserWorkspace().getUserRoles());
+		map.put("role", usrfinRolesList);
 		map.put("menuItemRightName", menuItemRightName);
 		if (fromEligibleScreen) {
 			map.put("fromEligibleScreen", true);
@@ -912,8 +915,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		StringBuilder whereClause = new StringBuilder();
-		if (getUserWorkspace().getUserRoles() != null && getUserWorkspace().getUserRoles().size() > 0) {
-			for (String role : getUserWorkspace().getUserRoles()) {
+		
+			for (String role : usrfinRolesList) {
 				if (whereClause.length() > 0) {
 					whereClause.append(" OR ");
 				}
@@ -936,7 +939,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (!"".equals(whereClause.toString())) {
 				this.searchObj.addWhereClause(whereClause.toString());
 			}
-		}
 
 		this.searchObj.addSortDesc("Priority");
 
@@ -1244,7 +1246,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		referenceSearchObj.addFilterOr(
 				Filter.equal("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()),
 				Filter.equal("CurrentOwner", 0));
-		referenceSearchObj.addFilterIn("RoleCode", getUserWorkspace().getUserRoles());
+		referenceSearchObj.addFilterIn("RoleCode", usrfinRolesList);
 
 		// Get the result set
 		String sql = "FinReference in ("
