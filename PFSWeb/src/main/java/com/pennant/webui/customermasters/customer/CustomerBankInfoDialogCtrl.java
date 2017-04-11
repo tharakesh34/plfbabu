@@ -43,6 +43,7 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -236,13 +237,17 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.accountType.setMaxlength(8);
 		this.accountType.setMandatoryStyle(true);
 		this.accountType.setTextBoxWidth(110);
-		this.accountType.setModuleName("AccountType");
-		this.accountType.setValueColumn("AcType");
-		this.accountType.setDescColumn("AcTypeDesc");
-		this.accountType.setValidateColumns(new String[] { "AcType" });
+		this.accountType.setModuleName("LovFieldCode");
+		this.accountType.setValueColumn("FieldCode");
+		this.accountType.setDescColumn("FieldCodeDesc");
+		this.accountType.setValidateColumns(new String[] { "FieldCode" });
 		
-		Filter filter[]=new Filter[1];
-		filter[0]=new Filter("AcPurpose", "B", Filter.OP_EQUAL);
+
+		String[] acntTypes = new String[2];
+		acntTypes[0]=PennantConstants.ACCOUNTTYPE_CA;
+		acntTypes[1]=PennantConstants.ACCOUNTTYPE_SA;
+		Filter filter[] = new Filter[1];
+		filter[0] = new Filter("FieldCode", Arrays.asList(acntTypes), Filter.OP_IN);
 		this.accountType.setFilters(filter);
 		
 		this.accountNumber.setMaxlength(50);
