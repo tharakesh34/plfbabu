@@ -144,6 +144,26 @@
 				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
 			</properties>
 		</profile>
+		<profile>
+			<id>oracledev</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>plfdev</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>oracledevaudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.19:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>plfauditdev</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
