@@ -1620,4 +1620,53 @@ from Customers C
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='SECURITYUSER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='SecurityUserDialog_UsrAcExpDt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 	</sql>
 	</changeSet>
+	<changeSet id="90" author="satish">
+	<createView viewName="PayOrderIssueHeader_View" replaceIfExists="true">
+	SELECT     T1.FinReference,T4.CustCIF,T4.CustShrtName,T3.FinType,T3.FinTypeDesc,T3.FinCategory,T4.CustCRCPR,
+			T1.TotalPOAmount,T1.TotalPOCount,
+			T1.IssuedPOAmount,T1.IssuedPOCount,T1.PODueAmount,T1.PODueCount,T2.FinCcy ,T2.CustID,
+			T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,
+			T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T3.AlwMultiPartyDisb,T2.FinIsActive
+FROM        PayOrderIssueHeader_Temp   T1  INNER JOIN
+			(   
+				SELECT FinCcy,FinType,CustID,FinReference,FinisActive
+				FROM FinanceMain
+			    UNION ALL 
+				SELECT FinCcy,FinType,CustID,FinReference,FinisActive
+				FROM FinanceMain_Temp 
+				 WHERE NOT EXISTS(
+					SELECT 1 FROM FinanceMain WHERE FinReference = FinanceMain_Temp.finreference
+				 )
+			)  T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			RMTFinanceTypes  T3 ON T2.FinType=T3.FinType INNER JOIN
+            Customers  T4 ON T2.CustID = T4.CustID  
+ union all
+ SELECT     T1.FinReference,T4.CustCIF,T4.CustShrtName,T3.FinType,T3.FinTypeDesc,T3.FinCategory,T4.CustCRCPR,
+			T1.TotalPOAmount,T1.TotalPOCount,
+			T1.IssuedPOAmount,T1.IssuedPOCount,T1.PODueAmount,T1.PODueCount,T2.FinCcy,T2.CustID,
+			T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,
+			T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T3.AlwMultiPartyDisb,T2.FinIsActive
+FROM        PayOrderIssueHeader  T1  INNER JOIN
+			(   
+				SELECT FinCcy,FinType,CustID,FinReference,FinisActive
+				FROM FinanceMain
+			    UNION ALL 
+				SELECT FinCcy,FinType,CustID,FinReference,FinisActive
+				FROM FinanceMain_Temp 
+				 WHERE NOT EXISTS(
+					SELECT 1 FROM FinanceMain WHERE FinReference = FinanceMain_Temp.finreference
+				 )
+			)  T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			RMTFinanceTypes  T3 ON T2.FinType=T3.FinType INNER JOIN
+            Customers  T4 ON T2.CustID = T4.CustID  
+ WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          PayOrderIssueHeader_Temp
+                            WHERE      FinReference = T1.FinReference)     
+	
+	</createView>
+	
+	</changeSet>
+	
+	
 </databaseChangeLog>
