@@ -286,7 +286,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				getFinanceWriteoffDAO().saveFinWriteoffPayment(finWriteoffPay, "_Temp");
 			}
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+			getFinanceMainDAO().update(financeMain, tableType, false);
 
 			//Finance Penalty OD Rate Details
 			if (penaltyRate != null) {
@@ -769,7 +769,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
-		getFinanceMainDAO().update(financeMain, "", false);
+		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		//Save Finance WriteOffPayment Details
 		FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();

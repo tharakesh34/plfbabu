@@ -396,7 +396,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
 
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+			getFinanceMainDAO().update(financeMain, tableType, false);
 
 			//Save/Update FinRepayHeader Details depends on Workflow
 			if (tableType == TableType.TEMP_TAB) {
@@ -727,7 +727,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (finAccount != null) {
 			financeMain.setFinAccount(finAccount);
 		}
-		getFinanceMainDAO().update(financeMain, "", false);
+		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		// ScheduleDetails delete and save
 		//=======================================

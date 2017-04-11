@@ -1152,7 +1152,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		FinanceMain aFinanceMain = finDetail.getFinanceMain();
 		aFinanceMain.setAvailedDefRpyChange(aFinanceMain.getAvailedDefRpyChange()+1);
 		aFinanceMain.setVersion(aFinanceMain.getVersion()+1);
-		getFinanceMainDAO().update(aFinanceMain, "", false);
+		getFinanceMainDAO().update(aFinanceMain, TableType.MAIN_TAB, false);
 
 		logger.debug("Leaving ");
 	}

@@ -250,7 +250,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+			getFinanceMainDAO().update(financeMain, tableType, false);
 		}
 		
 		// Save Fee Charges List
@@ -443,7 +443,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
-		getFinanceMainDAO().update(financeMain, "", false);
+		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 		
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {

@@ -256,7 +256,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 			getFinanceWriteoffDAO().save(financeWriteoff, tableType.getSuffix());
 			
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+			getFinanceMainDAO().update(financeMain, tableType, false);
 			
 			//Update Writeoff Details depends on Workflow
 			getFinanceWriteoffDAO().update(financeWriteoff, tableType.getSuffix());
@@ -503,7 +503,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		financeMain.setRecordType("");
 		financeMain.setFinIsActive(false);
 		financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
-		getFinanceMainDAO().update(financeMain, "", false);
+		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 		
 		//Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();

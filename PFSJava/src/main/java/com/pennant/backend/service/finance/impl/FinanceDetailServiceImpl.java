@@ -188,7 +188,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class FinanceDetailServiceImpl extends GenericFinanceDetailService implements  FinanceDetailService {
-	private final static Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
 
 	private CustomerIncomeDAO customerIncomeDAO;
 	private IncomeTypeDAO incomeTypeDAO;
@@ -1681,7 +1681,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 		} else {
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), isWIF);
+			getFinanceMainDAO().update(financeMain, tableType, isWIF);
 
 			//Update Finance Premium Details
 			String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
@@ -3117,7 +3117,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				//Save Finance Main after Saving  the oldFinSchdData
 				//=======================================
-				getFinanceMainDAO().update(financeMain, "", isWIF);
+				getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, isWIF);
 				
 				//Save Finance Premium Details
 				//=======================================
@@ -3746,7 +3746,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				tranType = PennantConstants.TRAN_UPD;
 				financeMain.setRecordType("");
-				getFinanceMainDAO().update(financeMain, "", isWIF);
+				getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, isWIF);
 
 				if(!isWIF){
 

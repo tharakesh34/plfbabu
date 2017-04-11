@@ -237,7 +237,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		if (financeDetail.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 		}else{
-			getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+			getFinanceMainDAO().update(financeMain, tableType, false);
 		}
 		
 		saveScheduleDetails(financeDetail, "_Temp", false);
@@ -414,7 +414,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				financeMain.setRecordType("");
-				getFinanceMainDAO().update(financeMain, "", false);
+				getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 			}
 			
 			saveScheduleDetails(financeDetail, "", false);
@@ -846,7 +846,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			}
 
 			if (updateRecord) {
-				getFinanceMainDAO().update(financeMain, type, false);
+				getFinanceMainDAO().update(financeMain, TableType.valueOf(type), false);
 			}
 
 			if (deleteRecord) {

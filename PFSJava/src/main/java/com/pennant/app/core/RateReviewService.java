@@ -74,6 +74,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennanttech.pff.core.TableType;
 
 public class RateReviewService extends ServiceHelper {
 
@@ -358,7 +359,7 @@ public class RateReviewService extends ServiceHelper {
 		FinanceMain finMain = schdueleData.getFinanceMain();
 		// FinanceMain updation
 		finMain.setVersion(finMain.getVersion() + 1);
-		getFinanceMainDAO().update(finMain, "", false);
+		getFinanceMainDAO().update(finMain, TableType.MAIN_TAB, false);
 		// Finance Schedule Details
 		getFinanceScheduleDetailDAO().updateList(schdueleData.getFinanceScheduleDetails(), "");
 		// Finance Repay Instruction Details

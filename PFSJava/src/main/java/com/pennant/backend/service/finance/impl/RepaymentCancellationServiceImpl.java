@@ -163,7 +163,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			if (financeMain.isNew()) {
 				getFinanceMainDAO().save(financeMain, tableType, false);
 			} else {
-				getFinanceMainDAO().update(financeMain, tableType.getSuffix(), false);
+				getFinanceMainDAO().update(financeMain, tableType, false);
 			}
 		}
 
