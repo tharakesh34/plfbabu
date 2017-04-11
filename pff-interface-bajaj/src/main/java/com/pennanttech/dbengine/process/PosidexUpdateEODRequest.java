@@ -54,7 +54,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			executionStatus.setRemarks("Loading destination database connection...");
 			DBConfiguration dbConfiguration = config.getDbConfiguration();
 			destConnection = getConnection(dbConfiguration);
-			sourceConnection=DataSourceUtils.doGetConnection(appDataSource);
+			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
 
 			resultSet = getSourceData();

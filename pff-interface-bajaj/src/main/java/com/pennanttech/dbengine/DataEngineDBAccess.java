@@ -13,7 +13,7 @@ public class DataEngineDBAccess extends DataAccess {
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	public DataEngineDBAccess(DataSource appDataSource, String dataBase, DataEngineStatus executionStatus) {
-		super(appDataSource, executionStatus);
+		super(appDataSource, executionStatus, dataBase);
 		this.database = dataBase;
 		this.jdbcTemplate = new NamedParameterJdbcTemplate(appDataSource);
 	}
