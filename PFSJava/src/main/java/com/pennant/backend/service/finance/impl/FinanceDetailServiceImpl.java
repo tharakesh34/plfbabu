@@ -2917,6 +2917,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeMain.setRecordType("");
 				financeMain.setLinkedFinRef(financeMain.getFinReference()+"_DP");
 				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, isWIF);
+				
+				// Setting BPI Paid amount to Schedule details
+				//=======================================
+				if(financeMain.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment())){
+					for (int i = 0; i < financeDetail.getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
+						FinanceScheduleDetail curSchd = financeDetail.getFinScheduleData().getFinanceScheduleDetails().get(i);
+						if(StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())){
+							curSchd.setSchdPftPaid(financeMain.getBpiAmount());
+							if(curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0){
+								curSchd.setSchPftPaid(true);
+							}
+							break;
+						}
+						if(curSchd.getInstNumber() > 1){
+							break;
+						}
+					}
+				}
 
 				//Schedule Details
 				//=======================================
