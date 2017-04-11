@@ -1689,5 +1689,33 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		insert into RMTLovFieldDetail  values((select max(fieldcodeid)+1 from RMTLovFieldDetail),'ACC_TYPE','CA','Current Account',1,1,1000,current_timestamp,'Approved','','','','','',0,0);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="95" author="madhubabu">
+	<createView replaceIfExists="true" viewName="CustomerBankInfo_View">
+			SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+				     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+				     T3.BankName lovDescBankName,T4.ValueDesc lovDescAccountType
+		  FROM       CustomerBankInfo_Temp T1 INNER JOIN 
+		             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+		             RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType 
+		UNION ALL
+		
+		  SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+				     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+				     T3.BankName lovDescBankName,T4.ValueDesc lovDescAccountType
+		  FROM       CustomerBankInfo T1 INNER JOIN 
+		             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+		             RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType
+		WHERE     NOT EXISTS (SELECT 1 FROM CustomerBankInfo_TEMP WHERE BankId = T1.BankId)
+	</createView>
+	</changeSet>
+	<changeSet id="96" author="madhubabu">
+	<createView replaceIfExists="true" viewName="CustomerBankInfo_AView">
+			SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+		     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+		     T3.BankName lovDescBankName,T4.ValueDesc lovDescAccountType
+  FROM       CustomerBankInfo T1 INNER JOIN 
+             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+             RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType
+	</createView>
+	</changeSet>
 </databaseChangeLog>
