@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -65,19 +64,17 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 /**
  * DAO methods implementation for the <b>Country model</b> class.<br>
- * 
  */
 public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO {
-
-	private static Logger logger = Logger.getLogger(CountryDAOImpl.class);
+	private static Logger				logger	= Logger.getLogger(CountryDAOImpl.class);
 
 	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+
 	public CountryDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Country details by key field
 	 * 
@@ -93,19 +90,22 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 		Country country = new Country();
 		country.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("SELECT CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,CountryRiskLimit, CountryIsActive,SystemDefault," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append(
+				"SELECT CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,CountryRiskLimit, CountryIsActive,SystemDefault,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTCountries");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CountryCode =:CountryCode") ;
+		selectSql.append(" Where CountryCode =:CountryCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
 		RowMapper<Country> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Country.class);
 
 		try {
-			country = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			country = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			country = null;
@@ -123,9 +123,8 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 	}
 
 	/**
-	 * This method Deletes the Record from the BMTCountries or
-	 * BMTCountries_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Country by key CountryCode
+	 * This method Deletes the Record from the BMTCountries or BMTCountries_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Country by key CountryCode
 	 * 
 	 * @param Country
 	 *            (country)
@@ -140,26 +139,28 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 		logger.debug("Entering");
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
-		
+
 		deleteSql.append("Delete From BMTCountries");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where CountryCode =:CountryCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+
+		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", country.getCountryCode(), country.getUserDetails().getUsrLanguage());
+				ErrorDetails errorDetails = getError("41004", country.getCountryCode(),
+						country.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.debug("Error in delete Method");
 			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", country.getCountryCode(), country.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails = getError("41006", country.getCountryCode(),
+					country.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -183,19 +184,20 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 	public String save(Country country, String type) {
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
-		
+
 		insertSql.append("Insert Into BMTCountries");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (CountryCode, CountryDesc, CountryParentLimit, CountryResidenceLimit,");
 		insertSql.append(" CountryRiskLimit, CountryIsActive,SystemDefault,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(:CountryCode, :CountryDesc, :CountryParentLimit, :CountryResidenceLimit,");
 		insertSql.append(" :CountryRiskLimit, :CountryIsActive,:SystemDefault,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
@@ -204,9 +206,8 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 	}
 
 	/**
-	 * This method updates the Record BMTCountries or BMTCountries_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Country by key CountryCode and Version
+	 * This method updates the Record BMTCountries or BMTCountries_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Country by key CountryCode and Version
 	 * 
 	 * @param Country
 	 *            (country)
@@ -222,28 +223,30 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
-		
+
 		updateSql.append("Update BMTCountries");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set CountryDesc = :CountryDesc, CountryParentLimit = :CountryParentLimit,");
 		updateSql.append(" CountryResidenceLimit = :CountryResidenceLimit, CountryRiskLimit = :CountryRiskLimit,");
 		updateSql.append(" CountryIsActive = :CountryIsActive, SystemDefault = :SystemDefault,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CountryCode =:CountryCode ");
-		if (!type.endsWith("_Temp")){
+		if (!type.endsWith("_Temp")) {
 			updateSql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			logger.debug("Error in Update Method Count :" + recordCount);
 
-			ErrorDetails errorDetails= getError("41003", country.getCountryCode(), country.getUserDetails().getUsrLanguage());
+			ErrorDetails errorDetails = getError("41003", country.getCountryCode(),
+					country.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
 		}
@@ -275,28 +278,34 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
 		String dftCountryCode = "";
 		try {
-			dftCountryCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (EmptyResultDataAccessException e) {
-        	logger.warn("Exception: ", e);
-        	dftCountryCode = "";
-        }
+			dftCountryCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			dftCountryCode = "";
+		}
 
 		logger.debug("Leaving");
 		return dftCountryCode;
 	}
-	
+
 	/**
 	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
+	 * 
+	 * @param errorId
+	 *            (String)
+	 * @param Id
+	 *            (String)
+	 * @param userLanguage
+	 *            (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String countryCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
+	private ErrorDetails getError(String errorId, String countryCode, String userLanguage) {
+		String[][] parms = new String[2][2];
 		parms[1][0] = countryCode;
 
-		parms[0][0] = PennantJavaUtil.getLabel("label_CountryCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+		parms[0][0] = PennantJavaUtil.getLabel("label_CountryCode") + ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
+				userLanguage);
 	}
 }
