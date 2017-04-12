@@ -492,48 +492,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	}
 
 	/**
-	 * This method Deletes the Record from the FinanceMain or FinanceMain_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Main Detail by key FinReference
-	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(FinanceMain financeMain, String type, boolean isWIF) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql = new StringBuilder("Delete From ");
-		if (isWIF) {
-			deleteSql.append(" WIFFinanceMain");
-		} else {
-			deleteSql.append(" FinanceMain");
-		}
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),  beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
-			}
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * This method insert new Records into FinanceMain or FinanceMain_Temp.
 	 * 
 	 * save Finance Main Detail
@@ -768,6 +726,48 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * This method Deletes the Record from the FinanceMain or FinanceMain_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Finance Main Detail by key FinReference
+	 * 
+	 * @param Finance
+	 *            Main Detail (financeMain)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public void delete(FinanceMain financeMain, String type, boolean isWIF) {
+		logger.debug("Entering");
+		int recordCount = 0;
+
+		StringBuilder deleteSql = new StringBuilder("Delete From ");
+		if (isWIF) {
+			deleteSql.append(" WIFFinanceMain");
+		} else {
+			deleteSql.append(" FinanceMain");
+		}
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where FinReference =:FinReference");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),  beanParameters);
+			if (recordCount <= 0) {
+				ErrorDetails errorDetails = getError("41003", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) { };
+			}
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+			ErrorDetails errorDetails = getError("41006", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) { };
+		}
+		logger.debug("Leaving");
 	}
 
 	/**

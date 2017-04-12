@@ -67,11 +67,11 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainById(String id, String type, boolean isWIF);
 
-	void delete(FinanceMain financeMain, String type, boolean isWIF);
-
 	String save(FinanceMain financeMain, TableType tableType, boolean wif);
 
 	void update(FinanceMain financeMain, TableType tableType, boolean wif);
+
+	void delete(FinanceMain financeMain, String type, boolean isWIF);
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
 
