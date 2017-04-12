@@ -85,5 +85,11 @@ public class ImplementationConstants {
 	public static final String	CLIENT_AHB						= "AHB";
 	public static final String	CLIENT_BFL						= "BFL";
 	public static final String	CLIENT_NAME						= CLIENT_BFL;
+	
+	public static final String	NBFC							= "NBFC";
+	public static final String	BANK							= "BANK";
+	public static final String	CLIENTTYPE						=  NBFC;
 
+	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
+	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
 }

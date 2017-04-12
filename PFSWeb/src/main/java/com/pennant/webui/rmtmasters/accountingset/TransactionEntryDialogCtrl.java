@@ -1281,10 +1281,16 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	
 	public void onClick$btnSearchAccountType(Event event) {
 		logger.debug("Entering" + event.toString());
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
 		
-		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType", filter);
+		Object dataObject = null;
+		if (ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_AIB)) {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("CustSysAc", "1", Filter.OP_EQUAL);
+			dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType", filter);
+		} else {
+			dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, "AccountType");
+		}
+
 		if (dataObject instanceof String) {
 			this.accountType.setValue(dataObject.toString());
 			this.lovDescAccountTypeName.setValue("");
@@ -1296,6 +1302,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1845,13 +1852,20 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.lovDescAccountSubHeadRuleName.setValue("");
 				this.openNewFinAc.setChecked(false);
 			} else if (value.equals(AccountConstants.TRANACC_GLNPL) || value.equals(AccountConstants.TRANACC_BUILD)) {
-				this.btnSearchAccountType.setVisible(false);
-				this.accountType.setValue(null);
-				this.spSubHead.setSclass("mandatory");
+				if(ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_AIB)){
+					this.btnSearchAccountType.setVisible(false);
+					this.btnSearchSystemIntAccount.setVisible(true);
+					this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+					this.accountType.setValue(null);
+					this.spSubHead.setSclass("mandatory");
+				}else{
+					this.btnSearchAccountType.setVisible(true);
+					this.btnSearchSystemIntAccount.setVisible(false);
+					this.btnSearchAccountType.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
+					this.accountType.setValue(null);
+				}
 				this.spAccountType.setSclass("mandatory");
 				this.btnSearchAccountSubHeadRule.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountSubHeadEule"));
-				this.btnSearchSystemIntAccount.setVisible(true);
-				this.btnSearchSystemIntAccount.setDisabled(getUserWorkspace().isReadOnly("TransactionEntryDialog_accountType"));
 				this.openNewFinAc.setChecked(false);
 			} else if (value.equals(AccountConstants.TRANACC_CUSTSYS)) {
 				this.btnSearchAccountType.setVisible(true);
@@ -1891,11 +1905,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 		this.amountcodes.clear();
 		getAmountCodes(getTransactionEntry().getLovDescEventCodeName());
-		if(StringUtils.isNotBlank(getTransactionEntry().getFeeCode())){
+		//if(StringUtils.isNotBlank(getTransactionEntry().getFeeCode())){
 			getFeeCodes(getTransactionEntry().getLovDescEventCodeName());
-		}else{
-			this.tab_Fee.setVisible(false);
-		}
+		//}else{
+			//this.tab_Fee.setVisible(false);
+		//}
 		logger.debug("Leaving");
 	}
 

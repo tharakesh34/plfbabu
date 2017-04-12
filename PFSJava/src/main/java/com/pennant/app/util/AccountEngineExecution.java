@@ -62,6 +62,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -753,15 +754,18 @@ public class AccountEngineExecution implements Serializable {
 			sysIntAccMap.put(siaDef.getSIACode(), siaDef.getSIANumber());
 		}
 		
-		Map<String, String> ruleResultMap =  doProcessSubHeadRules(subHeadSqlList, aeCommitment,vASRecording, dataSetFiller, 
+		Map<String, String> ruleResultMap = null;
+		if(ImplementationConstants.CLIENTTYPE.equals(ImplementationConstants.BANK)){
+			ruleResultMap =  doProcessSubHeadRules(subHeadSqlList, aeCommitment,vASRecording, dataSetFiller, 
 					dataSet.getFinCcy());
-		
+		}
+
 		//Set Account number generation
 		for (TransactionEntry transactionEntry : transactionEntries) {
 			
 			if("N".equals(createNow)){
 				IAccounts account = getAccountNumber(dataSet,transactionEntry,isCommitment,false, financeType, accountsMap, 
-						accountCcyMap, sysIntAccMap, ruleResultMap);
+						accountCcyMap, sysIntAccMap, ruleResultMap, dataSetFiller);
 				if(account != null){
 					accountsList.add(account);
 				}
@@ -770,7 +774,7 @@ public class AccountEngineExecution implements Serializable {
 				
 			}else{
 				IAccounts account = getAccountNumber(dataSet,transactionEntry,isCommitment,true, financeType, accountsMap, 
-						accountCcyMap, sysIntAccMap, ruleResultMap);
+						accountCcyMap, sysIntAccMap, ruleResultMap, dataSetFiller);
 				if(account != null){
 					logger.trace("Refactoring of Account Engine: accountsList Size := " + accountsList.size());
 					accountsList.add(account);
@@ -821,9 +825,6 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setTranDesc(transactionEntry.getTransDesc());
 			returnDataSet.setPostDate(dataSet.getPostDate());
 			returnDataSet.setValueDate(dataSet.getPostDate());
-			returnDataSet.setTranCode(transactionEntry.getTranscationCode());
-			returnDataSet.setRevTranCode(transactionEntry.getRvsTransactionCode());
-			returnDataSet.setDrOrCr(transactionEntry.getDebitcredit());
 			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
@@ -875,7 +876,21 @@ public class AccountEngineExecution implements Serializable {
 			
 			//Amount Rule Execution for Amount Calculation
 			BigDecimal postAmt = executeAmountRule(dataSet.getFinEvent(), transactionEntry, feeRuleDetailMap, dataSet.getFinCcy(),dataSetFiller,aeCommitment,vASRecording);
-			returnDataSet.setPostAmount(postAmt);
+			if(postAmt.compareTo(BigDecimal.ZERO) >= 0 ){
+				returnDataSet.setPostAmount(postAmt);
+				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
+				returnDataSet.setRevTranCode(transactionEntry.getRvsTransactionCode());
+				returnDataSet.setDrOrCr(transactionEntry.getDebitcredit());
+			}else{
+				returnDataSet.setPostAmount(postAmt.abs());
+				returnDataSet.setRevTranCode(transactionEntry.getTranscationCode());
+				returnDataSet.setTranCode(transactionEntry.getRvsTransactionCode());
+				if(transactionEntry.getDebitcredit().equals(AccountConstants.TRANTYPE_CREDIT)){
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+				}else{
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+				}
+			}
 			//post amount in Local currency
 			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(dataSet.getFinCcy(), SysParamUtil.getAppCurrency(), postAmt));
 			returnDataSet.setExchangeRate(CurrencyUtil.getExChangeRate(dataSet.getFinCcy()));
@@ -1164,6 +1179,13 @@ public class AccountEngineExecution implements Serializable {
 		dataSetFiller.setFinAmount(dataSet.getFinAmount());
 		dataSetFiller.setFINAMT(dataSet.getFinAmount());
 		dataSetFiller.setNewLoan(dataSet.isNewRecord());
+		
+		dataSetFiller.setDEDUCTFEEDISB(dataSet.getDeductFeeDisb());
+		dataSetFiller.setADDFEETOFINANCE(dataSet.getAddFeeToFinance());
+		dataSetFiller.setPAIDFEE(dataSet.getPaidFee());
+		dataSetFiller.setWAIVEDFEE(dataSet.getWaivedFee());
+		dataSetFiller.setBPI(dataSet.getBpiAmount());
+		
 		logger.debug("Leaving");
 		return dataSetFiller;
 	}
@@ -1202,7 +1224,7 @@ public class AccountEngineExecution implements Serializable {
 	 */
 	private IAccounts getAccountNumber(DataSet dataSet,TransactionEntry transactionEntry, boolean isCommitment,boolean createNow,
 			FinanceType financeType, Map<String, Object> accountsMap, Map<String, String> accountCcyMap, Map<String, String> sysIntAccMap,
-			Map<String, String> ruleResultMap) throws IllegalAccessException, InvocationTargetException {
+			Map<String, String> ruleResultMap, DataSetFiller dataSetFiller) throws IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 		IAccounts newAccount = new IAccounts();
@@ -1530,9 +1552,18 @@ public class AccountEngineExecution implements Serializable {
 			
 			newAccount.setAcType(transactionEntry.getAccountType());
 			newAccount.setInternalAc(true);
-			newAccount.setAccountId(generateAccount(dataSet, transactionEntry.getAccountType(), true, transactionEntry.getAccountSubHeadRule(), 
-					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap));
 			
+			//FIXME Constant to be changed
+			if(ImplementationConstants.CLIENTTYPE.equals(ImplementationConstants.NBFC)){
+				Rule rule = getRuleDAO().getRuleByID(transactionEntry.getAccountSubHeadRule(),RuleConstants.MODULE_SUBHEAD, RuleConstants.MODULE_SUBHEAD, "");
+				HashMap<String, Object> map = dataSetFiller.getDeclaredFieldValues();
+				map.put("reqFinAcType", transactionEntry.getAccountType());
+				newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), map,
+						dataSet.getFinCcy(), RuleReturnType.STRING));
+			}else{
+				newAccount.setAccountId(generateAccount(dataSet, transactionEntry.getAccountType(), true, transactionEntry.getAccountSubHeadRule(), 
+					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap));
+			}
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
@@ -1634,50 +1665,51 @@ public class AccountEngineExecution implements Serializable {
 		if(res.length > 0){
 			for (int i = 0; i < res.length; i++) {
 				if(!(StringUtils.isBlank(res[i]) || "Result".equalsIgnoreCase(res[i]))){
-					if(feeRuleDetailMap != null && feeRuleDetailMap.containsKey(res[i].trim().substring(0,
-							res[i].trim().contains("_") ? res[i].trim().indexOf('_'): res[i].trim().length()))){
-						FeeRule feeRule = feeRuleDetailMap.get(res[i].trim().substring(0,
-								res[i].trim().contains("_") ? res[i].trim().indexOf('_'): res[i].trim().length()));
+					String trim = res[i].trim();
+					
+					if(feeRuleDetailMap != null && feeRuleDetailMap.containsKey(trim.substring(0, trim.contains("_") ? trim.indexOf('_'): trim.length()))){
+						FeeRule feeRule = feeRuleDetailMap.get(trim.substring(0,
+								trim.contains("_") ? trim.indexOf('_'): trim.length()));
 						
-						if(amountRule.contains(res[i].trim()+"_C")){
-							amountRule = amountRule.replace(res[i].trim()+"_C",feeRule.getFeeAmount().toString());
+						if(amountRule.contains(trim+"_C")){
+							amountRule = amountRule.replace(trim+"_C",feeRule.getFeeAmount().toString());
 						}
-						if(amountRule.contains(res[i].trim()+"_W")){
-							amountRule = amountRule.replace(res[i].trim()+"_W",feeRule.getWaiverAmount().toString());
+						if(amountRule.contains(trim+"_W")){
+							amountRule = amountRule.replace(trim+"_W",feeRule.getWaiverAmount().toString());
 						}
-						if(amountRule.contains(res[i].trim()+"_P")){
-							amountRule = amountRule.replace(res[i].trim()+"_P",feeRule.getPaidAmount().toString());
+						if(amountRule.contains(trim+"_P")){
+							amountRule = amountRule.replace(trim+"_P",feeRule.getPaidAmount().toString());
 						}
-						if(amountRule.contains(res[i].trim()+"_AF")){
+						if(amountRule.contains(trim+"_AF")){
 							if(StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-								amountRule = amountRule.replace(res[i].trim()+"_AF",(feeRule.getFeeAmount().subtract(
+								amountRule = amountRule.replace(trim+"_AF",(feeRule.getFeeAmount().subtract(
 										feeRule.getWaiverAmount()).subtract(feeRule.getPaidAmount())).toString());
 							}else{
-								amountRule = amountRule.replace(res[i].trim()+"_AF","0");
+								amountRule = amountRule.replace(trim+"_AF","0");
 							}
 						}
 					}else{
-						Rule rule = getRuleDAO().getRuleByID(res[i].trim(), RuleConstants.MODULE_FEES ,event , "");
+						Rule rule = getRuleDAO().getRuleByID(trim, RuleConstants.MODULE_FEES ,event , "");
 						if (event.equals(AccountEventConstants.ACCEVENT_NEWCMT)|| event.equals(AccountEventConstants.ACCEVENT_MNTCMT)) {
 							if(rule != null){
 								try {
 									amount =  (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), aeCommitment.getDeclaredFieldValues(),
-											finCcy, RuleReturnType.DECIMAL);;
+											finCcy, RuleReturnType.DECIMAL);
 									
-									if(amountRule.contains(res[i].trim()+"_C")){
-										amountRule = amountRule.replace(res[i].trim()+"_C",amount.toString());
+									if(amountRule.contains(trim+"_C")){
+										amountRule = amountRule.replace(trim+"_C",amount.toString());
 									}
-									if(amountRule.contains(res[i].trim()+"_W")){
-										amountRule = amountRule.replace(res[i].trim()+"_W","0");
+									if(amountRule.contains(trim+"_W")){
+										amountRule = amountRule.replace(trim+"_W","0");
 									}
-									if(amountRule.contains(res[i].trim()+"_P")){
-										amountRule = amountRule.replace(res[i].trim()+"_P","0");
+									if(amountRule.contains(trim+"_P")){
+										amountRule = amountRule.replace(trim+"_P","0");
 									}
-									if(amountRule.contains(res[i].trim()+"_AF")){
+									if(amountRule.contains(trim+"_AF")){
 										if(StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-											amountRule = amountRule.replace(res[i].trim()+"_AF",amount.toString());
+											amountRule = amountRule.replace(trim+"_AF",amount.toString());
 										}else{
-											amountRule = amountRule.replace(res[i].trim()+"_AF","0");
+											amountRule = amountRule.replace(trim+"_AF","0");
 										}
 									}
 								}catch (Exception e) {
@@ -1691,20 +1723,20 @@ public class AccountEngineExecution implements Serializable {
 											finCcy, RuleReturnType.DECIMAL);
 									amount = new BigDecimal(result == null ? "0" : result.toString());
 									
-									if(amountRule.contains(res[i].trim()+"_W")){
-										amountRule = amountRule.replace(res[i].trim()+"_W","0");
+									if(amountRule.contains(trim+"_W")){
+										amountRule = amountRule.replace(trim+"_W","0");
 									}
-									if(amountRule.contains(res[i].trim()+"_C")){
-										amountRule = amountRule.replace(res[i].trim()+"_C",amount.toString());
+									if(amountRule.contains(trim+"_C")){
+										amountRule = amountRule.replace(trim+"_C",amount.toString());
 									}
-									if(amountRule.contains(res[i].trim()+"_P")){
-										amountRule = amountRule.replace(res[i].trim()+"_P","0");
+									if(amountRule.contains(trim+"_P")){
+										amountRule = amountRule.replace(trim+"_P","0");
 									}
-									if(amountRule.contains(res[i].trim()+"_AF")){
+									if(amountRule.contains(trim+"_AF")){
 										if(StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-											amountRule = amountRule.replace(res[i].trim()+"_AF",amount.toString());
+											amountRule = amountRule.replace(trim+"_AF",amount.toString());
 										}else{
-											amountRule = amountRule.replace(res[i].trim()+"_AF","0");
+											amountRule = amountRule.replace(trim+"_AF","0");
 										}
 									}
 								}catch (Exception e) {
@@ -1848,6 +1880,7 @@ public class AccountEngineExecution implements Serializable {
 		
 		dataSetFiller.setPreApprovalExpired(aeAmountCodes.isPreApprovalExpired());
 		dataSetFiller.setPreApprovalFinance(aeAmountCodes.isPreApprovalFinance());
+
 		logger.debug("Leaving");
 	}
 

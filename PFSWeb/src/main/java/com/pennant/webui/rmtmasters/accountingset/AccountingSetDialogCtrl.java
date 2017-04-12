@@ -66,6 +66,8 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -124,6 +126,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Button 		btnCopyTo;					// autowired
 
 	protected Grid 			grid_Basicdetails;			// autoWired
+	
+	protected Hbox 			hbox_EntryByInvestment;		// autoWired
 
 	protected Listbox 		listBoxTransactionEntry;
 	protected Listheader 	listheader_Account;
@@ -249,6 +253,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.listheader_Account.setVisible(false);
 			this.listheader_PostToSystem.setVisible(false);
 		}
+		
+		this.hbox_EntryByInvestment.setVisible(ImplementationConstants.ALLOW_RIA);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -1126,6 +1132,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		aTransactionEntry.setLovDescAccSetCodeName(this.accountSetCode.getValue());
 		aTransactionEntry.setLovDescAccSetCodeDesc(this.accountSetCodeName.getValue());
 		aTransactionEntry.setLovDescEventCodeDesc(this.lovDescEventCodeName.getValue());
+		if(ImplementationConstants.CLIENT_NAME.equals(ImplementationConstants.CLIENT_BFL)){
+			aTransactionEntry.setAccount(AccountConstants.TRANACC_BUILD);
+		}
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 

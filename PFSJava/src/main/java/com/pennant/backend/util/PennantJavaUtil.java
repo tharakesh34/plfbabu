@@ -239,6 +239,7 @@ import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -258,6 +259,7 @@ import com.pennant.backend.model.rmtmasters.ScoringGroup;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.rulefactory.AmountCode;
 import com.pennant.backend.model.rulefactory.CorpScoreGroupDetail;
 import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
@@ -272,7 +274,6 @@ import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.model.sponsorbank.SponsorBank;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.staticparms.Frequency;
@@ -516,8 +517,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MandateStatus", new ModuleMapping("MandateStatus", MandateStatus.class, new String[] { "MandatesStatus",
 		"MandatesStatus_View" }, masterWF, new String[] { "MandateID", "Status" }, null, 300));
 
-		ModuleUtil.register("SponsorBank", new ModuleMapping("SponsorBank", SponsorBank.class, new String[] {
-				"SponsorBank", "SponsorBank_AView" }, masterWF, new String[] { "SponsorBankCode", "SponsorBankCode" },
+		ModuleUtil.register("PartnerBank", new ModuleMapping("PartnerBank", PartnerBank.class, new String[] {
+				"PartnerBank", "PartnerBank_AView" }, masterWF, new String[] { "PartnerBankCode", "PartnerBankCode" },
 				null, 300));
 
 		ModuleUtil.register("BankDetail", new ModuleMapping("BankDetail", BankDetail.class, new String[] {
@@ -1818,6 +1819,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("InsuranceTypePolicy", new ModuleMapping("InsuranceTypePolicy",
 				InsurancePolicy.class, new String[] { "InsurancePolicy", "InsurancePolicy_View" },
 				masterWF, new String[] { "InsuranceType", "InsuranceTypeDesc" }, null, 300));
+		
+		ModuleUtil.register("AmountCode", new ModuleMapping("Amountcode",
+				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
+				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
 		
 	}
 

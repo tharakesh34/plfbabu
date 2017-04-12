@@ -462,30 +462,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private Tab finTypeAccountDetails; // autoWired
 	private Tab extendedDetails; // autoWired
 	
-	//Fees 
-	//protected Button btnNew_FinTypeFees_Origination;
-	//protected Listbox listBoxFinTypeFeesOrigination;
-	//private List<FinTypeFees> finTypeFeesOriginationList = new ArrayList<FinTypeFees>();
-	//private List<FinTypeFees> finTypeFeesServicingList = new ArrayList<FinTypeFees>();
-	//protected Button btnNew_FinTypeFees_Servicing;
-	//protected Listbox listBoxFinTypeFeesServicing;
-
 	//Customer Accounts
 	protected Button btnNew_FinTypeAccount;
 	protected Listbox listBoxFinTypeAccounts;
 	private List<FinTypeAccount> finTypeAccountList = new ArrayList<FinTypeAccount>();
 
-	//Finance Type Accounting
-	//protected Listbox listBoxFinTypeAccounting;
-	//private Map<String,FinTypeAccounting> finTypeAccEventMap = new LinkedHashMap<String,FinTypeAccounting>();
-
 	private boolean isCompReadonly = false;
 	protected boolean alwCopyOption = false;
 
-	//Insurance Details
-	//protected Button						btnNew_insuranceType;
-	//private List<FinTypeInsurances>			finTypeInsuranceList	= new ArrayList<FinTypeInsurances>();
-	//private Listbox							listBoxInsuranceDetails;
 	private Map<String,String> eventDetailMap = new HashMap<String,String>();
 	private Row row_ManualSchedule;
 	
@@ -585,11 +569,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
 			this.repayDetailDiv.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
 			this.listBoxFinTypeAccounts.setHeight(this.borderLayoutHeight - 145 + "px");
-			
-			//this.listBoxFinTypeFeesOrigination.setHeight(this.borderLayoutHeight - 145 + "px");
-			//this.listBoxFinTypeFeesServicing.setHeight(this.borderLayoutHeight - 145 + "px");
-			//this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 145 + "px");
-			//this.listBoxFinTypeAccounting.setHeight(this.borderLayoutHeight - 120 + "px");
 
 			this.isCompReadonly = !isMaintainable();
 
@@ -855,8 +834,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxReAgeHolidays.setMaxlength(3);
 		this.maxUnplannedEmi.setMaxlength(3);
 
-		this.label_FinanceTypeDialog_FinTypeSuspRemarks.setVisible(true);
-		this.finSuspRemarks.setVisible(true);
 		this.space_PftDueSchdOn.setSclass("");
 		
 		if (ImplementationConstants.ALLOW_MANUAL_SCHEDULE) {
@@ -924,10 +901,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.row_QuickDisb.setVisible(true);
 		}
 		
-		if(ImplementationConstants.ALLOW_PRICINGPOLICY){
-			row_ApplyPricingPolicy.setVisible(false);
-			row_ApplyGracePricingPolicy.setVisible(false);
-		}
+		row_ApplyPricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
+		row_ApplyGracePricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 		
 		logger.debug("Leaving");
 	}
@@ -1433,26 +1408,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				PennantStaticListUtil.getSuspendedTriggers(), "");
 		//FinTypeVasProducts
 		doFillAlwVasProductDetails(aFinanceType.getFinTypeVASProductsList());
-		if (!aFinanceType.isNewRecord()) {
-			if (StringUtils.equals(getComboboxValue(this.finSuspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
-				this.label_FinanceTypeDialog_FinTypeSuspRemarks.setVisible(true);
-				this.finSuspRemarks.setVisible(true);
-			}
-			if (this.finSuspRemarks.isVisible()) {
-				this.finSuspRemarks.setValue(aFinanceType.getFinSuspRemarks());
-			}
-		}
+			
+		this.finSuspRemarks.setValue(aFinanceType.getFinSuspRemarks());
+		doChangeSuspTrigger();
+		
 		doSetDownpayProperties(aFinanceType.getFinCategory(),false);
 		doSetCollateralProp();
-
-		//============Tab 7
-		//doFillFinInsuranceTypes(aFinanceType.getFinTypeInsurances());
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
 		
 		appendFeeDetailTab();
-		appendInsuranceDetailsTab();
 		appendAccountingDetailsTab();
+		
+		if(this.isOverdraft || ImplementationConstants.ALLOW_INSURANCE) {
+			appendInsuranceDetailsTab();
+		}
 		
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -3033,16 +3003,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
 
 		//****************End of Tab 6********************//
-		
-		//****************Start of Tab 7********************//
-		
-		//aFinanceType.setFinTypeInsurances(getFinTypeInsuranceList());
-		
-		//****************End of Tab 7********************//
 
 		aFinanceType.setRecordStatus(this.recordStatus.getValue());
-		logger.debug("Leaving");
 
+		logger.debug("Leaving");
 	}
 
 	// For Tab Wise validations
@@ -3600,8 +3564,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.product.setReadonly(isTrue);
 		this.startDate.setDisabled(isTrue);
 		this.endDate.setDisabled(isTrue);
-		//this.finType.setReadonly(isTrue);
-		//this.finCcy.setReadonly(isTrue);
 		this.finType.setReadonly(true);
 		this.finCcy.setReadonly(true);
 		this.finTypeDesc.setReadonly(isTrue);
@@ -3699,7 +3661,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
 		this.quickDisb.setDisabled(isTrue);
 		
-		
 		//Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);
 		this.cbfinGrcRateType.setDisabled(isTrue);
@@ -3722,6 +3683,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.grcAdvPftRate.setDisabled(isTrue);
 		this.applyGrcPricing.setDisabled(isTrue);
 		this.grcPricingMethod.setReadonly(isTrue);
+		
 		//Repayment Details
 		this.cbfinRateType.setDisabled(isTrue);
 		this.financeBaserate.getBaseComp().setReadonly(isTrue);
@@ -3766,6 +3728,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnSearchRpyMethod.setDisabled(isTrue);
 		this.btnFrequencyRate.setDisabled(isTrue);
 		this.alwUnPlannedEmiHoliday.setDisabled(isTrue);
+		
 		// Overdue Penalty Details
 		this.applyODPenalty.setDisabled(isTrue);
 		this.oDIncGrcDays.setDisabled(isTrue);
@@ -3775,6 +3738,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeAmtOrPerc.setDisabled(isTrue);
 		this.oDAllowWaiver.setDisabled(isTrue);
 		this.oDMaxWaiverPerc.setDisabled(isTrue);
+		
 		// Stepping Details
 		this.stepFinance.setDisabled(isTrue);
 		this.steppingMandatory.setDisabled(isTrue);
@@ -3783,17 +3747,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.dftStepPolicy.setDisabled(isTrue);
 		this.btnMandatoryVasProduct.setDisabled(isTrue);
 		this.btnAlwVasProducts.setDisabled(isTrue);
+	
 		// Profit on past Due
 		this.pastduePftCalMthd.setDisabled(isTrue);
 		this.pastduePftMargin.setDisabled(isTrue);
+		
 		// Features Tab
 		this.remarks.setReadonly(isTrue);
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-		//this.btnNew_FinTypeFees_Origination.setVisible(!isTrue);
-		//this.btnNew_FinTypeFees_Servicing.setVisible(!isTrue);
-		//this.btnNew_insuranceType.setVisible(!isTrue);
 		
 		if(isTrue){
 			this.space_finType.setSclass("");
@@ -3862,24 +3825,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_startDate.setSclass("");
 			this.space_endDate.setSclass("");
 			this.space_finAssetType.setSclass("");
-			
-			
 		}
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(isTrue);
 			}
-		}
-		if (isWorkFlowEnabled()) {
+			
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
+		
 		logger.debug("Leaving");
 	}
 
 	/** Clears the components values. <br> */
 	public void doClear() {
 		logger.debug("Entering");
+		
 		// remove validation, if there are a save before
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
 			this.finAcType.setValue("");
@@ -3893,6 +3856,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finBankContingentAcType.setValue("");
 			this.finContingentAcType.setValue("");
 		}
+		
 		this.finType.setValue("");
 		this.finTypeDesc.setValue("");
 		this.finCcy.setValue("");
@@ -3975,6 +3939,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setValue("0");
 		this.rpyPricingMethod.setDescription("");
 		this.manualSchedule.setChecked(false);
+		
 		// Overdue Penalty Details
 		this.applyODPenalty.setChecked(false);
 		this.oDIncGrcDays.setChecked(false);
@@ -3989,11 +3954,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDMaxWaiverPerc.setDisabled(true);
 		this.alwdVasProduct.setValue("");
 		this.mandVasProduct.setValue("");
+		
 		// Stepping Details
 		this.stepFinance.setChecked(false);
 		this.lovDescStepPolicyCodename.setValue("");
 		this.steppingMandatory.setChecked(false);
 		this.allowManualSteps.setChecked(false);
+		
 		// Profit on past Due
 		this.pastduePftCalMthd.setSelectedIndex(0);
 		this.pastduePftMargin.setValue(BigDecimal.ZERO);
@@ -4583,9 +4550,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving " + event.toString());
 	}
 	
-	
-	
-	
 	private void setGraceEffectiveRate() throws InterruptedException {
 		if (StringUtils.isBlank(this.financeGrcBaseRate.getBaseValue())) {
 			this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil.formatRate((this.financeGrcBaseRate
@@ -4787,7 +4751,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
-
 	public void onCheck$applyRpyPricing(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.rpyPricingMethod.setErrorMessage("");
@@ -4860,7 +4823,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finGrcMaxRate.setValue(finTypeBef.getFinGrcMaxRate());
 			this.gracePeriod.setDisabled(false);
 			this.gracePeriod.setSclass("");
-			this.finIsAlwGrcRepay.setChecked(finTypeBef.isFinIsAlwGrcRepay());
+			if(this.financeType.isNewRecord()) {
+				this.finIsAlwGrcRepay.setChecked(true);	// As per FSD default for this field is true
+			} else {
+				this.finIsAlwGrcRepay.setChecked(finTypeBef.isFinIsAlwGrcRepay());
+			}
+			//this.finIsAlwGrcRepay.setChecked(finTypeBef.isFinIsAlwGrcRepay());
 			//this.applyGrcPricing.setChecked(true);
 			this.grcPricingMethod.setValue(Long.toString(finTypeBef.getGrcPricingMethod()));
 			doDisableGrcSchdMtd();
@@ -5028,7 +4996,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doCheckRateType(this.cbfinRateType, false, true);
 			changeFinRateType();
 		}
-
 	}
 
 	public void changeFinRateType(){
@@ -5051,6 +5018,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving");
 	}
+	
 	public void onCheck$finIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
 		
@@ -5096,12 +5064,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/** To Enable or Disable GracePeriod Tab Profit Capitalize Frequency. */
 	private void doCheckGrcPftCpzFrq() {
 		logger.debug("Entering ");
+		
 		if (this.finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				this.finGrcCpzFrq.setMandatoryStyle(true);
@@ -5112,12 +5082,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finGrcCpzFrq.setMandatoryStyle(false);
 			this.finGrcCpzFrq.setDisabled(true);
 		}
+		
 		logger.debug("Leaving");
 	}
 
 	/** To Enable or Disable Schedule Tab Review Frequency. */
 	private void doCheckRpeayReview(boolean checkAction) {
 		logger.debug("Entering");
+		
 		if (this.finIsRvwAlw.isChecked()) {
 			if (!isCompReadonly) {
 				this.rateChgAnyDay.setDisabled(false);
@@ -5157,12 +5129,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.cbfinRvwRateApplFor.setDisabled(true);
 			this.cbfinSchCalCodeOnRvw.setDisabled(true);
 		}
+		
 		logger.debug("Leaving");
 	}
 
 	/** To Enable or Disable Schedule Tab Profit Capitalize Frequency. */
 	private void doCheckPftCpzFrq() {
 		logger.debug("Entering");
+		
 		if (this.finIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				this.finCpzFrq.setDisabled(false);
@@ -5173,12 +5147,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finCpzFrq.setMandatoryStyle(false);
 			this.finCpzFrq.setDisabled(true);
 		}
+		
 		logger.debug("Leaving");
 	}
 
 
 	private void doCheckRateType(Combobox combobox, boolean isGrc, boolean checkAction) {
 		logger.debug("Entering");
+		
 		String value = getComboboxValue(combobox);
 		// grace
 		if (isGrc) {
@@ -5256,6 +5232,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.rateChgAnyDay.setDisabled(true);
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 	// ******************************
@@ -5533,18 +5510,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceType aFinanceType, String tranType) {
-		logger.debug("Entering getAuditHeader()");
+		logger.debug("Entering");
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceType.getBefImage(), aFinanceType);
-		logger.debug("Leaving getAuditHeader()");
+		logger.debug("Leaving");
 		return new AuditHeader(String.valueOf(aFinanceType.getId()), null, null, null, auditDetail,
 				aFinanceType.getUserDetails(), getOverideMap());
-
 	}
 
 	// To Show Error messages
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
-		logger.debug("Entering showMessage()");
+		logger.debug("Entering");
+		
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
@@ -5552,7 +5529,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
-		logger.debug("Leaving showMessage()");
+		
+		logger.debug("Leaving");
 	}
 
 	/** To get Note Dialog on clicking the button note */
@@ -5968,16 +5946,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelect$finSuspTrigger(Event event) {
+	public void onChange$finSuspTrigger(Event event) {
 		logger.debug("Entering" + event.toString());
+		doChangeSuspTrigger();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void doChangeSuspTrigger() {
 		if (StringUtils.equals(getComboboxValue(this.finSuspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
 			this.label_FinanceTypeDialog_FinTypeSuspRemarks.setVisible(true);
 			this.finSuspRemarks.setVisible(true);
 		} else {
 			this.label_FinanceTypeDialog_FinTypeSuspRemarks.setVisible(false);
 			this.finSuspRemarks.setVisible(false);
+			this.finSuspRemarks.setValue("");
 		}
-		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onClick$btnNew_FinTypeAccount(Event event) throws InterruptedException {
@@ -6068,584 +6051,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.listBoxFinTypeAccounts.appendChild(item);
 		}
 	}
-
-	/*public void onClick$btnNew_FinTypeFees_Origination(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Clients.clearWrongValue(this.listBoxFinTypeFeesOrigination);
-		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
-		final FinTypeFees aFinTypeFees = getFinanceTypeService().getNewFinTypeFees();
-		aFinTypeFees.setFinType(this.finType.getValue());
-		aFinTypeFees.setOriginationFee(true);
-		aFinTypeFees.setActive(true);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finTypeFees", aFinTypeFees);
-		map.put("financeTypeDialogCtrl", this);
-		map.put("role", getRole());
-		map.put("isOverdraft", isOverdraft);
-		map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy.getValue()));
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul", null,
-					map);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onFinTypeFeesOrgItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Listitem item = (Listitem) event.getOrigin().getTarget();
-		FinTypeFees itemdata = (FinTypeFees) item.getAttribute("data");
-		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			itemdata.setOriginationFee(true);
-			map.put("finTypeFees", itemdata);
-			map.put("financeTypeDialogCtrl", this);
-			map.put("role", getRole());
-			map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy.getValue()));
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul",
-						null, map);
-			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void doFillFinTypeFeesOrigination(List<FinTypeFees> finTypeFees) {
-		logger.debug("Entering");
-		try {
-			if (finTypeFees != null) {
-				finTypeFees = sortFeesByFeeOrder(finTypeFees);
-				setFinTypeFeesOriginationList(finTypeFees);
-				this.listBoxFinTypeFeesOrigination.getItems().clear();
-				String listGroupEvent = "";
-				Listgroup group;
-				Listcell lc;
-				for (FinTypeFees finTypeFee : finTypeFees) {
-					if(!finTypeFee.isOriginationFee()){
-						continue;
-					}
-					if(!StringUtils.equals(finTypeFee.getFinEvent(), listGroupEvent)){
-						group = new Listgroup();
-						if(this.eventDetailMap.get(finTypeFee.getFinEvent()) == null){
-							lc = new Listcell(finTypeFee.getFinEvent());
-						}else{
-							lc = new Listcell(finTypeFee.getFinEvent() + "-" + this.eventDetailMap.get(finTypeFee.getFinEvent()));
-						}
-						lc.setParent(group);
-						this.listBoxFinTypeFeesOrigination.appendChild(group); 
-					}
-					listGroupEvent = finTypeFee.getFinEvent();
-					Listitem item = new Listitem();
-					lc = new Listcell(String.valueOf(finTypeFee.getFeeOrder()));
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getFeeTypeCode());
-					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes()));
-					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finTypeFee.getMaxWaiverPerc()));
-					lc.setStyle("text-align:right;");
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox modifyFeeCB = new Checkbox();
-					modifyFeeCB.setChecked(finTypeFee.isAlwModifyFee());
-					modifyFeeCB.setDisabled(true);
-					modifyFeeCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox alwDeviationCB = new Checkbox();
-					alwDeviationCB.setChecked(finTypeFee.isAlwDeviation());
-					alwDeviationCB.setDisabled(true);
-					alwDeviationCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordType());
-					lc.setParent(item);
-					item.setAttribute("data", finTypeFee);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeFeesOrgItemDoubleClicked");
-					this.listBoxFinTypeFeesOrigination.appendChild(item);
-				}
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-		logger.debug("Leaving");
-	}
-	
-	public void onClick$btnNew_FinTypeFees_Servicing(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Clients.clearWrongValue(this.listBoxFinTypeFeesOrigination);
-		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
-		final FinTypeFees aFinTypeFees = getFinanceTypeService().getNewFinTypeFees();
-		aFinTypeFees.setFinType(this.finType.getValue());
-		aFinTypeFees.setOriginationFee(false);
-		aFinTypeFees.setActive(true);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finTypeFees", aFinTypeFees);
-		map.put("financeTypeDialogCtrl", this);
-		map.put("role", getRole());
-		map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy.getValue()));
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul", null,
-					map);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onFinTypeFeesServicingItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Listitem item = (Listitem) event.getOrigin().getTarget();
-		FinTypeFees itemdata = (FinTypeFees) item.getAttribute("data");
-		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			itemdata.setOriginationFee(false);
-			map.put("finTypeFees", itemdata);
-			map.put("financeTypeDialogCtrl", this);
-			map.put("role", getRole());
-			map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy.getValue()));
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul",
-						null, map);
-			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-	
-	public void doFillFinTypeFeesServicing(List<FinTypeFees> finTypeFees) {
-		logger.debug("Entering");
-		try {
-			if (finTypeFees != null) {
-				finTypeFees = sortFeesByFeeOrder(finTypeFees);
-				setFinTypeFeesServicingList(finTypeFees);
-				this.listBoxFinTypeFeesServicing.getItems().clear();
-				String listGroupEvent = "";
-				Listgroup group;
-				Listcell lc;
-				for (FinTypeFees finTypeFee : finTypeFees) {
-					if(finTypeFee.isOriginationFee()){
-						continue;
-					}
-					if(!StringUtils.equals(finTypeFee.getFinEvent(), listGroupEvent)){
-						group = new Listgroup();
-						if(this.eventDetailMap.get(finTypeFee.getFinEvent()) == null){
-							lc = new Listcell(finTypeFee.getFinEvent());
-						}else{
-							lc = new Listcell(finTypeFee.getFinEvent() + "-" + this.eventDetailMap.get(finTypeFee.getFinEvent()));
-						}
-						lc.setParent(group);
-						this.listBoxFinTypeFeesServicing.appendChild(group); 
-					}
-					listGroupEvent = finTypeFee.getFinEvent();
-					Listitem item = new Listitem();
-					lc = new Listcell(String.valueOf(finTypeFee.getFeeOrder()));
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getFeeTypeCode());
-					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finTypeFee.getMaxWaiverPerc()));
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox modifyFeeCB = new Checkbox();
-					modifyFeeCB.setChecked(finTypeFee.isAlwModifyFee());
-					modifyFeeCB.setDisabled(true);
-					modifyFeeCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox alwDeviationCB = new Checkbox();
-					alwDeviationCB.setChecked(finTypeFee.isAlwDeviation());
-					alwDeviationCB.setDisabled(true);
-					alwDeviationCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordType());
-					lc.setParent(item);
-					item.setAttribute("data", finTypeFee);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeFeesServicingItemDoubleClicked");
-					this.listBoxFinTypeFeesServicing.appendChild(item);
-				}
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-		logger.debug("Leaving");
-	}
-	
-	@SuppressWarnings("unchecked")
-	private List<FinTypeFees> sortFeesByFeeOrder(List<FinTypeFees> finTypeFeesList){
-		List<FinTypeFees> sortedList = new ArrayList<FinTypeFees>();
-		 Map<String,List<FinTypeFees>> feesMap = new HashMap<String,List<FinTypeFees>>();
-		 if(finTypeFeesList != null && !finTypeFeesList.isEmpty()){
-			 for (FinTypeFees finTypeFee : finTypeFeesList) {
-				if(!feesMap.containsKey(finTypeFee.getFinEvent())){
-					feesMap.put(finTypeFee.getFinEvent(),new ArrayList<FinTypeFees>());
-				}
-				feesMap.get(finTypeFee.getFinEvent()).add(finTypeFee);
-			}
-		 }
-		 for (String eventCode : feesMap.keySet()) {
-			 List<FinTypeFees> eventList = feesMap.get(eventCode);
-			 Comparator<FinTypeFees> beanComp = new BeanComparator("feeOrder");
-			 Collections.sort(eventList, beanComp);
-			 sortedList.addAll(eventList);
-		}
-		return sortedList;
-	}
-	
-	private List<FinTypeFees> getFinTypeFeesByModule(List<FinTypeFees> finTypeFeesList,boolean isOriginationFees){
-		List<FinTypeFees> feesList = new ArrayList<FinTypeFees>();
-		if(finTypeFeesList != null && !finTypeFeesList.isEmpty()){
-			 for (FinTypeFees finTypeFee : finTypeFeesList) {
-				 if((finTypeFee.isOriginationFee() == isOriginationFees) || (!finTypeFee.isOriginationFee() == !isOriginationFees)){
-					 feesList.add(finTypeFee);
-				 }
-			 }
-		 }
-		return feesList;
-	}
-	
-	public void doFillFinTypeAccounting(FinanceType aFinanceType) {
-		logger.debug("Entering");
-
-		List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
-
-		for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
-			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(aFinanceType, accountEngineEvent.getAEEventCode());
-			if(finTypeAcc == null){
-				FinTypeAccounting finTypeAccNew = getNewFinTypeAccounting();
-				finTypeAccNew.setEvent(accountEngineEvent.getAEEventCode());
-				finTypeAccNew.setEventDesc(accountEngineEvent.getAEEventCodeDesc());
-				finTypeAccNew.setMandatory(accountEngineEvent.isMandatory());
-				finTypeAccEventMap.put(accountEngineEvent.getAEEventCode(), finTypeAccNew);
-			}else{
-				FinTypeAccounting befImage = new FinTypeAccounting();
-				BeanUtils.copyProperties(finTypeAcc, befImage);
-				finTypeAcc.setBefImage(befImage);
-				finTypeAcc.setEventDesc(accountEngineEvent.getAEEventCodeDesc());
-				finTypeAcc.setMandatory(accountEngineEvent.isMandatory());
-				finTypeAccEventMap.put(accountEngineEvent.getAEEventCode(),finTypeAcc);
-			}
-		}
-
-		this.listBoxFinTypeAccounting.getItems().clear();
-		Listitem item = null;
-		ExtendedCombobox extCombobox = null;
-		boolean newRowReq = true;
-		int itemCount = 0;
-		for (FinTypeAccounting finTypeAcc : finTypeAccEventMap.values()) {
-			itemCount++;
-
-			if(newRowReq){
-				item = new Listitem();
-			}
-			Listcell lc;
-			lc = new Listcell(getEventDesc(finTypeAcc.getEvent()));
-			lc.setStyle("line-height:12px!important;");
-			lc.setParent(item);
-
-			lc = new Listcell();
-			lc.setStyle("line-height:12px!important;");
-			extCombobox = getExtendedCombobox(finTypeAcc.getEvent());
-			extCombobox.setId(finTypeAcc.getEvent());
-			if(isCompReadonly){
-				extCombobox.setMandatoryStyle(false);
-			}else{
-				extCombobox.setMandatoryStyle(finTypeAcc.isMandatory());
-			}
-			extCombobox.setReadonly(isCompReadonly);
-			extCombobox.setValue(finTypeAcc.getLovDescEventAccountingName());
-			extCombobox.setDescription(finTypeAcc.getLovDescAccountingName());
-			lc.appendChild(extCombobox);
-			lc.setParent(item);
-			if(!newRowReq || itemCount == finTypeAccEventMap.size()){
-				this.listBoxFinTypeAccounting.appendChild(item);
-				newRowReq = true;
-			}else{
-				newRowReq = false;
-			}
-		}
-		logger.debug("Leaving");
-	}
-
-
-	private ExtendedCombobox getExtendedCombobox(String eventCode){
-		ExtendedCombobox extendedCombobox = new ExtendedCombobox();
-		extendedCombobox.setMaxlength(8);
-		extendedCombobox.setModuleName("AccountingSet");
-		extendedCombobox.setValueColumn("AccountSetCode");
-		extendedCombobox.setDescColumn("AccountSetCodeName");
-		extendedCombobox.setValidateColumns(new String[] { "AccountSetCode" });
-		extendedCombobox.setTextBoxWidth(80);
-		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("EventCode", eventCode, Filter.OP_EQUAL);
-		filters[1] = new Filter("EntryByInvestment", this.allowRIAInvestment.isChecked() ? 1 : 0, Filter.OP_EQUAL);
-		extendedCombobox.setFilters(filters);
-		return extendedCombobox;
-	}
-
-	private void processAccountingDetails(FinanceType aFinanceType){
-		if(this.listBoxFinTypeAccounting.getItems() != null && !this.listBoxFinTypeAccounting.getItems().isEmpty()){
-			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-			for (Listitem listitem : this.listBoxFinTypeAccounting.getItems()) {
-				List<Listcell> listCells = listitem.getChildren();
-				boolean isEventCode = true;
-				for (Listcell listcell : listCells) {
-					if(!isEventCode){
-						ExtendedCombobox extCombobox = (ExtendedCombobox) listcell.getFirstChild();
-						String eventCode = extCombobox.getId();
-						FinTypeAccounting finAccounting = finTypeAccEventMap.get(eventCode);
-						if(validate && extCombobox.isMandatory() && !extCombobox.isReadonly()){
-							extCombobox.setConstraint(new PTStringValidator(finAccounting.getEventDesc(), null, true,true));
-							try{
-								extCombobox.getValidatedValue();
-							} catch (WrongValueException we) {
-								wve.add(we);
-							}
-							extCombobox.setConstraint("");
-						}
-						if(extCombobox.getObject() == null){
-							if(StringUtils.isEmpty(extCombobox.getValue()) && finAccounting.getAccountSetID() != Long.MIN_VALUE){
-								finAccounting.setAccountSetID(Long.MIN_VALUE);
-								finAccounting.setLovDescEventAccountingName("");
-								finAccounting.setLovDescAccountingName("");
-								finAccounting.setRecordStatus(this.recordStatus.getValue());
-								finTypeAccEventMap.put(eventCode, finAccounting);
-							}
-						}else {
-							if(extCombobox.getObject() instanceof String){
-								finAccounting.setAccountSetID(Long.MIN_VALUE);
-								finAccounting.setLovDescEventAccountingName("");
-								finAccounting.setLovDescAccountingName("");
-							}else{
-								AccountingSet accountingSet = (AccountingSet) extCombobox.getObject();
-								finAccounting.setAccountSetID(accountingSet.getAccountSetid());
-								finAccounting.setLovDescEventAccountingName(accountingSet.getAccountSetCode());
-								finAccounting.setLovDescAccountingName(accountingSet.getAccountSetCodeName());
-							}
-							finAccounting.setRecordStatus(this.recordStatus.getValue());
-							finTypeAccEventMap.put(eventCode, finAccounting);
-						}
-					}
-					isEventCode = !isEventCode;
-				}
-			}
-			if (wve.size() > 0) {
-				WrongValueException[] wvea = new WrongValueException[wve.size()];
-				for (int i = 0; i < wve.size(); i++) {
-					wvea[i] = (WrongValueException) wve.get(i);
-					if(i == 0){
-						Component comp = wvea[i].getComponent();
-						if(comp instanceof HtmlBasedComponent){
-							Clients.scrollIntoView(comp);
-						}
-					}
-				}
-				this.accountingEvent.setSelected(true);
-				throw new WrongValuesException(wvea);
-			}
-		}
-		processWorkflowDetails(aFinanceType);
-	}
-
-
-	private void processWorkflowDetails(FinanceType aFinanceType){
-		List<FinTypeAccounting> finTypeAccList = new ArrayList<FinTypeAccounting>();
-		for (FinTypeAccounting finAccounting : finTypeAccEventMap.values()) {
-			FinTypeAccounting finTypeAccBefImg = finAccounting.getBefImage();
-			if(finTypeAccBefImg == null){
-				if(finAccounting.getAccountSetID() != Long.MIN_VALUE){
-					finTypeAccList.add(finAccounting);
-				}
-			}else{
-				if(finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE && finAccounting.getAccountSetID() == Long.MIN_VALUE){
-					if (StringUtils.isBlank(finAccounting.getRecordType())) {
-						finAccounting.setVersion(finAccounting.getVersion() + 1);
-						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-						finAccounting.setNewRecord(true);
-					} else if (StringUtils.trimToEmpty(finAccounting.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-						finAccounting.setVersion(finAccounting.getVersion() + 1);
-						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}else if (StringUtils.trimToEmpty(finAccounting.getRecordType()).equals(PennantConstants.RECORD_TYPE_UPD)) {
-						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}else if (finAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-						finAccounting.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-					}
-				}else if(finTypeAccBefImg.getAccountSetID() == Long.MIN_VALUE &&
-						finAccounting.getAccountSetID() != Long.MIN_VALUE){
-					finAccounting.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}else if(finTypeAccBefImg.getAccountSetID() != Long.MIN_VALUE && 
-						finAccounting.getAccountSetID() != Long.MIN_VALUE && 
-						finTypeAccBefImg.getAccountSetID() != finAccounting.getAccountSetID()){
-					if (StringUtils.isBlank(finAccounting.getRecordType())) {
-						finAccounting.setVersion(finAccounting.getVersion() + 1);
-						finAccounting.setRecordType(PennantConstants.RCD_UPD);
-					}
-				}
-				finTypeAccList.add(finAccounting);
-			}
-		}
-		aFinanceType.setFinTypeAccountingList(finTypeAccList);
-	}
-
-	private void doSetAccountingMandatory(){
-		if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ && !isOverdraft) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
-		}
-		if (getFinanceType().getLovDescAERule().containsKey(AccountEventConstants.ACCEVENT_ADDDBSF)) {
-			if(isOverdraft){
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
-			}else{
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
-			}
-		}else{
-			if(isOverdraft){
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
-			}else{
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
-			}
-		}
-		if(isOverdraft){
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZPD, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_CMTDISB, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_RATCHG, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SCDCHG, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EMIHOLIDAY, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REAGING, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYSTL, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, false);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_RATCHG, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SCDCHG, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EMIHOLIDAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REAGING, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYSTL, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, true);
-		}
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_CANCELFIN, true);
-		if (this.finDepreciationReq.isChecked() && !isOverdraft) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);
-		}
-		if(this.alwPlanDeferment.isChecked()){
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, true);
-		}
-		if (this.finIsAlwDifferment.isChecked()) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, true);
-		}
-		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
-			if (!isCompReadonly) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);
-			}
-		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
-		}
-		if (StringUtils.equals(getComboboxValue(this.cbfinProductType), FinanceConstants.PRODUCT_ISTISNA)) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
-		}else{
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
-		}
-	}
-
-
-	private void setAccountingMandStyle(String eventCode,boolean mandatory){
-		if(this.listBoxFinTypeAccounting.getFellowIfAny(eventCode) != null){
-			ExtendedCombobox exCombobox = (ExtendedCombobox) this.listBoxFinTypeAccounting.getFellowIfAny(eventCode);
-			if(exCombobox.isReadonly()){
-				exCombobox.setMandatoryStyle(false);
-			}else{
-				exCombobox.setMandatoryStyle(mandatory);
-			}
-		}
-	}
-
-	private void setRIAAccountingProps(String eventCode){
-		if(this.listBoxFinTypeAccounting.getFellowIfAny(eventCode) != null){
-			Filter[] filters = new Filter[2];
-			filters[0] = new Filter("EventCode", eventCode, Filter.OP_EQUAL);
-			filters[1] = new Filter("EntryByInvestment", this.allowRIAInvestment.isChecked() ? 1 : 0, Filter.OP_EQUAL);
-			ExtendedCombobox extCombobox = (ExtendedCombobox) this.listBoxFinTypeAccounting.getFellowIfAny(eventCode);
-			extCombobox.setValue("", "");
-			extCombobox.setObject("");
-			extCombobox.setFilters(filters);
-		}
-	}
-
-	private FinTypeAccounting fetchExistingFinTypeAcc(FinanceType aFinanceType,String eventCode){
-		if(aFinanceType.getFinTypeAccountingList() != null && !aFinanceType.getFinTypeAccountingList().isEmpty()){
-			for (FinTypeAccounting finTypeAcc : aFinanceType.getFinTypeAccountingList()) {
-				if(StringUtils.equals(finTypeAcc.getEvent(), eventCode)){
-					return finTypeAcc;
-				}
-			}
-		}
-		return null;
-	}
-
-
-	private FinTypeAccounting getNewFinTypeAccounting(){
-		FinTypeAccounting finTypeAccNew = new FinTypeAccounting();
-		finTypeAccNew.setNewRecord(true);
-		finTypeAccNew.setFinType(this.finType.getValue());
-		boolean isNew = finTypeAccNew.isNew();
-		if (isWorkFlowEnabled()) {
-			if (StringUtils.isBlank(finTypeAccNew.getRecordType())) {
-				finTypeAccNew.setVersion(finTypeAccNew.getVersion() + 1);
-				if (isNew) {
-					finTypeAccNew.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else {
-					finTypeAccNew.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					finTypeAccNew.setNewRecord(true);
-				}
-			}
-		} else {
-			if (isNew) {
-				finTypeAccNew.setVersion(1);
-				finTypeAccNew.setRecordType(PennantConstants.RCD_ADD);
-			}
-			if (StringUtils.isBlank(finTypeAccNew.getRecordType())) {
-				finTypeAccNew.setVersion(finTypeAccNew.getVersion() + 1);
-				finTypeAccNew.setRecordType(PennantConstants.RCD_UPD);
-			}
-		}
-		return finTypeAccNew;
-	}
-
-	public String getEventDesc(String value) {
-		List<AccountEngineEvent> list = getAccountingEvents();
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getAEEventCode().equalsIgnoreCase(value)) {
-				return list.get(i).getAEEventCodeDesc();
-			}
-		}
-		return "";
-	}*/
 
 	/*
 	 * onCheck Event For stepFinance
@@ -6918,111 +6323,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		return true;
 	}
 
-	/*public void onClick$btnNew_insuranceType(Event event) throws InterruptedException {
-		FinTypeInsurances finTypeInsurances = new FinTypeInsurances();
-		finTypeInsurances.setNewRecord(true);
-		finTypeInsurances.setFinType(this.financeType.getFinType());
-		finTypeInsurances.setFinTypeDesc(this.finTypeDesc.getValue());
-		finTypeInsurances.setWorkflowId(getWorkFlowId());
-
-		doShowDialogPage(finTypeInsurances);
-
-	}
-
-	private void doShowDialogPage(FinTypeInsurances finTypeInsurances) {
-
-		Map<String, Object> arg = new HashMap<String, Object>();
-		arg.put("finTypeInsurances", finTypeInsurances);
-		arg.put("financeTypeDialogCtrl", this);
-		arg.put("role", getRole());
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul", null,
-					arg);
-		} catch (Exception e) {
-			logger.error("Exception:", e);
-			MessageUtil.showError(e);
-		}
-
-		logger.debug("Leaving");
-
-	}
-
-	public void doFillFinInsuranceTypes(List<FinTypeInsurances> finTypeInsuranceList) {
-		logger.debug("Entering");
-		try {
-			if (finTypeInsuranceList != null) {
-				setFinTypeInsuranceList(finTypeInsuranceList);
-				fillFinTypeInsuranecs(finTypeInsuranceList);
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	private void fillFinTypeInsuranecs(List<FinTypeInsurances> finTypeInsuranceList) {
-		this.listBoxInsuranceDetails.getItems().clear();
-		for (FinTypeInsurances finTypeInsurance : finTypeInsuranceList) {
-			Listitem item = new Listitem();
-			Listcell lc;
-
-			lc = new Listcell(finTypeInsurance.getPolicyType() + "-" + finTypeInsurance.getPolicyDesc());
-			lc.setParent(item);
-
-			lc = new Listcell(finTypeInsurance.getInsuranceType() + "-" + finTypeInsurance.getInsuranceTypeDesc());
-			lc.setParent(item);
-			
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getDftPayType()),
-							PennantStaticListUtil.getInsurancePaymentType()));
-			lc.setParent(item);
-
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getCalType()),
-							PennantStaticListUtil.getInsuranceCalType()));
-			lc.setParent(item);
-
-			lc = new Listcell();
-			Checkbox checkbox = new Checkbox();
-			checkbox.setChecked(finTypeInsurance.isMandatory());
-			checkbox.setDisabled(true);
-			checkbox.setParent(lc);
-			lc.setParent(item);
-
-			lc = new Listcell(finTypeInsurance.getRecordStatus());
-			lc.setParent(item);
-
-			lc = new Listcell(finTypeInsurance.getRecordType());
-			lc.setParent(item);
-
-			item.setAttribute("data", finTypeInsurance);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeInsuranceItemDoubleClicked");
-			this.listBoxInsuranceDetails.appendChild(item);
-		}
-	}
-
-
-	public void onFinTypeInsuranceItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		Listitem item = (Listitem) event.getOrigin().getTarget();
-		FinTypeInsurances itemdata = (FinTypeInsurances) item.getAttribute("data");
-			itemdata.setNewRecord(false);
-			itemdata.setFinTypeDesc(this.financeType.getFinTypeDesc());
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("finTypeInsurances", itemdata);
-			map.put("financeTypeDialogCtrl", this);
-			map.put("role", getRole());
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul",
-						null, map);
-
-			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
-			}
-		logger.debug("Leaving" + event.toString());
-	}*/
-	
 	/**
 	 * Method for selecting Mandatory Vas products for the Loan Type
 	 * @param event
@@ -7308,106 +6608,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 	
-	/*public boolean validateFeeAccounting(FinTypeFees aFinTypeFees,boolean isSave){
-		
-		if(!aFinTypeFees.isNewRecord() && aFinTypeFees.isActive()){
-			return true;
-		}
-		
-		if(this.listBoxFinTypeAccounting.getFellowIfAny(aFinTypeFees.getFinEvent()) != null){
-			ExtendedCombobox exCombobox = (ExtendedCombobox) this.listBoxFinTypeAccounting.getFellowIfAny(aFinTypeFees.getFinEvent());
-			Long accountSetId = Long.MIN_VALUE;
-			if(exCombobox.getObject() != null && !(exCombobox.getObject() instanceof String)){
-				AccountingSet accountingSet = (AccountingSet) exCombobox.getObject();
-				accountSetId = accountingSet.getAccountSetid();
-			}else{
-				FinTypeAccounting finAccounting = finTypeAccEventMap.get(exCombobox.getId());
-				if(finAccounting != null){
-					accountSetId = finAccounting.getAccountSetID();
-				}
-			}
-			if(accountSetId != Long.MIN_VALUE){
-				
-				List<ErrorDetails> feeErrorDetails = new ArrayList<ErrorDetails>();
-				List<Long> accSetIdList = new ArrayList<Long>();
-				accSetIdList.add(accountSetId);
-				
-				List<String> feeCodeList  = getFinanceTypeService().fetchFeeCodeList(accountSetId);
-			
-				boolean configuredinAccSetup = false;
-				if(feeCodeList != null){
-					for (String feeCodeTemp : feeCodeList) {
-						if(StringUtils.equals(feeCodeTemp, aFinTypeFees.getFeeTypeCode())){
-							configuredinAccSetup = true;
-							break;
-						}
-					}
-				}
-				
-				if(isSave){
-					if(aFinTypeFees.isNewRecord()){
-						if(!configuredinAccSetup){
-							feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-									(PennantConstants.KEY_FIELD, "WFEE03", null, null), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
-						}
-					}
-				}else{
-					if(configuredinAccSetup){
-						feeErrorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails
-								(PennantConstants.KEY_FIELD, "WFEE02", null, null), getUserWorkspace().getLoggedInUser().getUsrLanguage()));
-					}
-				}
-				
-				if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
-					MultiLineMessageBox.doSetTemplate();
-					for (ErrorDetails errorDetail : feeErrorDetails) {
-						if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
-							MultiLineMessageBox.show(errorDetail.getError(), Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
-							return false;
-						}else{
-							int conf = MultiLineMessageBox.show(errorDetail.getError(), Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-							if (conf != MultiLineMessageBox.YES) {
-								return false;
-							}
-						}
-					}
-				}
-				return true;
-			}
-		}
-		return true;
-	}*/
-	
 	public List<FinTypeAccount> getFinTypeAccountList() {
 		return finTypeAccountList;
 	}
+	
 	public void setFinTypeAccountList(List<FinTypeAccount> finTypeAccountList) {
 		this.finTypeAccountList = finTypeAccountList;
 	}
 	
-	/*public List<FinTypeFees> getFinTypeFeesOriginationList() {
-		return finTypeFeesOriginationList;
-	}
-	public void setFinTypeFeesOriginationList(
-			List<FinTypeFees> finTypeFeesOriginationList) {
-		this.finTypeFeesOriginationList = finTypeFeesOriginationList;
-	}
-
-	public List<FinTypeFees> getFinTypeFeesServicingList() {
-		return finTypeFeesServicingList;
-	}
-	public void setFinTypeFeesServicingList(
-			List<FinTypeFees> finTypeFeesServicingList) {
-		this.finTypeFeesServicingList = finTypeFeesServicingList;
-	}
-
-	public List<FinTypeInsurances> getFinTypeInsuranceList() {
-		return finTypeInsuranceList;
-	}
-	public void setFinTypeInsuranceList(List<FinTypeInsurances> finTypeInsuranceList) {
-		this.finTypeInsuranceList = finTypeInsuranceList;
-	}*/
-
 	public List<FinTypeVASProducts> getFinTypeVASProductsList() {
 		return finTypeVASProductsList;
 	}

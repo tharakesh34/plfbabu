@@ -89,7 +89,7 @@
 		<menuItem id="menu_Item_SukukBond" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBond/SukukBondList.zul" rightName="menuItem_ApplicationMasters_SukukBond"/>
 		<menuItem id="menu_Item_SukukBroker" zulNavigation="/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerList.zul" rightName="menuItem_ApplicationMasters_SukukBroker"/>		
 		 -->
-		 <!-- <menuItem id="menu_Item_TransactionCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul"  rightName="menuItem_ApplicationMaster_TransactionCode"/> -->
+		 <menuItem id="menu_Item_TransactionCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeList.zul"  rightName="menuItem_ApplicationMaster_TransactionCode"/>
 		<!-- <menuItem id="menu_Item_TakafulProvider" zulNavigation="/WEB-INF/pages/ApplicationMaster/TakafulProvider/TakafulProviderList.zul" rightName="menuItem_ApplicationMaster_TakafulProvider"/> -->
  		<!-- <menuItem id="menu_Item_InsuranceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeList.zul" rightName="menuItem_applicationmasters_InsuranceType"/> -->
 		<!-- <menuItem id="menu_Item_InsurancePolicy" zulNavigation="/WEB-INF/pages/ApplicationMaster/InsurancePolicy/InsurancePolicyList.zul" rightName="menuItem_applicationmaster_InsurancePolicy"/> -->
@@ -164,8 +164,8 @@
 		<menuItem id="menu_Item_ScoringGroup" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"  rightName="menuItem_RulesFactory_ScoringGroup"/>
 		<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"   rightName="menuItem_RulesFactory_ScoringMetricRules"/>		
 		<menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_ScoringType"/>
-		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
 		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_RulesFactory_Query"/> -->
+		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
 	</menu>
 	
 	<!-- Solution Factory -->

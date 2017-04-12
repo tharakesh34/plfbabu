@@ -73,12 +73,6 @@
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_RepaymentDetails.value')}"
 							id="repayment" visible="false" />
-						<!-- <tab
-							label="${c:l('tab_OverDraftFinanceTypeDialog_Fees.value')}"
-							id="fees" />
-						<tab
-							label="${c:l('tab_OverDraftFinanceTypeDialog_AccountingEvent.value')}"
-							id="accountingEvent" /> -->
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_ScheduleDetails.value')}"
 							id="scheduleProfit" visible="false" />
@@ -88,9 +82,6 @@
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_ExtendedDetails.value')}"
 							id="extendedDetails" visible="false" />
-						<!-- <tab
-							label="${c:l('tab_OverDraftFinanceTypeDialog_InsuranceDetails.value')}"
-							id="insuranceDetails" /> -->
 						<tab
 							label="${c:l('tab_OverDraftFinanceTypeDialog_FeaturDetails.value')}"
 							id="featureDetails" />
@@ -305,7 +296,7 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row visible="true">
+											<row id = "row_ApplyPricingPolicy">
 												<label
 													id="label_ApplyRpyPricing"
 													value="${c:l('label_OverDraftFinanceTypeDialog_ApplyRpyPricing.value')}" />
@@ -680,7 +671,7 @@
 												id="financeGrcBaseRate" />
 
 										</row>
-										<row visible="true">
+										<row id = "row_ApplyGracePricingPolicy">
 											<label
 												id="label_ApplyGrcPricing"
 												value="${c:l('label_OverDraftFinanceTypeDialog_ApplyGrcPricing.value')}" />
@@ -1348,191 +1339,6 @@
 								</groupbox>
 							</div>
 						</tabpanel>
-						<!-- <tabpanel style="overflow:auto"
-							ca:data-scrollable="true">
-							<tabbox width="100%">
-								<tabs>
-									<tab id="feeOriginationTab"
-										label="${c:l('gb_FinType_Fees_Origination')}" />
-									<tab id="feeServicingTab"
-										label="${c:l('gb_FinType_Fees_Servicing')}" />
-								</tabs>
-								<tabpanels>
-									<tabpanel style="overflow:auto"
-										ca:data-scrollable="true">
-										<groupbox id="gb_FeeDetails_Org"
-											width="100%" height="100%">
-											<div sclass="z-toolbar"
-												style="padding:0">
-												<hbox pack="stretch"
-													sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-													height="100%" width="100%">
-													<toolbar align="end"
-														style="float:right; border-style: none; padding:0px;"
-														height="100%">
-														<button
-															id="btnNew_FinTypeFees_Origination"
-															label="${c:l('label_New')}"
-															tooltiptext="${c:l('btnNew_FinTypeFees.tooltiptext')}"
-															autodisable="btnNew_FinTypeFees_Origination" />
-													</toolbar>
-												</hbox>
-											</div>
-											<listbox
-												id="listBoxFinTypeFeesOrigination" fixedLayout="true"
-												height="100px" sizedByContent="true"
-												tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}"
-												multiple="false" span="true">
-												<listhead
-													sizable="true">
-													<listheader
-														id="listheader_FinTypeFees_Org_FeeOrder"
-														label="${c:l('listheader_FinTypeFees_FeeOrder.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_FeeType"
-														label="${c:l('listheader_FinTypeFees_FeeType.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_CalculationType"
-														label="${c:l('listheader_FinTypeFees_CalculationType.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_FeeSchduleMethod"
-														label="${c:l('listheader_FinTypeFees_FeeSchduleMethod.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_MaxWaiver"
-														label="${c:l('listheader_FinTypeFees_MaxWaiver.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_ModifyFee"
-														label="${c:l('listheader_FinTypeFees_ModifyFee.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Org_AlwDeviation"
-														label="${c:l('listheader_FinTypeFees_AlwDeviation.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														label="${c:l('listheader_RecordStatus.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														label="${c:l('listheader_RecordType.label')}" sort="false"
-														hflex="min" />
-												</listhead>
-											</listbox>
-										</groupbox>
-									</tabpanel>
-									<tabpanel style="overflow:auto"
-										ca:data-scrollable="true">
-										<groupbox
-											id="gb_FeeDetails_Servicing" width="100%" height="100%">
-											<div sclass="z-toolbar"
-												style="padding:0">
-												<hbox pack="stretch"
-													sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-													height="100%" width="100%">
-													<toolbar align="end"
-														style="float:right; border-style: none; padding:0px;"
-														height="100%">
-														<button
-															id="btnNew_FinTypeFees_Servicing"
-															label="${c:l('label_New')}"
-															tooltiptext="${c:l('btnNew_FinTypeFees.tooltiptext')}"
-															autodisable="btnNew_FinTypeFees_Servicing" />
-													</toolbar>
-												</hbox>
-											</div>
-											<listbox
-												id="listBoxFinTypeFeesServicing" fixedLayout="true"
-												height="100px" sizedByContent="true"
-												tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}"
-												multiple="false" span="true">
-												<listhead
-													sizable="true">
-													<listheader
-														id="listheader_FinTypeFees_Serv_FeeOrder"
-														label="${c:l('listheader_FinTypeFees_FeeOrder.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Serv_FeeType"
-														label="${c:l('listheader_FinTypeFees_FeeType.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Serv_CalculationType"
-														label="${c:l('listheader_FinTypeFees_CalculationType.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Serv_MaxWaiver"
-														label="${c:l('listheader_FinTypeFees_MaxWaiver.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Serv_ModifyFee"
-														label="${c:l('listheader_FinTypeFees_ModifyFee.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														id="listheader_FinTypeFees_Serv_AlwDeviation"
-														label="${c:l('listheader_FinTypeFees_AlwDeviation.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														label="${c:l('listheader_RecordStatus.label')}"
-														sort="false" hflex="min" />
-													<listheader
-														label="${c:l('listheader_RecordType.label')}" sort="false"
-														hflex="min" />
-												</listhead>
-											</listbox>
-										</groupbox>
-									</tabpanel>
-								</tabpanels>
-							</tabbox>
-						</tabpanel>
-						<tabpanel style="overflow:auto"
-							ca:data-scrollable="true">
-							<groupbox id="gb_AccountingDetails"
-								width="100%" height="100%">
-								<div sclass="z-toolbar"
-									style="padding:0">
-									<hbox pack="stretch"
-										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-										height="100%" width="100%">
-										<toolbar align="start"
-											style="border:none;">
-											<label
-												value="${c:l('FinType_AccountingDetails')}"
-												sclass="listboxHeading">
-											</label>
-										</toolbar>
-									</hbox>
-								</div>
-								<listbox id="listBoxFinTypeAccounting"
-									fixedLayout="true" height="100px"
-									tooltiptext="${c:l('listbox.tooltiptext')}"
-									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
-									span="true" style="overflow:auto" ca:data-scrollable="true">
-									<listhead sizable="true">
-										<listheader
-											id="listheader_AccountingEvent"
-											label="${c:l('listheader_AccountingEvent.label')}"
-											sort="auto" width="17%" />
-										<listheader
-											id="listheader_AccountingCode"
-											label="${c:l('listheader_AccountingCode.label')}" sort="auto"
-											width="33%" />
-										<listheader
-											id="listheader_AccountingEventSecond"
-											label="${c:l('listheader_AccountingEvent.label')}"
-											sort="auto" width="17%" />
-										<listheader
-											id="listheader_AccountingCodeSecond"
-											label="${c:l('listheader_AccountingCode.label')}" sort="auto"
-											width="33%" />
-									</listhead>
-								</listbox>
-							</groupbox>
-						</tabpanel> -->
 						<tabpanel style="overflow:auto"
 							ca:data-scrollable="true">
 							<groupbox id="gb_ScheduleProfit"
@@ -1992,67 +1798,6 @@
 								</grid>
 							</groupbox>
 						</tabpanel>
-						<!-- <tabpanel style="overflow:auto"
-							ca:data-scrollable="true">
-							<groupbox id="gb_InsuranceDetails"
-								width="100%" height="100%">
-								<div sclass="z-toolbar"
-									style="padding:0">
-									<hbox pack="stretch"
-										sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
-										height="100%" width="100%">
-										<toolbar align="start"
-											style="border:none;">
-										</toolbar>
-										<toolbar align="end"
-											style="float:right; border-style: none; padding:0px;"
-											height="100%">
-											<button
-												id="btnNew_insuranceType" label="${c:l('label_New')}"
-												tooltiptext="${c:l('btnNew_FinTypeInsurance.tooltiptext')}"
-												autodisable="btnNew_FinTypeAccount" />
-										</toolbar>
-									</hbox>
-								</div>
-								<listbox id="listBoxInsuranceDetails"
-									span="true" sizedByContent="true"
-									tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-									height="100%" multiple="false"
-									emptyMessage="${c:l('listbox.emptyMessage')}">
-									<listhead sizable="true">
-										<listheader
-											id="listheader_FinanceTypeDialog_InsuranceType"
-											label="${c:l('listheader_FinanceTypeDialog_InsuranceType.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_InsuranceTypeDesc"
-											label="${c:l('listheader_FinanceTypeDialog_InsuranceTypeDesc.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_DefaultPaymentType"
-											label="${c:l('listheader_FinanceTypeDialog_DefaultPaymentType.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_CalculationRule"
-											label="${c:l('listheader_FinanceTypeDialog_CalculationRule.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_InsuranceMandatory"
-											label="${c:l('listheader_FinanceTypeDialog_InsuranceMandatory.label')}"
-											sort="false" hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="false"
-											hflex="min" />
-										<listheader
-											id="listheader_FinanceTypeDialog_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="false"
-											hflex="min" />
-									</listhead>
-								</listbox>
-							</groupbox>
-						</tabpanel> -->
-
 						<tabpanel>
 							<groupbox>
 								<ptCKeditor id="remarks" width="99%"

@@ -73,7 +73,6 @@ public class DataSetFiller implements Serializable {
 	private BigDecimal CPZNXT=BigDecimal.ZERO;
 	private BigDecimal PROVAMT=BigDecimal.ZERO;
 	private BigDecimal SECDEPST =BigDecimal.ZERO;
-	private BigDecimal DEDUCTFEEDISB =BigDecimal.ZERO;
 	private BigDecimal DEDUCTINSDISB =BigDecimal.ZERO;
 	private BigDecimal RETAMT =BigDecimal.ZERO;
 	private BigDecimal NETRET =BigDecimal.ZERO;
@@ -168,6 +167,12 @@ public class DataSetFiller implements Serializable {
 	private boolean repayInAdv = false; 
 	private boolean repayInPD = false; 
 	private boolean repayInSusp = false; 
+	
+	private BigDecimal DEDUCTFEEDISB = BigDecimal.ZERO;
+	private BigDecimal ADDFEETOFINANCE = BigDecimal.ZERO;
+	private BigDecimal PAIDFEE = BigDecimal.ZERO;
+	private BigDecimal WAIVEDFEE = BigDecimal.ZERO;
+	private BigDecimal BPI = BigDecimal.ZERO;
 	
 	
 	public DataSetFiller() {
@@ -1133,6 +1138,54 @@ public class DataSetFiller implements Serializable {
 
 	public void setDEDUCTINSDISB(BigDecimal dEDUCTINSDISB) {
 		DEDUCTINSDISB = dEDUCTINSDISB;
+	}
+
+	public int getcPNoOfDays() {
+		return cPNoOfDays;
+	}
+
+	public void setcPNoOfDays(int cPNoOfDays) {
+		this.cPNoOfDays = cPNoOfDays;
+	}
+
+	public int gettPPNoOfDays() {
+		return tPPNoOfDays;
+	}
+
+	public void settPPNoOfDays(int tPPNoOfDays) {
+		this.tPPNoOfDays = tPPNoOfDays;
+	}
+
+	public BigDecimal getADDFEETOFINANCE() {
+		return ADDFEETOFINANCE;
+	}
+
+	public void setADDFEETOFINANCE(BigDecimal aDDFEETOFINANCE) {
+		ADDFEETOFINANCE = aDDFEETOFINANCE;
+	}
+
+	public BigDecimal getPAIDFEE() {
+		return PAIDFEE;
+	}
+
+	public void setPAIDFEE(BigDecimal pAIDFEE) {
+		PAIDFEE = pAIDFEE;
+	}
+
+	public BigDecimal getWAIVEDFEE() {
+		return WAIVEDFEE;
+	}
+
+	public void setWAIVEDFEE(BigDecimal wAIVEDFEE) {
+		WAIVEDFEE = wAIVEDFEE;
+	}
+
+	public BigDecimal getBPI() {
+		return BPI;
+	}
+
+	public void setBPI(BigDecimal bPI) {
+		BPI = bPI;
 	}
 	
 }

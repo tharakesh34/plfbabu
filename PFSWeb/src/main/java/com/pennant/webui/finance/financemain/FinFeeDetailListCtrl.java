@@ -96,6 +96,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -176,6 +177,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String	 numberOfTermsLabel = "";
 	private String	 moduleDefiner = "";
 	private String	eventCode	   = "";
+	private Map<String, FeeRule>			feeRuleDetailsMap		= null;
 
 	/**
 	 * default constructor.<br>
@@ -1919,6 +1921,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void setEventCode(String eventCode) {
 		this.eventCode = eventCode;
+	}
+
+	public Map<String, FeeRule> getFeeRuleDetailsMap() {
+		return feeRuleDetailsMap;
+	}
+
+	public void setFeeRuleDetailsMap(Map<String, FeeRule> feeRuleDetailsMap) {
+		this.feeRuleDetailsMap = feeRuleDetailsMap;
 	}
 
 }

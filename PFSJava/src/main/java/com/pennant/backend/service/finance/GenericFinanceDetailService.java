@@ -20,6 +20,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountEngineExecutionRIA;
@@ -86,6 +87,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -1210,7 +1212,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		try {
 			
 			Map<String, FeeRule> feeRuleDetailsMap = null;
-			if (financeDetail.getFinScheduleData().getFeeRules() != null
+			/*if (financeDetail.getFinScheduleData().getFeeRules() != null
 					&& financeDetail.getFinScheduleData().getFeeRules().size() > 0) {
 
 				feeRuleDetailsMap = new HashMap<String, FeeRule>();
@@ -1218,6 +1220,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					if (!feeRuleDetailsMap.containsKey(feeRule.getFeeCode())) {
 						feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
 					}
+				}
+			}*/
+			
+			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList(); 
+			if(finFeeDetailList != null ){
+				feeRuleDetailsMap = new HashMap<>();
+				FeeRule feeRule ;
+				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+					feeRule = new FeeRule();
+					feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+					feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+					feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+					feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+					feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+					feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+					feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
 				}
 			}
 			
@@ -2340,7 +2358,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				new FinanceProfitDetail(), financeMain.getFinStartDate());
 		
 		Map<String, FeeRule> feeRuleDetailsMap = null;
-		if (financeDetail.getFinScheduleData().getFeeRules() != null
+		/*if (financeDetail.getFinScheduleData().getFeeRules() != null
 				&& financeDetail.getFinScheduleData().getFeeRules().size() > 0) {
 
 			feeRuleDetailsMap = new HashMap<String, FeeRule>();
@@ -2348,6 +2366,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (!feeRuleDetailsMap.containsKey(feeRule.getFeeCode())) {
 					feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
 				}
+			}
+		}*/
+		
+		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList(); 
+		if(finFeeDetailList != null ){
+			feeRuleDetailsMap = new HashMap<>();
+			FeeRule feeRule ;
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				feeRule = new FeeRule();
+				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+				feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
 			}
 		}
 		
@@ -2415,8 +2449,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 		
-		list = getPostingsInterfaceService().doFillPostingDetails(list,
-				financeMain.getFinBranch(), linkedTranId, "Y");
+		if(!ImplementationConstants.INDIAN_IMPLEMENTATION){
+			list = getPostingsInterfaceService().doFillPostingDetails(list, financeMain.getFinBranch(), linkedTranId, "Y");
+		}
+		
+		/*list = getPostingsInterfaceService().doFillPostingDetails(list,
+				financeMain.getFinBranch(), linkedTranId, "Y");*/
 		if (list != null && list.size() > 0) {
 			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 			for (int i = 0; i < list.size(); i++) {

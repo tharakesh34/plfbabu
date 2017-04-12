@@ -11302,11 +11302,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 						List<ReturnDataSet> returnSetEntries = null;
-						Map<String, FeeRule> map = null;
-
-						if (feeDetailDialogCtrl != null) {
-							map = feeDetailDialogCtrl.getFeeRuleDetailsMap();
-						}
+						Map<String, FeeRule> map = preparingFeeRulesMap(dataSet);
 
 						if (!isRIAExist) {
 							returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(),
@@ -11356,11 +11352,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								dataSet.setDisburseAmount(disbursement.getDisbAmount());
 
 								List<ReturnDataSet> returnSetEntries = null;
-								Map<String, FeeRule> map = null;
-
-								if (feeDetailDialogCtrl != null) {
-									map = feeDetailDialogCtrl.getFeeRuleDetailsMap();
-								}
+								
+								Map<String, FeeRule> map = preparingFeeRulesMap(dataSet);
 
 								if (!isRIAExist) {
 									returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
@@ -11602,6 +11595,48 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		logger.debug("Leaving");
+	}
+	
+	private Map<String, FeeRule> preparingFeeRulesMap(DataSet dataSet) {
+		logger.debug("Entering");
+		
+		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		Map<String, FeeRule> map = new HashMap<>();
+		
+		if (finFeeDetailList != null) {
+			FeeRule feeRule;
+
+			BigDecimal deductFeeDisb = BigDecimal.ZERO;
+			BigDecimal addFeeToFinance = BigDecimal.ZERO;
+			BigDecimal paidFee = BigDecimal.ZERO;
+			BigDecimal waivedFee = BigDecimal.ZERO;
+
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				feeRule = new FeeRule();
+				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+				map.put(feeRule.getFeeCode(), feeRule);
+				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+				}
+				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
+				waivedFee = waivedFee.add(finFeeDetail.getWaivedAmount());
+			}
+			dataSet.setDeductFeeDisb(deductFeeDisb);
+			dataSet.setAddFeeToFinance(addFeeToFinance);
+			dataSet.setWaivedFee(waivedFee);
+			dataSet.setPaidFee(paidFee);
+		}
+		
+		logger.debug("Leaving");
+		
+		return map;
 	}
 
 	/**

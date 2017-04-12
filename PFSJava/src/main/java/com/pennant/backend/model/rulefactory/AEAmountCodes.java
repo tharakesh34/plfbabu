@@ -1035,5 +1035,4 @@ public class AEAmountCodes {
 	public void setRepayInSusp(boolean repayInSusp) {
 		this.repayInSusp = repayInSusp;
 	}
-	
 }

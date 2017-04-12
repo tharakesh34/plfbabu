@@ -544,6 +544,9 @@ public class AEAmounts implements Serializable {
 		dataSet.setDeductInsDisb(financeMain.getDeductInsDisb() == null ? BigDecimal.ZERO : financeMain.getDeductInsDisb());
 		dataSet.setGrcPftChg(financeMain.getTotalGrossGrcPft() == null ? BigDecimal.ZERO : financeMain.getTotalGrossGrcPft());
 		dataSet.setNoOfTerms(financeMain.getNumberOfTerms() + financeMain.getGraceTerms());
+		
+		dataSet.setBpiAmount(financeMain.getBpiAmount());
+		
 		// Tenure Calculation
 		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(), true);
 		dataSet.setTenure(months);

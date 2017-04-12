@@ -39,7 +39,6 @@ public class DataSet {
 	private int finJointAcCount = 0;
 	private int curRpyDefCount = 0;
 	private BigDecimal securityDeposit = BigDecimal.ZERO;
-	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
 	private BigDecimal curDisbRet = BigDecimal.ZERO;
 	private BigDecimal netRetDue = BigDecimal.ZERO;
 	private BigDecimal grcPftChg = BigDecimal.ZERO;
@@ -62,16 +61,19 @@ public class DataSet {
 	private BigDecimal UNSOLDFEE = BigDecimal.ZERO;
 	private BigDecimal SETTLEAMT = BigDecimal.ZERO;
 
-	//Pre Approval Fee
 	private BigDecimal PREAPPFEE = BigDecimal.ZERO;
 	private BigDecimal PREAPPFEEW = BigDecimal.ZERO;
 	private BigDecimal PREAPPFEEP = BigDecimal.ZERO;
+	
 	private BigDecimal deductInsDisb = BigDecimal.ZERO;
+	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
+	private BigDecimal addFeeToFinance = BigDecimal.ZERO;
+	private BigDecimal paidFee = BigDecimal.ZERO;
+	private BigDecimal waivedFee = BigDecimal.ZERO;
 	
-	//Rebate
 	private BigDecimal rebate = BigDecimal.ZERO;
-	
 	private String custCIF;
+	private BigDecimal bpiAmount = BigDecimal.ZERO;
 	
 	public DataSet() {
 		
@@ -502,6 +504,38 @@ public class DataSet {
 
 	public void setDeductInsDisb(BigDecimal deductInsDisb) {
 		this.deductInsDisb = deductInsDisb;
+	}
+
+	public BigDecimal getAddFeeToFinance() {
+		return addFeeToFinance;
+	}
+
+	public void setAddFeeToFinance(BigDecimal addFeeToFinance) {
+		this.addFeeToFinance = addFeeToFinance;
+	}
+
+	public BigDecimal getPaidFee() {
+		return paidFee;
+	}
+
+	public void setPaidFee(BigDecimal paidFee) {
+		this.paidFee = paidFee;
+	}
+
+	public BigDecimal getWaivedFee() {
+		return waivedFee;
+	}
+
+	public void setWaivedFee(BigDecimal waivedFee) {
+		this.waivedFee = waivedFee;
+	}
+
+	public BigDecimal getBpiAmount() {
+		return bpiAmount;
+	}
+
+	public void setBpiAmount(BigDecimal bpiAmount) {
+		this.bpiAmount = bpiAmount;
 	}
 
 
