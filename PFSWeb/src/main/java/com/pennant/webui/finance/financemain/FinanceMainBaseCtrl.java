@@ -1228,7 +1228,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.label_FinanceMainDialog_FinCurrentAssetValue.setValue("");
 				this.finCurrentAssetValue.setVisible(false);
 			} else {
-				if (!isOverdraft && financeType.isFinIsAlwMD()) {
+				if (!isOverdraft && financeType.isAlwMaxDisbCheckReq()) {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
 					this.row_FinAssetValue.setVisible(true);
 					this.finAssetValue.setMandatory(true);
@@ -5896,8 +5896,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						aFinanceDetail.getCustomerDetails().getCustomer().setCustCoreBank(aFinanceDetail.getCustomerDedupList().get(0).getCustCoreBank());
 						aFinanceDetail.getCustomerDetails().getCustomer().setCustCIF(aFinanceDetail.getCustomerDedupList().get(0).getCustCIF());
 					}
-					
-					
 				}
 
 				// Limits Checking with ACP Interface
