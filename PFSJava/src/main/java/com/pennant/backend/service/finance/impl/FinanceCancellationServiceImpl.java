@@ -333,7 +333,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		}
 		
 		// ScheduleDetails deletion
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
 		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -477,7 +477,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		tempAuditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
 		
 		// Adding audit as deleted from TEMP table
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(tempAuditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);

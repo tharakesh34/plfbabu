@@ -71,7 +71,7 @@ public interface FinanceMainDAO {
 
 	void update(FinanceMain financeMain, TableType tableType, boolean wif);
 
-	void delete(FinanceMain financeMain, TableType tableType, boolean isWIF);
+	void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize);
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
 

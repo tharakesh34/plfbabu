@@ -2635,7 +2635,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Finance Deletion
-		getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF);
+		getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 
 		//Step Details Deletion
 		getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(),isWIF ,"");
@@ -2842,7 +2842,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF);
+			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 			listDeletion(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), "", isWIF);
 			getFinServiceInstructionDAO().deleteList(financeDetail.getFinScheduleData().getFinReference(),financeDetail.getModuleDefiner(),"");
 			
@@ -3495,7 +3495,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				// Finance Main Details
 				//=======================================
-				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF);
+				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 			}
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
@@ -3661,7 +3661,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF);
+			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 			listDeletion(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), "", isWIF);
 
 			//Delete Finance Premium Details 
@@ -4071,7 +4071,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance Main Details
 			//=======================================
-			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF);
+			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
@@ -4246,7 +4246,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Main Details Deletion
 		//=======================================
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, false);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

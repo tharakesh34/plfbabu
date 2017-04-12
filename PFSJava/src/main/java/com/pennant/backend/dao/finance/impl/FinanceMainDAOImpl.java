@@ -729,23 +729,25 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	}
 
 	@Override
-	public void delete(FinanceMain financeMain, TableType tableType, boolean isWIF) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize) {
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From ");
-		if (isWIF) {
-			deleteSql.append(" WIFFinanceMain");
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from");
+		if (wif) {
+			sql.append(" WIFFinanceMain");
 		} else {
-			deleteSql.append(" FinanceMain");
+			sql.append(" FinanceMain");
 		}
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		sql.append(tableType.getSuffix());
+		sql.append(" where FinReference = :FinReference");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType, finalize));
+		
+		logger.debug("deleteSql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),  beanParameters);
+			int recordCount = this.namedParameterJdbcTemplate.update(sql.toString(),  beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails = getError("41003", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) { };
