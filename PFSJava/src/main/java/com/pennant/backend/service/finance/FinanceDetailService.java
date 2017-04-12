@@ -171,6 +171,7 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMainParms(String finReference);
 	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType);
 	BigDecimal getFinAssetValue(String finReference);
+	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 	
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);

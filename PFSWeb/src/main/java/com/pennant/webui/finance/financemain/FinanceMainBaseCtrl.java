@@ -11296,59 +11296,183 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} else {
+				
+				FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
-				if (getFinanceDetail().getFinScheduleData().getDisbursementDetails() != null
-						&& getFinanceDetail().getFinScheduleData().getDisbursementDetails().size() > 0) {
+				if(finMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+					if (getFinanceDetail().getFinScheduleData().getDisbursementDetails() != null
+							&& getFinanceDetail().getFinScheduleData().getDisbursementDetails().size() > 0) {
 
-					for (FinanceDisbursement disbursement : getFinanceDetail().getFinScheduleData()
-							.getDisbursementDetails()) {
-						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
-							continue;
-						}
+						for (FinanceDisbursement disbursement : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
 
-						if (disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0) {
+							if (disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-							if (StringUtils.isEmpty(eventCode)) {
-								if (StringUtils.isNotEmpty(moduleDefiner)) {
-									if (disbursement.getDisbReqDate().compareTo(curBDay) != 0) {
-										continue;
+								if (StringUtils.isEmpty(eventCode)) {
+									if (StringUtils.isNotEmpty(moduleDefiner)) {
+										if (disbursement.getDisbReqDate().compareTo(curBDay) != 0) {
+											continue;
+										}
+									}
+									if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSF);
+									} else {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
 									}
 								}
-								if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
-									dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSF);
+
+								if (StringUtils.isNotBlank(disbursement.getDisbAccountId())) {
+									dataSet.setDisburseAccount(disbursement.getDisbAccountId());
+								}
+								dataSet.setDisburseAmount(disbursement.getDisbAmount());
+
+								List<ReturnDataSet> returnSetEntries = null;
+								Map<String, FeeRule> map = null;
+
+								if (feeDetailDialogCtrl != null) {
+									map = feeDetailDialogCtrl.getFeeRuleDetailsMap();
+								}
+
+								if (!isRIAExist) {
+									returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
+											getAmountCodes(), "N", map, false, finType);
+								} else {
+
+									List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(
+											contributorDetailsDialogCtrl == null ? null
+													: contributorDetailsDialogCtrl.getContributorsList(),
+													dataSet.getFinReference());
+									returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet,
+											getAmountCodes(), "N", riaDetailList, map);
+								}
+								accountingSetEntries.addAll(returnSetEntries);
+							}
+						}
+					}
+				}else{
+					
+					Map<String, FeeRule> feeRuleDetailsMap = null;
+					if (feeDetailDialogCtrl != null) {
+						feeRuleDetailsMap = feeDetailDialogCtrl.getFeeRuleDetailsMap();
+					}
+					
+					if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)){
+						
+						// Get Approved Disbursement Records 
+						List<FinanceDisbursement> oldDisbList = getFinanceDetailService().getFinanceDisbursements(finMain.getFinReference(), "", false);
+						List<FinanceDisbursement> curDisbList = getFinanceDetail().getFinScheduleData().getDisbursementDetails();
+
+						// Loop Repetition for Multiple Disbursement
+						if(curDisbList != null && !curDisbList.isEmpty()){
+							for (int i = 0; i < curDisbList.size(); i++) {
+								FinanceDisbursement curDisb = curDisbList.get(i);
+								if(StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+									continue;
+								}
+								boolean isDisbFound = false;
+								for (int j = 0; j < oldDisbList.size(); j++) {
+									FinanceDisbursement oldDisb = oldDisbList.get(j);
+									if(curDisb.getDisbDate().compareTo(oldDisb.getDisbDate()) == 0 && 
+											(curDisb.getDisbSeq() == oldDisb.getDisbSeq())){
+										isDisbFound = true;
+										break;
+									}
+								}
+
+								// If Disbursement not found in Existing List
+								if(isDisbFound){
+									continue;
+								}
+
+								if (curDisb.getDisbDate().after(DateUtility.getAppDate())) {
+									if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSF);
+									} else {
+										dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
+									}
 								} else {
 									dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
 								}
+
+								if(StringUtils.isNotBlank(curDisb.getDisbAccountId())){
+									dataSet.setDisburseAccount(curDisb.getDisbAccountId());
+								}
+								dataSet.setDisburseAmount(curDisb.getDisbAmount());
+								dataSet.setCurDisbRet(curDisb.getDisbRetAmount());
+								dataSet.setNetRetDue(curDisb.getNetRetDue());
+								dataSet.setClaimAmt(curDisb.getDisbClaim());
+								dataSet.setGrcPftTillNow(calculateTillGrcProfit(financeDetail.getFinScheduleData(), curDisb.getDisbDate()));
+								
+								accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(), "N",
+										feeRuleDetailsMap,false, finType,getFinanceDetail().getPremiumDetail()));
 							}
-
-							if (StringUtils.isNotBlank(disbursement.getDisbAccountId())) {
-								dataSet.setDisburseAccount(disbursement.getDisbAccountId());
-							}
-							dataSet.setDisburseAmount(disbursement.getDisbAmount());
-
-							List<ReturnDataSet> returnSetEntries = null;
-							Map<String, FeeRule> map = null;
-
-							if (feeDetailDialogCtrl != null) {
-								map = feeDetailDialogCtrl.getFeeRuleDetailsMap();
-							}
-
-							FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-
-							if (!isRIAExist) {
-								returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
-										getAmountCodes(), "N", map, false, finType);
-							} else {
-
-								List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(
-										contributorDetailsDialogCtrl == null ? null
-												: contributorDetailsDialogCtrl.getContributorsList(),
-										dataSet.getFinReference());
-								returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet,
-										getAmountCodes(), "N", riaDetailList, map);
-							}
-							accountingSetEntries.addAll(returnSetEntries);
 						}
+						
+						oldDisbList = null;
+					}else if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)){
+						
+						// Get Approved Disbursement Records 
+						List<FinanceDisbursement> oldDisbList = getFinanceDetailService().getFinanceDisbursements(finMain.getFinReference(), "", false);
+						List<FinanceDisbursement> curDisbList = getFinanceDetail().getFinScheduleData().getDisbursementDetails();
+
+						// Loop Repetition for Multiple Disbursement
+						long linkedTranId = 0;
+						if(curDisbList != null && !curDisbList.isEmpty()){
+							for (int i = 0; i < curDisbList.size(); i++) {
+								FinanceDisbursement curDisb = curDisbList.get(i);
+								if(!StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+									continue;
+								}
+								boolean isCancelDisbExists = false;
+								for (int j = 0; j < oldDisbList.size(); j++) {
+									FinanceDisbursement oldDisb = oldDisbList.get(j);
+									if(curDisb.getDisbDate().compareTo(oldDisb.getDisbDate()) == 0 && 
+											(curDisb.getDisbSeq() == oldDisb.getDisbSeq()) && 
+											StringUtils.equals(oldDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)){
+										isCancelDisbExists = true;
+										break;
+									}
+								}
+								linkedTranId = curDisb.getLinkedTranId();
+
+								// If Disbursement not found in Existing List
+								if(isCancelDisbExists){
+									continue;
+								}
+								
+								List<ReturnDataSet> returnSetEntries = getFinanceDetailService().getPostingsByLinkTransId(linkedTranId);
+								//Method for Checking for Reverse Calculations Based upon Negative Amounts
+								for (ReturnDataSet returnDataSet : returnSetEntries) {
+
+									returnDataSet.setLinkedTranId(linkedTranId);
+									returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+									if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+										String tranCode = returnDataSet.getTranCode();
+										String revTranCode = returnDataSet.getRevTranCode();
+										String debitOrCredit = returnDataSet.getDrOrCr();
+
+										returnDataSet.setTranCode(revTranCode);
+										returnDataSet.setRevTranCode(tranCode);
+
+										returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+										if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+											returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+										} else {
+											returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+										}
+									}
+								}
+								accountingSetEntries.addAll(returnSetEntries);
+							}
+						}
+						oldDisbList = null;
+					}else{
+
+						//Accounting Execution for Maintenance
+						accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(), "N",
+								feeRuleDetailsMap,false, finType,getFinanceDetail().getPremiumDetail()));
 					}
 				}
 			}

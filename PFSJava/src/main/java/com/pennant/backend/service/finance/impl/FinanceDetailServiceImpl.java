@@ -93,6 +93,7 @@ import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -180,6 +181,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -2830,8 +2832,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		}
 		
-		//Bundled Product
-		BundledProductsDetail bundledProductTemp = getBundledProductsDetailService().getBundledProductsDetailById(financeMain.getFinReference(),"_Temp");
+		//Bundled Product TODO: Need to check why it was calling
+		BundledProductsDetail bundledProductTemp = null;
+		if(ImplementationConstants.ALLOW_BUNDLEDPRODUCT){
+			bundledProductTemp = getBundledProductsDetailService().getBundledProductsDetailById(financeMain.getFinReference(),"_Temp");
+		}
 		
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		FinanceScheduleDetail orgNextSchd = null;
@@ -2920,6 +2925,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				
 				// Setting BPI Paid amount to Schedule details
 				//=======================================
+				FinanceRepayments repayment = null;
 				if(financeMain.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment())){
 					for (int i = 0; i < financeDetail.getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
 						FinanceScheduleDetail curSchd = financeDetail.getFinScheduleData().getFinanceScheduleDetails().get(i);
@@ -2927,6 +2933,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							curSchd.setSchdPftPaid(financeMain.getBpiAmount());
 							if(curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0){
 								curSchd.setSchPftPaid(true);
+								long linkedTranId = financeDetail.getFinScheduleData().getDisbursementDetails().get(0).getLinkedTranId();
+								repayment = prepareBpiRepayData(financeMain, curSchd.getSchDate(), linkedTranId, financeMain.getBpiAmount());
 							}
 							break;
 						}
@@ -2939,6 +2947,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//Schedule Details
 				//=======================================
 				listSave(financeDetail.getFinScheduleData(), "", isWIF, 0);
+				
+				// BPI Repayment details saving
+				if(repayment != null){
+					getFinanceRepaymentsDAO().save(repayment, "");
+				}
 
 				// Save Finance Step Policy Details
 				//=======================================
@@ -5802,6 +5815,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			boolean showZeroBal,String postingGroupBy) {
 		return getPostingsDAO().getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal,postingGroupBy);
 	}
+	
+	/**
+	 * Method for fetching list of entries executed based on Linked Transaction ID
+	 */
+	@Override
+	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid) {
+		return getPostingsDAO().getPostingsByLinkTransId(linkedTranid);
+	}
 
 	/**
 	 * Method to CheckLimits
@@ -7296,7 +7317,48 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return aAuditHeader;
 	}
 	
-	
+	/**
+	 * Method for Preparing Data for Finance Repay Details Object
+	 * 
+	 * @param detail
+	 * @param main
+	 * @param valueDate
+	 * @param repayAmtBal
+	 * @return
+	 */
+	private FinanceRepayments prepareBpiRepayData(FinanceMain finMain, Date bpiDate, long linkedTranId, BigDecimal bpiAmount) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceRepayments repayment = new FinanceRepayments();
+		Date curAppDate = DateUtility.getAppDate();
+
+		repayment.setFinReference(finMain.getFinReference());
+		repayment.setFinSchdDate(bpiDate);
+		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		repayment.setLinkedTranId(linkedTranId);
+
+		repayment.setFinRpyAmount(bpiAmount);
+		repayment.setFinPostDate(curAppDate);
+		repayment.setFinValueDate(finMain.getFinStartDate());
+		repayment.setFinBranch(finMain.getFinBranch());
+		repayment.setFinType(finMain.getFinType());
+		repayment.setFinCustID(finMain.getCustID());
+		repayment.setFinSchdPftPaid(bpiAmount);
+		repayment.setFinSchdPriPaid(BigDecimal.ZERO);
+		repayment.setFinTotSchdPaid(bpiAmount);
+		repayment.setFinFee(BigDecimal.ZERO);
+		repayment.setFinWaiver(BigDecimal.ZERO);
+		repayment.setFinRefund(BigDecimal.ZERO);
+
+		// Fee Details
+		repayment.setSchdFeePaid(BigDecimal.ZERO);
+		repayment.setSchdInsPaid(BigDecimal.ZERO);
+		repayment.setSchdSuplRentPaid(BigDecimal.ZERO);
+		repayment.setSchdIncrCostPaid(BigDecimal.ZERO);
+
+		logger.debug(Literal.LEAVING);
+		return repayment;
+	}
 	
 
 	@Override
