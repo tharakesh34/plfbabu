@@ -671,4 +671,30 @@ WHERE DISB.STATUS='APPROVED' AND DISB.PAYMENTTYPE IN ('CHEQUE', 'DD') AND BANK.B
 <modifyDataType tableName="DATA_ENGINE_TABLE" columnName="Operation" newDataType="int" />
 </changeSet>
 
+
+	<changeSet id="24" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="TotalRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="25" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="ProcessedRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="26" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="SuccessRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="27" author="durgaprasad g">
+		<dropNotNullConstraint tableName="DATA_ENGINE_STATUS"
+			columnName="FailedRecords" columnDataType="int" />
+	</changeSet>
+	
+	<changeSet id="28" author="durgaprasad g">
+		<sql>
+			Update DATA_ENGINE_COLUMN set SeqType = 'S', SeqObject = 'SEQ_DATA_ENGINE_PROCESS_LOG' WHERE TableId  in  (Select id from DATA_ENGINE_TABLE Where Name = 'DATA_ENGINE_PROCESS_LOG') and Name = 'ID';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
