@@ -2199,13 +2199,13 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
-			this.grcEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = graceRate.getBaseObject();
 
 			if (dataObject instanceof String) {
 				this.graceRate.setBaseValue(dataObject.toString());
 				this.graceRate.setBaseDescription("");
-				this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				BaseRateCode details = (BaseRateCode) dataObject;
 				if (details != null) {
@@ -2214,15 +2214,15 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.grcEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
-			this.grcEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = graceRate.getSpecialObject();
 
 			if (dataObject instanceof String) {
 				this.graceRate.setSpecialValue(dataObject.toString());
 				this.graceRate.setSpecialDescription("");
-				this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				SplRateCode details = (SplRateCode) dataObject;
 				if (details != null) {
@@ -2232,7 +2232,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.grcEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 
 		}
@@ -2285,13 +2285,13 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
-			this.repayEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = repayRate.getBaseObject();
 
 			if (dataObject instanceof String) {
 				this.repayRate.setBaseValue(dataObject.toString());
 				this.repayRate.setBaseDescription("");
-				this.repayEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				BaseRateCode details = (BaseRateCode) dataObject;
 				if (details != null) {
@@ -2300,15 +2300,15 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(), this.repayRate.getBaseComp(),
-					this.repayRate.getMarginComp(), this.repayEffectiveRate, this.finMinRate, this.finMaxRate);
+					this.repayRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finMinRate, this.finMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
-			this.repayEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = repayRate.getSpecialObject();
 
 			if (dataObject instanceof String) {
 				this.repayRate.setSpecialValue(dataObject.toString());
 				this.repayRate.setSpecialDescription("");
-				this.repayEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				SplRateCode details = (SplRateCode) dataObject;
 				if (details != null) {
@@ -2317,7 +2317,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(), this.repayRate.getBaseComp(),
-					this.repayRate.getMarginComp(), this.repayEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);
+					this.repayRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 
 		}
