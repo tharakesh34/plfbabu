@@ -260,6 +260,7 @@ import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.AppException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -6910,7 +6911,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			setOverideMap(auditHeader.getOverideMap());
 			setNextUserId(((FinanceDetail) auditHeader.getAuditDetail().getModelData()).getFinScheduleData()
 					.getFinanceMain().getNextUserId());
-
+		} catch (AppException e) {
+			MessageUtil.showError(e);
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		} catch (PFFInterfaceException e) {
