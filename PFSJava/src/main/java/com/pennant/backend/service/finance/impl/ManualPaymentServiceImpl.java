@@ -548,7 +548,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		listDeletion(financeMain.getFinReference(), "_Temp", false);
 		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
 				repayData.getFinRepayHeader().getFinEvent(), false, "_Temp");
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 
 		//Delete Finance Repay Header
 		getFinanceRepaymentsDAO().deleteFinRepayHeader(repayData.getFinRepayHeader(), "_Temp");
@@ -788,7 +788,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), "_Temp");
 			
 			//Reset Repay Account ID On Finance Main for Correcting Audit Data
-			getFinanceMainDAO().delete(financeMain, "_Temp", false);
+			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 			
 			
 			RepayData tempRepayData = (RepayData) aAuditHeader.getAuditDetail().getModelData();

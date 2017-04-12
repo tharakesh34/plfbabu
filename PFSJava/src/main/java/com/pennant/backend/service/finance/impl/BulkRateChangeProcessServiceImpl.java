@@ -228,7 +228,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 				FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(bulkRateChangeDetail.getFinReference(), "", false);
 				
 				if(!bulkRateChangeHeader.isNewRecord()){
-					getFinanceMainDAO().delete(financeMain, "_TEMP", false);
+					getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 				}
 				
 				financeMain.setRcdMaintainSts(FinanceConstants.BULK_RATE_CHG);

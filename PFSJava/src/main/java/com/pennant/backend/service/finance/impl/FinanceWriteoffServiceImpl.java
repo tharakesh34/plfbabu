@@ -400,7 +400,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		
 		// ScheduleDetails deletion
 		listDeletion(financeMain.getFinReference(), "_Temp");
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -575,7 +575,7 @@ public class FinanceWriteoffServiceImpl  extends GenericFinanceDetailService  im
 		getFinanceWriteoffDAO().delete(financeMain.getFinReference(), "_Temp");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 		
 		// Adding audit as deleted from TEMP table
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));

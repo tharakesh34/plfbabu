@@ -327,7 +327,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		InvestmentFinHeader investmentFinHeader = (InvestmentFinHeader) auditHeader.getAuditDetail().getModelData();
 		
 		for (FinanceDetail financeDetail : investmentFinHeader.getFinanceDetailsList()) {
-			getFinanceMainDAO().delete(financeDetail.getFinScheduleData().getFinanceMain(),"_Temp", false);
+			getFinanceMainDAO().delete(financeDetail.getFinScheduleData().getFinanceMain(),TableType.TEMP_TAB, false);
 			listDeletion(financeDetail.getFinScheduleData(),financeDetail.getModuleDefiner(), "_Temp", false);
 		}
 		
@@ -398,7 +398,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
-			getFinanceMainDAO().delete(financeMain, "", false);
+			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, false);
 
 		} else {
 			financeMain.setRoleCode("");
@@ -422,7 +422,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		
 		auditDetails.addAll(doApproveFinanceDetails(financeDetail, "", tranType));
 		
-		getFinanceMainDAO().delete(financeMain,"_Temp", false);
+		getFinanceMainDAO().delete(financeMain,TableType.TEMP_TAB, false);
 		listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), "_Temp", false);
 		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -544,7 +544,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		InvestmentFinHeader treasuaryFinance = (InvestmentFinHeader) auditHeader.getAuditDetail().getModelData();
 		
 		for (FinanceDetail financeDetail : treasuaryFinance.getFinanceDetailsList()) {
-			getFinanceMainDAO().delete(financeDetail.getFinScheduleData().getFinanceMain(),"_Temp", false);
+			getFinanceMainDAO().delete(financeDetail.getFinScheduleData().getFinanceMain(),TableType.TEMP_TAB, false);
 			listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), "_Temp", false);
 		}
 	
@@ -850,7 +850,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			}
 
 			if (deleteRecord) {
-				getFinanceMainDAO().delete(financeMain, type, false);
+				getFinanceMainDAO().delete(financeMain, TableType.valueOf(type), false);
 			}
 
 			if (approveRec) {

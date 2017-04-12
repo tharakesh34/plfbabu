@@ -202,7 +202,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		// ScheduleDetails deletion
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -264,7 +264,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		tranType = PennantConstants.TRAN_UPD;
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				financeMain.getBefImage(), financeMain));
 

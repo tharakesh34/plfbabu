@@ -673,7 +673,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if(financeDetail.getFinwriteoffPayment()!=null){
 			getFinanceWriteoffDAO().deletefinWriteoffPayment(financeMain.getFinReference(),financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(),
@@ -913,7 +913,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		
 		//FinanceMain Details Clearing before 
 		//=======================================
-		getFinanceMainDAO().delete(financeMain, "_Temp", false);
+		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false);
 		
 		// Collateral assignment Details
 		if(financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()){

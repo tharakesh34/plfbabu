@@ -728,20 +728,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method Deletes the Record from the FinanceMain or FinanceMain_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Main Detail by key FinReference
-	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(FinanceMain financeMain, String type, boolean isWIF) {
+	@Override
+	public void delete(FinanceMain financeMain, TableType tableType, boolean isWIF) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -751,7 +739,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		} else {
 			deleteSql.append(" FinanceMain");
 		}
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where FinReference =:FinReference");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
