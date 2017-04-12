@@ -94,6 +94,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(
 		        finReference, type, false));
+		
+		// Finance Disbursement details
+		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
 
 		//Finance Accounting Fee Charge Details
 		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
@@ -144,7 +147,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					accSetId, "_AEView", true));
 		}
 		
-		//Fiannce Flag Details
+		//Finance Flag Details
 		financeDetail.setFinFlagsDetails(getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference, 
 				FinanceConstants.MODULE_NAME,"_View"));
 		
@@ -165,7 +168,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			// Collateral Details
 			if(ImplementationConstants.COLLATERAL_INTERNAL){
-				financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,"FINANCE", "_TView"));
+				financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,FinanceConstants.MODULE_NAME, "_View"));
 			}else{
 				financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_View"));
 			}
@@ -178,7 +181,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(
 		        finReference, type));
 
-		// Docuument Details
+		// Document Details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
 		        finReference,FinanceConstants.MODULE_NAME,procEdtEvent, "_View"));
 		
@@ -918,12 +921,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Collateral assignment Details
 		if(financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()){
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
-			for (int i = 0; i < details.size(); i++) {
-				CollateralAssignment assignment = (CollateralAssignment) details.get(i).getModelData();
-				assignment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			details = processingCollateralAssignmentList(details, "_Temp", financeDetail.getFinScheduleData().getFinanceMain());
-			auditDetailList.addAll(details);					
+			auditDetailList.addAll(details);				
+			getCollateralAssignmentDAO().deleteByReference(financeMain.getFinReference(), "_Temp");					
 		}
 		
 		if(financeDetail.getFinanceCollaterals() != null){

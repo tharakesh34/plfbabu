@@ -882,14 +882,19 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// Default Sort on the table	
 		Date appDate = DateUtility.getAppDate();
-		
-		//searchObject.addSort("FinReference", false);
-		StringBuilder whereClause = new StringBuilder( " FinIsActive = 1 " );
+		StringBuilder whereClause = new StringBuilder(" FinIsActive = 1 ");
 		if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)){
-			 whereClause = new StringBuilder( " FinIsActive = 0 " );
+			 whereClause = new StringBuilder(" FinIsActive = 0 ");
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)){
+			 whereClause = new StringBuilder(" ");
 		}
+		
 		if(StringUtils.isNotEmpty(buildedWhereCondition)){
-			whereClause.append(" AND ("+buildedWhereCondition +") "); 
+			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)){
+				 whereClause = new StringBuilder(" ("+buildedWhereCondition +") ");
+			}else{
+				whereClause.append(" AND ("+buildedWhereCondition +") ");
+			}
 		}
 		
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)){

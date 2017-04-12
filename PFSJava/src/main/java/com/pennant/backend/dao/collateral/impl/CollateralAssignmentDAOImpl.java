@@ -61,10 +61,11 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -73,7 +74,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 
-public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignment> implements CollateralAssignmentDAO {
+public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMovement> implements CollateralAssignmentDAO {
 
 	private static Logger logger = Logger.getLogger(CollateralAssignmentDAOImpl.class);
 	
@@ -167,7 +168,6 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 	 * @throws DataAccessException
 	 * 
 	 */
-	
 	@Override
 	public void save(CollateralAssignment collateralAssignment,String type) {
 		logger.debug("Entering");
@@ -390,7 +390,7 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		CollateralAssignment collateralAssignment = new CollateralAssignment();
 		collateralAssignment.setReference(finReference);
 
-		StringBuilder sql = new StringBuilder("Update CollateralAssignment Set Active = 0 ");
+		StringBuilder sql = new StringBuilder("Delete From CollateralAssignment ");
 		sql.append(" Where Reference = :Reference");
 
 		logger.debug("deleteSql: " + sql.toString());
@@ -400,6 +400,59 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * This method insert new Records into CollateralMovement.
+	 *
+	 * save Collateral Movement 
+	 * 
+	 * @param Collateral Movement (collateralMovement)
+	 * @param  type (String) ""          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public void save(CollateralMovement movement) {
+		logger.debug("Entering");
+		
+		if(movement.getMovementSeq() == 0 || movement.getMovementSeq()==Long.MIN_VALUE){
+			movement.setMovementSeq(getNextidviewDAO().getNextId("SeqCollateralMovement"));	
+		}
+		
+		StringBuilder query =new StringBuilder("Insert Into CollateralMovement");
+		query.append(" (MovementSeq , Module, CollateralRef, Reference, AssignPerc , ValueDate, Process)");
+		query.append(" Values(:MovementSeq ,:Module, :CollateralRef, :Reference, :AssignPerc , :ValueDate, :Process)");
+		
+		logger.debug("insertSql: " + query.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
+		this.namedParameterJdbcTemplate.update(query.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Fetching Collateral Movement Details
+	 */
+	@Override
+	public List<CollateralMovement> getCollateralMovements(String collateralRef) {
+		logger.debug("Entering");
+		
+		CollateralMovement movement = new CollateralMovement();
+		movement.setCollateralRef(collateralRef);
+		
+		StringBuilder selectSql = new StringBuilder("Select MovementSeq , Module, Reference, ");
+		selectSql.append(" AssignPerc , ValueDate, Process  From CollateralMovement ");
+		selectSql.append(" Where CollateralRef = :CollateralRef Order By MovementSeq ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
+		RowMapper<CollateralMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralMovement.class);
+		
+		List<CollateralMovement> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		logger.debug("Leaving");
+		return list;
+	}
 	
 	/**
 	 * 
@@ -414,5 +467,6 @@ public class CollateralAssignmentDAOImpl extends BasisCodeDAO<CollateralAssignme
 		parms[0][0] = PennantJavaUtil.getLabel("label_CollateralRef")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
+
 
 }

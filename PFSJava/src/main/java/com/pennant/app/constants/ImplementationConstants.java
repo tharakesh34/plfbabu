@@ -78,6 +78,7 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_BUNDLEDPRODUCT			= false;					// Allow Bundled Product
 	public static final boolean	ALLOW_COMMITMENT				= false;					// Allow Commitment Details
 	public static final boolean	ALLOW_PFTUNCHG					= false;					// Allow Profit Unchanged
+	public static final boolean	COLLATERAL_DELINK_AUTO			= false;					// Allow Auto Collateral Delink Process
 
 	//Client Names and Current Client
 	public static final String	CLIENT_AIB						= "AIB";

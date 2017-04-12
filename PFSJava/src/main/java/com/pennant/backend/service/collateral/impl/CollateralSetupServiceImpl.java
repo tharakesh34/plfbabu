@@ -77,6 +77,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
@@ -2476,6 +2477,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	public int getCountByCollateralRef(String collateralRef) {
 		return getCollateralSetupDAO().getCountByCollateralRef(collateralRef);
 	}
+	
+	/**
+	 * Method for Fetching Movement Details against Collateral Reference
+	 */
+	@Override
+	public List<CollateralMovement> getCollateralMovements(String collateralRef) {
+		return getCollateralAssignmentDAO().getCollateralMovements(collateralRef);
+	}
+	
 	/**
 	 * Fetch list of customer collateral by custId
 	 * 
@@ -2525,4 +2535,5 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Leaving");
 		return collaterals;
 	}
+
 }

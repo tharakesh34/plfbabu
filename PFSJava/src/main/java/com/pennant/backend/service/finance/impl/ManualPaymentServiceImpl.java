@@ -38,6 +38,8 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -69,6 +71,7 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -824,7 +827,25 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			// send Collateral DeMark request to Interface
 			//==========================================
 			if(ImplementationConstants.COLLATERAL_INTERNAL){
-				getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+				if(ImplementationConstants.COLLATERAL_DELINK_AUTO){
+					
+					List<CollateralAssignment> colAssignList = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(
+							finReference,FinanceConstants.MODULE_NAME, "");
+					if(colAssignList != null && !colAssignList.isEmpty()){
+						for (int i = 0; i < colAssignList.size(); i++) {
+							CollateralMovement movement = new CollateralMovement();
+							movement.setModule(FinanceConstants.MODULE_NAME);
+							movement.setCollateralRef(colAssignList.get(i).getCollateralRef());
+							movement.setReference(colAssignList.get(i).getReference());
+							movement.setAssignPerc(BigDecimal.ZERO);
+							movement.setValueDate(DateUtility.getAppDate());
+							movement.setProcess(CollateralConstants.PROCESS_AUTO);
+							getCollateralAssignmentDAO().save(movement);
+						}
+
+						getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+					}
+				}
 			}else{
 				if (repayData.getFinanceDetail().getFinanceCollaterals() != null) {
 					getCollateralMarkProcess().deMarkCollateral(repayData.getFinanceDetail().getFinanceCollaterals());

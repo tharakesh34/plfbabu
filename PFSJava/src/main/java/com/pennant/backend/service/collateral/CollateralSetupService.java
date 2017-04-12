@@ -48,6 +48,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 
 public interface CollateralSetupService {
@@ -77,4 +78,6 @@ public interface CollateralSetupService {
 	int getCountByCollateralRef(String collateralRef);
 	
 	List<CollateralSetup> getCollateralSetupByCustId(long custId);
+
+	List<CollateralMovement> getCollateralMovements(String collateralRef);
 }

@@ -77,6 +77,8 @@
 								label="${c:l('Tab_CollateralSetUp_ExtendedFieldDetails')}" />
 							<tab id="assignmentDetailTab"
 								label="${c:l('Tab_CollateralSetUp_AssignmentDeatails')}" />
+							<tab id="movementsTab"
+								label="${c:l('Tab_CollateralSetUp_MovementDeatails')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto">
@@ -182,7 +184,7 @@
 														value="${c:l('label_CollateralSetupDialog_SpecialLTV.value')}" />
 													<hbox>
 														<space
-															id="space_SpecialLTV" spacing="2px" sclass="mandatory"/>
+															id="space_SpecialLTV" spacing="2px" sclass="mandatory" />
 														<decimalbox
 															id="specialLTV" maxlength="5" width="45px" />
 													</hbox>
@@ -303,18 +305,18 @@
 													</hbox>
 												</row>
 												<row>
-												<label
-													id="label_CollateralSetupDialog_Flag"
-													value="${c:l('label_CollateralSetupDialog_Flag.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<uppercasebox
-														id="flagDetails" width="180px" />
-													<button
-														id="btnFlagDetails" visible="false"
-														image="/images/icons/LOVSearch.png" />
-												</hbox>
+													<label
+														id="label_CollateralSetupDialog_Flag"
+														value="${c:l('label_CollateralSetupDialog_Flag.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<uppercasebox
+															id="flagDetails" width="180px" />
+														<button
+															id="btnFlagDetails" visible="false"
+															image="/images/icons/LOVSearch.png" />
+													</hbox>
 												</row>
 
 												<row spans="1,3">
@@ -402,7 +404,7 @@
 											<rows>
 												<row align="Right">
 													<button
-														id="btnAddCoownerDetails" height="10px"  visible="false"
+														id="btnAddCoownerDetails" height="10px" visible="false"
 														label="Add Co-Owners" tooltiptext="Add Co-Owner details"
 														autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnAddCoownerDetails,btnAddThirdPartyDetail" />
 												</row>
@@ -415,7 +417,7 @@
 														<listhead
 															sizable="true">
 															<listheader
-																label="${c:l('listheader_CoOwnerDetailr_Name.label')}"
+																label="${c:l('listheader_CoOwnerDetail_Name.label')}"
 																hflex="min" />
 															<listheader
 																label="${c:l('listheader_CoOwnerDetail_Percentage.label')}"
@@ -454,75 +456,76 @@
 								style="overflow:auto">
 								<div id="assignmentDetails">
 									<groupbox>
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="220px" />
-											<column />
-											<column width="220px" />
-											<column  />
-										</columns>
-										<rows>
-											<row height="24px">
-												<label
-													value="${c:l('label_CollateralSetupDialog_DepositorCif.value')}" />
-												<label
-													id="label_DepositorCif" style="font-weight:bold;" />
-												<label
-													value="${c:l('label_CollateralSetupDialog_CollateralRef.value')}" />
-												<label
-													id="label_CollateralRef" style="font-weight:bold;" />
-											</row>
-											<row height="24px">
-												<label
-													value="${c:l('label_CollateralSetupDialog_CollateralDepositorName.value')}" />
-												<label
-													id="label_DepositorName" style="font-weight:bold;" />
-												<label
-													value="${c:l('label_CollateralSetupDialog_Currency.value')}" />
-												<label
-													id="label_Currency" style="font-weight:bold;" />
-											</row>
-											<row height="24px">
-												<label
-													value="${c:l('label_SelectCollateralTypeDialog_CollateralType.value')}" />
-												<label
-													id="label_CollateralType" style="font-weight:bold;" />
-												<label
-													value="${c:l('label_CollateralSetupDialog_CollateralLoc.value')}" />
-												<label
-													id="label_CollateralLoc" style="font-weight:bold;" />
-											</row>
-											<row height="24px">
-												<label
-													value="${c:l('label_CollateralSetupDialog_BankValuation.value')}" />
-												<decimalbox
-													id="label_assignedBankValuation" width="150px"
-													tabindex="-1" readonly="true"
-													style="border:none; background-color:white ;font-weight:bold;" />
-												<label
-													value="${c:l('label_CollateralSetupDialog_AssignedCollateralValue.value')}" />
-												<decimalbox
-													id="label_assignedColllValue" width="150px" tabindex="-1"
-													readonly="true"
-													style="border:none; background-color:white ;font-weight:bold;" />
-											</row>
-											<row height="24px">
-												<label
-													value="${c:l('label_CollateralSetupDialog_AssignedPercBankValuation.value')}" />
-												<decimalbox
-													id="label_assignedPercBankValuation" width="150px"
-													tabindex="-1" readonly="true"
-													style="border:none; background-color:white ;font-weight:bold;" />
-												<label
-													value="${c:l('label_CollateralSetupDialog_AvailableForAssignment.value')}" />
-												<decimalbox
-													id="label_availableForAssignment" width="150px"
-													tabindex="-1" readonly="true"
-													style="border:none; background-color:white ;font-weight:bold;" />
-											</row>
-										</rows>
-									</grid>
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_DepositorCif.value')}" />
+													<label
+														id="label_DepositorCif" style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralRef.value')}" />
+													<label
+														id="label_CollateralRef" style="font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralDepositorName.value')}" />
+													<label
+														id="label_DepositorName" style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_Currency.value')}" />
+													<label
+														id="label_Currency" style="font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_SelectCollateralTypeDialog_CollateralType.value')}" />
+													<label
+														id="label_CollateralType" style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralLoc.value')}" />
+													<label
+														id="label_CollateralLoc" style="font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_BankValuation.value')}" />
+													<decimalbox
+														id="label_assignedBankValuation" width="150px"
+														tabindex="-1" readonly="true"
+														style="border:none; background-color:white ;font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_AssignedCollateralValue.value')}" />
+													<decimalbox
+														id="label_assignedColllValue" width="150px" tabindex="-1"
+														readonly="true"
+														style="border:none; background-color:white ;font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_AssignedPercBankValuation.value')}" />
+													<decimalbox
+														id="label_assignedPercBankValuation" width="150px"
+														tabindex="-1" readonly="true"
+														style="border:none; background-color:white ;font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_AvailableForAssignment.value')}" />
+													<decimalbox
+														id="label_availableForAssignment" width="150px"
+														tabindex="-1" readonly="true"
+														style="border:none; background-color:white ;font-weight:bold;" />
+												</row>
+											</rows>
+										</grid>
 									</groupbox>
 									<groupbox>
 										<listbox
@@ -531,29 +534,104 @@
 											width="99.8%" sizedByContent="true" height="100px">
 											<listhead sizable="true">
 												<listheader
-													label="${c:l('listheader_CoOwnerDetailr_LoanOrCommitment.label')}"
+													label="${c:l('listheader_Assignment_LoanOrCommitment.label')}"
 													hflex="min" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_CollateralReference.label')}"
+													label="${c:l('listheader_Assignment_CollateralReference.label')}"
 													hflex="min" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_Currency.label')}"
+													label="${c:l('listheader_Assignment_Currency.label')}"
 													hflex="min" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_AssignedPercentage.label')}"
+													label="${c:l('listheader_Assignment_AssignedPercentage.label')}"
 													hflex="min" align="right" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_AssignedValue.label')}"
+													label="${c:l('listheader_Assignment_AssignedValue.label')}"
 													hflex="min" align="right" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_UtilizationValue.label')}"
+													label="${c:l('listheader_Assignment_UtilizationValue.label')}"
 													hflex="min" align="right" />
 												<listheader sort="auto"
-													label="${c:l('listheader_CoOwnerDetail_AvailableForUtilization.label')}"
+													label="${c:l('listheader_Assignment_AvailableForUtilization.label')}"
 													hflex="min" align="right" />
 												<listheader
-													label="${c:l('listheader_CoOwnerDetail_Expired.label')}"
-													hflex="min"  />
+													label="${c:l('listheader_Assignment_Expired.label')}"
+													hflex="min" />
+											</listhead>
+										</listbox>
+									</groupbox>
+								</div>
+							</tabpanel>
+							<tabpanel id="movementsTabPanel"
+								style="overflow:auto">
+								<div id="movementsDiv">
+									<groupbox>
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_DepositorCif.value')}" />
+													<label
+														id="label_Movement_DepositorCif"
+														style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralRef.value')}" />
+													<label
+														id="label_Movement_CollateralRef"
+														style="font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralDepositorName.value')}" />
+													<label
+														id="label_Movement_DepositorName"
+														style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_Currency.value')}" />
+													<label
+														id="label_Movement_Currency" style="font-weight:bold;" />
+												</row>
+												<row height="24px">
+													<label
+														value="${c:l('label_SelectCollateralTypeDialog_CollateralType.value')}" />
+													<label
+														id="label_Movement_CollateralType"
+														style="font-weight:bold;" />
+													<label
+														value="${c:l('label_CollateralSetupDialog_CollateralLoc.value')}" />
+													<label
+														id="label_Movement_CollateralLoc"
+														style="font-weight:bold;" />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<groupbox>
+										<listbox id="listBoxMovements"
+											fixedLayout="true" span="true"
+											emptyMessage="${c:l('listbox.emptyMessage')}" multiple="true"
+											width="99.8%" sizedByContent="true" height="100px">
+											<listhead sizable="true">
+												<listheader
+													label="${c:l('listheader_Movement_LoanOrCommitment.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_Movement_Reference.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_Movement_AssignedPercentage.label')}"
+													hflex="min" align="right" />
+												<listheader
+													label="${c:l('listheader_Movement_ValueDate.label')}"
+													hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>

@@ -4403,7 +4403,7 @@
 	<!-- Collateral Assignment -->
 	<bean id="collateralAssignmentDAO"
 		class="com.pennant.backend.dao.collateral.impl.CollateralAssignmentDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
@@ -5860,6 +5860,7 @@
 	    <property name="finAssetTypeDAO" ref="finAssetTypeDAO" />
 	    <property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 	    <property name="mandateDAO" ref="mandateDAO" />
+	    <property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	    
 	    <!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

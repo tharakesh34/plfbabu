@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
 
 public interface CollateralAssignmentDAO {
 
@@ -69,6 +70,10 @@ public interface CollateralAssignmentDAO {
 	int getAssignedCollateralCount(String collateralRef, String type);
 
 	void deLinkCollateral(String finReference);
+
+	void save(CollateralMovement movement);
+
+	List<CollateralMovement> getCollateralMovements(String collateralRef);
 	
 }
 

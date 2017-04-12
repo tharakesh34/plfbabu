@@ -107,6 +107,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
@@ -144,6 +145,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/collateral/CollateralSetup/collateralSetupDialog.zul file. <br>
@@ -187,10 +189,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	protected Tab											extendedDetailsTab;
 	protected Tabpanel										extendedFieldTabpanel;
 	protected Tab											assignmentDetailTab;
+	protected Tab											movementsTab;
 	protected Listbox										listBoxCoownerDetail;
 	protected Button										btnAddCoownerDetails;
 	protected Button										btnAddThirdPartyDetail;
 	protected Listbox										listBoxAssignmentDetail;
+	protected Listbox										listBoxMovements;
 	protected Listbox										listBoxThirdParty;
 	protected Component										checkListChildWindow;
 	protected Button										viewInfo;
@@ -208,6 +212,13 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	protected Decimalbox 									label_assignedColllValue;
 	protected Decimalbox 									label_assignedPercBankValuation;
 	protected Decimalbox 									label_availableForAssignment;
+	
+	protected Label 										label_Movement_DepositorCif;
+	protected Label 										label_Movement_CollateralRef;
+	protected Label 										label_Movement_DepositorName;
+	protected Label 										label_Movement_Currency;
+	protected Label 										label_Movement_CollateralType;
+	protected Label 										label_Movement_CollateralLoc;
 
 	protected Space											space_SpecialLTV;
 	protected Space											space_CollateralLoc;
@@ -710,6 +721,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		// Assignment Details
 		renderAssignmentDetails();
 		
+		// Movement Details
+		renderMovementDetails();
 		
 		if (!enqiryModule) {
 
@@ -2353,22 +2366,42 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void renderAssignmentDetails() {
 		logger.debug("Entering");
 
-		this.label_DepositorCif.setValue(this.depositorCif.getValue());
-		this.label_CollateralRef.setValue(this.collateralRef.getValue());
-		this.label_DepositorName.setValue(this.depositerName.getValue());
-		this.label_Currency.setValue(this.collateralCcy.getValue());
-		this.label_CollateralType.setValue(this.collateralType.getValue());
-		this.label_CollateralLoc.setValue(this.collateralLoc.getValue());
-		this.label_assignedBankValuation.setValue(BigDecimal.ZERO);
-		this.label_assignedColllValue.setValue(BigDecimal.ZERO);
-		this.label_assignedPercBankValuation.setValue(BigDecimal.ZERO);
-		this.label_availableForAssignment.setValue(BigDecimal.ZERO);
-
 		if(!getCollateralSetup().isNewRecord() && 
 				!StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+			
+			this.label_DepositorCif.setValue(this.depositorCif.getValue());
+			this.label_CollateralRef.setValue(this.collateralRef.getValue());
+			this.label_DepositorName.setValue(this.depositerName.getValue());
+			this.label_Currency.setValue(this.collateralCcy.getValue());
+			this.label_CollateralType.setValue(this.collateralType.getValue());
+			this.label_CollateralLoc.setValue(this.collateralLoc.getValue());
+			this.label_assignedBankValuation.setValue(BigDecimal.ZERO);
+			this.label_assignedColllValue.setValue(BigDecimal.ZERO);
+			this.label_assignedPercBankValuation.setValue(BigDecimal.ZERO);
+			this.label_availableForAssignment.setValue(BigDecimal.ZERO);
 
 			// Only once is enough for rendering details in Maintenance
 			doFillAssignmentDetails(getCollateralSetup().getAssignmentDetails());
+		}else{
+			this.assignmentDetailTab.setVisible(false);
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Basic Details on Selecting Movement Details Tab and render the Movement details.
+	 * 
+	 * @param event
+	 */
+	private void renderMovementDetails() {
+		logger.debug("Entering");
+
+		if(!getCollateralSetup().isNewRecord() && 
+				!StringUtils.equals(getCollateralSetup().getRecordType(), PennantConstants.RECORD_TYPE_NEW)){
+			this.movementsTab.setVisible(true);
+		}else{
+			this.movementsTab.setVisible(false);
 		}
 
 		logger.debug("Leaving");
@@ -2482,6 +2515,43 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		 
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Rendering Collateral Assignments from loan or Commitment
+	 * @param movementList
+	 */
+	private void doFillMovementDetails(List<CollateralMovement> movementList) {
+		logger.debug("Entering");
+		
+		this.listBoxMovements.getItems().clear();
+		if(movementList != null && !movementList.isEmpty()){
+			for (CollateralMovement movement : movementList) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				
+				String moduleName = movement.getModule();
+				if (FinanceConstants.MODULE_NAME.equals(moduleName)
+						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL.equals(ImplementationConstants.IMPLEMENTATION_TYPE)) {
+					moduleName = Labels.getLabel("label_Finance");
+				}
+				lc = new Listcell(moduleName);
+				item.appendChild(lc);
+
+				lc = new Listcell(movement.getReference());
+				item.appendChild(lc);
+
+				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getAssignPerc().doubleValue(),2));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+
+				lc = new Listcell(DateUtility.formatDate(movement.getValueDate(),DateFormat.LONG_DATE.getPattern()));
+				item.appendChild(lc);
+				this.listBoxMovements.appendChild(item);
+			}
+		}
+		
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Method for resetting Default header details
@@ -2499,6 +2569,26 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 */
 	public void onSelect$assignmentDetailTab(Event event) {
 		doFillAssignmentDetails(getCollateralSetup().getAssignmentDetails());
+	}
+	
+	/**
+	 * Method for resetting Default header details
+	 * @param event
+	 */
+	public void onSelect$movementsTab(Event event) {
+		logger.debug("Entering");
+		this.label_Movement_DepositorCif.setValue(this.depositorCif.getValue());
+		this.label_Movement_CollateralRef.setValue(this.collateralRef.getValue());
+		this.label_Movement_DepositorName.setValue(this.depositerName.getValue());
+		this.label_Movement_Currency.setValue(this.collateralCcy.getValue());
+		this.label_Movement_CollateralType.setValue(this.collateralType.getValue());
+		this.label_Movement_CollateralLoc.setValue(this.collateralLoc.getValue());
+		
+		List<CollateralMovement> movementList = getCollateralSetupService().getCollateralMovements(this.collateralRef.getValue());
+		doFillMovementDetails(movementList);
+		
+		movementsTab.removeForward(Events.ON_SELECT, this.window, "onSelect$movementsTab");
+		logger.debug("Leaving");
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//

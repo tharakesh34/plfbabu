@@ -28,6 +28,8 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -44,6 +46,7 @@ import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
@@ -494,7 +497,25 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		// Delinking collateral Assigned to Finance
 		//==========================================
 		if(ImplementationConstants.COLLATERAL_INTERNAL){
-			getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+			if(ImplementationConstants.COLLATERAL_DELINK_AUTO){
+				List<CollateralAssignment> colAssignList = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(
+						finReference,FinanceConstants.MODULE_NAME, "");
+				
+				if(colAssignList != null && !colAssignList.isEmpty()){
+					for (int i = 0; i < colAssignList.size(); i++) {
+						CollateralMovement movement = new CollateralMovement();
+						movement.setModule(FinanceConstants.MODULE_NAME);
+						movement.setCollateralRef(colAssignList.get(i).getCollateralRef());
+						movement.setReference(colAssignList.get(i).getReference());
+						movement.setAssignPerc(BigDecimal.ZERO);
+						movement.setValueDate(DateUtility.getAppDate());
+						movement.setProcess(CollateralConstants.PROCESS_AUTO);
+						getCollateralAssignmentDAO().save(movement);
+					}
+
+					getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
+				}
+			}
 		}else{
 			List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
 			if(collateralList != null && !collateralList.isEmpty()) {

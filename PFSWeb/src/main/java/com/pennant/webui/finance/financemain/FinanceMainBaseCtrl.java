@@ -2390,11 +2390,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 				map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
 				map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());
-				map.put("utilizedAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount());
+				map.put("utilizedAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCurrAssetValue().subtract(
+						getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount()));
 				map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
 				map.put("customerId", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 				map.put("assetsReq", true);
-				map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq());
+				map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq() 
+						|| !getFinanceDetail().getCollateralAssignmentList().isEmpty());
 
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
@@ -2552,7 +2554,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 
 					utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue()
-							.subtract(this.downPaySupl.getActualValue()), formatter));
+							.subtract(this.downPaySupl.getActualValue()), formatter)).subtract(
+									getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount());
 				}
 
 				if (this.oldVar_utilizedAmount != utilizedAmt) {
@@ -5735,8 +5738,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(
 								aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
 					}
-
-					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment());
+					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount());
 				}
 
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);

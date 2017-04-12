@@ -1927,11 +1927,19 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		final HashMap<String, Object> map = getDefaultArguments();
 		if(ImplementationConstants.COLLATERAL_INTERNAL){
-			map.put("parentTab", tab);
-			map.put("ccyFormatter", CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy()));
-			collateralAssignmentWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul", tabpanel, map);
+			
+			map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
+			map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
+			map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());
+			map.put("utilizedAmount", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCurrAssetValue().subtract(
+					getFinanceDetail().getFinScheduleData().getFinanceMain().getFinRepaymentAmount()));
+			map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
+			map.put("customerId", getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 			map.put("assetsReq", true);
-			map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq());
+			map.put("collateralReq", getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq() 
+					|| !getFinanceDetail().getCollateralAssignmentList().isEmpty());
+			
+			collateralAssignmentWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul", tabpanel, map);
 			
 		}else{
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCollateralHeaderDialog.zul", tabpanel, map);

@@ -105,6 +105,7 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -425,7 +426,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnEdit"));
-		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_FinanceMainDialog_btnDelete")
+		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -640,8 +641,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Accounting
 			appendAccountingDetailTab(true);
 		}
+		
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aFinanceDetail.getFinFlagsDetails());
+		
 		//Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision() + " - " + aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
@@ -2009,6 +2012,17 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Overridden method for Inactive case checking
+	 */
+	public boolean isReadOnly(String rightName){
+		
+		if(!getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive()){
+			return true;
+		}
+		return super.isReadOnly(rightName);
+	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
@@ -2102,23 +2116,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinFlagsDetails(null);
 		}
 
-		if (collateralAssignmentWindow != null) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("financeMainDialogCtrl", this);
-			map.put("financeDetail", aFinanceDetail);
-			map.put("userAction", this.userAction.getSelectedItem().getLabel());
-			Events.sendEvent("onCollateralAssignmentValidation", collateralAssignmentWindow, map);
-			if (aFinanceDetail.getCollateralAssignmentList() != null
-					&& !aFinanceDetail.getCollateralAssignmentList().isEmpty()) {
-				for (CollateralAssignment collateralAssignment : aFinanceDetail.getCollateralAssignmentList()) {
-					collateralAssignment.setReference(this.finReference.getValue());
-					collateralAssignment.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-					collateralAssignment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					collateralAssignment.setUserDetails(getUserWorkspace().getLoggedInUser());
-				}
-			}
-		}
-
 		if (aFinanceDetail.getFinFlagsDetails() != null && !aFinanceDetail.getFinFlagsDetails().isEmpty()) {
 			for (FinFlagsDetail flagsDetail : finFlagsDetailList) {
 				if (StringUtils.isNotBlank(flagsDetail.getRecordType())) {
@@ -2184,8 +2181,42 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setJountAccountDetailList(null);
 			aFinanceDetail.setGurantorsDetailList(null);
 		}
+		
+		// Internal Collateral Assignment Details
+		if (getCollateralHeaderDialogCtrl() != null) {
 
-		// Finance Collaterals Details validating & Saving
+			// Validate Assigned Collateral Value
+			if (!recSave && (getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq() 
+					|| !getCollateralHeaderDialogCtrl().getCollateralAssignments().isEmpty())) {
+
+				BigDecimal utilizedAmt = BigDecimal.ZERO;
+				for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+						continue;
+					}
+					utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(
+							aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
+				}
+				utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount());
+
+				boolean isValid = getCollateralHeaderDialogCtrl().validCollateralValue(utilizedAmt);
+				if (!isValid) {
+					MessageUtil.showErrorMessage(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					return;
+				}
+			}
+
+			aFinanceDetail.setCollateralAssignmentList(getCollateralHeaderDialogCtrl().getCollateralAssignments());
+			aFinanceDetail.setFinAssetTypesList(getCollateralHeaderDialogCtrl().getFinAssetTypes());
+			aFinanceDetail.setExtendedFieldRenderList(getCollateralHeaderDialogCtrl().getExtendedFieldRenderList());
+
+		} else {
+			aFinanceDetail.setCollateralAssignmentList(null);
+			aFinanceDetail.setFinAssetTypesList(null);
+			aFinanceDetail.setExtendedFieldRenderList(null);
+		}
+
+		// Finance Collateral Details validating & Saving
 		if (getFinCollateralHeaderDialogCtrl() != null) {
 			BigDecimal totCost = BigDecimal.ZERO;
 			boolean isFDAmount = false;

@@ -77,6 +77,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -118,6 +119,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
 import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -985,6 +987,23 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				collateralAssignment.setRecordType("");
 				collateralAssignment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
+			
+			// Insert Collateral Movement record
+			if(StringUtils.isEmpty(type)){
+				CollateralMovement movement = new CollateralMovement();
+				movement.setModule(FinanceConstants.MODULE_NAME);
+				movement.setCollateralRef(collateralAssignment.getCollateralRef());
+				movement.setReference(collateralAssignment.getReference());
+				movement.setAssignPerc(collateralAssignment.getAssignPerc());
+				movement.setValueDate(DateUtility.getAppDate());
+				movement.setProcess(CollateralConstants.PROCESS_MANUAL);
+				if(deleteRecord){
+					movement.setAssignPerc(BigDecimal.ZERO);
+				}
+				
+				getCollateralAssignmentDAO().save(movement);
+			}
+			
 			if (saveRecord) {
 				getCollateralAssignmentDAO().save(collateralAssignment, type);
 			}
