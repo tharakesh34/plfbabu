@@ -4759,84 +4759,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean isWIF) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-		FinanceMain tempFinanceMain = null;
-		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", isWIF);
-		}
-		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", isWIF);
-		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 		valueParm[0] = financeMain.getId();
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
-		if (financeMain.isNew()) { // for New record or new record into work flow
-
-			if (!financeMain.isWorkflow()) {// With out Work flow only new
-				// records
-				if (befFinanceMain != null) { // Record Already Exists in the
-					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-				}
-			} else { // with work flow
-				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-					// records type is new
-					if (befFinanceMain != null || tempFinanceMain != null) { // if
-						// records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befFinanceMain == null || tempFinanceMain != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!financeMain.isWorkflow()) { // With out Work flow for update
-				// and delete
-
-				if (befFinanceMain == null) { // if records not exists in the
-					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
-				} else {
-					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn()
-							.equals(befFinanceMain.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
-						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
-						}
-					}
-				}
-			} else {
-
-				if (tempFinanceMain == null) { // if records not exists in the
-					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-				}
-
-				if (tempFinanceMain != null && oldFinanceMain != null
-						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-				}
-			}
-		}
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 		
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
 		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, financeMain.getRecordType())) {
@@ -4957,8 +4886,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {
-			auditDetail.setBefImage(befFinanceMain);
+		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
+			auditDetail.setBefImage(getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", isWIF));
 		}
 
 		return auditDetail;
