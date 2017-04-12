@@ -1825,4 +1825,106 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="101" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'SUBHEADRULE_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'SUBHEADRULE_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBHEADRULE_MAKER','WF Maker for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_ruleCode');
+			Delete from SecRights where RightName = 'RuleDialog_ruleCode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_ruleCode', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'SUBHEADRULE_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_ruleCodeDesc');
+			Delete from SecRights where RightName = 'RuleDialog_ruleCodeDesc';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_ruleCodeDesc', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCodeDesc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_ruleEvent');
+			Delete from SecRights where RightName = 'RuleDialog_ruleEvent';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_ruleEvent', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleEvent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_returnType');
+			Delete from SecRights where RightName = 'RuleDialog_returnType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_returnType', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_returnType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_active');
+			Delete from SecRights where RightName = 'RuleDialog_active';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_active', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_active'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_ruleModule');
+			Delete from SecRights where RightName = 'RuleDialog_ruleModule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_ruleModule', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleModule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule');
+			Delete from SecRights where RightName = 'RuleDialog_sqlRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_sqlRule', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleDialog_btnNew');
+			Delete from SecRights where RightName = 'button_RuleDialog_btnNew';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleDialog_btnNew', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleDialog_btnEdit');
+			Delete from SecRights where RightName = 'button_RuleDialog_btnEdit';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleDialog_btnEdit', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_RuleDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleDialog_btnDelete', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave');
+			Delete from SecRights where RightName = 'button_RuleDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleDialog_btnSave', 'RuleDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_RulesFactory');
+			Delete from SecRights where RightName = 'menuCat_RulesFactory';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_RulesFactory', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_RulesFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_SubHeadRules');
+			Delete from SecRights where RightName = 'menuItem_RulesFactory_SubHeadRules';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_RulesFactory_SubHeadRules', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_SubHeadRules'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleList_NewSubHeadRule');
+			Delete from SecRights where RightName = 'button_RuleList_NewSubHeadRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleList_NewSubHeadRule', 'RuleList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_MAKER'), (Select RightID from SecRights where RightName = 'button_RuleList_NewSubHeadRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_APPROVER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'SUBHEADRULE_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'SUBHEADRULE_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBHEADRULE_APPROVER','WF Approver for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_APPROVER'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'SUBHEADRULE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_RulesFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBHEADRULE_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_SubHeadRules'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
