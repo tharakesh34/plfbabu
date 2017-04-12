@@ -73,6 +73,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -718,7 +719,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
-		int recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
@@ -742,22 +743,24 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(tableType.getSuffix());
 		sql.append(" where FinReference = :FinReference");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType, finalize));
-		
-		logger.debug("deleteSql: " + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
+		int recordCount = 0;
+
 		try {
-			int recordCount = this.namedParameterJdbcTemplate.update(sql.toString(),  beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
-			}
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", financeMain.getId(), financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
