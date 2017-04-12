@@ -68,7 +68,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
@@ -106,7 +105,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox						city;
 	protected Textbox						micr;
 	protected Textbox						ifsc;
-	protected AccountSelectionBox			accNumber;
+	protected Textbox						accNumber;
 	protected Textbox						accHolderName;
 	protected Datebox						inputDate;
 	protected Textbox						jointAccHolderName;
@@ -237,11 +236,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.accNumber.setMandatoryStyle(false);
-		this.accNumber.setTextBoxWidth(170);
-		this.accNumber.setButtonVisible(false);
-		this.accNumber.setAcountDetails("", "", true);
-
+		this.accNumber.setMaxlength(50);
 		this.accHolderName.setMaxlength(50);
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());

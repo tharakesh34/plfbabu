@@ -73,7 +73,8 @@
 								<row>
 									<label id="label_AccNumber" value="${c:l('label_MandateDialog_AccNumber.value')}" />
 									<hbox>
-										<accountSelectionBox id="accNumber" width="300px" />
+										<space spacing="2px" />
+										<textbox id="accNumber" width="200px" />
 									</hbox>
 									<label id="label_AccHolderName" value="${c:l('label_MandateDialog_AccHolderName.value')}" />
 									<hbox>
