@@ -1819,6 +1819,10 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		<modifyDataType tableName="overdraftmovements"
 			columnName="DroplineFrq" newDataType="varchar(5)" />
 	</changeSet>
-	
+	<changeSet id="100" author="Madhubabu">
+		<addColumn tableName="RejectFinDisbursementdetails">
+			<column name="DisbStatus" type="char(1)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
