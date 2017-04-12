@@ -30,6 +30,55 @@
 	<changeSet author="Kesav" id="4"> 
 		<dropTable tableName="AdtPromotionFees" /> 
 		<dropTable tableName="AdtPromotionInsurances" /> 
-	</changeSet>	
+	</changeSet>
+	<changeSet id="5" author="Irfan">
+		<dropTable tableName="AdtSponsorBank"/>
+</changeSet>
+						
+<changeSet author="Irfan" id="6">
+	<createTable tableName="AdtPartnerBank">
+		<column name="PartnerBankId" type="bigint"/>
+		<column name="PartnerBankCode" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="PartnerBankName" type="varchar(50)" />
+		<column name="BankCode" type="varchar(8)" />
+		<column name="BankBranchCode" type="varchar(8)" />
+		<column name="BranchMICRCode" type="varchar(20)"/>
+		<column name="BranchIFSCCode" type="varchar(20)"/>
+		<column name="BranchCity" type="varchar(50)" />
+		<column name="UtilityCode" type="varchar(8)" />
+		<column name="AccountNo" type="varchar(50)" />
+		<column name="AccountType" type="char(1)" />
+		<column name="AcType" type="varchar(20)"/>
+		<column name="AlwFileDownload" type="bit"/>
+		<column name="DisbDownload" type="bit"/>
+		<column name="InFavourLength" type="int"/>
+		<column name="AccountCategory" type="char(1)"/>
+		<column name="Active" type="bit"/>
+		<column name="Version" type="int"  defaultValueNumeric="0"/>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		<column name="AuditId" type="bigint" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditDate" type="datetime">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditSeq" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>	
  
 </databaseChangeLog>
