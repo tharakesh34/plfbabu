@@ -238,7 +238,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox 		gracePeriodEndDate_two; 				
 	protected Combobox	    grcRateBasis;							
 	protected Decimalbox 	gracePftRate; 							
-	protected Decimalbox 	grcEffectiveRate; 						
+	//protected Decimalbox 	grcEffectiveRate; 						
 	protected RateBox 		graceRate; 					
 	protected Row		 	row_FinGrcRates; 						
 	protected Decimalbox 	finGrcMinRate; 							
@@ -282,7 +282,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row 		    row_ProfitRate; 							
 	protected Combobox 		repayRateBasis; 							
 	protected Decimalbox 	repayProfitRate; 						
-	protected Decimalbox 	repayEffectiveRate; 					
+	//protected Decimalbox 	repayEffectiveRate; 					
 	protected Row			repayBaseRateRow;						
 	protected RateBox 		repayRate; 					
 	protected Row		    row_FinRepRates; 				
@@ -655,14 +655,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.gracePeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.graceRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.graceRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
+		this.graceRate.getEffRateComp().setVisible(true);
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
 		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.gracePftRate.setScale(9);
-		this.grcEffectiveRate.setMaxlength(13);
-		this.grcEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.grcEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.grcEffectiveRate.setScale(9);
+		this.graceRate.getEffRateComp().setMaxlength(13);
+		this.graceRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
+		this.graceRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.graceRate.getEffRateComp().setScale(9);
+		
+		
+		
 		this.nextGrcPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcPftRvwDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcCpzDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -685,14 +689,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.repayRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.repayRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
+		this.repayRate.getEffRateComp().setVisible(true);
 		this.repayProfitRate.setMaxlength(13);
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
 		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.repayProfitRate.setScale(9);
-		this.repayEffectiveRate.setMaxlength(13);
-		this.repayEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.repayEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.repayEffectiveRate.setScale(9);
+		this.repayRate.getEffRateComp().setMaxlength(13);
+		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
+		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setScale(9);
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayRvwDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -1049,7 +1054,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.getGrcMinRate(), aFinanceMain.getGrcMaxRate());
 
 				if (rateDetail.getErrorDetails() == null) {
-					this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+					this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(
 							rateDetail.getNetRefRateLoan().doubleValue(), 2));
 				}
 				this.gracePftRate.setDisabled(true);
@@ -1077,7 +1082,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.graceRate.setSpecialReadonly(true);
 				this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 				this.gracePftRate.setValue(aFinanceMain.getGrcPftRate());
-				this.grcEffectiveRate.setValue(aFinanceMain.getGrcPftRate());
+				this.graceRate.setEffRateValue(aFinanceMain.getGrcPftRate());
 				this.row_FinGrcRates.setVisible(false);
 				this.finGrcMinRate.setValue(BigDecimal.ZERO);
 				this.finGrcMaxRate.setValue(BigDecimal.ZERO);
@@ -1210,7 +1215,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.repayRate.getMarginValue(),aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
 
 			if (rateDetail.getErrorDetails() == null) {
-				this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+				this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(
 						rateDetail.getNetRefRateLoan().doubleValue(), 2));
 			}
 			this.repayProfitRate.setDisabled(true);
@@ -1237,7 +1242,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayRate.setSpecialReadonly(true);
 			this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
-			this.repayEffectiveRate.setValue(aFinanceMain.getRepayProfitRate());
+			this.repayRate.setEffRateValue(aFinanceMain.getRepayProfitRate());
 			this.row_FinRepRates.setVisible(false);
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
@@ -1677,7 +1682,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					aFinanceMain.setGraceSpecialRate(this.graceRate.getSpecialValue());
 				}
-				aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
+				aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			} 
@@ -1685,7 +1690,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			try {
 				if(grcBaseRateRow.isVisible()) {
 					calculateRate(this.graceRate.getBaseComp(), this.finCcy.getValue(), this.graceRate.getSpecialComp(), this.graceRate.getMarginComp(), 
-							this.grcEffectiveRate,this.finGrcMinRate,this.finGrcMaxRate);	
+							this.graceRate.getEffRateComp(),this.finGrcMinRate,this.finGrcMaxRate);	
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1704,7 +1709,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				} else {
-					aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
+					aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
 				}
 
 			} catch (WrongValueException we) {
@@ -1941,7 +1946,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				aFinanceMain.setRepaySpecialRate(this.repayRate.getSpecialValue());
 			}
-			aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1957,7 +1961,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if(repayBaseRateRow.isVisible()) {
 				calculateRate(this.repayRate.getBaseComp(), this.finCcy.getValue(), this.repayRate.getSpecialComp(), this.repayRate.getMarginComp(),
-						this.repayEffectiveRate,this.finMinRate,this.finMaxRate);
+						this.repayRate.getEffRateComp(),this.finMinRate,this.finMaxRate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2026,7 +2030,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			} else {
-				aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
+				aFinanceMain.setRepayProfitRate(this.repayRate.getEffRateValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2889,7 +2893,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oldVar_lovDescGraceBaseRateName = this.graceRate.getBaseDescription();
 			this.oldVar_graceSpecialRate = this.graceRate.getSpecialValue();
 			this.oldVar_lovDescGraceSpecialRateName = this.graceRate.getSpecialDescription();
-			this.oldVar_gracePftRate = this.gracePftRate.getValue() == null ? this.grcEffectiveRate.getValue() : this.gracePftRate.getValue();
+			this.oldVar_gracePftRate = this.gracePftRate.getValue() == null ? this.graceRate.getEffRateValue() : this.gracePftRate.getValue();
 			this.oldVar_gracePftFrq = this.gracePftFrq.getValue();
 			this.oldVar_nextGrcPftDate = this.nextGrcPftDate_two.getValue();
 			this.oldVar_gracePftRvwFrq = this.gracePftRvwFrq.getValue();
@@ -2912,7 +2916,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_lovDescRepayBaseRateName = this.repayRate.getBaseDescription();
 		this.oldVar_repaySpecialRate = this.repayRate.getSpecialValue();
 		this.oldVar_lovDescRepaySpecialRateName = this.repayRate.getSpecialDescription();
-		this.oldVar_repayProfitRate = this.repayProfitRate.getValue() == null ? this.repayEffectiveRate.getValue() : this.repayProfitRate.getValue();
+		this.oldVar_repayProfitRate = this.repayProfitRate.getValue() == null ? this.repayRate.getEffRateValue() : this.repayProfitRate.getValue();
 		this.oldVar_repayMargin = this.repayRate.getMarginValue();
 		this.oldVar_scheduleMethod = this.cbScheduleMethod.getSelectedIndex();
 		this.oldVar_repayFrq = this.repayFrq.getValue();
@@ -3258,7 +3262,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.oldVar_repaySpecialRate != this.repayRate.getSpecialValue()) {
 			return true;
 		}
-		if ((this.oldVar_repayProfitRate != this.repayProfitRate.getValue() || this.oldVar_repayProfitRate.compareTo(this.repayEffectiveRate.getValue()) !=0) 
+		if ((this.oldVar_repayProfitRate != this.repayProfitRate.getValue() || this.oldVar_repayProfitRate.compareTo(this.repayRate.getEffRateValue()) !=0) 
 				&& StringUtils.isEmpty(this.repayRate.getBaseValue()) && !this.repayBaseRateRow.isVisible()) {
 			if (this.oldVar_repayProfitRate.compareTo(BigDecimal.ZERO) > 0 || 
 					(this.repayProfitRate.getValue() != null && this.repayProfitRate.getValue().compareTo(BigDecimal.ZERO) > 0)) {
@@ -3361,6 +3365,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					"label_FinanceMainDialog_FinAmount.value"), 0, true, false));
 		}
 		
+		if (this.repayProfitRate.isVisible() && !this.repayProfitRate.isDisabled()) {
+			this.repayProfitRate.setConstraint(new PTDecimalValidator(Labels
+					.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, true, false));
+		}
+		
 		if (this.downPayBank.isMandatory() && !this.downPayBank.isReadonly()) {
 			this.downPayBank.setConstraint(new PTDecimalValidator(Labels.getLabel(
 					"label_FinanceMainDialog_DownPayment.value"), CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()), true, false));
@@ -3391,7 +3400,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if(this.allowGrace.isChecked()){
-				this.grcEffectiveRate.setConstraint(new PTDecimalValidator(Labels.getLabel(
+				this.graceRate.getEffRateComp().setConstraint(new PTDecimalValidator(Labels.getLabel(
 						"label_FinanceMainDialog_GracePftRate.value"),9,false));
 			}
 
@@ -3464,7 +3473,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		this.repayEffectiveRate.setConstraint(new PTDecimalValidator(Labels.getLabel(
+		this.repayRate.getEffRateComp().setConstraint(new PTDecimalValidator(Labels.getLabel(
 				"label_FinanceMainDialog_ProfitRate.value"),9,false));
 
 		if (!this.repayRate.isMarginReadonly()) {
@@ -3516,7 +3525,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.gracePeriodEndDate.setConstraint("");
 		this.cbGrcSchdMthd.setConstraint("");
 		this.gracePftRate.setConstraint("");
-		this.grcEffectiveRate.setConstraint("");
+		this.graceRate.getEffRateComp().setConstraint("");
 		this.graceRate.setMarginConstraint("");
 		this.grcPftDaysBasis.setConstraint("");
 		this.nextGrcPftDate.setConstraint("");
@@ -3533,7 +3542,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.numberOfTerms.setConstraint("");
 		this.finRepaymentAmount.setConstraint("");
 		this.repayProfitRate.setConstraint("");
-		this.repayEffectiveRate.setConstraint("");
+		this.repayRate.getEffRateComp().setConstraint("");
 		this.repayRate.setMarginConstraint("");
 		this.cbScheduleMethod.setConstraint("");
 		this.nextRepayDate.setConstraint("");
@@ -3645,7 +3654,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.graceRate.setSpecialErrorMessage("");
 		this.gracePftRate.setErrorMessage("");
 		this.grcPftDaysBasis.setErrorMessage("");
-		this.grcEffectiveRate.setErrorMessage("");
+		this.graceRate.getEffRateComp().setErrorMessage("");
 		this.graceRate.setMarginErrorMessage("");
 		this.gracePftFrq.setErrorMessage("");
 		this.nextGrcPftDate.setErrorMessage("");
@@ -3666,7 +3675,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRate.setSpecialErrorMessage("");
 		this.repayRate.setBaseErrorMessage("");
 		this.repayProfitRate.setErrorMessage("");
-		this.repayEffectiveRate.setErrorMessage("");
+		this.repayRate.getEffRateComp().setErrorMessage("");
 		this.repayRate.setMarginErrorMessage("");
 		this.cbScheduleMethod.setErrorMessage("");
 		this.repayFrq.setErrorMessage("");
@@ -3680,7 +3689,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.maturityDate.setErrorMessage("");
 		this.maturityDate_two.setErrorMessage("");
 		this.finRepaymentAmount.setErrorMessage("");
-		this.repayEffectiveRate.setErrorMessage("");
 		this.rpyAdvBaseRate.setErrorMessage("");
 		this.rpyAdvMargin.setErrorMessage("");
 		this.rpyAdvPftRate.setErrorMessage("");
@@ -4856,14 +4864,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if(StringUtils.equals(rateType, PennantConstants.RATE_BASE)){
 			calculateRate(this.graceRate.getBaseComp(), this.finCcy.getValue(), this.graceRate.getSpecialComp(), this.graceRate.getMarginComp(),
-					this.grcEffectiveRate,this.finGrcMinRate,this.finGrcMaxRate);
+					this.graceRate.getEffRateComp(),this.finGrcMinRate,this.finGrcMaxRate);
 		}else if(StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)){
 			calculateRate(this.graceRate.getBaseComp(), this.finCcy.getValue(), this.graceRate.getSpecialComp(), this.graceRate.getMarginComp(), 
-					this.grcEffectiveRate,this.finGrcMinRate,this.finGrcMaxRate);
+					this.graceRate.getEffRateComp(),this.finGrcMinRate,this.finGrcMaxRate);
 		}else if(StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)){
 			if(this.graceRate.getMarginValue() != null) {
-				this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate((
-						this.grcEffectiveRate.getValue().add(this.graceRate.getMarginValue())).doubleValue(),2));
+				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate((
+						this.graceRate.getEffRateComp().getValue().add(this.graceRate.getMarginValue())).doubleValue(),2));
 			}
 		}
 
@@ -5002,9 +5010,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(),this.finCcy.getValue(), this.graceRate.getSpecialValue(),
 							this.graceRate.getMarginValue()==null?BigDecimal.ZERO:this.graceRate.getMarginValue(),
 							this.finGrcMinRate.getValue(), this.finGrcMaxRate.getValue());
-							this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+							this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 				}else{
-					this.grcEffectiveRate.setValue(finType.getFinGrcIntRate());
+					this.graceRate.setEffRateValue(finType.getFinGrcIntRate());
 					this.gracePftRate.setValue(finType.getFinGrcIntRate());
 				}
 			}
@@ -5012,7 +5020,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if(CalculationConstants.RATE_BASIS_F.equals(getComboboxValue(this.grcRateBasis)) || 
 					CalculationConstants.RATE_BASIS_C.equals(getComboboxValue(this.grcRateBasis)) ||
 					CalculationConstants.RATE_BASIS_D.equals(getComboboxValue(this.grcRateBasis))){
-				this.grcEffectiveRate.setValue(finType.getFinGrcIntRate());
+				this.graceRate.setEffRateValue(finType.getFinGrcIntRate());
 				this.gracePftRate.setValue(finType.getFinGrcIntRate());
 			}
 
@@ -5146,14 +5154,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if(StringUtils.equals(rateType, PennantConstants.RATE_BASE)){
 			calculateRate(this.repayRate.getBaseComp(), this.finCcy.getValue(), this.repayRate.getSpecialComp(), this.repayRate.getMarginComp(), 
-					this.repayEffectiveRate,	this.finMinRate, this.finMaxRate);
+					this.repayRate.getEffRateComp(),	this.finMinRate, this.finMaxRate);
 		}else if(StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)){
 			calculateRate(this.repayRate.getBaseComp(), this.finCcy.getValue(), this.repayRate.getSpecialComp(), this.repayRate.getMarginComp(), 
-					this.repayEffectiveRate, this.finMinRate,this.finMaxRate);
+					this.repayRate.getEffRateComp(), this.finMinRate,this.finMaxRate);
 		}else if(StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)){
 			if(this.repayRate.getMarginValue() != null && !this.repayProfitRate.isDisabled()) {
-				this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate((
-						this.repayEffectiveRate.getValue().add(this.repayRate.getMarginValue())).doubleValue(),2));
+				this.repayRate.getEffRateComp().setValue(PennantApplicationUtil.formatRate((
+						this.repayRate.getEffRateComp().getValue().add(this.repayRate.getMarginValue())).doubleValue(),2));
 			}
 		}
 
@@ -5804,19 +5812,19 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(),
 						this.finGrcMinRate.getValue(), this.finGrcMaxRate.getValue());
 
-				this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(
 						rateDetail.getNetRefRateLoan().doubleValue(), 2));
 			}else{
 
 				if (this.gracePftRate.getValue() != null) {
 
 					if (this.gracePftRate.getValue().intValue() == 0 && this.gracePftRate.getValue().precision() == 1) {
-						this.grcEffectiveRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcIntRate());
+						this.graceRate.setEffRateValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinGrcIntRate());
 					} else {
-						this.grcEffectiveRate.setValue(this.gracePftRate.getValue());
+						this.graceRate.setEffRateValue(this.gracePftRate.getValue());
 					}
 				}else{
-					this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+					this.graceRate.setEffRateValue(BigDecimal.ZERO);
 				}
 			}
 			if (this.grcAdvMargin.getValue() == null) {
@@ -5971,11 +5979,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.finMinRate.getValue(), this.finMaxRate.getValue());
 
 				if (rateDetail.getErrorDetails() == null) {
-					this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+					this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(
 							rateDetail.getNetRefRateLoan().doubleValue(), 2));
 				}
 			}else{
-				this.repayEffectiveRate.setValue(this.repayProfitRate.getValue()==null?BigDecimal.ZERO : this.repayProfitRate.getValue());
+				this.repayRate.setEffRateValue(this.repayProfitRate.getValue()==null?BigDecimal.ZERO : this.repayProfitRate.getValue());
 			}
 		}
 
@@ -5984,9 +5992,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				CalculationConstants.RATE_BASIS_D.equals(getComboboxValue(this.repayRateBasis))){
 			if (this.repayProfitRate.getValue() != null) {
 				if (this.repayProfitRate.getValue().intValue() == 0 && this.repayProfitRate.getValue().precision() == 1) {
-					this.repayEffectiveRate.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinIntRate());
+					this.repayRate.setEffRateValue(getFinanceDetail().getFinScheduleData().getFinanceType().getFinIntRate());
 				} else {
-					this.repayEffectiveRate.setValue(this.repayProfitRate.getValue()==null?BigDecimal.ZERO : this.repayProfitRate.getValue());
+					this.repayRate.setEffRateValue(this.repayProfitRate.getValue()==null?BigDecimal.ZERO : this.repayProfitRate.getValue());
 				}
 			}
 		}
@@ -6438,7 +6446,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			
 			if (this.row_RpyAdvBaseRate.isVisible() && !this.rpyAdvBaseRate.isReadonly() && 
-					this.repayEffectiveRate.getValue().compareTo(this.rpyAdvEffRate.getValue()) < 0) {
+					this.repayRate.getEffRateValue().compareTo(this.rpyAdvEffRate.getValue()) < 0) {
 				errorList.add(new ErrorDetails("rpyAdvBaseRate", "30551",  new String[] {
 						Labels.getLabel("label_FinanceMainDialog_RpyAdvPftRate.value"),
 						Labels.getLabel("label_FinanceMainDialog_ProfitRate.value") }, null));
@@ -6721,8 +6729,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.graceRate.setBaseConstraint("");
 		this.graceRate.setSpecialConstraint("");
-		this.grcEffectiveRate.setConstraint("");
-
+		this.graceRate.getEffRateComp().setConstraint("");
 		this.graceRate.setBaseReadonly(true);
 		this.graceRate.setSpecialReadonly(true);
 
@@ -6731,7 +6738,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.graceRate.setBaseDescription("");
 		this.graceRate.setSpecialDescription("");
 		this.gracePftRate.setDisabled(true);
-		this.grcEffectiveRate.setText("0.00");
+		this.graceRate.setEffRateText("0.00");
 		this.gracePftRate.setText("0.00");
 
 		if(!"#".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
@@ -6744,7 +6751,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.graceRate.setBaseDescription("");
 				this.graceRate.setSpecialDescription("");
 
-				this.grcEffectiveRate.setText("0.00");
+				this.gracePftRate.setText("0.00");
 				this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 				
 				this.row_FinGrcRates.setVisible(false);
@@ -6769,7 +6776,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.gracePftRate.setDisabled(isReadOnly("WIFFinanceMainDialog_gracePftRate"));
 				}
 
-				this.grcEffectiveRate.setText("0.00");
+				this.gracePftRate.setText("0.00");
 				this.gracePftRate.setText("0.00");
 			}
 		} else {
@@ -6800,7 +6807,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRate.setSpecialDescription("");
 		this.repayProfitRate.setDisabled(true);
 		if(!isManualAction){
-			this.repayEffectiveRate.setText("0.00");
+			this.repayRate.setEffRateText("0.00");
 			this.repayProfitRate.setText("0.00");
 		}
 
@@ -6815,7 +6822,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.repayRate.setSpecialDescription("");
 
 				if(!isManualAction){
-					this.repayEffectiveRate.setText("0.00");
+					this.repayRate.setEffRateText("0.00");
 				}
 				this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 				
@@ -6841,7 +6848,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.repayProfitRate.setDisabled(isReadOnly("WIFFinanceMainDialog_profitRate"));
 				}
 				if(!isManualAction){
-					this.repayEffectiveRate.setText("0.00");
+					this.repayRate.setEffRateText("0.00");
 					this.repayProfitRate.setText("0.00");
 				}
 			}

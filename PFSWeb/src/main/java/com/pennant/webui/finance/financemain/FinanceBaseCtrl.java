@@ -265,7 +265,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox 		gracePeriodEndDate_two; 				// autoWired
 	protected Combobox	    grcRateBasis;							// autoWired
 	protected Decimalbox 	gracePftRate; 							// autoWired
-	protected Decimalbox 	grcEffectiveRate; 						// autoWired
+	//protected Decimalbox 	grcEffectiveRate; 						// autoWired
 	protected RateBox 	    graceRate; 						        // autoWired
 	protected Row		 	row_FinGrcRates; 						// autoWired
 	protected Decimalbox 	finGrcMinRate; 							// autoWired
@@ -301,7 +301,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox 	finRepaymentAmount; 					// autoWire
 	protected Combobox 		repayRateBasis; 						// autoWired	
 	protected Decimalbox 	repayProfitRate; 						// autoWired
-	protected Decimalbox 	repayEffectiveRate; 					// autoWired
+	//protected Decimalbox 	repayEffectiveRate; 					// autoWired
 	protected Row			repayBaseRateRow;						// autoWired
 	protected RateBox       repayRate; 						        // autoWired
 	protected RateBox 		rpyAdvRate; 				            // autoWired
@@ -784,14 +784,16 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.graceTerms_Two.setStyle("text-align:right;");
 		this.graceRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.graceRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
+		this.graceRate.getEffRateComp().setVisible(true);
 		this.gracePftRate.setMaxlength(13);
 		this.gracePftRate.setFormat(PennantConstants.rateFormate9);
 		this.gracePftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.gracePftRate.setScale(9);
-		this.grcEffectiveRate.setMaxlength(13);
-		this.grcEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.grcEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.grcEffectiveRate.setScale(9);
+		this.repayRate.getEffRateComp().setMaxlength(13);
+		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
+		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setScale(9);
+		this.repayRate.getEffRateComp().setVisible(true);
 		this.nextGrcPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcPftDate_two.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.nextGrcPftRvwDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -820,10 +822,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.repayProfitRate.setFormat(PennantConstants.rateFormate9);
 		this.repayProfitRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.repayProfitRate.setScale(9);
-		this.repayEffectiveRate.setMaxlength(13);
-		this.repayEffectiveRate.setFormat(PennantConstants.rateFormate9);
-		this.repayEffectiveRate.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.repayEffectiveRate.setScale(9);
+		this.repayRate.getEffRateComp().setMaxlength(13);
+		this.repayRate.getEffRateComp().setFormat(PennantConstants.rateFormate9);
+		this.repayRate.getEffRateComp().setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.repayRate.getEffRateComp().setScale(9);
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayDate_two.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.nextRepayPftDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -2221,7 +2223,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.getGrcMinRate(),  aFinanceMain.getGrcMaxRate());
 
 				if (rateDetail.getErrorDetails() == null) {
-					this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+					this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(
 							rateDetail.getNetRefRateLoan().doubleValue(), 2));
 				}
 				readOnlyComponent(true, this.gracePftRate);
@@ -2237,7 +2239,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				this.graceRate.setSpecialReadonly(true);
 				readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 				this.gracePftRate.setValue(aFinanceMain.getGrcPftRate());
-				this.grcEffectiveRate.setValue(aFinanceMain.getGrcPftRate());
+				this.graceRate.setEffRateValue(aFinanceMain.getGrcPftRate());
 				
 				this.finGrcMinRate.setValue(BigDecimal.ZERO);
 				this.finGrcMaxRate.setValue(BigDecimal.ZERO);
@@ -2383,7 +2385,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.getRpyMinRate(), aFinanceMain.getRpyMaxRate());
 
 			if (rateDetail.getErrorDetails() == null) {
-				this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+				this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(
 						rateDetail.getNetRefRateLoan().doubleValue(), 2));
 			}
 			readOnlyComponent(true, this.repayProfitRate);
@@ -2413,7 +2415,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.repayRate.setSpecialReadonly(true);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
-			this.repayEffectiveRate.setValue(aFinanceMain.getRepayProfitRate());
+			this.repayRate.setEffRateValue(aFinanceMain.getRepayProfitRate());
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
@@ -2790,15 +2792,15 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							this.graceRate.getSpecialValue(),
 							this.graceRate.getMarginValue()==null?BigDecimal.ZERO:this.graceRate.getMarginValue(),
 							this.finGrcMinRate.getValue() , this.finGrcMaxRate.getValue());
-					this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
+					this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 				}else{
-					this.grcEffectiveRate.setValue(finType.getFinGrcIntRate());
+					this.graceRate.setEffRateValue(finType.getFinGrcIntRate());
 					this.gracePftRate.setValue(finType.getFinGrcIntRate());
 				}
 			}
 
 			if(CalculationConstants.RATE_BASIS_F.equals(getComboboxValue(this.grcRateBasis)) || CalculationConstants.RATE_BASIS_C.equals(getComboboxValue(this.grcRateBasis))){
-				this.grcEffectiveRate.setValue(finType.getFinGrcIntRate());
+				this.graceRate.setEffRateValue(finType.getFinGrcIntRate());
 				this.gracePftRate.setValue(finType.getFinGrcIntRate());
 			}
 
@@ -4353,7 +4355,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					aFinanceMain.setGraceSpecialRate(this.graceRate.getSpecialValue());
 				}
-				aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
+				aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			} 
@@ -4361,7 +4363,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			try {
 				if(!this.graceRate.isBaseReadonly()) {
 					calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(),
-							this.graceRate.getBaseComp(), this.graceRate.getMarginComp(), this.grcEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);	
+							this.graceRate.getBaseComp(), this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);	
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -4380,7 +4382,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					}
 					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				} else {
-					aFinanceMain.setGrcPftRate(this.grcEffectiveRate.getValue());
+					aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
 				}
 
 			} catch (WrongValueException we) {
@@ -4576,7 +4578,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				aFinanceMain.setRepaySpecialRate(this.repayRate.getSpecialValue());
 			}
-			aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
+			aFinanceMain.setRepayProfitRate(this.repayRate.getEffRateValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4590,7 +4592,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if(!this.repayRate.isBaseReadonly()) {
 				calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(),
-						this.repayRate.getBaseComp(), this.repayRate.getMarginComp(), this.repayEffectiveRate, this.finMinRate, this.finMaxRate);
+						this.repayRate.getBaseComp(), this.repayRate.getMarginComp(), this.repayRate.getEffRateComp(), this.finMinRate, this.finMaxRate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4659,7 +4661,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			} else {
-				aFinanceMain.setRepayProfitRate(this.repayEffectiveRate.getValue());
+				aFinanceMain.setRepayProfitRate(this.repayRate.getEffRateValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -5771,19 +5773,19 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(), 
 								this.finGrcMinRate.getValue() , this.finGrcMaxRate.getValue());
 
-				this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(
 						rateDetail.getNetRefRateLoan().doubleValue(), 2));
 			}else{
 
 				if (this.gracePftRate.getValue() != null) {
 
 					if (this.gracePftRate.getValue().intValue() == 0 && this.gracePftRate.getValue().precision() == 1) {
-						this.grcEffectiveRate.setValue(financeType.getFinGrcIntRate());
+						this.graceRate.setEffRateValue(financeType.getFinGrcIntRate());
 					} else {
-						this.grcEffectiveRate.setValue(this.gracePftRate.getValue());
+						this.graceRate.setEffRateValue(this.gracePftRate.getValue());
 					}
 				}else{
-					this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+					this.graceRate.setEffRateValue(BigDecimal.ZERO);
 				}
 			}
 
@@ -5909,11 +5911,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 								this.finMinRate.getValue() , this.finMaxRate.getValue());
 
 				if (rateDetail.getErrorDetails() == null) {
-					this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(
+					this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(
 							rateDetail.getNetRefRateLoan().doubleValue(), 2));
 				}
 			}else{
-				this.repayEffectiveRate.setValue(this.repayProfitRate.getValue() == null ? BigDecimal.ZERO : this.repayProfitRate.getValue());
+				this.repayRate.setEffRateValue(this.repayProfitRate.getValue() == null ? BigDecimal.ZERO : this.repayProfitRate.getValue());
 			}
 		}
 		if (this.rpyAdvRate.getMarginValue() == null) {
@@ -5923,9 +5925,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if(CalculationConstants.RATE_BASIS_F.equals(getComboboxValue(this.repayRateBasis)) || CalculationConstants.RATE_BASIS_C.equals(getComboboxValue(this.repayRateBasis))){
 			if (this.repayProfitRate.getValue() != null) {
 				if (this.repayProfitRate.getValue().intValue() == 0 && this.repayProfitRate.getValue().precision() == 1) {
-					this.repayEffectiveRate.setValue(financeType.getFinIntRate());
+					this.repayRate.setEffRateValue(financeType.getFinIntRate());
 				} else {
-					this.repayEffectiveRate.setValue(this.repayProfitRate.getValue() == null ? BigDecimal.ZERO : this.repayProfitRate.getValue());
+					this.repayRate.setEffRateValue(this.repayProfitRate.getValue() == null ? BigDecimal.ZERO : this.repayProfitRate.getValue());
 				}
 			}
 		}
@@ -6443,7 +6445,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.graceRate.setBaseErrorMessage("");
 		this.graceRate.setSpecialErrorMessage("");
 		this.gracePftRate.setErrorMessage("");
-		this.grcEffectiveRate.setErrorMessage("");
+		this.graceRate.getEffRateComp().setErrorMessage("");
 		this.graceRate.setMarginErrorMessage("");
 		this.grcPftDaysBasis.setErrorMessage("");
 		this.gracePftFrq.setErrorMessage("");
@@ -6464,7 +6466,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.repayRate.setBaseErrorMessage("");
 		this.repayRate.setSpecialErrorMessage("");
 		this.repayProfitRate.setErrorMessage("");
-		this.repayEffectiveRate.setErrorMessage("");
+		this.repayRate.getEffRateComp().setErrorMessage("");
 		this.repayRate.setMarginErrorMessage("");
 		this.cbScheduleMethod.setErrorMessage("");
 		this.repayFrq.setErrorMessage("");
@@ -6880,7 +6882,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.repayRateBasis.setDisabled(true);
 			this.repayRate.setBaseConstraint("");
 			this.repayRate.setSpecialConstraint("");
-			this.repayEffectiveRate.setConstraint("");
+			this.repayRate.getEffRateComp().setConstraint("");
 			this.repayRate.setSpecialReadonly(true);
 
 			this.repayRate.setBaseValue("");
@@ -6895,7 +6897,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			if(isNewRecord && !getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
-				this.repayEffectiveRate.setText("0.00");
+				this.repayRate.setEffRateText("0.00");
 				this.repayProfitRate.setText("0.00");
 			}
 		} 

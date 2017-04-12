@@ -774,11 +774,6 @@
 															spacing="2px" sclass="mandatory" />
 														<decimalbox
 															id="gracePftRate" width="120px" maxlength="15" />
-														<space
-															spacing="2px" />
-														<decimalbox
-															id="grcEffectiveRate" width="120px" maxlength="15"
-															readonly="true" tabindex="-1" />
 													</hbox>
 												</row>
 												<row id="grcBaseRateRow"
@@ -987,11 +982,6 @@
 															spacing="2px" sclass="mandatory" />
 														<decimalbox
 															id="repayProfitRate" width="120px" maxlength="15" />
-														<space
-															spacing="2px" />
-														<decimalbox
-															id="repayEffectiveRate" width="120px" maxlength="15"
-															readonly="true" tabindex="-1" />
 													</hbox>
 												</row>
 												<row

@@ -1561,7 +1561,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			if (this.allowGrace.isChecked()) {
-				this.grcEffectiveRate.setConstraint(new PTDecimalValidator(Labels
+				this.graceRate.getEffRateComp().setConstraint(new PTDecimalValidator(Labels
 						.getLabel("label_FinanceMainDialog_GracePftRate.value"), 9, false));
 			}
 
@@ -1609,8 +1609,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"), true));
 		}
-
-		this.repayEffectiveRate.setConstraint(new PTDecimalValidator(Labels
+		
+		this.repayRate.getEffRateComp().setConstraint(new PTDecimalValidator(Labels
 				.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, false));
 
 		if (!this.repayRate.isMarginReadonly()) {
@@ -1717,7 +1717,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.gracePeriodEndDate.setConstraint("");
 		this.cbGrcSchdMthd.setConstraint("");
 		this.gracePftRate.setConstraint("");
-		this.grcEffectiveRate.setConstraint("");
+		this.graceRate.getEffRateComp().setConstraint("");
 		this.graceRate.setMarginConstraint("");
 		this.nextGrcPftDate.setConstraint("");
 		this.nextGrcPftRvwDate.setConstraint("");
@@ -1729,7 +1729,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.numberOfTerms.setConstraint("");
 		this.finRepaymentAmount.setConstraint("");
 		this.repayProfitRate.setConstraint("");
-		this.repayEffectiveRate.setConstraint("");
+		this.repayRate.getEffRateComp().setConstraint("");
 		this.repayRate.setMarginConstraint("");
 		this.cbScheduleMethod.setConstraint("");
 		this.nextRepayDate.setConstraint("");
@@ -2883,12 +2883,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
-			this.grcEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = graceRate.getBaseObject();
 			if (dataObject instanceof String) {
 				this.graceRate.setBaseValue(dataObject.toString());
 				this.graceRate.setBaseDescription("");
-				this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				BaseRateCode details = (BaseRateCode) dataObject;
 				if (details != null) {
@@ -2897,14 +2897,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.grcEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
-			this.grcEffectiveRate.setConstraint("");
+			this.graceRate.getEffRateComp().setConstraint("");
 			Object dataObject = graceRate.getSpecialObject();
 			if (dataObject instanceof String) {
 				this.graceRate.setSpecialValue(dataObject.toString());
 				this.graceRate.setSpecialDescription("");
-				this.grcEffectiveRate.setValue(BigDecimal.ZERO);
+				this.graceRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				SplRateCode details = (SplRateCode) dataObject;
 				if (details != null) {
@@ -2913,11 +2913,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			calculateRate(this.graceRate.getBaseComp(), this.graceRate.getSpecialComp(), this.graceRate.getBaseComp(),
-					this.graceRate.getMarginComp(), this.grcEffectiveRate, this.finGrcMinRate, this.finGrcMaxRate);
+					this.graceRate.getMarginComp(), this.graceRate.getEffRateComp(), this.finGrcMinRate, this.finGrcMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 			if (this.graceRate.getMarginValue() != null) {
-				this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(
-						(this.grcEffectiveRate.getValue().add(this.graceRate.getMarginValue())).doubleValue(), 2));
+				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(
+						(this.graceRate.getEffRateValue().add(this.graceRate.getMarginValue())).doubleValue(), 2));
 			}
 		}
 
@@ -2970,13 +2970,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
-			this.repayEffectiveRate.setConstraint("");
+			this.repayRate.getEffRateComp().setConstraint("");
 			Object dataObject = repayRate.getBaseObject();
 
 			if (dataObject instanceof String) {
 				this.repayRate.setBaseValue(dataObject.toString());
 				this.repayRate.setBaseDescription("");
-				this.repayEffectiveRate.setValue(BigDecimal.ZERO);
+				this.repayRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				BaseRateCode details = (BaseRateCode) dataObject;
 				if (details != null) {
@@ -2986,15 +2986,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(), this.repayRate.getBaseComp(),
-					this.repayRate.getMarginComp(), this.repayEffectiveRate, this.finMinRate, this.finMaxRate);
+					this.repayRate.getMarginComp(), this.repayRate.getEffRateComp(), this.finMinRate, this.finMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
-			this.repayEffectiveRate.setConstraint("");
+			this.repayRate.getEffRateComp().setConstraint("");
 			Object dataObject = repayRate.getSpecialObject();
 
 			if (dataObject instanceof String) {
 				this.repayRate.setSpecialValue(dataObject.toString());
 				this.repayRate.setSpecialDescription("");
-				this.repayEffectiveRate.setValue(BigDecimal.ZERO);
+				this.repayRate.setEffRateValue(BigDecimal.ZERO);
 			} else {
 				SplRateCode details = (SplRateCode) dataObject;
 				if (details != null) {
@@ -3004,11 +3004,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			calculateRate(this.repayRate.getBaseComp(), this.repayRate.getSpecialComp(), this.repayRate.getBaseComp(),
-					this.repayRate.getMarginComp(), this.repayEffectiveRate, this.finMinRate, this.finMaxRate);
+					this.repayRate.getMarginComp(), this.repayRate.getEffRateComp(), this.finMinRate, this.finMaxRate);
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
 			if (this.repayRate.getMarginValue() != null && !this.repayProfitRate.isReadonly()) {
-				this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(
-						(this.repayEffectiveRate.getValue().add(this.repayRate.getMarginValue())).doubleValue(), 2));
+				this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(
+						(this.repayRate.getEffRateValue().add(this.repayRate.getMarginValue())).doubleValue(), 2));
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -3149,7 +3149,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		this.graceRate.setBaseConstraint("");
 		this.graceRate.setSpecialConstraint("");
-		this.grcEffectiveRate.setConstraint("");
+		this.graceRate.getEffRateComp().setConstraint("");
 
 		this.graceRate.setBaseReadonly(true);
 		this.graceRate.setSpecialReadonly(true);
@@ -3159,7 +3159,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.graceRate.setBaseDescription("");
 		this.graceRate.setSpecialDescription("");
 		readOnlyComponent(true, this.gracePftRate);
-		this.grcEffectiveRate.setText("0.00");
+		this.graceRate.setEffRateText("0.00");
+		
 		this.gracePftRate.setText("0.00");
 
 		if (!"#".equals(this.grcRateBasis.getSelectedItem().getValue().toString())) {
@@ -3172,7 +3173,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.graceRate.setBaseDescription("");
 				this.graceRate.setSpecialDescription("");
 
-				this.grcEffectiveRate.setText("0.00");
+				this.graceRate.setEffRateText("0.00");
 				readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 			} else if (CalculationConstants.RATE_BASIS_R.equals(this.grcRateBasis.getSelectedItem().getValue()
 					.toString())) {
@@ -3185,7 +3186,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 				}
 
-				this.grcEffectiveRate.setText("0.00");
+				this.graceRate.setEffRateText("0.00");
 				this.gracePftRate.setText("0.00");
 			}
 		}
@@ -3201,7 +3202,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		this.repayRate.setBaseConstraint("");
 		this.repayRate.setSpecialConstraint("");
-		this.repayEffectiveRate.setConstraint("");
+		this.repayRate.getEffRateComp().setConstraint("");
 
 		this.repayRate.setBaseReadonly(true);
 		this.repayRate.setSpecialReadonly(true);
@@ -3211,7 +3212,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.repayRate.setSpecialValue("");
 		this.repayRate.setSpecialDescription("");
 		readOnlyComponent(true, this.repayProfitRate);
-		this.repayEffectiveRate.setText("0.00");
+		this.repayRate.setEffRateText("0.00");
 		this.repayProfitRate.setText("0.00");
 
 		if (!"#".equals(this.repayRateBasis.getSelectedItem().getValue().toString())) {
@@ -3224,7 +3225,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.repayRate.setBaseDescription("");
 				this.repayRate.setSpecialDescription("");
 
-				this.repayEffectiveRate.setText("0.00");
+				this.repayRate.setEffRateText("0.00");
 				readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			} else if (CalculationConstants.RATE_BASIS_R.equals(this.repayRateBasis.getSelectedItem().getValue()
 					.toString())) {
@@ -3234,7 +3235,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 				}
-				this.repayEffectiveRate.setText("0.00");
+				this.repayRate.setEffRateText("0.00");
 				this.repayProfitRate.setText("0.00");
 			}
 		}

@@ -1317,7 +1317,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 						aFinanceMain.getGrcMaxRate());
 
 				if (rateDetail.getErrorDetails() == null) {
-					this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
+					this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 							.doubleValue(), 2));
 				}
 				readOnlyComponent(true, this.gracePftRate);
@@ -1334,9 +1334,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				this.graceRate.setSpecialReadonly(true);
 				readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRate"), this.gracePftRate);
 				this.gracePftRate.setValue(aFinanceMain.getGrcPftRate());
-				this.grcEffectiveRate.setValue(aFinanceMain.getGrcPftRate());
-				this.grcEffectiveRate.setValue(PennantApplicationUtil.formatRate(aFinanceMain.getGrcPftRate()
-						.doubleValue(), 2));
+				this.graceRate.setEffRateValue(aFinanceMain.getGrcPftRate());
+				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(aFinanceMain.getGrcPftRate().doubleValue(), 2));
 				this.finGrcMinRate.setValue(BigDecimal.ZERO);
 				this.finGrcMaxRate.setValue(BigDecimal.ZERO);
 
@@ -1451,7 +1450,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					this.finMaxRate.getValue());
 
 			if (rateDetail.getErrorDetails() == null) {
-				this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
+				this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 						.doubleValue(), 2));
 			}
 			readOnlyComponent(true, this.repayProfitRate);
@@ -1482,9 +1481,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.repayRate.setSpecialReadonly(true);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
 			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
-			this.repayEffectiveRate.setValue(aFinanceMain.getRepayProfitRate());
-			this.repayEffectiveRate.setValue(PennantApplicationUtil.formatRate(aFinanceMain.getRepayProfitRate()
-					.doubleValue(), 2));
+			this.repayRate.setEffRateValue(aFinanceMain.getRepayProfitRate());
+			this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(aFinanceMain.getRepayProfitRate().doubleValue(), 2));
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
