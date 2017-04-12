@@ -1976,4 +1976,16 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		<column name="Module" type="varchar(20)"/>
 	</addColumn>
 	</changeSet>
+	<changeSet author="SreeRavali" id="107">
+		<sql>
+			INSERT INTO SMTparameters VALUES ('HOLDEMI_MAXDAYS', 'Number of Days the
+			EMI can Hold', 'int', '0', '10', 2, 0, NULL, NULL, 'Number of
+			Days the EMI can Hold', 1, 1000, CURRENT_TIMESTAMP,'Approved','null','null','null','null','null',0);
+		</sql>
+	</changeSet>
+	<changeSet author="SreeRavali" id="108">
+		<sql>
+			insert into bmtproduct values('ODFCLITY','Overdraft Facility',1,1000,CURRENT_TIMESTAMP,'Approved','null','null','null','null','null',0,'ODFCLITY')
+		</sql>
+	</changeSet>
 </databaseChangeLog>
