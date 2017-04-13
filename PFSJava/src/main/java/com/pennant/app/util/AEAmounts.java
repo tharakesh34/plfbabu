@@ -310,7 +310,7 @@ public class AEAmounts implements Serializable {
 
 			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) <= 0) {
 				if ((!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())) {
-					finState = CalculationConstants.FINSTATE_PD;
+					finState = CalculationConstants.FIN_STATE_PD;
 				}
 			}
 
@@ -318,7 +318,7 @@ public class AEAmounts implements Serializable {
 				tdPftAmortizedNormal = tdPftAmortized;
 			}
 
-			if (finState.equals(CalculationConstants.FINSTATE_PD)) {
+			if (finState.equals(CalculationConstants.FIN_STATE_PD)) {
 				// PD Amortization
 				if (curSchdDate.after(dateSusp)) {
 					// do nothing

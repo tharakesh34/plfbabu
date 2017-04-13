@@ -129,7 +129,7 @@ public class CalculationConstants {
 	public static final String	PDPFTCAL_SCHRATEMARGIN				= "SRATEMRG";
 
 	public static final String	FIN_STATE_NORMAL					= "N";
-	public static final String	FINSTATE_PD							= "PD";
+	public static final String	FIN_STATE_PD						= "PD";
 	
 	public static final String	COMPARE_PRI							= "P";
 	public static final String	COMPARE_PFT							= "I";
