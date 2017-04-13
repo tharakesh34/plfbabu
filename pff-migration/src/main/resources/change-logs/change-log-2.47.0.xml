@@ -2375,5 +2375,10 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 
 	</sql>
 </changeSet>
+<changeSet id="117" author="Madhubabu">
+	<sql>
+		delete from secgrouprights where grpid in (select grpid from secgroups where grpcode='CL_ORIGINATION_MAKER') and rightid in (select rightid from secrights where rightname='FinanceMainDialog_finBranch');
+	</sql>
+</changeSet>
 
 </databaseChangeLog>
