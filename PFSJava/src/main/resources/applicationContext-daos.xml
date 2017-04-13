@@ -9086,7 +9086,7 @@
 	<!-- PartnerBank -->
 	<bean id="partnerBankDAO"
 		class="com.pennant.backend.dao.partnerbank.impl.PartnerBankDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="partnerBankService"

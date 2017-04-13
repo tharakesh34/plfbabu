@@ -48,6 +48,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -55,9 +56,10 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>PartnerBank table</b>.<br>
  *
  */
-public class PartnerBank extends AbstractWorkflowEntity implements java.io.Serializable {
+public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private static final long	serialVersionUID	= 1L;
 
+	private long 				partnerBankId = Long.MIN_VALUE;
 	private String				partnerBankCode;
 	private String				partnerBankName;
 	private String				bankCode;
@@ -69,7 +71,13 @@ public class PartnerBank extends AbstractWorkflowEntity implements java.io.Seria
 	private String				branchCity;
 	private String				utilityCode;
 	private String				accountNo;
-	private String				accountType;
+	private String				usage;
+	private String				acType;
+	private String 				acTypeName;
+	private boolean				alwFileDownload;
+	private boolean				disbDownload;
+	private int					inFavourLength;
+	private String				accountCategory;
 	private boolean				active;
 
 	private boolean				newRecord;
@@ -85,25 +93,16 @@ public class PartnerBank extends AbstractWorkflowEntity implements java.io.Seria
 		super();
 	}
 
-	public PartnerBank(String id) {
-		super();
-		this.setId(id);
-	}
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankCodeName");
 		excludeFields.add("bankBranchCodeName");
+		excludeFields.add("acTypeName");
 		return excludeFields;
 	}
 
-	public String getId() {
-		return partnerBankCode;
-	}
 
-	public void setId(String id) {
-		this.partnerBankCode = id;
-	}
 
 	public String getPartnerBankCode() {
 		return partnerBankCode;
@@ -193,14 +192,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements java.io.Seria
 		this.accountNo = accountNo;
 	}
 
-	public String getAccountType() {
-		return accountType;
-	}
-
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
-
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -241,6 +232,81 @@ public class PartnerBank extends AbstractWorkflowEntity implements java.io.Seria
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getUsage() {
+		return usage;
+	}
+
+	public void setUsage(String usage) {
+		this.usage = usage;
+	}
+
+	public String getAcType() {
+		return acType;
+	}
+
+	public void setAcType(String acType) {
+		this.acType = acType;
+	}
+
+	public boolean isAlwFileDownload() {
+		return alwFileDownload;
+	}
+
+	public void setAlwFileDownload(boolean alwFileDownload) {
+		this.alwFileDownload = alwFileDownload;
+	}
+
+	public boolean isDisbDownload() {
+		return disbDownload;
+	}
+
+	public void setDisbDownload(boolean disbDownload) {
+		this.disbDownload = disbDownload;
+	}
+
+	public int getInFavourLength() {
+		return inFavourLength;
+	}
+
+	public void setInFavourLength(int inFavourLength) {
+		this.inFavourLength = inFavourLength;
+	}
+
+	public String getAccountCategory() {
+		return accountCategory;
+	}
+
+	public void setAccountCategory(String accountCategory) {
+		this.accountCategory = accountCategory;
+	}
+
+	public String getAcTypeName() {
+		return acTypeName;
+	}
+
+	public void setAcTypeName(String acTypeName) {
+		this.acTypeName = acTypeName;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.partnerBankId = id;
+		
+	}
+
+	@Override
+	public long getId() {
+		return partnerBankId;
+	}
+	
+	public long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
 	}
 
 }

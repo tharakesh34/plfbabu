@@ -46,7 +46,7 @@ package com.pennant.backend.dao.partnerbank;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 
 public interface PartnerBankDAO {
-	PartnerBank getPartnerBankById(String id, String type);
+	PartnerBank getPartnerBankById(long id, String type);
 
 	void update(PartnerBank partnerBank, String type);
 

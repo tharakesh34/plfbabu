@@ -68,6 +68,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.PennantConstants;
@@ -101,13 +102,13 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox						branchCity;
 	protected Textbox						utilityCode;
 	protected Textbox						accountNo;
-	protected Combobox						accountType;
+	protected Combobox						usage;
 	protected Checkbox						active;
-	protected Textbox						glCode;
+	protected ExtendedCombobox				acType;
 	protected Checkbox						reqFileDownload;
 	protected Checkbox						disbDownload;
-	protected Intbox						length;
-	protected Combobox						bankAccountType;
+	protected Intbox						inFavourLength;
+	protected Combobox						accountCategory;
 	
 	private PartnerBank						partnerBank;															
 	private transient PartnerBankListCtrl	partnerBankListCtrl;													
@@ -209,10 +210,17 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setReadonly(true);
 		this.utilityCode.setMaxlength(8);
 		this.accountNo.setMaxlength(50);
-		
+		this.inFavourLength.setMaxlength(2);
 		if(StringUtils.isNotBlank(this.partnerBank.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.partnerBank.getBankCode());
 		}
+		
+		this.acType.setModuleName("AccountType");
+		this.acType.setMandatoryStyle(true);
+		this.acType.setValueColumn("AcType");
+		this.acType.setDescColumn("AcTypeDesc");
+		this.acType.setDisplayStyle(2);
+		this.acType.setValidateColumns(new String[] { "AcType" });
 
 		setStatusDetails();
 
@@ -333,16 +341,23 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setValue(aPartnerBank.getBranchCity());
 		this.utilityCode.setValue(aPartnerBank.getUtilityCode());
 		this.accountNo.setValue(aPartnerBank.getAccountNo());
+		this.acType.setValue(aPartnerBank.getAcType());
+		this.reqFileDownload.setChecked(aPartnerBank.isAlwFileDownload());
+		this.disbDownload.setChecked(aPartnerBank.isDisbDownload());
+		this.inFavourLength.setValue(aPartnerBank.getInFavourLength());
 		this.active.setChecked(aPartnerBank.isActive());
 		
-		fillComboBox(this.accountType, aPartnerBank.getAccountType(), PennantStaticListUtil.getAccountType(), "");
+		fillComboBox(this.usage, aPartnerBank.getUsage(), PennantStaticListUtil.getAccountType(), "");
+		fillComboBox(this.accountCategory, aPartnerBank.getAccountCategory(), PennantStaticListUtil.getBankAccountType(), "");
 
 		if (aPartnerBank.isNewRecord()) {
 			this.bankCode.setDescription("");
 			this.bankBranchCode.setDescription("");
+			this.acType.setDescription("");
 		} else {
 			this.bankCode.setDescription(aPartnerBank.getBankCodeName());
 			this.bankBranchCode.setDescription(aPartnerBank.getBankBranchCodeName());
+			this.acType.setDescription(aPartnerBank.getAcTypeName());
 		}
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
 		logger.debug("Leaving");
@@ -414,13 +429,48 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			wve.add(we);
 		}
 		
-		//Account Type
+		//
 		try {
-			aPartnerBank.setAccountType(this.accountType.getSelectedItem().getValue().toString());
+			aPartnerBank.setAcType(this.acType.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
+		//Account Type
+		try {
+			aPartnerBank.setUsage(this.usage.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Account Category
+		try {
+			aPartnerBank.setAccountCategory(this.accountCategory.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Required File Download
+		try {
+			aPartnerBank.setAlwFileDownload(this.reqFileDownload.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Required File Download
+		try {
+			aPartnerBank.setDisbDownload(this.disbDownload.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//In Favor Length
+		try {
+			aPartnerBank.setInFavourLength(this.inFavourLength.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		//Active
 		try {
 			aPartnerBank.setActive(this.active.isChecked());
@@ -495,11 +545,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					true));
 		}
 		//Partner Bank Name
-		if (!this.partnerBankName.isReadonly()) {
+		/*if (!this.partnerBankName.isReadonly()) {
 			this.partnerBankName.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_PartnerBankName.value"), PennantRegularExpressions.REGEX_NAME,
 					true));
-		}
+		}*/
 		//Bank Code
 		if (!this.bankCode.isReadonly()) {
 			this.bankCode.setConstraint(new PTStringValidator(
@@ -531,11 +581,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 							null, false));
 		}
 		//Utility Code
-		if (!this.utilityCode.isReadonly()) {
+		/*if (!this.utilityCode.isReadonly()) {
 			this.utilityCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_UtilityCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}
+		}*/
 		//Account No
 		if (!this.accountNo.isReadonly()) {
 			this.accountNo.setConstraint(new PTStringValidator(Labels
@@ -543,8 +593,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					true,accNoLength,accNoLength));
 		}
 		//Account Type
-		if (!this.accountType.isDisabled()) {
-			this.accountType.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountType(),
+		if (!this.usage.isDisabled()) {
+			this.usage.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountType(),
 					Labels.getLabel("label_PartnerBankDialog_AccountType.value")));
 		}
 		logger.debug("Leaving");
@@ -564,7 +614,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setConstraint("");
 		this.utilityCode.setConstraint("");
 		this.accountNo.setConstraint("");
-		this.accountType.setConstraint("");
+		this.usage.setConstraint("");
+		this.accountCategory.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -597,7 +648,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setErrorMessage("");
 		this.utilityCode.setErrorMessage("");
 		this.accountNo.setErrorMessage("");
-		this.accountType.setErrorMessage("");
+		this.acType.setErrorMessage("");
+		this.usage.setErrorMessage("");
+		this.accountCategory.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -695,6 +748,22 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$glCode(Event event) {
+		logger.debug("Entering");
+		Object dataObject = acType.getObject();
+		if (dataObject instanceof String) {
+			this.acType.setValue("");
+			this.acType.setDescription("");
+		} else {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.acType.setValue(String.valueOf(details.getAcType()));
+				this.acType.setDescription(details.getAcTypeDesc());
+			}
+		}
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -719,7 +788,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setReadonly(true);//"PartnerBankDialog_BranchCity"
 		this.utilityCode.setReadonly(isReadOnly("PartnerBankDialog_UtilityCode"));
 		this.accountNo.setReadonly(isReadOnly("PartnerBankDialog_AccountNo"));
-		this.accountType.setDisabled(isReadOnly("PartnerBankDialog_AccountType"));
+		this.usage.setDisabled(isReadOnly("PartnerBankDialog_AccountType"));
+		this.acType.setReadonly(isReadOnly("PartnerBankDialog_AccType"));
+		this.reqFileDownload.setDisabled(isReadOnly("PartnerBankDialog_AlwFileDownload"));
+		this.disbDownload.setDisabled(isReadOnly("PartnerBankDialog_DisbDownload"));
+		this.accountCategory.setDisabled(isReadOnly("PartnerBankDialog_AccountCategory"));
+		this.inFavourLength.setDisabled(isReadOnly("PartnerBankDialog_InFavourLength"));
 		this.active.setDisabled(isReadOnly("PartnerBankDialog_Active"));
 
 		if (isWorkFlowEnabled()) {
@@ -754,7 +828,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setReadonly(true);
 		this.utilityCode.setReadonly(true);
 		this.accountNo.setReadonly(true);
-		this.accountType.setDisabled(true);
+		this.usage.setDisabled(true);
+		this.acType.setReadonly(true);
+		this.reqFileDownload.setDisabled(true);
+		this.disbDownload.setDisabled(true);
+		this.accountCategory.setDisabled(true);
+		this.inFavourLength.setReadonly(true);
 		this.active.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -789,7 +868,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchCity.setValue("");
 		this.utilityCode.setValue("");
 		this.accountNo.setValue("");
-		this.accountType.setSelectedIndex(0);
+		this.acType.setValue("");
+		this.usage.setSelectedIndex(0);
+		this.accountCategory.setSelectedIndex(0);
 
 		logger.debug("Leaving");
 	}

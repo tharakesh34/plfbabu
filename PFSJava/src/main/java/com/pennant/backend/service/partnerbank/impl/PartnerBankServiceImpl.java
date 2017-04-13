@@ -182,7 +182,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	 */
 
 	@Override
-	public PartnerBank getPartnerBankById(String id) {
+	public PartnerBank getPartnerBankById(long id) {
 		return getPartnerBankDAO().getPartnerBankById(id, "_View");
 	}
 
@@ -195,7 +195,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	 * @return PartnerBank
 	 */
 
-	public PartnerBank getApprovedPartnerBankById(String id) {
+	public PartnerBank getApprovedPartnerBankById(long id) {
 		return getPartnerBankDAO().getPartnerBankById(id, "_AView");
 	}
 
@@ -223,7 +223,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			return auditHeader;
 		}
 
-		PartnerBank partnerBank = new PartnerBank("");
+		PartnerBank partnerBank = new PartnerBank();
 		BeanUtils.copyProperties((PartnerBank) auditHeader.getAuditDetail().getModelData(), partnerBank);
 
 		if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -339,7 +339,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = partnerBank.getId();
+		valueParm[0] = partnerBank.getPartnerBankCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ":" + valueParm[0];
 
 		if (partnerBank.isNew()) { // for New record or new record into work flow

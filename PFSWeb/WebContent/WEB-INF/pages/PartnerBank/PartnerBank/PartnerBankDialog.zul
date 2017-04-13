@@ -152,7 +152,48 @@
 								<hlayout id="hlayout_AccountType">
 									<space id="space_AccountType"
 										spacing="2px" sclass="mandatory" />
-									<combobox id="accountType"/>
+									<combobox id="usage"/>
+								</hlayout>
+							</row>
+							<row>
+								<label
+									id="label_PartnerBankingDialog_GLCode"
+									value="${c:l('label_PartnerBankDialog_GLCode.value') }" />
+								<extendedcombobox id="acType" />
+								<label
+									id="label_PartnerBankDialog_ReqFileDownload"
+									value="${c:l('label_PartnerBankDialog_ReqFileDownload.value')}" />
+								<hlayout>
+									<space spacing="2px" />
+									<checkbox id="reqFileDownload"
+										checked="false" />
+								</hlayout>
+							</row>
+							<row>						
+							<label
+								id="label_PartnerBankDialog_DisbDownload"
+								value="${c:l('label_PartnerBankDialog_DisbDownload.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<checkbox id="disbDownload"
+									checked="false" />
+							</hlayout>
+							<label
+								id="label_PartnerBankDialog_FavourLength"
+								value="${c:l('label_PartnerBankDialog_FavourLength.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<intbox id="inFavourLength" width="100px"
+									maxlength="5" />
+							</hlayout>
+							</row>
+							<row>
+							<label id="label_BankAccountType"
+									value="${c:l('label_PartnerBankDialog_BankAccountType.value')}" />
+								<hlayout id="hlayout_BankAccountType">
+									<space id="space_BankAccountType"
+										spacing="2px" />
+									<combobox id="accountCategory"/>
 								</hlayout>
 							</row>
 							<row visible="true">
@@ -164,50 +205,7 @@
 									<checkbox id="active"
 										checked="false" />
 								</hlayout>
-								<label
-									id="label_PartnerBankingDialog_GLCode"
-									value="${c:l('label_PartnerBankDialog_GLCode.value') }"/>
-								<hlayout>
-								<space id="space_GLCode"
-										spacing="2px" />
-									<textbox id="glCode" maxlength="50" width="100px"/>
-								</hlayout>
-							</row>
-							<row>
-							<label
-								id="label_PartnerBankDialog_ReqFileDownload"
-								value="${c:l('label_PartnerBankDialog_ReqFileDownload.value')}" />
-							<hlayout>
-								<space spacing="2px" />
-								<checkbox id="reqFileDownload"
-									checked="false" />
-							</hlayout>
-							<label
-								id="label_PartnerBankDialog_DisbDownload"
-								value="${c:l('label_PartnerBankDialog_DisbDownload.value')}" />
-							<hlayout>
-								<space spacing="2px" />
-								<checkbox id="disbDownload"
-									checked="false" />
-							</hlayout>
-							</row>
-							<row>
-							<label
-								id="label_PartnerBankDialog_FavourLength"
-								value="${c:l('label_PartnerBankDialog_FavourLength.value')}" />
-							<hlayout>
-								<space spacing="2px" />
-								<intbox id="length" width="100px"
-										maxlength="5" />
-							</hlayout>
-							<label id="label_BankAccountType"
-									value="${c:l('label_PartnerBankDialog_BankAccountType.value')}" />
-								<hlayout id="hlayout_BankAccountType">
-									<space id="space_BankAccountType"
-										spacing="2px" sclass="mandatory" />
-									<combobox id="bankAccountType"/>
-								</hlayout>
-							</row>
+								</row>
 						</rows>
 					</grid>
 				</groupbox>

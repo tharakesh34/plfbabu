@@ -2489,9 +2489,9 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAccountType() {
 		if(accountType == null){
 			accountType = new ArrayList<ValueLabel>(3);
-			accountType.add(new ValueLabel("P", Labels.getLabel("label_SponsorBank_AccType_Payments")));
-			accountType.add(new ValueLabel("R", Labels.getLabel("label_SponsorBank_AccType_Receipts")));
-			accountType.add(new ValueLabel("B", Labels.getLabel("label_SponsorBank_AccType_Both")));
+			accountType.add(new ValueLabel("P", Labels.getLabel("label_PartnerBank_AccType_Payments")));
+			accountType.add(new ValueLabel("R", Labels.getLabel("label_PartnerBank_AccType_Receipts")));
+			accountType.add(new ValueLabel("B", Labels.getLabel("label_PartnerBank_AccType_Both")));
 		}
 		return accountType;
 	}
@@ -2499,8 +2499,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getBankAccountType(){
 		if(bankAccountType == null){
 			bankAccountType = new ArrayList<ValueLabel>(2);
-			bankAccountType.add(new ValueLabel("C", Labels.getLabel("label_SponsorBank_Cash")));
-			bankAccountType.add(new ValueLabel("B", Labels.getLabel("label_SponsorBank_Bank")));
+			bankAccountType.add(new ValueLabel("C", Labels.getLabel("label_PartnerBank_Cash")));
+			bankAccountType.add(new ValueLabel("B", Labels.getLabel("label_PartnerBank_Bank")));
 		}
 		return bankAccountType;
 	}

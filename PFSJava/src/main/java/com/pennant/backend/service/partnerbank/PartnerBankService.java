@@ -50,9 +50,9 @@ public interface PartnerBankService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	PartnerBank getPartnerBankById(String id);
+	PartnerBank getPartnerBankById(long id);
 
-	PartnerBank getApprovedPartnerBankById(String id);
+	PartnerBank getApprovedPartnerBankById(long id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

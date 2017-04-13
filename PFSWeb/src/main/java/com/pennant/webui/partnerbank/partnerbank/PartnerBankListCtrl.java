@@ -139,6 +139,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		registerField("bankCode");
 		registerField("bankBranchCode", listheader_BankBranchCode, SortOrder.NONE, bankBranchCode,
 				sortOperator_BankBranchCode, Operators.STRING);
+		registerField("partnerBankId");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -202,7 +203,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		Listitem selectedItem = this.listBoxPartnerBank.getSelectedItem();
 
 		// Get the selected entity.
-		String id = (String) selectedItem.getAttribute("id");
+		long id =  (long) selectedItem.getAttribute("id");
 		PartnerBank partnerBank = partnerBankService.getPartnerBankById(id);
 
 		if (partnerBank == null) {
