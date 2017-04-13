@@ -285,7 +285,12 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 					financeReference.setLovDescFinTypeDescName(aFinanceWorkflow.getLovDescFinTypeName());
 				}
 				
-				showDetailView(financeReference);
+				boolean isOverDraft = false;
+				if(StringUtils.equals(aFinanceWorkflow.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+					isOverDraft = true;
+				}
+				
+				showDetailView(financeReference, isOverDraft);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -298,7 +303,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 	 * @param FinanceReferenceDetail (aFinanceReferenceDetail)
 	 * @throws Exception
 	 */
-	private void showDetailView(FinanceReference aFinanceReference) throws Exception {
+	private void showDetailView(FinanceReference aFinanceReference, boolean isOverDraft) throws Exception {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them
@@ -321,6 +326,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 		map.put("financeReferenceDetailListCtrl", this);
 		map.put("eventAction", aFinanceReference.getFinEvent());
 		map.put("moduleName", this.moduleName);
+		map.put("isOverDraft", isOverDraft);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -393,6 +399,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 		this.searchObj.addField("LovDescPromotionName");
 		this.searchObj.addField("LovDescFacilityTypeName");
 		this.searchObj.addField("ModuleName");
+		this.searchObj.addField("ProductCategory");
 		this.searchObj.addSort("FinType", false);
 		
 		// Removing Unused Finance Events

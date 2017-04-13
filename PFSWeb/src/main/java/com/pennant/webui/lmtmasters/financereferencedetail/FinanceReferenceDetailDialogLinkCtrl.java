@@ -149,6 +149,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 	private String roleCodes;
 	private String moduleName;
+	private String eventAction;
 	
 	protected Listbox listboxshowInStage; // auto wired
 	protected Listbox listboxmandInputInStage; // auto wired
@@ -261,6 +262,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			}
 			if (arguments.containsKey("moduleName")) {
 				moduleName = (String) arguments.get("moduleName");
+			}
+			if (arguments.containsKey("eventAction")) {
+				eventAction = (String) arguments.get("eventAction");
 			}
 
 			doLoadWorkFlow(this.financeReferenceDetail.isWorkflow(),
@@ -1281,8 +1285,16 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	
 	public void onClick$btnSearchLimitService(Event event) {
 		logger.debug("Entering" + event.toString());
+		
+		Object dataObject = null;
+		if(StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)){
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("LimitCode", FinanceConstants.QUICK_DISBURSEMENT, Filter.OP_NOT_EQUAL);
 
-		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail");
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail", filter);
+		}else{
+			dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "LimitCodeDetail");
+		}
 		if (dataObject instanceof String) {
 			this.lovDescRefDesc.setValue("");
 		} else {

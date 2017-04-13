@@ -205,6 +205,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	int listRows;
 	private String eventAction = "";
 	private String moduleName = "";
+	private boolean isOverDraft = false;
 	
 	protected Listbox delationDeviation;
 	private DelegationDeviationCtrl delegationDeviationCtrl;
@@ -273,6 +274,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			// Module Name 
 			if (arguments.containsKey("moduleName")) {
 				moduleName = (String) arguments.get("moduleName");
+			}
+			// Product Category
+			if (arguments.containsKey("isOverDraft")) {
+				isOverDraft = (boolean) arguments.get("isOverDraft");
 			}
 
 			doLoadWorkFlow(this.financeReferenceDetail.isWorkflow(),
@@ -810,6 +815,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		
 		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
 			this.tabDeviation.setVisible(false);
+		}
+		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			this.tabCustLimitCheck.setVisible(true);
+		}
+		if(isOverDraft){
+			this.tabCustLimitCheck.setVisible(false);
 		}
 		logger.debug(" Leaving ");
 
@@ -1535,6 +1546,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		map.put("financeReferenceDetail", financeReferenceDetail);
 		map.put("financeReferenceDetailDialogCtrl", this);
 		map.put("moduleName", moduleName);
+		map.put("eventAction", eventAction);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
