@@ -544,12 +544,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					.getLabel("label_PartnerBankDialog_PartnerBankCode.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					true));
 		}
-		//Partner Bank Name
-		/*if (!this.partnerBankName.isReadonly()) {
-			this.partnerBankName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_PartnerBankName.value"), PennantRegularExpressions.REGEX_NAME,
-					true));
-		}*/
+		
 		//Bank Code
 		if (!this.bankCode.isReadonly()) {
 			this.bankCode.setConstraint(new PTStringValidator(
@@ -580,12 +575,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BranchCity.value"),
 							null, false));
 		}
-		//Utility Code
-		/*if (!this.utilityCode.isReadonly()) {
-			this.utilityCode
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_UtilityCode.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}*/
+		
 		//Account No
 		if (!this.accountNo.isReadonly()) {
 			this.accountNo.setConstraint(new PTStringValidator(Labels
@@ -596,6 +586,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (!this.usage.isDisabled()) {
 			this.usage.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountType(),
 					Labels.getLabel("label_PartnerBankDialog_AccountType.value")));
+		}
+		
+		//Account Type Code
+		if (!this.acType.isReadonly()) {
+			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_GLCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -616,6 +612,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.accountNo.setConstraint("");
 		this.usage.setConstraint("");
 		this.accountCategory.setConstraint("");
+		this.acType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
