@@ -4461,16 +4461,16 @@
 		<property name="insurancePolicyService" ref="insurancePolicyService" />
 	</bean>
 
-	<!-- SponsorBank -->
-	<bean id="sponsorBankListCtrl"
-		class="com.pennant.webui.sponsorbank.sponsorbank.SponsorBankListCtrl"
+	<!-- PartnerBank -->
+	<bean id="partnerBankListCtrl"
+		class="com.pennant.webui.partnerbank.partnerbank.PartnerBankListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="sponsorBankService" ref="sponsorBankService" />
+		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
-	<bean id="sponsorBankDialogCtrl"
-		class="com.pennant.webui.sponsorbank.sponsorbank.SponsorBankDialogCtrl"
+	<bean id="partnerBankDialogCtrl"
+		class="com.pennant.webui.partnerbank.partnerbank.PartnerBankDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="sponsorBankService" ref="sponsorBankService" />
+		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 	

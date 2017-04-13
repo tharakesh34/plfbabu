@@ -81,7 +81,7 @@
 		<menuItem id="menu_Item_RejectDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"  rightName="menuItem_ApplicationMaster_RejectDetail"/>
 		<menuItem id="menu_Item_RelationshipOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"  rightName="menuItem_ApplicationMaster_RelationshipOfficer"/>
 		<menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" rightName="menuItem_ApplicationMaster_ReturnedCheque" />
-		<menuItem id="menu_Item_SponsorBank" zulNavigation="/WEB-INF/pages/SponsorBank/SponsorBank/SponsorBankList.zul"  rightName="menuItem_sponsorbank_SponsorBank"/>
+		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<!-- <menuItem id="menu_Item_SalesOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/SalesOfficer/SalesOfficerList.zul"  rightName="menuItem_ApplicationMaster_SalesOfficer"/> -->
 		<!-- <menuItem id="menu_Item_SplRate" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRate/SplRateList.zul"  rightName="menuItem_ApplicationMaster_SplRate"/>
 		<menuItem id="menu_Item_SplRateCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeList.zul"  rightName="menuItem_ApplicationMaster_SplRateCode"/> -->
