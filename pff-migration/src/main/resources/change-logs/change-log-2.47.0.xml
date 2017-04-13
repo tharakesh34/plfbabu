@@ -1988,13 +1988,13 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 			insert into bmtproduct values('ODFCLITY','Overdraft Facility',1,1000,CURRENT_TIMESTAMP,'Approved','null','null','null','null','null',0,'ODFCLITY')
 		</sql>
 	</changeSet>
-	<changeSet id="102" author="Irfan">
+	<!-- <changeSet id="102" author="Irfan">
 	<dropView viewName="SponsorBank_View"/>
 		<dropView viewName="SponsorBank_AView"/> 
 		<dropTable tableName="SponsorBank"/>
 		<dropTable tableName="SponsorBank_Temp"/>
 	</changeSet>
-	
+	 -->
 	<changeSet author="Irfan" id="103">
 	<dropTable tableName="PartnerBank"/>
 	<createTable tableName="PartnerBank">
@@ -2325,4 +2325,55 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 			
 		</sql>
 	</changeSet>
+	<changeSet id="114" author="Surekha">
+		<createTable tableName="AccountTypeGroup">
+			<column name="Level" type="int" />
+			<column name="GroupId" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupDescription" type="varchar(100)" />
+			<column name="ParentGroup" type="varchar(20)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="115" author="Surekha">
+		<createTable tableName="AccountTypeGroup_Temp">
+			<column name="Level" type="int"/>
+			<column name="GroupId" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupDescription" type="varchar(100)" />
+			<column name="ParentGroup" type="varchar(20)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="116" author="SreeRavali">
+	<sql>
+		insert into BMTAEEVENTS values ('HLDEMI','HOLDEMI',1,1007,CURRENT_TIMESTAMP,'Approved','','','','','',0,1)
+
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
