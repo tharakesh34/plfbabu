@@ -1513,43 +1513,47 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		Listcell lc = null;
 		
 		for (int i = 0; i < feeRulesList.size(); i++) {
-			
 			String feeTypeCode =feeRulesList.get(i).getFeeTypeCode();
 			String feeTypeDesc =feeRulesList.get(i).getFeeTypeDesc();
 			
 			group = new Listgroup(feeTypeCode);
 			this.feeCodeListbox.appendChild(group);
 			
-			for (int j = 0; j < 4; j++) {
-				
+			for (int j = 0; j < 5; j++) {
 				String newRuleCode = feeTypeCode;
 				String newRuleCodeDesc = feeTypeDesc;
-				
-				if(j==0){
-					newRuleCode = newRuleCode+"_C";
-					newRuleCodeDesc = newRuleCodeDesc+" (Calculated Amount)";
-				}else if(j==1){
-					newRuleCode = newRuleCode+"_W";
-					newRuleCodeDesc = newRuleCodeDesc+" (Waiver Amount)";
-				}else if(j==2){
-					newRuleCode = newRuleCode+"_P";
-					newRuleCodeDesc = newRuleCodeDesc+" (Customer Paid)";
-				}else if(j==3){
-					newRuleCode = newRuleCode+"_AF";
-					newRuleCodeDesc = newRuleCodeDesc+" (Added to Finance)";
+
+				if (j == 0) {
+					newRuleCode = newRuleCode + "_C";
+					newRuleCodeDesc = newRuleCodeDesc + " (Calculated Amount)";
+				} else if (j == 1) {
+					newRuleCode = newRuleCode + "_W";
+					newRuleCodeDesc = newRuleCodeDesc + " (Waiver Amount)";
+				} else if (j == 2) {
+					newRuleCode = newRuleCode + "_P";
+					newRuleCodeDesc = newRuleCodeDesc + " (Customer Paid)";
+				} else if (j == 3) {
+					newRuleCode = newRuleCode + "_AF";
+					newRuleCodeDesc = newRuleCodeDesc + " (Added to Finance)";
+				} else if (j == 4) {
+					newRuleCode = newRuleCode + "_SCH";
+					newRuleCodeDesc = newRuleCodeDesc + " (Scheduled to Finance)";
 				}
-				
+
 				item = new Listitem();
 				lc = new Listcell(newRuleCode);
+				
 				if (!amountcodes.contains(newRuleCode)) {
 					amountcodes.add(newRuleCode);
 				}
+				
 				lc.setParent(item);
 				lc = new Listcell(newRuleCodeDesc);
 				lc.setParent(item);
 				this.feeCodeListbox.appendChild(item);
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 

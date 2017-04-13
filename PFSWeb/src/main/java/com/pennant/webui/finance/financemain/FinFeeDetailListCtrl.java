@@ -101,6 +101,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -1635,9 +1636,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 	
 		//FIXME as discussed should be added in finance main table
-		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner())) {
-		finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
-        finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
+		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner()) || 
+				StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, getFinanceDetail().getModuleDefiner())) {
+			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
+	        finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 		

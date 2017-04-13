@@ -11307,7 +11307,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 						List<ReturnDataSet> returnSetEntries = null;
-						Map<String, FeeRule> map = preparingFeeRulesMap(dataSet);
+						Map<String, FeeRule> map = prepareFeeRulesMap(dataSet);
 
 						if (!isRIAExist) {
 							returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(),
@@ -11358,7 +11358,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 								List<ReturnDataSet> returnSetEntries = null;
 								
-								Map<String, FeeRule> map = preparingFeeRulesMap(dataSet);
+								Map<String, FeeRule> map = prepareFeeRulesMap(dataSet);
 
 								if (!isRIAExist) {
 									returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
@@ -11602,7 +11602,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 	
-	private Map<String, FeeRule> preparingFeeRulesMap(DataSet dataSet) {
+	private Map<String, FeeRule> prepareFeeRulesMap(DataSet dataSet) {
 		logger.debug("Entering");
 		
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();

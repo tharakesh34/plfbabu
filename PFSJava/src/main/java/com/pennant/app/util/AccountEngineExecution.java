@@ -62,6 +62,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -1650,96 +1651,112 @@ public class AccountEngineExecution implements Serializable {
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry ,
 			Map<String, FeeRule> feeRuleDetailMap, String finCcy,DataSetFiller dataSetFiller,
-			AECommitment aeCommitment,VASRecording vASRecording) throws IllegalAccessException, InvocationTargetException{
+			AECommitment aeCommitment, VASRecording vASRecording) throws IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("Entering");
 
-		//Execute Transaction Entry Rule
+		// Execute Transaction Entry Rule
 		BigDecimal amount = BigDecimal.ZERO;
-		if(event.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)){
+		if (event.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)) {
 			event = AccountEventConstants.ACCEVENT_ADDDBS;
 		}
 
 		String amountRule = transactionEntry.getAmountRule();
 		String[] res = StringUtils.trimToEmpty(transactionEntry.getFeeCode()).split(",");
-		
-		if(res.length > 0){
+
+		if (res.length > 0) {
 			for (int i = 0; i < res.length; i++) {
-				if(!(StringUtils.isBlank(res[i]) || "Result".equalsIgnoreCase(res[i]))){
+				if (!(StringUtils.isBlank(res[i]) || "Result".equalsIgnoreCase(res[i]))) {
 					String trim = res[i].trim();
-					
-					if(feeRuleDetailMap != null && feeRuleDetailMap.containsKey(trim.substring(0, trim.contains("_") ? trim.indexOf('_'): trim.length()))){
-						FeeRule feeRule = feeRuleDetailMap.get(trim.substring(0,
-								trim.contains("_") ? trim.indexOf('_'): trim.length()));
-						
-						if(amountRule.contains(trim+"_C")){
-							amountRule = amountRule.replace(trim+"_C",feeRule.getFeeAmount().toString());
+
+					if (feeRuleDetailMap != null
+							&& feeRuleDetailMap.containsKey(trim.substring(0, trim.contains("_") ? trim.indexOf('_')
+									: trim.length()))) {
+						FeeRule feeRule = feeRuleDetailMap.get(trim.substring(0, trim.contains("_") ? trim.indexOf('_')
+								: trim.length()));
+
+						if (amountRule.contains(trim + "_C")) {
+							amountRule = amountRule.replace(trim + "_C", feeRule.getFeeAmount().toString());
 						}
-						if(amountRule.contains(trim+"_W")){
-							amountRule = amountRule.replace(trim+"_W",feeRule.getWaiverAmount().toString());
+						if (amountRule.contains(trim + "_W")) {
+							amountRule = amountRule.replace(trim + "_W", feeRule.getWaiverAmount().toString());
 						}
-						if(amountRule.contains(trim+"_P")){
-							amountRule = amountRule.replace(trim+"_P",feeRule.getPaidAmount().toString());
+						if (amountRule.contains(trim + "_P")) {
+							amountRule = amountRule.replace(trim + "_P", feeRule.getPaidAmount().toString());
 						}
-						if(amountRule.contains(trim+"_AF")){
-							if(StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-								amountRule = amountRule.replace(trim+"_AF",(feeRule.getFeeAmount().subtract(
-										feeRule.getWaiverAmount()).subtract(feeRule.getPaidAmount())).toString());
-							}else{
-								amountRule = amountRule.replace(trim+"_AF","0");
+						if (amountRule.contains(trim + "_AF")) {
+							if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
+								amountRule = amountRule.replace(trim + "_AF",
+										(feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount()).subtract(feeRule
+												.getPaidAmount())).toString());
+							} else {
+								amountRule = amountRule.replace(trim + "_AF", "0");
 							}
 						}
-					}else{
-						Rule rule = getRuleDAO().getRuleByID(trim, RuleConstants.MODULE_FEES ,event , "");
-						if (event.equals(AccountEventConstants.ACCEVENT_NEWCMT)|| event.equals(AccountEventConstants.ACCEVENT_MNTCMT)) {
-							if(rule != null){
+						if (amountRule.contains(trim + "_SCH")) {
+							if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+									|| feeRule.getFeeToFinance().equals(
+											CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+									|| feeRule.getFeeToFinance().equals(
+											CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+								amountRule = amountRule.replace(trim + "_SCH", feeRule.getFeeAmount().toString());
+							} else {
+								amountRule = amountRule.replace(trim + "_SCH", "0");
+							}
+						}
+					} else {
+						Rule rule = getRuleDAO().getRuleByID(trim, RuleConstants.MODULE_FEES, event, "");
+						if (event.equals(AccountEventConstants.ACCEVENT_NEWCMT)
+								|| event.equals(AccountEventConstants.ACCEVENT_MNTCMT)) {
+							if (rule != null) {
 								try {
-									amount =  (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), aeCommitment.getDeclaredFieldValues(),
-											finCcy, RuleReturnType.DECIMAL);
-									
-									if(amountRule.contains(trim+"_C")){
-										amountRule = amountRule.replace(trim+"_C",amount.toString());
+									amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
+											aeCommitment.getDeclaredFieldValues(), finCcy, RuleReturnType.DECIMAL);
+
+									if (amountRule.contains(trim + "_C")) {
+										amountRule = amountRule.replace(trim + "_C", amount.toString());
 									}
-									if(amountRule.contains(trim+"_W")){
-										amountRule = amountRule.replace(trim+"_W","0");
+									if (amountRule.contains(trim + "_W")) {
+										amountRule = amountRule.replace(trim + "_W", "0");
 									}
-									if(amountRule.contains(trim+"_P")){
-										amountRule = amountRule.replace(trim+"_P","0");
+									if (amountRule.contains(trim + "_P")) {
+										amountRule = amountRule.replace(trim + "_P", "0");
 									}
-									if(amountRule.contains(trim+"_AF")){
-										if(StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-											amountRule = amountRule.replace(trim+"_AF",amount.toString());
-										}else{
-											amountRule = amountRule.replace(trim+"_AF","0");
+									if (amountRule.contains(trim + "_AF")) {
+										if (StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
+											amountRule = amountRule.replace(trim + "_AF", amount.toString());
+										} else {
+											amountRule = amountRule.replace(trim + "_AF", "0");
 										}
 									}
-								}catch (Exception e) {
+								} catch (Exception e) {
 									logger.error("Exception: ", e);
 								}
 							}
-						}else{
-							if(rule != null){
+						} else {
+							if (rule != null) {
 								try {
-									Object result = getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataSetFiller.getDeclaredFieldValues(),
-											finCcy, RuleReturnType.DECIMAL);
+									Object result = getRuleExecutionUtil().executeRule(rule.getSQLRule(),
+											dataSetFiller.getDeclaredFieldValues(), finCcy, RuleReturnType.DECIMAL);
 									amount = new BigDecimal(result == null ? "0" : result.toString());
-									
-									if(amountRule.contains(trim+"_W")){
-										amountRule = amountRule.replace(trim+"_W","0");
+
+									if (amountRule.contains(trim + "_W")) {
+										amountRule = amountRule.replace(trim + "_W", "0");
 									}
-									if(amountRule.contains(trim+"_C")){
-										amountRule = amountRule.replace(trim+"_C",amount.toString());
+									if (amountRule.contains(trim + "_C")) {
+										amountRule = amountRule.replace(trim + "_C", amount.toString());
 									}
-									if(amountRule.contains(trim+"_P")){
-										amountRule = amountRule.replace(trim+"_P","0");
+									if (amountRule.contains(trim + "_P")) {
+										amountRule = amountRule.replace(trim + "_P", "0");
 									}
-									if(amountRule.contains(trim+"_AF")){
-										if(StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)){
-											amountRule = amountRule.replace(trim+"_AF",amount.toString());
-										}else{
-											amountRule = amountRule.replace(trim+"_AF","0");
+									if (amountRule.contains(trim + "_AF")) {
+										if (StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
+											amountRule = amountRule.replace(trim + "_AF", amount.toString());
+										} else {
+											amountRule = amountRule.replace(trim + "_AF", "0");
 										}
 									}
-								}catch (Exception e) {
+								} catch (Exception e) {
 									logger.error("Exception: ", e);
 								}
 							}
@@ -1752,19 +1769,19 @@ public class AccountEngineExecution implements Serializable {
 		Object result = null;
 
 		if (event.contains("CMT")) {
-			result = getRuleExecutionUtil().executeRule(amountRule, aeCommitment.getDeclaredFieldValues(),
-					finCcy, RuleReturnType.DECIMAL);
-		}else if(event.contains("VAS")){
-			result = getRuleExecutionUtil().executeRule(amountRule, vASRecording.getDeclaredFieldValues(),
-					finCcy, RuleReturnType.DECIMAL);
-		}else{
-			result = getRuleExecutionUtil().executeRule(amountRule, dataSetFiller.getDeclaredFieldValues(),
-					finCcy, RuleReturnType.DECIMAL);
+			result = getRuleExecutionUtil().executeRule(amountRule, aeCommitment.getDeclaredFieldValues(), finCcy,
+					RuleReturnType.DECIMAL);
+		} else if (event.contains("VAS")) {
+			result = getRuleExecutionUtil().executeRule(amountRule, vASRecording.getDeclaredFieldValues(), finCcy,
+					RuleReturnType.DECIMAL);
+		} else {
+			result = getRuleExecutionUtil().executeRule(amountRule, dataSetFiller.getDeclaredFieldValues(), finCcy,
+					RuleReturnType.DECIMAL);
 		}
-		amount = (BigDecimal)result;
-		
+		amount = (BigDecimal) result;
 
 		logger.debug("Leaving");
+
 		return amount;
 	}
 
