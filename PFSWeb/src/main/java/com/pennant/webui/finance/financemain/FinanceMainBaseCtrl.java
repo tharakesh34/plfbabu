@@ -4666,6 +4666,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
+			
+			if (this.gracePftRate.isVisible() && !this.gracePftRate.isReadonly()) {
+				this.gracePftRate.setConstraint(new PTDecimalValidator(Labels
+						.getLabel("label_FinanceMainDialog_GracePftRate.value"), 9, true, false));
+			}
 			if (!this.graceRate.isMarginReadonly()) {
 				this.graceRate.setMarginConstraint(new PTDecimalValidator(Labels
 						.getLabel("label_FinanceMainDialog_GraceMargin.value"), 9, false, true, -9999, 9999));
