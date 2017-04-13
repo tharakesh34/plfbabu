@@ -54,6 +54,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
 
 public class FeeScheduleCalculator {
 	private final static Logger	logger					= Logger.getLogger(FeeScheduleCalculator.class);
@@ -191,7 +192,7 @@ public class FeeScheduleCalculator {
 	}
 
 	
-	private boolean allowFeeToSchedule(FinanceScheduleDetail finScheduleDetail,FinScheduleData finScheduleDataTemp){
+	private boolean allowFeeToSchedule(FinanceScheduleDetail curSchd,FinScheduleData finScheduleDataTemp){
 		/*if (finScheduleDetail.isDisbOnSchDate() || !finScheduleDetail.isRepayOnSchDate() || StringUtils.isNotEmpty(finScheduleDetail.getBpiOrHoliday()) || 
 				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getGrcPeriodEndDate()) <= 0 ||
 				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getCalMaturity()) > 0){
@@ -200,8 +201,9 @@ public class FeeScheduleCalculator {
 			return true;
 		}*/
 		
-		if (finScheduleDetail.isDisbOnSchDate() || StringUtils.isNotEmpty(finScheduleDetail.getBpiOrHoliday())
-				|| (!finScheduleDetail.isPftOnSchDate() && !finScheduleDetail.isRepayOnSchDate())) {
+		if (curSchd.isDisbOnSchDate() || (StringUtils.isNotEmpty(curSchd.getBpiOrHoliday()) && 
+				!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI))
+				|| (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate())) {
 			return false;
 		}
 

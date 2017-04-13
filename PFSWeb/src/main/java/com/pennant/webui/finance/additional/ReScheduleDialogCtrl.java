@@ -370,42 +370,79 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 		
 		if (financeScheduleDetails != null) {
-			
 			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			FinanceScheduleDetail prvSchd = null;
+			boolean isPrvShcdAdded = false;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				
-				// Not Allowing Grace Period Dates
-				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
-					continue;
+				if(i == 0){
+					prvSchd = curSchd;
 				}
 
+				// Not Allowing Grace Period Dates
+				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
+					if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
+						prvSchd = curSchd;
+					}
+					continue;
+				}
+				
 				//Not Review Date
-				if (!curSchd.isRepayOnSchDate()) {
+				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+					continue;
+				}
+				
+				// Only allowed if payment amount is greater than Zero
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 
 				//Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
+					
+					prvSchd = curSchd;
 					continue;
 				}
-				
+
 				//Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
+					prvSchd = curSchd;
 					continue;
 				}
 				
-				// Should not allow Maturity and after Closing Balance is Zero terms
-				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
+				if(i == financeScheduleDetails.size() -1){
 					continue;
+				}
+				
+				if(prvSchd != null && !isPrvShcdAdded){
+					comboitem = new Comboitem();
+					comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+					comboitem.setValue(prvSchd.getSchDate());
+					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
+					this.cbFrqFromDate.appendChild(comboitem);
+					isPrvShcdAdded = true;
 				}
 				
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
+				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
-				comboitem.setAttribute("fromSpecifier",curSchd.getSpecifier());
+				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);
+				
+				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+					break;
+				}
 			}
 		}
 		logger.debug("Leaving");

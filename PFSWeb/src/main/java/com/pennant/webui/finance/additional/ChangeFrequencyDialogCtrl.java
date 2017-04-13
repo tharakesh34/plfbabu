@@ -289,17 +289,30 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (financeScheduleDetails != null) {
 			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			FinanceScheduleDetail prvSchd = null;
+			boolean isPrvShcdAdded = false;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				if(i == 0){
+					prvSchd = curSchd;
+				}
 
 				// Not Allowing Grace Period Dates
 				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
+					if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
+						prvSchd = curSchd;
+					}
 					continue;
 				}
 				
 				//Not Review Date
-				if (!curSchd.isRepayOnSchDate()) {
+				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+					continue;
+				}
+				
+				// Only allowed if payment amount is greater than Zero
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 
@@ -310,6 +323,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setValue("#");
 					comboitem.setLabel(Labels.getLabel("Combo.Select"));
 					this.cbFrqFromDate.appendChild(comboitem);
+					
+					prvSchd = curSchd;
 					continue;
 				}
 
@@ -320,11 +335,21 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setValue("#");
 					comboitem.setLabel(Labels.getLabel("Combo.Select"));
 					this.cbFrqFromDate.appendChild(comboitem);
+					prvSchd = curSchd;
 					continue;
 				}
 				
 				if(i == financeScheduleDetails.size() -1){
 					continue;
+				}
+				
+				if(prvSchd != null && !isPrvShcdAdded){
+					comboitem = new Comboitem();
+					comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+					comboitem.setValue(prvSchd.getSchDate());
+					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
+					this.cbFrqFromDate.appendChild(comboitem);
+					isPrvShcdAdded = true;
 				}
 				
 				comboitem = new Comboitem();

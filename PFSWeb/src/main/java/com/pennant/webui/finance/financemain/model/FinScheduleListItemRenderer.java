@@ -717,9 +717,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 			}
 			if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
-				String emiHold = "listcell_EMIHOld_label";
+				String emiHold = "listcell_EMIHold_label";
 				doFillListBox(getFinanceScheduleDetail(), count,Labels.getLabel(emiHold, 
-						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getSchDate())}),
+						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getDefSchdDate())}),
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
@@ -1693,9 +1693,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 		
 			if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
-				String emiHold = "listcell_EMIHOld_label";
+				String emiHold = "listcell_EMIHold_label";
 				doFillListBox(getFinanceScheduleDetail(), count,Labels.getLabel(emiHold, 
-						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getSchDate())}),
+						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getDefSchdDate())}),
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
@@ -2099,21 +2099,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}else{
 
 				if (data.isRvwOnSchDate() || data.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
-					strDate = DateUtility.formatToLongDate(data.getDefSchdDate()) + " [R]";
+					strDate = DateUtility.formatToLongDate(data.getSchDate()) + " [R]";
 				} else {
-					strDate = DateUtility.formatToLongDate(data.getDefSchdDate());
+					strDate = DateUtility.formatToLongDate(data.getSchDate());
 				}	
-
-				if(StringUtils.equals(data.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
-					if(DateUtility.compare(data.getDefSchdDate(), data.getSchDate()) != 0 && 
-							data.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-						if (data.isRvwOnSchDate() || data.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
-							strDate = DateUtility.formatToLongDate(data.getSchDate()) + " [R]";
-						} else {
-							strDate = DateUtility.formatToLongDate(data.getSchDate());
-						}	
-					}
-				}
 			}
 		}else if(isDropLine && !lastRec){
 			isODSchdLimit = true;
@@ -2685,9 +2674,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 						if( aScheduleDetail.isRvwOnSchDate()){
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 						}
 					}else {
 						data.setSchDate("");
@@ -2739,9 +2728,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 								if (count == 1) {
 									if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 									}else {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 									}
 									data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 								}else{
@@ -2758,7 +2747,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							data.setLabel(Labels.getLabel("label_listcell_downPayment.label"));
 							if (count == 1){
 								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 							}else{
 								data.setSchDate("");
 							}
@@ -2839,23 +2828,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 						if (count == 1) {
 							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 							if( aScheduleDetail.isRvwOnSchDate()) {
-								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 							}else {
-								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 							}
-
-							if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
-								if(DateUtility.compare(aScheduleDetail.getDefSchdDate(), aScheduleDetail.getSchDate()) != 0 && 
-										aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-									if (aScheduleDetail.isRvwOnSchDate() || 
-											aScheduleDetail.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getFinStartDate()) == 0) {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()) + " [R]");
-									} else {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-									}	
-								}
-							}
-
 						}else {
 							data.setSchDate("");
 						}
@@ -2902,23 +2878,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if (count == 1) {
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 						if( aScheduleDetail.isRvwOnSchDate()) {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 						}
-
-						if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
-							if(DateUtility.compare(aScheduleDetail.getDefSchdDate(), aScheduleDetail.getSchDate()) != 0 && 
-									aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-								if (aScheduleDetail.isRvwOnSchDate() || 
-										aScheduleDetail.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getFinStartDate()) == 0) {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()) + " [R]");
-								} else {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-								}	
-							}
-						}
-
 					}else {
 						data.setSchDate("");
 					}
@@ -2961,23 +2924,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if (count == 1) {
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 						if( aScheduleDetail.isRvwOnSchDate()) {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 						}
-
-						if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)){
-							if(DateUtility.compare(aScheduleDetail.getDefSchdDate(), aScheduleDetail.getSchDate()) != 0 && 
-									aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-								if (aScheduleDetail.isRvwOnSchDate() || 
-										aScheduleDetail.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getFinStartDate()) == 0) {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()) + " [R]");
-								} else {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-								}	
-							}
-						}
-
 					}else {
 						data.setSchDate("");
 					}
@@ -2997,6 +2947,24 @@ public class FinScheduleListItemRenderer implements Serializable{
 					count = 2;
 				}
 			}
+			
+			// Hold EMI Information 
+			if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
+				data = new FinanceScheduleReportData();	
+				data.setLabel(Labels.getLabel("listcell_EMIHold_label.label"));
+				data.setSchDate("");
+				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
+				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
+				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
+				data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));				
+				data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
+				data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+				reportList.add(data);
+				count = 2;
+
+			}
+			
 			if (aScheduleDetail.isCpzOnSchDate() && aScheduleDetail.getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
 				data = new FinanceScheduleReportData();	
 				String label = Labels.getLabel("label_listcell_capital.label");
@@ -3011,9 +2979,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if (count == 1){
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 					if( aScheduleDetail.isRvwOnSchDate()){
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 					}else {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 					}
 				}else{
 					data.setSchDate("");
@@ -3059,9 +3027,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 							if (count == 1){
 								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 								if( aScheduleDetail.isRvwOnSchDate()){
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 								}else {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 								}
 							}else {
 								data.setSchDate("");
@@ -3152,9 +3120,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 						if( aScheduleDetail.isRvwOnSchDate()){
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 						}
 					}else {
 						data.setSchDate("");
@@ -3198,7 +3166,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							new String[]{DateUtility.formatToLongDate(getFinanceRepayments().get(j).getFinPostDate())}));
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 					}else {
 						data.setSchDate("");
 					}
@@ -3231,7 +3199,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							new String[]{DateUtility.formatToLongDate(recovery.getMovementDate())}));
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 					}else {
 						data.setSchDate("");
 					}
@@ -3261,9 +3229,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if (count == 1){
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 					if( aScheduleDetail.isRvwOnSchDate()){
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 					}else {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 					}
 				}else {
 					data.setSchDate("");
@@ -3306,9 +3274,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if (count == 1) {
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 					if( aScheduleDetail.isRvwOnSchDate()) {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 					}else {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 					}
 				}else {
 					data.setSchDate("");
@@ -3356,7 +3324,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				if (count == 1) {
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 				}else {
 					data.setSchDate("");
 				}
@@ -3439,9 +3407,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
 					if (count == 1) {
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 					}else if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0) {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 					}else {
 						data.setSchDate("");
 					}
@@ -3465,9 +3433,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 				if (count == 1) {
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 				}else if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0 && !isFlatRatebasis) {
-					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())+"[R]");
+					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 				}else {
 					data.setSchDate("");
 				}
@@ -3634,7 +3602,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			FinanceScheduleDetail aScheduleDetail = getFinScheduleData().getFinanceScheduleDetails().get(i);
 			data = new FinanceGraphReportData();
 			data.setRecordNo(i);
-			data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate()));
+			data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 
 			if(i == size-1){
 				data.setProfitBal(BigDecimal.ZERO);
@@ -3685,7 +3653,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				data = new FinanceScheduleReportData();	
 				data.setSchdSeqNo(String.valueOf(schdSeqNo+1));
-				data.setSchDate(DateUtility.formatToLongDate(curSchd.getDefSchdDate()));
+				data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(),false,true));
 				data.setPftAmount(formatAmt(curSchd.getProfitCalc(),false,true));				
 				data.setSchdPft(formatAmt(curSchd.getProfitSchd(),false,true));				
@@ -3693,7 +3661,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setTotalAmount(formatAmt(curSchd.getRepayAmount(),false,true));
 
 				//Exclude Grace Schedule term Details
-				if(curSchd.getDefSchdDate().compareTo(aFinScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0){
+				if(curSchd.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0){
 					reportList.add(data);
 					schdSeqNo = schdSeqNo+1;
 				}

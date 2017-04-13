@@ -72,14 +72,6 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				continue;
 			}
 			
-			if(!curSchd.isRepayOnSchDate()){
-				curSchd.setDisbOnSchDate(false);
-				curSchd.setDisbAmount(BigDecimal.ZERO);
-				curSchd.setFeeChargeAmt(BigDecimal.ZERO);
-				prvSchd = curSchd;
-				continue;
-			}
-			
 			Calendar newDate = Calendar.getInstance();
 			newDate.setTime(curSchd.getSchDate());
 			int maxdays = newDate.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -100,7 +92,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			curSchd.setDisbAmount(BigDecimal.ZERO);
 			curSchd.setFeeChargeAmt(BigDecimal.ZERO);
 			
-			if(prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
+			if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
 				scheduleList.remove(i-1);
 				i--;
 			}

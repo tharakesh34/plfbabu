@@ -374,6 +374,12 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 				
+				// BPI case not allowed to Re-age except Hold EMI
+				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday()) && 
+						!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)){
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
@@ -429,8 +435,9 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				// BPI case not allowed to Re-age
-				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())){
+				// BPI case not allowed to Re-age except Hold EMI
+				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday()) && 
+						!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)){
 					continue;
 				}
 

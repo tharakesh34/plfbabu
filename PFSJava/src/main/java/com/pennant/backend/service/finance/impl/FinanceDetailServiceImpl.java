@@ -2710,12 +2710,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (!isWIF) {
 			auditHeader = executeAccountingProcess(auditHeader, curBDay);
-			
-			// BPI Treatment case: If Deduct From Disbursement -- TODO
-			// 1. Pay First Schedule term, when Flag = "BPI" & BPI treatment Method is "Deduct From Disbursement"
-			// 2. Execute Payment for First Schedule BPI term
-			// 3. Update Schedule Payments in Object before Save to avoid locks
-			
 		}
 		
 		//Validation Checking for All Finance Detail data

@@ -1424,7 +1424,8 @@ public class ScheduleCalculator {
 			
 			adjTerms = adjTerms + 1;
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_POSTPONE);
 			}
 
@@ -1472,7 +1473,8 @@ public class ScheduleCalculator {
 			
 			adjTerms = adjTerms + 1;
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_REAGE);
 			}
 
@@ -1566,7 +1568,8 @@ public class ScheduleCalculator {
 				break;
 			}
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_UNPLANNED);
 			}
 		}
@@ -2640,6 +2643,7 @@ public class ScheduleCalculator {
 		finMain.setTotalProfit(BigDecimal.ZERO);
 		finMain.setTotalGrossPft(BigDecimal.ZERO);
 		finMain.setTotalRepayAmt(BigDecimal.ZERO);
+		finMain.setSchdIndex(0);
 
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		Date schdDate = new Date();
