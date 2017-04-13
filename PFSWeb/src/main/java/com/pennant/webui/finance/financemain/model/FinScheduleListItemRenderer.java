@@ -722,7 +722,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getDefSchdDate())}),
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
-						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
+						false, false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate() && 
@@ -1698,7 +1698,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						new String[]{ DateUtility.formatToLongDate(getFinanceScheduleDetail().getDefSchdDate())}),
 						BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
 						BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,false, isRate,
-						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
+						false, false, false, "","",0, null,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, false);
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate() && 
