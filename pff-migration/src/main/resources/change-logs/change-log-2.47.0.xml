@@ -2403,5 +2403,11 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 		
 	</sql>
 </changeSet>
-
+<changeSet id="119" author="SreeRavali">
+	<sql>
+		Insert into RMTACCOUNTINGSET values ((Select MAX(ACCOUNTSETID) + 1
+		from
+		RMTACCOUNTINGSET),'HLDEMI','Default','Default',0,1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
