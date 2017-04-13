@@ -356,8 +356,13 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 			setObject(null);
 			onClose();
 			
-			if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME,
+					ImplementationConstants.CLIENT_BFL)) {
 				setUserAction(1);
+				if(validateUserMultiSelection()){
+					setUserAction(2);
+					return;
+				}
 				List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 				for (int i = 0; i < listbox.getItems().size(); i++) {
 					Listitem listitem = listbox.getItems().get(i);
@@ -370,25 +375,46 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 								setUserAction(-1);
 							} else {
 								setUserAction(1);
-								CustomerDedup customer = (CustomerDedup) listitem.getAttribute("data");
-									if (customer.isNewCustDedupRecord()) {
-										customer.setOverrideUser(curAccessedUser);
-									}
-									customerDedupList.add(customer);
-									break;
+								CustomerDedup customer = (CustomerDedup) listitem
+										.getAttribute("data");
+								if (customer.isNewCustDedupRecord()) {
+									customer.setOverrideUser(curAccessedUser);
+								}
+								customerDedupList.add(customer);
+								break;
 							}
 						}
 					}
 				}
 
 				if (getUserAction() == -1) {
-					MessageUtil
-							.showErrorMessage(Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
+					return;
 				} else {
 					setObject(customerDedupList);
 					onClose();
 				}
-			
+
+			}
+		}
+
+		private boolean validateUserMultiSelection() throws InterruptedException {
+			int userMultiselect = 0;
+			for (int i = 0; i < listbox.getItems().size(); i++) {
+				Listitem listitem = listbox.getItems().get(i);
+				List<Component> componentList = ((Listcell) listitem
+						.getLastChild()).getChildren();
+				if (componentList != null && componentList.size() > 0) {
+					Component component = componentList.get(0);
+					if (((Checkbox) component).isChecked()) {
+						userMultiselect++;
+					}
+				}
+			}
+
+			if (userMultiselect > 1) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 	}

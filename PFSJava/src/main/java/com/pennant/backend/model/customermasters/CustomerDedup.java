@@ -108,6 +108,7 @@ public class CustomerDedup {
 		excludeFields.add("tradeLicenceNo");
 		excludeFields.add("registrationNo");
 		excludeFields.add("titleDeedNo");
+		excludeFields.add("appScore");
 		return excludeFields;
 	}
 	

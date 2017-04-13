@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -94,9 +95,15 @@ public class FetchFinCustomerDedupDetails {
 			 */
 			if (userAction == -1) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
+				throw new PFFInterfaceException("41001",Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
 			} else if (userAction == 1) {
 				aFinanceDetail.setCustomerDedupList(customerDedupList);
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
+				aFinanceDetail.getCustomerDetails().getCustomer().setDedupFound(true);
+			}else if (userAction == 2) {
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
+				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
+				throw new PFFInterfaceException("41002",Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
 			} else {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
 			}

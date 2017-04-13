@@ -2483,6 +2483,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			for (int i = 0; i < financeDetail.getCustomerDedupList().size(); i++) {
 
 				deDupCustomer = financeDetail.getCustomerDedupList().get(i);
+				deDupCustomer.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 				deDupCustomer.setLastMntBy(lastmntby);
 				deDupCustomer.setRoleCode(roleCode);
 				deDupCustomer.setRecordStatus(recordSts);

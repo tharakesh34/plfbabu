@@ -830,7 +830,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customer.setVersion(customer.getVersion() + 1);
 			customerDAO.update(customer, tableType);
 		}
-
+		if(financeDetail.getCustomerDetails().getCustomer().isDedupFound()){
+			getCustomerDAO().updateProspectCustomer(customer);
+		}
 		String[] fields = PennantJavaUtil.getFieldDetails(customer, customer.getExcludeFields());
 		auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1], customer
 				.getBefImage(), customer));

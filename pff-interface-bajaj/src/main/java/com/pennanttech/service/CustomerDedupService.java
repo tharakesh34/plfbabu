@@ -278,13 +278,19 @@ public class CustomerDedupService {
 		if(detail!=null){
 			customerDetail= new DedupCustomerDetail();
 			
+			//set Demographic details
 			if(detail.getCustDGDetails()!=null && !detail.getCustDGDetails().isEmpty()){
-				setDGDetails(detail.getCustDGDetails().get(0), customerDetail); 
+				setDGDetails(detail.getCustDGDetails().get(0), customerDetail);
+				//get posidex id.
+				logger.debug(""+detail.getReportDetails().getFiller1());
+				if(detail.getReportDetails()!=null)
+				customerDetail.getCustomer().setCustCoreBank(detail.getReportDetails().getFiller1());
 			}
 		}
 
 		List<CustomerAddres> addressList= new ArrayList<CustomerAddres>();
 		
+		//Customer Adderess details List
 		if(detail.getCustAddressDetails()!=null && !detail.getCustAddressDetails().isEmpty()){
 			for (CustAddressDetail addressDetail : detail.getCustAddressDetails()) {
 				addressList.add(setAddress(addressDetail));
@@ -295,6 +301,7 @@ public class CustomerDedupService {
 
 		List<CustomerEMail> customerEMailList= new ArrayList<CustomerEMail>();
 		
+		//E-mails List 
 		if(detail.getCustEmailDetails()!=null && !detail.getCustEmailDetails().isEmpty()){
 			for (CustEmailDetail emailDetail: detail.getCustEmailDetails()) {
 				customerEMailList.add(setEmail(emailDetail));
@@ -302,7 +309,8 @@ public class CustomerDedupService {
 			
 			customerDetail.setCustomerEMailList(customerEMailList);
 		}
-
+		
+		//phone numbers List
 		List<CustomerPhoneNumber> customerPhoneNumList= new ArrayList<CustomerPhoneNumber>();
 		if(detail.getCustContactDetails()!=null && !detail.getCustContactDetails().isEmpty()){
 			for (CustContactDetail contactDetail : detail.getCustContactDetails()) {
@@ -339,6 +347,7 @@ public class CustomerDedupService {
 		customerDetail.setCustomerDocumentsList(listDocuments);
 		return customerDetail;
 	}
+	
 	
 	
 	private CustomerAddres setAddress(CustAddressDetail addressDetail){

@@ -1475,7 +1475,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				customerDedup.setCustDOB(dedupDetail.getCustomer().getCustDOB());
 				customerDedup.setCustFName(dedupDetail.getCustomer().getCustFName());
 				customerDedup.setCustCRCPR(dedupDetail.getCustomer().getCustCRCPR());
-
+				customerDedup.setCustCoreBank(dedupDetail.getCustomer().getCustCoreBank());
 				custDedupList.add(customerDedup);
 				// Add appScore
 				//if(StringUtils.equals(response.getC, str2))

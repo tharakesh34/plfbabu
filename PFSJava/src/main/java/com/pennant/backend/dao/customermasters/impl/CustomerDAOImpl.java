@@ -331,7 +331,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			customer.setCustID(getNextidviewDAO().getNextId("SeqCustomers"));	
 		}
 		//FIXME : To be discussed 
-		customer.setCustCoreBank("T" + customer.getCustCIF());
+		
 		StringBuilder insertSql = new StringBuilder("Insert Into Customers" );
 		insertSql.append(StringUtils.trimToEmpty(type) );
 		insertSql.append("(CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode, CustFName," );

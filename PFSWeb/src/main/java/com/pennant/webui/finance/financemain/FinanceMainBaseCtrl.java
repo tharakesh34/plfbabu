@@ -5902,7 +5902,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}else{
 					if (aFinanceDetail.getCustomerDedupList() != null && !aFinanceDetail.getCustomerDedupList().isEmpty()) {
 						aFinanceDetail.getCustomerDetails().getCustomer().setCustCoreBank(aFinanceDetail.getCustomerDedupList().get(0).getCustCoreBank());
-						aFinanceDetail.getCustomerDetails().getCustomer().setCustCIF(aFinanceDetail.getCustomerDedupList().get(0).getCustCIF());
+						logger.debug("Posidex Id:"+aFinanceDetail.getCustomerDedupList().get(0).getCustCoreBank());
 					}
 				}
 
