@@ -2594,4 +2594,8 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
   	update SECRIGHTS set page='AccountTypeGroupDialog' where Rightname='button_AccountTypeGroupDialog_btnSave'
   </sql>
 </changeSet>
+<changeSet id="127" author="Irfan">
+	<sql>
+		INSERT INTO ReportList Values('PartnerBank','PartnerBank','label_PartnerBankDialog_PartnerBankCode.value,label_PartnerBankDialog_PartnerBankName.value,label_PartnerBankDialog_BankBranchCode.value,     listheader_RecordStatus.label,listheader_RecordType.label','partnerBankCode,partnerBankName,bankBranchCode,recordStatus,recordType','String,String,String,String,String','','ReportList05','Partner Bank Details','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);	</sql>
+</changeSet>
 </databaseChangeLog>
