@@ -2790,4 +2790,14 @@ Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AM
  
  </sql>
  </changeSet>
+ <changeSet id="130" author="chaitanya">
+	<sql>
+	delete from Rules where rulemodule='SUBHEAD' and ruleevent='SUBHEAD' and rulecode='GLCODE';
+		Insert into Rules Values((select max(RuleID) + 1 from Rules),'SUBHEAD', 'SUBHEAD', 'GLCODE','Account Creation', 
+null, 0, null, 'if (reqFinAcType == ''BANK'') {	Result = DISBURSE ; return;  } else {	Result = reqFinType + reqFinAcType ; return; }',
+'(|if|FIELDLIST|reqFinAcType| |==|STATICTEXT|BANK| |1|0|1|1|1|DISBURSE|DISBURSE|~)|~(|else|0|0|0|1|1|reqFinType + reqFinAcType|reqFinType,reqFinAcType|~)|',
+'0', 'C', '0', 1, 1000, sysDate, 'Approved', null, null, null, null, null, 0, 0, null, 0, null, 1, 'F','1', 'reqFinType,reqFinAcType,DISBURSE',
+null);
+	</sql>
+</changeSet>
 </databaseChangeLog>
