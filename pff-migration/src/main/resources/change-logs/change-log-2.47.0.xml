@@ -2441,7 +2441,7 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
 						RMTAccountTypes T4 ON T1.AcType = T4.AcType
 	</createView>
-</changeSet>	
+</changeSet>
 <changeSet author="Surekha" id="117">
 	<renameColumn  columnDataType="int" newColumnName="AcctTypeLevel" oldColumnName="Level" tableName="AccountTypeGroup_Temp"/>
 	<renameColumn  columnDataType="int" newColumnName="AcctTypeLevel" oldColumnName="Level" tableName="AccountTypeGroup"/>
@@ -2542,5 +2542,24 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 			Insert into RMTTRANSACTIONENTRY (ACCOUNTSETID,TRANSORDER,TRANSDESC,DEBITCREDIT,SHADOWPOSTING,ACCOUNTTYPE,ACCOUNTBRANCH,ACCOUNT,ACCOUNTSUBHEADRULE,TRANSCATIONCODE,RVSTRANSACTIONCODE,AMOUNTRULE,RULEDECIDER,FEECODE,CHARGETYPE,ENTRYBYINVESTMENT,OPENNEWFINAC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,POSTTOSYS,DERIVEDTRANORDER) values ((SELECT ACCOUNTSETID From RMTACCOUNTINGSET where ACCOUNTSETCODE = 'BJSCDCHG'),10,'Change in Interest','D',0,'UMFC',null,'BUILD',null,'010','510','Result = PFTCHG;',null,null,'D',0,0,1,0,to_date('20-MAR-17','DD-MON-RR'),'Approved',null,null,null,null,null,0,'E',0);
 		</sql>
 	</changeSet>
-	
+	<changeSet id="124" author="Irfan">
+	<createView replaceIfExists="true" viewName="PartnerBank_View">
+	SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.Usage, T1.AcType, T1.AlwFileDownload, T1.DisbDownload, T1.InFavourLength, T1.AccountCategory, T1.Active	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+			T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PARTNERBANK_Temp  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT		 T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.Usage, T1.AcType, T1.AlwFileDownload, T1.DisbDownload, T1.InFavourLength, T1.AccountCategory, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+						T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBank  T1 INNER JOIN
+			           BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+						
+			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBank_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+			</createView>
+	</changeSet>
 </databaseChangeLog>
