@@ -4512,4 +4512,12 @@
 	
 	<bean id="finTypeAccountingListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<!--Hold EMI -->
+
+	<bean id="holdEMIDialogCtrl"
+		class="com.pennant.webui.finance.additional.HoldEMIDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="holdEMIService" ref="holdEMIService" />
+	</bean>
 </beans>

@@ -888,6 +888,17 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			finServiceInstruction.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		if (wve.size() > 0) {
 			doRemoveValidation();
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -922,17 +933,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			this.window_RateChangeDialog.onClose();
 		}
-		try {
-			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			finServiceInstruction.setRemarks(this.remarks.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1188,10 +1189,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				
-				if(i == financeScheduleDetails.size()-1){
-					continue;
-				}
-				
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				if ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))  
 						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
@@ -1210,6 +1207,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						}
 					} else if(!includeFromDate && DateUtility.compare(curSchd.getSchDate(),fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
+						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
 				//In Recalculation type if Till Date is selected and for the Same date if the profit Balance is greater than zero then will set the pft bal attribute
@@ -1242,9 +1240,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		fillSchFromDates(this.cbRateChangeFromDate,
 				getFinScheduleData().getFinanceScheduleDetails());
-		if(getFinanceScheduleDetail() != null ) {
+		if(getFinScheduleData().getFinanceScheduleDetails() != null ) {
 			fillSchToDates(this.cbRateChangeToDate,
-					getFinScheduleData().getFinanceScheduleDetails(), getFinanceScheduleDetail().getSchDate() );
+					getFinScheduleData().getFinanceScheduleDetails(), (Date)this.cbRateChangeFromDate.getSelectedItem().getValue(),false);
 		}else {
 			fillSchToDates(this.cbRateChangeToDate,
 					getFinScheduleData().getFinanceScheduleDetails(), getFinScheduleData().getFinanceMain().getFinStartDate() );

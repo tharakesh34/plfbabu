@@ -198,6 +198,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_CANCELDISB			= "CancelDisbursement";
 	public static final String FINSER_EVENT_OVERDRAFTSCHD		= "OverdraftSchedule";
 	public static final String FINSER_EVENT_PLANNEDEMI			= "PlannedEMI";
+	public static final String FINSER_EVENT_HOLDEMI	 			= "HoldEMI";
 	public static final String BULK_RATE_CHG	 				= "BulkRateChange";
 	
 	// Finance Collateral Details
@@ -301,6 +302,7 @@ public class FinanceConstants {
 	public static final String FLAG_POSTPONE					= "P";
 	public static final String FLAG_REAGE						= "A";
 	public static final String FLAG_UNPLANNED					= "U";
+	public static final String FLAG_HOLDEMI						= "S";
 	
 	
 	//Recording Fee Type

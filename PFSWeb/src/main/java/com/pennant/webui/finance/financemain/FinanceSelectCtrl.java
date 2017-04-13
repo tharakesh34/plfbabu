@@ -611,7 +611,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public void onClick$btnSearchSchdMethod(Event event) throws  SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-		
+		String whereClause ="";
+		if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)){
+			whereClause = new String( " SchdMethod NOT IN ('EQUAL','GRCNDPAY','MAN_PRI','MANUAL','PRI','PRI_PFT') ");
+		}
 		if(this.oldVar_sortOperator_scheduleMethod == Filter.OP_IN || this.oldVar_sortOperator_scheduleMethod == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
@@ -621,8 +624,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 			
 		}else{
-
-			Object dataObject = ExtendedSearchListBox.show(this.window_FinanceSelect, "ScheduleMethod");
+			Object dataObject = null;
+			if(StringUtils.isEmpty(whereClause)){
+				dataObject = ExtendedSearchListBox.show(this.window_FinanceSelect, "ScheduleMethod");
+			}else{
+				dataObject = ExtendedSearchListBox.show(this.window_FinanceSelect, "ScheduleMethod","",whereClause);
+			}
 			if (dataObject instanceof String) {
 				this.scheduleMethod.setValue("");
 			} else {
@@ -1014,6 +1021,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)){
 			whereClause.append(" AND (MaxReAgeHolidays - AvailedReAgeH > 0 OR RcdMaintainSts ='"+FinanceConstants.FINSER_EVENT_REAGING+"') "); 
 			whereClause.append(" AND FinReference IN ( Select D.FinReference From FinODDetails D Where D.FinCurODAmt > 0 AND D.FinODSchdDate > GrcPeriodEndDate) "); 
+			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}
 	
@@ -2271,6 +2280,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					setDialogCtrl("RolloverFinanceMainDialogCtrl");
 					this.btnNew.setVisible(true);
 					this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceSelectList_NewRollover"));
+				}  else if("tab_HoldEMI".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_HOLDEMI;
+					eventCodeRef  = AccountEventConstants.ACCEVENT_ROLLOVER;
+					workflowCode =  FinanceConstants.FINSER_EVENT_HOLDEMI;
 				}
 				return;
 			}

@@ -7691,12 +7691,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void resetFrqDay(int selectedIndex, boolean inclGrc) {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (StringUtils.isBlank(moduleDefiner)) {
 			// clear error messages on components
 			this.repayPftFrq.getFrqDayCombobox().setErrorMessage("");
 			this.repayRvwFrq.getFrqDayCombobox().setErrorMessage("");
 			this.repayFrq.getFrqDayCombobox().setErrorMessage("");
-
+			
 			if (inclGrc) {
 				if (this.gracePftFrq.getDaySelectedIndex() != selectedIndex) {
 					this.gracePftFrq.resetFrqDay(selectedIndex);
@@ -7743,7 +7742,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				this.nextRepayCpzDate.setText("");
 			}
-		}
 	}
 
 	/**
@@ -15054,7 +15052,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Show Error Details in Schedule Calculation
 				if (scheduleData.getErrorDetails() != null
 						&& !scheduleData.getErrorDetails().isEmpty()) {
-					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(scheduleData.getErrorDetails().get(0)));
+					MessageUtil.showErrorMessage(scheduleData.getErrorDetails().get(0).getError());
 					return;
 				}
 

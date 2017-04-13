@@ -9226,4 +9226,29 @@
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<!-- Hold EMI -->
+	<bean id="holdEMIService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="holdEMIServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="holdEMIServiceTarget"
+		class="com.pennant.backend.financeservice.impl.HoldEMIServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
+	</bean>
 </beans>

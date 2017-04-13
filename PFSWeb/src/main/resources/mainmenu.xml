@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE XMLRootMenu>
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
  
@@ -330,7 +329,8 @@
 	   <menuItem id="menu_Item_FinanceFlags" zulNavigation="/WEB-INF/pages/FinanceManagement/FinanceFlags/FinanceFlagsList.zul"  rightName="menuItem_FinanceManagement_FinanceFlags"/> 
  	   <menuItem id="menu_Item_JVPosting" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingList.zul" rightName="menuItem_others_JVPosting"/>
 	   <menuItem id="menu_Item_FinSuspHold" zulNavigation="/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldList.zul" rightName ="menuItem_FinanceManagement_FinSuspHold" />
-<!-- 	   <menuItem id="menu_Item_InventorySettlement" zulNavigation="/WEB-INF/pages/FinanceManagement/InventorySettlement/InventorySettlementList.zul" rightName="menuItem_FinanceManagement_CustSuspense"/> -->
+	   <menuItem id="menu_Item_HoldEMI" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_HoldEMI"/> 
+<!-- 	     <menuItem id="menu_Item_InventorySettlement" zulNavigation="/WEB-INF/pages/FinanceManagement/InventorySettlement/InventorySettlementList.zul" rightName="menuItem_FinanceManagement_CustSuspense"/> -->
 	   <menuItem id="menu_Item_LiabilityRequest" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" rightName="menuItem_FinanceManagement_LiabilityRequest"/> 
        <menuItem id="menu_Item_SuspHead" zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul?rightName=menuItem_FinanceManagement_SuspHead"  rightName="menuItem_FinanceManagement_SuspHead"/>
 	   <menuItem id="menu_Item_NOCIssuance" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" rightName="menuItem_FinanceManagement_NOCIssuance"/>

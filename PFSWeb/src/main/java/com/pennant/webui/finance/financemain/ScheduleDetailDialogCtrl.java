@@ -215,6 +215,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Button btnReschedule; // autoWired
 	protected Button btnSuplRentIncrCost; // autoWired
 	protected Button btnReAgeHolidays; // autoWired
+	protected Button btnHoldEMI; // autoWired
 	protected Button btnPrintSchedule; // autoWired
 
 	protected Listheader listheader_ScheduleDetailDialog_Date;
@@ -553,6 +554,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
 		this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 		this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
+		this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 		this.btnSuplRentIncrCost.setVisible(false);
 
 		this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
@@ -570,6 +572,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeFrq.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
 		this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 		this.btnReAgeHolidays.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
+		this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 		this.btnSuplRentIncrCost.setDisabled(true);
 		
 		if(StringUtils.isBlank(moduleDefiner)){
@@ -583,9 +586,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnChangeProfit.setVisible(false);
 			this.btnSubSchedule.setDisabled(true);
 			this.btnChangeProfit.setDisabled(true);
+			this.btnHoldEMI.setVisible(false);
+			this.btnHoldEMI.setDisabled(true);
 		}else if(isWIF){
 			this.btnPostponement.setVisible(false);
 			this.btnPostponement.setDisabled(true);
+			this.btnHoldEMI.setVisible(false);
+			this.btnHoldEMI.setDisabled(true);
 			this.btnUnPlanEMIH.setVisible(false);
 			this.btnUnPlanEMIH.setDisabled(true);
 			this.btnReAgeHolidays.setVisible(false);
@@ -1081,10 +1088,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				try {
 
 					this.schdl_noOfTerms.setValue(String.valueOf(totGrcTerms + totRepayTerms));
-					if(isOverdraft){
-						this.schdl_odyearlyTenor.setValue(String.valueOf(financeMain.getNumberOfTerms()/12));
-						this.schdl_odMnthTenor.setValue(String.valueOf(financeMain.getNumberOfTerms()%12));
-					}
 					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
 								.invoke(financeMainDialogCtrl, aFinSchData);
@@ -1567,6 +1570,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeFrq.setVisible(false);
 		this.btnReschedule.setVisible(false);
 		this.btnReAgeHolidays.setVisible(false);
+		this.btnHoldEMI.setVisible(false);
 		this.btnSuplRentIncrCost.setVisible(false);
 
 		this.btnAddReviewRate.setDisabled(true);
@@ -1584,6 +1588,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeFrq.setDisabled(true);
 		this.btnReschedule.setDisabled(true);
 		this.btnReAgeHolidays.setDisabled(true);
+		this.btnHoldEMI.setDisabled(true);
 		this.btnSuplRentIncrCost.setDisabled(true);
 
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG)) {
@@ -1657,7 +1662,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 			this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
 
-		} 
+		}  else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
+			this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
+			this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
+			
+		}
 		logger.debug("Leaving");
 	}
 
@@ -2187,6 +2196,33 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
+	 * when the "AddRepay" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnHoldEMI(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
+		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
+		map.put("disbursement", true);
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("isWIF", isWIF);
+		
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/HoldEMIDialog.zul",
+					window_ScheduleDetailDialog, map);
+		} catch (Exception e) {
+			logger.error("Exception: Opening window", e);
+			MessageUtil.showErrorMessage(e.toString());
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
 	 * Method to open child window based on selected menu item
 	 * 
 	 * */
@@ -2277,6 +2313,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESCHD)) {
 			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule")) {
 				Events.postEvent("onClick$btnReschedule", this.window_ScheduleDetailDialog, null);
+			}
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
+			if(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI")) {
+				Events.postEvent("onClick$btnHoldEMI", this.window_ScheduleDetailDialog, null);
+			}else{
+				this.btnHoldEMI.setVisible(false);
 			}
 		}
 		logger.debug("Leaving");

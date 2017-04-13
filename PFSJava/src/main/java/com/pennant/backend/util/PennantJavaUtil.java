@@ -1278,6 +1278,10 @@ public class PennantJavaUtil {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
 
+		ModuleUtil.register("HoldEMI", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
+		
 		/************ Finance Related Module Details *************/
 
 		ModuleUtil.register("FinContributorHeader", new ModuleMapping("FinContributorHeader",

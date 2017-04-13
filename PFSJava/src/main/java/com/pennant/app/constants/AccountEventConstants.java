@@ -108,5 +108,6 @@ public class AccountEventConstants {
 	public static final String  ACCEVENT_VAS_FEE 		= "VASFEE";	
 	public static final String	ACCEVENT_DEFAULT		= "DEFAULT";
 	public static final String	ACCEVENT_DISBINS		= "DISBINS";
+	public static final String	ACCEVENT_HOLDEMI		= "HLDEMI";
 
 }

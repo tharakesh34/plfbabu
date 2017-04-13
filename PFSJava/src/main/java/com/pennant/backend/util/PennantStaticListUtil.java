@@ -1659,6 +1659,7 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,Labels.getLabel("label_FinSerEvent_OverdraftSchedule")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_PLANNEDEMI,Labels.getLabel("label_FinSerEvent_PlannedEMI")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_REAGING,Labels.getLabel("label_FinSerEvent_ReAging")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_HOLDEMI,Labels.getLabel("label_FinSerEvent_HoldEMI")));
 		}
 		return finServiceEvents;
 	}
@@ -2357,6 +2358,7 @@ public class PennantStaticListUtil {
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EARLYPAY, Labels.getLabel("label_AccountingEvent_EARLYPAY"),true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMENDMENT, Labels.getLabel("label_AccountingEvent_AMENDMENT"),true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DEFRPY, Labels.getLabel("label_AccountingEvent_POSTPONEMENT"), true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_HOLDEMI, Labels.getLabel("label_AccountingEvent_HOLDEMI"), false));
 		}
 		return accountingEventsServicing;
 	}
