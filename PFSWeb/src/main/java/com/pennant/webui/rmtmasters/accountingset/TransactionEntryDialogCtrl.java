@@ -767,6 +767,16 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_TranscationCode.value") }));
 		}
 		
+		if (!this.btnSearchAccountSubHeadRule.isDisabled()) {
+			this.lovDescAccountSubHeadRuleName.setConstraint("NO EMPTY:"
+					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountSubHeadRule.value") }));
+		}
+		
+		if (!this.btnSearchAccountType.isDisabled()) {
+			this.lovDescAccountTypeName.setConstraint("NO EMPTY:"
+					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_AccountType.value") }));
+		}
+		
 		if (!this.btnSearchRvsTransactionCode.isDisabled()) {
 			this.lovDescRvsTransactionCodeName.setConstraint("NO EMPTY:"
 					+ Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_TransactionEntryDialog_RvsTransactionCode.value") }));

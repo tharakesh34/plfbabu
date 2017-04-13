@@ -305,7 +305,7 @@
 											value="${c:l('label_TransactionEntryDialog_AccountSubHeadRule.value')}" />
 										<hbox>
 											<space spacing="2px"
-												id="spSubHead" />
+												id="spSubHead" sclass="mandatory" />
 											<textbox
 												id="accountSubHeadRule" width="72px" visible="false" />
 											<textbox
