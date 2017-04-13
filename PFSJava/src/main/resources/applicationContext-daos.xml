@@ -9083,19 +9083,19 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
-	<!-- SponsorBank -->
-	<bean id="sponsorBankDAO"
-		class="com.pennant.backend.dao.sponsorbank.impl.SponsorBankDAOImpl"
+	<!-- PartnerBank -->
+	<bean id="partnerBankDAO"
+		class="com.pennant.backend.dao.partnerbank.impl.PartnerBankDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="sponsorBankService"
+	<bean id="partnerBankService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
 		<property name="target">
-			<ref bean="sponsorBankServiceTarget" />
+			<ref bean="partnerBankServiceTarget" />
 		</property>
 		<property name="transactionAttributes">
 			<props>
@@ -9108,9 +9108,9 @@
 		</property>
 	</bean>
 
-	<bean name="sponsorBankServiceTarget"
-		class="com.pennant.backend.service.sponsorbank.impl.SponsorBankServiceImpl">
-		<property name="sponsorBankDAO" ref="sponsorBankDAO" />
+	<bean name="partnerBankServiceTarget"
+		class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl">
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	<!--============ Reference ID Generation Configuration ============== -->

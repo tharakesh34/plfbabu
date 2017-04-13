@@ -175,6 +175,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> frequencyDays;
 	private static ArrayList<ValueLabel> assetOrLiability;
 	private static ArrayList<ValueLabel> accountType;
+	private static ArrayList<ValueLabel> bankAccountType;
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -2486,11 +2487,20 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAccountType() {
 		if(accountType == null){
 			accountType = new ArrayList<ValueLabel>(3);
-			accountType.add(new ValueLabel("D", Labels.getLabel("label_SponsorBank_AccType_Disbursements")));
 			accountType.add(new ValueLabel("P", Labels.getLabel("label_SponsorBank_AccType_Payments")));
+			accountType.add(new ValueLabel("R", Labels.getLabel("label_SponsorBank_AccType_Receipts")));
 			accountType.add(new ValueLabel("B", Labels.getLabel("label_SponsorBank_AccType_Both")));
 		}
 		return accountType;
+	}
+	
+	public static ArrayList<ValueLabel> getBankAccountType(){
+		if(bankAccountType == null){
+			bankAccountType = new ArrayList<ValueLabel>(2);
+			bankAccountType.add(new ValueLabel("C", Labels.getLabel("label_SponsorBank_Cash")));
+			bankAccountType.add(new ValueLabel("B", Labels.getLabel("label_SponsorBank_Bank")));
+		}
+		return bankAccountType;
 	}
 	
 }
