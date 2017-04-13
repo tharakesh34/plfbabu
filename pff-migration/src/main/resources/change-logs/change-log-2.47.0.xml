@@ -2562,4 +2562,10 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBank_TEMP WHERE PartnerBankId = T1.PartnerBankId)
 			</createView>
 	</changeSet>
+	<changeSet author="Irfan" id="125">
+		<dropNotNullConstraint tableName="PartnerBank" columnName="PartnerBankName" columnDataType="varchar(50)"/>
+		<dropNotNullConstraint tableName="PartnerBank" columnName="UtilityCode" columnDataType="varchar(8)"/>
+		<dropNotNullConstraint tableName="PartnerBank_Temp" columnName="PartnerBankName" columnDataType="varchar(50)"/>
+		<dropNotNullConstraint tableName="PartnerBank_Temp" columnName="UtilityCode" columnDataType="varchar(8)"/>
+</changeSet>
 </databaseChangeLog>
