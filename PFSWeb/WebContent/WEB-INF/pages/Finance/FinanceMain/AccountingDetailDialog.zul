@@ -106,7 +106,7 @@
 											<listheader
 												id="listheader_Acc_AccountType"
 												label="${c:l('listheader_Acc_AccountType.label')}"
-												sort="false" hflex="min" />
+												sort="false" hflex="min" visible="false"/>
 											<listheader
 												id="listheader_Acc_AccountNo"
 												label="${c:l('listheader_Acc_AccountNo.label')}"

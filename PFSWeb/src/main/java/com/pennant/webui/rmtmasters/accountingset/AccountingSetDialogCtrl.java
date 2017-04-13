@@ -67,7 +67,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -116,22 +115,23 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * component with the same 'id' in the ZUL-file are getting autowired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_AccountingSetDialog; // autowired
+	protected Window 		window_AccountingSetDialog; 
 
-	protected ExtendedCombobox 		eventCode; 					// autowired
-	protected Textbox 		accountSetCode; 			// autowired
-	protected Textbox 		accountSetCodeName; 		// autowired
-	protected Checkbox 		entryByInvestment; 			// autowired
-	protected Checkbox 		systemDefault;				// autowired
-	protected Button 		btnCopyTo;					// autowired
+	protected ExtendedCombobox 		eventCode; 					
+	protected Textbox 		accountSetCode; 			
+	protected Textbox 		accountSetCodeName; 		
+	protected Checkbox 		entryByInvestment; 			
+	protected Checkbox 		systemDefault;				
+	protected Button 		btnCopyTo;					
 
-	protected Grid 			grid_Basicdetails;			// autoWired
+	protected Grid 			grid_Basicdetails;			
 	
-	protected Hbox 			hbox_EntryByInvestment;		// autoWired
+	protected Hbox 			hbox_EntryByInvestment;		
 
 	protected Listbox 		listBoxTransactionEntry;
 	protected Listheader 	listheader_Account;
 	protected Listheader 	listheader_PostToSystem;
+	protected Listheader 	listheader_ByInvestor;		
 	protected Paging 		pagingTransactionEntryList;
 
 	// not auto wired vars
@@ -140,7 +140,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	private transient boolean validationOn;
 	
-	protected Button button_TransactionEntryList_NewTransactionEntry; // autowired
+	protected Button button_TransactionEntryList_NewTransactionEntry; 
 	protected Button btnSearchAccountSetCode; // autowire
 	protected Textbox lovDescEventCodeName;
 
@@ -255,6 +255,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 		
 		this.hbox_EntryByInvestment.setVisible(ImplementationConstants.ALLOW_RIA);
+		this.listheader_ByInvestor.setVisible(ImplementationConstants.ALLOW_RIA);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -537,6 +538,11 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.listBoxTransactionEntry.setItemRenderer(new TransactionEntryListModelItemRenderer());
 		}
 		checkListboxcount();
+		// Set the first page as the active page.
+		if (pagingTransactionEntryList != null) {
+			this.pagingTransactionEntryList.setActivePage(0);
+		}
+		
 		logger.debug("Leaving");
 	}
 
