@@ -15,7 +15,7 @@ public class OverdraftMovements extends AbstractWorkflowEntity {
 	private Date droplineDate;
 	private int  tenor;
 	private Date oDExpiryDate;
-	private BigDecimal droplineFrq = BigDecimal.ZERO;
+	private String droplineFrq = null;
 	private BigDecimal limitChange = BigDecimal.ZERO;
 	private BigDecimal oDLimit = BigDecimal.ZERO;
 	
@@ -63,11 +63,11 @@ public class OverdraftMovements extends AbstractWorkflowEntity {
 		this.oDLimit = oDLimit;
 	}
 
-	public BigDecimal getDroplineFrq() {
+	public String getDroplineFrq() {
 		return droplineFrq;
 	}
 
-	public void setDroplineFrq(BigDecimal droplineFrq) {
+	public void setDroplineFrq(String droplineFrq) {
 		this.droplineFrq = droplineFrq;
 	}
 

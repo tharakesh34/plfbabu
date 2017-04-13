@@ -49,13 +49,11 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
-import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -3089,17 +3087,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						OverdraftMovements odMovements = new OverdraftMovements();
 						odMovements.setFinReference(financeMain.getFinReference());
 						odMovements.setDroplineDate(financeMain.getFirstDroplineDate());
-						
-						if(StringUtils.isNotEmpty(financeMain.getRepayBaseRate())){
-							RateDetail rateDetail = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(), financeMain.getRepaySpecialRate(), 
-									financeMain.getRepayMargin(), financeMain.getFirstDroplineDate(), financeMain.getRpyMinRate(), financeMain.getRpyMaxRate());
-							if (rateDetail.getErrorDetails() == null) {
-								odMovements.setDroplineFrq(rateDetail.getNetRefRateLoan());
-							}
-						}else{
-							odMovements.setDroplineFrq(financeMain.getRepayProfitRate());
-						}
-
+						odMovements.setDroplineFrq(financeMain.getDroplineFrq());
 						odMovements.setTenor(financeMain.getNumberOfTerms());
 						odMovements.setODExpiryDate(financeMain.getMaturityDate());
 						odMovements.setODLimit(financeMain.getFinAssetValue());
