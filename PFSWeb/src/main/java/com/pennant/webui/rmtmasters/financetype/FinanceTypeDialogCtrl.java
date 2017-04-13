@@ -1453,7 +1453,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("finTypeInsuranceList", this.financeType.getFinTypeInsurances());
-
+			map.put("isOverdraft", isOverdraft);
 			insuranceDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_INSURANCES), map);
 		} catch (Exception e) {
@@ -1482,6 +1482,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("allowRIAInvestment", this.allowRIAInvestment.isChecked());
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("isOverdraft", isOverdraft);
 			map.put("finTypeAccountingList", this.financeType.getFinTypeAccountingList());
 			
 			accountingDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountingList.zul",
@@ -1512,6 +1513,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("isOverdraft", isOverdraft);
 			map.put("finTypeFeesList", this.financeType.getFinTypeFeesList());
 
 			feeDetailWindow = Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",

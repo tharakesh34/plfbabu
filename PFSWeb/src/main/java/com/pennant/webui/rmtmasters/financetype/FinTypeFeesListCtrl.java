@@ -161,6 +161,9 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			if (arguments.containsKey("finTypeFeesList")) {
 				this.finTypeFeesList =  (List<FinTypeFees>) arguments.get("finTypeFeesList");
 			} 
+			if (arguments.containsKey("isOverdraft")) {
+				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+			}
 			
 			doEdit();
 			doCheckRights();

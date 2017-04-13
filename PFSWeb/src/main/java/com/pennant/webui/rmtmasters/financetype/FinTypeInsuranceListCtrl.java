@@ -156,7 +156,9 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 			if (arguments.containsKey("finTypeInsuranceList")) {
 				this.finTypeInsuranceList = (List<FinTypeInsurances>) arguments.get("finTypeInsuranceList");
 			}
-
+			if (arguments.containsKey("isOverdraft")) {
+				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+			}
 			doEdit();
 			doCheckRights();
 			doSetFieldProperties();

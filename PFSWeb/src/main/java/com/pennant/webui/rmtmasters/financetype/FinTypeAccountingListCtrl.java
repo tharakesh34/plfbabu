@@ -158,6 +158,10 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			if (arguments.containsKey("finTypeAccountingList")) {
 				this.finTypeAccountingList = (List<FinTypeAccounting>) arguments.get("finTypeAccountingList");
 			}
+			
+			if (arguments.containsKey("isOverdraft")) {
+				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
+			}
 
 			this.listBoxAccountingDetails.setHeight(this.borderLayoutHeight - 120 + "px");
 			
