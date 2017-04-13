@@ -2442,4 +2442,73 @@ alter table PartnerBank alter column PartnerBankId bigint not null;
 						RMTAccountTypes T4 ON T1.AcType = T4.AcType
 	</createView>
 </changeSet>	
+<changeSet author="Surekha" id="117">
+	<renameColumn  columnDataType="int" newColumnName="AcctTypeLevel" oldColumnName="Level" tableName="AccountTypeGroup_Temp"/>
+	<renameColumn  columnDataType="int" newColumnName="AcctTypeLevel" oldColumnName="Level" tableName="AccountTypeGroup"/>
+</changeSet>
+<changeSet author="Surekha" id="118">
+<createView replaceIfExists="true" viewName="AccountTypeGroup_View">
+		SELECT AcctTypeLevel, GroupId, GroupDescription, ParentGroup 	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM   AccountTypeGroup_Temp  
+			           
+			UNION ALL
+			SELECT AcctTypeLevel, GroupId, GroupDescription, ParentGroup	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM    AccountTypeGroup  
+						
+			WHERE    NOT EXISTS (SELECT 1 FROM AccountTypeGroup_Temp WHERE GroupId = AccountTypeGroup.GroupId)
+	</createView>	
+</changeSet>	
+<changeSet author="Surekha" id="119">
+<createView replaceIfExists="true" viewName="AccountTypeGroup_AView">
+		SELECT AcctTypeLevel, GroupId, GroupDescription, ParentGroup 	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM   AccountTypeGroup
+			           
+	</createView>	
+</changeSet>	
+<changeSet author="Surekha" id="122">
+	<sql>
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+	
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_accounttypegroup_AccountTypeGroup','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AccountTypeGroupDialog_btnDelete','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AccountTypeGroupDialog_btnEdit','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AccountTypeGroupDialog_btnNew','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AccountTypeGroupDialog_btnSave','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeGroupDialog_AcctTypeLevel','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeGroupDialog_GroupId','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeGroupDialog_GroupDescription','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeGroupDialog_ParentGroup','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	
+	INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'AccountTypeGroup_MAKER', 'Account Type Group  Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+	INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'AccountTypeGroup_APPROVER', 'Account Type Group  Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+	
+	
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_accounttypeGroup_AccountTypegroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_AcctTypeLevel'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_GroupId'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_GroupDescription'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_ParentGroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_accounttypeGroup_AccountTypegroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountTypeGroup_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 			
+	
+	INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountTypeGroup_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+	
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+	</sql>
+</changeSet>
 </databaseChangeLog>
