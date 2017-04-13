@@ -1682,7 +1682,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					aFinanceMain.setGraceSpecialRate(this.graceRate.getSpecialValue());
 				}
-				aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
+				aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			} 
@@ -2030,7 +2030,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			} else {
-				aFinanceMain.setRepayProfitRate(this.repayRate.getEffRateValue());
+				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

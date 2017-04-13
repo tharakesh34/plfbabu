@@ -5,6 +5,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
@@ -76,7 +77,8 @@
 								label="${c:l('finBasicDetails')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto">
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true">
 								<div id="basicDetailTabDiv">
 									<groupbox id="gb_basicDetails">
 										<caption
