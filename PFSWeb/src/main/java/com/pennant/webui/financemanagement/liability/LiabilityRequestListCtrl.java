@@ -75,6 +75,7 @@ import com.pennant.backend.service.finance.liability.service.LiabilityRequestSer
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
@@ -441,7 +442,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		// Finance Maintenance Workflow Check & Assignment
 		if (StringUtils.isNotEmpty(workflowCode)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					workflowCode, FinanceConstants.MODULE_NAME);
+					workflowCode, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}

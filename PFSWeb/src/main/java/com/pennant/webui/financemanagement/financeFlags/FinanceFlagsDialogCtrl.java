@@ -948,7 +948,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		WorkFlowDetails workFlowDetails = null;
 		if(StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)){
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType, 
-					FinanceConstants.FINSER_EVENT_FINFLAGS, FinanceConstants.MODULE_NAME);
+					FinanceConstants.FINSER_EVENT_FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			} 

@@ -759,8 +759,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		//Customer Data Fetching
+		boolean promotionWorkflow = false;
 		CustomerDetails customerDetails;
 		if (isPromotionPick) {
+			promotionWorkflow = true;
 			customerDetails = this.financeEligibility.getFinanceDetail().getCustomerDetails();
 		} else {
 			customerDetails = fetchCustomerData();
@@ -826,6 +828,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				fintype = this.finType.getValue().trim();
 			} else if (StringUtils.isNotBlank(this.promotionCode.getValue())) {
 				fintype = this.promotionCode.getValue().trim();
+				promotionWorkflow = true;
 			}
 
 			// Fetching Finance Type Details
@@ -861,7 +864,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// Workflow Details Verification and initiation, if not found
 		if (this.financeWorkFlow == null) {
 			FinanceWorkFlow financeWorkFlow = this.financeWorkFlowService.getApprovedFinanceWorkFlowById(
-					financeType.getFinType(), financeEvent, FinanceConstants.MODULE_NAME);
+					financeType.getFinType(), financeEvent, promotionWorkflow ? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 

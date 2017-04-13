@@ -1159,12 +1159,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving"+ event.toString());
 	}
 	
-	private void setWorkflowDetails(String finType){
+	private void setWorkflowDetails(String finType, boolean isPromotion){
 		
 		//Finance Maintenance Workflow Check & Assignment
 		if(StringUtils.isNotEmpty(workflowCode)){
 			String workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType, 
-					workflowCode, FinanceConstants.MODULE_NAME);
+					workflowCode, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
 			if (workflowTye != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(workflowTye);
 			} 
@@ -1189,7 +1189,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
@@ -1292,7 +1292,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
@@ -1372,7 +1372,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			String userRole = "";
 			if(!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)){
-				setWorkflowDetails(aFinanceMain.getFinType());
+				setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 				if(workFlowDetails == null){
 					MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 					return;
@@ -1452,7 +1452,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
@@ -1531,7 +1531,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
@@ -1612,7 +1612,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
@@ -1701,7 +1701,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 			
 			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType());
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
 				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;

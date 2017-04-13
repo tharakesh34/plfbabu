@@ -811,7 +811,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService()
-					.getApprovedFinanceWorkFlowById(finType, moduleDefiner, FinanceConstants.MODULE_NAME);
+					.getApprovedFinanceWorkFlowById(finType, moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
 			if (financeWorkflow != null
 					&& financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow

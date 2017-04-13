@@ -1089,7 +1089,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
                         	finEvent = FinanceConstants.FINSER_EVENT_ORG;
                         }
 						FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(aReinstateFinance.getFinType(), 
-								finEvent, FinanceConstants.MODULE_NAME);
+								finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 						if(financeWorkFlow != null){
 							WorkFlowDetails	workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
 							if(workFlowDetails != null){
@@ -1255,7 +1255,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_REINSTATE)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					FinanceConstants.FINSER_EVENT_REINSTATE, FinanceConstants.MODULE_NAME);
+					FinanceConstants.FINSER_EVENT_REINSTATE, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO : Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}

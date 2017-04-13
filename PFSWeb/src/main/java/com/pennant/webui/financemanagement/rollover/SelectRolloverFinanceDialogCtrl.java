@@ -539,7 +539,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 
 			if(getFinanceWorkFlow() == null){
 				FinanceWorkFlow financeWorkFlow=getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-						this.finType.getValue().trim(),FinanceConstants.FINSER_EVENT_ROLLOVER, FinanceConstants.MODULE_NAME);
+						this.finType.getValue().trim(),FinanceConstants.FINSER_EVENT_ROLLOVER, PennantConstants.WORFLOW_MODULE_FINANCE);
 				setFinanceWorkFlow(financeWorkFlow);
 			}
 		}
