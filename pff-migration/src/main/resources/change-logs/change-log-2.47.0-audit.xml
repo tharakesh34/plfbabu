@@ -253,4 +253,7 @@ drop table AdtPromotions;
 			<column name="WorkflowId" type="bigint" />
 			</createTable>
 </changeSet>	
+	<changeSet id="13" author="Surekha">
+		<renameColumn tableName="AdtAccountTypeGroup" oldColumnName="ParentGroup" newColumnName="ParentGroupId"/>
+	</changeSet>
 </databaseChangeLog>
