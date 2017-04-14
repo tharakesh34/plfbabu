@@ -60,7 +60,7 @@ import com.pennant.webui.util.MultiLineMessageBox;
 
 public class ErrorControl extends Messagebox implements Serializable {
 	private static final long	serialVersionUID	= 6395769771121558224L;
-	private final static Logger	logger				= Logger.getLogger(ErrorControl.class);
+	private static final Logger	logger				= Logger.getLogger(ErrorControl.class);
 
 	private int					returnCode			= PennantConstants.porcessCONTINUE;
 	AuditHeader					auditHeader;
@@ -122,29 +122,20 @@ public class ErrorControl extends Messagebox implements Serializable {
 					ErrorDetails infoDetail = auditHeader.getInfoMessage().get(i);
 					showDetails(infoDetail);
 				}
-			} /*
-				 * else{ String nextRoleCode = ""; try { if
-				 * (auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode") != null) {
-				 * nextRoleCode= auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode").
-				 * invoke(auditHeader.getAuditDetail().getModelData()).toString(); } } catch (Exception e) {
-				 * logger.warn("Exception: ", e); }
-				 * 
-				 * Clients.showNotification("Record can be opened by the users with the Role : " + nextRoleCode, true);
-				 * }
-				 */
+			}
 		}
+
 		auditHeader.setProcessStatus(returnCode);
 		setAuditHeader(auditHeader);
 	}
 
 	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
-
-		int retValue = 0;
+		int retValue;
 		String title = Labels.getLabel("message.Information");
 		int buttons = MultiLineMessageBox.OK;
 		String icon = MultiLineMessageBox.INFORMATION;
-		logger.info("Error Details : " + errorDetail.getErrorCode() + "-" + errorDetail.getError() + ", " + title + ", "
-				+ buttons + ", " + icon);
+		logger.info("Error Detail: " + errorDetail.getErrorCode() + " - " + errorDetail.getError());
+
 		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 			buttons = MultiLineMessageBox.ABORT;
 			title = Labels.getLabel("message.Error");
