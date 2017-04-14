@@ -746,7 +746,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		logger.debug("Leaving");
 	}
 	
-	public void onFulfill$glCode(Event event) {
+	public void onFulfill$acType(Event event) {
 		logger.debug("Entering");
 		Object dataObject = acType.getObject();
 		if (dataObject instanceof String) {
