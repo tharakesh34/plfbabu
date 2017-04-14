@@ -46,58 +46,54 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.util.PennantConstants;
 
-
 public class ErrorDetails {
+	private String		errorField;
+	private String		errorCode;
+	private String		errorLanguage;
+	private String		errorSeverity;
+	private String		errorMessage;
+	private String		errorExtendedMessage;
+	private String[]	errorParameters;
+	private String[]	errorFieldValues;
+	private boolean		errorOveride	= false;
 
-	private String errorField;
-	private String errorCode;
-	private String errorLanguage;
-	private String errorSeverity;
-	private String errorMessage;
-	private String errorExtendedMessage;
-	private String[] errorParameters;
-	private String[] errorFieldValues;
-	private boolean errorOveride=false;
-	
-	public ErrorDetails(){
+	public ErrorDetails() {
 		super();
-	} 
-	
-
-	public ErrorDetails(String errorCode,String message,String[] errorParameters) {
-		super();
-		this.errorCode=errorCode;
-		this.errorSeverity=PennantConstants.ERR_SEV_ERROR;
-		this.errorMessage=message;
-		this.errorParameters=errorParameters;
-	}
-	
-	public ErrorDetails(String errorCode,String[] errorParameters) {
-		super();
-		this.errorCode=errorCode;
-		this.errorSeverity=PennantConstants.ERR_SEV_ERROR;
-		this.errorParameters=errorParameters;
 	}
 
-
-	public ErrorDetails(String errorField,String errorCode,String[] errorParameters,String[] errorFieldValues) {
+	public ErrorDetails(String errorCode, String message, String[] errorParameters) {
 		super();
-		this.errorField =errorField;
-		this.errorCode=errorCode;
-		this.errorParameters=errorParameters;
-		this.errorFieldValues=errorFieldValues;
+		this.errorCode = errorCode;
+		this.errorSeverity = PennantConstants.ERR_SEV_ERROR;
+		this.errorMessage = message;
+		this.errorParameters = errorParameters;
 	}
 
-	public ErrorDetails(String errorField,String errorCode,String severity,String message,String[] errorParameters,String[] errorFieldValues) {
+	public ErrorDetails(String errorCode, String[] errorParameters) {
 		super();
-		this.errorField =errorField;
-		this.errorCode=errorCode;
-		this.errorSeverity=severity;
-		this.errorMessage=message;
-		this.errorParameters=errorParameters;
-		this.errorFieldValues=errorFieldValues;
+		this.errorCode = errorCode;
+		this.errorSeverity = PennantConstants.ERR_SEV_ERROR;
+		this.errorParameters = errorParameters;
 	}
 
+	public ErrorDetails(String errorField, String errorCode, String[] errorParameters, String[] errorFieldValues) {
+		super();
+		this.errorField = errorField;
+		this.errorCode = errorCode;
+		this.errorParameters = errorParameters;
+		this.errorFieldValues = errorFieldValues;
+	}
+
+	public ErrorDetails(String errorField, String errorCode, String severity, String message, String[] errorParameters,
+			String[] errorFieldValues) {
+		super();
+		this.errorField = errorField;
+		this.errorCode = errorCode;
+		this.errorSeverity = severity;
+		this.errorMessage = message;
+		this.errorParameters = errorParameters;
+		this.errorFieldValues = errorFieldValues;
+	}
 
 	public String getErrorField() {
 		return errorField;
@@ -110,6 +106,7 @@ public class ErrorDetails {
 	public String getErrorCode() {
 		return errorCode;
 	}
+
 	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
 	}
@@ -117,6 +114,7 @@ public class ErrorDetails {
 	public String getErrorLanguage() {
 		return errorLanguage;
 	}
+
 	public void setErrorLanguage(String errorLanguage) {
 		this.errorLanguage = errorLanguage;
 	}
@@ -124,18 +122,23 @@ public class ErrorDetails {
 	public String getErrorSeverity() {
 		return errorSeverity;
 	}
+
 	public void setErrorSeverity(String errorSeverity) {
 		this.errorSeverity = errorSeverity;
 	}
+
 	public String getErrorMessage() {
 		return errorMessage;
 	}
+
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
+
 	public String getErrorExtendedMessage() {
 		return errorExtendedMessage;
 	}
+
 	public void setErrorExtendedMessage(String errorExtendedMessage) {
 		this.errorExtendedMessage = errorExtendedMessage;
 	}
@@ -148,28 +151,27 @@ public class ErrorDetails {
 		this.errorParameters = errorParameters;
 	}
 
-	
-	public String getError(String[] parameters){
-		this.errorParameters=parameters;
-		return getError(); 
+	public String getError(String[] parameters) {
+		this.errorParameters = parameters;
+		return getError();
 	}
-	
-	public String getError(){
-		String error=StringUtils.trimToEmpty(this.errorMessage);
-	
-		if (this.errorParameters!=null){
 
-			for(int i=0;i<errorParameters.length;i++){
+	public String getError() {
+		String error = StringUtils.trimToEmpty(this.errorMessage);
+
+		if (this.errorParameters != null) {
+
+			for (int i = 0; i < errorParameters.length; i++) {
 				String parameter = StringUtils.trimToEmpty(errorParameters[i]);
-				error = error.replace("{"+(i)+"}", parameter);
+				error = error.replace("{" + (i) + "}", parameter);
 			}
 		}
-		 
-		for(int i=0;i<5;i++){
-			error = error.replace("{"+(i)+"}", "");
+
+		for (int i = 0; i < 5; i++) {
+			error = error.replace("{" + (i) + "}", "");
 		}
-	
-		return error; 
+
+		return error;
 	}
 
 	public boolean isErrorOveride() {
@@ -187,5 +189,4 @@ public class ErrorDetails {
 	public void setErrorFieldValues(String[] errorFieldValues) {
 		this.errorFieldValues = errorFieldValues;
 	}
-	
 }
