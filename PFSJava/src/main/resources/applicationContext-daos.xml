@@ -9251,4 +9251,7 @@
 		class="com.pennant.backend.financeservice.impl.HoldEMIServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
 	</bean>
+	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 </beans>
