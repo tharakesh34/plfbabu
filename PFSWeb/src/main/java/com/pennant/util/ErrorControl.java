@@ -59,178 +59,171 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MultiLineMessageBox;
 
 public class ErrorControl extends Messagebox implements Serializable {
-	private static final long serialVersionUID = 6395769771121558224L;
+	private static final long	serialVersionUID	= 6395769771121558224L;
+	private final static Logger	logger				= Logger.getLogger(ErrorControl.class);
 
-	private final static Logger logger = Logger.getLogger(ErrorControl.class);
-	
-	private int returnCode=PennantConstants.porcessCONTINUE;
-	AuditHeader auditHeader;
-	
+	private int					returnCode			= PennantConstants.porcessCONTINUE;
+	AuditHeader					auditHeader;
+
 	public ErrorControl() {
 		super();
 	}
 
-	
-	public static int showErrorControl(Component parent,AuditHeader auditHeader) throws InterruptedException {
-		return new ErrorControl(parent,auditHeader).getReturnCode();
+	public static int showErrorControl(Component parent, AuditHeader auditHeader) throws InterruptedException {
+		return new ErrorControl(parent, auditHeader).getReturnCode();
 	}
 
-	public static AuditHeader showErrorDetails(Component parent,AuditHeader auditHeader) throws InterruptedException {
-		return new ErrorControl(parent,auditHeader).getAuditHeader();
+	public static AuditHeader showErrorDetails(Component parent, AuditHeader auditHeader) throws InterruptedException {
+		return new ErrorControl(parent, auditHeader).getAuditHeader();
 	}
 
 	@SuppressWarnings("unused")
-	private ErrorControl(Component parent,AuditHeader auditHeader) throws InterruptedException {
+	private ErrorControl(Component parent, AuditHeader auditHeader) throws InterruptedException {
 		super();
 		MultiLineMessageBox.doErrorTemplate();
-		
-		if (auditHeader!=null){
-			
-			if (auditHeader.getErrorMessage()!=null && auditHeader.getErrorMessage().size()>0){
-				
+
+		if (auditHeader != null) {
+
+			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+
 				for (int i = 0; i < auditHeader.getErrorMessage().size(); i++) {
 					ErrorDetails errorDetail = auditHeader.getErrorMessage().get(i);
 					showDetails(errorDetail);
-					this.returnCode=PennantConstants.porcessCANCEL;
+					this.returnCode = PennantConstants.porcessCANCEL;
 					break;
-				} 
-				
-			}else if ( !auditHeader.isOveride() && auditHeader.getOverideMessage()!=null && auditHeader.getOverideMessage().size()>0){
-				int selectedBtn=PennantConstants.porcessCONTINUE;
+				}
+
+			} else if (!auditHeader.isOveride() && auditHeader.getOverideMessage() != null
+					&& auditHeader.getOverideMessage().size() > 0) {
+				int selectedBtn = PennantConstants.porcessCONTINUE;
 				HashMap<String, ArrayList<ErrorDetails>> overideMap = auditHeader.getOverideMap();
-				
+
 				for (int i = 0; i < auditHeader.getOverideMessage().size(); i++) {
 					ErrorDetails overideDetail = auditHeader.getOverideMessage().get(i);
-					
-					if(!isOverride(overideMap, overideDetail)){
+
+					if (!isOverride(overideMap, overideDetail)) {
 						selectedBtn = showDetails(overideDetail);
-						if (selectedBtn==2){
-							this.returnCode=PennantConstants.porcessCANCEL;
+						if (selectedBtn == 2) {
+							this.returnCode = PennantConstants.porcessCANCEL;
 							break;
-						}else{
-							selectedBtn=PennantConstants.porcessOVERIDE;
+						} else {
+							selectedBtn = PennantConstants.porcessOVERIDE;
 							setOverideMap(overideMap, overideDetail);
 						}
 					}
 
-				} 
-				
-				this.returnCode=selectedBtn;
+				}
+
+				this.returnCode = selectedBtn;
 				auditHeader.setOverideMap(overideMap);
-			}else if (auditHeader.getInfoMessage()!=null && auditHeader.getInfoMessage().size()>0){
+			} else if (auditHeader.getInfoMessage() != null && auditHeader.getInfoMessage().size() > 0) {
 
 				for (int i = 0; i < auditHeader.getInfoMessage().size(); i++) {
 					ErrorDetails infoDetail = auditHeader.getInfoMessage().get(i);
 					showDetails(infoDetail);
-				} 
-			}/*else{
-				String nextRoleCode = "";
-				try {
-					if (auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode") != null) {
-					nextRoleCode=	 auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode").
-						invoke(auditHeader.getAuditDetail().getModelData()).toString();
-					}
-				} catch (Exception e) {
-					logger.warn("Exception: ", e);
-				}  
-				
-				Clients.showNotification("Record can be opened by the users with the Role : " + nextRoleCode, true);
-			}*/
+				}
+			} /*
+				 * else{ String nextRoleCode = ""; try { if
+				 * (auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode") != null) {
+				 * nextRoleCode= auditHeader.getAuditDetail().getModelData().getClass().getMethod("getNextRoleCode").
+				 * invoke(auditHeader.getAuditDetail().getModelData()).toString(); } } catch (Exception e) {
+				 * logger.warn("Exception: ", e); }
+				 * 
+				 * Clients.showNotification("Record can be opened by the users with the Role : " + nextRoleCode, true);
+				 * }
+				 */
 		}
 		auditHeader.setProcessStatus(returnCode);
 		setAuditHeader(auditHeader);
 	}
 
 	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
-		
-		int retValue=0;
-		String title=Labels.getLabel("message.Information");
-		int buttons=MultiLineMessageBox.OK;
-		String icon=MultiLineMessageBox.INFORMATION; 
-		logger.info("Error Details : " + errorDetail.getErrorCode()+"-"+errorDetail.getError() + ", " + title + ", " +  buttons + ", " +  icon);
-		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)){
-			 buttons=MultiLineMessageBox.ABORT;
-			 title=Labels.getLabel("message.Error");
-			 icon=MultiLineMessageBox.ERROR;
-			 
-		}else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)){
-			
-			 buttons=MultiLineMessageBox.CANCEL|MultiLineMessageBox.IGNORE;
-			 title=Labels.getLabel("message.Overide"); 
-			 icon=MultiLineMessageBox.EXCLAMATION;
+
+		int retValue = 0;
+		String title = Labels.getLabel("message.Information");
+		int buttons = MultiLineMessageBox.OK;
+		String icon = MultiLineMessageBox.INFORMATION;
+		logger.info("Error Details : " + errorDetail.getErrorCode() + "-" + errorDetail.getError() + ", " + title + ", "
+				+ buttons + ", " + icon);
+		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
+			buttons = MultiLineMessageBox.ABORT;
+			title = Labels.getLabel("message.Error");
+			icon = MultiLineMessageBox.ERROR;
+
+		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
+
+			buttons = MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE;
+			title = Labels.getLabel("message.Overide");
+			icon = MultiLineMessageBox.EXCLAMATION;
 		}
 
-		retValue = MultiLineMessageBox.show(errorDetail.getErrorCode()+"-"+errorDetail.getError(), title, buttons, icon, true);
-		
+		retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title, buttons,
+				icon, true);
+
 		return retValue;
-		
-	} 
+
+	}
 
 	public int getReturnCode() {
 		return returnCode;
 	}
-	
-	private HashMap<String, ArrayList<ErrorDetails>> setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap,ErrorDetails errorDetail){
 
-		if(StringUtils.isNotBlank(errorDetail.getErrorField())){
-			
+	private HashMap<String, ArrayList<ErrorDetails>> setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap,
+			ErrorDetails errorDetail) {
+
+		if (StringUtils.isNotBlank(errorDetail.getErrorField())) {
+
 			ArrayList<ErrorDetails> errorDetails = null;
-			
-			if(overideMap.containsKey(errorDetail.getErrorField())){
+
+			if (overideMap.containsKey(errorDetail.getErrorField())) {
 				errorDetails = overideMap.get(errorDetail.getErrorField());
-				
+
 				for (int i = 0; i < errorDetails.size(); i++) {
-					if(errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())){
+					if (errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())) {
 						errorDetails.remove(i);
 						break;
 					}
 				}
 
 				overideMap.remove(errorDetail.getErrorField());
-				
-			}else{
-				errorDetails= new ArrayList<ErrorDetails>();
-			
+
+			} else {
+				errorDetails = new ArrayList<ErrorDetails>();
+
 			}
 
 			errorDetail.setErrorOveride(true);
 			errorDetails.add(errorDetail);
 
-			overideMap.put(errorDetail.getErrorField(),errorDetails);
-			
-		}	
+			overideMap.put(errorDetail.getErrorField(), errorDetails);
+
+		}
 		return overideMap;
 	}
-
 
 	public AuditHeader getAuditHeader() {
 		return auditHeader;
 	}
 
-
 	public void setAuditHeader(AuditHeader auditHeader) {
 		this.auditHeader = auditHeader;
-	} 
-	
-	
-	private boolean isOverride(HashMap<String, ArrayList<ErrorDetails>> overideMap,ErrorDetails errorDetail){
-		
-		
-		if(overideMap.containsKey(errorDetail.getErrorField())){
-		
-			ArrayList<ErrorDetails> errorDetails =overideMap.get(errorDetail.getErrorField());
-			
+	}
+
+	private boolean isOverride(HashMap<String, ArrayList<ErrorDetails>> overideMap, ErrorDetails errorDetail) {
+
+		if (overideMap.containsKey(errorDetail.getErrorField())) {
+
+			ArrayList<ErrorDetails> errorDetails = overideMap.get(errorDetail.getErrorField());
+
 			for (int i = 0; i < errorDetails.size(); i++) {
-				
-				if(errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())){
+
+				if (errorDetails.get(i).getErrorCode().equals(errorDetail.getErrorCode())) {
 					return errorDetails.get(i).isErrorOveride();
 				}
 			}
-			
+
 		}
-		
+
 		return false;
 	}
-	
 }
-
