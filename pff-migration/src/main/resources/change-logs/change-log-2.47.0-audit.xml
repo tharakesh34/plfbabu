@@ -256,4 +256,9 @@ drop table AdtPromotions;
 	<changeSet id="13" author="Surekha">
 		<renameColumn tableName="AdtAccountTypeGroup" oldColumnName="ParentGroup" newColumnName="ParentGroupId"/>
 	</changeSet>
+<changeSet id="13" author="Madhubabu">
+	<addColumn tableName="AdtFinAdvancePayments">
+		<column name="PartnerBankId" type="bigint"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
