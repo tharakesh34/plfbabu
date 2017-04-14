@@ -2242,6 +2242,10 @@ alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
 						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode
 	</createView>
 </changeSet>	
+<changeSet id="132" author="Madhubabu" dbms="oracle">
+		<dropForeignKeyConstraint baseTableName="CUSTOMERBANKINFO_TEMP"
+			constraintName="FK_CUSTBANKINFO_TMP_RMTACCTYPE" />
+	</changeSet>
 
 	<changeSet author="Kesav" id="109">
 		<sql>
@@ -2816,10 +2820,7 @@ null);
 	</addColumn>
 	</changeSet>
 	
-	<changeSet id="132" author="Madhubabu" dbms="oracle">
-		<dropForeignKeyConstraint baseTableName="CUSTOMERBANKINFO_TEMP"
-			constraintName="FK_CUSTBANKINFO_TMP_RMTACCTYPE" />
-	</changeSet>
+	
 	<changeSet id="133" author="Madhubabu" dbms="mssql">
 		<dropForeignKeyConstraint baseTableName="CustomerBankInfo_Temp"
 			constraintName="fk_custbnkinfo_tmp_rmtacctypes" />
