@@ -2824,5 +2824,90 @@ null);
 		<dropForeignKeyConstraint baseTableName="CustomerBankInfo_Temp"
 			constraintName="fk_custbnkinfo_tmp_rmtacctypes" />
 	</changeSet>
-	
+	<changeSet id="s01" author="Surekha">
+		<createTable tableName="SeqAccountTypeGroup">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="s02" author="Surekha">
+		<sql>
+			INSERT INTO  SeqAccountTypeGroup VALUES(0);
+		</sql>
+	</changeSet>
+	<changeSet author="Surekha" id="s03">
+	 <dropTable tableName="AccountTypeGroup"/>
+	 <dropTable tableName="AccountTypeGroup_Temp"/>
+</changeSet>
+<changeSet id="s04" author="Surekha">
+	<createTable tableName="AccountTypeGroup">
+		<column name="GroupId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="GroupCode" type="varchar(20)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="GroupDescription" type="varchar(100)" />
+		<column name="AcctTypeLevel" type="int" />
+		<column name="ParentGroup" type="varchar(20)" />
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+	<changeSet id="s05" author="Surekha">
+		<createTable tableName="AccountTypeGroup_Temp">
+			<column name="GroupId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="GroupCode" type="varchar(20)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="GroupDescription" type="varchar(100)" />
+		<column name="AcctTypeLevel" type="int" />
+		<column name="ParentGroup" type="varchar(20)" />
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Surekha" id="s06">
+<createView replaceIfExists="true" viewName="AccountTypeGroup_View">
+		SELECT GroupId,GroupCode, GroupDescription, AcctTypeLevel, ParentGroup 	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM   AccountTypeGroup_Temp  
+			           
+			UNION ALL
+			SELECT GroupId,GroupCode, GroupDescription, AcctTypeLevel, ParentGroup	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM    AccountTypeGroup  
+						
+			WHERE    NOT EXISTS (SELECT 1 FROM AccountTypeGroup_Temp WHERE GroupId = AccountTypeGroup.GroupId)
+	</createView>	
+</changeSet>	
+<changeSet author="Surekha" id="s07">
+<createView replaceIfExists="true" viewName="AccountTypeGroup_AView">
+		SELECT GroupId,GroupCode, GroupDescription, AcctTypeLevel, ParentGroup
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			FROM   AccountTypeGroup
+			           
+	</createView>	
+</changeSet>	
 </databaseChangeLog>

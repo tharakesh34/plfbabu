@@ -215,5 +215,42 @@ drop table AdtPromotions;
             <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
         </createTable>
     </changeSet>	
- 
+    <changeSet author="Surekha" id="11">
+	 <dropTable tableName="AdtAccountTypeGroup"/>
+	</changeSet>
+ 	<changeSet author="Surekha" id="12">
+    <createTable tableName="AdtAccountTypeGroup">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupId" type="bigint">
+			<constraints nullable="false" />
+			</column>
+			<column name="GroupCode" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="GroupDescription" type="varchar(100)" />
+			<column name="AcctTypeLevel" type="int"/>
+			<column name="ParentGroup" type="varchar(20)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+			</createTable>
+</changeSet>	
 </databaseChangeLog>
