@@ -2800,4 +2800,10 @@ null, 0, null, 'if (reqFinAcType == ''BANK'') {	Result = DISBURSE ; return;  } e
 null);
 	</sql>
 </changeSet>
+
+ <changeSet author="Siva" id="131">
+	<addColumn tableName="FinDisbursementDetails_Log">
+		<column name="DisbStatus" type="char(1)"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
