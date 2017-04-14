@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.backend.dao;
 
 import java.util.List;
@@ -49,12 +48,13 @@ import com.pennant.search.ISearch;
 import com.pennant.search.SearchResult;
 
 public interface JdbcSearchSupport {
-
-	int count(Class<?> searchClass, ISearch search);
-	int count(ISearch search);
 	<T> List<T> search(Class<T> searchClass, ISearch search);
+
 	<T> List<T> search(ISearch search);
+
 	<T> String getSearchQuery(ISearch search);
+
 	<T> SearchResult<T> searchAndCount(Class<T> searchClass, ISearch search);
+
 	<T> SearchResult<T> searchAndCount(ISearch search);
 }

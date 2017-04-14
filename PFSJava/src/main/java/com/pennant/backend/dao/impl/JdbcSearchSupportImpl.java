@@ -53,23 +53,13 @@ import com.pennant.search.JdbcSearchProcessor;
 import com.pennant.search.SearchResult;
 
 public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
-
     private static final long serialVersionUID = -3473489484821533407L;
 
 	private JdbcSearchProcessor jdbcSearchProcessor;
-
 	private DataSource dataSource;
 
 	public JdbcSearchSupportImpl() {
 		super();
-	}
-	
-	public int count(Class<?> searchClass, ISearch search) {
-		return jdbcSearchProcessor.count(searchClass, search);
-	}
-
-	public int count(ISearch search) {
-		return jdbcSearchProcessor.count(search);
 	}
 
 	@SuppressWarnings("unchecked")

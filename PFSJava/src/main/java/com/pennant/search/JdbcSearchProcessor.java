@@ -94,14 +94,11 @@ public class JdbcSearchProcessor {
 		SelectQuery query = new SelectQuery();
 		query.addCustomFromTable(getTableName(search, searchClass));
 
-		// Add the fields to the query from the fields List
-		List<Field> fields = search.getFields();
-		if (fields.size() <= 0) {
-			// If not fields added select all fields
+		// Add the columns.
+		if (search.getFields().isEmpty()) {
 			query.addCustomColumns(new CustomSql("*"));
 		} else {
-			// If specific fields added to search object select only required fields
-			for (Iterator iterator = fields.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = search.getFields().iterator(); iterator.hasNext();) {
 				Field field = (Field) iterator.next();
 				query.addCustomColumns(new CustomSql(field.property));
 			}
