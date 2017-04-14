@@ -78,7 +78,7 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	private String				lovDescNextRoleCode	= "";
 	private Object				lovDescAuditRef;
 
-	private List<ErrorDetails>	errorDetails		= new ArrayList<>();
+	private List<ErrorDetails>	errors				= new ArrayList<>();
 
 	public AuditDetail() {
 		super();
@@ -154,9 +154,9 @@ public class AuditDetail implements java.io.Serializable, Entity {
 			auditDetail.setLovDescAuditRef(new Object());
 			BeanUtils.copyProperties(this.lovDescAuditRef, auditDetail.lovDescAuditRef);
 		}
-		if (this.errorDetails != null) {
+		if (errors != null) {
 			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
-			BeanUtils.copyProperties(this.errorDetails, auditDetail.errorDetails);
+			BeanUtils.copyProperties(errors, auditDetail.errors);
 		}
 		return auditDetail;
 	}
@@ -241,11 +241,11 @@ public class AuditDetail implements java.io.Serializable, Entity {
 	}
 
 	public List<ErrorDetails> getErrorDetails() {
-		return errorDetails;
+		return errors;
 	}
 
 	public void setErrorDetails(List<ErrorDetails> errorDetails) {
-		this.errorDetails = errorDetails;
+		this.errors = errorDetails;
 	}
 
 	public Timestamp getLovDescRcdInTime() {
@@ -293,11 +293,11 @@ public class AuditDetail implements java.io.Serializable, Entity {
 			return;
 		}
 
-		if (this.errorDetails == null) {
-			this.errorDetails = new ArrayList<>();
+		if (errors == null) {
+			errors = new ArrayList<>();
 		}
 
-		this.errorDetails.add(errorDetails);
+		errors.add(errorDetails);
 	}
 
 	public void setLovDescAuditRef(Object lovDescAuditRef) {
