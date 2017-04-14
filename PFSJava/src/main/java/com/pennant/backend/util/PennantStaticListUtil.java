@@ -286,10 +286,9 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel>  getDataSourceNames(){
 		if(dataSourceNames == null){
-			dataSourceNames = new ArrayList<ValueLabel>(2);
+			dataSourceNames = new ArrayList<>(2);
 			dataSourceNames.add(new ValueLabel("pfsDatasource", "PFS DataBase"));
 			dataSourceNames.add(new ValueLabel("auditDatasource", "PFSAudit Database"));
-			dataSourceNames.add(new ValueLabel("equationDatasource", "Equation Database"));
 		}
 		return dataSourceNames;	 
 	}
