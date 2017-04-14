@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +56,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
@@ -61,18 +66,66 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * DAO methods implementation for the <b>Country model</b> class.<br>
  */
 public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO {
-	private static Logger				logger	= Logger.getLogger(CountryDAOImpl.class);
+	private static Logger				logger		= Logger.getLogger(CountryDAOImpl.class);
 
-	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	String								spec		= "maximumSize=30,initialCapacity=10";
+	LoadingCache<String, Country>		countries	= CacheBuilder.newBuilder().maximumSize(30)
+			.build(new CacheLoader<String, Country>() {
+																@Override
+																public Country load(String key) throws Exception {
+																	return getCountry(key);
+																}
+															});
 
 	public CountryDAOImpl() {
 		super();
+
+		//init();
+	}
+	
+	private void init() {
+		countries	= CacheBuilder.from(spec).build(new CacheLoader<String, Country>() {
+			@Override
+			public Country load(String key) throws Exception {
+				return getCountry(key);
+			}
+		});
+	}
+
+	protected Country getCountry(String code) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select CountryDesc, CountryParentLimit, CountryResidenceLimit,");
+		sql.append(" CountryRiskLimit, CountryIsActive, SystemDefault, Version, LastMntOn, LastMntBy,");
+		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BMTCountries");
+		sql.append(" where CountryCode = :CountryCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		Country country = new Country();
+		country.setId(code);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(country);
+		RowMapper<Country> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Country.class);
+
+		try {
+			country = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			country = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return country;
 	}
 
 	/**
@@ -85,8 +138,17 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 	 * @return Country
 	 */
 	@Override
-	public Country getCountryById(final String id, String type) {
-		logger.debug("Entering");
+	public Country getCountryById(String id, String type) {
+		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.isEmpty(type)) {
+			try {
+				return countries.get(id);
+			} catch (ExecutionException e) {
+				logger.warn("Unable to load value to cache: ", e);
+			}
+		}
+
 		Country country = new Country();
 		country.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -110,7 +172,8 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 			logger.warn("Exception: ", e);
 			country = null;
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return country;
 	}
 
@@ -165,6 +228,7 @@ public class CountryDAOImpl extends BasisCodeDAO<Country> implements CountryDAO 
 			};
 		}
 		logger.debug("Leaving");
+
 	}
 
 	/**

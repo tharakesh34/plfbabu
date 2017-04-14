@@ -288,22 +288,16 @@ public class AuditDetail implements java.io.Serializable, Entity {
 		this.lovDescNextRoleCode = lovDescNextRoleCode;
 	}
 
-	public void setErrorDetail(ErrorDetails errorDetail) {
-		if (errorDetail != null) {
-			if (this.errorDetails == null) {
-				this.errorDetails = new ArrayList<ErrorDetails>();
-			}
-			this.errorDetails.add(errorDetail);
+	public void setErrorDetail(ErrorDetails errorDetails) {
+		if (errorDetails == null) {
+			return;
 		}
-	}
 
-	public void setErrorDetail(ErrorDetails errorDetail, String errorField) {
-		if (errorDetail != null) {
-			if (this.errorDetails == null) {
-				this.errorDetails = new ArrayList<ErrorDetails>();
-			}
-			this.errorDetails.add(errorDetail);
+		if (this.errorDetails == null) {
+			this.errorDetails = new ArrayList<>();
 		}
+
+		this.errorDetails.add(errorDetails);
 	}
 
 	public void setLovDescAuditRef(Object lovDescAuditRef) {
