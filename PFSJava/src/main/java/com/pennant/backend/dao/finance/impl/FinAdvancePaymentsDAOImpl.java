@@ -134,11 +134,11 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		selectSql.append(" AmtToBeReleased, LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description, ");
 		selectSql.append(" PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode,");
-		selectSql.append(" PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy, POIssued,");
+		selectSql.append(" PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy, POIssued,PartnerBankID,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		selectSql.append(" RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC");
+			selectSql.append(" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName");
 		}
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -171,11 +171,11 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description,PaymentType,BankCode,  ");
 		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		selectSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued, ");
+		selectSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC");
+			selectSql.append(",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName");
 		}
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -260,14 +260,14 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		insertSql.append(" LiabilityHoldName, BeneficiaryName, BeneficiaryAccNo,Description, PaymentType, ");
 		insertSql.append("  LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks,BankCode, ");
 		insertSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		insertSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued, ");
+		insertSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:PaymentId, :FinReference, :PaymentSeq ,:DisbSeq, :PaymentDetail, :AmtToBeReleased,");
 		insertSql.append("  :LiabilityHoldName, :BeneficiaryName,:BeneficiaryAccNo, :Description, :PaymentType, ");
 		insertSql.append(" :LlReferenceNo, :LlDate, :CustContribution,:SellerContribution, :Remarks, :BankCode,");
 		insertSql.append(" :PayableLoc, :PrintingLoc, :ValueDate, :BankBranchID, :PhoneCountryCode, :PhoneAreaCode, ");
-		insertSql.append(" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued,");
+		insertSql.append(" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued, :PartnerBankID,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -310,7 +310,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		updateSql.append(" ValueDate = :ValueDate, BankBranchID = :BankBranchID,");
 		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode,");
 		updateSql.append(" PhoneNumber = :PhoneNumber, ClearingDate = ClearingDate, Status = :Status,");
-		updateSql.append(" Active = :Active, InputDate = :InputDate, DisbCCy = :DisbCCy, POIssued = :POIssued,");
+		updateSql.append(" Active = :Active, InputDate = :InputDate, DisbCCy = :DisbCCy, POIssued = :POIssued, PartnerBankID =:PartnerBankID,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql

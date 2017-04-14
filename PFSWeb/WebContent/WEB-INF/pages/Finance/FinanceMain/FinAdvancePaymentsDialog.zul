@@ -180,39 +180,44 @@
 										<button id="btnGetCustBeneficiary" label="Beneficiary"></button>
 									</row>
 									<row>
+									<label id="label_PartnetBankID" value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
+										<extendedcombobox id="partnerBankID" />
 										<label id="label_BankBranchID" value="${c:l('label_FinAdvancePaymentsDialog_BankBranchID.value')}" />
 										<extendedcombobox id="bankBranchID" />
-										<label id="label_Bank" value="${c:l('label_FinAdvancePaymentsDialog_Bank.value')}" />
+										
+									</row>
+									<row>
+									<label id="label_Bank" value="${c:l('label_FinAdvancePaymentsDialog_Bank.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="bank" readonly="true" />
 										</hbox>
-									</row>
-									<row>
 										<label id="label_Branch" value="${c:l('label_FinAdvancePaymentsDialog_Branch.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="branch" readonly="true" />
 										</hbox>
-										<label id="label_city" value="${c:l('label_FinAdvancePaymentsDialog_city.value')}" />
+										
+									</row>
+									<row>
+									<label id="label_city" value="${c:l('label_FinAdvancePaymentsDialog_city.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="city" readonly="true" />
 										</hbox>
-									</row>
-									<row>
 										<label id="label_FinAdvancePaymentsDialog_BeneficiaryAccNo" value="${c:l('label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="beneficiaryAccNo" />
 										</hbox>
-										<label id="label_FinAdvancePaymentsDialog_BeneficiaryName" value="${c:l('label_FinAdvancePaymentsDialog_BeneficiaryName.value')}" />
+										
+									</row>
+									<row>
+									<label id="label_FinAdvancePaymentsDialog_BeneficiaryName" value="${c:l('label_FinAdvancePaymentsDialog_BeneficiaryName.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="beneficiaryName" />
 										</hbox>
-									</row>
-									<row>
 										<label id="label_PhoneNumber" value="${c:l('label_FinAdvancePaymentsDialog_PhoneNumber.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" id="contactNumber" />

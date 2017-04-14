@@ -83,6 +83,7 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -142,6 +143,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox							printingLoc;
 	protected Datebox							valueDate;
 	protected ExtendedCombobox					bankBranchID;
+	protected ExtendedCombobox					partnerBankID;
 	protected Textbox							bank;
 	protected Textbox							branch;
 	protected Textbox							city;
@@ -526,6 +528,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.description.setReadonly(isReadOnly("FinAdvancePaymentsDialog_description"));
 		this.custContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_custContribution"));
 		this.sellerContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_sellerContribution"));
+		this.partnerBankID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
 
 		logger.debug("Leaving");
 	}
@@ -659,6 +662,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
 
+		this.partnerBankID.setModuleName("PartnerBank");
+		this.partnerBankID.setMandatoryStyle(true);
+		this.partnerBankID.setValueColumn("PartnerBankCode");
+		this.partnerBankID.setDescColumn("PartnerBankName");
+		this.partnerBankID.setMaxlength(8);
+		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
+		
 		this.phoneCountryCode.setMaxlength(3);
 		this.phoneCountryCode.setWidth("50px");
 		this.phoneAreaCode.setMaxlength(3);
@@ -737,6 +747,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.bankBranchID.setAttribute("bankBranchID", aFinAdvnancePayments.getBankBranchID());
 			this.bankBranchID.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getiFSC()));
 		}
+		if (aFinAdvnancePayments.getPartnerBankID() != Long.MIN_VALUE && aFinAdvnancePayments.getPartnerBankID() != 0) {
+			this.partnerBankID.setAttribute("partnerBankId", aFinAdvnancePayments.getPartnerBankID());
+			this.partnerBankID.setValue(aFinAdvnancePayments.getPartnerbankCode(),aFinAdvnancePayments.getPartnerBankName());
+		}		
+		
 		this.bank.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getBranchBankName()));
 		this.branch.setValue(aFinAdvnancePayments.getBranchDesc());
 		this.city.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getCity()));
@@ -1074,7 +1089,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		try {
+			this.partnerBankID.getValidatedValue();
+			Object obj = this.partnerBankID.getAttribute("partnerBankId");
+			if (obj != null) {
+				aFinAdvancePayments.setPartnerBankID(Long.valueOf(String.valueOf(obj)));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -1085,6 +1109,36 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			throw new WrongValuesException(wvea);
 		}
 		aFinAdvancePayments.setRecordStatus(this.recordStatus.getValue());
+		logger.debug("Leaving");
+	}
+	
+	
+	
+	
+	/**
+	 * Change the partnerBankID for the Account on changing the finance Branch
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$partnerBankID(Event event) {
+		logger.debug("Entering");
+		Object dataObject = partnerBankID.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			if (dataObject != null) {
+				this.partnerBankID.setValue(dataObject.toString());
+				this.partnerBankID.setDescription("");
+			}
+
+		} else {
+			PartnerBank partnerBank = (PartnerBank) dataObject;
+			if (partnerBank != null) {
+				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankId());
+				this.finAdvancePayments.setPartnerbankCode(partnerBank.getPartnerBankCode());
+				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
+				
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1130,6 +1184,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (this.hbox_sellerContribution.isVisible() && !this.sellerContribution.isDisabled()) {
 			this.sellerContribution.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_FinAdvancePaymentsDialog_SellerContribution.value"), ccyFormatter, false, false));
+		}
+		
+		if (!this.partnerBankID.isReadonly()) {
+			this.partnerBankID.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_FinAdvancePaymentsDialog_PartnerbankId.value"), null, true));
 		}
 
 		if (gb_ChequeDetails.isVisible()) {

@@ -149,6 +149,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String lovValue;
 	private FinAdvancePayments befImage;
 	private LoggedInUser userDetails;
+	private long partnerBankID;
+	private String partnerbankCode;
+	private String partnerBankName;
+	
+	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -168,6 +173,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("iFSC");
 		excludeFields.add("branchBankCode");
 		excludeFields.add("branchBankName");
+		excludeFields.add("partnerbankCode");
+		excludeFields.add("partnerBankName");
 		return excludeFields;
 	}
 
@@ -517,6 +524,30 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
+	}
+
+	public long getPartnerBankID() {
+		return partnerBankID;
+	}
+
+	public void setPartnerBankID(long partnerBankID) {
+		this.partnerBankID = partnerBankID;
+	}
+
+	public String getPartnerbankCode() {
+		return partnerbankCode;
+	}
+
+	public void setPartnerbankCode(String partnerbankCode) {
+		this.partnerbankCode = partnerbankCode;
+	}
+
+	public String getPartnerBankName() {
+		return partnerBankName;
+	}
+
+	public void setPartnerBankName(String partnerBankName) {
+		this.partnerBankName = partnerBankName;
 	}
 
 }
