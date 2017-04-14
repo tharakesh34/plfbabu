@@ -66,8 +66,19 @@ public class ErrorUtil implements Serializable {
 	private List<ErrorDetails>		errorDetails		= null;
 	private static ErrorDetailsDAO	errorDetailsDAO;
 
-	public ErrorUtil() {
+	private ErrorUtil() {
 		super();
+	}
+
+	private ErrorUtil(List<ErrorDetails> errorDetails, String errorLanguage) {
+		if (errorDetails != null && errorDetails.size() != 0) {
+			HashMap<String, ErrorDetails> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
+
+			this.errorDetails = new ArrayList<>();
+			for (ErrorDetails errorDetail : errorDetails) {
+				this.errorDetails.add(copyErrorDetails(errorDetail, hashMap.get(errorDetail.getErrorCode())));
+			}
+		}
 	}
 
 	public static ErrorDetails getErrorDetail(ErrorDetails errorDetail) {
@@ -88,6 +99,10 @@ public class ErrorUtil implements Serializable {
 		return new ErrorUtil(errorDetails, errorLanguage).errorDetails;
 	}
 
+	private static ErrorDetails getErrorDetail(String errorCode) {
+		return errorDetailsDAO.getErrorDetail(errorCode);
+	}
+
 	private static LoadingCache<String, ErrorDetails> errorCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, ErrorDetails>() {
 				@Override
@@ -95,10 +110,6 @@ public class ErrorUtil implements Serializable {
 					return getErrorDetail(errorCode);
 				}
 			});
-
-	private static ErrorDetails getErrorDetail(String errorCode) {
-		return errorDetailsDAO.getErrorDetail(errorCode);
-	}
 
 	private static ErrorDetails getError(String errorCode) {
 
@@ -119,17 +130,6 @@ public class ErrorUtil implements Serializable {
 			errorCache.invalidate(errorCode);
 		} catch (Exception ex) {
 			logger.warn("Error clearing data from errorCache cache: ", ex);
-		}
-	}
-
-	private ErrorUtil(List<ErrorDetails> errorDetails, String errorLanguage) {
-		if (errorDetails != null && errorDetails.size() != 0) {
-			HashMap<String, ErrorDetails> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
-
-			this.errorDetails = new ArrayList<ErrorDetails>();
-			for (ErrorDetails errorDetail : errorDetails) {
-				this.errorDetails.add(copyErrorDetails(errorDetail, hashMap.get(errorDetail.getErrorCode())));
-			}
 		}
 	}
 
