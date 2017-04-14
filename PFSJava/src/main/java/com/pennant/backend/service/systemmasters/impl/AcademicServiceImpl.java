@@ -135,7 +135,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
-		getAcademicDAO().delete(academic, TableType.MAIN_TAB, true);
+		getAcademicDAO().delete(academic, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -204,9 +204,15 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		BeanUtils.copyProperties((Academic) auditHeader.getAuditDetail()
 				.getModelData(), academic);
 
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(academic.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(academicDAO.getAcademicById(academic.getAcademicID(), ""));
+		}
+
 		if (academic.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getAcademicDAO().delete(academic, TableType.MAIN_TAB, true);
+			getAcademicDAO().delete(academic, TableType.MAIN_TAB);
 		} else {
 			academic.setRoleCode("");
 			academic.setNextRoleCode("");
@@ -225,8 +231,6 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 				getAcademicDAO().update(academic, TableType.MAIN_TAB);
 			}
 		}
-
-		getAcademicDAO().delete(academic, TableType.TEMP_TAB, true);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -265,7 +269,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		Academic academic = (Academic) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAcademicDAO().delete(academic, TableType.TEMP_TAB, false);
+		getAcademicDAO().delete(academic, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -285,8 +289,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	private AuditHeader businessValidation(AuditHeader auditHeader,
 			String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -301,10 +304,9 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
 		// Get the model object.
@@ -324,13 +326,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(academic.getRecordType())) {
-			auditDetail.setBefImage(academicDAO.getAcademicById(academic.getAcademicID(), ""));
-		}
-
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
-
 }

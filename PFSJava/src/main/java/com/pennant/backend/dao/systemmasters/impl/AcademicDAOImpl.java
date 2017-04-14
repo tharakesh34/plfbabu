@@ -216,14 +216,14 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 	}
 
 	@Override
-	public void delete(Academic academic, TableType tableType, boolean finalize) {
+	public void delete(Academic academic, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from BMTAcademics");
 		sql.append(tableType.getSuffix());
 		sql.append(" where AcademicID = :AcademicID");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType, finalize));
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
