@@ -71,21 +71,21 @@ public class ErrorUtil implements Serializable {
 	}
 
 	public static ErrorDetails getErrorDetail(ErrorDetails errorDetail) {
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetails> errorDetails = new ArrayList<>();
 		errorDetails.add(errorDetail);
-		errorDetails = new ErrorUtil(errorDetails, PennantConstants.default_Language).getErrorDetails();
+		errorDetails = new ErrorUtil(errorDetails, PennantConstants.default_Language).errorDetails;
 		return errorDetails.get(0);
 	}
 
 	public static ErrorDetails getErrorDetail(ErrorDetails errorDetail, String errorLanguage) {
-		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		List<ErrorDetails> errorDetails = new ArrayList<>();
 		errorDetails.add(errorDetail);
-		errorDetails = new ErrorUtil(errorDetails, errorLanguage).getErrorDetails();
+		errorDetails = new ErrorUtil(errorDetails, errorLanguage).errorDetails;
 		return errorDetails.get(0);
 	}
 
 	public static List<ErrorDetails> getErrorDetails(List<ErrorDetails> errorDetails, String errorLanguage) {
-		return new ErrorUtil(errorDetails, errorLanguage).getErrorDetails();
+		return new ErrorUtil(errorDetails, errorLanguage).errorDetails;
 	}
 
 	private static LoadingCache<String, ErrorDetails> errorCache = CacheBuilder.newBuilder()
@@ -97,7 +97,7 @@ public class ErrorUtil implements Serializable {
 			});
 
 	private static ErrorDetails getErrorDetail(String errorCode) {
-		return getErrorDetailsDAO().getErrorDetail(errorCode);
+		return errorDetailsDAO.getErrorDetail(errorCode);
 	}
 
 	private static ErrorDetails getError(String errorCode) {
@@ -124,7 +124,6 @@ public class ErrorUtil implements Serializable {
 
 	private ErrorUtil(List<ErrorDetails> errorDetails, String errorLanguage) {
 		if (errorDetails != null && errorDetails.size() != 0) {
-			//String errorCodeList = getErrorCodeList(errorDetails);
 			HashMap<String, ErrorDetails> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
 
 			this.errorDetails = new ArrayList<ErrorDetails>();
@@ -133,31 +132,6 @@ public class ErrorUtil implements Serializable {
 			}
 		}
 	}
-
-	/*
-	 * private String getErrorCodeList(List<ErrorDetails> errorDetails){ String errorCodeList = "";
-	 * 
-	 * if(errorDetails!=null){ for (int i = 0; i < errorDetails.size(); i++) { ErrorDetails errorDetail =
-	 * errorDetails.get(i);
-	 * 
-	 * if(!StringUtils.contains(errorCodeList, errorDetail.getErrorCode())){
-	 * 
-	 * errorCodeList = errorCodeList+"'"+errorDetail.getErrorCode()+"'";
-	 * 
-	 * if(i<(errorDetails.size()-1)){ errorCodeList = errorCodeList+","; } } } } if(errorCodeList.endsWith(",")){
-	 * errorCodeList= errorCodeList.substring(0, errorCodeList.length()-1); } return errorCodeList; }
-	 * 
-	 * private HashMap<String, ErrorDetails> getErrorsByErrorCodes(String errorLanguage,String errorCodeList){
-	 * HashMap<String, ErrorDetails> hashMap= new HashMap<String, ErrorDetails>();
-	 * 
-	 * List<ErrorDetails> errorDetails =getErrorDetailsDAO().getErrorDetail(errorLanguage, errorCodeList);
-	 * 
-	 * if(errorDetails != null){ hashMap = new HashMap<String, ErrorDetails>(errorDetails.size()); for (int i = 0; i <
-	 * errorDetails.size(); i++) { hashMap.put(StringUtils.trim(errorDetails.get(i).getErrorCode()),
-	 * errorDetails.get(i)); }
-	 * 
-	 * }else{ hashMap = new HashMap<String, ErrorDetails>(1); } return hashMap; }
-	 */
 
 	private HashMap<String, ErrorDetails> getErrorsByErrorCodes(String errorLanguage, List<ErrorDetails> errorDetails) {
 		HashMap<String, ErrorDetails> hashMap = new HashMap<String, ErrorDetails>();
@@ -192,16 +166,7 @@ public class ErrorUtil implements Serializable {
 		ErrorUtil.errorDetailsDAO = errorDetailsDAO;
 	}
 
-	public static ErrorDetailsDAO getErrorDetailsDAO() {
-		return errorDetailsDAO;
-	}
-
-	public List<ErrorDetails> getErrorDetails() {
-		return errorDetails;
-	}
-
 	public void setErrorDetails(ArrayList<ErrorDetails> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
-
 }
