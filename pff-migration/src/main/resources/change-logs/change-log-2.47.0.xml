@@ -2909,5 +2909,40 @@ null);
 			FROM   AccountTypeGroup
 			           
 	</createView>	
-</changeSet>	
+</changeSet>
+
+<changeSet id="134" author="Madhubabu">
+		<addColumn tableName="FinAdvancePayments_Temp">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="135" author="Madhubabu">
+		<addColumn tableName="FinAdvancePayments">
+			<column name="PartnerBankId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="136" author="sai">
+		<addPrimaryKey columnNames="PARTNERBANKID" constraintName="PK_partnerbank_Temp"
+			tableName="partnerbank_temp" />
+	</changeSet>
+	<changeSet id="137" author="Madhubabu">
+		<addForeignKeyConstraint constraintName="FK_FinAdvPayment_PartnerBnkId"
+			referencedTableName="Partnerbank_temp" referencedColumnNames="PartnerBankId"
+			baseTableName="FinAdvancePayments" baseColumnNames="PartnerBankId" />
+	</changeSet>
+	<changeSet id="138" author="Madhubabu">
+		<addPrimaryKey columnNames="PARTNERBANKID" constraintName="PK_partnerbank"
+			tableName="partnerbank" />
+	</changeSet>
+	
+	<changeSet id="139" author="Madhubabu">
+		<dropForeignKeyConstraint baseTableName="FinAdvancePayments"
+			constraintName="FK_FinAdvPayment_PartnerBnkId" />
+	</changeSet>
+	<changeSet id="140" author="Madhubabu">
+		<addForeignKeyConstraint constraintName="FK_FinAdvPayment_PartnerBnkId"
+			referencedTableName="Partnerbank" referencedColumnNames="PartnerBankId"
+			baseTableName="FinAdvancePayments" baseColumnNames="PartnerBankId" />
+	</changeSet>
+	
 </databaseChangeLog>
