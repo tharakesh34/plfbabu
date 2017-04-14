@@ -3401,9 +3401,97 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 
 </createView>
 </changeSet>
-
-
-
+ 
+	<changeSet id="150" author="chaitanya.ch">
+<sql>
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	
+	Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER');
+	Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONWORKFLOW_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+	Delete from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER';
+	INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONWORKFLOW_MAKER','Group of Rights for promotions to Maker Role ', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);button_PromotionWorkFlowDialog_btnNew
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_PromotionWorkFlow'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionWorkFlowDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionWorkFlowDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'PromotionWorkFlowDialog_workFlowType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_MAKER'), (Select RightID from SecRights where RightName = 'PromotionWorkFlowDialog_finEvent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	
+	
+	----APPROVER 
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	
+	Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_APPROVER');
+	Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTIONWORKFLOW_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+	Delete from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_APPROVER';
+	INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTIONWORKFLOW_APPROVER','Group of Rights for promotions to Approver Role ', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_PromotionWorkFlow'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTIONWORKFLOW_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_APPROVER'), (Select RightID from SecRights where RightName = 'button_PromotionWorkFlowDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTIONWORKFLOW_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_SolutionFactory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	 
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	
+	
+	--PROCESS EDITOR 
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	
+	Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER');
+	Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+	Delete from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER';
+	INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTION_REFERENCEDETAIL_MAKER','Group of Rights for Promotions Process Editor to Approver Role ', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_SolutionFactory_PromotionReferenceDetail'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'button_FinanceReferenceDetailDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_finRefType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_finRefId'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_isActive'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_showInStage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_mandInputInStage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_REFERENCEDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'FinanceReferenceDetailDialog_allowInputInStage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+</sql>
+</changeSet>
+ 
 
 
 
