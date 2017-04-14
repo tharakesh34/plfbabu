@@ -122,7 +122,7 @@ public class AcademicDAOImpl extends BasisNextidDaoImpl<Academic> implements Aca
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "AcademicID != :id and AcademicLevel = :level and AcademicDecipline = :discipline";
+		String whereClause = "AcademicLevel = :level and AcademicDecipline = :discipline and AcademicID != :id";
 
 		switch (tableType) {
 		case MAIN_TAB:
