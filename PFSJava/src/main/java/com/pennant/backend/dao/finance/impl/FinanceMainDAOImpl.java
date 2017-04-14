@@ -742,7 +742,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		}
 		sql.append(tableType.getSuffix());
 		sql.append(" where FinReference = :FinReference");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType, finalize));
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
