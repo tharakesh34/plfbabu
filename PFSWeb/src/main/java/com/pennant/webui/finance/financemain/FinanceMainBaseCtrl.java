@@ -1628,20 +1628,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Schedule Preparation without calculation , In case of Overdraft Schedule when no disbursements happened
 		FinScheduleData finSchdData = getFinanceDetail().getFinScheduleData();
-		if (StringUtils.isNotBlank(moduleDefiner)
-				&& isOverdraft
-				&& (finSchdData.getFinanceScheduleDetails() == null || finSchdData.getFinanceScheduleDetails()
-						.isEmpty())) {
-			getFinanceDetail()
-					.setFinScheduleData(ScheduleGenerator.getNewSchd(getFinanceDetail().getFinScheduleData()));
+		if (StringUtils.isNotBlank(moduleDefiner) && isOverdraft
+				&& (finSchdData.getFinanceScheduleDetails() == null || finSchdData.getFinanceScheduleDetails().isEmpty())) {
+			getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(getFinanceDetail().getFinScheduleData()));
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 					&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
-				for (FinanceScheduleDetail finSchdDetail : getFinanceDetail().getFinScheduleData()
-						.getFinanceScheduleDetails()) {
-					finSchdDetail.setSchdMethod(getComboboxValue(this.cbScheduleMethod));
-					getFinanceDetail().getFinScheduleData().getFinanceMain()
-							.setRecalSchdMethod(getComboboxValue(this.cbScheduleMethod));
+				for (FinanceScheduleDetail curSchd : getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()) {
+					curSchd.setSchdMethod(getComboboxValue(this.cbScheduleMethod));
+					if(StringUtils.isNotEmpty(curSchd.getBaseRate())){
+						BigDecimal rate = RateUtil.rates(curSchd.getBaseRate(), finSchdData.getFinanceMain().getFinCcy(),
+								curSchd.getSplRate(), curSchd.getMrgRate(), finSchdData.getFinanceMain().getRpyMinRate(),
+								finSchdData.getFinanceMain().getRpyMaxRate()).getNetRefRateLoan();
+						curSchd.setCalculatedRate(rate);
+					}else{
+						curSchd.setCalculatedRate(finSchdData.getFinanceMain().getRepayProfitRate());
+					}
 				}
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalSchdMethod(getComboboxValue(this.cbScheduleMethod));
 			}
 		}
 
@@ -4742,7 +4745,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getLabel("label_FinanceMainDialog_NextRolloverDate.value"), false));
 		}
 
-		if (!this.nextRepayPftDate.isReadonly() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())
+		if (this.rpyPftFrqRow.isVisible() && !this.nextRepayPftDate.isReadonly() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
 			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels
@@ -10072,17 +10075,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 
-			if (isOverDraft) {
+			if (isOverDraft && !financeType.isDroplineOD()) {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())) {
 					this.nextRepayDate_two.setValue(FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1,
 							this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false,
 							financeType.getFddLockPeriod()).getNextFrequencyDate());
 					this.nextRepayPftDate_two.setValue(this.nextRepayDate_two.getValue());
+					this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
+					this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
 				}
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())) {
 					this.nextRepayRvwDate_two.setValue(FrequencyUtil.getNextDate(this.repayRvwFrq.getValue(), 1,
 							this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false,
 							financeType.getFddLockPeriod()).getNextFrequencyDate());
+					this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
 				}
 			}
 			
@@ -12317,12 +12323,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeType.getFinMinTerm() == 1 && financeType.getFinMaxTerm() == 1) {
 			singleTermFinance = true;
 		}
+		
+		boolean isOverdraft = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
+			isOverdraft = true;
+		}
 
 		if (!this.rpyPftFrqRow.isVisible()) {
 			this.nextRepayPftDate.setText("");
 		}
 
-		if (this.maturityDate.getValue() != null) {
+		if (this.maturityDate.getValue() != null && !isOverdraft) {
 
 			this.maturityDate_two.setValue(this.maturityDate.getValue());
 
@@ -12455,7 +12466,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (this.numberOfTerms_two.intValue() != 0 && !singleTermFinance && !isRollover
-				&& !this.manualSchedule.isChecked()) {
+				&& !this.manualSchedule.isChecked() && !isOverdraft) {
 
 			List<Calendar> scheduleDateList = null;
 
@@ -12502,11 +12513,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.maturityDate_two.setValue(this.nextRepayDate_two.getValue());
 		}
 
-		if (this.nextRepayPftDate.getValue() == null && StringUtils.isNotEmpty(this.repayPftFrq.getValue())
+		if (this.rpyPftFrqRow.isVisible() && this.nextRepayPftDate.getValue() == null && StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 			this.nextRepayPftDate_two.setValue(FrequencyUtil.getNextDate(this.repayPftFrq.getValue(), 1,
 					this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false,
 					financeType.getFddLockPeriod()).getNextFrequencyDate());
+		}else if(!this.rpyPftFrqRow.isVisible()){
+			this.nextRepayPftDate_two.setValue(this.nextRepayDate_two.getValue());
 		}
 
 		if (this.nextRepayPftDate.getValue() != null) {
