@@ -337,9 +337,10 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				if(!StringUtils.isEmpty(curSchd.getBpiOrHoliday())){
+				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())){
 					continue;
 				}
+				
 				if(!curSchd.isRepayOnSchDate() && 
 						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0){
 					continue;
