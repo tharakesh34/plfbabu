@@ -3015,5 +3015,11 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 		</createView>			
 				
 		</changeSet>
+		
+ <changeSet id="142" author="durgaprasad G ">
+		<modifyDataType tableName="DEDUP_EOD_CUST_DEMO_DTL" columnName="AADHAR_NO"
+			newDataType="varchar(16)" />
+</changeSet>
+			
 
 </databaseChangeLog>
