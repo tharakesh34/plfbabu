@@ -22,11 +22,6 @@
 		<property name="jndiName" value="jdbc/PFFAUDIT" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	<bean id="equationDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFEQUATION" />
-		<property name="lookupOnStartup" value="true" />
-	</bean>
 	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PFFEXT" />
