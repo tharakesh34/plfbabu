@@ -3015,8 +3015,15 @@ SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 		</createView>			
 				
 		</changeSet>
-		
- <changeSet id="142" author="durgaprasad G ">
+<changeSet id="142" author="Madhubabu">
+<sql>
+INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 3, 'FinAdvancePaymentsDialog_partnerBankID','FinAdvancePaymentsDialog',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='FinAdvancePayments_Maker'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='FinAdvancePaymentsDialog_partnerBankID'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CL_ORIGINATION_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='FinAdvancePaymentsDialog_partnerBankID'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+</sql>
+
+</changeSet>		
+ <changeSet id="143" author="durgaprasad G ">
 		<modifyDataType tableName="DEDUP_EOD_CUST_DEMO_DTL" columnName="AADHAR_NO"
 			newDataType="varchar(16)" />
 </changeSet>
