@@ -97,6 +97,8 @@ public class Promotion extends AbstractWorkflowEntity {
 	private String rpyPricingCode;
 	private String rpyPricingDesc;
 	
+	private String lovValue;
+	
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	private List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<FinTypeInsurances>();
 	private List<FinTypeAccounting>	finTypeAccountingList = new ArrayList<FinTypeAccounting>();
@@ -430,6 +432,14 @@ public class Promotion extends AbstractWorkflowEntity {
 
 	public void setFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
 		this.finTypeAccountingList = finTypeAccountingList;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
 	}
 
 }

@@ -429,7 +429,11 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("LMTFinanceWorkflowdef_AView");
+			if(isPromotion){
+				this.searchObj.addTabelName("LMTPromotionWorkflowdef_AView");
+			}else{
+				this.searchObj.addTabelName("LMTFinanceWorkflowdef_AView");
+			}
 			if (isFirstTask()) {
 				button_FinanceReferenceDetailList_NewFinanceReferenceDetail.setVisible(true);
 			} else {
@@ -438,7 +442,11 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 
 			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),isFirstTask());
 		}else{
-			this.searchObj.addTabelName("LMTFinanceWorkflowdef_AView");
+			if(isPromotion){
+				this.searchObj.addTabelName("LMTPromotionWorkflowdef_AView");
+			}else{
+				this.searchObj.addTabelName("LMTFinanceWorkflowdef_AView");
+			}
 		}
 
 		//Finance Type

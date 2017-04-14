@@ -918,11 +918,6 @@ public class PennantJavaUtil {
 				"RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF, new String[] { "FinType", "FinTypeDesc" },
 				new String[][] { { "FinIsActive", "0", "1" }, { "Product", "0", "" } }, 600));
 
-		ModuleUtil.register("PromotionCode", new ModuleMapping("FinanceType", FinanceType.class, new String[] {
-				"RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF, new String[] { "FinType",
-				"LovDescProductCodeDesc", "FinTypeDesc" }, new String[][] { { "FinIsActive", "0", "1" },
-				{ "Product", "1", "" } }, 600));
-
 		ModuleUtil.register("FinTypeAccount", new ModuleMapping("FinTypeAccount", FinTypeAccount.class,
 				new String[] { "FinTypeAccount" }, masterWF , new String[] { "FinCcy", "Event" }, null, 300));
 

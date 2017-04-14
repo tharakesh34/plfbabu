@@ -68,6 +68,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -78,6 +79,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.RateBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -114,7 +116,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SolutionFactory/Promotion/promotionDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul file. <br>
  */
 public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
@@ -147,6 +149,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Checkbox active;
 
 	protected Div basicDetailDiv;
+	
+	protected Row row_ApplyRpyPricing;
 
 	private Promotion promotion;
 	private transient PromotionListCtrl promotionListCtrl;
@@ -216,7 +220,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			}
 
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
-			
 			this.isCompReadonly = !isMaintainable();
 
 			// set Field Properties
@@ -279,17 +282,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.downPayRule.setValueColumn("RuleCode");
 		this.downPayRule.setDescColumn("RuleCodeDesc");
 		this.downPayRule.setValidateColumns(new String[] { "RuleId", "RuleCode", "RuleCodeDesc" });
-		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE,
-				Filter.OP_EQUAL) });
-		if (this.promotion.isFinIsDwPayRequired()) {
-			this.downPayRule.setMandatoryStyle(true);
-		} else {
-			this.downPayRule.setMandatoryStyle(false);
-		}
+		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
+		this.downPayRule.setMandatoryStyle(this.promotion.isFinIsDwPayRequired());
 
 		this.finBaseRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.finBaseRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
-		this.finBaseRate.setMandatoryStyle(true);
+		this.finBaseRate.setMandatoryStyle(false);
 
 		this.rpyPricingMethod.setInputAllowed(false);
 		this.rpyPricingMethod.setDisplayStyle(3);
@@ -298,14 +296,10 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setValueColumn("RuleCode");
 		this.rpyPricingMethod.setDescColumn("RuleCodeDesc");
 		this.rpyPricingMethod.setValidateColumns(new String[] { "RuleId", "RuleCode", "RuleCodeDesc" });
-		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,
-				Filter.OP_EQUAL) });
+		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE, Filter.OP_EQUAL) });
+		this.rpyPricingMethod.setMandatoryStyle(this.promotion.isApplyRpyPricing());
 
-		if (this.promotion.isApplyRpyPricing()) {
-			this.rpyPricingMethod.setMandatoryStyle(true);
-		} else {
-			this.rpyPricingMethod.setMandatoryStyle(false);
-		}
+		this.row_ApplyRpyPricing.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 
 		setStatusDetails();
 
@@ -394,6 +388,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setConstraint("");
 		this.rpyPricingMethod.setValue("0");
 		this.rpyPricingMethod.setDescription("");
+		
 		if (this.applyRpyPricing.isChecked()) {
 			this.rpyPricingMethod.setReadonly(isReadOnly("PromotionDialog_RpyPricingMethod"));
 			this.rpyPricingMethod.setButtonDisabled(isReadOnly("PromotionDialog_RpyPricingMethod"));
@@ -427,35 +422,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/*
-	 * public void onFulfill$finType(Event event) { logger.debug("Entering" + event.toString());
-	 * 
-	 * Object dataObject = finType.getObject(); boolean baseRateFlag = true;
-	 * 
-	 * if (dataObject instanceof String) { this.finType.setValue(dataObject.toString());
-	 * this.finType.setDescription(""); } else { FinanceType financeType = (FinanceType) dataObject; if (financeType !=
-	 * null) { this.finType.setValue(financeType.getFinCategory()); this.finType.setObject(new
-	 * FinanceType(financeType.getFinType())); this.finType.setDescription(financeType.getFinTypeDesc()); this.finCcy =
-	 * financeType.getFinCcy(); this.format = CurrencyUtil.getFormat(this.finCcy);
-	 * this.finBaseRate.getBaseComp().setReadonly(false); this.finBaseRate.getSpecialComp().setReadonly(false);
-	 * this.finBaseRate.setReadonly(false); baseRateFlag = false; } }
-	 * 
-	 * //setFinBaseRateProperties(baseRateFlag);
-	 * 
-	 * appendFeeDetailTab(!baseRateFlag);
-	 * 
-	 * logger.debug("Leaving" + event.toString()); }
-	 */
-
-	/*
-	 * private void setFinBaseRateProperties(boolean baseRateFlag) {
-	 * this.finBaseRate.getBaseComp().setReadonly(baseRateFlag);
-	 * this.finBaseRate.getSpecialComp().setReadonly(baseRateFlag); this.finBaseRate.setReadonly(baseRateFlag);
-	 * this.finBaseRate.getMarginComp().setDisabled(baseRateFlag);
-	 * 
-	 * this.finBaseRate.setEffectiveRateVisible(true); this.finBaseRate.setBaseValue(null);
-	 * this.finBaseRate.setSpecialValue(null); this.finBaseRate.setMarginValue(null); }
-	 */
 
 	public void onFulfill$finBaseRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
@@ -535,8 +501,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			return;
 		}
 
-		RateDetail rateDetail = RateUtil.rates(this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate
-				.getSpecialValue(),
+		RateDetail rateDetail = RateUtil.rates(this.finBaseRate.getBaseValue(), this.finCcy, this.finBaseRate.getSpecialValue(),
 				this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue(),
 				this.finMinRate.getValue(), this.finMaxRate.getValue());
 		if (rateDetail.getErrorDetails() == null) {
@@ -598,18 +563,18 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finType.setDescription(aPromotion.getFinTypeDesc());
 		this.finType.setObject(new FinanceType(aPromotion.getFinType()));
 
-		finCcy = aPromotion.getFinCcy();
-		format = CurrencyUtil.getFormat(finCcy);
+		this.finCcy = aPromotion.getFinCcy();
+		this.format = CurrencyUtil.getFormat(this.finCcy);
 
 		this.finMaxAmount.setMandatory(false);
-		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.finMaxAmount.setScale(format);
+		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(this.format));
+		this.finMaxAmount.setScale(this.format);
 		this.finMinAmount.setMandatory(false);
-		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.finMinAmount.setScale(format);
+		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(this.format));
+		this.finMinAmount.setScale(this.format);
 
-		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMinAmount(), format));
-		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMaxAmount(), format));
+		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMinAmount(), this.format));
+		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aPromotion.getFinMaxAmount(), this.format));
 
 		if (!applyRpyPricing.isChecked()) {
 			readOnlyComponent(true, this.rpyPricingMethod);
@@ -640,7 +605,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (StringUtils.isNotBlank(aPromotion.getFinCategory())) {
 			appendFeeDetailTab();
-			appendInsuranceDetailsTab();
+			//appendInsuranceDetailsTab();
 			appendAccountingDetailsTab();
 		}
 
@@ -837,22 +802,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 		// Base Rate
 		try {
-			aPromotion.setFinBaseRate(StringUtils.isEmpty(this.finBaseRate.getBaseValue()) ? null : this.finBaseRate
-					.getBaseValue());
+			aPromotion.setFinBaseRate(StringUtils.isEmpty(this.finBaseRate.getBaseValue()) ? null : this.finBaseRate.getBaseValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Special Rate
 		try {
-			aPromotion.setFinSplRate(StringUtils.isEmpty(this.finBaseRate.getSpecialValue()) ? null : this.finBaseRate
-					.getSpecialValue());
+			aPromotion.setFinSplRate(StringUtils.isEmpty(this.finBaseRate.getSpecialValue()) ? null : this.finBaseRate.getSpecialValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Margin
 		try {
-			aPromotion.setFinMargin(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate
-					.getMarginValue());
+			aPromotion.setFinMargin(this.finBaseRate.getMarginValue() == null ? BigDecimal.ZERO : this.finBaseRate.getMarginValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -913,16 +875,16 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			wve.add(we);
 		}
 		
-		if(getFinTypeFeesListCtrl() != null) {
-			aPromotion.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());
+		if(this.finTypeFeesListCtrl != null) {
+			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.doSave());
 		}
 
-		if(getFinTypeInsuranceListCtrl() != null) {
-			aPromotion.setFinTypeInsurancesList(getFinTypeInsuranceListCtrl().getFinTypeInsuranceList());
+		if(this.finTypeInsuranceListCtrl != null) {
+			aPromotion.setFinTypeInsurancesList(this.finTypeInsuranceListCtrl.getFinTypeInsuranceList());
 		}
 		
-		if(wve.isEmpty() && getFinTypeAccountingListCtrl() != null) {
-			aPromotion.setFinTypeAccountingList(getFinTypeAccountingListCtrl().doSave());
+		if(wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
+			aPromotion.setFinTypeAccountingList(this.finTypeAccountingListCtrl.doSave());
 		}
 		
 		doRemoveValidation();
@@ -990,18 +952,15 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Code
 		if (!this.promotionCode.isReadonly()) {
 			this.promotionCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_PromotionCode.value"), PennantRegularExpressions.REGEX_ALPHANUM,
-					true));
+					.getLabel("label_PromotionDialog_PromotionCode.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		// Description
 		if (!this.promotionDesc.isReadonly()) {
 			this.promotionDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_PromotionDesc.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					.getLabel("label_PromotionDialog_PromotionDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		// Finance Type
-		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null,
-				true, true));
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null, true, true));
 
 		Date appStartDate = DateUtility.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
@@ -1015,8 +974,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			try {
 				this.startDate.getValue();
 				this.endDate.setConstraint(new PTDateValidator(
-						Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, this.startDate.getValue(),
-						appEndDate, false));
+						Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, this.startDate.getValue(), appEndDate, false));
 			} catch (WrongValueException we) {
 				this.endDate.setConstraint(new PTDateValidator(
 						Labels.getLabel("label_FinanceTypeDialog_EndDate.value"), true, true, null, false));
@@ -1025,8 +983,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Down Payment Rule
 		if (this.finIsDwPayRequired.isChecked() && this.downPayRule.isButtonVisible()) {
 			this.downPayRule.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_DownPayRule.value"), null, this.finIsDwPayRequired.isChecked(),
-					true));
+					.getLabel("label_PromotionDialog_DownPayRule.value"), null, this.finIsDwPayRequired.isChecked(), true));
 		}
 
 		// Actual Interest Rate
@@ -1037,18 +994,16 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Base Rate
 		if (!this.finBaseRate.getMarginComp().isDisabled()) {
 			this.finBaseRate.getMarginComp().setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_PromotionDialog_FinMargin.value"), 9, true, true,
+					new PTDecimalValidator(Labels.getLabel("label_PromotionDialog_FinMargin.value"), 9, false, true,
 							-9999, 9999));
 			this.finBaseRate.getBaseComp()
 					.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinBaseRate.value"), null,
-									true, true));
+							new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinBaseRate.value"), null, false, true));
 		}
 		// Repay Pricing Method
 		if (this.applyRpyPricing.isChecked() && this.rpyPricingMethod.isButtonVisible()) {
 			this.rpyPricingMethod.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_RpyPricingMethod.value"), null, this.applyRpyPricing.isChecked(),
-					true));
+					.getLabel("label_PromotionDialog_RpyPricingMethod.value"), null, this.applyRpyPricing.isChecked(), true));
 		}
 		// Minimum Term
 		if (!this.finMinTerm.isReadonly()) {
@@ -1287,9 +1242,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
-		}
-
-		if (isWorkFlowEnabled()) {
+			
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -1350,8 +1303,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			validate = false;// Stop validations in save mode
 		}
 		
-		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setValidate(validate);
+		if (this.finTypeAccountingListCtrl != null) {
+			this.finTypeAccountingListCtrl.setValidate(validate);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1401,6 +1354,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			logger.error("Exception", e);
 			showErrorMessage(this.window_PromotionDialog, e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1621,24 +1575,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.promotionService = promotionService;
 	}
 
-	public FinTypeFeesListCtrl getFinTypeFeesListCtrl() {
-		return finTypeFeesListCtrl;
-	}
-
 	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
 		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
 	}
 
-	public FinTypeInsuranceListCtrl getFinTypeInsuranceListCtrl() {
-		return finTypeInsuranceListCtrl;
-	}
-
 	public void setFinTypeInsuranceListCtrl(FinTypeInsuranceListCtrl finTypeInsuranceListCtrl) {
 		this.finTypeInsuranceListCtrl = finTypeInsuranceListCtrl;
-	}
-
-	public FinTypeAccountingListCtrl getFinTypeAccountingListCtrl() {
-		return finTypeAccountingListCtrl;
 	}
 
 	public void setFinTypeAccountingListCtrl(FinTypeAccountingListCtrl finTypeAccountingListCtrl) {

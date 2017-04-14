@@ -182,7 +182,7 @@
 														id="finBaseRate" />
 												</hlayout>
 											</row>
-											<row id="row5">
+											<row id="row_ApplyRpyPricing">
 												<label
 													id="label_ApplyRpyPricing"
 													value="${c:l('label_PromotionDialog_ApplyRpyPricing.value')}" />

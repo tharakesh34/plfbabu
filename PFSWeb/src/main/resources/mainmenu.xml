@@ -188,12 +188,12 @@
  		<menuItem id="menu_Item_FinanceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=FINANCE&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_FinanceWorkFlow" /> 		
  		<menuItem id="menu_Item_FinanceServiceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=FINANCE&amp;eventAction=''"  rightName="menuItem_SolutionFactory_FinanceWorkFlow" /> 		
  		<menuItem id="menu_Item_Product" zulNavigation="/WEB-INF/pages/SolutionFactory/Product/ProductList.zul"  rightName="menuItem_SolutionFactory_Product"/>
- 		<!--<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/PromotionList.zul"  rightName="menuItem_SolutionFactory_Promotion"/>
+		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/Promotion/PromotionList.zul" rightName="menuItem_Promotion_Promotion"/>
 		<menuItem id="menu_Item_PromotionReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=PROMOTION&amp;event=Origination" rightName="menuItem_SolutionFactory_PromotionReferenceDetail"/>
 		<menuItem id="menu_Item_PromotionReferenceService" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=PROMOTION&amp;event=''" rightName="menuItem_SolutionFactory_PromotionReferenceDetail"/>
 		<menuItem id="menu_Item_PromotionWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=PROMOTION&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_PromotionWorkFlow" />		
 		<menuItem id="menu_Item_PromotionServiceWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=PROMOTION&amp;eventAction=''"  rightName="menuItem_SolutionFactory_PromotionWorkFlow" />		
-		 -->
+		
 		 <!-- <menuItem id="menu_Item_FinanceRepayPriority" zulNavigation="/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityList.zul"  rightName="menuItem_SolutionFactory_FinanceRepayPriority"/>
  -->		
  		<menuItem id="menu_Item_StepPolicy" zulNavigation="/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyList.zul"  rightName="menuItem_SolutionFactory_StepPolicy"/>
@@ -210,7 +210,6 @@
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
 		
 		<!--Promotions -->
-		<menuItem id="menu_Item_Promotion" zulNavigation="/WEB-INF/pages/SolutionFactory/Promotion/PromotionList.zul" rightName="menuItem_Promotion_Promotion"/>
 	</menu>
 	
 	<!--Finance Menu Tree -->

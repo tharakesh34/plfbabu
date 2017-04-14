@@ -192,17 +192,17 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		// Fees
 		if (promotion.getFinTypeFeesList() != null && !promotion.getFinTypeFeesList().isEmpty()) {
 			auditDetailsList.addAll(this.finTypeFeesService.delete(promotion.getFinTypeFeesList(), tableType,
-					auditTranType, promotion.getFinType(), FinanceConstants.FINTYPEFEES_PROMOTION));
+					auditTranType, promotion.getPromotionCode(), FinanceConstants.FINTYPEFEES_PROMOTION));
 		}
 		// Insurance Deatails
 		if (promotion.getFinTypeInsurancesList() != null && !promotion.getFinTypeInsurancesList().isEmpty()) {
 			auditDetailsList.addAll(this.finTypeInsurancesService.delete(promotion.getFinTypeInsurancesList(),
-					tableType, auditTranType, promotion.getFinType(), FinanceConstants.FINTYPEFEES_PROMOTION));
+					tableType, auditTranType, promotion.getPromotionCode(), FinanceConstants.FINTYPEFEES_PROMOTION));
 		}
 		// Accounting Deatails
 		if (promotion.getFinTypeAccountingList() != null && !promotion.getFinTypeAccountingList().isEmpty()) {
 			auditDetailsList.addAll(this.finTypeAccountingService.delete(promotion.getFinTypeAccountingList(),
-					tableType, auditTranType, promotion.getFinType(), FinanceConstants.FINTYPEFEES_PROMOTION));
+					tableType, auditTranType, promotion.getPromotionCode(), FinanceConstants.FINTYPEFEES_PROMOTION));
 		}
 
 		logger.debug("Leaving");

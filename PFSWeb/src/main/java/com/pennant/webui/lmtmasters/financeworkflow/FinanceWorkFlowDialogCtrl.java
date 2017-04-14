@@ -271,10 +271,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setValidateColumns(new String[] { "FinType" });
 				this.row_finEvent.setVisible(true);
 			}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_PROMOTION)) {
-				this.finType.setModuleName("PromotionCode");
-				this.finType.setValueColumn("FinType");
-				this.finType.setDescColumn("FinTypeDesc");
-				this.finType.setValidateColumns(new String[] { "FinType" });
+				this.finType.setModuleName("Promotion");
+				this.finType.setValueColumn("PromotionCode");
+				this.finType.setDescColumn("PromotionDesc");
+				this.finType.setValidateColumns(new String[] { "PromotionCode" });
 				this.row_finEvent.setVisible(true);
 			}else if (this.moduleName.getSelectedItem().getValue().toString().equals(PennantConstants.WORFLOW_MODULE_COLLATERAL)) {
 				this.finType.setModuleName("CollateralStructure");

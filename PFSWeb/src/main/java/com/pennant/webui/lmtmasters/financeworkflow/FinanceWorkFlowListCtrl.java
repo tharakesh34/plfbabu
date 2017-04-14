@@ -148,8 +148,16 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		super.moduleCode = moduleName+"WorkFlow";
 		super.pageRightName = moduleName+"WorkFlowList";
 		
-		super.tableName = "LMTFinanceWorkFlowDef_AView";
-		super.queueTableName = "LMTFinanceWorkFlowDef_View";
+		if(isPromotion){
+			super.tableName = "LMTPromotionWorkflowdef_AView";
+			super.queueTableName = "LMTPromotionWorkflowdef_View";
+		}else{
+			super.tableName = "LMTFinanceWorkFlowDef_AView";
+			super.queueTableName = "LMTFinanceWorkFlowDef_View";
+		}
+
+		
+		
 	}
 
 	@Override

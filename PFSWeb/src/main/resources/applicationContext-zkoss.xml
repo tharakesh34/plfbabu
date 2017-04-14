@@ -4494,10 +4494,11 @@
 		<property name="promotionService" ref="promotionService" />
 	</bean>
 	
-	<bean id="selectPromotionDialogCtrl"
-		class="com.pennant.webui.rmtmasters.promotion.SelectPromotionDialogCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="selectPromotionDialogCtrl" class="com.pennant.webui.rmtmasters.promotion.SelectPromotionDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="promotionService" ref="promotionService"/>
+		<property name="finTypeFeesService" ref="finTypeFeesService" />
+	    <property name="finTypeInsurancesService" ref="finTypeInsurancesService" />
+	    <property name="finTypeAccountingService" ref="finTypeAccountingService" />
 	</bean>
 	
 	<bean id="promotionDialogCtrl" class="com.pennant.webui.rmtmasters.promotion.PromotionDialogCtrl" parent="basisCtrl" scope="prototype">

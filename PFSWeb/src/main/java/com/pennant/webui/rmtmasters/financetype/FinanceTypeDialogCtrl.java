@@ -590,9 +590,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	@SuppressWarnings("unused")
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		int format = CurrencyUtil.getFormat(getFinanceType().getFinCcy());
-		
+
 		if (isPromotion) {
 			this.product.setMaxlength(8);
 			this.product.setMandatoryStyle(true);
@@ -658,7 +658,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finSuspAcTypeFilters[0] = new Filter("AcPurpose", "S", Filter.OP_EQUAL);
 			finSuspAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finSuspAcType.setFilters(finSuspAcTypeFilters);
-			
+
 			this.finProvisionAcType.setMaxlength(8);
 			this.finProvisionAcType.setMandatoryStyle(false);
 			this.finProvisionAcType.setModuleName("AccountType");
@@ -669,7 +669,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finProvisionAcTypeFilters[0] = new Filter("AcPurpose", "P", Filter.OP_EQUAL);
 			finProvisionAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finProvisionAcType.setFilters(finProvisionAcTypeFilters);
-			
+
 			this.finBankContingentAcType.setMaxlength(8);
 			this.finBankContingentAcType.setMandatoryStyle(false);
 			this.finBankContingentAcType.setModuleName("AccountType");
@@ -680,7 +680,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finBankContingentAcTypeFilters[0] = new Filter("AcPurpose", "C", Filter.OP_EQUAL);
 			finBankContingentAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finBankContingentAcType.setFilters(finBankContingentAcTypeFilters);
-			
+
 			this.finContingentAcType.setMaxlength(8);
 			this.finContingentAcType.setMandatoryStyle(false);
 			this.finContingentAcType.setModuleName("AccountType");
@@ -692,7 +692,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finContingentAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finContingentAcType.setFilters(finContingentAcTypeFilters);
 		}
-		if(isOverdraft){
+		if (isOverdraft) {
 			this.finAcType.setMandatoryStyle(true);
 		}
 		this.finDivision.setMaxlength(8);
@@ -701,8 +701,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setValueColumn("DivisionCode");
 		this.finDivision.setDescColumn("DivisionCodeDesc");
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
-	
-		//modify
+
+		// modify
 		this.grcPricingMethod.setInputAllowed(false);
 		this.grcPricingMethod.setDisplayStyle(3);
 		this.grcPricingMethod.setMandatoryStyle(true);
@@ -711,19 +711,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.grcPricingMethod.setValueColumn("RuleId");
 		this.grcPricingMethod.setDescColumn("RuleCode");
 		this.grcPricingMethod.setValidateColumns(new String[] { "RuleId" });
-		this.grcPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,Filter.OP_EQUAL) });
+		this.grcPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,
+				Filter.OP_EQUAL) });
 
-		this.financeGrcBaseRate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
-		this.financeGrcBaseRate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
+		this.financeGrcBaseRate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
+		this.financeGrcBaseRate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 
 		this.grcAdvBaseRate.setMaxlength(8);
 		this.grcAdvBaseRate.setModuleName("BaseRateCode");
 		this.grcAdvBaseRate.setValueColumn("BRType");
 		this.grcAdvBaseRate.setDescColumn("BRTypeDesc");
 		this.grcAdvBaseRate.setValidateColumns(new String[] { "BRType" });
-		
-		this.financeBaserate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
-		this.financeBaserate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
+
+		this.financeBaserate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
+		this.financeBaserate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 
 		this.rpyAdvBaseRate.setMaxlength(8);
 		this.rpyAdvBaseRate.setModuleName("BaseRateCode");
@@ -739,7 +740,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setValueColumn("RuleId");
 		this.rpyPricingMethod.setDescColumn("RuleCode");
 		this.rpyPricingMethod.setValidateColumns(new String[] { "RuleId" });
-		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,Filter.OP_EQUAL) });
+		this.rpyPricingMethod.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_RATERULE,
+				Filter.OP_EQUAL) });
 
 		this.finGrcDftIntFrq.setMandatoryStyle(true);
 		this.finDftIntFrq.setMandatoryStyle(true);
@@ -793,13 +795,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.downPayRule.setValueColumn("RuleId");
 		this.downPayRule.setDescColumn("RuleCode");
 		this.downPayRule.setValidateColumns(new String[] { "RuleId" });
-		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE,Filter.OP_EQUAL) });
+		this.downPayRule.setFilters(new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
 
 		this.grcAdvMargin.setMaxlength(13);
 		this.grcAdvMargin.setFormat(PennantConstants.rateFormate9);
 		this.grcAdvMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.grcAdvMargin.setScale(9);
-		
+
 		this.grcAdvPftRate.setMaxlength(13);
 		this.grcAdvPftRate.setFormat(PennantConstants.rateFormate9);
 		this.grcAdvPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -809,7 +811,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyAdvMargin.setFormat(PennantConstants.rateFormate9);
 		this.rpyAdvMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.rpyAdvMargin.setScale(9);
-		
+
 		this.rpyAdvPftRate.setMaxlength(13);
 		this.rpyAdvPftRate.setFormat(PennantConstants.rateFormate9);
 		this.rpyAdvPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -826,7 +828,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pastduePftMargin.setFormat(PennantConstants.rateFormate9);
 		this.pastduePftMargin.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.pastduePftMargin.setScale(9);
-		
+
 		this.planEmiHLockPeriod.setMaxlength(3);
 		this.maxPlanEmiPerAnnum.setMaxlength(2);
 		this.maxPlanEmi.setMaxlength(3);
@@ -835,75 +837,43 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxUnplannedEmi.setMaxlength(3);
 
 		this.space_PftDueSchdOn.setSclass("");
-		
-		if (ImplementationConstants.ALLOW_MANUAL_SCHEDULE) {
-			this.row_ManualSchedule.setVisible(true);
-		} else {
-			this.row_ManualSchedule.setVisible(false);
-		}
-		
-		if(ImplementationConstants.ALLOW_COMMITMENT && !isOverdraft){
-			this.row_Commitment.setVisible(true);
-		}else{
-			this.row_Commitment.setVisible(false);
-		}
-		
-		if(ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY){
+
+		this.row_ManualSchedule.setVisible(ImplementationConstants.ALLOW_MANUAL_SCHEDULE);
+		this.row_Commitment.setVisible(ImplementationConstants.ALLOW_COMMITMENT && !isOverdraft);
+
+		if (ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY) {
 			fillComboBox(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ,
 					PennantStaticListUtil.getPlanEmiHolidayMethod(), "");
-		}else{
-			fillComboBox(this.planEmiMethod, null,new ArrayList<ValueLabel>(), "");
-		}
-		
-		if (ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY) {
-			this.row_UnplanEmi.setVisible(true);
 		} else {
-			this.row_UnplanEmi.setVisible(false);
+			fillComboBox(this.planEmiMethod, null, new ArrayList<ValueLabel>(), "");
 		}
 
-		if (ImplementationConstants.ALLOW_REAGE) {
-			this.row_AllowReage.setVisible(true);
-		} else {
-			this.row_AllowReage.setVisible(false);
-		}
+		this.row_UnplanEmi.setVisible(ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY);
+		this.row_AllowReage.setVisible(ImplementationConstants.ALLOW_REAGE);
 
-		if(ImplementationConstants.ALLOW_BPI_TREATMENT){
+		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
 			fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(), "");
-		}else{
-			fillComboBox(this.dftBpiTreatment, null,new ArrayList<ValueLabel>(), "");
-		}
-		
-		if(ImplementationConstants.INTERESTON_PASTDUE_PRINCIPAL){
-			this.gb_ProfitOnPastDue.setVisible(true);
-		}else{
-			this.gb_ProfitOnPastDue.setVisible(false);
+		} else {
+			fillComboBox(this.dftBpiTreatment, null, new ArrayList<ValueLabel>(), "");
 		}
 
-		if(ImplementationConstants.ALLOW_PLANNED_DEFERMENTS){
-			this.row_Deferement.setVisible(true);
-		}else{
-			this.row_Deferement.setVisible(false);
-		}
-		
-		if(ImplementationConstants.ALLOW_PFTUNCHG){
-			this.row_pftUnchanged.setVisible(true);
-		}else{
-			this.row_pftUnchanged.setVisible(false);
-		}
-		
+		this.gb_ProfitOnPastDue.setVisible(ImplementationConstants.INTERESTON_PASTDUE_PRINCIPAL);
+		this.row_Deferement.setVisible(ImplementationConstants.ALLOW_PLANNED_DEFERMENTS);
+		this.row_pftUnchanged.setVisible(ImplementationConstants.ALLOW_PFTUNCHG);
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
-		if(ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft){
+
+		if (ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft) {
 			this.row_QuickDisb.setVisible(true);
 		}
-		
-		row_ApplyPricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
-		row_ApplyGracePricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
-		
+
+		this.row_ApplyPricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
+		this.row_ApplyGracePricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
+
 		logger.debug("Leaving");
 	}
 
