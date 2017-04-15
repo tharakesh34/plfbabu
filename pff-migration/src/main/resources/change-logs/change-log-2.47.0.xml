@@ -3522,5 +3522,87 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 			           
 </createView>
 </changeSet>
+<changeSet author="Irfan" id="151">
+ <dropColumn tableName="PartnerBank" columnName="usage"/>
+<dropColumn tableName="PartnerBank" columnName="DisbDownload"/>
+<dropColumn tableName="PartnerBank" columnName="AccountCategory"/>
+<dropColumn tableName="PartnerBank_Temp" columnName="usage"/>
+<dropColumn tableName="PartnerBank_Temp" columnName="DisbDownload"/>
+<dropColumn tableName="PartnerBank_Temp" columnName="AccountCategory"/> 
+<addUniqueConstraint  tableName="PartnerBank" constraintName="UK_PartnerBankCode" columnNames="PartnerBankCode" />
+<addUniqueConstraint  tableName="PartnerBank_Temp" constraintName="UK_PartnerBankCode_Temp" columnNames="PartnerBankCode" />
+<addColumn tableName="PartnerBank">
+	<column name="AlwDisb" type="bit"/>
+	<column name="AlwPayment" type="bit"/>
+	<column name="AlwReceipt" type="bit"/>
+</addColumn>
+<addColumn tableName="PartnerBank_Temp">
+	<column name="AlwDisb" type="bit"/>
+	<column name="AlwPayment" type="bit"/>
+	<column name="AlwReceipt" type="bit"/>
+</addColumn>
+</changeSet>
+<changeSet author="Irfan" id="152">
+<createTable tableName="PartnerBankModes">
+<column name="PartnerBankId" type="bigint">
+<constraints nullable="false"/>
+</column>
+<column name="Purpose" type="char(1)"/>
+<column name="PaymentMode" type="varchar(100)"/>
+</createTable>
+</changeSet>
 
+<changeSet  author="Irfan" id="153">
+	<createView replaceIfExists="true" viewName="PartnerBank_View">
+	SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.InFavourLength, T1.Active, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PARTNERBANK_Temp  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.InFavourLength, T1.Active, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBank  T1 INNER JOIN
+			           BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+						
+			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBank_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+			</createView>
+</changeSet>
+
+<changeSet author="Irfan" id="154">
+	<createView replaceIfExists="true" viewName="PartnerBank_AView">
+		SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.InFavourLength, T1.Active, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBank  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+	</createView>
+</changeSet>
+<changeSet author="Irfan" id="155">
+<sql>
+Delete From SecGroupRights where GrpId IN (Select GrpId  From SecGroups Where GrpCode = 'PARTNERBANK_MAKER') And RightID IN (SELECT RightID FROM SecRights where RightName = 'PartnerBankDialog_DisbDownload');
+Delete From SecGroupRights where GrpId IN (Select GrpId  From SecGroups Where GrpCode = 'PARTNERBANK_MAKER') And RightID IN (SELECT RightID FROM SecRights where RightName = 'PartnerBankDialog_AccountCategory');
+Delete From SecGroupRights where GrpId IN (Select GrpId  From SecGroups Where GrpCode = 'PARTNERBANK_MAKER') And RightID IN (SELECT RightID FROM SecRights where RightName = 'PartnerBankDialog_AccountType');
+Delete From SecRights Where RightName = 'PartnerBankDialog_DisbDownload';
+Delete From SecRights Where RightName = 'PartnerBankDialog_AccountCategory';
+Delete From SecRights Where RightName = 'PartnerBankDialog_AccountType';
+
+
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DisbursmentMode','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_PaymentsMode','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_ReceiptsMode','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_AlwDisbursement','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_AlwReceipt','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_AlwPayment','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DisbursmentMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_PaymentsMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_ReceiptsMode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_AlwDisbursement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_AlwReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_AlwPayment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+
+</sql>
+</changeSet>
 </databaseChangeLog>
