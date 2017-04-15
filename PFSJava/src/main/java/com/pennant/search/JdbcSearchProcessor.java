@@ -62,10 +62,6 @@ public class JdbcSearchProcessor {
 		return instance;
 	}
 
-	public String getSearchQuery(ISearch search) {
-		return search == null ? null : getQuery(search);
-	}
-
 	/**
 	 * Get the results for the specified <code>ISearch</code> object.
 	 * 
@@ -93,6 +89,7 @@ public class JdbcSearchProcessor {
 		if (search.getWhereClause() != null) {
 			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
+
 		// Add order by conditions
 		if (search.getFilters() != null) {
 			List<Sort> sorts = search.getSorts();
@@ -154,6 +151,7 @@ public class JdbcSearchProcessor {
 		if (search.getWhereClause() != null) {
 			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
+
 		// Add order by conditions
 		if (search.getFilters() != null) {
 			List sorts = search.getSorts();
