@@ -59,7 +59,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
 	public <T> List<T> search(ISearch search) {
 		return jdbcSearchProcessor.getResults(search);
 	}

@@ -68,15 +68,18 @@ public class JdbcSearchProcessor {
 	}
 
 	/**
-	 * Search for objects based on the search parameters in the specified <code>ISearch</code> object. Uses the
-	 * specified searchClass, ignoring the searchClass specified on the search itself.
+	 * Get the results for the specified <code>ISearch</code> object.
 	 * 
-	 * @see ISearch
+	 * @param search
+	 *            The search object that contains the parameters to search.
+	 * @return The results mapped to a List (one entry for each row).
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List getResults(ISearch search) {
+	public <T> List<T> getResults(ISearch search) {
+		List resultList = null;
+
 		if (search == null || (search.getSearchClass() == null && StringUtils.isBlank(search.getTabelName()))) {
-			return null;
+			return resultList;
 		}
 
 		// Prepare the query.
@@ -121,11 +124,10 @@ public class JdbcSearchProcessor {
 		logger.trace("2SQL : "
 				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
-		List rowTypes = null;
 		if (search.getSearchClass() != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 			try {
-				rowTypes = this.namedParameterJdbcTemplate.query(
+				resultList = this.namedParameterJdbcTemplate.query(
 						getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
 						rowMapper);
 
@@ -134,14 +136,14 @@ public class JdbcSearchProcessor {
 			}
 		} else {
 			Map<String, Object> namedParameters = new HashMap<>();
-			rowTypes = this.namedParameterJdbcTemplate.queryForList(
+			resultList = this.namedParameterJdbcTemplate.queryForList(
 					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
 					namedParameters);
 
 			namedParameters = null;
 		}
 
-		return rowTypes;
+		return resultList;
 	}
 
 	@SuppressWarnings({ "rawtypes" })
