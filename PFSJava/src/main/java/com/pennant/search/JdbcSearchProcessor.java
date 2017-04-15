@@ -451,7 +451,7 @@ public class JdbcSearchProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Condition setInCond(Filter filter) {
+	private Condition getInCondition(Filter filter) {
 		String expression = "";
 
 		String[] strArray = null;
@@ -501,7 +501,7 @@ public class JdbcSearchProcessor {
 					}
 
 					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
-						whereClause.append(setInCond(subFilter));
+						whereClause.append(getInCondition(subFilter));
 					} else {
 						String andCond = subFilter.toString().trim();
 						whereClause.append(new CustomCondition(andCond));
@@ -510,7 +510,7 @@ public class JdbcSearchProcessor {
 
 				query.addCondition(new CustomCondition(whereClause.toString()));
 			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
-				query.addCondition(setInCond(filter));
+				query.addCondition(getInCondition(filter));
 			} else {
 				String andCond = filter.toString().trim();
 				query.addCondition(new CustomCondition(andCond));
