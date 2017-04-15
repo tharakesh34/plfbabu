@@ -96,5 +96,44 @@
 	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 </sql>
 </changeSet>
+<changeSet id="10" author="Subbarao" dbms="oracle">
+		<sql>
+			 Create table seqFinLogEntryDetail_bk as select * from seqFinLogEntryDetail;
+			 DROP table seqFinLogEntryDetail;
+		</sql>
+</changeSet>
+   		<changeSet id="10.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from seqFinLogEntryDetail_bk )T;
+         	 execute immediate 'CREATE SEQUENCE seqFinLogEntryDetail START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="10.2" author="Subbarao" dbms="oracle">	
+   		<sql>	 
+     		 DROP table seqFinLogEntryDetail_bk;
+		</sql>
+		</changeSet>
+	
+ <changeSet id="11" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into seqFinLogEntryDetail_bk  from seqFinLogEntryDetail;
+			DROP table seqFinLogEntryDetail;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from seqFinLogEntryDetail_bk)T);
+			CREATE TABLE seqFinLogEntryDetail(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''seqFinLogEntryDetail'', RESEED,'+@ex+' )');
+			
+			DROP table seqFinLogEntryDetail_bk;
+	</sql>
+</changeSet>
 
 </databaseChangeLog>
