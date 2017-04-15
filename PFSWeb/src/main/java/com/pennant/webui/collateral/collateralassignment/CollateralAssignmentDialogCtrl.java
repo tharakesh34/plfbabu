@@ -457,6 +457,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		int format = CurrencyUtil.getFormat(collateralAssignment.getCollateralCcy());
 
 		this.collateralRef.setValue(collateralAssignment.getCollateralRef());
+		if(StringUtils.isEmpty(collateralAssignment.getCollateralRef())){
+			this.collateralInfo.setVisible(false);
+		}else{
+			this.collateralInfo.setVisible(true);
+		}
 		this.bankValuation.setValue(PennantApplicationUtil.formateAmount(collateralAssignment.getBankValuation(), format));
 		
 		BigDecimal curAssignValue =(collateralAssignment.getBankValuation().multiply(
@@ -611,6 +616,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		
 		Object dataObject = this.collateralRef.getObject();
 		CollateralSetup collateralSetup = null;
+		this.collateralInfo.setVisible(false);
 		if (dataObject != null) {
 			if (dataObject instanceof CollateralSetup) {
 				collateralSetup = (CollateralSetup) dataObject;
@@ -650,6 +656,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				getCollateralAssignment().setAvailableAssignPerc(availAssignPerc);
 				getCollateralAssignment().setCollateralValue(collateralSetup.getCollateralValue());
 				getCollateralAssignment().setTotAssignedPerc(totAssignedPerc);
+				this.collateralInfo.setVisible(true);
 				
 			}else{
 				//Bank Valuation
@@ -663,7 +670,6 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				
 				// Available Assign Value Percentage
 				this.availableAssignPerc.setValue(BigDecimal.ZERO);
-				
 			}
 		}
 		
