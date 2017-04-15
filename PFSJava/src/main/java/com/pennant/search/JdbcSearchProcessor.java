@@ -452,16 +452,15 @@ public class JdbcSearchProcessor {
 
 	@SuppressWarnings("unchecked")
 	private Condition setInCond(Filter filter) {
+		String expression = "";
 
-		String inCondString = "";
 		String[] strArray = null;
-		List<String> objArray = null;
 		Object[] valArray = null;
 
 		if (filter.getValue() instanceof String[]) {
 			strArray = (String[]) filter.getValue();
 		} else if (filter.getValue() instanceof List) {
-			objArray = (List<String>) filter.getValue();
+			expression = "('" + StringUtils.join((List<String>) filter.getValue(), "','") + "')";
 		} else {
 			valArray = (Object[]) filter.getValue();
 		}
@@ -469,26 +468,19 @@ public class JdbcSearchProcessor {
 		if (strArray != null) {
 			for (int i = 0; i < strArray.length; i++) {
 				if (i != 0) {
-					inCondString = inCondString.concat(",");
+					expression = expression.concat(",");
 				}
-				inCondString = inCondString.concat("'" + strArray[i] + "'");
+				expression = expression.concat("'" + strArray[i] + "'");
 			}
-		}
-
-		if (objArray != null) {
-			for (int i = 0; i < objArray.size(); i++) {
-				if (i != 0) {
-					inCondString = inCondString.concat(",");
-				}
-				inCondString = inCondString.concat("'" + objArray.get(i) + "'");
-			}
+			expression = "(" + expression + ")";
 		}
 
 		if (valArray != null) {
-			inCondString = valArray[0].toString();
+			expression = valArray[0].toString();
+			expression = "(" + expression + ")";
 		}
-		inCondString = "(" + inCondString + ")";
-		return new CustomCondition(filter.getProperty() + filter.getSqlOperator() + inCondString);
+
+		return new CustomCondition(filter.getProperty() + filter.getSqlOperator() + expression);
 
 	}
 
