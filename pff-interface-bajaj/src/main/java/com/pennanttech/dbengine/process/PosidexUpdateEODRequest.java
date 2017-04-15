@@ -191,9 +191,9 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			ps.setString(22, getValue(rs, "ERROR_DESC"));
 			ps.setString(23, getValue(rs, "CUSTOMER_ID"));
 			ps.setString(24, getValue(rs, "SOURCE_SYSTEM"));
-			ps.setString(25, getValue(rs, "PSX_BATCH_ID"));
+			ps.setBigDecimal(25, getBigDecimal(rs, "PSX_BATCH_ID"));
 			ps.setString(26, getValue(rs, "UCIN_FLAG"));
-			ps.setString(27, getValue(rs, "EOD_BATCH_ID"));
+			ps.setBigDecimal(27, getBigDecimal(rs, "EOD_BATCH_ID"));
 			ps.setDate(28, getDateValue(rs, "INSERT_TS"));
 			ps.setString(29, getValue(rs, "GENDER"));
 			
@@ -308,7 +308,7 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" INSERT INTO DEDUP_EOD_CUST_LOAN_DTL (");
-			sb.append(" BATCHID, CUSTOMER_NO, SOURCE_SYS_ID, SEGMENT, DEAL_ID, LAN_NO, CUSTOMER_TYPE, APPLN_NO,PRODUCT_CODE,)");
+			sb.append(" BATCHID, CUSTOMER_NO, SOURCE_SYS_ID, SEGMENT, DEAL_ID, LAN_NO, CUSTOMER_TYPE, APPLN_NO,PRODUCT_CODE,");
 			sb.append(" PROCESS_TYPE, PROCESS_FLAG, ERROR_CODE, ERROR_DESC, PSX_BATCH_ID, PSX_ID, CUSTOMER_ID, SOURCE_SYSTEM, EOD_BATCH_ID)");
 			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
