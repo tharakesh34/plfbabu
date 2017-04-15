@@ -3491,8 +3491,36 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 </sql>
 </changeSet>
- 
-
-
+<changeSet id="s11" author="Surekha">
+		<modifyDataType tableName="AccountTypeGroup" columnName="ParentGroupId"
+			newDataType="bigint" />
+			<modifyDataType tableName="AccountTypeGroup_Temp" columnName="ParentGroupId"
+			newDataType="bigint" />
+</changeSet>
+<changeSet id="s12" author="Surekha">
+<createView viewName="AccountTypeGroup_View" replaceIfExists="true">
+	SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM   AccountTypeGroup_Temp T1 INNER JOIN
+					AccountTypeGroup T2 ON T1.GroupId = T2.GroupId
+			           
+			UNION ALL
+			SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    AccountTypeGroup T1 INNER JOIN
+					AccountTypeGroup T2 ON T1.GroupId = T2.GroupId
+						
+			WHERE    NOT EXISTS (SELECT 1 FROM AccountTypeGroup_Temp WHERE GroupId = T1.GroupId)
+</createView>
+</changeSet>
+<changeSet id="s13" author="Surekha">
+<createView viewName="AccountTypeGroup_AView" replaceIfExists="true">
+	SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM   AccountTypeGroup T1 INNER JOIN
+					AccountTypeGroup T2 ON T1.GroupId = T2.GroupId
+			           
+</createView>
+</changeSet>
 
 </databaseChangeLog>
