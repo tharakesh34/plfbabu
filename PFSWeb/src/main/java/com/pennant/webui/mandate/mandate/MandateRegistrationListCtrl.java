@@ -46,7 +46,6 @@ package com.pennant.webui.mandate.mandate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -224,7 +223,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		listCell_Checkbox = new Listcell();
 		listHeader_CheckBox_Comp = new Checkbox();
 		listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
-		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_CheckBox");
+		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_listHeaderCheckBox");
 		listItem_Checkbox.appendChild(listCell_Checkbox);
 
 		if (listHeader_CheckBox_Name.getChildren() != null) {
@@ -233,22 +232,20 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 	}
 
-	
 	/**
-	 * Set checked and unchecked based on the parent check box select.
+	 * Filling the MandateIdMap details and  based on checked and unchecked events of
+	 * listCellCheckBox.
 	 */
-	public void onClick_CheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-
-		Checkbox checkBoxEvent = (Checkbox) event.getOrigin().getTarget();
 
 		for (int i = 0; i < listBoxMandateRegistration.getItems().size(); i++) {
 			Listitem listitem = listBoxMandateRegistration.getItems().get(i);
 			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-			cb.setChecked(checkBoxEvent.isChecked());
+			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
 		}
 		
-		if (checkBoxEvent.isChecked()) {
+		if (listHeader_CheckBox_Comp.isChecked()) {
 			List<Long> mandateIdList = getMandateList();
 			if(mandateIdList != null){
 				for (Long mandateId : mandateIdList) {
@@ -261,11 +258,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Set checked and unchecked based on the parent check box select.
+	 * Filling the MandateIdMap details based on checked and unchecked events of
+	 * listCellCheckBox.
 	 */
-	public void onClick_listCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 		
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -275,13 +273,20 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			mandateIdMap.remove(Long.valueOf(checkBox.getValue().toString()));
 		}
 
-		listHeader_CheckBox_Comp.setChecked(false);
+		if (mandateIdMap.size() == this.pagingMandateList.getTotalSize()) {
+			listHeader_CheckBox_Comp.setChecked(true);
+		} else {
+			listHeader_CheckBox_Comp.setChecked(false);
+		}
 		
 		logger.debug("Leaving");
 	}
 	
 	
-	public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, Serializable {
+	/**
+	 * Item renderer for listItems in the listBox.
+	 */
+	private class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, Serializable {
 		private static final long serialVersionUID = 1L;
 	
 		@Override
@@ -292,8 +297,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
 			list_CheckBox.setValue(mandate.getId());
-			list_CheckBox.addForward("onClick", self, "onClick_listCheckBox");
+			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
 			lc.appendChild(list_CheckBox);
+			if (listHeader_CheckBox_Comp.isChecked()) {
+				list_CheckBox.setChecked(true);
+			} else {
+				list_CheckBox.setChecked(mandateIdMap.containsKey(mandate.getId()));
+			}
 			lc.setParent(item);
 
 			lc = new Listcell(mandate.getMandateType());
@@ -323,6 +333,35 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
+	}
+	
+	
+	
+	/**
+	 * Getting the mandate list using JdbcSearchObject with search criteria..
+	 */
+	private List<Long> getMandateList() {
+
+		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
+
+		searchObject.addFilterEqual("active", 1);
+		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
+		searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		searchObject.addField("mandateID");
+		searchObject.addTabelName(this.tableName);
+		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+
+		List<Long> mandateLst = new ArrayList<Long>();
+
+		if (list != null && !list.isEmpty()) {
+			for (int i = 0; i < list.size(); i++) {
+				Map<String, Long> map = (Map<String, Long>) list.get(i);
+				mandateLst.add(Long.parseLong(String.valueOf(map.get("mandateID"))));
+			}
+		}
+		return mandateLst;
+
 	}
 	
 	/**
@@ -482,27 +521,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} finally {
 			filewriter.close();
 			search();
+			this.listHeader_CheckBox_Comp.setChecked(false);
 
 		}
-	}
-	
-	private List<Long> getMandateList() {
-		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addFilterEqual("active", 1);
-		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
-		searchObject.addFilter(Filter.isNotNull("OrgReference"));
-		searchObject.addField("mandateID");
-		searchObject.addTabelName(this.tableName);
-		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-		List<Long> mandateLst = new ArrayList<>();
-		if(list != null && !list.isEmpty()){
-			for (int i = 0; i < list.size(); i++) {
-				Map<String,Long> map = (Map<String, Long>) list.get(i);
-				mandateLst.add(Long.parseLong(String.valueOf(map.get("mandateID"))));
-			}
-		}
-		return mandateLst;
 	}
 	
 	
