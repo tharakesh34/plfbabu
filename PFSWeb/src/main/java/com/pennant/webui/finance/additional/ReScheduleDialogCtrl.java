@@ -669,7 +669,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(getFinanceMainDialogCtrl().getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RESCHD);
 
 		// Service details calling for Schedule calculation
 		setFinScheduleData(reScheduleService.doReSchedule(getFinScheduleData(), finServiceInstruction));

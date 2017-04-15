@@ -29,6 +29,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
@@ -379,7 +380,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 
-		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_HOLDEMI);
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Schedule Calculator method calling

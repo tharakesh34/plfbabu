@@ -516,7 +516,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(getFinanceMainDialogCtrl().getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGFRQ);
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFromDate(fromDate);
 		finServiceInstruction.setRepayFrq(frq);

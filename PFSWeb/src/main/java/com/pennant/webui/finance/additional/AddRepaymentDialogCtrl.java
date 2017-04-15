@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -742,7 +743,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setRecalToDate(finMain.getMaturityDate());
 
 		}
-		finServiceInstruction.setFinEvent(getFinanceMainDialogCtrl().getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGRPY);
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Schedule Calculator method calling

@@ -68,6 +68,7 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -384,7 +385,11 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
-		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
+		if(isAddTerms()){
+			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDTERM);
+		}else{
+			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RMVTERM);
+		}
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 

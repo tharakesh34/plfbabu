@@ -684,7 +684,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if(this.rateChange.intValue()< 0){
 				throw new WrongValueException(this.rateChange, Labels.getLabel("NUMBER_NOT_NEGATIVE",
 						new String[] { Labels.getLabel("label_RateChangeDialog_Rate.value") }));
-			}
+			} 
+			 /*else if(this.rateChange.getValue().compareTo(finMain.getRpyMaxRate())>0){
+			throw new WrongValueException(this.rateChange,Labels.getLabel("NUMBER_MAXVALUE_EQ" ,new String[]{
+					Labels.getLabel("label_RateChangeDialog_Rate.value"),finMain.getRpyMaxRate().toString()}));
+		}else if(this.rateChange.getValue().compareTo(finMain.getRpyMinRate())<0){
+			throw new WrongValueException(this.rateChange, Labels.getLabel("NUMBER_MINVALUE_EQ",
+					new String[]{Labels.getLabel("label_RateChangeDialog_Rate.value"),finMain.getRpyMinRate().toString()}));
+		}
+		 for base*/
 			finServiceInstruction.setActualRate(this.rateChange.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -914,7 +922,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
-		finServiceInstruction.setFinEvent(financeMainDialogCtrl.getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		
 		// Service details calling for Schedule calculation

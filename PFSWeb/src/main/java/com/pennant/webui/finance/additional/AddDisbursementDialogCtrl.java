@@ -662,7 +662,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
+		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
