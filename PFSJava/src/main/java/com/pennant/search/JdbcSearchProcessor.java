@@ -494,6 +494,40 @@ public class JdbcSearchProcessor {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	private void addWhereClause(SelectQuery query, ISearch search) {
+		if (search.getFilters() == null) {
+			return;
+		}
+
+		for (Filter filter : search.getFilters()) {
+			if ("OR".equals(filter.getProperty())) {
+				List<Filter> subFilters = (List<Filter>) filter.getValue();
+				StringBuilder whereClause = new StringBuilder();
+
+				for (Filter subFilter : subFilters) {
+					if (whereClause.length() > 0) {
+						whereClause.append(" or ");
+					}
+
+					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
+						whereClause.append(setInCond(subFilter));
+					} else {
+						String andCond = subFilter.toString().trim();
+						whereClause.append(new CustomCondition(andCond));
+					}
+				}
+
+				query.addCondition(new CustomCondition(whereClause.toString()));
+			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
+				query.addCondition(setInCond(filter));
+			} else {
+				String andCond = filter.toString().trim();
+				query.addCondition(new CustomCondition(andCond));
+			}
+		}
+	}
+
 	/**
 	 * Adds the given columns to the SELECT query. If no columns specified adds the ALL_SYMBOL (*).
 	 * 
@@ -546,39 +580,5 @@ public class JdbcSearchProcessor {
 		}
 
 		query.addCustomFromTable(tableName);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void addWhereClause(SelectQuery query, ISearch search) {
-		if (search.getFilters() == null) {
-			return;
-		}
-
-		for (Filter filter : search.getFilters()) {
-			if ("OR".equals(filter.getProperty())) {
-				List<Filter> subFilters = (List<Filter>) filter.getValue();
-				StringBuilder whereClause = new StringBuilder();
-
-				for (Filter subFilter : subFilters) {
-					if (whereClause.length() > 0) {
-						whereClause.append(" or ");
-					}
-
-					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
-						whereClause.append(setInCond(subFilter));
-					} else {
-						String andCond = subFilter.toString().trim();
-						whereClause.append(new CustomCondition(andCond));
-					}
-				}
-
-				query.addCondition(new CustomCondition(whereClause.toString()));
-			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
-				query.addCondition(setInCond(filter));
-			} else {
-				String andCond = filter.toString().trim();
-				query.addCondition(new CustomCondition(andCond));
-			}
-		}
 	}
 }
