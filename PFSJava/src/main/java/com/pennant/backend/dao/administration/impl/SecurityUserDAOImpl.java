@@ -324,7 +324,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
 		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId, UsrDftAppCode = :UsrDftAppCode, ");
 		updateSql.append(" UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode, ");
-		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg,");
+		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg,UsrAcExpDt =:UsrAcExpDt,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
