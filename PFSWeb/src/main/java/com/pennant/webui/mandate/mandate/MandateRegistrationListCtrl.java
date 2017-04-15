@@ -46,6 +46,7 @@ package com.pennant.webui.mandate.mandate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -248,9 +249,11 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		
 		if (checkBoxEvent.isChecked()) {
-			List<Long> list = getMandateList();
-			for (Long id : list) {
-				mandateIdMap.put(id, null);
+			List<Long> mandateIdList = getMandateList();
+			if(mandateIdList != null){
+				for (Long mandateId : mandateIdList) {
+					mandateIdMap.put(mandateId, null);
+				}
 			}
 		} else {
 			mandateIdMap.clear();
@@ -484,13 +487,22 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	}
 	
 	private List<Long> getMandateList() {
-		JdbcSearchObject<Long> searchObject = new JdbcSearchObject<>();
-		super.doAddFilters();
+		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		searchObject.addFilter(Filter.isNotNull("OrgReference"));
 		searchObject.addField("mandateID");
-		return getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+		searchObject.addTabelName(this.tableName);
+		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+		List<Long> mandateLst = new ArrayList<>();
+		if(list != null && !list.isEmpty()){
+			for (int i = 0; i < list.size(); i++) {
+				Map<String,Long> map = (Map<String, Long>) list.get(i);
+				mandateLst.add(Long.parseLong(String.valueOf(map.get("mandateID"))));
+			}
+		}
+		return mandateLst;
 	}
 	
 	
