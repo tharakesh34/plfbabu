@@ -46,39 +46,48 @@ package com.pennant.webui.mandate.mandate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.PathUtil;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.search.Filter;
-import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -111,6 +120,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected Listheader				listheader_Status;
 	protected Listheader				listheader_InputDate;
 
+	protected Listheader 				listHeader_CheckBox_Name;
+	protected Listcell 					listCell_Checkbox;
+	protected Listitem 					listItem_Checkbox;
+	protected Checkbox 					listHeader_CheckBox_Comp;
+	
+	protected Checkbox 					list_CheckBox;
+	
 	protected Button					button_MandateList_NewMandate;
 	protected Button					button_MandateList_MandateSearch;
 
@@ -137,6 +153,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	private transient MandateService	mandateService;
 	private MandateStatusDAO			mandateStatusDAO;
 	private MandateDAO					mandateDAO;
+	
+	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
 
 	/**
 	 * default constructor.<br>
@@ -173,7 +191,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public void onCreate$window_MandateRegistrationList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_MandateRegistrationList, borderLayout_MandateList, listBoxMandateRegistration, pagingMandateList);
-		setItemRender(new MandateListModelItemRenderer(true));
+		setItemRender(new MandateListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
@@ -195,8 +213,115 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+		
+		doSetFieldProperties();
 	}
 
+	private void doSetFieldProperties() {
+
+		listItem_Checkbox = new Listitem();
+		listCell_Checkbox = new Listcell();
+		listHeader_CheckBox_Comp = new Checkbox();
+		listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
+		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_CheckBox");
+		listItem_Checkbox.appendChild(listCell_Checkbox);
+
+		if (listHeader_CheckBox_Name.getChildren() != null) {
+			listHeader_CheckBox_Name.getChildren().clear();
+		}
+		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
+	}
+
+	
+	/**
+	 * Set checked and unchecked based on the parent check box select.
+	 */
+	public void onClick_CheckBox(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+
+		Checkbox checkBoxEvent = (Checkbox) event.getOrigin().getTarget();
+
+		for (int i = 0; i < listBoxMandateRegistration.getItems().size(); i++) {
+			Listitem listitem = listBoxMandateRegistration.getItems().get(i);
+			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
+			cb.setChecked(checkBoxEvent.isChecked());
+		}
+		
+		if (checkBoxEvent.isChecked()) {
+			List<Long> list = getMandateList();
+			for (Long id : list) {
+				mandateIdMap.put(id, null);
+			}
+		} else {
+			mandateIdMap.clear();
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Set checked and unchecked based on the parent check box select.
+	 */
+	public void onClick_listCheckBox(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+		
+		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
+		if(checkBox.isChecked()){
+			mandateIdMap.put(Long.valueOf(checkBox.getValue().toString()), checkBox.getValue().toString());
+		} else {
+			mandateIdMap.remove(Long.valueOf(checkBox.getValue().toString()));
+		}
+
+		listHeader_CheckBox_Comp.setChecked(false);
+		
+		logger.debug("Leaving");
+	}
+	
+	
+	public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, Serializable {
+		private static final long serialVersionUID = 1L;
+	
+		@Override
+		public void render(Listitem item, Mandate mandate, int count) throws Exception {
+			
+			Listcell lc;
+			
+			lc = new Listcell();
+			list_CheckBox = new Checkbox();
+			list_CheckBox.setValue(mandate.getId());
+			list_CheckBox.addForward("onClick", self, "onClick_listCheckBox");
+			lc.appendChild(list_CheckBox);
+			lc.setParent(item);
+
+			lc = new Listcell(mandate.getMandateType());
+			lc.setParent(item);
+			lc = new Listcell(mandate.getCustCIF());
+			lc.setParent(item);
+			lc = new Listcell(mandate.getBankName());
+			lc.setParent(item);
+			lc = new Listcell(mandate.getAccNumber());
+			lc.setParent(item);
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),CurrencyUtil.getFormat(mandate.getMandateCcy())));
+			lc.setParent(item);
+			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
+			lc.setParent(item);
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+			lc.setParent(item);
+			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
+			lc.setParent(item);
+			lc = new Listcell(mandate.getRecordStatus());
+			lc.setParent(item);
+			lc = new Listcell(PennantJavaUtil.getLabel(mandate.getRecordType()));
+			lc.setParent(item);
+			
+			item.setAttribute("id", mandate.getId());
+	
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
+		}
+	}
+	
 	/**
 	 * The framework calls this event handler when user clicks the search
 	 * button.
@@ -297,20 +422,27 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 		logger.debug("Entering" + event.toString());
 
-		Set<Listitem> selectedItems = this.listBoxMandateRegistration.getSelectedItems();
+		List<Long> mandateIdList;
 
-		if (selectedItems.isEmpty()) {
+		if (listHeader_CheckBox_Comp.isChecked()) {
+			mandateIdList = getMandateList();
+		} else {
+			mandateIdList = new ArrayList<Long>(mandateIdMap.keySet());
+		}
+		
+		if (mandateIdList.isEmpty()) {
 			MessageUtil.showErrorMessage(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
-		File file = new File(PathUtil.getPath(PathUtil.DOWNLOAD) + "/" + "MandateData.txt");
+		
+		//File file = new File(PathUtil.getPath(PathUtil.DOWNLOAD) + "/" + "MandateData.txt");
+		File file = new File("D:/Data-Engine/PFF/Bajaj/Mandate/MandateData.txt");
 		if (!file.exists()) {
 			file.createNewFile();
 		}
 		FileWriter filewriter = BatchFileUtil.getFileWriter(file);
 
 		try {
-
 			StringBuilder builder = new StringBuilder();
 //			addField(builder, "MandateID");
 //			addField(builder, "CustCIF");
@@ -323,9 +455,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 //			addField(builder, "ExpiryDate");
 //			builder.append("MaxLimit");
 //			BatchFileUtil.writeline(filewriter, builder.toString());
-			for (Listitem selectedItem : selectedItems) {
-				long id = (long) selectedItem.getAttribute("id");
-				Mandate mandate = mandateService.getMandateById(id);
+			for (Long mandateId : mandateIdList) {
+				Mandate mandate = mandateService.getMandateById(mandateId);
 				StringBuilder builder1 = new StringBuilder();
 				addField(builder1, String.valueOf(mandate.getMandateID()));
 				addField(builder1, mandate.getCustCIF());
@@ -340,10 +471,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 				BatchFileUtil.writeline(filewriter, builder1.toString());
 				mandate.setUserDetails(getUserWorkspace().getLoggedInUser());
 				mandateService.processDownload(mandate);
-
 			}
-
-			MessageUtil.showInfoMessage(Labels.getLabel("MandateDataList_Request", new String[] { String.valueOf(selectedItems.size()) }));
+			
+			MessageUtil.showInfoMessage(Labels.getLabel("MandateDataList_Request", new String[] { String.valueOf(mandateIdList.size()) }));
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		} finally {
@@ -352,7 +482,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 		}
 	}
-
+	
+	private List<Long> getMandateList() {
+		JdbcSearchObject<Long> searchObject = new JdbcSearchObject<>();
+		super.doAddFilters();
+		searchObject.addFilterEqual("active", 1);
+		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
+		searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		searchObject.addField("mandateID");
+		return getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+	}
+	
+	
 	public void addField(StringBuilder line, String value) {
 		line.append(value).append(BatchFileUtil.DELIMITER);
 	}
