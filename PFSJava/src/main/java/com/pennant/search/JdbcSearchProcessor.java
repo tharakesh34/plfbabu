@@ -25,7 +25,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.CustomCondition;
 import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
@@ -451,7 +450,7 @@ public class JdbcSearchProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Condition getInCondition(Filter filter) {
+	private String getInCondition(Filter filter) {
 		String expression = "";
 
 		String[] strArray = null;
@@ -480,7 +479,7 @@ public class JdbcSearchProcessor {
 			expression = "(" + expression + ")";
 		}
 
-		return new CustomCondition(filter.getProperty() + filter.getSqlOperator() + expression);
+		return filter.getProperty() + filter.getSqlOperator() + expression;
 
 	}
 
@@ -510,7 +509,7 @@ public class JdbcSearchProcessor {
 
 				query.addCondition(new CustomCondition(whereClause.toString()));
 			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
-				query.addCondition(getInCondition(filter));
+				query.addCondition(new CustomCondition(getInCondition(filter)));
 			} else {
 				String andCond = filter.toString().trim();
 				query.addCondition(new CustomCondition(andCond));
