@@ -8,5 +8,10 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+<changeSet id="01" author="Surekha">
+	<addColumn tableName="AdtRmtAccounttypes">
+		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+	</addColumn>
+</changeSet>
 
 </databaseChangeLog>

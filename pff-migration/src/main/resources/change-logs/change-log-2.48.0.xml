@@ -19,6 +19,26 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-
+	
+<changeSet id="01" author="Surekha">
+	<createTable tableName="SeqRmtAccounttypes">
+		<column name="SeqNo" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet id="02" author="Surekha">
+	<sql>
+		INSERT INTO SeqRmtAccounttypes VALUES(0);
+	</sql>
+</changeSet>
+<changeSet id="03" author="Surekha">
+	<addColumn tableName="RmtAccounttypes">
+		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+	</addColumn>
+</changeSet>
+<changeSet id="04" author="Surekha">
+	<addColumn tableName="RmtAccounttypes_Temp">
+		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+	</addColumn>
+</changeSet>
 
 </databaseChangeLog>
