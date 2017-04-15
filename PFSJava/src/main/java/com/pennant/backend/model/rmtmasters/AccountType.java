@@ -43,6 +43,9 @@
 
 package com.pennant.backend.model.rmtmasters;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -54,6 +57,7 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6862602123712610264L;
 
+	private long acTypeGrpId;
 	private String acType;
 	private String acTypeDesc;
 	private String acPurpose;
@@ -69,6 +73,9 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String lovValue;
 	private AccountType befImage;
 	private LoggedInUser userDetails;
+	private String groupCode;
+	private String groupDescription;
+	private int acctTypeLevel;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -205,5 +212,44 @@ public class AccountType extends AbstractWorkflowEntity {
 		this.allowOverDraw = allowOverDraw;
 	}
 
+	public long getAcTypeGrpId() {
+		return acTypeGrpId;
+	}
+
+	public void setAcTypeGrpId(long acTypeGrpId) {
+		this.acTypeGrpId = acTypeGrpId;
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public void setGroupCode(String groupCode) {
+		this.groupCode = groupCode;
+	}
+
+	public String getGroupDescription() {
+		return groupDescription;
+	}
+
+	public void setGroupDescription(String groupDescription) {
+		this.groupDescription = groupDescription;
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("groupCode");
+		excludeFields.add("groupDescription");
+		excludeFields.add("acctTypeLevel");
+		return excludeFields;
+	}
+
+	public int getAcctTypeLevel() {
+		return acctTypeLevel;
+	}
+
+	public void setAcctTypeLevel(int acctTypeLevel) {
+		this.acctTypeLevel = acctTypeLevel;
+	}
 	
 }

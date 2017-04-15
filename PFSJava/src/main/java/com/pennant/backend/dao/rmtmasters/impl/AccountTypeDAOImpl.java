@@ -98,10 +98,13 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		AccountType accountType = new AccountType();
 		accountType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select AcType, AcTypeDesc, AcPurpose, AcHeadCode,");
+		StringBuilder selectSql = new StringBuilder("Select  AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
 		selectSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AssertOrLiability, OnBalanceSheet, AllowOverDraw , ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory" );
+		if(type.contains("View")){
+			selectSql.append(",GroupCode,  GroupDescription");
+		}
 		selectSql.append(" From RMTAccountTypes" );
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AcType =:AcType");
@@ -196,11 +199,11 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTAccountTypes" );
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcHeadCode," );
+		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode," );
 		insertSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose, :AcHeadCode, " );
+		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose,  :AcTypeGrpId, :AcHeadCode, " );
 		insertSql.append(" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -235,7 +238,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTAccountTypes");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose," );
+		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose,  AcTypeGrpId = :AcTypeGrpId," );
 		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory," );
 		updateSql.append(" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );

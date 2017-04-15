@@ -143,7 +143,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 		registerButton(button_AccountTypeList_AccountTypeSearchDialog);
 
 		fillComboBox(this.acPurpose, "", PennantStaticListUtil.getAccountPurpose(), "");
-
+		
 		registerField("acType", listheader_AcType, SortOrder.ASC, acType, sortOperator_acType, Operators.STRING);
 		registerField("acTypeDesc", listheader_AcTypeDesc, SortOrder.NONE, acTypeDesc, sortOperator_acTypeDesc,
 				Operators.STRING);

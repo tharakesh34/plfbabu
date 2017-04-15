@@ -101,6 +101,14 @@
 							</row>
 							<row visible="true">
 								<label
+									id="label_AccountTypeDialog_AcTypeGrpId"
+									value="${c:l('label_AccountTypeDialog_AcTypeGrpId.value')}" />
+								<hbox>
+									<extendedcombobox id="acTypeGrpId" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
 									id="label_AccountTypeDialog_AcPurpose"
 									value="${c:l('label_AccountTypeDialog_AcPurpose.value')}" />
 								<hbox>

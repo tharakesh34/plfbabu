@@ -64,8 +64,10 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -108,6 +110,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected Checkbox allowOverDraw; // autoWired
 	protected Checkbox acTypeIsActive; // autoWired
 	protected Space space_acHeadCode; // autoWired
+	protected ExtendedCombobox	acTypeGrpId;
 	
 	protected Row row_headcode;
 
@@ -222,6 +225,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acLmtCategory.setMaxlength(100);
 
 		this.acHeadCode.setMaxlength(4);
+		
+		this.acTypeGrpId.setWidth("200px");
+		this.acTypeGrpId.setModuleName("AccountTypeGroup");
+		this.acTypeGrpId.setMandatoryStyle(true);
+		this.acTypeGrpId.setValueColumn("GroupCode");
+		this.acTypeGrpId.setDescColumn("GroupDescription");
+		this.acTypeGrpId.setDisplayStyle(2);
+		this.acTypeGrpId.setValidateColumns(new String[] {"GroupCode" });
 
 		if ("Y".equals(CBI_Available)) {
 			this.acHeadCode.setValue("0000");
@@ -453,6 +464,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
 		}
+		if (aAccountType.getAcTypeGrpId() != Long.MIN_VALUE && aAccountType.getAcTypeGrpId() != 0) {
+			this.acTypeGrpId.setAttribute("ParentGroupId", aAccountType.getAcTypeGrpId());
+			this.acTypeGrpId.setValue(aAccountType.getGroupCode(),aAccountType.getGroupDescription());
+		}
 		
 		logger.debug("Leaving");
 	}
@@ -537,7 +552,17 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			wve.add(we);
 		}
 		
+		try {
+			this.acTypeGrpId.getValidatedValue();
+			Object obj = this.acTypeGrpId.getAttribute("AcTypeGrpId");
+			if (obj != null) {
+				aAccountType.setAcTypeGrpId(Long.valueOf(String.valueOf(obj)));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
+		
 		if (!"Y".equals(CBI_Available)) {
 			try {
 				if (!this.custSysAc.isChecked() && !this.internalAc
@@ -688,6 +713,11 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.assertOrLiability.setConstraint(new StaticListValidator(PennantStaticListUtil.getAssetOrLiability(),
 							Labels.getLabel("label_AccountTypeDialog_AssertOrLiability.value")));
 		}
+		if (!this.acTypeGrpId.isReadonly()) {
+			this.acTypeGrpId.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountTypeDialog_AcTypeGrpId.value"), null,
+					false));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -704,6 +734,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acPurpose.setConstraint("");
 		this.acHeadCode.setConstraint("");
 		this.assertOrLiability.setConstraint("");
+		this.acTypeGrpId.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -731,6 +762,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acPurpose.setErrorMessage("");
 		this.acHeadCode.setErrorMessage("");
 		this.assertOrLiability.setErrorMessage("");
+		this.acTypeGrpId.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -818,6 +850,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.assertOrLiability.setDisabled(isReadOnly("AccountTypeDialog_AssertOrLiability"));
 		this.onBalanceSheet.setDisabled(isReadOnly("AccountTypeDialog_OnBalanceSheet"));
 		this.allowOverDraw.setDisabled(isReadOnly("AccountTypeDialog_AllowOverDraw"));
+		this.acTypeGrpId.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -853,6 +886,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.assertOrLiability.setDisabled(true);
 		this.onBalanceSheet.setDisabled(true);
 		this.allowOverDraw.setDisabled(true);
+		this.acTypeGrpId.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -884,6 +918,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.assertOrLiability.setValue("");
 		this.onBalanceSheet.setChecked(false);
 		this.allowOverDraw.setChecked(false);
+		this.acTypeGrpId.setValue("");;
 		logger.debug("Leaving");
 	}
 
@@ -1265,6 +1300,24 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		internalAccHeadMax = Long.valueOf(internalAccHeads[1]);
 		logger.debug("Leaving ");
 	}
+	
+	public void onFulfill$acTypeGrpId(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = acTypeGrpId.getObject();
+		if (dataObject instanceof String) {
+			this.acTypeGrpId.setValue(dataObject.toString());
+			this.acTypeGrpId.setDescription("");
+		} else {
+			AccountTypeGroup details = (AccountTypeGroup) dataObject;
+			if (details != null) {
+				this.acTypeGrpId.setAttribute("AcTypeGrpId", details.getGroupId());
+				this.accountType.setGroupCode(details.getGroupCode());
+				this.accountType.setGroupDescription(details.getGroupDescription());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

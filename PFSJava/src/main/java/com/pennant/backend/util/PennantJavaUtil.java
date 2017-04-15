@@ -77,6 +77,7 @@ import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.model.amtmasters.VehicleModel;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
+import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -510,6 +511,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
 				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",
 						"AggName" }, null, 450));
+		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
+				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] { "AcctTypeLevel", "GroupCode", "GroupDescription" }, null, 400));
 		
 		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
 				"Mandates_AView" }, masterWF, new String[] { "MandateID","BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));

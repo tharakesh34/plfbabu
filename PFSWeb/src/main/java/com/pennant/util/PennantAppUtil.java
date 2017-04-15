@@ -70,6 +70,7 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.ChequePurpose;
@@ -1880,6 +1881,28 @@ public class PennantAppUtil {
 		
 		rbFieldCriterias = pagedListService.getBySearchObject(searchObject);
 		return rbFieldCriterias;
+	}
+	
+	/**
+	 * Get the Db Object based on the module mapping and the code
+	 * 
+	 * @return
+	 */
+	public static Object getParentGroup(int acctTypeLevel, long id) {
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountTypeGroup> searchObject = new JdbcSearchObject<AccountTypeGroup>(AccountTypeGroup.class);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AcctTypeLevel", acctTypeLevel - 1, Filter.OP_EQUAL);
+		filters[0] = new Filter("GroupId", id, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("AccountTypeGroup_AView");
+		List<AccountTypeGroup> accountTypeGroup = pagedListService.getBySearchObject(searchObject);
+		if (accountTypeGroup != null && !accountTypeGroup.isEmpty()) {
+			return accountTypeGroup.get(0);
+		}
+		return null;
 	}
 
 }

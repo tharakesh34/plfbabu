@@ -54,6 +54,7 @@
 	
 	<menu id="menu_Category_ApplicationMaster"  rightName="menuCat_ApplicationMaster" >
 		<menuItem id="menu_Item_AgreementDefinition" zulNavigation="/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionList.zul"   rightName="menuItem_ApplicationMaster_AgreementDefinition"/>
+		<menuItem id="menu_Item_AccountTypeGroup" zulNavigation="/WEB-INF/pages/ApplicationMaster/AccountTypeGroup/AccountTypeGroupList.zul"   rightName="menuItem_accounttypegroup_AccountTypeGroup"/>
 		<!-- <menuItem id="menu_Item_FinanceApplicationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeList.zul"  rightName="menuItem_ApplicationMaster_FinanceApplicationCode"/> -->
 		<menuItem id="menu_Item_BankDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"  rightName="menuItem_ApplicationMaster_BankDetail"/>
 		<menuItem id="menu_Item_BankBranch" zulNavigation="/WEB-INF/pages/BMTMasters/BankBranch/BankBranchList.zul" rightName="menuItem_BMTMasters_BankBranch" />

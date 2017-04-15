@@ -9294,4 +9294,27 @@
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	<!-- AccountTypeGroup -->
+	<bean id="accountTypeGroupService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="accountTypeGroupServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="accountTypeGroupServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.AccountTypeGroupServiceImpl">
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+       <property name="accountTypeGroupDAO" ref="accountTypeGroupDAO" />
+   </bean>
+   
+	<bean id="accountTypeGroupDAO" class="com.pennant.backend.dao.applicationmaster.impl.AccountTypeGroupDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 </beans>

@@ -4514,6 +4514,16 @@
 	<bean id="finTypeAccountingListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
 	
+	<!-- AccountTypeGroup -->
+	<bean id="accountTypeGroupListCtrl" class="com.pennant.webui.applicationmaster.accounttypegroup.AccountTypeGroupListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="accountTypeGroupService" ref="accountTypeGroupService" />
+	</bean>
+	
+	<bean id="accounTypeGroupDialogCtrl" class="com.pennant.webui.applicationmaster.accounttypegroup.AccountTypeGroupDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="accountTypeGroupService" ref="accountTypeGroupService"/>
+	</bean>
+	
 	<!--Hold EMI -->
 
 	<bean id="holdEMIDialogCtrl"
