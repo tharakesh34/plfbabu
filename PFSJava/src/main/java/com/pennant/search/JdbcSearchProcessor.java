@@ -72,13 +72,13 @@ public class JdbcSearchProcessor {
 	 * @param search
 	 *            The search object that contains the parameters to search.
 	 * @return The results mapped to a List (one entry for each row).
+	 * @throws IllegalArgumentException
+	 *             - If the given search object is <code>null</code>.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T> List<T> getResults(ISearch search) {
-		List resultList = null;
-
-		if (search == null || (search.getSearchClass() == null && StringUtils.isBlank(search.getTabelName()))) {
-			return resultList;
+		if (search == null) {
+			throw new IllegalArgumentException();
 		}
 
 		// Prepare the query.
@@ -123,6 +123,8 @@ public class JdbcSearchProcessor {
 		logger.trace("2SQL : "
 				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
+		List resultList = null;
+
 		if (search.getSearchClass() != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 			try {
@@ -145,9 +147,8 @@ public class JdbcSearchProcessor {
 
 	@SuppressWarnings({ "rawtypes" })
 	public String getQuery(ISearch search) {
-
-		if (search == null || StringUtils.isBlank(search.getTabelName())) {
-			return null;
+		if (search == null) {
+			throw new IllegalArgumentException();
 		}
 
 		// Prepare the query.
@@ -243,10 +244,8 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	public int count(Class<?> searchClass, ISearch search) {
-
-		int count;
-		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
-			return 0;
+		if (search == null) {
+			throw new IllegalArgumentException();
 		}
 
 		// Prepare the query.
@@ -269,7 +268,7 @@ public class JdbcSearchProcessor {
 
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 
-		count = this.namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
+		int count = this.namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
 
 		return count;
 	}
