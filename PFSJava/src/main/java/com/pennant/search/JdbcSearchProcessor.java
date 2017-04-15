@@ -70,7 +70,7 @@ public class JdbcSearchProcessor {
 	 * Get the results for the specified <code>ISearch</code> object.
 	 * 
 	 * @param search
-	 *            The search object that contains the parameters to search.
+	 *            The search object that contains the parameters.
 	 * @return The results mapped to a List (one entry for each row).
 	 * @throws IllegalArgumentException
 	 *             - If the given search object is <code>null</code>.
@@ -84,16 +84,7 @@ public class JdbcSearchProcessor {
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
 		query.addCustomFromTable(getTableName(search));
-
-		// Add the columns.
-		if (search.getFields().isEmpty()) {
-			query.addCustomColumns(new CustomSql("*"));
-		} else {
-			for (Iterator iterator = search.getFields().iterator(); iterator.hasNext();) {
-				Field field = (Field) iterator.next();
-				query.addCustomColumns(new CustomSql(field.property));
-			}
-		}
+		addColumns(query, search);
 
 		// Add where conditions
 		addWhereClause(search, query);
@@ -575,12 +566,17 @@ public class JdbcSearchProcessor {
 
 	}
 
+	/**
+	 * Get the table name from the search object.
+	 * 
+	 * @param search
+	 *            The search object that contains the parameters.
+	 * @return The table name.
+	 */
 	private String getTableName(ISearch search) {
-		String tableName;
+		String tableName = search.getTabelName();
 
-		if (StringUtils.isNotBlank(search.getTabelName())) {
-			tableName = search.getTabelName();
-		} else {
+		if (StringUtils.isBlank(tableName)) {
 			tableName = ModuleUtil.getTableName(search.getSearchClass().getSimpleName());
 		}
 
@@ -589,5 +585,23 @@ public class JdbcSearchProcessor {
 		}
 
 		return tableName;
+	}
+
+	/**
+	 * Adds the given columns to the SELECT column list. If no columns specified adds the ALL_SYMBOL (*).
+	 * 
+	 * @param query
+	 *            The select query.
+	 * @param search
+	 *            The search object that contains the parameters.
+	 */
+	private void addColumns(SelectQuery query, ISearch search) {
+		if (search.getFields().isEmpty()) {
+			query.addCustomColumns(new CustomSql("*"));
+		} else {
+			for (Field field : search.getFields()) {
+				query.addCustomColumns(new CustomSql(field.property));
+			}
+		}
 	}
 }
