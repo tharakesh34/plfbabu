@@ -3522,7 +3522,7 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 			           
 </createView>
 </changeSet>
-<changeSet author="Irfan" id="151">
+<!-- <changeSet author="Irfan" id="151">
  <dropColumn tableName="PartnerBank" columnName="usage"/>
 <dropColumn tableName="PartnerBank" columnName="DisbDownload"/>
 <dropColumn tableName="PartnerBank" columnName="AccountCategory"/>
@@ -3541,7 +3541,7 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 	<column name="AlwPayment" type="bit"/>
 	<column name="AlwReceipt" type="bit"/>
 </addColumn>
-</changeSet>
+</changeSet> -->
 <changeSet author="Irfan" id="152">
 <createTable tableName="PartnerBankModes">
 <column name="PartnerBankId" type="bigint">
@@ -3609,6 +3609,41 @@ INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS)
 <changeSet id="156" author="Surekha">
 	<sql>
 	update smtparameters set sysparmvalue='8' where sysparmcode='ACCOUNT_TYPE_LEN';
+</sql>
+</changeSet>
+<changeSet id="157" author="Madhubabu">
+<sql>
+Update FinanceMain set FinCurrAssetValue = (select SUM(DisbAmount) from FinDisbursementDetails D  WHERE Financemain.FinReference = D.FinReference);
+Update FinanceMain set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update FinanceMain_Temp set FinCurrAssetValue = (select SUM(DisbAmount) from FinDisbursementDetails D  WHERE FinanceMain_Temp.FinReference = D.FinReference);
+Update FinanceMain_Temp set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update FinanceMain_Temp set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
+Update FinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
+</sql>
+</changeSet>
+<changeSet id="158" author="Madhubabu">
+<createView replaceIfExists="true" viewName="FINANCEMAIN_LVIEW">
+SELECT     T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt, T1.ScheduleMethod, T1.NumberOfTerms, 
+                      T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, 
+                      T3.FinCategory lovDescProductCodeName, T1.FinBranch, T3.FinDivision lovdescfindivision, T3.Product lovdescFinProduct, T2.CustCRCPR LovDescCustCRCPR, 
+                      T2.CustPassportNo lovDescCustPassportNo, T2.CustDOB LovDescCustDOB, T1.FinContractDate, T1.LinkedFinRef, T1.NextUserId, T1.Priority, 
+                      COALESCE(T4.RoleDesc, FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage, T2.PhoneNumber, T1.WorkflowId, T1.TaskId, T1.NextTaskId,
+                      T1.DeviationApproval, T1.FinPurpose,
+                      T1.InitiateDate,T3.FinTypeDesc lovDescFinTypeName,T1.FinPreApprovedRef, T1.RcdMaintainSts,T1.InsuranceAmt,T1.FinCurrAssetValue
+FROM         FinanceMain_Temp T1 INNER JOIN
+             Customers T2 ON T1.CustID = T2.CustID INNER JOIN
+             RMTFinanceTypes T3 ON T3.FinType = T1.FinType LEFT OUTER JOIN
+             SecRoles T4 ON T1.NextRoleCode = T4.RoleCd
+</createView>
+</changeSet>
+<changeSet id="159" author="Madhubabu">
+<sql>
+Update FinanceMain set FinCurrAssetValue = (select SUM(DisbAmount) from FinDisbursementDetails D  WHERE Financemain.FinReference = D.FinReference);
+Update FinanceMain set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update FinanceMain_Temp set FinCurrAssetValue = (select SUM(DisbAmount) from FinDisbursementDetails_temp D  WHERE FinanceMain_Temp.FinReference = D.FinReference);
+Update FinanceMain_Temp set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update FinanceMain_Temp set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
+Update FinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 </sql>
 </changeSet>
 </databaseChangeLog>
