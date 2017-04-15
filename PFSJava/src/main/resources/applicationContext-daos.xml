@@ -13,7 +13,6 @@
 	<!-- ====================================================== -->
 
 	<bean id="jdbcSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<property name="dataSource" ref="pfsDatasource" />
 		<property name="jdbcSearchProcessor">
 			<bean class="com.pennant.search.JdbcSearchProcessor"
 				factory-method="getInstanceForDataSource">
@@ -23,7 +22,6 @@
 	</bean>
 
 	<bean id="jdbcExtSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<property name="dataSource" ref="pfsExtDatasource" />
 		<property name="jdbcSearchProcessor">
 			<bean class="com.pennant.search.JdbcSearchProcessor"
 				factory-method="getInstanceForDataSource">

@@ -63,17 +63,6 @@ public class JdbcSearchProcessor {
 		return instance;
 	}
 
-	// --- Public Methods --- //
-	/**
-	 * Search for objects based on the search parameters in the specified <code>ISearch</code> object.
-	 * 
-	 * @see ISearch
-	 */
-	@SuppressWarnings("rawtypes")
-	public List search(ISearch search) {
-		return search == null ? null : search(search.getSearchClass(), search);
-	}
-
 	public String getSearchQuery(ISearch search) {
 		return search == null ? null : getQuery(search);
 	}
@@ -85,14 +74,14 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List search(Class<?> searchClass, ISearch search) {
-		if (search == null || (searchClass == null && StringUtils.isBlank(search.getTabelName()))) {
+	public List search(ISearch search) {
+		if (search == null || (search.getSearchClass() == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
 		}
 
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-		query.addCustomFromTable(getTableName(search, searchClass));
+		query.addCustomFromTable(getTableName(search, search.getSearchClass()));
 
 		// Add the columns.
 		if (search.getFields().isEmpty()) {
@@ -133,8 +122,8 @@ public class JdbcSearchProcessor {
 				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
 		List rowTypes = null;
-		if (searchClass != null) {
-			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(searchClass);
+		if (search.getSearchClass() != null) {
+			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 			try {
 				rowTypes = this.namedParameterJdbcTemplate.query(
 						getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
@@ -332,7 +321,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings("rawtypes")
-	public SearchResult searchAndCount(DataSource dataSource, ISearch search) {
+	public SearchResult searchAndCount(ISearch search) {
 		return search == null ? null : searchAndCount(search.getSearchClass(), search);
 	}
 
@@ -351,7 +340,7 @@ public class JdbcSearchProcessor {
 		}
 
 		SearchResult result = new SearchResult();
-		result.setResult(search(searchClass, search));
+		result.setResult(search(search));
 
 		if (search.getMaxResults() > 0) {
 			result.setTotalCount(count(searchClass, search));
