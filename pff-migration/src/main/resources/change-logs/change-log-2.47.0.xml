@@ -3605,4 +3605,10 @@ INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS)
 
 </sql>
 </changeSet>
+
+<changeSet id="156" author="Surekha">
+	<sql>
+	update smtparameters set sysparmvalue='8' where sysparmcode='ACCOUNT_TYPE_LEN';
+</sql>
+</changeSet>
 </databaseChangeLog>
