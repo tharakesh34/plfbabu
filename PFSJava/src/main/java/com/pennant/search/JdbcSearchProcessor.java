@@ -151,49 +151,29 @@ public class JdbcSearchProcessor {
 			return null;
 		}
 
-		//Build query object
-		SelectQuery selectQuery = new SelectQuery();
-
-		if (StringUtils.isBlank(search.getTabelName())) {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(
-						ModuleUtil.getTableName(search.getSearchClass().getSimpleName()) + WITH_NOLOCK);
-				break;
-			default:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(search.getSearchClass().getSimpleName()));
-				break;
-			}
-		} else {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(search.getTabelName() + WITH_NOLOCK);
-				break;
-			default:
-				selectQuery.addCustomFromTable(search.getTabelName());
-				break;
-			}
-		}
+		// Prepare the query.
+		SelectQuery query = new SelectQuery();
+		query.addCustomFromTable(getTableName(search));
 
 		// Add the fields to the query from the fields List
 		List fields = search.getFields();
 		if (fields.size() <= 0) {
 			// If not fields added select all fields
-			selectQuery.addCustomColumns(new CustomSql("*"));
+			query.addCustomColumns(new CustomSql("*"));
 		} else {
 			// If specific fields added to search object select only required fields
 			for (Iterator iterator = fields.iterator(); iterator.hasNext();) {
 				Field field = (Field) iterator.next();
-				selectQuery.addCustomColumns(new CustomSql(field.property));
+				query.addCustomColumns(new CustomSql(field.property));
 			}
 		}
 
 		// Add where conditions
-		addWhereClause(search, selectQuery);
+		addWhereClause(search, query);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
-			selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
+			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
 		// Add order by conditions
 		if (search.getFilters() != null) {
@@ -201,15 +181,15 @@ public class JdbcSearchProcessor {
 
 			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
 				Sort sortField = (Sort) iterator.next();
-				selectQuery.addCustomOrdering(sortField.getProperty(),
+				query.addCustomOrdering(sortField.getProperty(),
 						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
 			}
 		}
 
-		logger.debug("Query : " + selectQuery.toString());
-		selectQuery.validate();
+		logger.debug("Query : " + query.toString());
+		query.validate();
 
-		return selectQuery.toString();
+		return query.toString();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -270,46 +250,27 @@ public class JdbcSearchProcessor {
 			return 0;
 		}
 
-		//Build query object
-		SelectQuery selectQuery = new SelectQuery();
-
-		if (StringUtils.isBlank(search.getTabelName())) {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()) + WITH_NOLOCK);
-				break;
-			default:
-				selectQuery.addCustomFromTable(ModuleUtil.getTableName(searchClass.getSimpleName()));
-				break;
-			}
-		} else {
-			switch (App.DATABASE) {
-			case SQL_SERVER:
-				selectQuery.addCustomFromTable(search.getTabelName() + WITH_NOLOCK);
-				break;
-			default:
-				selectQuery.addCustomFromTable(search.getTabelName());
-				break;
-			}
-		}
+		// Prepare the query.
+		SelectQuery query = new SelectQuery();
+		query.addCustomFromTable(getTableName(search));
 
 		// select count of all fields
-		selectQuery.addCustomColumns(new CustomSql("count(*)"));
+		query.addCustomColumns(new CustomSql("count(*)"));
 
 		// Add where conditions
-		addWhereClause(search, selectQuery);
+		addWhereClause(search, query);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
-			selectQuery.addCondition(new CustomCondition(search.getWhereClause()));
+			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
 
-		selectQuery.validate();
-		logger.debug("3SQL : " + selectQuery.toString());
+		query.validate();
+		logger.debug("3SQL : " + query.toString());
 
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 
-		count = this.namedParameterJdbcTemplate.queryForObject(selectQuery.toString(), namedParameters, Integer.class);
+		count = this.namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
 
 		return count;
 	}
