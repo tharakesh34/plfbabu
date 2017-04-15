@@ -265,4 +265,15 @@ drop table AdtPromotions;
 		<modifyDataType tableName="AdtAccountTypeGroup" columnName="ParentGroupId"
 			newDataType="bigint" />
 </changeSet>
+
+<changeSet author="Irfan" id="15">
+ <dropColumn tableName="AdtPartnerBank" columnName="Usage"/>
+<dropColumn tableName="AdtPartnerBank" columnName="DisbDownload"/>
+<dropColumn tableName="AdtPartnerBank" columnName="AccountCategory"/>
+<addColumn tableName="AdtPartnerBank">
+	<column name="AlwDisb" type="bit"/>
+	<column name="AlwPayment" type="bit"/>
+	<column name="AlwReceipt" type="bit"/>
+</addColumn>
+</changeSet>
 </databaseChangeLog>
