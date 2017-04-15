@@ -87,7 +87,7 @@ public class JdbcSearchProcessor {
 		addTableSource(query, search);
 
 		// Add where conditions
-		addWhereClause(search, query);
+		addWhereClause(query, search);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
@@ -148,7 +148,7 @@ public class JdbcSearchProcessor {
 		addTableSource(query, search);
 
 		// Add where conditions
-		addWhereClause(search, query);
+		addWhereClause(query, search);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
@@ -171,40 +171,6 @@ public class JdbcSearchProcessor {
 		return query.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	private void addWhereClause(ISearch search, SelectQuery selectQuery) {
-		if (search.getFilters() == null) {
-			return;
-		}
-
-		for (Filter filter : search.getFilters()) {
-			if ("OR".equals(filter.getProperty())) {
-				List<Filter> subFilters = (List<Filter>) filter.getValue();
-				StringBuilder whereClause = new StringBuilder();
-
-				for (Filter subFilter : subFilters) {
-					if (whereClause.length() > 0) {
-						whereClause.append(" or ");
-					}
-
-					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
-						whereClause.append(setInCond(subFilter));
-					} else {
-						String andCond = subFilter.toString().trim();
-						whereClause.append(new CustomCondition(andCond));
-					}
-				}
-
-				selectQuery.addCondition(new CustomCondition(whereClause.toString()));
-			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
-				selectQuery.addCondition(setInCond(filter));
-			} else {
-				String andCond = filter.toString().trim();
-				selectQuery.addCondition(new CustomCondition(andCond));
-			}
-		}
-	}
-
 	/**
 	 * Returns the total number of results that would be returned using the given <code>ISearch</code> if there were no
 	 * paging or maxResult limits. Uses the specified searchClass, ignoring the searchClass specified on the search
@@ -223,7 +189,7 @@ public class JdbcSearchProcessor {
 		addTableSource(query, search);
 
 		// Add where conditions
-		addWhereClause(search, query);
+		addWhereClause(query, search);
 
 		// Add direct where clause sent by client
 		if (search.getWhereClause() != null) {
@@ -580,5 +546,39 @@ public class JdbcSearchProcessor {
 		}
 
 		query.addCustomFromTable(tableName);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addWhereClause(SelectQuery query, ISearch search) {
+		if (search.getFilters() == null) {
+			return;
+		}
+
+		for (Filter filter : search.getFilters()) {
+			if ("OR".equals(filter.getProperty())) {
+				List<Filter> subFilters = (List<Filter>) filter.getValue();
+				StringBuilder whereClause = new StringBuilder();
+
+				for (Filter subFilter : subFilters) {
+					if (whereClause.length() > 0) {
+						whereClause.append(" or ");
+					}
+
+					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
+						whereClause.append(setInCond(subFilter));
+					} else {
+						String andCond = subFilter.toString().trim();
+						whereClause.append(new CustomCondition(andCond));
+					}
+				}
+
+				query.addCondition(new CustomCondition(whereClause.toString()));
+			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
+				query.addCondition(setInCond(filter));
+			} else {
+				String andCond = filter.toString().trim();
+				query.addCondition(new CustomCondition(andCond));
+			}
+		}
 	}
 }
