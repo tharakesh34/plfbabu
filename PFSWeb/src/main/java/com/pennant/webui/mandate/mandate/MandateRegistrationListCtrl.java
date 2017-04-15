@@ -54,6 +54,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -92,6 +93,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.framework.web.components.MultiLineMessageBox;
 
 /**
  * ************************************************************<br>
@@ -212,6 +214,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		registerField("maxLimit", listheader_Amount);
 		// Render the page and display the data.
 		doRenderPage();
+		this.mandateIdMap.clear();
 		search();
 		
 		doSetFieldProperties();
@@ -372,6 +375,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MandateList_MandateSearch(Event event) {
+		this.mandateIdMap.clear();
+		this.listHeader_CheckBox_Comp.setChecked(false);
 		search();
 	}
 
@@ -384,6 +389,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
+		this.mandateIdMap.clear();
+		this.listHeader_CheckBox_Comp.setChecked(false);
 		search();
 	}
 
@@ -477,6 +484,14 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			return;
 		}
 		
+		// Show a confirm box
+		String msg = " Out of " + this.pagingMandateList.getTotalSize() + " records, " + this.mandateIdMap.size() + " records are ready for download.\n Are you sure to download? ";
+		MultiLineMessageBox.doSetTemplate();
+		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+		if (conf == MultiLineMessageBox.NO) {
+			return;
+		}
+
 		//File file = new File(PathUtil.getPath(PathUtil.DOWNLOAD) + "/" + "MandateData.txt");
 		File file = new File("D:/Data-Engine/PFF/Bajaj/Mandate/MandateData.txt");
 		if (!file.exists()) {
@@ -514,15 +529,14 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 				mandate.setUserDetails(getUserWorkspace().getLoggedInUser());
 				mandateService.processDownload(mandate);
 			}
-			
 			MessageUtil.showInfoMessage(Labels.getLabel("MandateDataList_Request", new String[] { String.valueOf(mandateIdList.size()) }));
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		} finally {
 			filewriter.close();
-			search();
+			this.mandateIdMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);
-
+			search();
 		}
 	}
 	
