@@ -46,27 +46,29 @@
 </changeSet>
 <changeSet id="05" author="Surekha">
 	<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
-		SELECT    AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
-                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
-			FROM         RMTAccountTypes_Temp T1
-		UNION ALL
-		SELECT    AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
-                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
-			FROM         RMTAccountTypes T1
-		WHERE     (NOT EXISTS
-                          (SELECT     1 Expr1
-                            FROM          RMTAccountTypes_Temp
-                            WHERE      (AccountTypeId = T1.AccountTypeId)))
+		SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel
+			 FROM         RMTAccountTypes_Temp T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId
+			 UNION ALL
+			SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel
+			 FROM         RMTAccountTypes T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId
+			 WHERE     (NOT EXISTS
+			 (SELECT     1 Expr1
+			 FROM          RMTAccountTypes_Temp
+			 WHERE      (AcType = T1.AcType)))
 	</createView>
 </changeSet>
 <changeSet id="06" author="Surekha">
 	<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
-		SELECT      AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
-                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
-			FROM         RMTAccountTypes T1
-	
+		SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel
+			 FROM         RMTAccountTypes T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId
 	</createView>
-	</changeSet>
+</changeSet>
 	<changeSet id="07" author="Surekha">
 		<dropTable tableName="SeqRmtAccounttypes"/>
 	</changeSet>
