@@ -40,5 +40,27 @@
 		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
 	</addColumn>
 </changeSet>
-
+<changeSet id="05" author="Surekha">
+	<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
+		SELECT    AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
+			FROM         RMTAccountTypes_Temp T1
+		UNION ALL
+		SELECT    AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
+			FROM         RMTAccountTypes T1
+		WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          RMTAccountTypes_Temp
+                            WHERE      (AccountTypeId = T1.AccountTypeId)))
+	</createView>
+</changeSet>
+<changeSet id="06" author="Surekha">
+	<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
+		SELECT     AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+                      NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
+			FROM         RMTAccountTypes T1
+	
+	</createView>
+	</changeSet>
 </databaseChangeLog>
