@@ -25,41 +25,27 @@ import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
- * A convenient fully-featured implementation of ISearch and IMutableSearch for
- * general use in Java code.
+ * A convenient fully-featured implementation of ISearch and IMutableSearch for general use in Java code.
  * 
  * @author dwolverton
  */
 public class Search implements IMutableSearch, Serializable {
+	private static final long	serialVersionUID	= 1L;
 
-	private static final long serialVersionUID = 1L;
+	protected int				firstResult			= -1;				// -1 stands for unspecified
+	protected int				maxResults			= -1;				// -1 stands for unspecified
+	protected int				page				= -1;				// -1 stands for unspecified
+	protected Class<?>			searchClass;
+	private List<Filter>		filters				= new ArrayList<>();
+	protected boolean			disjunction;
+	private List<Sort>			sorts				= new ArrayList<>();
+	private List<Field>			fields				= new ArrayList<>();
+	protected boolean			distinct;
+	private List<String>		fetches				= new ArrayList<>();
+	protected int				resultMode			= RESULT_AUTO;
+	protected String			tabelName			= null;
+	protected String			whereClause			= null;
 
-	protected int firstResult = -1; // -1 stands for unspecified
-
-	protected int maxResults = -1; // -1 stands for unspecified
-
-	protected int page = -1; // -1 stands for unspecified
-
-	protected Class<?> searchClass;
-
-	private List<Filter> filters = new ArrayList<>();
-
-	protected boolean disjunction;
-
-	private List<Sort> sorts = new ArrayList<>();
-	private List<Field> fields = new ArrayList<>();
-
-	protected boolean distinct;
-
-	private List<String> fetches = new ArrayList<>();
-
-	protected int resultMode = RESULT_AUTO;
-
-	protected String tabelName=null;
-	
-	// Direct Where Clause which can be sent directly
-	protected String whereClause=null;
-	
 	public Search() {
 		super();
 	}
@@ -125,8 +111,7 @@ public class Search implements IMutableSearch, Serializable {
 	 * Add a filter that uses the IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public Search addFilterIn(String property, Object... value) {
 		SearchUtil.addFilterIn(this, property, value);
@@ -145,8 +130,7 @@ public class Search implements IMutableSearch, Serializable {
 	 * Add a filter that uses the NOT IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public Search addFilterNotIn(String property, Object... value) {
 		SearchUtil.addFilterNotIn(this, property, value);
@@ -230,8 +214,7 @@ public class Search implements IMutableSearch, Serializable {
 	 * 
 	 * <p>
 	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be
-	 * specified.
+	 * </code>s can be specified.
 	 */
 	public Search addFilterAnd(Filter... filters) {
 		SearchUtil.addFilterAnd(this, filters);
@@ -243,8 +226,7 @@ public class Search implements IMutableSearch, Serializable {
 	 * 
 	 * <p>
 	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be
-	 * specified.
+	 * </code>s can be specified.
 	 */
 	public Search addFilterOr(Filter... filters) {
 		SearchUtil.addFilterOr(this, filters);
@@ -303,8 +285,7 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Filters added to a search are "ANDed" together if this is false (default)
-	 * and "ORed" if it is set to true.
+	 * Filters added to a search are "ANDed" together if this is false (default) and "ORed" if it is set to true.
 	 */
 	public Search setDisjunction(boolean disjunction) {
 		this.disjunction = disjunction;
@@ -355,8 +336,7 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public Search addSort(String property, boolean desc) {
 		SearchUtil.addSort(this, property, desc);
@@ -364,8 +344,7 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public Search addSort(String property, boolean desc, boolean ignoreCase) {
 		SearchUtil.addSort(this, property, desc, ignoreCase);
@@ -396,9 +375,8 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
+	 * the key for this value in the map.
 	 */
 	public Search addField(String property) {
 		SearchUtil.addField(this, property);
@@ -406,8 +384,8 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
+	 * for this value in the map.
 	 */
 	public Search addField(String property, String key) {
 		SearchUtil.addField(this, property, key);
@@ -415,9 +393,8 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
+	 * the key for this value in the map.
 	 */
 	public Search addField(String property, int operator) {
 		SearchUtil.addField(this, property, operator);
@@ -425,8 +402,8 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
+	 * for this value in the map.
 	 */
 	public Search addField(String property, int operator, String key) {
 		SearchUtil.addField(this, property, operator, key);
@@ -463,7 +440,7 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	public Search setResultMode(int resultMode) {
-		if (resultMode < 0 || resultMode > 4){
+		if (resultMode < 0 || resultMode > 4) {
 			throw new IllegalArgumentException("Result Mode ( " + resultMode + " ) is not a valid option.");
 		}
 		this.resultMode = resultMode;
@@ -526,9 +503,8 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Create a copy of this search. All collections are copied into new
-	 * collections, but them items in those collections are not duplicated; they
-	 * still point to the same objects.
+	 * Create a copy of this search. All collections are copied into new collections, but them items in those
+	 * collections are not duplicated; they still point to the same objects.
 	 */
 	public Search copy() {
 		Search dest = new Search();
@@ -590,26 +566,26 @@ public class Search implements IMutableSearch, Serializable {
 	/**
 	 * Filering throw using LIKE condition
 	 */
-	public Filter[] addFilterOrLike(String field, List<String>  listValues,boolean emptyEqual) {
-		Filter[] filters =null;
-		int cnt=0;
+	public Filter[] addFilterOrLike(String field, List<String> listValues, boolean emptyEqual) {
+		Filter[] filters = null;
+		int cnt = 0;
 
-		if (listValues!=null && listValues.size()>0){
-			if (emptyEqual){
-				filters  = new Filter[listValues.size()+1];
-				filters[0]= new Filter(field, "", Filter.OP_EQUAL);
-				cnt=1;
-			}else{
-				filters  = new Filter[listValues.size()];
+		if (listValues != null && listValues.size() > 0) {
+			if (emptyEqual) {
+				filters = new Filter[listValues.size() + 1];
+				filters[0] = new Filter(field, "", Filter.OP_EQUAL);
+				cnt = 1;
+			} else {
+				filters = new Filter[listValues.size()];
 			}
 			for (int i = 0; i < listValues.size(); i++) {
-				filters[cnt+i]= new Filter(field, "%" +listValues.get(i)+"%", Filter.OP_LIKE); 		
+				filters[cnt + i] = new Filter(field, "%" + listValues.get(i) + "%", Filter.OP_LIKE);
 			}
 		}
 		this.addFilterOr(filters);
 		return filters;
 	}
-	
+
 	/**
 	 * Filtering throw using IN condition
 	 */
@@ -633,11 +609,11 @@ public class Search implements IMutableSearch, Serializable {
 			if (App.DATABASE == Database.ORACLE) {
 				Filter[] filters = null;
 
-				if(emptyEqual){
+				if (emptyEqual) {
 					filters = new Filter[2];
 					filters[0] = Filter.isNull(field);
 					filters[1] = Filter.in(field, listValues);
-				}else{
+				} else {
 					filters = new Filter[1];
 					filters[0] = Filter.in(field, listValues);
 				}
@@ -648,37 +624,37 @@ public class Search implements IMutableSearch, Serializable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Filtering throw using Not IN condition
 	 */
-	public void addFilterNotIn(String field, List<String>  listValues,boolean emptyEqual) {
-		Object[] values=null;
-		int cnt=0;
+	public void addFilterNotIn(String field, List<String> listValues, boolean emptyEqual) {
+		Object[] values = null;
+		int cnt = 0;
 
-		if (listValues!=null && listValues.size()>0){
-			if (emptyEqual){
-				values=new String[listValues.size()+1];
-				values[0]=" ";
-				cnt=1;
-			}else{
-				values=new String[listValues.size()];				
+		if (listValues != null && listValues.size() > 0) {
+			if (emptyEqual) {
+				values = new String[listValues.size() + 1];
+				values[0] = " ";
+				cnt = 1;
+			} else {
+				values = new String[listValues.size()];
 			}
 
 			for (int i = 0; i < listValues.size(); i++) {
-				values[cnt+i]=listValues.get(i);
+				values[cnt + i] = listValues.get(i);
 			}
 
-			this.addFilterNotIn(field,values);
+			this.addFilterNotIn(field, values);
 		}
 	}
-	
+
 	public String getTabelName() {
 		return this.tabelName;
 	}
 
 	public Search addTabelName(String tabelName) {
-		this.tabelName=tabelName;
+		this.tabelName = tabelName;
 		return this;
 	}
 
@@ -693,8 +669,7 @@ public class Search implements IMutableSearch, Serializable {
 	 * Set the Where Clause which will be added directly to the SQL Query
 	 */
 	public Search addWhereClause(String whereClause) {
-		this.whereClause=whereClause;
+		this.whereClause = whereClause;
 		return this;
 	}
-	
 }
