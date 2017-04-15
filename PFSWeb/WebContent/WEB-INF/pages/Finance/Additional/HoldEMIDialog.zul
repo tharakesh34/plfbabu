@@ -37,7 +37,7 @@
 									</combobox>
 								</hbox>
 							</row>
-							<row>
+							<row id="row_hldEmiToDate" visible="false">
 								<label
 									id="label_HoldEMIDialog_ToDate"
 									value="${c:l('label_HoldEMIDialog_ToDate.value')}" />
@@ -47,6 +47,17 @@
 									<datebox id="holdEMIToDate"
 										readonly="true" width="144px">
 									</datebox>
+								</hbox>
+							</row>
+							<row id="row_hldEmiFrqToDate" visible="false">
+								<label id="label_HoldEMIDialog_FrqToDate"
+									value="${c:l('label_HoldEMIDialog_ToDate.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="holdEMIFrqToDate"
+										readonly="true" width="144px">
+									</combobox>
 								</hbox>
 							</row>
 							<row>

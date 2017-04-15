@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.HoldEMIService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -20,8 +20,6 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> implements HoldEMIService {
 	private static Logger logger = Logger.getLogger(AddRepaymentServiceImpl.class);
-
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public HoldEMIServiceImpl(){
 		super();
@@ -49,7 +47,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 	 *  Validation for the holdEmi From and ToDate
 	 */
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
+	public AuditDetail doValidations(FinScheduleData finscheduleData,FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
@@ -58,24 +56,18 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 		int holdemidays = SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS");
 		Date datehldEMIAlwd = DateUtility.addDays(finServiceInstruction.getFromDate(),holdemidays);
 		// To Date cannot be greater than the HoldEMi ALwd Days
-		if(DateUtility.compare(finServiceInstruction.getToDate(),datehldEMIAlwd) > 0) {
+		if(DateUtility.compare(finServiceInstruction.getToDate(),datehldEMIAlwd) > 0 ||
+				DateUtility.compare(finServiceInstruction.getToDate(),finServiceInstruction.getFromDate()) < 0)  {
 			isValidCheck = false;
-			String[] valueParm = new String[2];
-			valueParm[0] = "ToDate";
-			valueParm[1] = DateUtility.formatToShortDate(datehldEMIAlwd);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), lang));
-		}else if(DateUtility.compare(finServiceInstruction.getToDate(),finServiceInstruction.getFromDate()) < 0){
-				isValidCheck = false;
-				// To Date cannot be greater than the HoldEMi ALwd Days
-				String[] valueParm = new String[2];
-				valueParm[0] = "ToDate";
-				valueParm[1] = DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
-		
+			String[] valueParm = new String[3];
+			valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
+			valueParm[1] = DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
+			valueParm[2] = DateUtility.formatToLongDate(datehldEMIAlwd);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30567", "", valueParm), lang));
 		}
 		//validation for Todate to check whether it is greater than next Schedule if yes then throw the validation
 		if(isValidCheck){
-			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finServiceInstruction.getFinReference(), "", false);
+			List<FinanceScheduleDetail> schedules = finscheduleData.getFinanceScheduleDetails();
 			Date nextSchdDate = null ;
 			for( int i=0;i<schedules.size();i++){
 				if(DateUtility.compare(schedules.get(i).getSchDate(),finServiceInstruction.getFromDate())==0){
@@ -87,7 +79,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 				isValidCheck = false;
 				// To Date cannot be greater than the HoldEMi ALwd Days
 				String[] valueParm = new String[2];
-				valueParm[0] = "ToDate";
+				valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
 				valueParm[1] = DateUtility.formatToShortDate(nextSchdDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), lang));
 
@@ -96,8 +88,4 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
 }

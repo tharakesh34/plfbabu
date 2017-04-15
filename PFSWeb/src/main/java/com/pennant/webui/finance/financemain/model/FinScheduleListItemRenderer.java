@@ -2933,7 +2933,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 			
 			// Hold EMI Information 
-			if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
+			if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
 				data = new FinanceScheduleReportData();	
 				data.setLabel(Labels.getLabel("listcell_EMIHold_label.label"));
 				data.setSchDate("");

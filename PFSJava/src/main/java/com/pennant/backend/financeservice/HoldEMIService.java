@@ -7,5 +7,5 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 public interface HoldEMIService {
 
 	FinScheduleData getHoldEmiDetails(FinScheduleData finscheduleData,FinServiceInstruction finServiceInstruction);
-	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
+	AuditDetail doValidations(FinScheduleData finscheduleData,FinServiceInstruction finServiceInstruction);
 }

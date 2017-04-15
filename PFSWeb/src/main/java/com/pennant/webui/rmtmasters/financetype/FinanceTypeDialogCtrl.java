@@ -1144,8 +1144,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		String schdMethod  = aFinanceType.getFinSchdMthd();
 		if (isOverdraft) {
-			schdMethod = CalculationConstants.SCHMTHD_PFT;
-			fillComboBox(this.cbfinSchdMthd, schdMethod, PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,");
+			fillComboBox(this.cbfinSchdMthd, schdMethod, PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,NO_PAY,PRI_PFT,");
 		}else{
 			fillComboBox(this.cbfinSchdMthd, schdMethod, PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
 		}

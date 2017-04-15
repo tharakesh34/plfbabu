@@ -3,6 +3,7 @@ package com.pennant.webui.finance.additional;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -16,16 +17,19 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.HoldEMIService;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -46,6 +50,9 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Datebox						holdEMIToDate;
 	protected Uppercasebox					serviceReqNo;	
 	protected Textbox						remarks;
+	protected Row							row_hldEmiFrqToDate;
+	protected Row							row_hldEmiToDate;
+	protected Combobox						holdEMIFrqToDate;
 
 	// not auto wired vars
 	private FinScheduleData					finScheduleData;														// overhanded per param
@@ -161,6 +168,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		setValidationOn(false);
 		this.holdEMIToDate.setErrorMessage("");
 		this.holdEMIFromDate.setErrorMessage("");
+		this.holdEMIFrqToDate.setErrorMessage("");
 		this.serviceReqNo.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 		logger.debug("Leaving");
@@ -172,6 +180,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		this.holdEMIFromDate.setReadonly(true);
 		this.holdEMIToDate.setReadonly(true);
+		this.holdEMIFrqToDate.setReadonly(true);
 		logger.debug("Leaving");
 	}
 
@@ -231,11 +240,82 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
+		
 		fillSchFromDates(this.holdEMIFromDate, aFinSchData.getFinanceScheduleDetails());
+		
+		if(StringUtils.isNotEmpty(aFinSchData.getFinanceType().getFrequencyDays())){
+			this.row_hldEmiFrqToDate.setVisible(true);
+			getholdEMIFrqToDate();
+		}else{
+			this.row_hldEmiToDate.setVisible(true);
+		}
+
 		logger.debug("Leaving");
 	}
 
 
+	public void onChange$holdEMIFromDate(Event event){
+		logger.debug("Entering" + event.toString());
+		if (!StringUtils.equals(getComboboxValue(this.holdEMIFromDate),PennantConstants.List_Select)) {
+			getholdEMIFrqToDate();
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onSelect$holdEMIFrqToDate(Event event){
+		if (!StringUtils.equals(getComboboxValue(this.holdEMIFrqToDate),PennantConstants.List_Select)) {
+			this.holdEMIFrqToDate.setValue(DateUtility.formatToLongDate((Date)holdEMIFrqToDate.getSelectedItem().getValue()));
+		}
+	}
+	
+	
+/*
+ * Method to check whether the Frequency Days are less than the holdemi days, if yes then display those fields in the combobox.
+ */
+	private void getholdEMIFrqToDate(){
+		logger.debug("Entering");
+		
+		holdEMIFrqToDate.getItems().clear();
+		
+		Date hldEMIMaxAlwdDays = DateUtility.addDays( (Date)this.holdEMIFromDate.getSelectedItem().getValue(),SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
+		String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
+		
+		int hldEMIMaxAlwdMnth  = DateUtility.getMonth(hldEMIMaxAlwdDays);
+		int hldEMIMaxAlwdYear  = DateUtility.getYear(hldEMIMaxAlwdDays);
+		Date date = null;
+		List<Date> frqAlwdDate = new ArrayList<Date>();
+		
+		for (int i = 0; i < frqAlwdDays.length; i++) {
+			
+			int frqDay  = Integer.parseInt(frqAlwdDays[i]);
+			int emiFromDay = DateUtility.getDay((Date)this.holdEMIFromDate.getSelectedItem().getValue());
+			
+			if(frqDay>emiFromDay){
+				int emiFromMnth = DateUtility.getMonth((Date)this.holdEMIFromDate.getSelectedItem().getValue());
+				date= DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth-1, frqDay);
+				if(DateUtility.getMonth(date)<=emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 &&
+						DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0 ){
+					frqAlwdDate.add(date);
+				}
+			}else{
+				date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth-1, frqDay);
+				if(DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 && DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0){
+					frqAlwdDate.add(date);
+				}
+			}
+			DateUtility.formatToLongDate(date);
+		}
+		Collections.sort(frqAlwdDate);
+		fillSchFrqToDates(holdEMIFrqToDate, frqAlwdDate);
+		
+		
+	
+		if(holdEMIFrqToDate.getItemCount()<0){
+			this.row_hldEmiFrqToDate.setVisible(false);
+			this.row_hldEmiToDate.setVisible(true);
+		}
+		logger.debug("Leaving");
+	}
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -251,16 +331,30 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 
 		try {
-			finServiceInstruction.setFromDate((Date) this.holdEMIFromDate.getSelectedItem().getValue());
+			if (!StringUtils.equals(getComboboxValue(this.holdEMIFromDate),PennantConstants.List_Select)) {
+				finServiceInstruction.setFromDate((Date) this.holdEMIFromDate.getSelectedItem().getValue());
+			}else{
+				throw new WrongValueException(this.holdEMIFromDate, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_HoldEMIDialog_FromDate.value") }));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		try {
-			if(this.holdEMIToDate.getValue()==null){
-				throw new WrongValueException(this.holdEMIToDate, Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_HoldEMIDialog_ToDate.value")}));
+			if(this.row_hldEmiToDate.isVisible()){
+				if(this.holdEMIToDate.getValue()==null){
+					throw new WrongValueException(this.holdEMIToDate, Labels.getLabel("FIELD_NO_EMPTY",new String[]{Labels.getLabel("label_HoldEMIDialog_ToDate.value")}));
+				}
+				finServiceInstruction.setToDate(this.holdEMIToDate.getValue());
+			}else{
+				if (!StringUtils.equals(getComboboxValue(this.holdEMIFrqToDate),PennantConstants.List_Select)) {
+					finServiceInstruction.setToDate((Date)this.holdEMIFrqToDate.getSelectedItem().getValue());
+				}else{
+					throw new WrongValueException(this.holdEMIFrqToDate, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_HoldEMIDialog_ToDate.value") }));
+				}
 			}
-			finServiceInstruction.setToDate(this.holdEMIToDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -289,7 +383,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
 		// Schedule Calculator method calling
-		AuditDetail auditDetail = holdEMIService.doValidations(finServiceInstruction);
+		AuditDetail auditDetail = holdEMIService.doValidations(getFinScheduleData(),finServiceInstruction);
 		
 		if (auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().size()>0 ) {
 			MessageUtil.showErrorMessage(auditDetail.getErrorDetails().get(0).getError());
@@ -326,7 +420,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-
+		boolean isSelect = true;
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
@@ -361,10 +455,36 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setValue(curSchd.getSchDate());
 
 				dateCombobox.appendChild(comboitem);
-				if (getFinanceScheduleDetail() != null) {
-					if (curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
-						dateCombobox.setSelectedItem(comboitem);
-					}
+				
+				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0 && isSelect) {
+					dateCombobox.setSelectedItem(comboitem);
+					isSelect = false;
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	/** To fill schedule dates */
+	public void fillSchFrqToDates(Combobox dateCombobox, List<Date> hldEmiAlwdDaysList) {
+		logger.debug("Entering");
+		dateCombobox.getItems().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue("#");
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		dateCombobox.appendChild(comboitem);
+		dateCombobox.setSelectedItem(comboitem);
+		boolean isSelect = true;
+		if (hldEmiAlwdDaysList != null) {
+			for (int i = 0; i < hldEmiAlwdDaysList.size(); i++) {
+					comboitem = new Comboitem();
+					comboitem.setLabel(DateUtility.formatToLongDate(hldEmiAlwdDaysList.get(i)));
+					comboitem.setValue(hldEmiAlwdDaysList.get(i));
+					dateCombobox.appendChild(comboitem);
+				
+				if (hldEmiAlwdDaysList.get(i).compareTo((Date)this.holdEMIFromDate.getSelectedItem().getValue()) > 0 && isSelect) {
+					dateCombobox.setSelectedItem(comboitem);
+					isSelect = false;
 				}
 			}
 		}

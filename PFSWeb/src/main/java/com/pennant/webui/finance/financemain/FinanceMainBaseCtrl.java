@@ -769,6 +769,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// Change Frequency Fields
 	private Date											org_grcPeriodEndDate	= null;
+	private BigDecimal										org_finAssetValue	= BigDecimal.ZERO;
 
 	// not auto wired variables
 	private transient boolean								validationOn;
@@ -3194,7 +3195,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isOverdraft) {
 			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
-					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,");
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,");
 		} else {
 			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
 					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
@@ -10416,7 +10417,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
 						.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
 				validateFinAssetvalue(this.finAssetValue, financeType, formatter);
+
+				// in overDraftMaintenance if the finassetValue is less than the org_finAssetValue then validation is thrown
+
+				if(org_finAssetValue.compareTo(BigDecimal.ZERO)>0){
+					if(this.finAssetValue.getActualValue().compareTo(org_finAssetValue)<0){
+						throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
+								"NUMBER_MINVALUE_EQ",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
+										PennantAppUtil.amountFormate(org_finAssetValue, formatter) }));
+					}
+				}
 			}
+			
 			if (this.row_FinAssetValue.isVisible()) {
 				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
 				if (!isBuildEvent()
@@ -12022,7 +12035,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
 					.getFinanceMain().getProductCategory())) {
 				fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(),
-						PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,");
+						PennantStaticListUtil.getScheduleMethods(), ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,NO_PAY,PRI,PRI_PFT,");
 			} else {
 				fillComboBox(this.cbScheduleMethod, financeType.getFinSchdMthd(),
 						PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,");
@@ -12499,6 +12512,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			scheduleDateList = null;
+		}
+		//set the defualt first dropline date based on droplinefrq
+		if(isOverdraft && financeType.isDroplineOD() && this.firstDroplineDate.getValue()==null){
+			int tenor = ((this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue());
+			if(tenor>0){
+				Date nextSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(
+						FrequencyUtil.getNextDate(this.droplineFrq.getValue(), tenor, this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false)
+						.getNextFrequencyDate(), PennantConstants.dateFormat));
+				this.firstDroplineDate.setValue(nextSchdDate);
+			}
 		}
 
 		if (this.maturityDate_two.getValue() != null && this.nextRepayDate_two.getValue() != null
@@ -14038,18 +14061,39 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
  */
 	public void onFulfill$finAssetValue(Event event) {
 		logger.debug("Entering");
+		
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,moduleDefiner)){
-			BigDecimal minFinAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
-			if(this.finAssetValue.getActualValue().compareTo(minFinAssetValue)<0){
-				throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
-						"NUMBER_MINVALUE_EQ",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
-								String.valueOf(minFinAssetValue) }));
-			}
+			 org_finAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
 		}
+		
 		logger.debug("Leaving");
 	}
-
+/***
+ *  Method to get the FinAsset Value  by calling to the financemaindaoimpl
+ */
+	public void getfinassetcheck(boolean isvalidCheck){
+		logger.debug("Entering");
+		if(isvalidCheck){
+			int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,moduleDefiner)){
+				BigDecimal minFinAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
+				if(this.finAssetValue.getActualValue().compareTo(minFinAssetValue)<0){
+					try {
+						MessageUtil.showErrorMessage(Labels.getLabel(
+								"NUMBER_MINVALUE_EQ",
+								new String[] {  Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
+										PennantAppUtil.amountFormate(minFinAssetValue, format) }));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else{
+					return;
+				}
+			}
+			logger.debug("Leaving");
+		}
+	}
 	/**
 	 * Validation check for Commitment For Available Amount and Expiry Date Check
 	 * 
