@@ -129,10 +129,6 @@ public class UserServiceImpl implements UserService {
 		return getUserDAO().getUserRolesByUserID(userID);
 	}
 
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName){
-		return getSecurityRightDAO().getRoleRights(secRight, menuRightName); 
-	}
-
 	public List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles){
 		return getSecurityRightDAO().getRoleRights(secRight,roles); 
 	}

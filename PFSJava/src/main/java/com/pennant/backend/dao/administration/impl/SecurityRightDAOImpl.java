@@ -50,7 +50,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -68,8 +67,6 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	public SecurityRightDAOImpl() {
 		super();
 	}
-
-	
 
 	/**
 	 * This Method selects all MenuRights by UserId
@@ -133,50 +130,6 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * This method gets the rights for the specified user, dialog page, and the role.
-	 * 
-	 * @param secRight
-	 *            (SecurityRight)
-	 * @return {@link List} of {@link SecurityRight}
-	 */
-	@Override
-	public List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName) {
-		logger.debug("Entering ");
-
-	/*	MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("RightType", "3");
-		paramSource.addValue("RoleCd", secRight.getRoleCd());
-		paramSource.addValue("AppId", secRight.getLoginAppId());
-		paramSource.addValue("Page", secRight.getPage());
-		paramSource.addValue("UsrId", secRight.getUsrID());
-		paramSource.addValue("RightName", menuRightName);
-
-		StringBuilder sql = new StringBuilder(" select distinct RightName ");
-		sql.append(" FROM SecRolesRights_View ");
-		sql.append(" where RightType = :RightType and RoleCd = :RoleCd and AppId = :AppId ");
-		sql.append(" and Page = :Page AND UsrId = :UsrId ");
-		
-		if (StringUtils.isNotBlank(menuRightName)) {
-			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
-			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
-			sql.append(" where TR.RightName = '");
-			sql.append(menuRightName);
-			sql.append("')");
-		}
-		
-		
-
-		logger.debug("selectSql:" + sql.toString());
-		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
-
-	
-		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);*/
-		
-		logger.debug("Leaving ");
-		return getPageRights(secRight, menuRightName);
 	}
 
 	@Override

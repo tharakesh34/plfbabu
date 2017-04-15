@@ -70,7 +70,5 @@ public interface UserService {
 
 	List<SecurityRole> getUserRolesByUserID(long userID);
 
-	List<SecurityRight> getRoleRights(SecurityRight secRight, String menuRightName);
-
 	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
 }
