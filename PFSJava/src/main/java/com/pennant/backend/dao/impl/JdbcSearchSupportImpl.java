@@ -61,7 +61,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	@SuppressWarnings("unchecked")
 	public <T> List<T> search(ISearch search) {
-		return jdbcSearchProcessor.search(search);
+		return jdbcSearchProcessor.getResults(search);
 	}
 
 	public <T> String getSearchQuery(ISearch search) {

@@ -74,7 +74,7 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List search(ISearch search) {
+	public List getResults(ISearch search) {
 		if (search == null || (search.getSearchClass() == null && StringUtils.isBlank(search.getTabelName()))) {
 			return null;
 		}
@@ -340,7 +340,7 @@ public class JdbcSearchProcessor {
 		}
 
 		SearchResult result = new SearchResult();
-		result.setResult(search(search));
+		result.setResult(getResults(search));
 
 		if (search.getMaxResults() > 0) {
 			result.setTotalCount(count(searchClass, search));
