@@ -83,8 +83,8 @@ public class JdbcSearchProcessor {
 
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-		query.addCustomFromTable(getTableName(search));
-		addColumns(query, search);
+		addSelectList(query, search);
+		addTableSource(query, search);
 
 		// Add where conditions
 		addWhereClause(search, query);
@@ -119,7 +119,7 @@ public class JdbcSearchProcessor {
 		if (search.getSearchClass() != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 			try {
-				resultList = this.namedParameterJdbcTemplate.query(
+				resultList = namedParameterJdbcTemplate.query(
 						getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
 						rowMapper);
 
@@ -128,7 +128,7 @@ public class JdbcSearchProcessor {
 			}
 		} else {
 			Map<String, Object> paramMap = new HashMap<>();
-			resultList = this.namedParameterJdbcTemplate.queryForList(
+			resultList = namedParameterJdbcTemplate.queryForList(
 					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
 					paramMap);
 		}
@@ -144,20 +144,8 @@ public class JdbcSearchProcessor {
 
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-		query.addCustomFromTable(getTableName(search));
-
-		// Add the fields to the query from the fields List
-		List fields = search.getFields();
-		if (fields.size() <= 0) {
-			// If not fields added select all fields
-			query.addCustomColumns(new CustomSql("*"));
-		} else {
-			// If specific fields added to search object select only required fields
-			for (Iterator iterator = fields.iterator(); iterator.hasNext();) {
-				Field field = (Field) iterator.next();
-				query.addCustomColumns(new CustomSql(field.property));
-			}
-		}
+		addSelectList(query, search);
+		addTableSource(query, search);
 
 		// Add where conditions
 		addWhereClause(search, query);
@@ -219,32 +207,20 @@ public class JdbcSearchProcessor {
 
 	/**
 	 * Returns the total number of results that would be returned using the given <code>ISearch</code> if there were no
-	 * paging or maxResult limits.
-	 * 
-	 * @see ISearch
-	 */
-	public int count(ISearch search) {
-		return search == null ? 0 : count(search.getSearchClass(), search);
-	}
-
-	/**
-	 * Returns the total number of results that would be returned using the given <code>ISearch</code> if there were no
 	 * paging or maxResult limits. Uses the specified searchClass, ignoring the searchClass specified on the search
 	 * itself.
 	 * 
 	 * @see ISearch
 	 */
-	public int count(Class<?> searchClass, ISearch search) {
+	public int count(ISearch search) {
 		if (search == null) {
 			throw new IllegalArgumentException();
 		}
 
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-		query.addCustomFromTable(getTableName(search));
-
-		// select count of all fields
-		query.addCustomColumns(new CustomSql("count(*)"));
+		addSelectList(query, "count(*)");
+		addTableSource(query, search);
 
 		// Add where conditions
 		addWhereClause(search, query);
@@ -257,22 +233,9 @@ public class JdbcSearchProcessor {
 		query.validate();
 		logger.debug("3SQL : " + query.toString());
 
-		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		Map<String, Object> namedParameters = new HashMap<>();
 
-		int count = this.namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
-
-		return count;
-	}
-
-	/**
-	 * Returns a <code>SearchResult</code> object that includes the list of results like <code>search()</code> and the
-	 * total length like <code>searchLength</code>.
-	 * 
-	 * @see ISearch
-	 */
-	@SuppressWarnings("rawtypes")
-	public SearchResult searchAndCount(ISearch search) {
-		return search == null ? null : searchAndCount(search.getSearchClass(), search);
+		return namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
 	}
 
 	/**
@@ -283,9 +246,8 @@ public class JdbcSearchProcessor {
 	 * @see ISearch
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public SearchResult searchAndCount(Class<?> searchClass, ISearch search) {
-
-		if (searchClass == null || search == null) {
+	public SearchResult searchAndCount(ISearch search) {
+		if (search == null) {
 			return null;
 		}
 
@@ -293,7 +255,7 @@ public class JdbcSearchProcessor {
 		result.setResult(getResults(search));
 
 		if (search.getMaxResults() > 0) {
-			result.setTotalCount(count(searchClass, search));
+			result.setTotalCount(count(search));
 		} else {
 			result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
 		}
@@ -567,13 +529,46 @@ public class JdbcSearchProcessor {
 	}
 
 	/**
-	 * Get the table name from the search object.
+	 * Adds the given columns to the SELECT query. If no columns specified adds the ALL_SYMBOL (*).
 	 * 
+	 * @param query
+	 *            The select query to which the columns to be added.
 	 * @param search
-	 *            The search object that contains the parameters.
-	 * @return The table name.
+	 *            The search object that contains the columns.
 	 */
-	private String getTableName(ISearch search) {
+	private void addSelectList(SelectQuery query, ISearch search) {
+		if (search.getFields().isEmpty()) {
+			query.addCustomColumns(new CustomSql("*"));
+
+			return;
+		}
+
+		for (Field field : search.getFields()) {
+			query.addCustomColumns(new CustomSql(field.property));
+		}
+	}
+
+	/**
+	 * Adds the given columns to the SELECT query.
+	 * 
+	 * @param query
+	 *            The select query to which the columns to be added.
+	 * @param selectList
+	 *            The columns to be added. The select list is a series of expressions separated by commas.
+	 */
+	private void addSelectList(SelectQuery query, String selectList) {
+		query.addCustomColumns(new CustomSql(selectList));
+	}
+
+	/**
+	 * Adds the table source to the SELECT query.
+	 * 
+	 * @param query
+	 *            The select query to which the table source to be added.
+	 * @param search
+	 *            The search object that contains the table source.
+	 */
+	private void addTableSource(SelectQuery query, ISearch search) {
 		String tableName = search.getTabelName();
 
 		if (StringUtils.isBlank(tableName)) {
@@ -584,24 +579,6 @@ public class JdbcSearchProcessor {
 			tableName = tableName.concat(" with (nolock)");
 		}
 
-		return tableName;
-	}
-
-	/**
-	 * Adds the given columns to the SELECT column list. If no columns specified adds the ALL_SYMBOL (*).
-	 * 
-	 * @param query
-	 *            The select query.
-	 * @param search
-	 *            The search object that contains the parameters.
-	 */
-	private void addColumns(SelectQuery query, ISearch search) {
-		if (search.getFields().isEmpty()) {
-			query.addCustomColumns(new CustomSql("*"));
-		} else {
-			for (Field field : search.getFields()) {
-				query.addCustomColumns(new CustomSql(field.property));
-			}
-		}
+		query.addCustomFromTable(tableName);
 	}
 }
