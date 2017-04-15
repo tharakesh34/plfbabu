@@ -72,4 +72,29 @@
 	<changeSet id="07" author="Surekha">
 		<dropTable tableName="SeqRmtAccounttypes"/>
 	</changeSet>
+<changeSet id="08" author="Irfan">
+	<sql>
+		Delete from ReportList where Code='PartnerBank';
+		INSERT INTO ReportList Values('PartnerBank','PartnerBank','label_PartnerBankDialog_PartnerBankCode.value,label_PartnerBankList_BankCode.value,label_PartnerBankDialog_PartnerBankName.value,label_PartnerBankDialog_BankBranchCode.value,listheader_RecordStatus.label,listheader_RecordType.label','partnerBankCode,partnerBankName,bankCode,bankBranchCode,recordStatus,recordType','String,String,String,String,String,String','','ReportList05','Partner Bank Details','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);	
+	</sql>
+</changeSet>
+<changeSet id="09" author="Irfan">
+<sql>
+
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_PartnerBankDialog_ModeDisbursment','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_PartnerBankDialog_ModePayments','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_PartnerBankDialog_ModeReceipts','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PartnerBankDialog_ModeDisbursment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PartnerBankDialog_ModePayments'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PartnerBankDialog_ModeReceipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+</sql>
+</changeSet>
+
 </databaseChangeLog>
