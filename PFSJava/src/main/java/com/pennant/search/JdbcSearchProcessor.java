@@ -46,7 +46,6 @@ public class JdbcSearchProcessor {
 	private static final String							SELECT		= "select";
 	private static final String							FROM		= "from";
 	private static final String							DISTINCT	= "distinct";
-	private static final String							WITH_NOLOCK	= " with (nolock)";
 
 	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<>();
 	private NamedParameterJdbcTemplate					namedParameterJdbcTemplate;
@@ -587,7 +586,7 @@ public class JdbcSearchProcessor {
 		}
 
 		if (App.DATABASE == Database.SQL_SERVER) {
-			tableName = tableName.concat(WITH_NOLOCK);
+			tableName = tableName.concat(" with (nolock)");
 		}
 
 		return tableName;
