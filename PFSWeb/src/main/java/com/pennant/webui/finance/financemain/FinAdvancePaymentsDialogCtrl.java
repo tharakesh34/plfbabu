@@ -568,6 +568,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneCountryCode.setReadonly(true);
 		this.phoneAreaCode.setReadonly(true);
 		this.phoneNumber.setReadonly(true);
+		this.partnerBankID.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
