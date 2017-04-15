@@ -84,7 +84,7 @@ public class JdbcSearchProcessor {
 
 		// Prepare the query.
 		SelectQuery query = new SelectQuery();
-		query.addCustomFromTable(getTableName(search, search.getSearchClass()));
+		query.addCustomFromTable(getTableName(search));
 
 		// Add the columns.
 		if (search.getFields().isEmpty()) {
@@ -135,12 +135,10 @@ public class JdbcSearchProcessor {
 				logger.debug(e);
 			}
 		} else {
-			Map<String, Object> namedParameters = new HashMap<>();
+			Map<String, Object> paramMap = new HashMap<>();
 			resultList = this.namedParameterJdbcTemplate.queryForList(
 					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
-					namedParameters);
-
-			namedParameters = null;
+					paramMap);
 		}
 
 		return resultList;
@@ -618,13 +616,13 @@ public class JdbcSearchProcessor {
 
 	}
 
-	private String getTableName(ISearch search, Class<?> clazz) {
+	private String getTableName(ISearch search) {
 		String tableName;
 
 		if (StringUtils.isNotBlank(search.getTabelName())) {
 			tableName = search.getTabelName();
 		} else {
-			tableName = ModuleUtil.getTableName(clazz.getSimpleName());
+			tableName = ModuleUtil.getTableName(search.getSearchClass().getSimpleName());
 		}
 
 		if (App.DATABASE == Database.SQL_SERVER) {
