@@ -10,7 +10,9 @@
 
 <changeSet id="01" author="Surekha">
 	<addColumn tableName="AdtRmtAccounttypes">
-		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+		<column name="AcTypeGrpId" type="bigint" defaultValueNumeric="0">
+			<constraints nullable="false" />
+		</column>
 	</addColumn>
 </changeSet>
 

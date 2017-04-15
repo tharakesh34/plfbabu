@@ -32,21 +32,25 @@
 </changeSet>
 <changeSet id="03" author="Surekha">
 	<addColumn tableName="RmtAccounttypes">
-		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+		<column name="AcTypeGrpId" type="bigint" defaultValueNumeric="0">
+			<constraints nullable="false" />
+		</column>
 	</addColumn>
 </changeSet>
 <changeSet id="04" author="Surekha">
 	<addColumn tableName="RmtAccounttypes_Temp">
-		<column name="AccountTypeId" type="bigint" defaultValueNumeric="0"></column>
+		<column name="AcTypeGrpId" type="bigint" defaultValueNumeric="0">
+			<constraints nullable="false" />
+		</column>
 	</addColumn>
 </changeSet>
 <changeSet id="05" author="Surekha">
 	<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
-		SELECT    AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+		SELECT    AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
                       NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
 			FROM         RMTAccountTypes_Temp T1
 		UNION ALL
-		SELECT    AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+		SELECT    AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
                       NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
 			FROM         RMTAccountTypes T1
 		WHERE     (NOT EXISTS
@@ -57,10 +61,13 @@
 </changeSet>
 <changeSet id="06" author="Surekha">
 	<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
-		SELECT     AccountTypeId, AcType, AcTypeDesc, AcPurpose, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
+		SELECT      AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode, InternalAc, CustSysAc, AcLmtCategory, AcTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, 
                       NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AssertOrLiability,OnBalanceSheet,AllowOverDraw
 			FROM         RMTAccountTypes T1
 	
 	</createView>
+	</changeSet>
+	<changeSet id="07" author="Surekha">
+		<dropTable tableName="SeqRmtAccounttypes"/>
 	</changeSet>
 </databaseChangeLog>
