@@ -89,7 +89,7 @@
 									value="${c:l('label_PartnerBankDialog_PartnerBankName.value')}" />
 								<hlayout id="hlayout_PartnerBankName">
 									<space id="space_PartnerBankName"
-										spacing="2px" />
+										spacing="2px" sclass="mandatory" />
 									<textbox id="partnerBankName"
 										maxlength="50" width="150px" />
 								</hlayout>

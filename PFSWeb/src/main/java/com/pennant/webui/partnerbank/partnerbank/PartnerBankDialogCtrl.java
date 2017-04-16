@@ -622,6 +622,13 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					true));
 		}
 		
+		//Partner Bank Code
+		if (!this.partnerBankName.isReadonly()) {
+			this.partnerBankName.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_PartnerBankName.value"), PennantRegularExpressions.REGEX_DESCRIPTION,
+					true));
+		}
+		
 		//Bank Code
 		if (!this.bankCode.isReadonly()) {
 			this.bankCode.setConstraint(new PTStringValidator(
