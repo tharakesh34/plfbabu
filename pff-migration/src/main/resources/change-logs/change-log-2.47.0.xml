@@ -3522,7 +3522,7 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 			           
 </createView>
 </changeSet>
-<!-- <changeSet author="Irfan" id="151">
+ <changeSet author="Irfan" id="151">
  <dropColumn tableName="PartnerBank" columnName="usage"/>
 <dropColumn tableName="PartnerBank" columnName="DisbDownload"/>
 <dropColumn tableName="PartnerBank" columnName="AccountCategory"/>
@@ -3541,7 +3541,7 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 	<column name="AlwPayment" type="bit"/>
 	<column name="AlwReceipt" type="bit"/>
 </addColumn>
-</changeSet> -->
+</changeSet> 
 <changeSet author="Irfan" id="152">
 <createTable tableName="PartnerBankModes">
 <column name="PartnerBankId" type="bigint">

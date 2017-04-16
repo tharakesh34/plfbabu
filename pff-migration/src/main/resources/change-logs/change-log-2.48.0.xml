@@ -316,9 +316,8 @@
 			FROM    	PartnerBanks  T1 INNER JOIN
 			           BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
 						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
-						RMTAccountTypes T4 ON T1.AcType = T4.AcType
-						
-			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBank_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType						
+			WHERE     NOT EXISTS (SELECT 1 FROM PARTNERBANKS_Temp WHERE PartnerBankId = T1.PartnerBankId)
 			</createView>
 </changeSet>
 
