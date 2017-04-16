@@ -585,9 +585,8 @@
 <changeSet id="32" author="chaitanya.ch">
 	<sql>
 		Delete from ACCOUNTTYPEGROUP;
-		Update RMTAccountTypes set AccountGrpID = null ;
+		Update RMTAccountTypes set ActyPeGrpID = 1 ;
 		Insert into ACCOUNTTYPEGROUP (GROUPID,GROUPCODE,GROUPDESCRIPTION,ACCTTYPELEVEL,PARENTGROUPID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values (1,'ASSET01','ASSET',1,0,1,1000,to_date('15-APR-17','DD-MON-RR'),'Approved',null,null,null,null,null,0);
-		Update RMTAccountTypes set AccountGrpID = 1 ;
 	</sql>
 </changeSet>
 
