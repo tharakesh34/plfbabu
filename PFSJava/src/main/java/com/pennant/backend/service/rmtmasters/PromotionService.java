@@ -50,7 +50,7 @@ public interface PromotionService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 	Promotion getPromotionById(String promotionCode, int moduleId);
-	Promotion getApprovedPromotionById(String promotionCode, int moduleId);
+	Promotion getApprovedPromotionById(String promotionCode, int moduleId, boolean childExist);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);

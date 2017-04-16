@@ -284,12 +284,12 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * @return Promotions
 	 */
 	@Override
-	public Promotion getApprovedPromotionById(String promotionCode, int moduleId) {
+	public Promotion getApprovedPromotionById(String promotionCode, int moduleId, boolean childExist) {
 		logger.debug("Entering");
 
 		Promotion promotion = getPromotionDAO().getPromotionById(promotionCode, "_AView");
 
-		if (promotion != null) {
+		if (childExist && promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
 			promotion.setFinTypeInsurancesList(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
 			promotion.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));

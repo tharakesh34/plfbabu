@@ -90,6 +90,7 @@ import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.systemmasters.Country;
@@ -105,6 +106,7 @@ import com.pennant.backend.service.finance.FinanceEligibility;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -168,6 +170,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String								requestSource		= "";
 
 	private transient FinanceTypeService		financeTypeService;
+	private transient PromotionService			promotionService;
 	private transient FinanceWorkFlowService	financeWorkFlowService;
 	private transient FinanceDetailService		financeDetailService;
 	private transient CustomerDetailsService	customerDetailsService;
@@ -303,11 +306,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.promotionCode.setValueColumn("LovDescPromotionCode");
 		this.promotionCode.setDescColumn("LovDescPromotionName");
 		this.promotionCode.setValidateColumns(new String[] { "LovDescPromotionCode" });
-		getPromotionwithAccess(true);
+	//	getPromotionwithAccess(true);
 		if (!"".equals(whereClause)) {
 			this.promotionCode.setWhereClause(whereClause);
 		}
-
+		
+		setPromotionFilters(filters);
+		
 		// WIF Reference
 		this.wIfFinaceRef.setModuleName("WhatIfFinance");
 		this.wIfFinaceRef.setValueColumn("FinReference");
@@ -338,7 +343,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * 
 	 * @param setFilters
 	 * @return
-	 */
+	 *//*
 	private boolean getPromotionwithAccess(boolean setFilters) {
 
 		Filter[] filters = new Filter[4];
@@ -368,7 +373,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 		return false;
 	}
-
+*/
 	/**
 	 * method for Checking First Task Owneraginst assigned Role Details for the user
 	 * 
@@ -462,18 +467,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.wIfFinaceRef.setValue("");
 		this.wIfFinaceRef.setObject("");
 
-		this.promotionCode.setFilters(new Filter[0]);
-		if (StringUtils.isNotEmpty(this.finType.getValue().trim())) {
-			boolean isPromotionExists = getPromotionwithAccess(false);
-			if (isPromotionExists) {
-				this.promotionCodeRow.setVisible(true);
-			} else {
-				this.promotionCodeRow.setVisible(false);
-			}
-		} else {
-			this.promotionCodeRow.setVisible(false);
-			this.promotionCode.setList(null);
-		}
+		setPromotionFilters(this.promotionCode.getFilters());
 
 		this.wIfFinaceRef.setFilters(new Filter[0]);
 		if (StringUtils.isNotEmpty(this.finType.getValue().trim())) {
@@ -505,7 +499,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setFinanceWorkFlow(details);
 			if (details != null) {
 
-				this.productCategory = details.getLovDescProductCodeName();
+				this.productCategory = details.getProductCategory();
 				this.promotionCode.setValue(details.getLovDescPromotionCode());
 				this.promotionCode.setDescription(details.getLovDescPromotionName());
 				this.finType.setValue(details.getLovDescProductName());
@@ -519,6 +513,36 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving " + event.toString());
 	}
 
+	/**
+	 * Method for Checking Screen Code Object to avail Customer
+	 */
+	private void setPromotionFilters(Filter[] filters) {
+		
+		if(StringUtils.isEmpty(this.finType.getValue())){
+			filters = new Filter[3];
+		}else{
+			filters = new Filter[4];
+		}
+		
+		Date appDate = DateUtility.getAppDate();
+		filters[0] = new Filter("StartDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+				Filter.OP_LESS_OR_EQUAL);
+		filters[1] = new Filter("EndDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+				Filter.OP_GREATER_OR_EQUAL);
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
+			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL);
+		} else {
+			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+		}
+		
+		if(!StringUtils.isEmpty(this.finType.getValue())){
+			filters[3] = new Filter("LovDescProductName", StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
+		} 
+		this.promotionCode.setFilters(filters);
+		
+	}
+	
+	
 	/**
 	 * Method for Checking Screen Code Object to avail Customer
 	 */
@@ -788,6 +812,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// If User requested through What-if Reference
 		FinanceType financeType = null;
+		boolean promotionFlag = false;
 		if (StringUtils.isNotEmpty(this.wIfFinaceRef.getValue())) {
 
 			financeDetail = this.financeDetailService.getWIFFinanceDetailById(this.wIfFinaceRef.getValue(),
@@ -823,25 +848,29 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (StringUtils.isNotBlank(this.preApprovedFinRef.getValue())) {
 				FinanceMain financeMain = (FinanceMain) this.preApprovedFinRef.getObject();
 				fintype = financeMain.getFinType();
-			} else if (StringUtils.isNotBlank(this.finType.getValue())
-					&& StringUtils.isBlank(this.promotionCode.getValue())) {
+			} else { 
 				fintype = this.finType.getValue().trim();
-			} else if (StringUtils.isNotBlank(this.promotionCode.getValue())) {
-				fintype = this.promotionCode.getValue().trim();
-				promotionWorkflow = true;
 			}
 
+			
 			// Fetching Finance Type Details
 			financeType = this.financeTypeService.getOrgFinanceTypeById(fintype);
+			if (StringUtils.isNotBlank(promotionCode.getValue())) {
+				promotionFlag = true;
+				// Fetching Promotion Details
+				Promotion promotion = this.promotionService.getApprovedPromotionById(promotionCode.getValue(), FinanceConstants.FINTYPEFEES_PROMOTION, false);
+				financeType.setFInTypeFromPromotiion(promotion);
+			}
+						
 			financeDetail.getFinScheduleData().setFinanceType(financeType);
-
+			
 			// Step Policy Details
 			if (financeType.isStepFinance()) {
 				List<StepPolicyDetail> stepPolicyList = this.stepPolicyService.getStepPolicyDetailsById(financeType
 						.getDftStepPolicy());
 				financeDetail.getFinScheduleData().resetStepPolicyDetails(stepPolicyList);
 			}
-
+			
 			if (StringUtils.isNotBlank(this.preApprovedFinRef.getValue())) {
 				setPreApprovalRequiredDetails(financeDetail, financeType, this.preApprovedFinRef.getValue());
 				this.productCategory = financeType.getProductCategory();
@@ -965,10 +994,16 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			financeDetail.getFinScheduleData().setFeeEvent(finEvent);
+			
+			// Fee Details Fetching From Finance Type	//FIXME promotion Fees
+			if(promotionFlag) {
+				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
+						finEvent, true, FinanceConstants.FINTYPEFEES_PROMOTION));
+			} else {
+				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
+						finEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE));
+			}
 
-			// Fee Details Fetching From Finance Type
-			financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
-					finEvent, true));
 		}
 
 		showDetailView(financeDetail);
@@ -1697,5 +1732,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
+	}
+
+	public PromotionService getPromotionService() {
+		return promotionService;
+	}
+
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
 	}
 }

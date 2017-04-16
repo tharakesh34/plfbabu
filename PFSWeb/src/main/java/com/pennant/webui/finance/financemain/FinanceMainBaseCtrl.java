@@ -297,6 +297,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected CurrencyBox									downPayBank;
 	protected AccountSelectionBox							downPayAccount;
 	protected Hbox											hbox_PromotionProduct;
+	protected Label											label_FinanceMainDialog_PromotionProduct;
 	protected Row											row_downPayBank;
 	protected Row											row_disbAcctId;
 	protected Row											row_secondaryAccount;
@@ -2693,13 +2694,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(financeType.getFinDivision() + " - " + financeType.getLovDescFinDivisionName());
-		if (StringUtils.isNotEmpty(financeType.getProduct())) {
+		if (StringUtils.isNotEmpty(financeType.getPromotionCode())) {
 			this.hbox_PromotionProduct.setVisible(true);
-			this.getLabel_FinanceMainDialog_PromoProduct().setVisible(true);
-			this.promotionProduct.setValue(financeType.getProduct() + " - " + financeType.getLovDescPromoFinTypeDesc());
-			this.label_FinanceMainDialog_FinType.setValue(Labels
-					.getLabel("label_FinanceMainDialog_PromotionCode.value"));
-		}
+			this.label_FinanceMainDialog_PromotionProduct.setVisible(true);
+			this.promotionProduct.setValue(financeType.getPromotionCode() + " - " + financeType.getLovDescPromoFinTypeDesc());
+ 		}
 
 		this.repayAcctId.setMandatoryStyle(!isReadOnly("FinanceMainDialog_ManRepayAcctId"));
 		if (getWorkFlow() != null && !"Accounting".equals(getTaskTabs(getTaskId(getRole())))) {

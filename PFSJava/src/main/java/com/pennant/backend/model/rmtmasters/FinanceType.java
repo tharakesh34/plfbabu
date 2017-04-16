@@ -229,6 +229,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private FinanceType befImage;
 	private boolean alwMaxDisbCheckReq;
 	private boolean quickDisb;
+	private String promotionCode;
 	
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -294,6 +295,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("finTypeFeesList");
 		excludeFields.add("finTypeVASProductsList");
 		excludeFields.add("addrLine1");
+		excludeFields.add("promotionCode");
 		return excludeFields;
 	}
 
@@ -1814,6 +1816,42 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setQuickDisb(boolean quickDisb) {
 		this.quickDisb = quickDisb;
+	}
+	
+	public String getPromotionCode() {
+		return promotionCode;
+	}
+	
+	public void setPromotionCode(String promotionCode) {
+		this.promotionCode = promotionCode;
+	}
+	
+	/**
+	 * Copy the Promotion Details to Finance Type 
+	 * @param promotion
+	 */
+	public void setFInTypeFromPromotiion(Promotion promotion){
+		setPromotionCode(promotion.getPromotionCode());
+		setFinIsDwPayRequired(promotion.isFinIsDwPayRequired());
+		setDownPayRule(promotion.getDownPayRule());
+		if(promotion.getActualInterestRate() != null){
+			setFinIntRate(promotion.getActualInterestRate());
+		}else if(promotion.getFinBaseRate() != null){
+			setFinBaseRate(promotion.getFinBaseRate());
+			setFinSplRate(promotion.getFinSplRate());
+			setFinMargin(promotion.getFinMargin());
+		}	
+		
+		setApplyRpyPricing(promotion.isApplyRpyPricing());
+		setRpyPricingMethod(promotion.getRpyPricingMethod());
+		
+		setFinMinTerm(promotion.getFinMinTerm());
+		setFinMaxTerm(promotion.getFinMaxTerm());
+		setFinMinAmount(promotion.getFinMinAmount());
+		setFinMaxAmount(promotion.getFinMaxAmount());
+		setFInMinRate(promotion.getFinMinRate());
+		setFinMaxRate(promotion.getFinMaxRate());
+		setFinCcy(promotion.getFinCcy());
 	}
 
 }

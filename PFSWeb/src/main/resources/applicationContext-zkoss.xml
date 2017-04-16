@@ -1665,6 +1665,7 @@
 		<property name="branchService" ref="branchService" />
 		<property name="customerTypeService" ref="customerTypeService" />
 		<property name="pagedListService" ref="pagedListService" />
+		<property name="promotionService" ref="promotionService" />
 	</bean>
 
 	<bean id="selectRolloverFinanceDialogCtrl"

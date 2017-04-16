@@ -163,7 +163,7 @@ public interface FinanceDetailService {
 	DocumentDetails getFinDocDetailByDocId(long docId, String type, boolean readAttachment);
 	List<DocumentDetails> getDocumentDetails(String finReference, String finProcEvent);
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
-	List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination);
+	List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination, int moduleId);
 	BigDecimal getTotalRepayAmount(String finReference);
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
 	FinanceDetail getWIFFinanceDetailById(String finReference, 	String procEdtEvent);

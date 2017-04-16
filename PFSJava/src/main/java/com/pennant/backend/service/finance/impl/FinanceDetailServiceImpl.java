@@ -7635,8 +7635,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getScheduleEffectModuleList(schdChangeReq);
 	}
 
-	public List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination){
-		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, FinanceConstants.FINTYPEFEES_FINTYPE);
+	public List<FinTypeFees> getFinTypeFees(String finType,String eventCode, boolean origination, int moduleId){
+		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, moduleId);
 	}
 
 	public FinTypeFeesDAO getFinTypeFeesDAO() {

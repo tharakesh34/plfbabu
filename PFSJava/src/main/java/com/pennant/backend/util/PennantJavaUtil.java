@@ -904,7 +904,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("PromotionWorkFlow", new ModuleMapping("PromotionWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_PTView" }, masterWF, new String[] {
-						"LovDescProductCodeName", "lovDescPromotionCode", "lovDescPromotionName" }, new String[][] {
+						"lovDescProductName", "lovDescPromotionCode", "lovDescPromotionName" }, new String[][] {
 						{ "ModuleName", "0", "PROMOTION" }, { "LovDescProductName", "1", "" } }, 600));
 
 		ModuleUtil.register("FacilityWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,

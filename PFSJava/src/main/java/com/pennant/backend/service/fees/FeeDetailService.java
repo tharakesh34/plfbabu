@@ -29,6 +29,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -342,7 +343,7 @@ public class FeeDetailService {
 		}
 		if (!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)) {
 			List<FinTypeFees> finTypeFeesList = financeDetailService.getFinTypeFees(
-					finScheduleData.getFinanceMain().getFinType(), feeEvent, true);
+					finScheduleData.getFinanceMain().getFinType(), feeEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE);
 
 			financeDetail.setFinTypeFeesList(finTypeFeesList);
 			for(FinFeeDetail finFeeDetail:getFinFeeDetailList()){

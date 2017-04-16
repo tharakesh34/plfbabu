@@ -81,7 +81,7 @@
 									value="${c:l('label_SelectFinanceTypeDialog_FinType.value')}" />
 								<extendedcombobox id="finType" />
 							</row>
-							<row id="promotionCodeRow" visible="false"
+							<row id="promotionCodeRow" 
 								spans="1,3">
 								<label
 									id="label_SelectFinanceTypeDialog_PromotionCode"
