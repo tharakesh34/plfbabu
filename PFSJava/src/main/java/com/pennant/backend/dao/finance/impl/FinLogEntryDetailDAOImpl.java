@@ -13,10 +13,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.util.FinanceConstants;
 
-public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
+public class FinLogEntryDetailDAOImpl extends BasisNextidDaoImpl<FinLogEntryDetail> implements FinLogEntryDetailDAO {
 
 	private static Logger logger = Logger.getLogger(FinLogEntryDetailDAOImpl.class);
 
@@ -35,7 +36,7 @@ public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
 	public long save(FinLogEntryDetail entryDetail) {
 		logger.debug("Entering");
 		
-		entryDetail.setLogKey(getLogKey());
+		entryDetail.setLogKey(getNextidviewDAO().getNextId("seqFinLogEntryDetail"));
 		 
 		StringBuilder insertSql = new StringBuilder(" Insert Into FinLogEntryDetail ");
 		insertSql.append(" (FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted ) ");
@@ -49,27 +50,7 @@ public class FinLogEntryDetailDAOImpl implements FinLogEntryDetailDAO {
 		logger.debug("Leaving");
 		return entryDetail.getLogKey();
 	}
-	
-	/**
-	 * Generate Linked Transaction ID
-	 */
-	public long getLogKey(){
-		logger.debug("Entering");
-		long count =0; 
-		try {
-			String updateSql = 	"update seqFinLogEntryDetail  set seqNo= seqNo+1 " ;
-			this.namedParameterJdbcTemplate.getJdbcOperations().update(updateSql);
-
-			String selectCountSql = "select seqNo from seqFinLogEntryDetail" ;
-			count = this.namedParameterJdbcTemplate.getJdbcOperations().queryForObject(selectCountSql, Long.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-		logger.debug("Leaving");
-		return count;
-	}
-	
+		
 	@Override
 	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, Date postDate) {
 		logger.debug("Entering");

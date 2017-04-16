@@ -3,7 +3,9 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
-public class FinLogEntryDetail implements Serializable {
+import com.pennant.backend.model.Entity;
+
+public class FinLogEntryDetail implements Serializable, Entity {
 
     private static final long serialVersionUID = 587826313209520957L;
 
@@ -63,5 +65,19 @@ public class FinLogEntryDetail implements Serializable {
 	public void setReversalCompleted(boolean reversalCompleted) {
     	this.reversalCompleted = reversalCompleted;
     }
+
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return 0;
+	}
+
+	@Override
+	public void setId(long id) {
+	}
 	
 }
