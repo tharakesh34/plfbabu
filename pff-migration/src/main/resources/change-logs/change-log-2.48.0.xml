@@ -154,4 +154,142 @@
 		</addColumn>
 	</changeSet>
 
+<changeSet id="15" author="Irfan"> 
+<dropForeignKeyConstraint constraintName="FK_FINADVPAYMENT_PARTNERBNKID" baseTableName="FinAdvancePayments" />
+<dropPrimaryKey tableName="PartnerBank" constraintName="PK_PARTNERBANK"/>
+<dropPrimaryKey tableName="PartnerBank_Temp" constraintName="PK_PARTNERBANK_TEMP"/>
+<dropView viewName="PartnerBank_View"/>
+<dropView viewName="PartnerBank_AView"/>
+<dropTable tableName="PartnerBank"/>
+<dropTable tableName="PartnerBank_Temp"/>
+</changeSet> 
+
+
+<changeSet id="16" author="Irfan">
+<createTable tableName="PartnerBanks">
+<column name="PartnerBankId" type="bigint">
+<constraints nullable="false"/>
+</column>
+<column name="PartnerBankCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="PartnerBankName" type="varchar(50)"/>
+<column name="BankCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="BankBranchCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="BranchMICRCode" type="varchar(20)"/>
+<column name="BranchIFSCCode" type="varchar(20)" />
+<column name="BranchCity" type="varchar(50)"/>
+<column name="UtilityCode" type="varchar(8)"/>
+<column name="AccountNo" type="varchar(50)"/>
+<column name="AcType" type="varchar(20)"/>
+<column name="AlwFileDownload" type="bit"/>
+<column name="AlwDisb" type="bit"/>
+<column name="AlwPayment" type="bit"/>
+<column name="AlwReceipt" type="bit"/>
+<column name="InFavourLength" type="int"/>
+<column name="Active" type="bit"/>
+<column name="Version" type="int" >
+<constraints nullable="false"/>
+</column>
+<column name="LastMntBy" type="bigint"/>
+<column name="LastMntOn" type="datetime"/>
+<column name="RecordStatus" type="varchar(50)"/>
+<column name="RoleCode" type="varchar(100)"/>
+<column name="NextRoleCode" type="varchar(200)"/>
+<column name="TaskId" type="varchar(50)"/>
+<column name="NextTaskId" type="varchar(200)"/>
+<column name="RecordType" type="varchar(50)"/>
+<column name="WorkflowId" type="bigint"/>
+</createTable>
+
+<createTable tableName="PartnerBanks_Temp">
+<column name="PartnerBankId" type="bigint">
+<constraints nullable="false"/>
+</column>
+<column name="PartnerBankCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="PartnerBankName" type="varchar(50)"/>
+<column name="BankCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="BankBranchCode" type="varchar(8)">
+<constraints nullable="false"/>
+</column>
+<column name="BranchMICRCode" type="varchar(20)"/>
+<column name="BranchIFSCCode" type="varchar(20)" />
+<column name="BranchCity" type="varchar(50)"/>
+<column name="UtilityCode" type="varchar(8)"/>
+<column name="AccountNo" type="varchar(50)"/>
+<column name="AcType" type="varchar(20)"/>
+<column name="AlwFileDownload" type="bit"/>
+<column name="AlwDisb" type="bit"/>
+<column name="AlwPayment" type="bit"/>
+<column name="AlwReceipt" type="bit"/>
+<column name="InFavourLength" type="int"/>
+<column name="Active" type="bit"/>
+<column name="Version" type="int" >
+<constraints nullable="false"/>
+</column>
+<column name="LastMntBy" type="bigint"/>
+<column name="LastMntOn" type="datetime"/>
+<column name="RecordStatus" type="varchar(50)"/>
+<column name="RoleCode" type="varchar(100)"/>
+<column name="NextRoleCode" type="varchar(200)"/>
+<column name="TaskId" type="varchar(50)"/>
+<column name="NextTaskId" type="varchar(200)"/>
+<column name="RecordType" type="varchar(50)"/>
+<column name="WorkflowId" type="bigint"/>
+</createTable>
+<addPrimaryKey tableName="PartnerBanks" constraintName="PK_PartnerBankId" columnNames="PartnerBankId"/>
+<addPrimaryKey tableName="PartnerBanks_Temp" constraintName="PK_PartnerBankId_Temp" columnNames="PartnerBankId"/>
+<addUniqueConstraint  tableName="PartnerBanks" constraintName="UK_PartnerBankCode" columnNames="PartnerBankCode" />
+<addUniqueConstraint  tableName="PartnerBanks_Temp" constraintName="UK_PartnerBankCode_Temp" columnNames="PartnerBankCode" />
+</changeSet>
+
+<changeSet id="17" author="Irfan">
+<sql>
+
+	Update FINADVANCEPAYMENTS set PartnerBankId = null; 
+
+</sql>
+<addForeignKeyConstraint constraintName="FK_FinAdvPayment_PartnerBnkId"
+			referencedTableName="Partnerbanks" referencedColumnNames="PartnerBankId"
+			baseTableName="FinAdvancePayments" baseColumnNames="PartnerBankId" />
+</changeSet>
+
+<changeSet  author="Irfan" id="18">
+	<createView replaceIfExists="true" viewName="PartnerBanks_View">
+	SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PARTNERBANKS_Temp  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBanks  T1 INNER JOIN
+			           BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+						
+			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBank_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+			</createView>
+</changeSet>
+
+<changeSet author="Irfan" id="19">
+	<createView replaceIfExists="true" viewName="PartnerBanks_AView">
+		SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBanks  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+	</createView>
+</changeSet>
+
+	
+
 </databaseChangeLog>
