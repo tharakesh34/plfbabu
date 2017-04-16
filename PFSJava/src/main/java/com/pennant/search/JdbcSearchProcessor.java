@@ -125,7 +125,6 @@ public class JdbcSearchProcessor {
 		return resultList;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	public String getQuery(ISearch search) {
 		if (search == null) {
 			throw new IllegalArgumentException();
@@ -136,17 +135,6 @@ public class JdbcSearchProcessor {
 		addSelectList(query, search);
 		addTableSource(query, search);
 		addWhereClause(query, search);
-
-		// Add order by conditions
-		if (search.getFilters() != null) {
-			List sorts = search.getSorts();
-
-			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
-				Sort sortField = (Sort) iterator.next();
-				query.addCustomOrdering(sortField.getProperty(),
-						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
-			}
-		}
 
 		logger.debug("Query : " + query.toString());
 		query.validate();
