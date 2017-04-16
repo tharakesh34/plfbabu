@@ -230,6 +230,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwMaxDisbCheckReq;
 	private boolean quickDisb;
 	private String promotionCode;
+	private String promotionDesc;
 	
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -296,6 +297,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("finTypeVASProductsList");
 		excludeFields.add("addrLine1");
 		excludeFields.add("promotionCode");
+		excludeFields.add("promotionDesc");
 		return excludeFields;
 	}
 
@@ -1832,6 +1834,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	 */
 	public void setFInTypeFromPromotiion(Promotion promotion){
 		setPromotionCode(promotion.getPromotionCode());
+		setPromotionDesc(promotion.getPromotionDesc());
 		setFinIsDwPayRequired(promotion.isFinIsDwPayRequired());
 		setDownPayRule(promotion.getDownPayRule());
 		if(promotion.getActualInterestRate() != null){
@@ -1852,6 +1855,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 		setFInMinRate(promotion.getFinMinRate());
 		setFinMaxRate(promotion.getFinMaxRate());
 		setFinCcy(promotion.getFinCcy());
+	}
+
+	public String getPromotionDesc() {
+		return promotionDesc;
+	}
+
+	public void setPromotionDesc(String promotionDesc) {
+		this.promotionDesc = promotionDesc;
 	}
 
 }

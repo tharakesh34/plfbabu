@@ -1438,9 +1438,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 		}
-
+		
+		Long accSetId;
 		// TODO: Better to Remove from Here and add it in Tab Selection
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.FINTYPEFEES_PROMOTION);
+		}else{
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
 		if(accSetId != Long.MIN_VALUE){
 
 			//Finance Accounting Posting Details
@@ -4838,7 +4843,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			//Finance Insurance Validation
 			//validate the Insurances against the finance Type having list of configured insurances
-			List<String> mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+			List<String> mandPolicyList;
+			if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
+				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getPromotionCode(), FinanceConstants.FINTYPEFEES_PROMOTION);
+			}else{
+				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+			}
+			
 			if (mandPolicyList != null && !mandPolicyList.isEmpty()){
 				
 				boolean notValidEntry = false;
@@ -6373,8 +6384,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(
-				financeDetail.getFinScheduleData().getFinanceType().getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId ;
+		
+		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.FINTYPEFEES_PROMOTION);
+		}else{
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
 
 		//Finance Accounting Posting Details
 		if(accSetId != Long.MIN_VALUE){

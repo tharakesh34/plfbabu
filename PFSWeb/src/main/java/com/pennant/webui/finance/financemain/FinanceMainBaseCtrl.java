@@ -2697,7 +2697,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotEmpty(financeType.getPromotionCode())) {
 			this.hbox_PromotionProduct.setVisible(true);
 			this.label_FinanceMainDialog_PromotionProduct.setVisible(true);
-			this.promotionProduct.setValue(financeType.getPromotionCode() + " - " + financeType.getLovDescPromoFinTypeDesc());
+			this.promotionProduct.setValue(financeType.getPromotionCode() + " - " + financeType.getPromotionDesc());
  		}
 
 		this.repayAcctId.setMandatoryStyle(!isReadOnly("FinanceMainDialog_ManRepayAcctId"));
