@@ -205,6 +205,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" InsuranceAmt,DeductInsDisb,AlwBPI , BpiTreatment , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
 		selectSql.append(" PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode , AlwMultiDisb , ApplicationNo , ReferralId ,  DmaCode ,  SalesDepartment , ");
 		selectSql.append(" QuickDisb , WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, BpiAmount, DeductFeeDisb");
+		selectSql.append(" , PromotionCode");
 		
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, ProductCategory, LovDescFinBranchName, ");
@@ -263,7 +264,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate,");
 		selectSql.append(" ManualSchedule , TakeOverFinance , GrcAdvBaseRate ,GrcAdvMargin ,GrcAdvPftRate ,RpyAdvBaseRate ,RpyAdvMargin ,RpyAdvPftRate ,");
 		selectSql.append(" SupplementRent, IncreasedCost , feeAccountId, MinDownPayPerc, TDSApplicable, FeeChargeAmt, InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
-		selectSql.append(" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode , AlwMultiDisb, BpiAmount, DeductFeeDisb, ");
+		selectSql.append(" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode , AlwMultiDisb, BpiAmount, DeductFeeDisb,");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinTypeName,FinRvwRateApplFor, FinGrcRvwRateApplFor,lovDescFinBranchName, ");
@@ -285,7 +286,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			selectSql.append(" Blacklisted, LimitValid, OverrideLimit, FinPurpose,FinStatus, FinStsReason, InitiateUser,");
 			selectSql.append(" BankName, Iban, AccountType, DdaReferenceNo, NextUserId, Priority, ");
 			selectSql.append(" RolloverFrq, NextRolloverDate,ShariaStatus,InitiateDate,MMAId,AccountsOfficer,DsaCode,DroplineFrq,FirstDroplineDate,PftServicingODLimit,  ");
-			selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH ");
+			selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, PromotionCode ");
 			selectSql.append(" From FinanceMain");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -362,7 +363,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference,FinType, CustId, FinAmount, DownPayment, FeeChargeAmt, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, FinIsActive, " );
 		selectSql.append(" ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate,LastRepayRvwDate,FinCurrAssetValue, MaturityDate, FinStatus, FinStsReason, ");
-		selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, ClosingStatus, LastRepayDate, NextRepayDate ");
+		selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, ClosingStatus, LastRepayDate, NextRepayDate, PromotionCode ");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -397,7 +398,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, CustId, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, " );
 		selectSql.append(" FinStatus, FinAmount, FeeChargeAmt, FinRepaymentAmount, " );
-		selectSql.append(" ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate,LastRepayRvwDate,FinCurrAssetValue, MaturityDate ");
+		selectSql.append(" ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate,LastRepayRvwDate,FinCurrAssetValue, MaturityDate, PromotionCode ");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -436,7 +437,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, " );
 		selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, " );
 		selectSql.append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
-		selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate, feeAccountId, MinDownPayPerc " );
+		selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate, feeAccountId, MinDownPayPerc, PromotionCode " );
 		selectSql.append(" FROM Financemain");
 		selectSql.append(" Where FinReference =:FinReference");
 		
@@ -526,7 +527,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated , Blacklisted ,");		
 		insertSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps,DsaCode, ");		
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit)");
+		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode)");
 		
 		insertSql.append(" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
 		insertSql.append(" :MaturityDate, :CustID, :RepayProfitRate , :TotalRepayAmt ,");
@@ -540,7 +541,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		insertSql.append(" :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :Blacklisted,");
 		insertSql.append(" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps,:DsaCode, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :feeAccountId, :minDownPayPerc, :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit)");
+		insertSql.append(" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :feeAccountId, :minDownPayPerc, :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :PromotionCode)");
 		logger.debug("insertSql: " + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
@@ -593,7 +594,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			sql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH,");
 		}
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(" NextTaskId, RecordType, WorkflowId)");
+		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode)");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -627,7 +628,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			sql.append(" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,");
 		}
 		sql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		sql.append(" :NextTaskId,:RecordType,:WorkflowId)");
+		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -712,7 +713,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		}		
 		sql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, PromotionCode = :PromotionCode");
 		sql.append(" where FinReference = :FinReference");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -811,6 +812,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority, MinDownPayPerc=:MinDownPayPerc");
+		updateSql.append(" ,PromotionCode = :PromotionCode");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_Temp") ) {
 			updateSql.append("  AND Version= :Version-1");
@@ -924,6 +926,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz, ReAgeCpz=:ReAgeCpz, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays ,AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,");
 		updateSql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, NextUserId=:NextUserId, Priority=:Priority, RecordType = :RecordType, WorkflowId = :WorkflowId, MinDownPayPerc=:MinDownPayPerc");
+		updateSql.append(" PromotionCode = :PromotionCode");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -1880,7 +1883,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql.append(" ClosingStatus, FinApprovedDate, ");
-		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, FeeChargeAmt, BpiAmount, DeductFeeDisb ");
+		selectSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, FeeChargeAmt, BpiAmount, DeductFeeDisb, PromotionCode ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", lovDescFinTypeName, lovDescCustCIF, ");
 			selectSql.append(" lovDescCustShrtName, LovDescCustFName, lovDescCustLName, lovDescFinBranchName, lovDescFinancingAmount ");
@@ -2330,7 +2333,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" AvailedDefFrqChange, FinIsActive, ");
 		selectSql.append(" AlwBPI , BpiTreatment , PlanEMIHAlw ,");
 		selectSql.append(" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , AlwMultiDisb, ");
-		selectSql.append("  UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH ");
+		selectSql.append("  UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, PromotionCode ");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where FinReference =:FinReference");
 
