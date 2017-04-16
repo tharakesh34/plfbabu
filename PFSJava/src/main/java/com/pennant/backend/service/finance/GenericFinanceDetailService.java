@@ -1223,24 +1223,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 			}*/
 			
-			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList(); 
-			if(finFeeDetailList != null ){
-				feeRuleDetailsMap = new HashMap<>();
-				FeeRule feeRule ;
-				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-					feeRule = new FeeRule();
-					feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
-					feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-					feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-					feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-					feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-					feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-					feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
-				}
-			}
-			
-			//Fee Rules Checking with Existing Fees with in Process & Latest Accounting Entry Details
-			boolean reExecuteFees = false;
 			
 			//Commented for Excluding Fee Details Checking with only Final Stage Accounting. 
 			//Fees may occur at Stage level accounting also.
@@ -1257,6 +1239,46 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			
 			List<String> feeCodeList = getTransactionEntryDAO().getListFeeCodes(accountSetID);
 			
+			Set<String> transactionEntryFees = new HashSet<>(); 
+			for (String feeCode : feeCodeList) {
+				String[] feelist = null;
+				if(feeCode.contains(",")){
+					feelist = feeCode.split(",");
+					for (String string : feelist) {
+						transactionEntryFees.add(string);
+					}
+				}else{
+					transactionEntryFees.add(feeCode);
+				}
+			}
+			
+			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList(); 
+			if(finFeeDetailList != null ){
+				feeRuleDetailsMap = new HashMap<>();
+				FeeRule feeRule ;
+				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+					if(!transactionEntryFees.contains(finFeeDetail.getFeeTypeCode())){
+						ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+						errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
+								PennantJavaUtil.getLabel("label_mismatchFeeswithAccounting"), new String[] {}, new String[] {}));
+						auditHeader.setErrorList(errorDetails);
+						logger.debug("Leaving");
+						return auditHeader;
+					}
+					feeRule = new FeeRule();
+					feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+					feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+					feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+					feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+					feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+					feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+					feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
+				}
+			}
+			/*	
+			//Fee Rules Checking with Existing Fees with in Process & Latest Accounting Entry Details
+			boolean reExecuteFees = false;
+		
 			for (int i = 0; i < feeCodeList.size(); i++) {
 
 				String[] feelist = null;
@@ -1287,7 +1309,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				auditHeader.setErrorList(errorDetails);
 				logger.debug("Leaving");
 				return auditHeader;
-			}
+			}*/
 			
 			// TODO : NED TO DO CLEANUP ON BELOW EXECUTION PROCESS (Execution process calling multiple times(Repeated code- added time being)
 			

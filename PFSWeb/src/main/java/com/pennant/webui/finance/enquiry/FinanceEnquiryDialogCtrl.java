@@ -443,7 +443,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox						finDivisionName;
 	protected Textbox 						promotionProduct;
 	protected Hbox							hbox_PromotionProduct;
-	private   Label							label_FinanceMainDialog_PromoProduct;
+	private   Label							label_FinanceMainDialog_PromotionProduct;
 	private   Label							label_FinanceMainDialog_FinType;
 	protected ExtendedCombobox      		dsaCode;
 	protected Row                  			row_accountsOfficer;
@@ -755,6 +755,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void doWriteBeanToComponents() throws InterruptedException {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
+		FinanceType aFinanceType = getFinScheduleData().getFinanceType();
 		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 		Customer customer = null;
 		customer = customerService.getCustomerById(aFinanceMain.getCustID());
@@ -1206,12 +1207,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		//Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(getFinScheduleData().getFinanceType().getFinDivision());
-		if (StringUtils.isNotEmpty(getFinScheduleData().getFinanceType().getProduct())) {
+		if (StringUtils.isNotBlank(aFinanceMain.getPromotionCode())) {
 			this.hbox_PromotionProduct.setVisible(true);
-			this.getLabel_FinanceMainDialog_PromoProduct().setVisible(true);
-			this.promotionProduct.setValue(getFinScheduleData().getFinanceType().getProduct());
+			this.label_FinanceMainDialog_PromotionProduct.setVisible(true);
 			this.label_FinanceMainDialog_FinType.setValue(Labels
 					.getLabel("label_FinanceMainDialog_PromotionCode.value"));
+			this.promotionProduct.setValue(aFinanceType.getPromotionCode() + "-" + aFinanceType.getPromotionDesc());
 		}
 		
 		if(this.getFinScheduleData().getFinanceType().getFinDivision().equals(FinanceConstants.FIN_DIVISION_RETAIL)) {
@@ -2034,15 +2035,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public List<ContractorAssetDetail> getAssetDetails() {
 		return assetDetails;
 	}
-
-	public Label getLabel_FinanceMainDialog_PromoProduct() {
-		return label_FinanceMainDialog_PromoProduct;
-	}
-
-	public void setLabel_FinanceMainDialog_PromoProduct(Label label_FinanceMainDialog_PromoProduct) {
-		this.label_FinanceMainDialog_PromoProduct = label_FinanceMainDialog_PromoProduct;
-	}
-	
+ 
 	public CustomerService getCustomerService() {
 		return customerService;
 	}

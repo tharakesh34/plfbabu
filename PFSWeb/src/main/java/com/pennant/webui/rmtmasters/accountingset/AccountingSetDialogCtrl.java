@@ -1368,6 +1368,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			String finTypes = "";
 			for (String finType : finTypeFeeMap.keySet()) {
 				boolean feeConfigured = false;
+				if(finTypeFeeMap.get(finType) == null){
+					continue;
+				}
 				for (FinTypeFees finTypeFee : finTypeFeeMap.get(finType)) {
 					if(StringUtils.equals(feeCode, finTypeFee.getFeeTypeCode())){
 						feeConfigured = true;
@@ -1436,6 +1439,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		Map<String,String> finTypeFeeCodeMap = new HashMap<String,String>();		
 		
 		for (String finType : finTypeFeeMap.keySet()) {
+			if(finTypeFeeMap.get(finType) == null){
+				continue;
+			}
 			for (FinTypeFees finTypeFee : finTypeFeeMap.get(finType)) {
 				if(finTypeFeeCodeMap.containsKey(finTypeFee.getFeeTypeCode())){
 					String finTypes = finTypeFeeCodeMap.get(finTypeFee.getFeeTypeCode());
@@ -1453,7 +1459,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					if(StringUtils.equals(feeCode, finTypeFeeCode)){
 						feeConfigured = true;
 						break;
-					}
+					} 	
 				}
 				if(!feeConfigured){
 					String[] errParm = new String[2];

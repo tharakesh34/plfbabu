@@ -9288,7 +9288,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		try {
+		/*try {
 			if (StringUtils.isNotEmpty(financeType.getProduct())) {
 				// calculate max allowed future Promotion Date
 				Date prmotionEndDate = DateUtility.addDays(financeType.getEndDate(),
@@ -9306,7 +9306,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
-		}
+		}*/
 
 		try {
 			if (getComboboxValue(this.cbScheduleMethod).equals(PennantConstants.List_Select)) {

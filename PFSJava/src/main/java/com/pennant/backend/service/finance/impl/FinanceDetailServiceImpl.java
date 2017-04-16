@@ -82,6 +82,7 @@ import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -148,6 +149,7 @@ import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -232,6 +234,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private VasRecordingValidation	vasRecordingValidation;
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
+	private PromotionDAO promotionDAO;
 	
 	public FinanceDetailServiceImpl() {
 		super();
@@ -1156,7 +1159,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String finReference = scheduleData.getFinanceMain().getFinReference();
 
 		//Finance Type Details
-		scheduleData.setFinanceType(getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView"));
+		FinanceType financeType = getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			// Fetching Promotion Details
+			Promotion promotion = this.promotionDAO.getPromotionById(financeMain.getPromotionCode(), "_AView");
+			financeType.setFInTypeFromPromotiion(promotion);
+		}
+		scheduleData.setFinanceType(financeType);
 
 		//Step Policy Details List
 		if(scheduleData.getFinanceMain().isStepFinance()){
@@ -1240,7 +1249,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (scheduleData.getFinanceMain() != null) {
 
 			//Finance Type Details
-			scheduleData.setFinanceType(getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView"));
+			FinanceType financeType = getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
+			if (StringUtils.isNotBlank(scheduleData.getFinanceMain() .getPromotionCode())) {
+				// Fetching Promotion Details
+				Promotion promotion = this.promotionDAO.getPromotionById(scheduleData.getFinanceMain() .getPromotionCode(), "_AView");
+				financeType.setFInTypeFromPromotiion(promotion);
+			}
+			scheduleData.setFinanceType(financeType);
+			
 
 			//Step Policy Details List
 			if(scheduleData.getFinanceMain().isStepFinance()){
@@ -5738,7 +5754,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (summaryRequired) {
 			
 			// Finance Type
-			finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
+			//finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
+			//Finance Type Details
+			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
+			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+				// Fetching Promotion Details
+				Promotion promotion = this.promotionDAO.getPromotionById(financeMain.getPromotionCode(), "_AView");
+				financeType.setFInTypeFromPromotiion(promotion);
+			}
+			finSchData.setFinanceType(financeType);			
+			
 			
 			// Suspense
 			finSchData.setFinPftSuspended(false);
@@ -7739,6 +7764,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public BigDecimal getFinAssetValue(String finReference) {
 		return getFinanceMainDAO().getFinAssetValue(finReference);
+	}
+
+	public PromotionDAO getPromotionDAO() {
+		return promotionDAO;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
 	}
 
 }

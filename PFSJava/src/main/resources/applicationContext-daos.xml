@@ -4182,6 +4182,8 @@
 		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
+		<property name="promotionDAO" ref="promotionDAO" />
+		
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />

@@ -251,6 +251,7 @@ public class FinScheduleData {
 		// Basic Details
 		this.financeMain.setFinType(financeType.getFinType());
 		this.financeMain.setLovDescFinTypeName(financeType.getFinTypeDesc());
+		this.financeMain.setPromotionCode(financeType.getPromotionCode());
 		this.financeMain.setFinCcy(financeType.getFinCcy());
 		this.financeMain.setProfitDaysBasis(financeType.getFinDaysCalType());
 		this.financeMain.setScheduleMethod(financeType.getFinSchdMthd());
