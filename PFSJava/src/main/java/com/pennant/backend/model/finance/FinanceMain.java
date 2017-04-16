@@ -104,6 +104,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finType;
 	private String lovDescFinTypeName;
+	private String promotionCode;
 	@XmlElement
 	private String finCcy;
 	@XmlElement
@@ -3376,5 +3377,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getPromotionCode() {
+		return promotionCode;
+	}
+
+	public void setPromotionCode(String promotionCode) {
+		this.promotionCode = promotionCode;
 	}
 }
