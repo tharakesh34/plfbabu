@@ -251,14 +251,24 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
 		Long accountSetId = Long.MIN_VALUE;
+		String event = "";
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.FINTYPEFEES_FINTYPE);
+			event = AccountEventConstants.ACCEVENT_EARLYSTL;
 		} else if (AccountEventConstants.ACCEVENT_EARLYPAY.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
+			event = AccountEventConstants.ACCEVENT_EARLYPAY;
 		} else {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINTYPEFEES_FINTYPE);
+			event = AccountEventConstants.ACCEVENT_REPAY;
 		}
-
+		
+		String promotionCode = financeDetail.getFinScheduleData().getFinanceMain().getPromotionCode();
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, event,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), event,
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
+		
 		financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
 				accountSetId, "_AEView", true));
 

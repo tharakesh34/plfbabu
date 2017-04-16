@@ -995,10 +995,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 			
-			// Fee Details Fetching From Finance Type	//FIXME promotion Fees
-			if(promotionFlag) {
-				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.promotionCode.getValue(),
-						finEvent, true, FinanceConstants.FINTYPEFEES_PROMOTION));
+			// Fee Details Fetching From Finance Type
+			if (promotionFlag) {
+				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(
+						this.promotionCode.getValue(), finEvent, true, FinanceConstants.FINTYPEFEES_PROMOTION));
 			} else {
 				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
 						finEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE));

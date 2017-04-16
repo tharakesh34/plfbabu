@@ -114,8 +114,18 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//Finance Fee Charge Details
 		//=======================================
 		List<Long> accSetIdList = new ArrayList<Long>();
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-				AccountEventConstants.ACCEVENT_CANCELFIN, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId;
+		
+		String promotionCode = scheduleData.getFinanceMain().getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, AccountEventConstants.ACCEVENT_CANCELFIN,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
+					AccountEventConstants.ACCEVENT_CANCELFIN, FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
+		
 		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType,procEdtEvent, null, "_ACView"));
 		if (accSetId != Long.MIN_VALUE) {
 			accSetIdList.add(accSetId);

@@ -289,7 +289,19 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		logger.debug("Leaving");
 		
-		return  getFinTypeAccountingDAO().getAccountSetID(dataSet.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId;
+
+		String promotionCode = dataSet.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(dataSet.getFinType(), dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
+
+		return accSetId;
 	}
 	
 

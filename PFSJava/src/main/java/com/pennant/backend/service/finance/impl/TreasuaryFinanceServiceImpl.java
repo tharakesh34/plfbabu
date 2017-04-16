@@ -1106,7 +1106,16 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId;
+		String promotionCode = financeMain.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode,
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
 		
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
@@ -1222,16 +1231,26 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			Date curBussDate = DateUtility.getAppDate();
 
 			if (financeMain.getFinStartDate() != null && financeMain.getFinStartDate().after(curBussDate)) {
-				if(AccountEventConstants.ACCEVENT_ADDDBSF_REQ){
+				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
 					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-				}else{
+				} else {
 					eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 				}
 			} else {
 				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 			}
 		}
-		Long accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accountSetId;
+		String promotionCode = financeMain.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
+					eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
+		
 		transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountSetId, "_AEView", true);
 		
 		logger.debug("Leaving "); 

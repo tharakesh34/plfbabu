@@ -1441,10 +1441,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		Long accSetId;
 		// TODO: Better to Remove from Here and add it in Tab Selection
-		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.FINTYPEFEES_PROMOTION);
-		}else{
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
+					FinanceConstants.FINTYPEFEES_FINTYPE);
 		}
 		if(accSetId != Long.MIN_VALUE){
 
@@ -6384,12 +6386,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId ;
-		
-		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.FINTYPEFEES_PROMOTION);
-		}else{
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId;
+
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
+					FinanceConstants.FINTYPEFEES_FINTYPE);
 		}
 
 		//Finance Accounting Posting Details

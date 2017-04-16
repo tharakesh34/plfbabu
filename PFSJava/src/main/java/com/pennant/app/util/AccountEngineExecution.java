@@ -274,8 +274,18 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller	dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, false, isAccrualCal, finType, premiumDetail);
 
 		// Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
+		long accountingSetId;
 
+		String promotionCode = dataSet.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
+		
 		List<TransactionEntry> transactionEntries = null;
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
@@ -337,7 +347,17 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller dataSetFiller =	prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
 		
 		//Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
+		long accountingSetId;
+
+		String promotionCode = dataSet.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
 
 		List<FeeRule> feeRules = new ArrayList<FeeRule>();
 		String ruleEvent= dataSet.getFinEvent();
@@ -407,7 +427,17 @@ public class AccountEngineExecution implements Serializable {
 		DataSetFiller dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
 		
 		//Execute entries depend on Finance Event
-		long accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
+		long accountingSetId;
+
+		String promotionCode = dataSet.getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+					FinanceConstants.FINTYPEFEES_FINTYPE);
+		}
 
 		//Adding Existing Fees
 		int feeOrder = 0;

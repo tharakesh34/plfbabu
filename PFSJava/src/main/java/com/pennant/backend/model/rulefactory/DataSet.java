@@ -75,6 +75,8 @@ public class DataSet {
 	private String custCIF;
 	private BigDecimal bpiAmount = BigDecimal.ZERO;
 	
+	private String promotionCode;
+	
 	public DataSet() {
 		
 	}
@@ -536,6 +538,14 @@ public class DataSet {
 
 	public void setBpiAmount(BigDecimal bpiAmount) {
 		this.bpiAmount = bpiAmount;
+	}
+
+	public String getPromotionCode() {
+		return promotionCode;
+	}
+
+	public void setPromotionCode(String promotionCode) {
+		this.promotionCode = promotionCode;
 	}
 
 

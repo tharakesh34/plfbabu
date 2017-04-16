@@ -1244,8 +1244,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			
 			//Commented for Excluding Fee Details Checking with only Final Stage Accounting. 
 			//Fees may occur at Stage level accounting also.
-			Long accountSetID = getFinTypeAccountingDAO().getAccountSetID(
-					financeDetail.getFinScheduleData().getFinanceType().getFinType(),dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_FINTYPE);
+			Long accountSetID;
+
+			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+				accountSetID = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(),
+						dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_PROMOTION);
+			} else {
+				accountSetID = getFinTypeAccountingDAO().getAccountSetID(
+						financeDetail.getFinScheduleData().getFinanceType().getFinType(), dataSet.getFinEvent(),
+						FinanceConstants.FINTYPEFEES_FINTYPE);
+			}
+			
 			List<String> feeCodeList = getTransactionEntryDAO().getListFeeCodes(accountSetID);
 			
 			for (int i = 0; i < feeCodeList.size(); i++) {

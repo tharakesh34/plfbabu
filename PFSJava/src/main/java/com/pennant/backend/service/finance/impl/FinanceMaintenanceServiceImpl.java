@@ -134,12 +134,23 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//=======================================
 		
 		Long accSetId = Long.MIN_VALUE;
-		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)){
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), AccountEventConstants.ACCEVENT_WRITEBK, FinanceConstants.FINTYPEFEES_FINTYPE);
-		}else if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)){
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), AccountEventConstants.ACCEVENT_AMENDMENT, FinanceConstants.FINTYPEFEES_FINTYPE);
-		}else if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)){
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), AccountEventConstants.ACCEVENT_SEGMENT, FinanceConstants.FINTYPEFEES_FINTYPE);
+		String event = "";
+		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+			event = AccountEventConstants.ACCEVENT_WRITEBK;
+		} else if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+			event = AccountEventConstants.ACCEVENT_AMENDMENT;
+		} else if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+			event = AccountEventConstants.ACCEVENT_SEGMENT;
+		}
+
+		String promotionCode = scheduleData.getFinanceMain().getPromotionCode();
+
+		if (StringUtils.isNotBlank(promotionCode)) {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, event,
+					FinanceConstants.FINTYPEFEES_PROMOTION);
+		} else {
+			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), event,
+					FinanceConstants.FINTYPEFEES_FINTYPE);
 		}
 
 		if(accSetId != Long.MIN_VALUE){
