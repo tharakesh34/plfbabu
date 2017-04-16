@@ -133,6 +133,10 @@
 									label="${c:l('listheader_PartnerBankName.label')}" sort="auto"
 									hflex="min" />
 								<listheader
+									id="listheader_BankCode"
+									label="${c:l('listheader_BankCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader
 									id="listheader_BankBranchCode"
 									label="${c:l('listheader_BankBranchCode.label')}" sort="auto"
 									hflex="min" />

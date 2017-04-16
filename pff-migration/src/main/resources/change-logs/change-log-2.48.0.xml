@@ -541,5 +541,40 @@
 					  RMTGenDepartments T10 ON T1.SalesDepartment = T10.GenDepartment
 		</createView>
 	</changeSet>
+	<changeSet author="Irfan" id="26">
+	<sql>
+		Update RmtAccountTypes set ACTYPEGRPID = 1;
+	</sql>
+</changeSet>
+
+<changeSet author="Irfan" id="28">
+	<sql>
+		Delete from PartnerBanks; 
+		Delete from PartnerBanks_Temp; 
+	</sql>
+</changeSet>
+<changeSet  author="Irfan" id="29">
+	<createView replaceIfExists="true" viewName="PartnerBanks_View">
+	SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PARTNERBANKS_Temp  T1 INNER JOIN
+						BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,T4.AcTypeDesc AcTypeName
+			FROM    	PartnerBanks  T1 INNER JOIN
+			           BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+						
+			WHERE     NOT EXISTS (SELECT 1 FROM PartnerBanks_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+			</createView>
+</changeSet>
+<changeSet author="Irfan" id="30">
+	<sql>
+		Delete from PartnerBanks; 
+		Delete from PartnerBanks_Temp; 
+	</sql>
+</changeSet>
 
 </databaseChangeLog>

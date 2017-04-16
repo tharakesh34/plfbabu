@@ -521,7 +521,7 @@ public class PennantJavaUtil {
 		"MandatesStatus_View" }, masterWF, new String[] { "MandateID", "Status" }, null, 300));
 
 		ModuleUtil.register("PartnerBank", new ModuleMapping("PartnerBank", PartnerBank.class, new String[] {
-				"PartnerBank", "PartnerBank_AView" }, masterWF, new String[] { "PartnerBankCode", "PartnerBankName" },
+				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankCode", "PartnerBankName" },
 				null, 300));
 
 		ModuleUtil.register("BankDetail", new ModuleMapping("BankDetail", BankDetail.class, new String[] {

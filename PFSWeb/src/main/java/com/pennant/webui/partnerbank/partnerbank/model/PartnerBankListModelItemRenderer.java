@@ -74,6 +74,8 @@ public class PartnerBankListModelItemRenderer implements ListitemRenderer<Partne
 		lc.setParent(item);
 	  	lc = new Listcell(partnerBank.getPartnerBankName());
 		lc.setParent(item);
+		lc = new Listcell(partnerBank.getBankCode());
+		lc.setParent(item);
 	  	lc = new Listcell(partnerBank.getBankBranchCode());
 		lc.setParent(item);
 	  	lc = new Listcell(partnerBank.getRecordStatus());

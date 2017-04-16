@@ -129,14 +129,10 @@
 									<textbox id="branchCity"
 										maxlength="50" width="100px" />
 								</hlayout>
-								<label id="label_UtilityCode"
-									value="${c:l('label_PartnerBankDialog_UtilityCode.value')}" />
-								<hlayout id="hlayout_UtilityCode">
-									<space id="space_UtilityCode"
-										spacing="2px" />
-									<textbox id="utilityCode"
-										maxlength="8" width="100" />
-								</hlayout>
+								<label
+									id="label_PartnerBankingDialog_GLCode"
+									value="${c:l('label_PartnerBankDialog_GLCode.value') }" />
+								<extendedcombobox id="acType" />
 							</row>
 							<row id="row4">
 								<label id="label_AccountNo"
@@ -147,19 +143,79 @@
 									<textbox id="accountNo"
 										maxlength="50" width="150px" />
 								</hlayout>
-								<label id="label_AccountType"
-									value="${c:l('label_PartnerBankDialog_AccountType.value')}" />
-								<hlayout id="hlayout_AccountType">
-									<space id="space_AccountType"
-										spacing="2px" sclass="mandatory" />
-									<combobox id="usage"/>
+								<label id="label_UtilityCode"
+									value="${c:l('label_PartnerBankDialog_UtilityCode.value')}" />
+								<hlayout id="hlayout_UtilityCode">
+									<space id="space_UtilityCode"
+										spacing="2px" />
+									<textbox id="utilityCode"
+										maxlength="8" width="100" />
 								</hlayout>
 							</row>
 							<row>
-								<label
-									id="label_PartnerBankingDialog_GLCode"
-									value="${c:l('label_PartnerBankDialog_GLCode.value') }" />
-								<extendedcombobox id="acType" />
+							<label
+								id="label_PartnerBankDialog_Disbursement"
+								value="${c:l('label_PartnerBankDialog_Disbursement.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<checkbox id="alwDisburment"
+									checked="true" />
+							</hlayout>
+							<label
+								id="label_PartnerBankDialog_ModeDisbursment"
+								value="${c:l('label_PartnerBankDialog_ModeDisbursment.value')}"  visible="false"/>
+							<hlayout>
+								<space id="space_modeDisbursments"
+									spacing="2px" sclass="mandatory" visible="false"/>
+								<textbox id="modeDisbursment"
+									width="175px" readonly="true"  visible="false"/>
+								<button id="btnSearchModeDisbursment" visible="false"
+									image="/images/icons/LOVSearch.png" />
+							</hlayout>
+							</row>
+							<row>
+							<label
+								id="label_PartnerBankDialog_Receipts"
+								value="${c:l('label_PartnerBankDialog_Receipts.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<checkbox id="alwReceipts"
+									checked="true" />
+							</hlayout>
+							<label
+								id="label_PartnerBankDialog_ModeReceipts"
+								value="${c:l('label_PartnerBankDialog_ModeReceipts.value')}" visible="false" />
+							<hlayout>
+								<space id="space_modeReceipts"
+									spacing="2px" sclass="mandatory" visible="false"/>
+								<textbox id="modeReceipts" visible="false"
+									width="175px" readonly="true" />
+								<button id="btnSearchModeReceipts" visible="false"
+									image="/images/icons/LOVSearch.png" />
+							</hlayout>
+							</row>
+							<row>
+							<label
+								id="label_PartnerBankDialog_Payments"
+								value="${c:l('label_PartnerBankDialog_Payments.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<checkbox id="alwPayments"
+									checked="true" />
+							</hlayout>
+							<label
+								id="label_PartnerBankDialog_ModePayments"
+								value="${c:l('label_PartnerBankDialog_ModePayments.value')}" visible="false" />
+							<hlayout>
+								<space id="space_modePayments"
+									spacing="2px" sclass="mandatory"  visible="false"/>
+								<textbox id="modePayments"
+									width="175px" readonly="true"  visible="false"/>
+								<button id="btnSearchModePayments" visible="false"
+									image="/images/icons/LOVSearch.png" />
+							</hlayout>
+							</row>
+							<row>
 								<label
 									id="label_PartnerBankDialog_ReqFileDownload"
 									value="${c:l('label_PartnerBankDialog_ReqFileDownload.value')}" />
@@ -170,15 +226,7 @@
 								</hlayout>
 							</row>
 							<row>						
-							<label
-								id="label_PartnerBankDialog_DisbDownload"
-								value="${c:l('label_PartnerBankDialog_DisbDownload.value')}" />
-							<hlayout>
-								<space spacing="2px" />
-								<checkbox id="disbDownload"
-									checked="false" />
-							</hlayout>
-							<label
+								<label
 								id="label_PartnerBankDialog_FavourLength"
 								value="${c:l('label_PartnerBankDialog_FavourLength.value')}" />
 							<hlayout>
@@ -186,15 +234,6 @@
 								<intbox id="inFavourLength" width="100px"
 									maxlength="5" />
 							</hlayout>
-							</row>
-							<row>
-							<label id="label_BankAccountType"
-									value="${c:l('label_PartnerBankDialog_BankAccountType.value')}" />
-								<hlayout id="hlayout_BankAccountType">
-									<space id="space_BankAccountType"
-										spacing="2px" />
-									<combobox id="accountCategory"/>
-								</hlayout>
 							</row>
 							<row visible="true">
 								<label

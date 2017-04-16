@@ -113,5 +113,9 @@ public class AccountConstants {
 	public static final String POSTTOSYS_GLNPL 				= "E";
 	
 	public static final String FinanceAccount_FEE 			= "FEE";
+	
+	public static final String PARTNERSBANK_DISB			= "D";
+	public static final String PARTNERSBANK_PAYMENT			= "P";
+	public static final String PARTNERSBANK_RECEIPTS 		= "R";
 
 }

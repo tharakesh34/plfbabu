@@ -43,7 +43,9 @@
 
 package com.pennant.backend.model.partnerbank;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -71,19 +73,23 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private String				branchCity;
 	private String				utilityCode;
 	private String				accountNo;
-	private String				usage;
 	private String				acType;
 	private String 				acTypeName;
 	private boolean				alwFileDownload;
-	private boolean				disbDownload;
 	private int					inFavourLength;
-	private String				accountCategory;
 	private boolean				active;
+	private boolean				alwDisb;
+	private boolean				alwPayment;
+	private boolean				alwReceipt;
 
 	private boolean				newRecord;
 	private String				lovValue;
 	private PartnerBank			befImage;
 	private LoggedInUser		userDetails;
+	private String				modeDisbursment;
+	private String				modePayments;
+	private String				modeReceipts;
+	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -99,6 +105,12 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		excludeFields.add("bankCodeName");
 		excludeFields.add("bankBranchCodeName");
 		excludeFields.add("acTypeName");
+		excludeFields.add("modeDisbursment");
+		excludeFields.add("modePayments");
+		excludeFields.add("modeReceipts");
+		excludeFields.add("disburment");
+		excludeFields.add("payments");
+		excludeFields.add("receipts");
 		return excludeFields;
 	}
 
@@ -234,14 +246,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.active = active;
 	}
 
-	public String getUsage() {
-		return usage;
-	}
-
-	public void setUsage(String usage) {
-		this.usage = usage;
-	}
-
 	public String getAcType() {
 		return acType;
 	}
@@ -258,14 +262,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.alwFileDownload = alwFileDownload;
 	}
 
-	public boolean isDisbDownload() {
-		return disbDownload;
-	}
-
-	public void setDisbDownload(boolean disbDownload) {
-		this.disbDownload = disbDownload;
-	}
-
 	public int getInFavourLength() {
 		return inFavourLength;
 	}
@@ -274,13 +270,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.inFavourLength = inFavourLength;
 	}
 
-	public String getAccountCategory() {
-		return accountCategory;
-	}
-
-	public void setAccountCategory(String accountCategory) {
-		this.accountCategory = accountCategory;
-	}
 
 	public String getAcTypeName() {
 		return acTypeName;
@@ -307,6 +296,62 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 
 	public void setPartnerBankId(long partnerBankId) {
 		this.partnerBankId = partnerBankId;
+	}
+
+	public String getModeDisbursment() {
+		return modeDisbursment;
+	}
+
+	public void setModeDisbursment(String modeDisbursment) {
+		this.modeDisbursment = modeDisbursment;
+	}
+
+	public String getModePayments() {
+		return modePayments;
+	}
+
+	public void setModePayments(String modePayments) {
+		this.modePayments = modePayments;
+	}
+
+	public String getModeReceipts() {
+		return modeReceipts;
+	}
+
+	public void setModeReceipts(String modeReceipts) {
+		this.modeReceipts = modeReceipts;
+	}
+
+	public List<PartnerBankModes> getPartnerBankModesList() {
+		return partnerBankModesList;
+	}
+
+	public void setPartnerBankModesList(List<PartnerBankModes> partnerBankModesList) {
+		this.partnerBankModesList = partnerBankModesList;
+	}
+
+	public boolean isAlwDisb() {
+		return alwDisb;
+	}
+
+	public void setAlwDisb(boolean alwDisb) {
+		this.alwDisb = alwDisb;
+	}
+
+	public boolean isAlwPayment() {
+		return alwPayment;
+	}
+
+	public void setAlwPayment(boolean alwPayment) {
+		this.alwPayment = alwPayment;
+	}
+
+	public boolean isAlwReceipt() {
+		return alwReceipt;
+	}
+
+	public void setAlwReceipt(boolean alwReceipt) {
+		this.alwReceipt = alwReceipt;
 	}
 
 }

@@ -18,7 +18,8 @@ public class PennantLOVListUtil {
 			put("EarlyPayMethod",new ModuleListcode("EarlyPayMethod",getHeading("Early Payment Method"),PennantStaticListUtil.getEarlyPayEffectOn(), getHeadings(new String[]{"EarlyPayMethod_Code","EarlyPayMethod_Desc"})));
 			put("RepaymentMethod",new ModuleListcode("RepaymentMethod",getHeading("Repayment Method"),PennantStaticListUtil.getRepayMethods(), getHeadings(new String[]{"label_RepayMethod","label_RepayMethodDesc"})));
 			put("FrequencyDaysMethod",new ModuleListcode("FrequencyDaysMethod",getHeading("Frequency Days Method"),PennantStaticListUtil.getFrequencyDays(), getHeadings(new String[]{"label_FrequencyDaysMethod","label_FrequencyDaysMethodDesc"})));
-		}
+			put("AccountTypeModes",new ModuleListcode("AccountTypeModes",getHeading("Account Type Modes"),PennantStaticListUtil.getPaymentTypes(true), getHeadings(new String[]{"label_AccountTypeCode","label_AccountTypeDescription"})));
+	}
 	};
 	
 	

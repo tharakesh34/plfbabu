@@ -43,6 +43,7 @@
 
 package com.pennant.webui.partnerbank.partnerbank;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -59,6 +60,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.webui.partnerbank.partnerbank.model.PartnerBankListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -85,6 +87,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 	protected Listheader					listheader_PartnerBankCode;
 	protected Listheader					listheader_PartnerBankName;
 	protected Listheader					listheader_BankBranchCode;
+	protected Listheader					listheader_BankCode;
 
 	protected Button						button_PartnerBankList_NewPartnerBank;
 	protected Button						button_PartnerBankList_PartnerBankSearch;
@@ -112,8 +115,8 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 	protected void doSetProperties() {
 		super.moduleCode = "PartnerBank";
 		super.pageRightName = "PartnerBankList";
-		super.tableName = "PartnerBank_AView";
-		super.queueTableName = "PartnerBank_View";
+		super.tableName = "PartnerBanks_AView";
+		super.queueTableName = "PartnerBanks_View";
 	}
 
 	/**
@@ -136,7 +139,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 				sortOperator_PartnerBankCode, Operators.STRING);
 		registerField("partnerBankName", listheader_PartnerBankName, SortOrder.NONE, partnerBankName,
 				sortOperator_PartnerBankName, Operators.STRING);
-		registerField("bankCode");
+		registerField("bankCode", listheader_BankCode,SortOrder.NONE,bankCode,sortOperator_BankCode,Operators.STRING);
 		registerField("bankBranchCode", listheader_BankBranchCode, SortOrder.NONE, bankBranchCode,
 				sortOperator_BankBranchCode, Operators.STRING);
 		registerField("partnerBankId");
@@ -205,7 +208,13 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		// Get the selected entity.
 		long id =  (long) selectedItem.getAttribute("id");
 		PartnerBank partnerBank = partnerBankService.getPartnerBankById(id);
-
+		
+		//get the disb modes list.
+		
+		List<PartnerBankModes> modesList=this.partnerBankService.getPartnerBankModesId(id);
+		if(modesList!=null && !modesList.isEmpty()){
+			partnerBank.setPartnerBankModesList(modesList);
+		}
 		if (partnerBank == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

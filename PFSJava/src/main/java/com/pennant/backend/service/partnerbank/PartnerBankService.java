@@ -43,8 +43,11 @@
 
 package com.pennant.backend.service.partnerbank;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 
 public interface PartnerBankService {
 
@@ -59,4 +62,8 @@ public interface PartnerBankService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	List<PartnerBankModes> getPartnerBankModesId(long id);
+
+	boolean getPartnerCodeExist(String partnerBankCodeValue, String partnerBankCode);
 }

@@ -43,23 +43,25 @@
 
 package com.pennant.backend.service.partnerbank.impl;
 
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
-import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
-import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.app.util.ErrorUtil;
 
 /**
  * Service implementation for methods that depends on <b>PartnerBank</b>.<br>
@@ -133,8 +135,14 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		if (partnerBank.isNew()) {
 			getPartnerBankDAO().save(partnerBank, tableType);
+			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
+				getPartnerBankDAO().deletePartner(partnerBank);
+				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(),partnerBank.getPartnerBankId());
+			}
 		} else {
 			getPartnerBankDAO().update(partnerBank, tableType);
+			getPartnerBankDAO().deletePartner(partnerBank);
+			getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(),partnerBank.getPartnerBankId());
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -165,6 +173,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
 		getPartnerBankDAO().delete(partnerBank, "");
+		getPartnerBankDAO().deletePartner(partnerBank);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -186,6 +195,12 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		return getPartnerBankDAO().getPartnerBankById(id, "_View");
 	}
 
+	
+	@Override
+	public List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) {
+		return getPartnerBankDAO().getPartnerBankModesId(partnerBankId);
+
+	}
 	/**
 	 * getApprovedPartnerBankById fetch the details by using PartnerBankDAO's getPartnerBankById method . with parameter
 	 * id and type as blank. it fetches the approved records from the PartnerBank.
@@ -343,7 +358,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ":" + valueParm[0];
 
 		if (partnerBank.isNew()) { // for New record or new record into work flow
-
+			
 			if (!partnerBank.isWorkflow()) {// With out Work flow only new records  
 				if (befPartnerBank != null) { // Record Already Exists in the table then error  
 					auditDetail
@@ -404,5 +419,21 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 		return auditDetail;
 	}
+
+	@Override
+	public boolean getPartnerCodeExist(String partnerBankCodeValue, String type) {
+		logger.debug("Entering");
+
+		boolean codeExist = false;
+
+		if (getPartnerBankDAO().geBankCodeCount(partnerBankCodeValue, type) != 0) {
+			codeExist = true;
+		}
+
+		logger.debug("Leaving");
+
+		return codeExist;
+	}
+
 
 }

@@ -43,6 +43,10 @@
 
 package com.pennant.backend.dao.partnerbank.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,8 +55,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
@@ -60,8 +66,12 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>PartnerBank model</b> class.<br>
@@ -96,9 +106,9 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql
-				.append("Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo, Usage ");
+				.append("Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql
-				.append(", AcType, AlwFileDownload, DisbDownload, InFavourLength, AccountCategory, Active");
+				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt");
 		selectSql
 				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -106,7 +116,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 			selectSql.append(",BankCodeName,BankBranchCodeName,AcTypeName");
 		}
 
-		selectSql.append(" From PartnerBank");
+		selectSql.append(" From PartnerBanks");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
@@ -151,7 +161,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug("Entering");
 		int recordCount = 0;
 
-		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBank");
+		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBanks");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where PartnerBankId =:PartnerBankId");
 
@@ -197,18 +207,18 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 			partnerBank.setPartnerBankId(getNextidviewDAO().getNextId("SEQPartnerBank"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBank");
+		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBanks");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql
-				.append(" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo, Usage ");
+				.append(" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		insertSql
-				.append(", AcType, AlwFileDownload, DisbDownload, InFavourLength, AccountCategory, Active");
+				.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt");
 		insertSql
 				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql
-				.append(" Values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo, :Usage ");
+				.append(" Values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
 		insertSql
-				.append(", :AcType, :AlwFileDownload, :DisbDownload, :InFavourLength, :AccountCategory, :Active");
+				.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt");
 		insertSql
 				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -220,6 +230,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		return partnerBank.getPartnerBankCode();
 	}
 
+	
 	/**
 	 * This method updates the Record PartnerBank or PartnerBank_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update PartnerBank by key PartnerBankCode and Version
@@ -238,12 +249,12 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 	public void update(PartnerBank partnerBank, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder("Update PartnerBank");
+		StringBuilder updateSql = new StringBuilder("Update PartnerBanks");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
-				.append(" Set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo, Usage = :Usage");
+				.append(" Set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
 		updateSql
-				.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload, DisbDownload = :DisbDownload, InFavourLength = :InFavourLength, AccountCategory = :AccountCategory, Active = :Active");
+				.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt");
 		updateSql
 				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PartnerBankId =:PartnerBankId");
@@ -274,5 +285,118 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
 				userLanguage);
 	}
+
+	/**
+	 * Method for Saving List Of PartnerBankModes Details
+	 */
+	public void saveList(List<PartnerBankModes> list,long id) {
+	
+		for (PartnerBankModes partnerBankModes : list) {
+			partnerBankModes.setPartnerBankId(id);
+		}
+		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBankModes");
+		insertSql.append(" ( PartnerBankId, Purpose, PaymentMode)");
+		insertSql.append(" Values(:PartnerBankId,:Purpose, :PaymentMode)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Update List Of PartnerBankModes Details
+	 */
+	@Override
+	public void updateList(List<PartnerBankModes> list) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update PartnerBankModes");
+		updateSql
+				.append(" Set Purpose= :Purpose, PaymentMode = :PaymentMode");
+		updateSql.append(" Where PartnerBankId =:PartnerBankId  AND PaymentMode =:PaymentMode ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");		
+	}
+	/**
+	 * Method for Deletion PartnerBankModes Details  
+	 * @param partnerBankList
+	 */
+	
+	public void deletePartner(PartnerBank partnerBank) {
+		logger.debug("Entering");
+		int recordCount = 0;
+		PartnerBankModes partnerBankModes= new PartnerBankModes();
+		partnerBankModes.setPartnerBankId(partnerBank.getPartnerBankId());
+		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBankModes");
+		deleteSql.append(" Where PartnerBankId =:PartnerBankId");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBankModes);
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	public List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT PartnerBankId, Purpose,PaymentMode from PartnerBankModes");
+		selectSql.append(" Where PartnerBankId =:PartnerBankId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<PartnerBankModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PartnerBankModes.class);
+		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
+		try {
+			PartnerBankModeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
+		logger.debug("Leaving");
+		return PartnerBankModeList;}
+
+	
+	@Override
+	public int geBankCodeCount(String partnerBankCodeValue, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(PartnerBankCode) From PartnerBanks");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PartnerBankCode = :PartnerBankCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PartnerBankCode", partnerBankCodeValue);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+
+	
 
 }
