@@ -410,7 +410,7 @@ public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> 
 				&& StringUtils.equals(insurancePolicy.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 
 			List<FinTypeInsurances> finTypeInsurance = getFinTypeInsuranceDAO().getFinTypeInsurances(
-					insurancePolicy.getPolicyCode(), FinanceConstants.FINTYPEFEES_FINTYPE, "_view");
+					insurancePolicy.getPolicyCode(), FinanceConstants.MODULEID_FINTYPE, "_view");
 			if (!finTypeInsurance.isEmpty()) {
 				String[][] parms = new String[2][1];
 				parms[1][0] = insurancePolicy.getPolicyCode();

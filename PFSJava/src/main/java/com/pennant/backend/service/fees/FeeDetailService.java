@@ -343,7 +343,7 @@ public class FeeDetailService {
 		}
 		if (!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)) {
 			List<FinTypeFees> finTypeFeesList = financeDetailService.getFinTypeFees(
-					finScheduleData.getFinanceMain().getFinType(), feeEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE);
+					finScheduleData.getFinanceMain().getFinType(), feeEvent, true, FinanceConstants.MODULEID_FINTYPE);
 
 			financeDetail.setFinTypeFeesList(finTypeFeesList);
 			for(FinFeeDetail finFeeDetail:getFinFeeDetailList()){

@@ -897,7 +897,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			accountingFeeMap = getFinanceReferenceDetailService().getAccountingFeeCodes(accSetIdList);
 		}
 
-		List<FinTypeFees> finTypeFeesList =  getFinanceReferenceDetailService().getFinTypeFeesList(this.finType.getValue(), getEventCodes(true), "_AView", FinanceConstants.FINTYPEFEES_FINTYPE);
+		List<FinTypeFees> finTypeFeesList =  getFinanceReferenceDetailService().getFinTypeFeesList(this.finType.getValue(), getEventCodes(true), "_AView", FinanceConstants.MODULEID_FINTYPE);
 		
 		if(finTypeFeesList != null && !finTypeFeesList.isEmpty()){
 			Comparator<FinTypeFees> beanComp = new BeanComparator("finEvent");

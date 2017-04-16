@@ -210,7 +210,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			logger.error("Exception: ", e);
 		}
 		
-		if(moduleId == FinanceConstants.FINTYPEFEES_PROMOTION) {
+		if(moduleId == FinanceConstants.MODULEID_PROMOTION) {
 			List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
 			
 			for (AccountEngineEvent accountEngineEvent : accEventStaticList) {

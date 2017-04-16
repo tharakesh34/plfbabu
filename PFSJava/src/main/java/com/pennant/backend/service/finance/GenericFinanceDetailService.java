@@ -1248,11 +1248,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				accountSetID = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(),
-						dataSet.getFinEvent(), FinanceConstants.FINTYPEFEES_PROMOTION);
+						dataSet.getFinEvent(), FinanceConstants.MODULEID_PROMOTION);
 			} else {
 				accountSetID = getFinTypeAccountingDAO().getAccountSetID(
 						financeDetail.getFinScheduleData().getFinanceType().getFinType(), dataSet.getFinEvent(),
-						FinanceConstants.FINTYPEFEES_FINTYPE);
+						FinanceConstants.MODULEID_FINTYPE);
 			}
 			
 			List<String> feeCodeList = getTransactionEntryDAO().getListFeeCodes(accountSetID);

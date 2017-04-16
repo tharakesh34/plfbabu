@@ -349,7 +349,7 @@ public class DelegationDeviationCtrl {
 		}
 		accountingsetIds.addAll(listAcc);
 */
-		List<FinTypeFees> feeCodes = getDelegationDeviationService().getFeeCodeList(finType, FinanceConstants.FINTYPEFEES_FINTYPE);
+		List<FinTypeFees> feeCodes = getDelegationDeviationService().getFeeCodeList(finType, FinanceConstants.MODULEID_FINTYPE);
 		
 		if (!feeCodes.isEmpty()) {
 

@@ -277,9 +277,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_View"));
 			//FinTypeVasProduct Details
 			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType,"_View"));
-			financeType.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
-			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
-			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
 		}
 		
 		logger.debug("Leaving");
@@ -315,9 +315,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
 			}
 			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_AView"));
-			financeType.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
-			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
-			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(finType, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeType.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
 		}
 		
 		logger.debug("Leaving");
@@ -857,17 +857,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		// Fees
 		if (financeType.getFinTypeFeesList() != null && !financeType.getFinTypeFeesList().isEmpty()) {
 			auditDetails.addAll(this.finTypeFeesService.delete(financeType.getFinTypeFeesList(), tableType,
-					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
+					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 		// Insurance Deatails
 		if (financeType.getFinTypeInsurances() != null && !financeType.getFinTypeInsurances().isEmpty()) {
 			auditDetails.addAll(this.finTypeInsurancesService.delete(financeType.getFinTypeInsurances(), tableType,
-					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
+					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 		// Accounting Deatails
 		if (financeType.getFinTypeAccountingList() != null && !financeType.getFinTypeAccountingList().isEmpty()) {
 			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), tableType,
-					auditTranType, financeType.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE));
+					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 		
 		logger.debug("Leaving");

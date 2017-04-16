@@ -120,10 +120,10 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, AccountEventConstants.ACCEVENT_CANCELFIN,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-					AccountEventConstants.ACCEVENT_CANCELFIN, FinanceConstants.FINTYPEFEES_FINTYPE);
+					AccountEventConstants.ACCEVENT_CANCELFIN, FinanceConstants.MODULEID_FINTYPE);
 		}
 		
 		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType,procEdtEvent, null, "_ACView"));
@@ -161,7 +161,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		
 		financeDetail.setAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, "_View"));
 
-		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType, AccountEventConstants.ACCEVENT_CANCELFIN, "_AView", false, FinanceConstants.FINTYPEFEES_FINTYPE));
+		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType, AccountEventConstants.ACCEVENT_CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));

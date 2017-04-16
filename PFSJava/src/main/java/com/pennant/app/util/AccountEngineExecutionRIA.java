@@ -295,10 +295,10 @@ public class AccountEngineExecutionRIA implements Serializable {
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(dataSet.getFinType(), dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		return accSetId;

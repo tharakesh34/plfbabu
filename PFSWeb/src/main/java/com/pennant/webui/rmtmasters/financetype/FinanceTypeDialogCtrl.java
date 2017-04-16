@@ -1416,7 +1416,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.finType.getValue());
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("moduleId", FinanceConstants.MODULEID_FINTYPE);
 			map.put("finTypeDesc", this.finTypeDesc.getValue());
 			map.put("finCcy", this.finCcy.getValue());
 			map.put("mainController", this);
@@ -1447,7 +1447,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
 			map.put("roleCode", getRole());
 			map.put("finType", this.finType.getValue());
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("moduleId", FinanceConstants.MODULEID_FINTYPE);
 			map.put("allowRIAInvestment", this.allowRIAInvestment.isChecked());
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
@@ -1479,7 +1479,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("roleCode", getRole());
 			map.put("finType", finType.getValue());
 			map.put("finCcy", this.finCcy.getValue());
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_FINTYPE);
+			map.put("moduleId", FinanceConstants.MODULEID_FINTYPE);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("isOverdraft", isOverdraft);

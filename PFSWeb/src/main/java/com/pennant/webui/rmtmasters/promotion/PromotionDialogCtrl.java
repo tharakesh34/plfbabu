@@ -628,7 +628,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
 			map.put("finCcy", this.finCcy);
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("finTypeFeesList", this.promotion.getFinTypeFeesList());
@@ -657,7 +657,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
 			map.put("finTypeDesc", this.promotionDesc.getValue());
 			map.put("finCcy", this.finCcy);
 			map.put("mainController", this);
@@ -688,7 +688,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
-			map.put("moduleId", FinanceConstants.FINTYPEFEES_PROMOTION);
+			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("finTypeAccountingList", this.promotion.getFinTypeAccountingList());

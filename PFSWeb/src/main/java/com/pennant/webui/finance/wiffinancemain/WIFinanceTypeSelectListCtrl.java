@@ -695,7 +695,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 				}
 				this.financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-				this.financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(this.finType.getValue(),finEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE));
+				this.financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(this.finType.getValue(),finEvent, true, FinanceConstants.MODULEID_FINTYPE));
 			}
 			
 			boolean newCust = false;

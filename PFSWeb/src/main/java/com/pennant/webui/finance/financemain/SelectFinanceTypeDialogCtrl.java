@@ -858,7 +858,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (StringUtils.isNotBlank(promotionCode.getValue())) {
 				promotionFlag = true;
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionService.getApprovedPromotionById(promotionCode.getValue(), FinanceConstants.FINTYPEFEES_PROMOTION, false);
+				Promotion promotion = this.promotionService.getApprovedPromotionById(promotionCode.getValue(), FinanceConstants.MODULEID_PROMOTION, false);
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 						
@@ -998,10 +998,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// Fee Details Fetching From Finance Type
 			if (promotionFlag) {
 				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(
-						this.promotionCode.getValue(), finEvent, true, FinanceConstants.FINTYPEFEES_PROMOTION));
+						this.promotionCode.getValue(), finEvent, true, FinanceConstants.MODULEID_PROMOTION));
 			} else {
 				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
-						finEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE));
+						finEvent, true, FinanceConstants.MODULEID_FINTYPE));
 			}
 
 		}

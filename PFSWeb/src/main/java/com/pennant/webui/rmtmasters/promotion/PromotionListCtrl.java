@@ -210,7 +210,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 
 		// Get the selected entity.
 		String promotionCode = (String) selectedItem.getAttribute("promotionCode");
-		Promotion promotion = promotionService.getPromotionById(promotionCode, FinanceConstants.FINTYPEFEES_PROMOTION);
+		Promotion promotion = promotionService.getPromotionById(promotionCode, FinanceConstants.MODULEID_PROMOTION);
 
 		if (promotion == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

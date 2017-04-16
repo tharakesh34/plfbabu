@@ -313,9 +313,9 @@ public class FinanceConstants {
 	public static final String PLANEMIHMETHOD_FRQ              	= "F";
 	public static final String PLANEMIHMETHOD_ADHOC				= "A";
 	
-	//FinType ModuleId Constants
-	public static final int FINTYPEFEES_FINTYPE					= 1;
-	public static final int FINTYPEFEES_PROMOTION				= 2;
+	//ModuleId Constants
+	public static final int MODULEID_FINTYPE					= 1;	//FinType 
+	public static final int MODULEID_PROMOTION					= 2;	//Promotions
 
 	// Finance Disbursement Status
 	public static final String DISB_STATUS_CANCEL				= "C";

@@ -2647,7 +2647,7 @@ public class FinanceDataValidation {
 		}
 
 		List<FinTypeFees> finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceMain().getFinType(), 
-				finEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE);
+				finEvent, true, FinanceConstants.MODULEID_FINTYPE);
 		if (finTypeFeeDetail != null) {
 			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()) {
 				for (FinFeeDetail feeDetail : finSchdData.getFinFeeDetailList()) {

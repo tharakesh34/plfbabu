@@ -789,13 +789,13 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	public Map<String,List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet) {
 		logger.debug("Entering");
 		List<FinTypeFees> finTypeFees =  null;
-		List<String> finTypeList = getFinTypeAccountingDAO().getFinTypeAccounting(aAccountingSet.getEventCode(), aAccountingSet.getAccountSetid(), FinanceConstants.FINTYPEFEES_FINTYPE);
+		List<String> finTypeList = getFinTypeAccountingDAO().getFinTypeAccounting(aAccountingSet.getEventCode(), aAccountingSet.getAccountSetid(), FinanceConstants.MODULEID_FINTYPE);
 		if(finTypeList == null || finTypeList.isEmpty()){
 			logger.debug("Leaving");
 			return null;
 		}else{
 			Map<String,List<FinTypeFees>> finTypeFeesMap = new HashMap<String,List<FinTypeFees>>();
-			finTypeFees = getFinTypeFeesDAO().getFinTypeFeesList(aAccountingSet.getEventCode(),finTypeList, FinanceConstants.FINTYPEFEES_FINTYPE);
+			finTypeFees = getFinTypeFeesDAO().getFinTypeFeesList(aAccountingSet.getEventCode(),finTypeList, FinanceConstants.MODULEID_FINTYPE);
 			for (String fintype : finTypeList) {
 				finTypeFeesMap.put(fintype, getFeesbyFinType(fintype, finTypeFees));
 			}

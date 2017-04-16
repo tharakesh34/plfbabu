@@ -669,9 +669,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
-			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_PROMOTION));
+			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(), eventCodeRef, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
 		}else{
-			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_FINTYPE));
+			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 		}
 		
 		// Finance Fee Details
@@ -1069,7 +1069,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		
-		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE);
 
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
@@ -1443,10 +1443,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TODO: Better to Remove from Here and add it in Tab Selection
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 		if(accSetId != Long.MIN_VALUE){
 
@@ -4847,9 +4847,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//validate the Insurances against the finance Type having list of configured insurances
 			List<String> mandPolicyList;
 			if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
-				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getPromotionCode(), FinanceConstants.FINTYPEFEES_PROMOTION);
+				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getPromotionCode(), FinanceConstants.MODULEID_PROMOTION);
 			}else{
-				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			}
 			
 			if (mandPolicyList != null && !mandPolicyList.isEmpty()){
@@ -6390,10 +6390,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		//Finance Accounting Posting Details

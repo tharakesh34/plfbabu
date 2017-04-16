@@ -316,11 +316,11 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (wve.isEmpty()) {
 			List<FinTypeFees> finTypeFeesList = getFinTypeFeesService().getApprovedFinTypeFeesById(
-					aPromotion.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+					aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			List<FinTypeInsurances> finTypeInsurancesList = getFinTypeInsurancesService()
-					.getApprovedFinTypeInsuranceListByID(aPromotion.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+					.getApprovedFinTypeInsuranceListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			List<FinTypeAccounting> finTypeAccountingList = getFinTypeAccountingService()
-					.getApprovedFinTypeAccountingListByID(aPromotion.getFinType(), FinanceConstants.FINTYPEFEES_FINTYPE);
+					.getApprovedFinTypeAccountingListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			
 			//Fees
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
@@ -331,7 +331,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeFee.setNextTaskId("");
 				finTypeFee.setRoleCode("");
 				finTypeFee.setNextRoleCode("");
-				finTypeFee.setModuleId(FinanceConstants.FINTYPEFEES_PROMOTION);
+				finTypeFee.setModuleId(FinanceConstants.MODULEID_PROMOTION);
 				finTypeFee.setFinType(aPromotion.getPromotionCode());
 				finTypeFee.setNewRecord(true);
 			}
@@ -345,7 +345,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeInsurances.setNextTaskId("");
 				finTypeInsurances.setRoleCode("");
 				finTypeInsurances.setNextRoleCode("");
-				finTypeInsurances.setModuleId(FinanceConstants.FINTYPEFEES_PROMOTION);
+				finTypeInsurances.setModuleId(FinanceConstants.MODULEID_PROMOTION);
 				finTypeInsurances.setFinType(aPromotion.getPromotionCode());
 				finTypeInsurances.setNewRecord(true);
 			}
@@ -359,7 +359,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeAccounting.setNextTaskId("");
 				finTypeAccounting.setRoleCode("");
 				finTypeAccounting.setNextRoleCode("");
-				finTypeAccounting.setModuleId(FinanceConstants.FINTYPEFEES_PROMOTION);
+				finTypeAccounting.setModuleId(FinanceConstants.MODULEID_PROMOTION);
 				finTypeAccounting.setFinType(aPromotion.getPromotionCode());
 				finTypeAccounting.setNewRecord(true);
 			}

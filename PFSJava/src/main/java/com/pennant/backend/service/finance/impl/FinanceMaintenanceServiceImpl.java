@@ -147,10 +147,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, event,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), event,
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		if(accSetId != Long.MIN_VALUE){

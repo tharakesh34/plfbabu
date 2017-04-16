@@ -1111,10 +1111,10 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), eventCode,
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 		
 		//Fetch Stage Accounting AccountingSetId List 
@@ -1245,10 +1245,10 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accountSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-					eventCode, FinanceConstants.FINTYPEFEES_FINTYPE);
+					eventCode, FinanceConstants.MODULEID_FINTYPE);
 		}
 		
 		transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountSetId, "_AEView", true);

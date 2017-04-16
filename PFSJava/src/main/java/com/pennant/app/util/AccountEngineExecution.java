@@ -280,10 +280,10 @@ public class AccountEngineExecution implements Serializable {
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 		
 		List<TransactionEntry> transactionEntries = null;
@@ -353,10 +353,10 @@ public class AccountEngineExecution implements Serializable {
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		List<FeeRule> feeRules = new ArrayList<FeeRule>();
@@ -433,10 +433,10 @@ public class AccountEngineExecution implements Serializable {
 
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_PROMOTION);
+					FinanceConstants.MODULEID_PROMOTION);
 		} else {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
-					FinanceConstants.FINTYPEFEES_FINTYPE);
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		//Adding Existing Fees

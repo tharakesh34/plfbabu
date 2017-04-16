@@ -1523,7 +1523,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		if(!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)){
 			List<FinTypeFees> finTypeFeesList = getFinanceDetailService().getFinTypeFees(
-					finScheduleData.getFinanceMain().getFinType(),feeEvent, true, FinanceConstants.FINTYPEFEES_FINTYPE);
+					finScheduleData.getFinanceMain().getFinType(),feeEvent, true, FinanceConstants.MODULEID_FINTYPE);
 			
 			getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
 			

@@ -590,7 +590,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 
 	@Override
 	public List<Long> getFinTypeAccounting(String finType, List<String> events){
-		return getFinTypeAccountingDAO().getFinTypeAccounting(finType, events, FinanceConstants.FINTYPEFEES_FINTYPE);
+		return getFinTypeAccountingDAO().getFinTypeAccounting(finType, events, FinanceConstants.MODULEID_FINTYPE);
 	}
 	
 	@Override
