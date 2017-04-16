@@ -136,4 +136,22 @@
 	</sql>
 </changeSet>
 
+	<changeSet author="Kesav" id="21">
+		<addColumn tableName="FinanceMain">
+			<column name="PromotionCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="22">
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="PromotionCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="23">
+		<addColumn tableName="FinanceMain_PA">
+			<column name="PromotionCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
