@@ -3219,7 +3219,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					true));
 		}
 
-		if (this.applyRpyPricing.isChecked() && this.rpyPricingMethod.isButtonVisible()) {
+		if (this.row_ApplyPricingPolicy.isVisible() && this.applyRpyPricing.isChecked() && this.rpyPricingMethod.isButtonVisible()) {
 			this.rpyPricingMethod.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FinanceTypeDialog_RpyPricingMethod.value"), null, this.applyRpyPricing.isChecked(),
 					true));
