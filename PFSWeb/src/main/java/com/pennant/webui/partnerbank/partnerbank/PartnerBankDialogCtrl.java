@@ -622,7 +622,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					true));
 		}
 		
-		//Partner Bank Code
+		//Partner Bank name
 		if (!this.partnerBankName.isReadonly()) {
 			this.partnerBankName.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_PartnerBankName.value"), PennantRegularExpressions.REGEX_DESCRIPTION,

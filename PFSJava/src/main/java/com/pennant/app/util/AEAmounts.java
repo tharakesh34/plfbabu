@@ -550,6 +550,7 @@ public class AEAmounts implements Serializable {
 		// Tenure Calculation
 		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(), true);
 		dataSet.setTenure(months);
+		dataSet.setPromotionCode(financeMain.getPromotionCode());
 		logger.debug("Leaving");
 		return dataSet;
 
