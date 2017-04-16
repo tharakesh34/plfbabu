@@ -13,7 +13,6 @@
 package com.pennant.search;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
@@ -70,7 +70,7 @@ public class JdbcSearchProcessor {
 	 * @throws IllegalArgumentException
 	 *             - If the given search object is <code>null</code>.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T> List<T> getResults(ISearch search) {
 		if (search == null) {
 			throw new IllegalArgumentException();
@@ -81,26 +81,16 @@ public class JdbcSearchProcessor {
 		addSelectList(query, search);
 		addTableSource(query, search);
 		addWhereClause(query, search);
-
-		// Add order by conditions
-		if (search.getFilters() != null) {
-			List<Sort> sorts = search.getSorts();
-
-			for (Iterator iterator = sorts.iterator(); iterator.hasNext();) {
-				Sort sortField = (Sort) iterator.next();
-				query.addCustomOrdering(sortField.getProperty(),
-						sortField.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
-			}
-		}
-
-		logger.trace("1SQL : " + query.toString());
+		addOrderByExpression(query, search);
 		query.validate();
+		
+		// Prepare the 
 
 		boolean firstResult = false;
 		if (search.getFirstResult() > 0) {
 			firstResult = true;
 		}
-		logger.trace("2SQL : "
+		logger.trace(Literal.SQL
 				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
 
 		List resultList = null;
@@ -135,8 +125,6 @@ public class JdbcSearchProcessor {
 		addSelectList(query, search);
 		addTableSource(query, search);
 		addWhereClause(query, search);
-
-		logger.debug("Query : " + query.toString());
 		query.validate();
 
 		return query.toString();
@@ -144,12 +132,11 @@ public class JdbcSearchProcessor {
 
 	/**
 	 * Returns the total number of results that would be returned using the given <code>ISearch</code> if there were no
-	 * paging or maxResult limits. Uses the specified searchClass, ignoring the searchClass specified on the search
-	 * itself.
+	 * paging or maxResult limits.
 	 * 
 	 * @see ISearch
 	 */
-	public int count(ISearch search) {
+	public int getCount(ISearch search) {
 		if (search == null) {
 			throw new IllegalArgumentException();
 		}
@@ -159,10 +146,9 @@ public class JdbcSearchProcessor {
 		addSelectList(query, "count(*)");
 		addTableSource(query, search);
 		addWhereClause(query, search);
-
 		query.validate();
-		logger.debug("3SQL : " + query.toString());
 
+		logger.trace(Literal.SQL + query.toString());
 		Map<String, Object> namedParameters = new HashMap<>();
 
 		return namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
@@ -185,7 +171,7 @@ public class JdbcSearchProcessor {
 		result.setResult(getResults(search));
 
 		if (search.getMaxResults() > 0) {
-			result.setTotalCount(count(search));
+			result.setTotalCount(getCount(search));
 		} else {
 			result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
 		}
@@ -553,5 +539,20 @@ public class JdbcSearchProcessor {
 		}
 
 		return filter.getProperty().concat(filter.getSqlOperator()).concat("('").concat(expression).concat("')");
+	}
+
+	/**
+	 * Adds the order by expressions to the SELECT query.
+	 * 
+	 * @param query
+	 *            The select query to which the order by expressions to be added.
+	 * @param search
+	 *            The search object that contains the order by expressions.
+	 */
+	private void addOrderByExpression(SelectQuery query, ISearch search) {
+		for (Sort sort : search.getSorts()) {
+			query.addCustomOrdering(sort.getProperty(),
+					sort.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
+		}
 	}
 }

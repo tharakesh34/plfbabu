@@ -18,15 +18,14 @@ package com.pennant.search;
 import java.io.Serializable;
 
 public class Sort implements Serializable {
+	private static final long	serialVersionUID	= 1L;
 
-	private static final long serialVersionUID = 1L;
-
-	protected String property;
-	protected boolean desc = false;
-	protected boolean ignoreCase = false;
+	protected String			property;
+	protected boolean			desc				= false;
+	protected boolean			ignoreCase			= false;
 
 	public Sort() {
-
+		super();
 	}
 
 	public Sort(String property, boolean desc, boolean ignoreCase) {
@@ -87,7 +86,7 @@ public class Sort implements Serializable {
 	/**
 	 * Get the hashCode
 	 * 
-	 *  @return int
+	 * @return int
 	 */
 	@Override
 	public int hashCode() {
@@ -101,11 +100,11 @@ public class Sort implements Serializable {
 	/**
 	 * Check object is equal or not with Other object
 	 * 
-	 *  @return boolean
+	 * @return boolean
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj){
+		if (this == obj) {
 			return true;
 		}
 		if (obj == null) {
@@ -131,7 +130,7 @@ public class Sort implements Serializable {
 	/**
 	 * Get the String return type Value
 	 * 
-	 *  @return String
+	 * @return String
 	 */
 	@Override
 	public String toString() {
