@@ -893,7 +893,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// Workflow Details Verification and initiation, if not found
 		if (this.financeWorkFlow == null) {
 			FinanceWorkFlow financeWorkFlow = this.financeWorkFlowService.getApprovedFinanceWorkFlowById(
-					financeType.getFinType(), financeEvent, promotionWorkflow ? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
+					financeType.getFinType(), financeEvent, promotionFlag ? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 
