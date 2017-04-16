@@ -668,8 +668,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setAdvancePaymentsList(getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference,"_View"));
 		}
 		
-		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_FINTYPE));
-
+		if(StringUtils.isNotBlank(financeMain.getPromotionCode())){
+			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_PROMOTION));
+		}else{
+			financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(), eventCodeRef, "_AView", false, FinanceConstants.FINTYPEFEES_FINTYPE));
+		}
+		
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 		
