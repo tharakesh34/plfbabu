@@ -443,13 +443,6 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		//Partner Bank Code
 		try {
 
-			String partnerBankCodeValue = this.partnerBankCode.getValue();
-			boolean partnerBankCodeExist = this.partnerBankService.getPartnerCodeExist(partnerBankCodeValue, "_View");
-
-			if (partnerBankCodeExist) {
-				throw new WrongValueException(this.partnerBankCode,
-						Labels.getLabel("label_PartnerBankDialog_PartnerBankCode.value"));
-			}
 			aPartnerBank.setPartnerBankCode(this.partnerBankCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

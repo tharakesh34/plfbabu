@@ -410,7 +410,17 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 				}
 			}
 		}
-
+		
+		//Duplicate Partner Bank Code 
+		if(partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && partnerBank.isNewRecord() && 
+				getPartnerCodeExist(partnerBank.getPartnerBankCode(), "_View")){
+			auditDetail
+			.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
+		}
+		
+		
+		
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !partnerBank.isWorkflow()) {
