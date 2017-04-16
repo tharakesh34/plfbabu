@@ -161,6 +161,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private String finCcy = "";
 
 	protected Tabs tabsIndexCenter;
+	protected Tab  basicDetails;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 
 	protected String selectMethodName = "onSelectTab";
@@ -883,8 +884,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			aPromotion.setFinTypeInsurancesList(this.finTypeInsuranceListCtrl.getFinTypeInsuranceList());
 		}
 		
-		if(wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
-			aPromotion.setFinTypeAccountingList(this.finTypeAccountingListCtrl.doSave());
+		if (wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
+			if (this.finTypeAccountingListCtrl != null) {
+				aPromotion.setFinTypeAccountingList(this.finTypeAccountingListCtrl.doSave());
+			}
+		} else {
+			this.basicDetails.setSelected(true);
 		}
 		
 		doRemoveValidation();
@@ -892,9 +897,11 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
+			
 			throw new WrongValuesException(wvea);
 		}
 
