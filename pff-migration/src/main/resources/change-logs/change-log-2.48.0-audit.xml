@@ -15,5 +15,11 @@
 		</column>
 	</addColumn>
 </changeSet>
+	
+	<changeSet author="Kesav" id="2">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="PromotionCode" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
