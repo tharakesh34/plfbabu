@@ -503,7 +503,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.promotionCode.setValue(details.getLovDescPromotionCode());
 				this.promotionCode.setDescription(details.getLovDescPromotionName());
 				this.finType.setValue(details.getLovDescProductName());
-				this.finType.setDescription(details.getLovDescPromoFinTypeDesc());
+				this.finType.setDescription(details.getLovDescFinTypeName());
 				CheckScreenCode(details.getScreenCode());
 			}
 		}
