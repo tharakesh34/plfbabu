@@ -135,7 +135,49 @@
 			DROP table seqFinLogEntryDetail_bk;
 	</sql>
 </changeSet>
-
+<changeSet id="13" author="chaitanya.ch">
+   <createView viewName="LMTFINANCEWORKFLOWDEF_PTVIEW" replaceIfExists="true">
+	SELECT    T1.FinType lovDescPromotionCode  ,
+          T2.PROMOTIONDESC lovDescPromotionName  ,
+          T1.ScreenCode ,
+          T1.WorkFlowType ,
+          T4.FinCategory LovdescProductCodeName  ,
+          T3.FirstTaskOwner LovDescFirstTaskOwner  ,
+          T1.ModuleName ,
+          T2.Active ,
+          T2.StartDate ,
+          T2.EndDate ,
+          T1.FinEvent,
+          T5.ProductCategory
+     FROM LMTFinanceWorkFlowDef T1
+            INNER JOIN Promotions T2   ON T1.FinType = T2.PromotionCode
+            INNER JOIN WorkFlowDetails T3   ON T1.WorkFlowType = T3.WorkFlowType AND T3.WorkFlowActive = 1
+            INNER JOIN RMTFinanceTypes T4   ON T4.FinType = T2.FinType
+            INNER JOin BMTProduct T5 ON T4.FinCategory = T5.ProductCode
+    </createView>
+</changeSet>
+<changeSet id="20" author="chaitanya.ch">
+   <createView viewName="LMTFINANCEWORKFLOWDEF_PTVIEW" replaceIfExists="true">
+	  SELECT    T1.FinType lovDescPromotionCode  ,
+          T2.PROMOTIONDESC lovDescPromotionName  ,
+          T1.ScreenCode ,
+          T1.WorkFlowType ,
+          T2.FinType LovdescProductName  ,
+          T3.FirstTaskOwner LovDescFirstTaskOwner  ,
+          T1.ModuleName ,
+          T2.Active ,
+          T2.StartDate ,
+          T2.EndDate ,
+          T1.FinEvent,
+          T5.ProductCategory
+     FROM LMTFinanceWorkFlowDef T1
+            INNER JOIN Promotions T2   ON T1.FinType = T2.PromotionCode
+            INNER JOIN WorkFlowDetails T3   ON T1.WorkFlowType = T3.WorkFlowType AND T3.WorkFlowActive = 1
+            INNER JOIN RMTFinanceTypes T4   ON T4.FinType = T2.FinType
+            INNER JOin BMTProduct T5 ON T4.FinCategory = T5.ProductCode
+    </createView>
+</changeSet>
+ 
 	<changeSet author="Kesav" id="21">
 		<addColumn tableName="FinanceMain">
 			<column name="PromotionCode" type="varchar(8)"/>
