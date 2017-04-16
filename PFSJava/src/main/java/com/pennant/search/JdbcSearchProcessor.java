@@ -80,14 +80,7 @@ public class JdbcSearchProcessor {
 		SelectQuery query = new SelectQuery();
 		addSelectList(query, search);
 		addTableSource(query, search);
-
-		// Add where conditions
 		addWhereClause(query, search);
-
-		// Add direct where clause sent by client
-		if (search.getWhereClause() != null) {
-			query.addCondition(new CustomCondition(search.getWhereClause()));
-		}
 
 		// Add order by conditions
 		if (search.getFilters() != null) {
@@ -120,7 +113,7 @@ public class JdbcSearchProcessor {
 						rowMapper);
 
 			} catch (Exception e) {
-				logger.debug(e);
+				logger.warn(e);
 			}
 		} else {
 			Map<String, Object> paramMap = new HashMap<>();
@@ -142,14 +135,7 @@ public class JdbcSearchProcessor {
 		SelectQuery query = new SelectQuery();
 		addSelectList(query, search);
 		addTableSource(query, search);
-
-		// Add where conditions
 		addWhereClause(query, search);
-
-		// Add direct where clause sent by client
-		if (search.getWhereClause() != null) {
-			query.addCondition(new CustomCondition(search.getWhereClause()));
-		}
 
 		// Add order by conditions
 		if (search.getFilters() != null) {
@@ -184,14 +170,7 @@ public class JdbcSearchProcessor {
 		SelectQuery query = new SelectQuery();
 		addSelectList(query, "count(*)");
 		addTableSource(query, search);
-
-		// Add where conditions
 		addWhereClause(query, search);
-
-		// Add direct where clause sent by client
-		if (search.getWhereClause() != null) {
-			query.addCondition(new CustomCondition(search.getWhereClause()));
-		}
 
 		query.validate();
 		logger.debug("3SQL : " + query.toString());
@@ -449,74 +428,6 @@ public class JdbcSearchProcessor {
 		return sql.toLowerCase().indexOf("select distinct") >= 0;
 	}
 
-	@SuppressWarnings("unchecked")
-	private String getInCondition(Filter filter) {
-		String expression = "";
-
-		String[] strArray = null;
-		Object[] valArray = null;
-
-		if (filter.getValue() instanceof String[]) {
-			strArray = (String[]) filter.getValue();
-		} else if (filter.getValue() instanceof List) {
-			expression = "('" + StringUtils.join((List<String>) filter.getValue(), "','") + "')";
-		} else {
-			valArray = (Object[]) filter.getValue();
-		}
-
-		if (strArray != null) {
-			for (int i = 0; i < strArray.length; i++) {
-				if (i != 0) {
-					expression = expression.concat(",");
-				}
-				expression = expression.concat("'" + strArray[i] + "'");
-			}
-			expression = "(" + expression + ")";
-		}
-
-		if (valArray != null) {
-			expression = valArray[0].toString();
-			expression = "(" + expression + ")";
-		}
-
-		return filter.getProperty() + filter.getSqlOperator() + expression;
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private void addWhereClause(SelectQuery query, ISearch search) {
-		if (search.getFilters() == null) {
-			return;
-		}
-
-		for (Filter filter : search.getFilters()) {
-			if ("OR".equals(filter.getProperty())) {
-				List<Filter> subFilters = (List<Filter>) filter.getValue();
-				StringBuilder whereClause = new StringBuilder();
-
-				for (Filter subFilter : subFilters) {
-					if (whereClause.length() > 0) {
-						whereClause.append(" or ");
-					}
-
-					if (subFilter.getOperator() == Filter.OP_IN || subFilter.getOperator() == Filter.OP_NOT_IN) {
-						whereClause.append(getInCondition(subFilter));
-					} else {
-						String andCond = subFilter.toString().trim();
-						whereClause.append(new CustomCondition(andCond));
-					}
-				}
-
-				query.addCondition(new CustomCondition(whereClause.toString()));
-			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
-				query.addCondition(new CustomCondition(getInCondition(filter)));
-			} else {
-				String andCond = filter.toString().trim();
-				query.addCondition(new CustomCondition(andCond));
-			}
-		}
-	}
-
 	/**
 	 * Adds the given columns to the SELECT query. If no columns specified adds the ALL_SYMBOL (*).
 	 * 
@@ -569,5 +480,90 @@ public class JdbcSearchProcessor {
 		}
 
 		query.addCustomFromTable(tableName);
+	}
+
+	/**
+	 * Adds the search conditions of the WHERE clause to the SELECT query.
+	 * 
+	 * @param query
+	 *            The select query to which the WHERE clause search conditions to be added.
+	 * @param search
+	 *            The search object that contains the WHERE clause search conditions.
+	 */
+	private void addWhereClause(SelectQuery query, ISearch search) {
+		// Add search conditions specified in filters.
+		for (Filter filter : search.getFilters()) {
+			if ("OR".equals(filter.getProperty())) {
+				query.addCondition(new CustomCondition(getOrCondition(filter)));
+			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
+				query.addCondition(new CustomCondition(getInCondition(filter)));
+			} else {
+				query.addCondition(new CustomCondition(filter.toString()));
+			}
+		}
+
+		// Add custom search condition.
+		if (search.getWhereClause() != null) {
+			query.addCondition(new CustomCondition(search.getWhereClause()));
+		}
+	}
+
+	/**
+	 * Returns the OR condition as specified in the filter.
+	 * 
+	 * @param filter
+	 *            The filter that contain the parameters of OR condition.
+	 * @return The OR condition.
+	 */
+	private String getOrCondition(Filter filter) {
+		if (!(filter.getValue() instanceof List<?>)) {
+			return "";
+		}
+
+		List<?> list = (List<?>) filter.getValue();
+		StringBuilder expression = new StringBuilder();
+
+		for (Object object : list) {
+			if (object instanceof Filter) {
+				Filter condition = (Filter) object;
+
+				if (expression.length() > 0) {
+					expression.append(" or ");
+				}
+
+				if (condition.getOperator() == Filter.OP_IN || condition.getOperator() == Filter.OP_NOT_IN) {
+					expression.append(getInCondition(condition));
+				} else {
+					expression.append(condition.toString());
+				}
+			}
+		}
+
+		return expression.toString();
+	}
+
+	/**
+	 * Returns the IN condition as specified in the filter.
+	 * 
+	 * @param filter
+	 *            The filter that contain the parameters of IN condition.
+	 * @return The IN condition.
+	 */
+	private String getInCondition(Filter filter) {
+		if (filter.getValue() == null) {
+			return "";
+		}
+
+		String expression;
+
+		if (filter.getValue() instanceof String[]) {
+			expression = StringUtils.join((String[]) filter.getValue(), "','");
+		} else if (filter.getValue() instanceof List<?>) {
+			expression = StringUtils.join((List<?>) filter.getValue(), "','");
+		} else {
+			expression = StringUtils.join((Object[]) filter.getValue(), "','");
+		}
+
+		return filter.getProperty().concat(filter.getSqlOperator()).concat("('").concat(expression).concat("')");
 	}
 }

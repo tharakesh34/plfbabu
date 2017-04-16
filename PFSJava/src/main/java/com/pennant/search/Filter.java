@@ -67,7 +67,7 @@ public class Filter implements Serializable {
 	protected int operator;
 
 	public Filter() {
-
+		super();
 	}
 
 	public Filter(String property, Object value, int operator) {
