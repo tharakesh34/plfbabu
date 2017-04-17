@@ -282,7 +282,8 @@ public class RateUtil implements Serializable {
 			splRateVal = splRates.get(i).getSRRate();
 		}
 		
-		netRefRate = baseRateVal.subtract(splRateVal).add(finSchdDetails.get(iSchd).getMrgRate());
+		netRefRate = baseRateVal.subtract(splRateVal).add(finSchdDetails.get(iSchd).getMrgRate() == null? 
+				BigDecimal.ZERO : finSchdDetails.get(iSchd).getMrgRate());
 		calRate = getEffRate(netRefRate, minRate, maxRate);
 
 		logger.debug("Leaving");
