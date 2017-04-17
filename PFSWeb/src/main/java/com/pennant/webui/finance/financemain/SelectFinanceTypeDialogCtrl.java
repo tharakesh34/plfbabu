@@ -1419,9 +1419,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			//If  customer exist is checked 
 			if (this.existingCust.isChecked()) {
 				Customer customer = null;
-
+				//FIXME comment need to be removed when the version issue get resolved
 				//check Customer Data in LOCAL PFF system
-				customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
+				//customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
 
 				if (customer == null) {
 					isCustFromTemp = false;
