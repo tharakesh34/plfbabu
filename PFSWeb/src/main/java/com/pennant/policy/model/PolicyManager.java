@@ -97,7 +97,7 @@ public class PolicyManager implements UserDetailsService, Serializable {
 				throw new UsernameNotFoundException("Invalid User");
 			}
 
-			if (DateUtility.compare(SysParamUtil.getValueAsDate("APP_DATE"), user.getUsrAcExpDt())>=0) {
+			if (user.getUsrAcExpDt()!=null && DateUtility.compare(SysParamUtil.getValueAsDate("APP_DATE"), user.getUsrAcExpDt())>=0) {
 				throw new AccountExpiredException("User Account Expired");
 			}
 			
