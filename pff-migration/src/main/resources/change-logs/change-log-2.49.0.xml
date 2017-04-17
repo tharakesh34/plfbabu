@@ -89,6 +89,12 @@ SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1
 <sql>
 update SMTparameters set rolecode = NULL , nextrolecode = NULL, taskid = NULL , nexttaskid = NULL , recordtype = NULL where sysparmcode =  'HOLDEMI_MAXDAYS';
 </sql>
-
 </changeSet>
+
+	<changeSet author="Kesav" id="05">
+		<sql>
+			Insert into ReportList Values('Promotion', 'Promotion', 'listheader_PromotionCode.label,listheader_PromotionDesc.label,listheader_FinType.label,listheader_PromotionStartDate.label,listheader_PromotionEndDate.label,listheader_RecordStatus.label,listheader_RecordType.label','promotionCode,promotionDesc,finType,startDate,endDate,recordStatus,recordType','String,String,String,Date,Date,String,String','', 'ReportList07', 'Promotions', 'Solution Factory',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
