@@ -63,4 +63,26 @@ SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1
              RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType and T4.fieldCode='ACC_TYPE' 
  </createView>
  </changeSet> 
+ 
+ <changeSet id="03" author="Madhubabu">
+<createView viewName="CUSTOMERBANKINFO_VIEW" replaceIfExists="true">
+
+SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+				     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+				     T3.BankName lovDescBankName,T4.ValueDesc lovDescAccountType
+		  FROM       CustomerBankInfo_Temp T1 INNER JOIN 
+		             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+		             RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType  and T4.fieldCode='ACC_TYPE'
+		UNION ALL
+		
+		  SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1.SalaryAccount, T1.Version, T1.LastMntBy, T1.LastMntOn,
+				     T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,T1.WorkflowId,
+				     T3.BankName lovDescBankName,T4.ValueDesc lovDescAccountType
+		  FROM       CustomerBankInfo T1 INNER JOIN 
+		             BMTBankDetail T3 ON T3.BankCode = T1.BankName INNER JOIN
+		             RMTLovFieldDetail T4 ON T4.FieldCodeValue = T1.AccountType and T4.fieldCode='ACC_TYPE'
+		WHERE     NOT EXISTS (SELECT 1 FROM CustomerBankInfo_TEMP WHERE BankId = T1.BankId)
+
+</createView>
+</changeSet>
 </databaseChangeLog>
