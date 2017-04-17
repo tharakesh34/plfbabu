@@ -96,5 +96,11 @@ update SMTparameters set rolecode = NULL , nextrolecode = NULL, taskid = NULL , 
 			Insert into ReportList Values('Promotion', 'Promotion', 'listheader_PromotionCode.label,listheader_PromotionDesc.label,listheader_FinType.label,listheader_PromotionStartDate.label,listheader_PromotionEndDate.label,listheader_RecordStatus.label,listheader_RecordType.label','promotionCode,promotionDesc,finType,startDate,endDate,recordStatus,recordType','String,String,String,Date,Date,String,String','', 'ReportList07', 'Promotions', 'Solution Factory',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
 		</sql>
 	</changeSet>
+	<changeSet author="Madhubabu" id="06">
+		<sql>
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERALSETUP_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CoOwnerDetailDialog_btnUploadCoOwnerProof'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
