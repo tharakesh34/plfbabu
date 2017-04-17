@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.security.auth.login.AccountExpiredException;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +57,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -93,14 +97,14 @@ public class PolicyManager implements UserDetailsService, Serializable {
 				throw new UsernameNotFoundException("Invalid User");
 			}
 
-			/*if (!StringUtils.isEmpty(user.getUsrLanguage())) {
-				Labels.register(new GeneralLabelLocator(user.getUsrLanguage()));
-			} */ 
+			if (DateUtility.compare(SysParamUtil.getValueAsDate("APP_DATE"), user.getUsrAcExpDt())>=0) {
+				throw new AccountExpiredException("User Account Expired");
+			}
 			
 			securityRole= userService.getUserRolesByUserID(user.getId()); 	 
 			grantedAuthorities = getGrantedAuthority(user);
 
-		} catch (final NumberFormatException e) {
+		} catch (final NumberFormatException | AccountExpiredException e) {
 			throw new DataRetrievalFailureException("Cannot loadUserByUsername userId:" + userId + " Exception:" + e.getMessage(), e);
 		}
 
