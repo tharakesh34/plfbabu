@@ -235,7 +235,7 @@
 													<label id="label_FinanceMainDialog_DSACode" value="${c:l('label_FinanceMainDialog_DSACode.value')}" />
 													<extendedcombobox id="dsaCode" />
 												</row>
-												<row>
+												<row id="row_ReferralId">
 													<label id="label_FinanceMainDialog_ReferralId" value="${c:l('label_FinanceMainDialog_ReferralId.value')}" />
 													<hbox>
 														<extendedcombobox id="referralId" />
@@ -245,16 +245,22 @@
 														<extendedcombobox id="dmaCode" />
 													</hbox>
 												</row>
-												<row>
+												<row id="row_salesDept" >
 													<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
 													<hbox>
 														<extendedcombobox id="salesDepartment" />
 													</hbox>
-													<label id="label_FinanceMainDialog_QuickDisb" value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
-													<hbox>
-														<space id="space_QuickDisb" spacing="2px" />
-														<checkbox id="quickDisb" checked="false" />
-													</hbox>
+												</row>
+												<row>
+												<label
+													id="label_FinanceMainDialog_QuickDisb"
+													value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
+												<hbox>
+													<space
+														id="space_QuickDisb" spacing="2px" />
+													<checkbox
+														id="quickDisb" checked="false" />
+												</hbox>
 												</row>
 												<row id="row_finWriteoffPaymentDate" visible="false">
 													<label id="label_FinanceMainDialog_WriteoffDate" value="${c:l('label_FinanceMainDialog_WriteoffDate.value')}" />

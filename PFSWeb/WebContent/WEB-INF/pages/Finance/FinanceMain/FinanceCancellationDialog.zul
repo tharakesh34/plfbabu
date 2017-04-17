@@ -449,7 +449,7 @@
 													<extendedcombobox
 														id="dsaCode" />
 												</row>
-												<row>
+												<row id="row_ReferralId">
 													<label
 														id="label_FinanceMainDialog_ReferralId"
 														value="${c:l('label_FinanceMainDialog_ReferralId.value')}" />
@@ -465,7 +465,7 @@
 															id="dmaCode" />
 													</hbox>
 												</row>
-												<row>
+												<row id="row_salesDept">
 													<label
 														id="label_FinanceMainDialog_SalesDepartment"
 														value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
@@ -473,7 +473,9 @@
 														<extendedcombobox
 															id="salesDepartment" />
 													</hbox>
-													<label
+												</row>
+												<row>
+												<label
 														id="label_FinanceMainDialog_QuickDisb"
 														value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
 													<hbox>

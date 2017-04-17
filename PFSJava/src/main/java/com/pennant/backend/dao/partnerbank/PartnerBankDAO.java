@@ -47,7 +47,6 @@ import java.util.List;
 
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennanttech.pff.core.TableType;
 
 public interface PartnerBankDAO {
 	PartnerBank getPartnerBankById(long id, String type);

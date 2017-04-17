@@ -174,6 +174,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox			referralId;
 	protected ExtendedCombobox			dmaCode;
 	protected ExtendedCombobox			salesDepartment;
+	protected Row						row_salesDept;
 	protected Checkbox					quickDisb;
 	protected Button					btnFlagDetails;
 	protected Textbox					flagDetails;
@@ -453,6 +454,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private   FinFlagDetailsDAO             finFlagDetailsDAO;
 	private	  List<FinFlagsDetail>			finFlagsDetailList		= null;
 	protected Label							label_FinanceMainDialog_DownPayAccount;
+	protected String						finDivision				= "";
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -538,6 +540,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		FinanceType fintype = getFinScheduleData().getFinanceType();
+		finDivision = fintype.getFinDivision();
 		if (getFinScheduleData().getFinanceMain() != null) {
 			formatter = CurrencyUtil.getFormat( getFinScheduleData().getFinanceMain().getFinCcy());
 			// Empty sent any required attributes
@@ -666,6 +669,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayBank.setScale(formatter);
 			this.downPayBank.setTextBoxWidth(200);
 
+			if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
+				this.row_accountsOfficer.setVisible(false);
+				this.row_ReferralId.setVisible(false);
+				this.row_salesDept.setVisible(false);
+			}
+			
 		}
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);

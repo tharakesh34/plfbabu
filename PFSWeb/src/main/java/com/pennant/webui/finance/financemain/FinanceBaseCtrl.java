@@ -226,6 +226,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox 				finIsActive; 							// autoWired
 	protected ExtendedCombobox 		finPurpose; 							// autoWired
 	protected Row                   row_accountsOfficer;                    // autowired
+	protected Row					row_ReferralId;							// autowired
+	protected Row					row_salesDept;							//autowired
 	protected ExtendedCombobox      accountsOfficer;                        // autowired
 	protected ExtendedCombobox      dsaCode;                                // autowired
 	protected Hbox					hbox_tdsApplicable;
@@ -879,6 +881,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.hbox_Finance_IfscCode.setVisible(false);
 		this.ifscCode.setReadonly(true);
 		this.ifscCode.setMaxlength(9);
+		
+		if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
+			this.row_accountsOfficer.setVisible(false);
+			this.row_ReferralId.setVisible(false);
+			this.row_salesDept.setVisible(false);
+		}
 		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);

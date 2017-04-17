@@ -523,7 +523,6 @@
 														<extendedcombobox
 															id="dsaCode" />
 													</row>
-												<row id="row_salesDept"/>
 													<!-- Facility Details Start-->
 													<row
 														id="row_commitment">
@@ -654,7 +653,7 @@
 																id="dmaCode" />
 														</hbox>
 													</row>
-													<row>
+													<row id="row_salesDept">
 														<label
 															id="label_FinanceMainDialog_SalesDepartment"
 															value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
@@ -662,6 +661,8 @@
 															<extendedcombobox
 																id="salesDepartment" />
 														</hbox>
+													</row>
+													<row>
 														<label
 															id="label_FinanceMainDialog_QuickDisb"
 															value="${c:l('label_FinanceMainDialog_QuickDisb.value')}" />
