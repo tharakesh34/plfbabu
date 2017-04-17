@@ -9735,7 +9735,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				} else {
-					aFinanceMain.setGrcPftRate(this.graceRate.getEffRateValue());
+					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				}
 
 			} catch (WrongValueException we) {
