@@ -196,7 +196,7 @@
 		</addColumn>
 	</changeSet>
 
-<!-- <changeSet id="15" author="Irfan"> 
+<changeSet id="15" author="Irfan"> 
 <dropForeignKeyConstraint constraintName="FK_FINADVPAYMENT_PARTNERBNKID" baseTableName="FinAdvancePayments" />
 <dropPrimaryKey tableName="PartnerBank" constraintName="PK_PARTNERBANK"/>
 <dropPrimaryKey tableName="PartnerBank_Temp" constraintName="PK_PARTNERBANK_TEMP"/>
@@ -204,7 +204,7 @@
 <dropView viewName="PartnerBank_AView"/>
 <dropTable tableName="PartnerBank"/>
 <dropTable tableName="PartnerBank_Temp"/>
-</changeSet>  -->
+</changeSet> 
 
 
 <changeSet id="16" author="Irfan">
