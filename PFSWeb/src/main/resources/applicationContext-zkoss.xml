@@ -4174,8 +4174,7 @@
 		class="com.pennant.webui.mandate.mandate.MandateRegistrationListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<bean id="mandateRegistrationDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl"
