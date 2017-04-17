@@ -103,4 +103,189 @@ update SMTparameters set rolecode = NULL , nextrolecode = NULL, taskid = NULL , 
 		</sql>
 	</changeSet>
 	
+<changeSet id="07" author="Irfan">
+	<createTable tableName="LoanStatusCodes">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTo" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="SuspendProfit" type="bit">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+	
+	<createTable tableName="LoanStatusCodes_Temp">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTo" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="SuspendProfit" type="bit">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+	
+	<createTable tableName="LoanTypeStatusCodes">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FinType" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTO" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+	<createTable tableName="LoanTypeStatusCodes_Temp">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FinType" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTO" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="08" author="Irfan">
+<createView viewName="LoanStatusCodes_View" replaceIfExists="true">
+
+SELECT    StatusId, StatusCode, StatusDesc, DueFrom, DueTo, SuspendProfit, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanStatusCodes_TEMP
+UNION ALL
+SELECT    StatusId, StatusCode, StatusDesc, DueFrom, DueTo, SuspendProfit, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanStatusCodes
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          LoanStatusCodes_TEMP
+                            WHERE      StatusId = LoanStatusCodes.StatusId)
+
+</createView>
+</changeSet>
+
+<changeSet id="09" author="Irfan">
+<createView viewName="LoanStatusCodes_AView" replaceIfExists="true">
+
+SELECT    StatusId, StatusCode, StatusDesc, DueFrom, DueTo, SuspendProfit, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanStatusCodes
+
+</createView>
+</changeSet>
+
+<changeSet id="10" author="Irfan">
+<createView viewName="LoanTypeStatusCodes_View" replaceIfExists="true">
+
+SELECT    StatusId, FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes_TEMP
+UNION ALL
+SELECT    StatusId, FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          LoanTypeStatusCodes_TEMP
+                            WHERE      StatusId = LoanTypeStatusCodes.StatusId)
+
+</createView>
+</changeSet>
+<changeSet id="11" author="Irfan">
+	<createView viewName="LoanTypeStatusCodes_AView" replaceIfExists="true">
+SELECT    StatusId, FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes
+    </createView>
+ </changeSet>  
+ <changeSet id="12" author="Irfan">
+ 	<addPrimaryKey tableName="LoanStatusCodes" constraintName="PK_LoanStatusCodes" columnNames="StatusId"/>
+ 	<addPrimaryKey tableName="LoanStatusCodes_Temp" constraintName="PK_LoanStatusCodes_Temp" columnNames="StatusId"/>
+ 	<addUniqueConstraint tableName="LoanStatusCodes" columnNames="StatusCode" constraintName="UK_LoanStatusCodes"/>
+ 	<addUniqueConstraint tableName="LoanStatusCodes_Temp" columnNames="StatusCode" constraintName="UK_LoanStatusCodes_Temp"/>
+ </changeSet>   
+ <changeSet id="13" author="Irfan">
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusId,FinType"/>
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusId,FinType"/>
+ </changeSet>                  
+            
+	
 </databaseChangeLog>
