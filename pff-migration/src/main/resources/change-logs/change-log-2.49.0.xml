@@ -285,7 +285,101 @@ FROM         LoanTypeStatusCodes
  <changeSet id="13" author="Irfan">
  	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusId,FinType"/>
  	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusId,FinType"/>
- </changeSet>                  
-            
-	
+ </changeSet>  
+ <changeSet id="14" author="Irfan"> 
+     <dropPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes"/>   
+     <dropPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp"/>  
+     <dropView viewName="LoanTypeStatusCodes_View"/>     
+     <dropView viewName="LoanTypeStatusCodes_AView"/>    
+  	<dropTable tableName="LoanTypeStatusCodes" /> 
+  	<dropTable tableName="LoanTypeStatusCodes_Temp" /> 
+  </changeSet>
+  <changeSet id="15" author="Irfan">
+	<createTable tableName="LoanTypeStatusCodes">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="FinType" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTO" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+	<createTable tableName="LoanTypeStatusCodes_Temp">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="FinType" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueFrom" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DueTO" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet> 
+ <changeSet id="16" author="Irfan">
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusId,StatusCode"/>
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusId,StatusCode"/>  
+</changeSet>	
+<changeSet id="17" author="Irfan">
+<createView viewName="LoanTypeStatusCodes_View" replaceIfExists="true">
+
+SELECT    StatusId, StatusCode, FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes_TEMP
+UNION ALL
+SELECT    StatusId, StatusCode,FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          LoanTypeStatusCodes_TEMP
+                            WHERE      StatusId = LoanTypeStatusCodes.StatusId)
+
+</createView>
+</changeSet>
+<changeSet id="18" author="Irfan">
+	<createView viewName="LoanTypeStatusCodes_AView" replaceIfExists="true">
+SELECT    StatusId, StatusCode, FinType, DueFrom, DueTo, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         LoanTypeStatusCodes
+    </createView>
+ </changeSet>  
 </databaseChangeLog>
