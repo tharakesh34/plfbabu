@@ -611,7 +611,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("TransactionCode", new ModuleMapping("TransactionCode", TransactionCode.class,
 				new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, masterWF, new String[] { "TranCode",
-						"TranDesc" }, null, 300));
+						"TranDesc" }, new String[][] { { "TranIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("CommodityBrokerDetail", new ModuleMapping("CommodityBrokerDetail",
 				CommodityBrokerDetail.class, new String[] { "FCMTBrokerDetail", "FCMTBrokerDetail_AView" }, masterWF,
@@ -806,7 +806,7 @@ public class PennantJavaUtil {
 			"FinFeeDetail", "FinFeeDetail_AView" }, null, new String[] {"FinReference","FinEvent" }, null, 600));
 
 		ModuleUtil.register("Rule", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
-				masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, null, 400));
+				masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail", new ModuleMapping("CorpScoreGroupDetail",
 				CorpScoreGroupDetail.class, new String[] { "CorpScoringGroupDetail", "CorpScoringGroupDetail" }, null,
@@ -843,7 +843,7 @@ public class PennantJavaUtil {
 		/************* Solution Factory *************/
 
 		ModuleUtil.register("AccountType", new ModuleMapping("AccountType", AccountType.class, new String[] {
-				"RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF, new String[] { "AcType", "AcTypeDesc" }, null,
+				"RMTAccountTypes", "RMTAccountTypes_AView" }, masterWF, new String[] { "AcType", "AcTypeDesc" }, new String[][] { { "AcTypeIsActive", "0", "1" } },
 				400));
 
 		ModuleUtil.register("AssetType", new ModuleMapping("AssetType", AssetType.class, new String[] {
