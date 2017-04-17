@@ -85,4 +85,10 @@ SELECT     T1.BankId,T1.CustID, T1.BankName, T1.AccountNumber, T1.AccountType,T1
 
 </createView>
 </changeSet>
+<changeSet id="04" author="Madhubabu">
+<sql>
+update SMTparameters set rolecode = NULL , nextrolecode = NULL, taskid = NULL , nexttaskid = NULL , recordtype = NULL where sysparmcode =  'HOLDEMI_MAXDAYS';
+</sql>
+
+</changeSet>
 </databaseChangeLog>
