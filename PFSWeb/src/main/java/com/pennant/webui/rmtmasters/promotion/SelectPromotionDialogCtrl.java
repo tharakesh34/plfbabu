@@ -256,7 +256,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} else {
 			FinanceType financeType = (FinanceType) dataObject;
 			if (financeType != null) {
-				this.finType.setValue(financeType.getFinCategory());
+				this.finType.setValue(financeType.getFinType());
 				this.finType.setObject(new FinanceType(financeType.getFinType()));
 				this.finType.setDescription(financeType.getFinTypeDesc());
 				this.finCcy = financeType.getFinCcy();
@@ -305,7 +305,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			FinanceType FinanceTypeObj = (FinanceType) this.finType.getObject();
 			aPromotion.setFinType(FinanceTypeObj.getId());
-			aPromotion.setFinCategory(this.finType.getValue());
 			aPromotion.setFinTypeDesc(this.finType.getDescription());
 			aPromotion.setFinCcy(this.finCcy);
 		} catch (WrongValueException we) {

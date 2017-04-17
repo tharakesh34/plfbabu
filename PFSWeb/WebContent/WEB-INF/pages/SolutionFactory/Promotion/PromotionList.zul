@@ -131,6 +131,18 @@
 									id="listheader_PromotionDesc"
 									label="${c:l('listheader_PromotionDesc.label')}" sort="auto"
 									hflex="min" />
+								<listheader
+									id="listheader_FinType"
+									label="${c:l('listheader_FinType.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PromotionStartDate"
+									label="${c:l('listheader_PromotionStartDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_PromotionEndDate"
+									label="${c:l('listheader_PromotionEndDate.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType"

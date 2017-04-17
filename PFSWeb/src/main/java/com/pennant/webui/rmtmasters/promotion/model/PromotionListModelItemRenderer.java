@@ -51,7 +51,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.rmtmasters.Promotion;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.util.PennantAppUtil;
 
 
 /**
@@ -73,6 +75,14 @@ public class PromotionListModelItemRenderer implements ListitemRenderer<Promotio
 		lc.setParent(item);
 		lc = new Listcell(promotion.getPromotionDesc());
 		lc.setParent(item);
+		lc = new Listcell(promotion.getFinType());
+		lc.setParent(item);
+		
+		lc = new Listcell(PennantAppUtil.formateDate(promotion.getStartDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.formateDate(promotion.getEndDate(), PennantConstants.dateFormat));
+		lc.setParent(item);
+		
 		lc = new Listcell(promotion.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(promotion.getRecordType()));

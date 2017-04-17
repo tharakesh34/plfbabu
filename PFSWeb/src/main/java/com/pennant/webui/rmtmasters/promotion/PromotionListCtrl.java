@@ -89,6 +89,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	// List headers
 	protected Listheader listheader_PromotionCode;
 	protected Listheader listheader_PromotionDesc;
+	protected Listheader listheader_FinType;
+	protected Listheader listheader_PromotionStartDate;
+	protected Listheader listheader_PromotionEndDate;
 
 	// checkRights
 	protected Button button_PromotionList_NewPromotion;
@@ -138,7 +141,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 				sortOperator_PromotionCode, Operators.STRING);
 		registerField("PromotionDesc", listheader_PromotionDesc, SortOrder.ASC, promotionDesc,
 				sortOperator_PromotionDesc, Operators.STRING);
-		registerField("finType");
+		registerField("FinType", listheader_FinType, SortOrder.NONE);
+		registerField("StartDate", listheader_PromotionStartDate, SortOrder.NONE);
+		registerField("EndDate", listheader_PromotionEndDate, SortOrder.NONE);
 
 		// Render the page and display the data.
 		doRenderPage();

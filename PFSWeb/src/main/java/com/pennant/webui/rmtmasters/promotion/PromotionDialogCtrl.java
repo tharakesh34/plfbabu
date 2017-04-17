@@ -560,7 +560,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finMaxTerm.setValue(aPromotion.getFinMaxTerm());
 		this.active.setChecked(aPromotion.isActive());
 
-		this.finType.setValue(aPromotion.getFinCategory());
+		this.finType.setValue(aPromotion.getFinType());
 		this.finType.setDescription(aPromotion.getFinTypeDesc());
 		this.finType.setObject(new FinanceType(aPromotion.getFinType()));
 
@@ -795,12 +795,26 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		// Actual Interest Rate
 		try {
-			aPromotion.setActualInterestRate(actualInterestRate.getValue());
+			/*
+			 * to check mutually exclusive values i.e Base rate code and Actual Int rate
+			 */
+			if (this.actualInterestRate.getValue() != null) {
+				if (this.actualInterestRate.getValue().compareTo(BigDecimal.ZERO) > 0
+						&& StringUtils.isNotEmpty(this.finBaseRate.getBaseValue())) {
+					throw new WrongValueException(this.actualInterestRate, Labels.getLabel("EITHER_OR",
+							new String[] { Labels.getLabel("label_PromotionDialog_FinBaseRate.value"),
+									Labels.getLabel("label_PromotionDialog_ActualInterestRate.value") }));
+				}
+				aPromotion.setActualInterestRate(this.actualInterestRate.getValue());
+			} else {
+				aPromotion.setActualInterestRate(BigDecimal.ZERO);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
-		}
+		}	
 		// Base Rate
 		try {
 			aPromotion.setFinBaseRate(StringUtils.isEmpty(this.finBaseRate.getBaseValue()) ? null : this.finBaseRate.getBaseValue());
@@ -833,32 +847,71 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Minimum Term
 		try {
+			int minTerms = this.finMinTerm.intValue();
+			int maxTerms = this.finMaxTerm.intValue();
+			boolean validationRequired = true;
+			
+			if (minTerms == 0 && maxTerms == 0) {
+				validationRequired = false;
+			}
+
+			if (validationRequired) {
+				if (maxTerms < minTerms) {
+					throw new WrongValueException(this.finMaxTerm, Labels.getLabel("label_PromotionDialog_FinMaxTerm.value") + " should be greater than or equal to " + Labels.getLabel("label_PromotionDialog_FinMinTerm.value"));
+				}
+			}
 			aPromotion.setFinMinTerm(this.finMinTerm.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		// Maximum Term
-		try {
 			aPromotion.setFinMaxTerm(this.finMaxTerm.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Minimum Amount
+		
 		try {
+			double finMinAmountValue = this.finMinAmount.getValidateValue().doubleValue();
+			double finMaxAmountValue = this.finMaxAmount.getValidateValue().doubleValue();
+			boolean validationRequired = true;
+			
+			if (finMinAmountValue == 0 && finMaxAmountValue == 0) {
+				validationRequired = false;
+			}
+
+			if (validationRequired) {
+				if (finMaxAmountValue < finMinAmountValue) {
+					throw new WrongValueException(this.finMaxAmount, Labels.getLabel("label_PromotionDialog_FinMaxAmount.value") + " should be greater than or equal to " + Labels.getLabel("label_PromotionDialog_FinMinAmount.value"));
+				}
+			}
 			aPromotion.setFinMinAmount(PennantAppUtil.unFormateAmount(this.finMinAmount.getValidateValue(), format));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		// Maximum Amount
-		try {
 			aPromotion.setFinMaxAmount(PennantAppUtil.unFormateAmount(this.finMaxAmount.getValidateValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		// Minimum Rate
 		try {
+			long finMinRateValue = 0;
+			long finMaxRateValue = 0;
+			boolean validationRequired = true;
+			
+			if (this.finMinRate.getValue() != null) {
+				finMinRateValue = this.finMinRate.getValue().longValue();
+			}
+			
+			if (this.finMaxRate.getValue() != null) {
+				finMaxRateValue = this.finMaxRate.getValue().longValue();
+			}
+			
+			
+			if (finMinRateValue == 0 && finMaxRateValue == 0) {
+				validationRequired = false;
+			}
+
+			if (validationRequired) {
+				if (finMaxRateValue < finMinRateValue) {
+					throw new WrongValueException(this.finMaxRate, Labels.getLabel("label_PromotionDialog_FinMaxRate.value") + " should be greater than or equal to " + Labels.getLabel("label_PromotionDialog_FinMinRate.value"));
+				}
+			}
+			
 			aPromotion.setFinMinRate(this.finMinRate.getValue() == null ? BigDecimal.ZERO : this.finMinRate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -894,6 +947,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
+		doClearMessage();
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -907,7 +961,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		logger.debug("Leaving");
 	}
-
+	
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -959,7 +1013,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Code
 		if (!this.promotionCode.isReadonly()) {
 			this.promotionCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PromotionDialog_PromotionCode.value"), PennantRegularExpressions.REGEX_ALPHANUM, true));
+					.getLabel("label_PromotionDialog_PromotionCode.value"), PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_FL3, true));
 		}
 		// Description
 		if (!this.promotionDesc.isReadonly()) {
@@ -1001,10 +1055,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Base Rate
 		if (!this.finBaseRate.getMarginComp().isDisabled()) {
 			this.finBaseRate.getMarginComp().setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_PromotionDialog_FinMargin.value"), 9, false, true,
-							-9999, 9999));
-			this.finBaseRate.getBaseComp()
-					.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_PromotionDialog_FinMargin.value"), 9, false, true, -9999, 9999));
+			this.finBaseRate.getBaseComp().setConstraint(
 							new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinBaseRate.value"), null, false, true));
 		}
 		// Repay Pricing Method
