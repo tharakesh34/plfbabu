@@ -59,6 +59,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -155,7 +156,8 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 				sortOperator_isCustSysAccount, Operators.BOOLEAN);
 		registerField("acTypeIsActive", listheader_AcTypeIsActive, SortOrder.NONE, acTypeIsActive,
 				sortOperator_acTypeIsActive, Operators.BOOLEAN);
-
+		
+		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -300,6 +302,12 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
+	}
+	
+	private void doSetFieldProperties() {
+		int acTypeLen = SysParamUtil.getValueAsInt("ACCOUNT_TYPE_LEN");
+		this.acType.setMaxlength(acTypeLen);
+		
 	}
 
 	public void setAccountTypeService(AccountTypeService accountTypeService) {

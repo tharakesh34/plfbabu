@@ -73,8 +73,7 @@
 									value="${c:l('label_AccountTypeSearch_AcType.value')}" />
 								<listbox id="sortOperator_acType"
 									width="43px" mold="select" rows="1" />
-								<uppercasebox id="acType" width="120px"
-									maxlength="2" />
+								<uppercasebox id="acType" width="120px" />
 								<label
 									id="label_AccountTypeSearch_AcTypeDesc"
 									value="${c:l('label_AccountTypeSearch_AcTypeDesc.value')}" />
