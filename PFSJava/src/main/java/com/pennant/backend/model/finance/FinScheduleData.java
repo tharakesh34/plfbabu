@@ -336,6 +336,12 @@ public class FinScheduleData {
 		}
 		this.financeMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
 		this.financeMain.setRepayRvwFrq(financeType.getFinRvwFrq());
+		this.financeMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
+		this.financeMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
+		this.financeMain.setPastduePftMargin(financeType.getPastduePftMargin());
+		this.financeMain.setDroppingMethod(financeType.getDroppingMethod());
+		this.financeMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
+		
 		if (StringUtils.isNotEmpty(financeType.getFinRvwFrq()) &&
 				FrequencyUtil.validateFrequency(financeType.getFinRvwFrq()) == null) {
 			this.financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeType.getFinRvwFrq(), 1,

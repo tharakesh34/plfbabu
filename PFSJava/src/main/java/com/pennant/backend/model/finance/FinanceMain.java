@@ -402,7 +402,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal totalPriAmt = BigDecimal.ZERO;
 	private BigDecimal schPriDue = BigDecimal.ZERO;
 	private BigDecimal schPftDue = BigDecimal.ZERO;
-
+	private String schCalOnRvw;
+	private String pastduePftCalMthd;
+	private String droppingMethod;
+	private boolean rateChgAnyDay;
+	private BigDecimal pastduePftMargin= BigDecimal.ZERO;
+	
 	// Finance Maintenance Details
 	private int allowedDefRpyChange = 0;
 	private int availedDefRpyChange = 0;
@@ -3386,4 +3391,45 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setPromotionCode(String promotionCode) {
 		this.promotionCode = promotionCode;
 	}
+
+	public String getSchCalOnRvw() {
+		return schCalOnRvw;
+	}
+
+	public void setSchCalOnRvw(String schCalOnRvw) {
+		this.schCalOnRvw = schCalOnRvw;
+	}
+
+	public String getPastduePftCalMthd() {
+		return pastduePftCalMthd;
+	}
+
+	public void setPastduePftCalMthd(String pastduePftCalMthd) {
+		this.pastduePftCalMthd = pastduePftCalMthd;
+	}
+
+	public String getDroppingMethod() {
+		return droppingMethod;
+	}
+
+	public void setDroppingMethod(String droppingMethod) {
+		this.droppingMethod = droppingMethod;
+	}
+
+	public boolean isRateChgAnyDay() {
+		return rateChgAnyDay;
+	}
+
+	public void setRateChgAnyDay(boolean rateChgAnyDay) {
+		this.rateChgAnyDay = rateChgAnyDay;
+	}
+
+	public BigDecimal getPastduePftMargin() {
+		return pastduePftMargin;
+	}
+
+	public void setPastduePftMargin(BigDecimal pastduePftMargin) {
+		this.pastduePftMargin = pastduePftMargin;
+	}
+	
 }
