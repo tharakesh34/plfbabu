@@ -251,7 +251,7 @@ public class FinanceDetailController {
 			finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-		financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(financeMain.getFinType(),finEvent, true));
+		financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(financeMain.getFinType(),finEvent, true, FinanceConstants.MODULEID_FINTYPE));
 		
 		feeDetailService.doExecuteFeeCharges(true, financeDetail);
 		
