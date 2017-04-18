@@ -449,8 +449,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					
 					// Checking Total Disbursed amount validate against New disbursement
 					BigDecimal prvTotDisbValue = BigDecimal.ZERO;
-					for(FinanceDisbursement finDisbursment:aFinScheduleData.getDisbursementDetails()){
-						prvTotDisbValue = prvTotDisbValue.add(finDisbursment.getDisbAmount());
+					for(FinanceDisbursement curDisb:aFinScheduleData.getDisbursementDetails()){
+						if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+							continue;
+						}
+						prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
 					}
 					BigDecimal curTotDisbValue = PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(),formatter).add(prvTotDisbValue);
 					if(curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0 && finMain.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO)>0){

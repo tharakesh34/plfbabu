@@ -540,8 +540,8 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
-		if (ImplementationConstants.LIMIT_MODULE) {
-			getLimitManagement().processLoanLimit(financeDetail, false, LimitConstants.LIMIT_TYPE_CANCIL);
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+			getLimitManagement().processLoanCancel(financeDetail, false);
 		}else{
 			getLimitCheckDetails().doProcessLimits(financeDetail.getFinScheduleData().getFinanceMain(), FinanceConstants.CANCEL_UTILIZATION);
 		}

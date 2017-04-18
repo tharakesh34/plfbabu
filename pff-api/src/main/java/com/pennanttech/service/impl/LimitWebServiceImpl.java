@@ -220,7 +220,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		logger.debug("Entering");
 		WSReturnStatus returnStatus = null;
 
-		limitTransDetail.setReferenceCode(LimitConstants.LIMIT_FINANCE);
+		limitTransDetail.setReferenceCode(LimitConstants.FINANCE);
 		// validate limit transaction details
 		returnStatus = doLimitReserveValidations(limitTransDetail);
 
@@ -289,7 +289,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		// validate referenceCode
 		String referenceCode = limitTransDetail.getReferenceCode();
 		switch (referenceCode) {
-		case LimitConstants.LIMIT_FINANCE:
+		case LimitConstants.FINANCE:
 			// validate limit Reference number
 			String finReference = limitTransDetail.getReferenceNumber();
 			FinanceMain financeMain = financeMainService.getFinanceMainById(finReference, true);
@@ -311,7 +311,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				return APIErrorHandlerService.getFailedStatus("90812", valueParm);
 			}
 			break;
-		case LimitConstants.LIMIT_COMMITMENT:
+		case LimitConstants.COMMITMENT:
 			String cmtReference = limitTransDetail.getReferenceNumber();
 			int cmtCount = commitmentService.getCommitmentCountById(cmtReference);
 			if (cmtCount <= 0) {

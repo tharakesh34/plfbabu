@@ -518,8 +518,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < getFinScheduleData().getDisbursementDetails().size(); i++) {
-
 					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(i);
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+						continue;
+					}
 					if(DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0){
 
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
@@ -1491,8 +1493,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < getFinScheduleData().getDisbursementDetails().size(); i++) {
-
 					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(i);
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+						continue;
+					}
 					if(DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0){
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 						doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_disbursement.label")+" (Seq : "+curDisb.getDisbSeq()+")",
@@ -2689,6 +2693,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 						for (int k = 0; k < aFinScheduleData.getDisbursementDetails().size(); k++) {
 
 							FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(k);
+							if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+								continue;
+							}
 							if(DateUtility.compare(curDisb.getDisbDate(), aScheduleDetail.getSchDate()) == 0){
 								curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 

@@ -884,10 +884,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				BeanUtils.copyProperties(commitment, tempCommitment);
 				tempCommitment.setCmtAmount(diffAmount);
 				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, "Y", dateAppDate, event);
-				getLimitManagement().processCommitmentLimit(tempCommitment, false, LimitConstants.LIMIT_TYPE_BLOCK);
+				getLimitManagement().processCommitmentLimit(tempCommitment, false, LimitConstants.BLOCK);
 			} else {
 				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(commitment, "Y", dateAppDate, event);
-				getLimitManagement().processCommitmentLimit(commitment, false, LimitConstants.LIMIT_TYPE_BLOCK);
+				getLimitManagement().processCommitmentLimit(commitment, false, LimitConstants.BLOCK);
 			}
 
 		} catch (PFFInterfaceException e) {

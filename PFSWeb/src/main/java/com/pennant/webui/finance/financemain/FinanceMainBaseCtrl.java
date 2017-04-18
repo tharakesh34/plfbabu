@@ -946,7 +946,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		boolean limitRequired = financeType.isLimitRequired();
 
-		if (ImplementationConstants.LIMIT_MODULE) {
+		if (ImplementationConstants.LIMIT_INTERNAL) {
 			limitRequired = false;
 		}
 		if (limitRequired
@@ -2786,7 +2786,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			processLimitData();
 		}
 		if (aFinanceMain.isNew() && financeType.isLimitRequired()) {
-			if (!ImplementationConstants.LIMIT_MODULE) {
+			if (!ImplementationConstants.LIMIT_INTERNAL) {
 				checkLimitDetailsForSingleLimit();
 			}
 		}
@@ -6334,7 +6334,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			InterruptedException {
 		logger.debug("Entering");
 
-		if (!ImplementationConstants.LIMIT_MODULE) {
+		if (!ImplementationConstants.LIMIT_INTERNAL) {
 			// Checking for Limit check Authority i.e Is current Role contains limit check authority (or) Not
 			List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
 					aFinanceDetail.getFinScheduleData().getFinanceType().getFinType());

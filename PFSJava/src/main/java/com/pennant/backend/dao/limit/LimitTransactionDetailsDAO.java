@@ -9,10 +9,9 @@ public interface LimitTransactionDetailsDAO {
 
 	long save(LimitTransactionDetail limitTransactionDetail);
 
-	LimitTransactionDetail getTransaction(String referenceCode, String referenceNumber, String tranType,
-			long headerId,int schSeq);
+	LimitTransactionDetail getTransaction(String refCode, String refNo, String tranType, long headerId, int schSeq);
 
-	List<LimitTransactionDetail> getLimitTranDetails(String code, String ref,long headerId);
+	List<LimitTransactionDetail> getLimitTranDetails(String code, String ref, long headerId);
 
 	void delete(long transactionId);
 
@@ -22,4 +21,7 @@ public interface LimitTransactionDetailsDAO {
 
 	void deleteAllRuleTransactions(String type);
 
+	LimitTransactionDetail geLoantAvaliableReserve(String refNo, String tranType, long headerId);
+
+	void updateSeq(long transactionId, int schSeq);
 }

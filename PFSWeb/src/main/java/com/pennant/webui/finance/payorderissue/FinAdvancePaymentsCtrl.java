@@ -525,6 +525,11 @@ public class FinAdvancePaymentsCtrl {
 		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
 		if (loanApproved) {
 			for (FinanceDisbursement disbursement : financeDisbursement) {
+				
+				if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
+					continue;
+				}
+				
 				Date disbDate = disbursement.getDisbDate();
 				BigDecimal singletDisbursment = disbursement.getDisbAmount();
 
@@ -576,11 +581,18 @@ public class FinAdvancePaymentsCtrl {
 				if (group && seq != financeDisbursement.getDisbSeq()) {
 					continue;
 				}
+				
+				if (!group) {
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())){
+						continue;
+					}
+				}
+				
 				date = financeDisbursement.getDisbDate();
 				
 				//check is first disbursement
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
-				
+					
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());

@@ -14,7 +14,7 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_FINACTYPES				= false;
 	public static final boolean	ALLOW_CAPITALIZE				= true;
 	public static final boolean	SIA_REQUIRED					= true;						// System Internal Account Required or not
-	public static final boolean	LIMIT_MODULE					= true;						// Limit Module Exists or not
+	public static final boolean	LIMIT_INTERNAL					= true;						// Limit Module Exists or not
 	public static final boolean	ONLINE_IRL_CHECK				= false;
 
 	// Customer Modules

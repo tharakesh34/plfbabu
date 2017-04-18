@@ -7844,6 +7844,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 

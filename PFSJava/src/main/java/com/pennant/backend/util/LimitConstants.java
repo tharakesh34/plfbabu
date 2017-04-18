@@ -50,15 +50,19 @@ public class LimitConstants {
 	// Limit Institution filter
 	public static final String				LIMIT_FILTER_GLOBAL						= "global";
 
-	public static final String				LIMIT_TYPE_BLOCK						= "B";
-	public static final String				LIMIT_TYPE_UNBLOCK						= "U";
-	public static final String				LIMIT_TYPE_APPROVE						= "A";
-	public static final String				LIMIT_TYPE_CANCIL						= "C";
-	public static final String				LIMIT_TYPE_PRINPAY						= "P";
-	public static final String				LIMIT_TYPE_REPAY						= "R";
+	//reserver
+	public static final String				BLOCK									= "B";
+	//Loan reject
+	public static final String				UNBLOCK									= "U";
+	//utilised
+	public static final String				APPROVE									= "A";
+	//loan cancel
+	public static final String				CANCIL									= "C";
+	public static final String				PRINPAY									= "P";
+	public static final String				REPAY									= "R";
 
-	public static final String				LIMIT_FINANCE							= "F";
-	public static final String				LIMIT_COMMITMENT						= "C";
+	public static final String				FINANCE									= "F";
+	public static final String				COMMITMENT								= "C";
 
 	private static ArrayList<ValueLabel>	transactionType;
 
@@ -69,11 +73,12 @@ public class LimitConstants {
 		}
 
 		transactionType = new ArrayList<ValueLabel>(4);
-		transactionType.add(new ValueLabel(LIMIT_TYPE_BLOCK, "Reserved"));
-		transactionType.add(new ValueLabel(LIMIT_TYPE_APPROVE, "Approved"));
-		transactionType.add(new ValueLabel(LIMIT_TYPE_UNBLOCK, "Cancelled"));
-		transactionType.add(new ValueLabel(LIMIT_TYPE_CANCIL, "Cancelled"));
-		transactionType.add(new ValueLabel(LIMIT_TYPE_REPAY, "Payment"));
+		transactionType.add(new ValueLabel(BLOCK, "Reserved"));
+		transactionType.add(new ValueLabel(APPROVE, "Utilised"));
+		transactionType.add(new ValueLabel(UNBLOCK, "Rejected"));
+		transactionType.add(new ValueLabel(CANCIL, "Cancelled"));
+		transactionType.add(new ValueLabel(REPAY, "Payment"));
+		transactionType.add(new ValueLabel(PRINPAY, "Payment"));
 
 		return transactionType;
 	}

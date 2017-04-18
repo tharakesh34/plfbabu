@@ -142,7 +142,7 @@ public class LimitRuleManagement {
 		limitTransactionDetail.setReferenceCode("F");
 		limitTransactionDetail.setReferenceNumber(financeMain.getFinReference());
 		limitTransactionDetail.setLimitLine(limitDetails.getLimitLine());
-		limitTransactionDetail.setTransactionType(LimitConstants.LIMIT_TYPE_APPROVE);
+		limitTransactionDetail.setTransactionType(LimitConstants.APPROVE);
 		limitTransactionDetail.setTransactionDate(new Timestamp(System.currentTimeMillis()));
 		limitTransactionDetail.setOverrideFlag(false);
 		limitTransactionDetail.setTransactionAmount(financeMain.getFinAmount());

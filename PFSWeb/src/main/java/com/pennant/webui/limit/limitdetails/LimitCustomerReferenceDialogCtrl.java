@@ -145,9 +145,9 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 
 			String value = "";
 
-			if (LimitConstants.LIMIT_FINANCE.equals(limitReferenceMapping.getReferenceCode())) {
+			if (LimitConstants.FINANCE.equals(limitReferenceMapping.getReferenceCode())) {
 				value = Labels.getLabel("lable_Finance");
-			} else if (LimitConstants.LIMIT_COMMITMENT.equals(limitReferenceMapping.getReferenceCode())) {
+			} else if (LimitConstants.COMMITMENT.equals(limitReferenceMapping.getReferenceCode())) {
 				value = Labels.getLabel("lable_Commitment");
 			}
 

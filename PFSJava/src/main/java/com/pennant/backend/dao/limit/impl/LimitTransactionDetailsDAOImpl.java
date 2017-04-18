@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
+import com.pennant.backend.util.LimitConstants;
 
 public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTransactionDetail> implements
 		LimitTransactionDetailsDAO {
@@ -47,7 +48,7 @@ public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTran
 		selectSql.append(" OverrideFlag, TransactionAmount, TransactionCurrency, LimitCurrency, LimitAmount");
 		selectSql.append(", CreatedBy, CreatedOn, LastMntBy, LastMntOn");
 		selectSql.append(" From LimitTransactionDetails");
-		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND HeaderId=:HeaderId ");
+		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND HeaderId=:HeaderId order by TransactionDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		source = new MapSqlParameterSource();
@@ -102,6 +103,41 @@ public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTran
 		}
 		return null;
 	}
+	
+	
+	@Override
+	public LimitTransactionDetail geLoantAvaliableReserve(String referenceNumber, String tranType,long headerId) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReferenceCode", LimitConstants.FINANCE);
+		source.addValue("ReferenceNumber", referenceNumber);
+		source.addValue("TransactionType", tranType);
+		source.addValue("HeaderId", headerId);
+		
+		StringBuilder selectSql = new StringBuilder("Select  SUM(LimitAmount) LimitAmount");
+		selectSql.append(" From LimitTransactionDetails");
+		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND ");
+		selectSql.append("TransactionType = :TransactionType AND HeaderId=:HeaderId");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitTransactionDetail.class);
+		try {
+			LimitTransactionDetail limitTranDetail= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			if (limitTranDetail.getLimitAmount()==null) {
+				limitTranDetail.setLimitAmount(BigDecimal.ZERO);
+			}
+			return limitTranDetail;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		} finally {
+			source = null;
+			selectSql = null;
+			logger.debug("Leaving");
+		}
+		return null;
+	}
 
 	@Override
 	public long save(LimitTransactionDetail limitTransactionDetail) {
@@ -125,6 +161,21 @@ public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTran
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return limitTransactionDetail.getId();
+	}
+	
+	@Override
+	public void updateSeq(long transactionId, int schSeq) {
+		logger.debug("Entering");
+		MapSqlParameterSource map = new MapSqlParameterSource();
+		map.addValue("TransactionId", transactionId);
+		map.addValue("SchSeq", schSeq);
+
+		StringBuilder sql = new StringBuilder("update LimitTransactionDetails");
+		sql.append("  set SchSeq=:SchSeq  where TransactionId=:TransactionId ");
+		logger.debug("insertSql: " + sql.toString());
+
+		this.namedParameterJdbcTemplate.update(sql.toString(), map);
+		logger.debug("Leaving");
 	}
 
 	/**

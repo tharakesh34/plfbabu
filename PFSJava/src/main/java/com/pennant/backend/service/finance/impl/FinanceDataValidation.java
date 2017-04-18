@@ -341,7 +341,7 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
 			}
-			if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_MODULE) {
+			if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
 				/*if (StringUtils.isBlank(finMain.getFinLimitRef())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "finLimitRef";

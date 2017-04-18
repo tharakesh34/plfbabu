@@ -541,19 +541,18 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		List<FinanceDisbursement> list = schdata.getDisbursementDetails();
 		List<FinanceDisbursement> canceldDisbList = new ArrayList<FinanceDisbursement>();
 		for (FinanceDisbursement financeDisbursement : list) {
-			if (StringUtils.trimToEmpty(financeDisbursement.getRecordType()).equals(PennantConstants.RCD_DEL)) {
+			if (StringUtils.equals(financeDisbursement.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				canceldDisbList.add(financeDisbursement);
 			}
 		}
-		
+
 		for (FinanceDisbursement financeDisbursement : canceldDisbList) {
-			FinAdvancePayments advancePayments=new FinAdvancePayments();
+			FinAdvancePayments advancePayments = new FinAdvancePayments();
 			advancePayments.setFinReference(finMain.getFinReference());
-			advancePayments.setStatus(DisbursementConstants.STATUS_CANCEL);
 			advancePayments.setDisbSeq(financeDisbursement.getDisbSeq());
+			advancePayments.setStatus(DisbursementConstants.STATUS_CANCEL);
 			getFinAdvancePaymentsDAO().updateStatus(advancePayments, "");
 		}
-		
 
 	}
 

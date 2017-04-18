@@ -1572,7 +1572,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
-		aAuditHeader = processLimit(aAuditHeader,false);
+		aAuditHeader = processLimitSaveOrUpdate(aAuditHeader);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -2704,7 +2704,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
 		if(!isWIF) {
-			aAuditHeader = processLimit(aAuditHeader,true);
+			aAuditHeader = processLimitApprove(aAuditHeader);
 		}
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
@@ -2735,7 +2735,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeMain.setInsuranceAmt(BigDecimal.ZERO);
 			}
 		}	
-
+		//To maintain record Maintained status for furthur process
+		String recordMainStatus=StringUtils.trimToEmpty(financeMain.getRcdMaintainSts());
+		
 		if (!isWIF) {
 			auditHeader = executeAccountingProcess(auditHeader, curBDay);
 		}
@@ -2748,7 +2750,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		// send ConfirmReservation Request to ACP Interface and save log details
 		//======================================================================
-		if (!ImplementationConstants.LIMIT_MODULE) {
+		if (!ImplementationConstants.LIMIT_INTERNAL) {
 			if (!isWIF) {
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
 						|| StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(
@@ -3270,7 +3272,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Advance Payment Details
 				//=======================================
 				if (financeDetail.getAdvancePaymentsList() != null) {
-					if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+					if (StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
 						getFinAdvancePaymentsService().doCancel(financeDetail);
 					}else{
 						getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(), "", tranType);
@@ -4532,10 +4534,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//======================================================================
 		//Maker limit unblock should happen in the origination only
 		if (StringUtils.isEmpty(financeMain.getRcdMaintainSts())) {
-			if (ImplementationConstants.LIMIT_MODULE) {
-				getLimitManagement().processLoanLimit(financeDetail, false, LimitConstants.LIMIT_TYPE_UNBLOCK);
+			if (ImplementationConstants.LIMIT_INTERNAL) {
+				getLimitManagement().processLoanLimitOrgination(financeDetail, false, LimitConstants.UNBLOCK);
 			}else{
 				getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.CANCEL_RESERVE);
+			}
+		}else if (StringUtils.equals(financeMain.getRcdMaintainSts(),FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			if (ImplementationConstants.LIMIT_INTERNAL) {
+				getLimitManagement().processLoanDisbursments(financeDetail, false, LimitConstants.CANCIL);
 			}
 		}
 
@@ -7299,51 +7305,111 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	
 	
-	private AuditHeader processLimit(AuditHeader aAuditHeader,boolean approve) {
+	private AuditHeader processLimitSaveOrUpdate(AuditHeader aAuditHeader) {
 
-		if (ImplementationConstants.LIMIT_MODULE) {
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+
 			FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain finmain = financeDetail.getFinScheduleData().getFinanceMain();
+			FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
 			String nextrole = finmain.getNextRoleCode();
 			String role = finmain.getRoleCode();
-			
-			if (approve) {
-				if(finmain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) ||
-						StringUtils.trimToEmpty(finmain.getRcdMaintainSts()).equals(FinanceConstants.FINSER_EVENT_ADDDISB)){
+			String moduleType = StringUtils.trimToEmpty(finmain.getRcdMaintainSts());
+			String prodCategory = StringUtils.trimToEmpty(finType.getProductCategory());
 
-					List<ErrorDetails> errorDetails=getLimitManagement().processLoanLimit(financeDetail, aAuditHeader.isOveride(), LimitConstants.LIMIT_TYPE_APPROVE);					
+			//process block
+			if (!financeDetail.isActionSave() && !StringUtils.equals(nextrole, role)) {
+				// Checking for Limit check Authority i.e Is current Role contains limit check authority (or) Not
+				List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
+						finmain.getFinType());
+				if (limitCheckList == null || limitCheckList.isEmpty()) {
+					return aAuditHeader;
+				}
+
+				boolean validateReserve = false;
+				for (FinanceReferenceDetail finRefDetail : limitCheckList) {
+					if (StringUtils.equals(finRefDetail.getLovDescNamelov(), FinanceConstants.PRECHECK)) {
+						validateReserve = true;
+						break;
+					}
+				}
+				if (validateReserve) {
+
+					if ("".equals(moduleType) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleType)) {
+						List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(
+								financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK);
+						if (!errorDetails.isEmpty()) {
+							aAuditHeader.setErrorList(errorDetails);
+						}
+					} else if (moduleType.equals(FinanceConstants.FINSER_EVENT_ADDDISB)
+							&& !prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+						if (finmain.getFinAssetValue().compareTo(finmain.getFinCurrAssetValue()) == 0) {
+							List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(
+									financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK);
+							if (!errorDetails.isEmpty()) {
+								aAuditHeader.setErrorList(errorDetails);
+							}
+						}
+
+					}
+				}
+			}
+		}
+		aAuditHeader = nextProcess(aAuditHeader);
+		return aAuditHeader;
+	}
+
+	private AuditHeader processLimitApprove(AuditHeader aAuditHeader) {
+
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+
+			FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+			FinanceMain finmain = financeDetail.getFinScheduleData().getFinanceMain();
+			FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+			String moduleType = StringUtils.trimToEmpty(finmain.getRcdMaintainSts());
+			String prodCategory = StringUtils.trimToEmpty(finType.getProductCategory());
+			//Origination 
+			if ("".equals(moduleType) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleType)) {
+
+				String transType = "";
+				if (prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+					transType = LimitConstants.BLOCK;
+				} else {
+					transType = LimitConstants.APPROVE;
+				}
+				List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(financeDetail,
+						aAuditHeader.isOveride(), transType);
+				if (!errorDetails.isEmpty()) {
+					aAuditHeader.setErrorList(errorDetails);
+				}
+			} else {
+
+				if (moduleType.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+					List<ErrorDetails> errorDetails = getLimitManagement().processLimitIncrease(financeDetail,
+							aAuditHeader.isOveride());
 					if (!errorDetails.isEmpty()) {
 						aAuditHeader.setErrorList(errorDetails);
 					}
-				}
-				
-			}else{
-				if (!financeDetail.isActionSave() && !StringUtils.equals(nextrole, role)) {
-					// Checking for Limit check Authority i.e Is current Role contains limit check authority (or) Not
-					List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
-							finmain.getFinType());
-					if (limitCheckList == null || limitCheckList.isEmpty()) {
-						return aAuditHeader;
+				} else {
+
+					String tranType = "";
+
+					if (moduleType.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+						tranType = LimitConstants.APPROVE;
+					} else if (moduleType.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+						tranType = LimitConstants.UNBLOCK;
 					}
 
-					boolean validateReserve = false;
-
-					for (FinanceReferenceDetail finRefDetail : limitCheckList) {
-						if (StringUtils.equals(finRefDetail.getLovDescNamelov(), FinanceConstants.PRECHECK)) {
-							validateReserve = true;
-							break;
-						}
-					}
-					if (validateReserve) {
-						List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimit(financeDetail,
-								aAuditHeader.isOveride(), LimitConstants.LIMIT_TYPE_BLOCK);
+					if (!StringUtils.isBlank(tranType)) {
+						List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(financeDetail,
+								aAuditHeader.isOveride(), tranType);
 						if (!errorDetails.isEmpty()) {
 							aAuditHeader.setErrorList(errorDetails);
 						}
 					}
 				}
-			}
 
+			}
 		}
 		aAuditHeader = nextProcess(aAuditHeader);
 		return aAuditHeader;

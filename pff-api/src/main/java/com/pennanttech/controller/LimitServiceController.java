@@ -246,8 +246,8 @@ public class LimitServiceController {
 	 */
 	public WSReturnStatus doReserveLimit(LimitTransactionDetail limitTransDetail) {
 		WSReturnStatus status = new WSReturnStatus();
-		if (StringUtils.equals(limitTransDetail.getReferenceCode(), LimitConstants.LIMIT_FINANCE)) {
-			status = processLimits(limitTransDetail, LimitConstants.LIMIT_TYPE_BLOCK);
+		if (StringUtils.equals(limitTransDetail.getReferenceCode(), LimitConstants.FINANCE)) {
+			status = processLimits(limitTransDetail, LimitConstants.BLOCK);
 		} else {
 			logger.info("Received Other than finance Reference Code:" + limitTransDetail.getReferenceCode());
 			return APIErrorHandlerService.getFailedStatus();
@@ -264,7 +264,7 @@ public class LimitServiceController {
 	 * @return
 	 */
 	public WSReturnStatus cancelReserveLimit(LimitTransactionDetail limitTransDetail) {
-		return processLimits(limitTransDetail, LimitConstants.LIMIT_TYPE_UNBLOCK);
+		return processLimits(limitTransDetail, LimitConstants.UNBLOCK);
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class LimitServiceController {
 		List<ErrorDetails> errorDetails = null;
 		try {
 			// process limits
-			errorDetails = limitManagement.processLoanLimit(financeDetail, false, lmtTransType);
+			errorDetails = limitManagement.processLoanLimitOrgination(financeDetail, false, lmtTransType);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return APIErrorHandlerService.getFailedStatus();

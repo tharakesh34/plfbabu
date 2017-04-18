@@ -874,8 +874,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		// send Limit Amendment Request to ACP Interface and save log details
 		//=======================================
 
-		if (ImplementationConstants.LIMIT_MODULE) {
-			getLimitManagement().processLoanRepay(repayData, false, LimitConstants.LIMIT_TYPE_REPAY);
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+			getLimitManagement().processLoanRepay(repayData, false);
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeMain,	FinanceConstants.AMENDEMENT);
 		}
