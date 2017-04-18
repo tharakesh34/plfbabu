@@ -5530,6 +5530,11 @@ public class ScheduleCalculator {
 				break;
 			}
 		}
+		
+		// If it is first time(cases applicable for OD) , then there are no Repay Instructions
+		if (StringUtils.isBlank(schdMethod)) {
+			schdMethod = finMain.getScheduleMethod();
+		}
 
 		finMain.setRecalSchdMethod(schdMethod);
 
