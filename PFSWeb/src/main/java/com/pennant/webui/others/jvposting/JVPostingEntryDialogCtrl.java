@@ -366,17 +366,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"JVPostingEntryDialog");
-			} else {
-				getUserWorkspace().allocateRoleAuthorities("JVPostingEntryDialog");
 			}
 
 			/* set components visible dependent of the users rights */
 			if (arguments.containsKey("roleCode")) {
-				getUserWorkspace().allocateRoleAuthorities(
-						arguments.get("roleCode").toString(), "JVPostingEntryDialog");
+				setRole((String) arguments.get("roleCode"));
 			}
+			
+			getUserWorkspace().allocateAuthorities("JVPostingEntryDialog",getRole());
 			doCheckRights();
 
 			// set Field Properties
@@ -833,7 +830,6 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		// Assigning Rights based on Module Type
 		if (!enqModule || rePostingModule) {

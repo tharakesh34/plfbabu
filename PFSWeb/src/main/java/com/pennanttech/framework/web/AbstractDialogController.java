@@ -232,7 +232,6 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	protected void deAllocateAuthorities(String pageRightName) {
 		if (StringUtils.isNotEmpty(pageRightName)) {
 			getUserWorkspace().deAllocateAuthorities(pageRightName);
-			getUserWorkspace().deAllocateRoleAuthorities(pageRightName);
 		}
 	}
 	

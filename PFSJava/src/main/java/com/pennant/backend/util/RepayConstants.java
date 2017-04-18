@@ -90,5 +90,24 @@ public class RepayConstants {
 	public static final String	ALLOCATION_INS			= "INS";
 	public static final String	ALLOCATION_MANADV		= "MANADV";
 	
+	// Receipt Types
+	public static final String	RECEIPTTYPE_RECIPT		= "R";
+	public static final String	RECEIPTTYPE_PAYMENT		= "P";
+	
+	// Receipt Types
+	public static final String	RECEIPTTO_FINANCE		= "F";
+	public static final String	RECEIPTTO_CUSTOMER		= "C";
+	
+	// Receipt Payment Type
+	public static final String	PAYTYPE_CASH			= "CASH";
+	public static final String	PAYTYPE_CHEQUE			= "CHEQUE";
+	public static final String	PAYTYPE_DD				= "DD";
+	public static final String	PAYTYPE_NEFT			= "NEFT";
+	public static final String	PAYTYPE_RTGS			= "RTGS";
+	public static final String	PAYTYPE_IMPS			= "IMPS";
+	public static final String	PAYTYPE_EXCESS			= "EXCESS";
+	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
+	public static final String	PAYTYPE_PAYABLE			= "PAYABLE";
+	
 
 }

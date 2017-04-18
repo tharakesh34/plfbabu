@@ -31,6 +31,7 @@ import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -46,6 +47,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -75,7 +77,6 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -106,6 +107,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private RepayCalculator					repayCalculator;
 	private RuleExecutionUtil				ruleExecutionUtil;
 	private LimitManagement					limitManagement;
+	
+	private FinExcessAmountDAO				finExcessAmountDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -160,6 +163,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			//=======================================
 			financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(financeType.getFinType(),
 					procEdtEvent, userRole));
+			
 			// Finance Check List Details 
 			//=======================================
 			getCheckListDetailService().setFinanceCheckListDetails(receiptData.getFinanceDetail(),
@@ -183,10 +187,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Prepare List of Receipt Sequence ID and fetch List of Repay Headers
 				
 				//Using List of Repay Headers, prepare list of RepayID's and fetch List of Repay Schedules
-				
-				//Fee Rule Details
-				scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false,
-						"_Temp"));
 
 				//Finance Document Details
 				financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
@@ -195,49 +195,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			} else {
 
 				//Repay Header Details
-				receiptData.setReceiptHeader(null);
-
-				//Finance Fee Charge Details
-				//=======================================
-				List<Long> accSetIdList = new ArrayList<Long>();
-				Long accSetId = returnAccountingSetid(eventCode, financeType);
-				if(accSetId != Long.MIN_VALUE){
-					accSetIdList.add(Long.valueOf(accSetId));
-				}
-				accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(financeType.getFinType(),
-						procEdtEvent, null, "_ACView"));
-				if (!accSetIdList.isEmpty()) {
-					financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode,
-							"_AView", 0));
-				}
-
+				FinReceiptHeader receiptHeader = new FinReceiptHeader();
+				receiptData.setReceiptHeader(receiptHeader);
+				
+				// Fetch Excess Amount Details
+				receiptData.getReceiptHeader().setExcessAmounts(getFinExcessAmountDAO().getExcessAmountsByRef(finReference));
+				
 			}
 		}
 
 		logger.debug("Leaving");
 		return receiptData;
-	}
-
-	/**
-	 * Get AccountingSet Id based on event code.<br>
-	 * 
-	 * @param eventCode
-	 * @param financeType
-	 * @return
-	 */
-	private Long returnAccountingSetid(String eventCode, FinanceType financeType) {
-		logger.debug("Entering ");
-		// Execute entries depend on Finance Event
-		Long accountingSetId = Long.MIN_VALUE;
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYSTL)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
-		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYPAY)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.MODULEID_FINTYPE);
-		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_REPAY)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE);
-		}
-		logger.debug("Leaving");
-		return accountingSetId;
 	}
 
 	/**
@@ -1887,5 +1855,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setLimitManagement(LimitManagement limitManagement) {
 		this.limitManagement = limitManagement;
+	}
+
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

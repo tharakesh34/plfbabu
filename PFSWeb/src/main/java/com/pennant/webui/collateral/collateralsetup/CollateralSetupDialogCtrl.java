@@ -316,7 +316,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			}
 			//Set Listbox hights...
 			this.listBoxAssignmentDetail.setHeight(borderLayoutHeight - 210 + "px");
-
+			this.listBoxMovements.setHeight(borderLayoutHeight - 210 + "px");
 			
 			if ("E".equals(module)) {
 				moduleType = PennantConstants.MODULETYPE_ENQ;

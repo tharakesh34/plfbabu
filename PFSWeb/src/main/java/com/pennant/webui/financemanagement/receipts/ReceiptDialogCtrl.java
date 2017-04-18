@@ -83,7 +83,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -92,6 +91,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
+import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.service.AccountInterfaceService;
@@ -124,6 +124,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.EarlySettlementReportData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -151,7 +152,6 @@ import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryServic
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
@@ -179,7 +179,6 @@ import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -234,15 +233,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected CurrencyBox									receiptAmount;
 	protected Combobox										allocationMethod;
 	protected Combobox										effScheduleMethod;
+	
+	protected Groupbox										gb_CashDetails;
+	protected Caption										caption_cashDetail;
+	protected AccountSelectionBox							fundingAccount;
+	protected Datebox										cashReceivedDate;
+	protected Textbox										remarks;
 
 	protected Groupbox										gb_ChequeDetails;
 	protected Caption										caption_chequeDetail;
 	protected ExtendedCombobox								bankCode;
-	protected Textbox										liabilityHoldName;
+	protected Textbox										favourName;
 	protected Textbox										payableLoc;
 	protected Textbox										printingLoc;
 	protected Datebox										valueDate;
-	protected Textbox										llReferenceNo;
+	protected Textbox										favourNo;
 
 	protected Groupbox										gb_NeftDetails;
 	protected Caption										caption_neftDetail;
@@ -269,6 +274,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	protected Listbox										listBoxPastdues;
 	protected Listbox										listBoxManualAdvises;
+	
+	// Payment Schedule Details
+	protected Textbox										payment_finType;
+	protected Textbox										payment_finReference;
+	protected Textbox										payment_finCcy;
+	protected Textbox										payment_CustCIF;
+	protected Textbox										payment_finBranch;
+	protected Decimalbox									payment_paidByCustomer;
 
 	// List Header Details on payent Details
 	protected Listheader									listheader_InsPayment;
@@ -445,7 +458,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				doWriteBeanToComponents();
 
 				this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
-				this.listBoxPayment.setHeight(getListBoxHeight(1));
+				this.listBoxPayment.setHeight(getListBoxHeight(6));
 				this.listBoxSchedule.setHeight(getListBoxHeight(6));
 				this.receiptDetailsTab.setSelected(true);
 
@@ -472,7 +485,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("ReceiptDialog", getRole(), menuItemRightName);
+		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
 
 		this.btnReceipt.setVisible(getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
 		this.btnChangeReceipt.setVisible(getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
@@ -531,6 +544,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_CustCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receipt_paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.receiptAmount.setProperties(true , formatter);
+		
+		this.fundingAccount.setButtonVisible(false);
+		this.fundingAccount.setMandatory(true);
+		this.fundingAccount.setAcountDetails("", "", true);
+		this.cashReceivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.remarks.setMaxlength(100);
 
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
@@ -539,9 +558,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
 
-		this.liabilityHoldName.setMaxlength(100);
+		this.favourName.setMaxlength(100);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.llReferenceNo.setMaxlength(50);
+		this.favourNo.setMaxlength(50);
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
@@ -580,6 +599,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_receiptAmount"), this.receiptAmount);
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 		readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
+		
+		// NEFT/RTGS/IMPS Details 
+		readOnlyComponent(isReadOnly("ReceiptDialog_bankBranchID"), this.bankBranchID);
+		readOnlyComponent(isReadOnly("ReceiptDialog_beneficiaryAccNo"), this.beneficiaryAccNo);
+		readOnlyComponent(isReadOnly("ReceiptDialog_beneficiaryName"), this.beneficiaryName);
+		readOnlyComponent(isReadOnly("ReceiptDialog_phoneCountryCode"), this.phoneCountryCode);
+		readOnlyComponent(isReadOnly("ReceiptDialog_phoneAreaCode"), this.phoneAreaCode);
+		readOnlyComponent(isReadOnly("ReceiptDialog_phoneNumber"), this.phoneNumber);
+
+		// Cheque/DD Details
+		readOnlyComponent(isReadOnly("ReceiptDialog_bankCode"), this.bankCode);
+		readOnlyComponent(isReadOnly("ReceiptDialog_liabilityHoldName"), this.favourName);
+		this.favourNo.setReadonly(true);
+		readOnlyComponent(isReadOnly("ReceiptDialog_payableLoc"), this.payableLoc);
+		readOnlyComponent(isReadOnly("ReceiptDialog_printingLoc"), this.printingLoc);
+		readOnlyComponent(isReadOnly("ReceiptDialog_valueDate"), this.valueDate);
+		
+		// Cash Details
+		readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
+		readOnlyComponent(isReadOnly("ReceiptDialog_cashReceivedDate"), this.cashReceivedDate);
+		readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
+
 		logger.debug("Leaving");
 	}
 
@@ -694,42 +735,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		this.allocation_paidByCustomer.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
 
-		//Fill Schedule data
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		// Repayment Schedule Basic Details
+		this.payment_finType.setValue(getRepayMain().getFinType());
+		this.payment_finReference.setValue(getRepayMain().getFinReference());
+		this.payment_finCcy.setValue(getRepayMain().getFinCcy());
+		this.payment_finBranch.setValue(getRepayMain().getFinBranch());
+		if(customer != null){
+			this.payment_CustCIF.setValue(customer.getCustCIF());
+		}
+		this.payment_paidByCustomer.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
 
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				if (getReceiptHeader() != null) {
-					if (!isChgReceipt) {
-						Events.sendEvent("onClick$btnCalcReceipts", this.window_ReceiptDialog, isChgReceipt);
-						this.btnCalcReceipts.setVisible(false);
-						this.btnChangeReceipt.setVisible(false);
-					} else {
-						MessageUtil.showErrorMessage("Repay Account ID must Exist.");
-						return true;
-					}
-				} else {
-					//doFillRepaySchedules(getRepaySchdList());
-				}
+		// On Loading Data Render for Schedule
+		if (!isChgReceipt) {
+			if (getReceiptHeader() != null) {
+				this.btnCalcReceipts.setDisabled(true);
 			}
-
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-				Events.sendEvent("onClick$btnCalcReceipts", this.window_ReceiptDialog, isChgReceipt);
-
-				this.btnCalcReceipts.setVisible(true);
-				this.btnChangeReceipt.setVisible(false);
-				this.btnReceipt.setVisible(false);
-			}
-
+			//doFillRepaySchedules(getRepaySchdList());
 		} else {
-			if (!isChgReceipt) {
-				if (getReceiptHeader() != null) {
-					this.btnCalcReceipts.setDisabled(true);
-				}
-				//doFillRepaySchedules(getRepaySchdList());
-			} else {
-				//doFillRepaySchedules(receiptData.getRepayScheduleDetails());
-			}
+			//doFillRepaySchedules(receiptData.getRepayScheduleDetails());
 		}
 
 		logger.debug("Leaving");
@@ -777,7 +800,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doClose(this.btnReceipt.isVisible());
 	}
 
-
 	/**
 	 * Method for calculation of Schedule Repayment details List of data
 	 * 
@@ -786,8 +808,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
 	 */
-	public void onClick$btnCalcReceipts(Event event) throws InterruptedException, WrongValueException,
-	PFFInterfaceException {
+	public void onClick$btnCalcReceipts(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException {
 		logger.debug("Entering" + event.toString());
 
 		boolean isChgRpy = false;
@@ -795,79 +816,31 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			isChgRpy = (Boolean) event.getData();
 		}
 
-		if (isValid(isChgRpy, false)) {
+		// Validate Required Fields Data
+		if (!isValid(isChgRpy, false)) {
+			return;
+		}
 
-			FinReceiptData repayData = null;
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-				Cloner cloner = new Cloner();
-				List<FinanceScheduleDetail> finschDetailList = cloner.deepClone(getFinanceDetail().getFinScheduleData()
-						.getFinanceScheduleDetails());
-				repayData = calculateRepayments(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-						finschDetailList, false, null, null);
+		FinReceiptData receiptData = null;
+		Date valueDate = DateUtility.getAppDate();
+		receiptData = calculateRepayments(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), false, null, valueDate);
 
-			} else {
-				Date valueDate = null;
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-					//valueDate = this.earlySettlementDate.getValue();
-				}
-				repayData = calculateRepayments(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), false, null, valueDate);
-			}
-
-			if (repayData.getRepayMain().isEarlyPay() && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-
-				// Show a confirm box
-				final String msg = Labels.getLabel("label_EarlypayEffectOnSchedule_Method_Confirm", 
-						new String[]{""});
-				final String title = Labels.getLabel("message.Deleting.Record");
-				MultiLineMessageBox.doSetTemplate();
-
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.YES) {
-					logger.debug("Modify Effective Schedule Method: Yes");
-
-					final HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("manualPaymentDialogCtrl", this);
-					map.put("repayData", repayData);
-					Executions.createComponents(
-							"/WEB-INF/pages/FinanceManagement/Payments/EarlypayEffectOnSchedule.zul",
-							this.window_ReceiptDialog, map);
-
-				} else {
-					logger.debug("Modify Effective Schedule Method: No");
-					setEarlyRepayEffectOnSchedule(repayData);
-				}
-
-			} else {
-				setRepayDetailData(repayData);
-			}
-
+		if (receiptData.getRepayMain().isEarlyPay() && StringUtils.equals(getComboboxValue(this.receiptPurpose),
+				FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			setEarlyRepayEffectOnSchedule(receiptData);
+		} else {
+			setRepayDetailData(receiptData);
 		}
 
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
-	 * Method for Fill Unpaid Schedule Term for Selection of Paid Term
-	 * 
+	 * Method for Processing Calculation button visible , if amount modified
 	 * @param event
 	 */
-	public void onChange$earlySettlementDate(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		if (this.moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			//Recalculation for Repayment Schedule Details
-			Events.sendEvent("onClick$btnCalcReceipts", this.window_ReceiptDialog, false);
-
-			this.btnCalcReceipts.setVisible(false);
-			this.btnChangeReceipt.setVisible(false);
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onFulfill$rpyAmount(Event event) {
+	public void onFulfill$receiptAmount(Event event) {
 		logger.debug("Entering");
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnReceipt.setDisabled(true);
@@ -915,48 +888,45 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 	}
 
+	/**
+	 * Method for Processing Captured details based on Receipt Mode
+	 * @param event
+	 */
 	public void onChange$receiptMode(Event event) {
 		String dType = this.receiptMode.getSelectedItem().getValue().toString();
 		checkByReceiptMode(dType);
 	}
 
 	public void checkByReceiptMode(String recMode) {
-		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select)) {
-			gb_ChequeDetails.setVisible(false);
-			gb_NeftDetails.setVisible(false);
-			return;
-		} else if (recMode.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-				|| recMode.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
-			gb_ChequeDetails.setVisible(true);
-			gb_NeftDetails.setVisible(false);
-			this.bankBranchID.setValue("");
-			this.bankBranchID.setDescription("");
-			this.bank.setValue("");
-			this.city.setValue("");
-			this.branch.setValue("");
-			this.beneficiaryAccNo.setValue("");
-			this.beneficiaryName.setValue("");
-			this.phoneCountryCode.setValue("");
-			this.phoneAreaCode.setValue("");
-			this.phoneNumber.setValue("");
-			if (recMode.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
-				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
+		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
+				StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
+			this.gb_ChequeDetails.setVisible(false);
+			this.gb_NeftDetails.setVisible(false);
+			this.gb_CashDetails.setVisible(false);
+		} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
+				|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
+			this.caption_chequeDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
+			this.gb_ChequeDetails.setVisible(true);
+			this.gb_NeftDetails.setVisible(false);
+			this.gb_CashDetails.setVisible(false);
+			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
+				readOnlyComponent(isReadOnly("ReceiptDialog_printingLoc"), this.printingLoc);
 			} else {
-				this.printingLoc.setValue("");
 				readOnlyComponent(true, this.printingLoc);
 			}
 
 			this.btnGetCustBeneficiary.setVisible(false);
+		} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
+			this.caption_cashDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
+			this.gb_ChequeDetails.setVisible(false);
+			this.gb_NeftDetails.setVisible(false);
+			this.gb_CashDetails.setVisible(true);
 		} else {
-			gb_NeftDetails.setVisible(true);
-			gb_ChequeDetails.setVisible(false);
-			this.bankCode.setValue("");
-			this.bankCode.setDescription("");
-			this.liabilityHoldName.setValue("");
-			this.payableLoc.setValue("");
-			this.printingLoc.setValue("");
-			this.valueDate.setText("");
-			this.btnGetCustBeneficiary.setVisible(!isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
+			this.caption_neftDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
+			this.gb_NeftDetails.setVisible(true);
+			this.gb_ChequeDetails.setVisible(false);
+			this.gb_CashDetails.setVisible(false);
+			this.btnGetCustBeneficiary.setVisible(!isReadOnly("ReceiptDialog_bankBranchID"));
 		}
 	}
 
@@ -1219,15 +1189,92 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		getReceiptData().getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
 		getReceiptData().getRepayMain().setProfitPayNow(BigDecimal.ZERO);
-		receiptData = getReceiptCalculator().initiateReceipt(getReceiptData(), financeMain, finSchDetails, isReCal, method, valueDate, moduleDefiner);
-
+		
+		// Prepare Receipt Details Data
+		FinReceiptHeader receiptHeader = doWriteComponentsToBean();
+		
+		// Basic Receipt Mode Details
+		FinReceiptDetail receiptDetail = null;
+		if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())){
+			receiptDetail = new FinReceiptDetail();
+			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
+			receiptDetail.setPayAgainstID(0);
+			receiptDetail.setAmount(receiptHeader.getReceiptAmount());
+			receiptDetail.setBankCode(this.bankCode.getValue());
+			receiptDetail.setFavourName(this.favourName.getValue());
+			receiptDetail.setFavourNumber(this.favourNo.getValue());
+			receiptDetail.setValueDate(this.valueDate.getValue());
+			receiptDetail.setReceivedDate(this.valueDate.getValue());
+			receiptDetail.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
+			receiptDetail.setAcHolderName(this.beneficiaryName.getValue());
+			receiptDetail.setAccountNo(this.beneficiaryAccNo.getValue());
+			receiptDetail.setPhoneCountryCode(this.phoneCountryCode.getValue());
+			receiptDetail.setPhoneAreaCode(this.phoneAreaCode.getValue());
+			receiptDetail.setPhoneSubCode(this.phoneNumber.getValue());
+			receiptDetail.setStatus("");
+			receiptDetail.setRemarks(this.remarks.getValue());
+			
+			receiptHeader.getReceiptDetails().add(receiptDetail);
+		}
+		
+		// Excess Amount Receipt Detail
+		receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EXCESS);
+		receiptDetail.setPayAgainstID(0);
+		receiptDetail.setAmount(receiptHeader.getReceiptAmount());
+		receiptDetail.setBankCode(this.bankCode.getValue());
+		receiptDetail.setFavourName(this.favourName.getValue());
+		receiptDetail.setFavourNumber(this.favourNo.getValue());
+		receiptDetail.setValueDate(this.valueDate.getValue());
+		receiptDetail.setReceivedDate(this.valueDate.getValue());
+		receiptDetail.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
+		receiptDetail.setAcHolderName(this.beneficiaryName.getValue());
+		receiptDetail.setAccountNo(this.beneficiaryAccNo.getValue());
+		receiptDetail.setPhoneCountryCode(this.phoneCountryCode.getValue());
+		receiptDetail.setPhoneAreaCode(this.phoneAreaCode.getValue());
+		receiptDetail.setPhoneSubCode(this.phoneNumber.getValue());
+		receiptDetail.setStatus("");
+		receiptDetail.setRemarks(this.remarks.getValue());
+		receiptHeader.getReceiptDetails().add(receiptDetail);
+		
+		// EMI InAdvance Receipt Mode
+		receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+		receiptDetail.setPayAgainstID(0);
+		receiptDetail.setAmount(receiptHeader.getReceiptAmount());
+		receiptDetail.setBankCode("");
+		receiptDetail.setFavourName("");
+		receiptDetail.setFavourNumber("");
+		receiptDetail.setValueDate(this.valueDate.getValue());
+		receiptDetail.setReceivedDate(this.valueDate.getValue());
+		receiptDetail.setBankBranchID(0);
+		receiptDetail.setAcHolderName("");
+		receiptDetail.setAccountNo("");
+		receiptDetail.setPhoneCountryCode("");
+		receiptDetail.setPhoneAreaCode("");
+		receiptDetail.setPhoneSubCode("");
+		receiptDetail.setStatus("");
+		receiptDetail.setRemarks(this.remarks.getValue());
+		receiptHeader.getReceiptDetails().add(receiptDetail);
+		
+		// Payable Advise Receipt Modes TODO
+		
+		
+		receiptData = getReceiptCalculator().initiateReceipt(getReceiptData(), financeMain, 
+				finSchDetails, isReCal, method, valueDate, getComboboxValue(this.receiptPurpose));
 		setReceiptData(receiptData);
 
 		logger.debug("Leaving");
 		return receiptData;
 	}
 
-	private void setRepayDetailData(FinReceiptData repayData) throws InterruptedException {
+	private void setRepayDetailData(FinReceiptData receiptData) throws InterruptedException {
 		logger.debug("Entering");
 
 		//Repay Schedule Data rebuild
@@ -1795,44 +1842,29 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	private FinReceiptHeader doWriteComponentsToBean(boolean isSchdRegenerated) {
+	private FinReceiptHeader doWriteComponentsToBean() {
 		logger.debug("Entering");
-
-
+		
+		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		
 		FinReceiptHeader header = getReceiptHeader();
-		/*int finFormatter =CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		if (header == null || (isSchdRecal && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY))) {
-			header = new FinReceiptHeader();
-			header.setSchdRegenerated(isSchdRegenerated);
-		}
-
+		header.setReceiptDate(DateUtility.getAppDate());
+		header.setReceiptType("R");
+		header.setRecAgainst("F");
 		header.setReference(this.finReference.getValue());
-		Date curBDay = DateUtility.getAppDate();
-		header.setValueDate(curBDay);
-		header.setFinEvent(moduleDefiner);
-		header.setRepayAmount(PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(), finFormatter));
-		header.setPriAmount(PennantApplicationUtil.unFormateAmount(this.priPayment.getValue(), finFormatter));
-		header.setPftAmount(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(), finFormatter));
-		header.setTotalRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), finFormatter));
-		header.setTotalWaiver(PennantApplicationUtil.unFormateAmount(this.totWaivedAmt.getValue(), finFormatter));
-		header.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(this.repayAccount.getValue()));
-		header.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), finFormatter));
-		header.setTotalIns(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), finFormatter));
-		header.setTotalSchdFee(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), finFormatter));
-		header.setTotalSuplRent(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), finFormatter));
-		header.setTotalIncrCost(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), finFormatter));
-		header.setEarlyPayEffMtd(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString());
-		header.setEarlyPayDate(this.earlySettlementDate.getValue());
-		header.setPayApportionment(this.paymentApportionment.getSelectedItem().getValue().toString());
-		header.setSchdRegenerated(isSchdRegenerated);
-		getFinanceDetail().setFinRepayHeader(header);*/
+		header.setReceiptPurpose(getComboboxValue(receiptPurpose));
+		header.setReceiptMode(getComboboxValue(receiptMode));
+		header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));
+		header.setAllocationType(getComboboxValue(allocationMethod));
+		header.setReceiptAmount(PennantApplicationUtil.unFormateAmount(receiptAmount.getValidateValue(), finFormatter));
+		header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
 		logger.debug("Leaving");
 		return header;
 	}
 
 	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
 	IllegalAccessException, InvocationTargetException {
-		this.doWriteComponentsToBean(false);
+		this.doWriteComponentsToBean();
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
 			getCustomerDialogCtrl().doSetLabels(getFinBasicDetails());
@@ -1849,7 +1881,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void onSelectAgreementDetailTab(ForwardEvent event) throws IllegalAccessException,
 	InvocationTargetException, InterruptedException, ParseException {
-		this.doWriteComponentsToBean(false);
+		this.doWriteComponentsToBean();
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
 			getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(), custDetailTab, false);
@@ -2592,8 +2624,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Date curBussDate = DateUtility.getAppDate();
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
 				&& curBussDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
-			MessageUtil
-			.showErrorMessage(" Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
+			MessageUtil.showErrorMessage(" Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
 			return false;
 		}
 

@@ -81,7 +81,7 @@
 							label="${c:l('label_ReceiptDialog_ReceiptDetails')}" />
 						<tab id="allocationDetailsTab"
 							label="${c:l('label_ReceiptDialog_AllocationDetails')}" />
-						<tab id="repaymentDetailsTab" visible="false"
+						<tab id="repaymentDetailsTab"
 							label="${c:l('label_ReceiptDialog_RepaymentDetails')}" />
 						<tab id="effectiveScheduleTab"
 							label="${c:l('label_ReceiptDialog_EffectiveSchedule')}"
@@ -493,7 +493,7 @@
 													value="${c:l('label_ReceiptDialog_ReceiptPurpose.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="receiptPurpose" width="180px" readonly="true" />
 												</hbox>
@@ -501,7 +501,7 @@
 													value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="excessAdjustTo" width="180px" readonly="true" />
 												</hbox>
@@ -511,7 +511,7 @@
 													value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="receiptMode" width="180px" readonly="true" />
 												</hbox>
@@ -525,7 +525,7 @@
 													value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="allocationMethod" width="180px" readonly="true" />
 												</hbox>
@@ -533,9 +533,53 @@
 													value="${c:l('label_ReceiptDialog_EffecScheduleMethod.value')}" />
 												<hbox>
 													<space
-														spacing="2px" />
+														spacing="2px" sclass="mandatory" />
 													<combobox
 														id="effScheduleMethod" width="180px" readonly="true" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_CashDetails"
+									visible="false">
+									<caption id="caption_cashDetail" />
+									<grid fixedLayout="true"
+										sclass="GridLayoutNoBorder" style="border:0px;">
+										<columns>
+											<column width="200px" />
+											<column />
+											<column width="200px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													id="label_ReceiptDialog_FundingAccount"
+													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
+												<accountSelectionBox
+													id="fundingAccount" />
+												<label
+													id="label_ReceiptDialog_CashReceivedDate"
+													value="${c:l('label_ReceiptDialog_CashReceivedDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_CashReceivedDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="cashReceivedDate" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_Remarks"
+													value="${c:l('label_ReceiptDialog_Remarks.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_Remarks">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<textbox
+														id="remarks"  />
 												</hbox>
 											</row>
 										</rows>
@@ -560,14 +604,14 @@
 												<extendedcombobox
 													id="bankCode" />
 												<label
-													id="label_ReceiptDialog_liabilityHoldName"
-													value="${c:l('label_ReceiptDialog_LiabilityHoldName.value')}" />
+													id="label_ReceiptDialog_favourName"
+													value="${c:l('label_ReceiptDialog_favourName.value')}" />
 												<hbox
 													id="hbox_ReceiptDialog_liabilityHoldName">
 													<space spacing="2px"
 														sclass="mandatory" />
 													<textbox
-														id="liabilityHoldName" />
+														id="favourName" />
 												</hbox>
 											</row>
 											<row>
@@ -604,14 +648,14 @@
 														id="valueDate" />
 												</hbox>
 												<label
-													id="label_ReceiptDialog_llReferenceNo"
-													value="${c:l('label_ReceiptDialog_LLReferenceNo.value')}" />
+													id="label_ReceiptDialog_favourNo"
+													value="${c:l('label_ReceiptDialog_favourNo.value')}" />
 												<hbox
-													id="hbox_ReceiptDialog_llReferenceNo">
+													id="hbox_ReceiptDialog_favourNo">
 													<space
 														spacing="2px" />
 													<textbox
-														id="llReferenceNo" />
+														id="favourNo" />
 												</hbox>
 											</row>
 										</rows>
@@ -714,7 +758,7 @@
 										label="${c:l('label_ReceiptDialog_ExcessAmounts')}" />
 									<listbox id="listBoxExcess"
 										fixedLayout="true" sizedByContent="true" span="true"
-										emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 										height="100%" multiple="false">
 										<listhead sizable="false"
 											style="padding:0px;position:relative;">
@@ -848,58 +892,124 @@
 							</groupbox>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
-
-							<listbox id="listBoxPayment"
-								fixedLayout="true" sizedByContent="true" span="true"
-								emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
-								height="100%" multiple="false">
-								<listhead sizable="false"
-									style="padding:0px;position:relative;">
-									<listheader
-										label="${c:l('listheader_SchDateType.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_SchPftBal.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_SchPriBal.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_PftPayNow.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_PriPayNow.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_PenaltyPayNow.label')}" sort="false"
-										visible="true" hflex="min" />
-									<listheader
-										label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader
-										label="${c:l('listheader_RefundPft.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										id="listheader_InsPayment"
-										label="${c:l('listheader_InsPayment.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader id="listheader_SchdFee"
-										label="${c:l('listheader_SchdFee.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader id="listheader_SuplRent"
-										label="${c:l('listheader_SuplRent.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader id="listheader_IncrCost"
-										label="${c:l('listheader_IncrCost.label')}" sort="false"
-										visible="false" hflex="min" />
-									<listheader
-										label="${c:l('listheader_NetPayment.label')}" sort="false"
-										hflex="min" />
-									<listheader
-										label="${c:l('listheader_RpyAmtBal.label')}" sort="false"
-										hflex="min" />
-								</listhead>
-							</listbox>
+							<groupbox>
+								<grid id="grid_Repayment"
+									sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px" width="100%">
+									<columns>
+										<column width="220px" />
+										<column />
+										<column width="220px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_ReceiptDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="payment_finType" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_ReceiptDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="payment_finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_ReceiptDialog_FinCcy.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="payment_finCcy" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_ReceiptDialog_FinBranch.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="payment_finBranch" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_ReceiptDialog_CustID.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="payment_CustCIF" width="180px" readonly="true" />
+											</hbox>
+											<label
+												id="label_ReceiptDialog_PaidByCustomer"
+												value="${c:l('label_ReceiptDialog_PaidByCustomer.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<decimalbox
+													id="payment_paidByCustomer" width="180px" disabled="true"
+													style="font-weight:bold;" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+								<listbox id="listBoxPayment"
+									fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+									height="100%" multiple="false">
+									<listhead sizable="false"
+										style="padding:0px;position:relative;">
+										<listheader
+											label="${c:l('listheader_SchDateType.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_SchPftBal.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_SchPriBal.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_PftPayNow.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_PriPayNow.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_PenaltyPayNow.label')}" sort="false"
+											visible="true" hflex="min" />
+										<listheader
+											label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
+											visible="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_RefundPft.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											id="listheader_InsPayment"
+											label="${c:l('listheader_InsPayment.label')}" sort="false"
+											visible="false" hflex="min" />
+										<listheader
+											id="listheader_SchdFee"
+											label="${c:l('listheader_SchdFee.label')}" sort="false"
+											visible="false" hflex="min" />
+										<listheader
+											id="listheader_SuplRent"
+											label="${c:l('listheader_SuplRent.label')}" sort="false"
+											visible="false" hflex="min" />
+										<listheader
+											id="listheader_IncrCost"
+											label="${c:l('listheader_IncrCost.label')}" sort="false"
+											visible="false" hflex="min" />
+										<listheader
+											label="${c:l('listheader_NetPayment.label')}" sort="false"
+											hflex="min" />
+										<listheader
+											label="${c:l('listheader_RpyAmtBal.label')}" sort="false"
+											hflex="min" />
+									</listhead>
+								</listbox>
+							</groupbox>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
 							<groupbox id="gb_commonDetails" mold="3d">

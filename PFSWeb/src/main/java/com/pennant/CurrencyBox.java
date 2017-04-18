@@ -318,7 +318,7 @@ public class CurrencyBox extends Hbox {
 					}else{
 						throw new WrongValueException(this.textbox, errormesage1);
 					}
-				}else if (textbox.getValue().length() > 18) {
+				}else if (valuWithComma.length() > 18) {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
 				}else if (bigDecimal.compareTo(BigDecimal.ZERO) == 0 && new BigDecimal(textbox.getValue()).compareTo(BigDecimal.ZERO) > 0) {

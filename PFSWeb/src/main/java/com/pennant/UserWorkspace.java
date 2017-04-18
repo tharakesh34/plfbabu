@@ -94,7 +94,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private LoggedInUser loggedInUser;
 	private Set<String> userRoleSet = new HashSet<String>();
 	private HashMap<String, Integer> accessType = null;
-	private Set<String> roleRights = null;
 	private Collection<GrantedAuthority> grantedAuthorities;
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
@@ -184,11 +183,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	public boolean isReadOnly(String rightName) {
-
-		if (this.roleRights == null || !this.roleRights.contains(rightName)) {
-			return true;
-		}
-		return false;
+		return !isAllowed(rightName);
+		
 	}
 
 	/**
@@ -284,69 +280,17 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	public void allocateRoleAuthorities(String roleCode, String page) {
-		setRoleMenuAuthorities(roleCode, page, null);
+		allocateAuthorities(page, roleCode,null);
 	}
 
 	public void allocateMenuRoleAuthorities(String roleCode, String page, String menuRightName) {
-		setRoleMenuAuthorities(roleCode, page, menuRightName);
+		allocateAuthorities(page, roleCode,menuRightName);
 	}
 
-	private void setRoleMenuAuthorities(String roleCode, String page, String menuRightName) {
-		final Collection<SecurityRight> rights = getSecurityRights(page, roleCode, menuRightName);
+	
+	
 
-		if (this.roleRights == null) {
-			this.roleRights = new HashSet<String>(rights.size());
-		}
-
-		for (final SecurityRight right : rights) {
-			if (!this.roleRights.contains(right.getRightName())) {
-				this.roleRights.add(right.getRightName());
-			}
-		}
-	}
-
-	public void allocateRoleAuthorities(String page) {
-		SecurityRight secRight = new SecurityRight();
-		secRight.setLoginAppId(App.ID);
-		secRight.setPage(page);
-		secRight.setUsrID(loggedInUser.getLoginUsrID());
-
-		Object[] roles = getUserRoleSet().toArray();
-		String[] userRoles = new String[roles.length];
-
-		for (int i = 0; i < roles.length; i++) {
-			userRoles[i] = (String) roles[i];
-		}
-
-		final Collection<SecurityRight> rights = getUserService().getRoleRights(secRight, userRoles);
-
-		if (this.roleRights == null) {
-			this.roleRights = new HashSet<String>(rights.size());
-		}
-
-		for (final SecurityRight right : rights) {
-			if (!this.roleRights.contains(right.getRightName())) {
-				this.roleRights.add(right.getRightName());
-			}
-		}
-	}
-
-	public void deAllocateRoleAuthorities(String page) {
-
-		if (this.roleRights != null) {
-			Set<String> tempAuthoritySet = new HashSet<String>();
-
-			Object[] object = this.roleRights.toArray();
-
-			for (int i = 0; i < object.length; i++) {
-				if (!object[i].toString().contains(page)) {
-					tempAuthoritySet.add(object[i].toString());
-				}
-			}
-			this.roleRights = tempAuthoritySet;
-		}
-	}
-
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -428,10 +372,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 	public void setLoginLoggingService(LoginLoggingService loginLoggingService) {
 		this.loginLoggingService = loginLoggingService;
-	}
-
-	public Set<String> getRoleRights() {
-		return roleRights;
 	}
 
 	public List<SecurityUserDivBranch> getDivisionBranches() {
