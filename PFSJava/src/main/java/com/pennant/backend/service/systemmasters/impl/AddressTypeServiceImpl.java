@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.AddressTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>AddressType</b>.<br>
@@ -123,12 +121,13 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		AddressType addressType = (AddressType) auditHeader.getAuditDetail()
 				.getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 
 		if (addressType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (addressType.isNew()) {
@@ -167,7 +166,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 		}
 		AddressType addressType = (AddressType) auditHeader.getAuditDetail()
 				.getModelData();
-		getAddressTypeDAO().delete(addressType, "");
+		getAddressTypeDAO().delete(addressType, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -233,11 +232,17 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 		AddressType addressType = new AddressType();
 		BeanUtils.copyProperties((AddressType) auditHeader.getAuditDetail()
 				.getModelData(), addressType);
-
+		
+		getAddressTypeDAO().delete(addressType, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(addressType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(addressTypeDAO.getAddressTypeById(addressType.getAddrTypeCode(), ""));
+		}
+		
 		if (addressType.getRecordType()
 				.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getAddressTypeDAO().delete(addressType, "");
+			getAddressTypeDAO().delete(addressType, TableType.MAIN_TAB);
 		} else {
 			addressType.setRoleCode("");
 			addressType.setNextRoleCode("");
@@ -249,15 +254,15 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				addressType.setRecordType("");
-				getAddressTypeDAO().save(addressType, "");
+				getAddressTypeDAO().save(addressType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				addressType.setRecordType("");
-				getAddressTypeDAO().update(addressType, "");
+				getAddressTypeDAO().update(addressType, TableType.MAIN_TAB);
 			}
 		}
 
-		getAddressTypeDAO().delete(addressType, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -293,7 +298,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 		AddressType addressType = (AddressType) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAddressTypeDAO().delete(addressType, "_Temp");
+		getAddressTypeDAO().delete(addressType, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -313,7 +318,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -329,122 +334,28 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		AddressType addressType = (AddressType) auditDetail.getModelData();
-		AddressType tempAddressType = null;
+		String code = addressType.getAddrTypeCode();
 
-		if (addressType.isWorkflow()) {
-			tempAddressType = getAddressTypeDAO().getAddressTypeById(
-					addressType.getId(), "_Temp");
+		// Check the unique keys.
+		if (addressType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(addressType.getRecordType())
+				&& addressTypeDAO.isDuplicateKey(code, addressType.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_AddrTypeCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
-		AddressType befAddressType = getAddressTypeDAO().getAddressTypeById(
-				addressType.getId(), "");
-		AddressType oldAddressType = addressType.getBefImage();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = addressType.getAddrTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_AddrTypeCode") + ":"
-				+ valueParm[0];
-
-		if (addressType.isNew()) { // for New record or new record into work
-									// flow
-
-			if (!addressType.isWorkflow()) {// With out Work flow only new
-											// records
-				if (befAddressType != null) { // Record Already Exists in the
-												// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-
-				}
-			} else { // with work flow
-				if (addressType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befAddressType != null || tempAddressType != null) { 
-															// if records 
-															// already exists
-															// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befAddressType == null || tempAddressType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!addressType.isWorkflow()) { // With out Work flow for update
-												// and delete
-
-				if (befAddressType == null) { // if records not exists in the
-												// main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-
-					if (oldAddressType != null
-							&& !oldAddressType.getLastMntOn().equals(
-									befAddressType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-			} else {
-				if (tempAddressType == null) { // if records not exists in the
-												// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempAddressType != null
-						&& oldAddressType != null
-						&& !oldAddressType.getLastMntOn().equals(
-								tempAddressType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !addressType.isWorkflow()) {
-			auditDetail.setBefImage(befAddressType);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}

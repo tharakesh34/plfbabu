@@ -42,16 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.AddressType;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>AddressType model</b> class.<br>
  * 
  */
-public interface AddressTypeDAO {
+public interface AddressTypeDAO extends BasicCrudDao<AddressType>{
 
 	AddressType getAddressTypeById(String id,String type);
-	void update(AddressType addressType,String type);
-	void delete(AddressType addressType,String type);
-	String save(AddressType addressType,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param addressTypeCode
+	 *            addressTypeCode of the addressType.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String addressTypeCode, TableType tableType);
+
 }
