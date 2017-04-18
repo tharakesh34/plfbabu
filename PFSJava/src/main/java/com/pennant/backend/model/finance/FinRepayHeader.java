@@ -1,7 +1,9 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class FinRepayHeader {
 
@@ -23,7 +25,11 @@ public class FinRepayHeader {
 	private Date earlyPayDate;
 	private boolean schdRegenerated;
 	private long linkedTranId = 0;
+	private long repayID = 0;// Auto Generated Sequence
+	private int receiptSeqID = 0;// Only setting from Receipt Details
 	private String payApportionment;
+	
+	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<RepayScheduleDetail>(1);
 	
 	public FinRepayHeader() {
 		
@@ -163,6 +169,29 @@ public class FinRepayHeader {
 	}
 	public void setPayApportionment(String payApportionment) {
 		this.payApportionment = payApportionment;
+	}
+
+	public long getRepayID() {
+		return repayID;
+	}
+	public void setRepayID(long repayID) {
+		this.repayID = repayID;
+	}
+
+	public List<RepayScheduleDetail> getRepayScheduleDetails() {
+		return repayScheduleDetails;
+	}
+
+	public void setRepayScheduleDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+		this.repayScheduleDetails = repayScheduleDetails;
+	}
+
+	public int getReceiptSeqID() {
+		return receiptSeqID;
+	}
+
+	public void setReceiptSeqID(int receiptSeqID) {
+		this.receiptSeqID = receiptSeqID;
 	}
 	
 }

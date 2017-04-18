@@ -2102,6 +2102,7 @@
 		<property name="financeMaintenanceService" ref="financeMaintenanceService" />
 		<property name="repaymentCancellationService" ref="repaymentCancellationService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2828,7 +2829,7 @@
 		parent="basisCtrl" scope="prototype" />
 
 	<!--============ Manual Repayment Details ============== -->
-	<!-- (Schedule Repayment / Early Settlement ) -->
+	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->
 
 	<bean id="manualPaymentDialogCtrl"
 		class="com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl"
@@ -2853,6 +2854,29 @@
 	<bean id="earlypayEffectOnScheduleDialogCtrl"
 		class="com.pennant.webui.financemanagement.payments.EarlypayEffectOnScheduleDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+		
+	<!--============ Manual Receipt Details ============== -->
+	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->
+
+	<bean id="receiptDialogCtrl"
+		class="com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl"
+		parent="financeBaseCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
+		<property name="accountInterfaceService" ref="accountInterfaceService" />
+		<property name="provisionService" ref="provisionService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="accountsService" ref="accountsService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
+		<property name="commitmentService" ref="commitmentService" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="mailUtil" ref="mailUtil" />
+		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+	</bean>
 
 	<!--============ Manual Write-off Details ============== -->
 	<bean id="financeWriteoffDialogCtrl"

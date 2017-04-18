@@ -176,6 +176,12 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> assetOrLiability;
 	private static ArrayList<ValueLabel> accountType;
 	private static ArrayList<ValueLabel> bankAccountType;
+	
+	private static ArrayList<ValueLabel> receiptPurposes;
+	private static ArrayList<ValueLabel> excessAdjustTo;
+	private static ArrayList<ValueLabel> receiptModes;
+	private static ArrayList<ValueLabel> allocationMethods;
+	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -1643,6 +1649,7 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ADDTERM,Labels.getLabel("label_FinSerEvent_AddTerms")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RMVTERM,Labels.getLabel("label_FinSerEvent_RmvTerms")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RECALCULATE,Labels.getLabel("label_FinSerEvent_Recalculate")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RECEIPT,Labels.getLabel("label_FinSerEvent_Receipt")));
 			//finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SUBSCHD,Labels.getLabel("label_FinSerEvent_SubSchedule")));
 			//finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CHGPFT,Labels.getLabel("label_FinSerEvent_ChangeProfit")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CHGFRQ,Labels.getLabel("label_FinSerEvent_ChangeFrequency")));
@@ -2502,6 +2509,49 @@ public class PennantStaticListUtil {
 			bankAccountType.add(new ValueLabel("B", Labels.getLabel("label_PartnerBank_Bank")));
 		}
 		return bankAccountType;
+	}
+	
+	public static ArrayList<ValueLabel> getReceiptPurpose(){
+		if(receiptPurposes == null){
+			receiptPurposes = new ArrayList<ValueLabel>(3);
+			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY, Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
+			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY, Labels.getLabel("label_ReceiptPurpose_PartialSettlement")));
+			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE, Labels.getLabel("label_ReceiptPurpose_EarlySettlement")));
+		}
+		return receiptPurposes;
+	}
+	
+	public static ArrayList<ValueLabel> getExcessAdjustmentTypes(){
+		if(excessAdjustTo == null){
+			excessAdjustTo = new ArrayList<ValueLabel>(3);
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS, Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV, Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY, Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));
+		}
+		return excessAdjustTo;
+	}
+	
+	public static ArrayList<ValueLabel> getReceiptModes(){
+		if(receiptModes == null){
+			receiptModes = new ArrayList<ValueLabel>(7);
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_CHEQUE, Labels.getLabel("label_ReceiptMode_Cheque")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_DD, Labels.getLabel("label_ReceiptMode_DD")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_ReceiptMode_NEFT")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_ReceiptMode_RTGS")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_ReceiptMode_IMPS")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
+		}
+		return receiptModes;
+	}
+	
+	public static ArrayList<ValueLabel> getAllocationMethods(){
+		if(allocationMethods == null){
+			allocationMethods = new ArrayList<ValueLabel>(2);
+			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATION_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
+			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATION_MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
+		}
+		return allocationMethods;
 	}
 	
 }

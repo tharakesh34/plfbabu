@@ -57,5 +57,38 @@ public class RepayConstants {
 	public static final char	REPAY_PENALTY			= 'C';
 	public static final char	REPAY_OTHERS			= 'F';
 	public static final char	REPAY_LATEPAY_PROFIT	= 'L';
+	
+	// Excess Amounts to in Receipts
+	public static final String	EXAMOUNTTYPE_EXCESS		= "E";
+	public static final String	EXAMOUNTTYPE_EMIINADV	= "A";
+	public static final String	EXAMOUNTTYPE_PAYABLE 	= "P";
+	
+	// Excess Adjustment to in Receipts
+	public static final String	EXCESSADJUSTTO_EXCESS	= "E";
+	public static final String	EXCESSADJUSTTO_EMIINADV	= "A";
+	public static final String	EXCESSADJUSTTO_PARTPAY 	= "P";
+	
+	// Receipt Modes
+	public static final String	RECEIPTMODE_CASH		= "CASH";
+	public static final String	RECEIPTMODE_CHEQUE		= "CHEQUE";
+	public static final String	RECEIPTMODE_DD			= "DD";
+	public static final String	RECEIPTMODE_NEFT		= "NEFT";
+	public static final String	RECEIPTMODE_RTGS		= "RTGS";
+	public static final String	RECEIPTMODE_IMPS		= "IMPS";
+	public static final String	RECEIPTMODE_EXCESS		= "EXCESS";
+	
+	// Allocation Methods
+	public static final String	ALLOCATION_AUTO			= "A";
+	public static final String	ALLOCATION_MANUAL		= "M";
+
+	// Allocation Types
+	public static final String	ALLOCATION_PRI			= "PRI";
+	public static final String	ALLOCATION_PFT			= "PFT";
+	public static final String	ALLOCATION_LPFT			= "LPFT";
+	public static final String	ALLOCATION_ODC			= "ODC";
+	public static final String	ALLOCATION_FEE			= "FEE";
+	public static final String	ALLOCATION_INS			= "INS";
+	public static final String	ALLOCATION_MANADV		= "MANADV";
+	
 
 }

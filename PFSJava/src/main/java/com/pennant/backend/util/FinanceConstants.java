@@ -172,6 +172,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_CHGGRCEND 			= "ChangeGestation";
 	public static final String FINSER_EVENT_FAIRVALREVAL 		= "FairValueRevaluation";
 	public static final String FINSER_EVENT_INSCHANGE 			= "InsuranceChange";
+	public static final String FINSER_EVENT_RECEIPT 			= "Receipt";
 	public static final String FINSER_EVENT_SCHDRPY 			= "SchdlRepayment";
 	public static final String FINSER_EVENT_EARLYRPY 			= "EarlyPayment";
 	public static final String FINSER_EVENT_EARLYSETTLE 		= "EarlySettlement";

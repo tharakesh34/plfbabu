@@ -5576,6 +5576,75 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
+	<!--============ Manual Receipt Details ============== -->
+	<!-- Schedule Repayment / Early Pay Settlement / WriteOff -->
+
+	<bean id="receiptService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="receiptServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="receiptServiceTarget"
+		class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
+		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
+		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
+		<property name="repayPostingUtil" ref="repayPostingUtil" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="checkListDetailService" ref="finCheckListDetailService" />
+		<property name="agreementDetailService" ref="finAgreementDetailService" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="ddaControllerService" ref="ddaControllerService" />
+		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
+		<property name="handlingInstructionService" ref="handlingInstructionService" />
+		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
+		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
+		<property name="ddaRepresentmentService" ref="ddaRepresentmentService" />
+		<property name="limitCheckDetails" ref="limitCheckDetails" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="extTablesDAO" ref="extTablesDAO" />
+		<property name="contractorAssetDetailService" ref="finContractorAssetDetailService" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="repayCalculator" ref="repayCalculator" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="limitManagement" ref="limitManagement" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+
+		<!-- EOD -->
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
 	<!--============ Overdue Charge Recovery Details ============== -->
 
 	<bean id="overdueChargeRecoveryDAO"
@@ -6432,6 +6501,17 @@
 	<!--============ Repay Calculator Util ============== -->
 
 	<bean name="repayCalculator" class="com.pennant.app.util.RepayCalculator"
+		scope="prototype">
+		<aop:scoped-proxy />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+	</bean>
+
+	<!--============ Receipt Calculator Util ============== -->
+
+	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator"
 		scope="prototype">
 		<aop:scoped-proxy />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />

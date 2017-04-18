@@ -83,6 +83,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -97,6 +98,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
@@ -190,11 +192,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Button btnNew;
 	private transient FinanceDetailService financeDetailService;
 	private transient ManualPaymentService manualPaymentService;
+	private transient ReceiptService receiptService;
 	private transient FinanceWriteoffService financeWriteoffService;
 	private transient FinanceCancellationService financeCancellationService;
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
-	private transient   FinanceWorkFlowService  financeWorkFlowService;
+	private transient FinanceWorkFlowService  financeWorkFlowService;
 	
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -979,6 +982,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND (ProductCategory = '"+FinanceConstants.PRODUCT_SUKUK +"')"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)){
+			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
@@ -1096,6 +1101,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		
 		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT) && 
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY) && 
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && 
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ) &&
@@ -1115,6 +1121,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			
 			openFinanceRepaymentDialog(item);
+			
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+			
+			openFinanceReceiptDialog(item);
 			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
 			
@@ -1438,6 +1448,86 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					}
 				}else{
 					showRepayDetailView(repayData);
+				}
+			}	
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Method for Fetching Finance Receipt Details
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinanceReceiptDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+		
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Set Workflow Details
+			String userRole = "";
+			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if(workFlowDetails == null){
+				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+
+			userRole = aFinanceMain.getNextRoleCode();
+			if(StringUtils.isEmpty(userRole)){
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+			
+			final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(aFinanceMain.getFinReference(),
+					eventCodeRef, moduleDefiner, userRole);
+			
+			//Role Code State Checking
+			String nextroleCode = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
+			if(StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
+						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				MessageUtil.showErrorMessage(errorDetails.getError());
+				
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+			
+			String maintainSts = "";
+			if(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
+				, getUserWorkspace().getUserLanguage());
+				MessageUtil.showErrorMessage(errorDetails.getError());
+			}else{
+				
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showReceiptDetailView(receiptData);
+					}else{
+						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showReceiptDetailView(receiptData);
 				}
 			}	
 		}
@@ -1950,6 +2040,43 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param FinanceMain (aFinanceMain)
 	 * @throws Exception
 	 */
+	private void showReceiptDetailView(FinReceiptData receiptData) throws Exception {
+		logger.debug("Entering");
+		
+		/*
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
+		 */
+		FinanceMain aFinanceMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		if(aFinanceMain.getWorkflowId()==0 && isWorkFlowEnabled()){
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(aFinanceMain);
+		map.put("repayData", receiptData);
+		map.put("moduleCode",moduleDefiner);
+		map.put("moduleDefiner",moduleDefiner);
+		map.put("eventCode",eventCodeRef);
+		map.put("menuItemRightName",menuItemRightName);
+		map.put("financeSelectCtrl", this);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul",null,map);
+		} catch (Exception e) {
+			logger.error("Exception: Opening window", e);
+			MessageUtil.showErrorMessage(e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Opens the detail view. <br>
+	 * Over handed some parameters in a map if needed. <br>
+	 * 
+	 * @param FinanceMain (aFinanceMain)
+	 * @throws Exception
+	 */
 	private void showWriteoffDetailView(FinanceWriteoffHeader writeoffHeader) throws Exception {
 		logger.debug("Entering");
 		
@@ -2223,6 +2350,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_COMPOUND;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_COMPOUND;
 					workflowCode =  FinanceConstants.FINSER_EVENT_COMPOUND;
+				}else if("tab_Receipts".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_RECEIPT;
+					eventCodeRef  = AccountEventConstants.ACCEVENT_REPAY;
+					setDialogCtrl("ReceiptDialogCtrl");
+					workflowCode =  FinanceConstants.FINSER_EVENT_RECEIPT;
 				}else if("tab_PartialSettlement".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_EARLYPAY;
@@ -2478,6 +2610,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinanceWorkFlowService(
 			FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public ReceiptService getReceiptService() {
+		return receiptService;
+	}
+
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
 	
 	

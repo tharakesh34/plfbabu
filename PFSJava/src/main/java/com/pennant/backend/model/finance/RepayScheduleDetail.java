@@ -28,8 +28,8 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class RepayScheduleDetail implements java.io.Serializable {
-	private static final long serialVersionUID = 1L;
+public class RepayScheduleDetail {
+
 	private String finReference = null;
 	private Date schDate;
 	private Date defSchdDate;
@@ -53,7 +53,7 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	private BigDecimal schdFeeBal = BigDecimal.ZERO;
 	private BigDecimal schdFeePayNow = BigDecimal.ZERO;
 	
-	// Ins Amount
+	// Insurance Amount
 	private BigDecimal schdIns = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 	private BigDecimal schdInsBal = BigDecimal.ZERO;
@@ -87,6 +87,7 @@ public class RepayScheduleDetail implements java.io.Serializable {
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
 	private String chargeType = "";
 	private long linkedTranId = 0;
+	private long repayID = 0;// Only setting from Repay Header
 	
 	public RepayScheduleDetail() {
 		
@@ -426,6 +427,14 @@ public class RepayScheduleDetail implements java.io.Serializable {
 
 	public void setSchdIncrCostPayNow(BigDecimal schdIncrCostPayNow) {
 		this.schdIncrCostPayNow = schdIncrCostPayNow;
+	}
+
+	public long getRepayID() {
+		return repayID;
+	}
+
+	public void setRepayID(long repayID) {
+		this.repayID = repayID;
 	}
 	
 }
