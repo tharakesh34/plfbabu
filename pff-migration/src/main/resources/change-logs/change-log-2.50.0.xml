@@ -953,4 +953,18 @@ FROM FinanceMain_AView T1 INNER JOIN
 			<column name="PFTONPDMRG" type="decimal(13, 9)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="55" author="Prasad">
+	<renameColumn 
+            newColumnName="PRVMTHACRSUSP"
+            oldColumnName="PRVMTHAACRSUSP"
+            tableName="FinPftDetails"/>
+    <renameColumn 
+            newColumnName="PRVMTHACRSUSP"
+            oldColumnName="PRVMTHAACRSUSP"
+            tableName="FinPftDetails_TEMP"/>
+            <renameColumn 
+            newColumnName="PRVMTHACRSUSP"
+            oldColumnName="PRVMTHAACRSUSP"
+            tableName="FINPFTDETAILS_SNAPSHOT"/>
+</changeSet>
 </databaseChangeLog>
