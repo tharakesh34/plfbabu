@@ -13,7 +13,6 @@ package com.pennanttech.pff.core.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * AbstractWorkflowEntity class. Any class that should be uniquely identifiable from another with work-flow process
