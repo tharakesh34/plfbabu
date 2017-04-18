@@ -963,15 +963,22 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		
 		// Bank valuation checking against the total utilized amount
 		if (collateralSetup.getBankValuation() != null) {
-			
 			//Getting the utilized amount FIXME
 			BigDecimal utilizedAmount = new BigDecimal(0);
 			if (utilizedAmount.compareTo(collateralSetup.getBankValuation()) == 1) {
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "CL001", errParm, valueParm));
 			}
-
 		}
 		
+		// Checking wile record deletion if collateral used in loan or not.
+		// If it used we cannot allow to delete that record.
+		if (PennantConstants.RECORD_TYPE_DEL.equals(collateralSetup.getRecordType())) {
+			int assignedCount = getCollateralAssignmentDAO().getAssignedCollateralCount(collateralSetup.getCollateralRef(), "_View");
+			if(assignedCount > 0){
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
+				
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !collateralSetup.isWorkflow()) {
 			auditDetail.setBefImage(befCollateralSetup);
