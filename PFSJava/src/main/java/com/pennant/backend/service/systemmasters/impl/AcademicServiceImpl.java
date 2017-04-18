@@ -316,7 +316,6 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		if (academic.isNew() && academicDAO.isDuplicateKey(academic.getAcademicID(), academic.getAcademicLevel(),
 				academic.getAcademicDecipline(), academic.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-
 			parameters[0] = PennantJavaUtil.getLabel("label_AcademicLevel") + ": " + academic.getAcademicLevel();
 			parameters[1] = PennantJavaUtil.getLabel("label_AcademicDecipline") + ": "
 					+ academic.getAcademicDecipline();
