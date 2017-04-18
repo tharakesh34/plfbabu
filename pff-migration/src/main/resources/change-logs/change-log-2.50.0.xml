@@ -1021,4 +1021,12 @@ FROM FinanceMain_AView T1 INNER JOIN
 		 </createView>
 	</changeSet>
 	
+	<changeSet id="63" author="Kesav">
+    	<sql>
+			Delete from RbFieldDetails where rbmodule = 'SUBHEAD';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','acType','Account type','nvarchar',8,'0','1','Account Types','static','TransactionEntry');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','ft_finType','Loan Type','nvarchar',8,'0','1','FinanceType','static,global,dbvalue','FinanceType');
+		 </sql>
+	</changeSet>
+	
 </databaseChangeLog>
