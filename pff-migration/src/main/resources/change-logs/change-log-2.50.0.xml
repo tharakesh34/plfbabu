@@ -600,7 +600,6 @@ FROM FinanceMain_AView T1 INNER JOIN
             <column name="UEIncomeSuspAccount" type="varchar(50)"/>
             <column name="FinCommitmentRef" type="varchar(20)"/>
             <column name="FinIsActive" type="char(1)"/>
-            <column name="NORepayments" type="bigint"/>
             <column name="FirstRepayDate" type="datetime"/>
             <column name="FirstRepayAmt" type="decimal(18, 0)"/>
             <column name="FINALREPAYAMT" type="decimal(18, 0)"/>
