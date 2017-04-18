@@ -20,6 +20,15 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-
+<changeSet id="01" author="Srikanth">
+<sql>
+Delete From ErrorDetails where ErrorCode in('90238','90239','90240','90241');
+INSERT INTO ErrorDetails VALUES('90238','EN','E','Allowed Planned EMI holiday methods are {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+INSERT INTO ErrorDetails VALUES('90239','EN','E','Allowed Max. Planned EMI Holidays per Year is {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+INSERT INTO ErrorDetails VALUES('90240','EN','E','Allowed Max. Planned EMI Holidays {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+INSERT INTO ErrorDetails VALUES('90241','EN','E','Planned EMI holiday details not required when allow Planned EMI is false.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+INSERT INTO ErrorDetails VALUES('90256','EN','E','No {0} available or InActive with Id {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+</sql>
+</changeSet>
 	
 </databaseChangeLog>
