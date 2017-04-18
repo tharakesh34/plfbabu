@@ -47,8 +47,5 @@ import java.util.List;
 import com.pennant.backend.model.AuditLogDetils;
 
 public interface AuditLogDAO {
-
-	
-	List<AuditLogDetils> getLogDetails(String modName,String whereCond);
 	List<AuditLogDetils> getLogDetails(String moduleName,String[] keyFields,String recordRole,long currentUser,Object beanObject);
 }

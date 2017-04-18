@@ -66,18 +66,6 @@ public class AuditLogDAOImpl implements AuditLogDAO{
 		super();
 	}
 	
-	public List<AuditLogDetils> getLogDetails(String modelName,String whereCond){
-	
-		String selectListSql = 	"Select AuditId,AuditDate,AuditImage,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType" +
-		" From Adt"+ StringUtils.trimToEmpty(ModuleUtil.getTableName(modelName)) +
-		" Where AuditImage='W' " + whereCond + " ORDER BY AuditDate,AuditId,AuditImage,Version " ;
-		logger.debug("selectListSql: " + selectListSql);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new AuditLogDetils());
-		RowMapper<AuditLogDetils> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuditLogDetils.class);
-		return this.namedParameterJdbcTemplate.query(selectListSql, beanParameters,typeRowMapper);
-		
-	}
-	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}

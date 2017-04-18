@@ -90,10 +90,6 @@
 		<property name="dataSource" ref="auditDatasource" />
 	</bean>
 
-	<bean name="auditLogService" class="com.pennant.backend.service.impl.AuditLogServiceImpl">
-		<property name="auditLogDAO" ref="auditLogDAO" />
-	</bean>
-
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->
 	<!-- ====================================================== -->

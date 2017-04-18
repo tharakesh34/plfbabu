@@ -321,14 +321,6 @@ public class AbstractListController<T> extends AbstractController<T> {
 	}
 
 	protected boolean doCheckAuthority(T entity, String whereCond) {
-		if (!isWorkFlowEnabled()) {
-			return true;
-		}
-		List<AuditLogDetils> listLogDetils = this.auditLogService.getLogDetails(moduleCode, whereCond);
-
-		if (listLogDetils != null) {
-			// FIXME
-		}
 		return true;
 	}
 

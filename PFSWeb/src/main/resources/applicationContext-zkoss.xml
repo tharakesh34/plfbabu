@@ -65,7 +65,6 @@
 		class="com.pennant.webui.util.GFCBaseListCtrl" parent="basisCtrl"
 		p:pagedListWrapper-ref="pagedListWrapper"
 		p:pagedBindingListWrapper-ref="pagedBindingListWrapper">
-		<property name="auditLogService" ref="auditLogService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
 

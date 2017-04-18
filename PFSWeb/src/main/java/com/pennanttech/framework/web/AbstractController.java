@@ -55,13 +55,11 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
-import com.pennant.backend.model.AuditLogDetils;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.service.AuditLogService;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -189,7 +187,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	private transient UserService						userService;
-	protected AuditLogService							auditLogService;
 	protected transient FinanceWorkFlowService			financeWorkFlowService;
 
 	protected transient WorkflowEngine					workFlow		= null;
@@ -1111,21 +1108,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	public boolean validateUserAccess(long workFlowId, long userID, String modName, String whereCond, String taskID,
 			String nextTaskId) {
-
-		List<AuditLogDetils> listLogDetils = this.auditLogService.getLogDetails(modName, whereCond);
-		System.out.println(listLogDetils.size());
-		return true;
-	}
-
-	public boolean validateUserAccess(String moduleName, String[] keyFields, String recordRole, long currentUser,
-			Object beanObject) {
-
-		List<AuditLogDetils> listLogDetils = this.auditLogService.getLogDetails(moduleName, keyFields, recordRole,
-				currentUser, beanObject);
-
-		if (listLogDetils != null && !listLogDetils.isEmpty()) {
-			return false;
-		}
 		return true;
 	}
 
@@ -1134,7 +1116,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 */
 	public String getUsrFinAuthenticationQry(boolean isForReports) {
 		StringBuilder wherQuery = new StringBuilder();
-		boolean isdivChanged=false;
 
 		if (getUserWorkspace().getDivisionBranches() == null) {
 			getUserWorkspace().setDivisionBranches(
@@ -1179,14 +1160,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	private void appendWhereQuery(StringBuilder wherQuery, String divisionCode) {
 		wherQuery.append("Select UserBranch from SecurityUserDivBranch where userDivision ="+ 
 				   "'"+divisionCode+"'" +" and usrid ="+ getUserWorkspace().getLoggedInUser().getLoginUsrID());
-	}
-
-	public AuditLogService getAuditLogService() {
-		return auditLogService;
-	}
-
-	public void setAuditLogService(AuditLogService auditLogService) {
-		this.auditLogService = auditLogService;
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
