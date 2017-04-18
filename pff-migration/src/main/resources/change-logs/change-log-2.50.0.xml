@@ -30,5 +30,314 @@ INSERT INTO ErrorDetails VALUES('90241','EN','E','Planned EMI holiday details no
 INSERT INTO ErrorDetails VALUES('90256','EN','E','No {0} available or InActive with Id {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 </sql>
 </changeSet>
+<changeSet id="1" author="Prasad">
+	<renameColumn 
+            columnDataType="int"
+            newColumnName="PFTACCRUED"
+            oldColumnName="TDPFTACCRUED"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="2" author="Prasad">
+	<renameColumn 
+            newColumnName="PFTACCRUESUSP"
+            oldColumnName="TDPFTACCRUESUSP"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="3" author="Prasad">
+	<renameColumn 
+            newColumnName="PFTAMZ"
+            oldColumnName="TDPFTAMORTIZED"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="4" author="Prasad">
+	<renameColumn 
+            newColumnName="PFTAMZSUSP"
+            oldColumnName="TDPFTAMORTIZEDSUSP"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="5" author="Prasad">
+	<renameColumn 
+            newColumnName="FINALREPAYAMT"
+            oldColumnName="LASTREPAYAMT"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="6" author="Prasad">
+	<renameColumn 
+            newColumnName="CURODDAYS"
+            oldColumnName="ODDAYS"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="7" author="Prasad">
+	<renameColumn 
+            newColumnName="PRVODDATE"
+            oldColumnName="LASTODDATE"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="8" author="Prasad">
+	<renameColumn 
+            newColumnName="PRVRPYSCHDATE"
+            oldColumnName="LASTRPYSCHDATE"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="9" author="Prasad">
+	<renameColumn 
+            newColumnName="PRVRPYSCHDPRI"
+            oldColumnName="LASTRPYSCHPRI"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="10" author="Prasad">
+	<renameColumn 
+            newColumnName="PRVRPYSCHPFT"
+            oldColumnName="LASTRPYSCHPFT"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="11" author="Prasad">
+	<renameColumn 
+            newColumnName="PFTAMZNORMAL"
+            oldColumnName="TDPFTAMORTIZEDNORMAL"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="12" author="Prasad">
+	<renameColumn 
+            newColumnName="PFTAMZPD"
+            oldColumnName="TDPFTAMORTIZEDPD"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="13" author="Prasad">
+    	<dropColumn columnName="ACRTILLNBD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="ACRTODAYTONBD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="AMZTILLNBD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="EARLYPAIDAMT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="ACCRUEPFT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="EARNEDPFT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="UNEARNED" tableName="FinPftDetails"/>
+    	<dropColumn columnName="SUSPPFT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="PFTACCRUETSFD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="ADMINPAIDAMT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="NOREPAYMENTS" tableName="FinPftDetails"/>
+    	<dropColumn columnName="LATESTWRITEOFFDATE" tableName="FinPftDetails"/>
+    	<dropColumn columnName="PRVPFTACCRUETSFD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="SUSPPFTACCRUETSFD" tableName="FinPftDetails"/>
+    	<dropColumn columnName="ACRTSFDINSUSP" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBFIRSTODDATE" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBLASTODDATE" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBODPRINCIPAL" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBODPROFIT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBODDAYS" tableName="FinPftDetails"/>
+    	<dropColumn columnName="CRBODINST" tableName="FinPftDetails"/>
+    	<dropColumn columnName="INSPAIDAMT" tableName="FinPftDetails"/>
+    	<dropColumn columnName="INSCAL" tableName="FinPftDetails"/>   	
+	</changeSet>
+	<changeSet id="14" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="MAXODDAYS" type="int" />
+			<column name="CALPFTONPD" type="bit" />
+			<column name="PFTONPDMETHOD" type="varchar(8)" />
+			<column name="TOTPFTONPD" type="decimal(18,0)" />
+			<column name="TOTPFTONPDPAID" type="decimal(18,0)" />
+			<column name="TOTPFTONPDWAIVED" type="decimal(18,0)" />
+			<column name="TOTPFTONPDDUE" type="decimal(18,0)" />
+			<column name="ACRSUSPTILLLBD" type="decimal(18,0)" />
+			<column name="PRVMTHAMZ" type="decimal(18,0)" />
+			<column name="PRVMTHAMZNRM" type="decimal(18,0)" />
+			<column name="PRVMTHAMZPD" type="decimal(18,0)" />
+			<column name="PRVMTHAMZSUSP" type="decimal(18,0)" />
+			<column name="PRVMTHACR" type="decimal(18,0)" />
+			<column name="PRVMTHAACRSUSP" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="14.1" author="Prasad">
+	<sql>
+	update FinPftDetails set CALPFTONPD=0 where CALPFTONPD is null;
+	update FinPftDetails set TOTPFTONPD=0 where TOTPFTONPD is null;
+	update FinPftDetails set TOTPFTONPDPAID=0 where TOTPFTONPDPAID is null;
+	update FinPftDetails set TOTPFTONPDWAIVED=0 where TOTPFTONPDWAIVED is null;
+	update FinPftDetails set TOTPFTONPDDUE=0 where TOTPFTONPDDUE is null;
+	update FinPftDetails set ACRSUSPTILLLBD=0 where ACRSUSPTILLLBD is null;
+	update FinPftDetails set PRVMTHAMZ=0 where PRVMTHAMZ is null;
+	update FinPftDetails set PRVMTHAMZNRM=0 where PRVMTHAMZNRM is null;
+	update FinPftDetails set PRVMTHAMZPD=0 where PRVMTHAMZPD is null;
+	update FinPftDetails set PRVMTHAMZSUSP=0 where PRVMTHAMZSUSP is null;
+	update FinPftDetails set PRVMTHACR=0 where PRVMTHACR is null;
+	update FinPftDetails set PRVMTHAACRSUSP=0 where PRVMTHAACRSUSP is null;
+	</sql>
+	</changeSet>
+	<changeSet id="15" author="Prasad">
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="CALPFTONPD" columnDataType="bit" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="TOTPFTONPD" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="TOTPFTONPDPAID" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="TOTPFTONPDWAIVED" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="TOTPFTONPDDUE" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="ACRSUSPTILLLBD" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHAMZ" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHAMZNRM" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHAMZPD" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHAMZSUSP" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHACR" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PRVMTHAACRSUSP" columnDataType="decimal(18,0)" />
+	</changeSet>
+	<changeSet id="16" author="prasad">
+		<createView replaceIfExists="true" viewName="CUSTOMERFINANCES_IVIEW">
+			 SELECT     T1.CustID CustomerNo, T1.FinReference FinanceRef, T1.FinStartDate StartDate, T1.MaturityDate, T1.RepayAccountId RepaymentAccount, 
+			                      T1.TotalProfit ProfitAmount, T1.TotalRepayAmt TotalAmount, T1.FinAmount FinanceAmount, T1.NextRepayDate DueDate, 
+			                      T1.NumberOfTerms TotalInstallments, T1.FinType FinanceType, T3.CustShrtName CustomerName, T1.RepayProfitRate ProfitRate, 
+			                      T1.RepayMargin MarginRate, T1.RepayBaseRate BaseRate, T2.BranchDesc Branch,  T4.FinCategory ProductType, 
+			                      T5.NSchdPft + T5.NSchdPri InstallmentAmount, T5.NSchdPft + T5.NSchdPri + T5.NSchdPftDue + T5.NSchdPriDue OutstandingAmount, 
+			                      TotalPftBal - PFTACCRUED UnearnedProfit, T5.NOInst - T5.NOPaidInst RemainingInstallments, T5.CURODDAYS DaysPtDue, 
+			                      T1.FinAmount - T1.FinRepaymentAmount OutstandingBalance, T6.CustStsCode FinanceStatus
+			FROM          FinanceMain T1  INNER JOIN
+			                       RMTBranches T2 ON T1.FinBranch = T2.BranchCode INNER JOIN
+			                       Customers T3 ON T1.CustID = T3.CustID INNER JOIN
+			                       RMTFinanceTypes T4 ON T1.FinType = T4.FinType INNER JOIN
+			                       FinPftDetails T5 ON T1.FinReference = T5.FinReference INNER JOIN
+			                       BMTCustStatusCodes T6 ON T1.FinStatus = T6.CustStsCode
+		</createView>
+		<createView replaceIfExists="true" viewName="FINANCEPROFITENQUIRY_VIEW">
+			SELECT     FM.FinReference, FPD.TotalPriPaid + FPD.TotalPriBal TotalPriSchd, FPD.TotalPftPaid + FPD.TotalPftBal TotalPftSchd, 
+			                      FPD.TotalPriPaid + FPD.TotalPriBal + FPD.TotalPftPaid + FPD.TotalPftBal TotalOriginal, FPD.TotalPriPaid + FPD.TotalPriBal - FPD.TdSchdPri OutStandPrincipal, 
+			                      FPD.TotalPftPaid + FPD.TotalPftBal - FPD.TdSchdPft OutStandProfit, 
+			                      FPD.TotalPriPaid + FPD.TotalPriBal - FPD.TdSchdPri + FPD.TotalPftPaid + FPD.TotalPftBal - FPD.TdSchdPft TotalOutStanding, FPD.TotalPriPaid schdPriPaid, 
+			                      FPD.TotalPftPaid schdPftPaid, FPD.TotalPriPaid + FPD.TotalPftPaid totalPaid, FPD.TotalPriBal CurrentFinanceAmount, FPD.TotalPftBal UnPaidProfit, 
+			                      FPD.TotalPriBal + FPD.TotalPftBal TotalUnPaid, FPD.TotalPftPaid + FPD.PFTACCRUED EarnedProfit, FPD.TotalPftBal - FPD.PFTACCRUED UnEarnedProfit, 
+			                      FM.DownPayment TotalDownPayment, FM.DownPayBank DownPaymentToBank, FM.DownPaySupl DownPaymentToSpplier, 
+			                      FPD.TotalPriBal UnpaidPrincipal, FPD.PFTACCRUESUSP ProfitSuspended, FM.FinBranch, FM.FinType, FM.FinCcy, FM.NumberOfTerms, FM.MaturityDate, 
+			                      FM.FinStartDate,  FM.LastRepayDate FinLastRepayDate, FM.RepayProfitRate FinRate,
+			                      FPD.ODPrincipal OverDuePrincipal , FPD.ODProfit OverDueProfit,
+			                  (FPD.ODPrincipal + FPD.ODProfit) TotalOverDue, (FPD.ODPrincipal + FPD.ODProfit) OverDueInstlementPft,
+			                  FPD.NOODInst OverDueInstlments, FPD.NOPaidInst PaidInstlments, FPD.CustCIF			                            
+			FROM         FinanceMain FM INNER JOIN
+			                      FinPftDetails FPD ON FM.FinReference = FPD.FinReference
+		</createView>
+		<createView replaceIfExists="true" viewName="FINCUSTINSTDETAILS_IVIEW">
+			 SELECT T2.CustTypeCode CustomerType  ,
+          T2.CustCtgCode ,
+          T2.PhoneNumber MobileNo  ,
+          T2.CustShrtName CustomerName  ,
+          T2.EmailID EmailID  ,
+          T1.FirstRepayDate InstallmentDate  ,
+          T1.NSchdPri EMIAmount  ,
+          T1.FinReference ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '01' ) CustCRCPR  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '03' ) PassportNumber  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '11' ) DrivingLicense  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '15' ) TradeNumber  
+     FROM FinPftDetails T1
+            JOIN Customers T2
+             ON T1.CustID = T2.CustID 
+		</createView>
+		<createView replaceIfExists="true" viewName="FINDETAILSBYREFERENCE_IVIEW">
+		SELECT T1.CustID CustomerNo, T1.FinReference FinanceRef, T1.FinType FinanceType,
+	   T1.FinStartDate StartDate, T1.NumberOfTerms TotalInstallments, T1.FinAmount FinanceAmount, T1.NextRepayDate DueDate,
+		T9.CustShrtName CustomerName, T1.FinContractDate ContractDate, T1.DownPayment DownPaymentAmount, 
+		T1.RepayFrq RepaymentFrequency, T1.RepayProfitRate ProfitRate, T1.RepayAccountId RepaymentAccount, 
+		T1.RepayMargin MarginRate,
+		T2.BranchCode  Branch, T1.FinCcy Currency,T4.FinCategory ProductType,
+		(T5.NOInst-T5.NOPaidInst) RemainingInstallments,(T5.NSchdPft+T5.NSchdPri) InstallmentAmount,
+		(T5.ODPrincipal+T5.ODProfit) PastDueAmount,
+		(T5.TotalPftPaid+T5.TotalPriPaid) RepaidAmount, T5.PRVRPYSCHDATE LastInstallmentDate, 
+		T5.FINALREPAYAMT LastInstallmentAmount,
+		(T5.NSchdPft+T5.NSchdPri+T5.NSchdPftDue+T5.NSchdPriDue) OutstandingAmount,  T5.CURODDAYS DaysPastDue,
+		T6.CustStsDescription FinanceStatus,T7.DisbAmount DisbursedAmount,
+	    COALESCE(T8.BRRate,0) BaseRate, (COALESCE(T8.BRRate,0) + T1.RepayMargin) AllInRate
+FROM FinanceMain_AView T1 INNER JOIN 
+	 Customers T9 ON T9.CustId = T1.CustId INNER JOIN 
+	 RMTBranches T2 ON T1.FinBranch = T2.BranchCode INNER JOIN 
+	 RMTFinanceTypes T4 ON T1.FinType = T4.FinType INNER JOIN 
+	 FinPftDetails T5 ON T1.FinReference = T5.FinReference INNER JOIN
+	 BMTCustStatusCodes T6 ON T1.FinStatus = T6.CustStsCode INNER JOIN
+	 FinDisbursementDetails T7 ON T1.FinReference = T7.FinReference LEFT JOIN
+	 RMTBaseRates T8 ON T1.RepayBaseRate = T8.BRType
+		</createView>
+		<createView replaceIfExists="true" viewName="INT_ALM_VIEW">
+		select ${call.substr}(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+		(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+		'' ACCRUEDON,'N' ADVFLAG
+		from FinanceMain F
+		Inner join FinPftDetails FP on Fp.FinReference=F.FinReference
+		Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+		</createView>
+	</changeSet>
+	<changeSet id="17" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="FIRSTDISBDATE" type="DATETIME" />
+			<column name="LATESDISBDATE" type="DATETIME" />
+			<column name="FUTUREINST" type="int" />
+			<column name="REMAININGTENOR" type="int" />
+			<column name="TOTALTENOR" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="18" author="prasad">
+		<createView replaceIfExists="true" viewName="FINCUSTINSTDETAILS_IVIEW">
+			 SELECT T2.CustTypeCode CustomerType  ,
+          T2.CustCtgCode ,
+          T2.PhoneNumber MobileNo  ,
+          T2.CustShrtName CustomerName  ,
+          T2.EmailID EmailID  ,
+          T1.FirstRepayDate InstallmentDate  ,
+          T1.TOTALTENOR NoOfInstallments  ,
+          T1.NSchdPri EMIAmount  ,
+          T1.FinReference ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '01' ) CustCRCPR  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '03' ) PassportNumber  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '11' ) DrivingLicense  ,
+          ( SELECT CustDocTitle 
+            FROM CustomerDocuments 
+              WHERE CustID = T2.CustID
+                      AND CustDocCategory = '15' ) TradeNumber  
+     FROM FinPftDetails T1
+            JOIN Customers T2
+             ON T1.CustID = T2.CustID 
+		</createView>
+		</changeSet>
+		<changeSet id="19" author="Prasad">
+    	<dropColumn columnName="NEXTRPYSCHDATE" tableName="FinPftDetails"/>
+    	<dropColumn columnName="AMZTODAYTONBD" tableName="FinPftDetails"/> 	
+	</changeSet>
+	<changeSet id="20" author="Prasad">
+	<renameColumn 
+            columnDataType="int"
+            newColumnName="PRVRPYSCHPRI"
+            oldColumnName="PRVRPYSCHDPRI"
+            tableName="FinPftDetails"/>
+</changeSet>
+<changeSet id="21" author="Prasad">
+	<renameColumn 
+            newColumnName="LATESTDISBDATE"
+            oldColumnName="LATESDISBDATE"
+            tableName="FinPftDetails"/>
+</changeSet>
 	
 </databaseChangeLog>
