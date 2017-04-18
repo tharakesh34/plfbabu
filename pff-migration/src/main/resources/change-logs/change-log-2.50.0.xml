@@ -974,4 +974,24 @@ FROM FinanceMain_AView T1 INNER JOIN
 			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','finType','Loan Type','nvarchar',8,'0','1','FinanceType','static,global,dbvalue','FinanceType');
 	    </sql>
 	</changeSet>
+	
+<changeSet id="57" author="Durgaprasad G">
+	<createTable tableName="DISBURSMENT_UPLOAD_MAPPING">
+		<column name="BANKCODE" type="varchar(8)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="PAYMENTTYPE" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="CONFIGNAME" type="varchar(50)">
+		<constraints nullable="false"/>
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet id="58" author="Durgaprasad G">
+	<addPrimaryKey columnNames="BANKCODE, PAYMENTTYPE" constraintName="PK_BKCODE_PAYTYPE"
+			tableName="DISBURSMENT_UPLOAD_MAPPING" />
+</changeSet>
+	
 </databaseChangeLog>
