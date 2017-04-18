@@ -232,7 +232,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		// Render the page and display the data.
 		doRenderPage();
 		approvedList = true;
-		search();
 		doDesignByMode();
 
 	}

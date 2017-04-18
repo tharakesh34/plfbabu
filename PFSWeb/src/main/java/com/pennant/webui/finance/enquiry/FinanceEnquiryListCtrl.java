@@ -292,7 +292,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.listBoxEnquiryResult.setHeight(getListBoxHeight(this.grid_enquiryDetails.getRows().getVisibleItemCount()+1));
 		this.pagingEnquiryList.setPageSize(getListRows());
 		this.pagingEnquiryList.setDetailed(true);
-		doSearch();
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
 
 		logger.debug("Leaving" + event.toString());
