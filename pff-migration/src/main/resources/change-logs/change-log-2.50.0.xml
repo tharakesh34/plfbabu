@@ -348,5 +348,14 @@ FROM FinanceMain_AView T1 INNER JOIN
  	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusCode,FinType"/>
  	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusCode,FinType"/>  
 </changeSet>  
-	
+<changeSet id="10" author="Madhubabu">
+		<addColumn tableName="FinAdvancePayments_Temp">
+			<column name="LinkedTranId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="11" author="Madhubabu">
+		<addColumn tableName="FinAdvancePayments">
+			<column name="LinkedTranId" type="bigint"/>
+		</addColumn>
+	</changeSet>	
 </databaseChangeLog>
