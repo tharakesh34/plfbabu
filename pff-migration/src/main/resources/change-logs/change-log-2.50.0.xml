@@ -993,5 +993,32 @@ FROM FinanceMain_AView T1 INNER JOIN
 	<addPrimaryKey columnNames="BANKCODE, PAYMENTTYPE" constraintName="PK_BKCODE_PAYTYPE"
 			tableName="DISBURSMENT_UPLOAD_MAPPING" />
 </changeSet>
+<changeSet id="59" author="Prasad">
+		<addNotNullConstraint tableName="financemain"
+			columnName="custid" columnDataType="bigint" />
+	</changeSet>
+	<changeSet id="60" author="Prasad">
+    	<createIndex indexName="ix_fm_ft"
+            		 tableName="FinanceMain">
+        	<column name="FinType" type="varchar(8)"/>
+     	</createIndex>
+	</changeSet>
+	<changeSet id="61" author="Prasad">
+		<addNotNullConstraint tableName="secusers"
+			columnName="UsrDeptCode" columnDataType="varchar(8)" />
+	</changeSet>
+		<changeSet id="62" author="Prasad">
+    	<createView replaceIfExists="true" viewName="CUSTOMERFINANCEDETAILS_AVIEW">
+			SELECT     FM.FinReference, FM.FinBranch, C.CustID,  FM.RoleCode, FM.NextRoleCode, 
+                    FM.FinType,FM.FinAmount,FM.DownPayment, FM.FeeChargeAmt,FM.FinStartDate,FM.LastMntBy, FM.FinCcy,
+                    FM.RecordType, C.CustCIF, C.CustShrtName, '' PrvRoleDesc, '' NextRoleDesc,D.DeptDesc,
+                    U.UsrFName UsrFName, U.UsrLName lastMntByUser,FT.FinTypeDesc,FT.FinDivision lovDescFinDivision
+			FROM FinanceMain FM
+			  INNER JOIN RMTFinanceTypes FT on FT.FinType = FM.FinType
+			  INNER JOIN Customers C ON C.CustID = FM.CustID 
+			  INNER JOIN SecUsers U ON U.UsrID = FM.LastMntBy 
+			  INNER JOIN BMTDepartments D ON D.DeptCode = U.UsrDeptCode 
+		 </createView>
+	</changeSet>
 	
 </databaseChangeLog>
