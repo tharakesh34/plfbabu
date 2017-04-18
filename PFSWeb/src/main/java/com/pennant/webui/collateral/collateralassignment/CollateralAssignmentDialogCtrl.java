@@ -36,7 +36,6 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -413,16 +412,22 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				whereClause.append(" Select CollateralRef From CollateralAssignment union Select CollateralRef From CollateralAssignment_Temp)) ");
 				whereClause.append(" OR MultiLoanAssignment = 1))  ");
 				this.collateralRef.setWhereClause(whereClause.toString());
+			} else {
+				if (customerId != 0 && customerId != Long.MIN_VALUE) {
+					whereClause.append(" ((DepositorId = ");
+					whereClause.append(customerId).append(") ");
+					whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
+					whereClause.append(customerId).append(")) )");
+					this.collateralRef.setWhereClause(whereClause.toString());
+				}
 			}
 		} else {
-			Filter[] filter = null;
 			if (customerId != 0 && customerId != Long.MIN_VALUE) {
 				whereClause.append(" ((DepositorId = ");
 				whereClause.append(customerId).append(") ");
 				whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 				whereClause.append(customerId).append(")) )");
-
-				this.collateralRef.setFilters(filter);
+				this.collateralRef.setWhereClause(whereClause.toString());
 			}
 		}
 		
@@ -528,6 +533,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		}
 		try {
 			BigDecimal totalAssignedPerc = getCollateralAssignment().getTotAssignedPerc();
+			
+			if (totalAssignedPerc.compareTo(new BigDecimal(100)) <= 0) {
+				throw new WrongValueException(this.assignValuePerc, Labels.getLabel("label_CollateralAssignment_AssignValuePerc"));
+			}
+			
 			if((totalAssignedPerc.add(this.assignValuePerc.getValue())).compareTo(new BigDecimal(100)) > 0){
 				throw new WrongValueException(this.assignValuePerc, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER", new String[] { 
 						Labels.getLabel("label_CollateralAssignmentDetailDialog_AssignValuePerc.value"), 
@@ -628,7 +638,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				this.bankValuation.setValue(PennantApplicationUtil.formateAmount(collateralSetup.getBankValuation(), formatter));
 				
 				// Available Assignment value : Total Assignments value of the Collateral Excluding Current Reference (Commitment/Finance) 
-				BigDecimal totAssignedPerc = getCollateralSetupService().getAssignedPerc(collateralSetup.getCollateralRef(),"");//TODO:Add reference
+				BigDecimal totAssignedPerc = getCollateralSetupService().getAssignedPerc(collateralSetup.getCollateralRef(),"");//TODO:Add referen
+				
 				BigDecimal  curAssignValue = collateralSetup.getBankValuation().multiply(this.assignValuePerc.getValue() == null ? 
 						BigDecimal.ZERO : this.assignValuePerc.getValue()).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 				BigDecimal  totAssignedValue = collateralSetup.getBankValuation().multiply(totAssignedPerc).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
