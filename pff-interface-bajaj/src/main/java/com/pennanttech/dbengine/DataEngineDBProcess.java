@@ -6,28 +6,25 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
+import com.pennanttech.dataengine.DataEngine;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-public class DataEngineDBProcess {
+public class DataEngineDBProcess extends DataEngine {
 	private static final Logger logger = Logger.getLogger(DataEngineDBProcess.class);
-
-	private DataEngineStatus executionStatus;
-	private long userId;
-	private DataSource dataSource;
-	private String appDBName;
-
-	public DataEngineDBProcess(DataSource dataSource, long userId, String appDBName, DataEngineStatus executionStatus) {
-		this.dataSource = dataSource;
-		this.appDBName = appDBName;
-		this.executionStatus = executionStatus;
-		this.userId = userId;
-		executionStatus.reset();
+	
+	public DataEngineDBProcess(DataSource dataSource, long userId, String database) {
+		super(dataSource, userId, database, null);
 	}
+	
 
-	public void processDBData(Configuration config) {
-		processData(config);
+	public DataEngineDBProcess(DataSource dataSource, long userId, String database, DataEngineStatus executionStatus) {
+		super(dataSource, userId, database, executionStatus, null);
+	}
+	
+	public void processData(String configName) {
+		processData(getConfigurationByName(configName));
 	}
 
 	private void processData(Configuration config) {
@@ -35,7 +32,7 @@ public class DataEngineDBProcess {
 
 		Object object;
 		try {
-			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, appDBName, this.executionStatus);
+			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, database, executionStatus);
 			Object[] parms = new Object[2];
 			parms[0] = this.userId;
 			parms[1] = config;
