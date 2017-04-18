@@ -782,7 +782,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(curSchd.isRepayOnSchDate() ||
 							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
 						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
-							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0){
+							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
 								this.row_GrcPeriodEndDate.setVisible(true);
 								this.row_grcNextRepayDate.setVisible(true);
 								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");

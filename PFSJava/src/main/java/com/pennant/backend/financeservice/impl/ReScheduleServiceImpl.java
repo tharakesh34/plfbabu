@@ -74,7 +74,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		int terms = finServiceInstruction.getTerms();
 
 		List<FinanceScheduleDetail> scheduleList = scheduleData.getFinanceScheduleDetails();
-		if (fromDate != null && financeMain.isAllowGrcPeriod() && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+		if (fromDate != null && financeMain.isAllowGrcPeriod() && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 			calFromGrcPeriod = true;
 		}
 
