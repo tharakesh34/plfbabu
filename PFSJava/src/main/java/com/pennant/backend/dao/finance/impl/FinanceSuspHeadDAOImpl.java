@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,29 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 		logger.debug("Leaving");
 		return financeSuspHead;
 	}
+	
+	@Override
+	public Date getFinSuspDate(String finReference) {
+		logger.debug("Entering");
+		FinanceSuspHead financeSuspHead = new FinanceSuspHead();
+		financeSuspHead.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinSuspDate From FinSuspHead");
+		selectSql.append(" Where FinReference =:FinReference and FinIsInSusp = 1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
+		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
+
+		try {
+			financeSuspHead = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return financeSuspHead.getFinSuspDate();
+	}
+
 	
 	@Override
 	public List<String> getSuspFinanceList() {

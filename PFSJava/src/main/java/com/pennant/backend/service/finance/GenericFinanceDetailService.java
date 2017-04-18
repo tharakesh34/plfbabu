@@ -2853,7 +2853,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		finProfitDetails.setFinWorstStatus(worstSts);
 
 		if (getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference()) == null) {
-			getProfitDetailsDAO().save(finProfitDetails, "");
+			getProfitDetailsDAO().save(finProfitDetails);
 		} else {
 			getProfitDetailsDAO().update(finProfitDetails, false);
 		}

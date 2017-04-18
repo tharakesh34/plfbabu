@@ -59,8 +59,7 @@ public interface FinanceProfitDetailDAO {
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
 	void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
 	void update(List<FinanceProfitDetail> finProfitDetails, String type);
-	String save(FinanceProfitDetail finProfitDetails, String type);
-	void save(List<FinanceProfitDetail> finProfitDetails, String type);
+	void save(FinanceProfitDetail finProfitDetails);
 	BigDecimal getAccrueAmount(String finReference);
 	void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type);
 	void updateLBDAccruals(FinanceProfitDetail finProfitDetails, boolean isMonthEnd);

@@ -98,7 +98,7 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setPri(pftDetail.getTotalpriSchd());
 		aeAmountCodes.setPriAP(pftDetail.getTotalPriPaid());
 		aeAmountCodes.setPriAB(pftDetail.getTotalPriBal());
-		
+
 		// Till date Calculation
 		// profit
 		aeAmountCodes.setPftS(pftDetail.getTdSchdPft());
@@ -109,7 +109,7 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setPriS(pftDetail.getTdSchdPri());
 		aeAmountCodes.setPriSP(pftDetail.getTdSchdPriPaid());
 		aeAmountCodes.setPriSB(pftDetail.getTdSchdPriBal());
-		
+
 		//Accural
 		aeAmountCodes.setAccrue(pftDetail.getPftAccrued());
 		aeAmountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
@@ -121,7 +121,8 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setFirstRepayAmt(pftDetail.getFirstRepayAmt());
 		//Last Repayments
 		aeAmountCodes.setPrvRpySchDate(pftDetail.getPrvRpySchDate());
-		aeAmountCodes.setFinalRepayAmt(pftDetail.getFinalRepayAmt());;
+		aeAmountCodes.setFinalRepayAmt(pftDetail.getFinalRepayAmt());
+		;
 		aeAmountCodes.setPrvRpySchPft(pftDetail.getPrvRpySchPft());
 		aeAmountCodes.setPrvRpySchPri(pftDetail.getPrvRpySchPri());
 		//next Repayments
@@ -154,19 +155,19 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setDaysFromFullyPaid(getNoDays(pftDetail.getFullPaidDate(), valueDate));
 		aeAmountCodes.setTtlTerms(pftDetail.getNOInst());
 		aeAmountCodes.setElpTerms(pftDetail.getNOInst() - pftDetail.getFutureInst());
-		
+
 		aeAmountCodes.setAccrue(pftDetail.getPftAccrued());
 		aeAmountCodes.setlAccrue(pftDetail.getAcrTillLBD());
 		aeAmountCodes.setDAccrue(aeAmountCodes.getlAccrue().subtract(aeAmountCodes.getAccrue()));
-		
+
 		aeAmountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
 		aeAmountCodes.setlAccrueS(pftDetail.getAcrSuspTillLBD());
 		aeAmountCodes.setDAccrue(aeAmountCodes.getlAccrueS().subtract(aeAmountCodes.getAccrueS()));
-		
+
 		aeAmountCodes.setAmz(pftDetail.getPftAmz());
 		aeAmountCodes.setlAmz(pftDetail.getAmzTillLBD());
 		aeAmountCodes.setdAmz(aeAmountCodes.getlAmz().subtract(aeAmountCodes.getAmz()));
-		
+
 		aeAmountCodes.setAmzNRM(pftDetail.getPftAmzNormal());
 		aeAmountCodes.setlAmzNRM(pftDetail.getAmzTillLBDNormal());
 		aeAmountCodes.setdAmz(aeAmountCodes.getlAmzNRM().subtract(aeAmountCodes.getAmzNRM()));
@@ -179,7 +180,6 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setlAmzS(pftDetail.getAmzTillLBDPIS());
 		aeAmountCodes.setdAmzS(aeAmountCodes.getlAmzS().subtract(aeAmountCodes.getAmzS()));
 
-		
 		// +++++++++++++++++++
 		//		aeAmountCodes.setCpzNxt();
 		//		aeAmountCodes.setdAmz();
@@ -194,25 +194,36 @@ public class AEAmounts implements Serializable {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();
-		String finState = CalculationConstants.FIN_STATE_NORMAL;
-		boolean isSusp = false;
-		Date dateSusp = DateUtility.addDays(finMain.getMaturityDate(), 1);
+		Date dateSusp = null;
 
-		FinanceSuspHead suspHead = getSuspHeadDAO().getFinanceSuspHeadById(finRef, "");
-
-		if (suspHead != null && suspHead.isFinIsInSusp()) {
-			isSusp = true;
-			dateSusp = suspHead.getFinSuspDate();
+		if (StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			dateSusp = getSuspHeadDAO().getFinSuspDate(finRef);
 		}
 
+		if (dateSusp == null) {
+			dateSusp = DateUtility.addDays(finMain.getMaturityDate(), 1);
+		}
+
+		//Reset Totals
+		resetCalculatedTotals(finMain, pftDetail);
+
+		//Calculate Accruals
 		//How schdDetails will be empty? OD loans before disbursement?
 		if (schdDetails == null || schdDetails.isEmpty()) {
-			pftDetail.setLastMdfDate(DateUtility.getAppDate());
-			return pftDetail;
+		} else {
+			calAccruals(finMain, schdDetails, pftDetail, valueDate, dateSusp);
 		}
 
-		// reset fields
-		resetCalculatedTotals(finMain, pftDetail);
+		//Gross Totals
+		calculateTotals(finMain, pftDetail, dateSusp, valueDate);
+
+		return pftDetail;
+
+	}
+
+	private static void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+			FinanceProfitDetail pftDetail, Date valueDate, Date dateSusp) {
+		String finState = CalculationConstants.FIN_STATE_NORMAL;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail nextSchd = null;
 
@@ -304,23 +315,15 @@ public class AEAmounts implements Serializable {
 			} else {
 				acrNormal = nextSchd.getProfitCalc();
 			}
-			
+
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrueSusp().add(acrNormal));
-			
+
 			//Set Amortization for various periods
 			pftDetail.setPftAmz(pftDetail.getPftAmz().add(pftAmz));
 			pftDetail.setPftAmzNormal(pftDetail.getPftAmzNormal().add(pftAmzNormal));
 			pftDetail.setPftAmzPD(pftDetail.getPftAmzPD().add(pftAmzPD));
 
 		}
-
-		//-------------------------------------------------------------------------------------
-		//Gross Totals
-		//-------------------------------------------------------------------------------------
-
-		calculateTotals(pftDetail, finMain.getProfitDaysBasis(), isSusp, valueDate);
-
-		return pftDetail;
 
 	}
 
@@ -450,7 +453,7 @@ public class AEAmounts implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	private static void calculateTotals(FinanceProfitDetail pftDetail, String profitDaysBasis, boolean isSusp,
+	private static void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp,
 			Date valueDate) {
 		logger.debug("Entering");
 
@@ -463,15 +466,18 @@ public class AEAmounts implements Serializable {
 		BigDecimal calPart1 = pftDetail.getTotalPftSchd().add(pftDetail.getTotalPftCpz());
 		BigDecimal calPart2 = pftDetail.getTotalpriSchd().subtract(pftDetail.getTotalPftCpz()).max(new BigDecimal(100));
 		BigDecimal daysFactor = CalculationUtil.getInterestDays(pftDetail.getFinStartDate(),
-				pftDetail.getMaturityDate(), profitDaysBasis);
+				pftDetail.getMaturityDate(), finMain.getProfitDaysBasis());
 		pftDetail.setCurFlatRate(calPart1.divide(calPart2.multiply(daysFactor), 9, RoundingMode.HALF_DOWN));
 
 		// Suspense Amortization
-		if (isSusp) {
+		if (dateSusp.compareTo(pftDetail.getMaturityDate()) <= 0) {
 			pftDetail.setPftAmzSusp(pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal())
 					.subtract(pftDetail.getPftAmzPD()));
+			pftDetail.setPftInSusp(true);
+		} else {
+			pftDetail.setPftInSusp(false);
 		}
-		
+
 		pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
 		//Value Equivalent to accrued till the suspended date
@@ -479,24 +485,24 @@ public class AEAmounts implements Serializable {
 		//Value Equivalent accrual after suspended date
 		pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
 
-
 		// OD Details
-		FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference());
-		if (finODDetails != null) {
-			pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
-			pftDetail.setODProfit(finODDetails.getFinCurODPft());
-			pftDetail.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
-			pftDetail.setPenaltyDue(finODDetails.getTotPenaltyBal());
-			pftDetail.setPenaltyWaived(finODDetails.getTotWaived());
-			pftDetail.setFirstODDate(finODDetails.getFinODSchdDate());
-			pftDetail.setPrvODDate(finODDetails.getFinODTillDate());
-			pftDetail.setCurODDays(getNoDays(valueDate, finODDetails.getFinODTillDate()));
+		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference());
+			if (finODDetails != null) {
+				pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
+				pftDetail.setODProfit(finODDetails.getFinCurODPft());
+				pftDetail.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
+				pftDetail.setPenaltyDue(finODDetails.getTotPenaltyBal());
+				pftDetail.setPenaltyWaived(finODDetails.getTotWaived());
+				pftDetail.setFirstODDate(finODDetails.getFinODSchdDate());
+				pftDetail.setPrvODDate(finODDetails.getFinODTillDate());
+				pftDetail.setCurODDays(getNoDays(valueDate, finODDetails.getFinODTillDate()));
 
-			//Workaround solution to avoid another fields in the FinODDetails
-			pftDetail.setMaxODDays(finODDetails.getFinCurODDays());
+				//Workaround solution to avoid another fields in the FinODDetails
+				pftDetail.setMaxODDays(finODDetails.getFinCurODDays());
+			}
+
 		}
-
-		pftDetail.setPftInSusp(isSusp);
 
 		int tenor = DateUtility.getMonthsBetween(pftDetail.getNSchdDate(), pftDetail.getMaturityDate());
 		pftDetail.setRemainingTenor(tenor);
@@ -510,10 +516,53 @@ public class AEAmounts implements Serializable {
 
 	private static void resetCalculatedTotals(FinanceMain finMain, FinanceProfitDetail pftDetail) {
 
+		if (StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			pftDetail.setFinReference(finMain.getFinReference());
+			pftDetail.setFinStartDate(finMain.getFinStartDate());
+			pftDetail.setCustId(finMain.getCustID());
+			pftDetail.setCustCIF(finMain.getCustCIF());
+			pftDetail.setFinBranch(finMain.getFinBranch());
+			pftDetail.setFinType(finMain.getFinType());
+			pftDetail.setFinCcy(finMain.getFinCcy());
+			pftDetail.setFinPurpose(finMain.getFinPurpose());
+			pftDetail.setFinContractDate(finMain.getFinContractDate());
+			pftDetail.setFinApprovedDate(finMain.getFinApprovedDate());
+			pftDetail.setFullPaidDate(finMain.getFinStartDate());
+			pftDetail.setFinAmount(finMain.getFinAmount());
+			pftDetail.setDownPayment(finMain.getDownPayment());
+			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
+			pftDetail.setFinCategory(finMain.getProductCategory());
+		}
+
 		//Miscellaneous Fields
 		pftDetail.setLastMdfDate(DateUtility.getAppDate());
-		pftDetail.setFinStartDate(finMain.getFinStartDate());
 		pftDetail.setMaturityDate(finMain.getMaturityDate());
+		pftDetail.setFinIsActive(finMain.isFinIsActive());
+		pftDetail.setClosingStatus(finMain.getClosingStatus());
+		pftDetail.setRepayFrq(finMain.getRepayFrq());
+		pftDetail.setFinStatus(finMain.getFinStatus());
+		pftDetail.setFinStsReason(finMain.getFinStsReason());
+		
+
+		//Setting date for recal purpose
+		pftDetail.setFirstRepayDate(pftDetail.getFinStartDate());
+		pftDetail.setPrvRpySchDate(pftDetail.getFinStartDate());
+		pftDetail.setNSchdDate(pftDetail.getMaturityDate());
+		pftDetail.setFirstDisbDate(pftDetail.getMaturityDate());
+		pftDetail.setLatestDisbDate(pftDetail.getMaturityDate());
+		pftDetail.setLatestRpyDate(finMain.getFinStartDate());
+		pftDetail.setFirstODDate(pftDetail.getFinStartDate());
+		pftDetail.setPrvODDate(pftDetail.getFinStartDate());
+		
+
+		//Interest Calculaiton on Pastdue
+		if (StringUtils.equals(finMain.getPastduePftCalMthd(), CalculationConstants.PDPFTCAL_NOTAPP)) {
+			pftDetail.setCalPftOnPD(false);
+		} else {
+			pftDetail.setCalPftOnPD(true);
+		}
+		pftDetail.setPftOnPDMethod(finMain.getPastduePftCalMthd());
+		pftDetail.setPftOnPDMrg(finMain.getPastduePftMargin());
 
 		// profit
 		pftDetail.setTotalPftSchd(BigDecimal.ZERO);
@@ -570,6 +619,10 @@ public class AEAmounts implements Serializable {
 		pftDetail.setPenaltyDue(BigDecimal.ZERO);
 		pftDetail.setPenaltyWaived(BigDecimal.ZERO);
 
+		
+		pftDetail.setTotalPriPaidInAdv(BigDecimal.ZERO);
+		pftDetail.setTotalPftPaidInAdv(BigDecimal.ZERO);
+		
 		//Terms
 		pftDetail.setNOInst(0);
 		pftDetail.setNOPaidInst(0);
@@ -579,11 +632,6 @@ public class AEAmounts implements Serializable {
 		pftDetail.setFutureInst(0);
 		pftDetail.setRemainingTenor(0);
 		pftDetail.setTotalTenor(0);
-
-		//Setting date for recal purpose
-		pftDetail.setNSchdDate(pftDetail.getMaturityDate());
-		pftDetail.setFirstRepayDate(pftDetail.getFinStartDate());
-		pftDetail.setFirstDisbDate(pftDetail.getMaturityDate());
 
 	}
 

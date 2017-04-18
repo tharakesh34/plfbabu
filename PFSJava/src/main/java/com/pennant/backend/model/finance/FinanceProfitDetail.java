@@ -120,7 +120,8 @@ public class FinanceProfitDetail implements Serializable {
 	//New fields on 14APR17. If possible rearrange the fields to keep relevent fields together
 	private int					maxODDays			= 0;
 	private boolean				calPftOnPD			= false;
-	private BigDecimal			pftOnPDMethod		= BigDecimal.ZERO;
+	private String				pftOnPDMethod		= "";
+	private BigDecimal			pftOnPDMrg			= BigDecimal.ZERO;
 	private BigDecimal			totPftOnPD			= BigDecimal.ZERO;
 	private BigDecimal			totPftOnPDPaid		= BigDecimal.ZERO;
 	private BigDecimal			totPftOnPDWaived	= BigDecimal.ZERO;
@@ -938,12 +939,21 @@ public class FinanceProfitDetail implements Serializable {
 		this.calPftOnPD = calPftOnPD;
 	}
 
-	public BigDecimal getPftOnPDMethod() {
+
+	public String getPftOnPDMethod() {
 		return pftOnPDMethod;
 	}
 
-	public void setPftOnPDMethod(BigDecimal pftOnPDMethod) {
+	public void setPftOnPDMethod(String pftOnPDMethod) {
 		this.pftOnPDMethod = pftOnPDMethod;
+	}
+
+	public BigDecimal getPftOnPDMrg() {
+		return pftOnPDMrg;
+	}
+
+	public void setPftOnPDMrg(BigDecimal pftOnPDMrg) {
+		this.pftOnPDMrg = pftOnPDMrg;
 	}
 
 	public BigDecimal getTotPftOnPD() {

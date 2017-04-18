@@ -302,9 +302,10 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TdSchdPftPaid = :TdSchdPftPaid, TdSchdPftBal = :TdSchdPftBal,");
 		updateSql.append(" TotalpriSchd = :TotalpriSchd,TotalPriPaid = :TotalPriPaid, TotalPriBal = :TotalPriBal,");
 		updateSql.append(" TdSchdPri = :TdSchdPri, TdSchdPriPaid = :TdSchdPriPaid, TdSchdPriBal = :TdSchdPriBal,");
-		updateSql.append(" CalPftOnPD = :CalPftOnPD, PftOnPDMethod = :PftOnPDMethod, TotPftOnPD = :TotPftOnPD,");
-		updateSql.append(" TotPftOnPDPaid = :TotPftOnPDPaid, TotPftOnPDWaived = :TotPftOnPDWaived,");
-		updateSql.append(" TotPftOnPDDue = :TotPftOnPDDue,");
+		updateSql.append(" CalPftOnPD = :CalPftOnPD, PftOnPDMethod = :PftOnPDMethod, PftOnPDMrg = :PftOnPDMrg");
+		updateSql.append(" TotPftOnPD = :TotPftOnPD,TotPftOnPDPaid = :TotPftOnPDPaid,");
+		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived,");
+		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived, TotPftOnPDDue = :TotPftOnPDDue,");
 		updateSql.append(" NOInst = :NOInst, NOPaidInst = :NOPaidInst, NOODInst = :NOODInst,");
 		updateSql.append(" FutureInst = :FutureInst, RemainingTenor = :RemainingTenor, TotalTenor = :TotalTenor,");
 		updateSql.append(" ODPrincipal = :ODPrincipal, ODProfit = :ODProfit, CurODDays = :CurODDays,");
@@ -313,8 +314,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" FirstRepayDate = :FirstRepayDate, FirstRepayAmt = :FirstRepayAmt,");
 		updateSql.append(" FinalRepayAmt = :FinalRepayAmt, FirstDisbDate = :FirstDisbDate,");
 		updateSql.append(" LatestDisbDate = :LatestDisbDate, FullPaidDate = :FullPaidDate,");
-		updateSql
-				.append(" PrvRpySchDate = :PrvRpySchDate, PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft,");
+		updateSql.append(" PrvRpySchDate = :PrvRpySchDate, PrvRpySchPri = :PrvRpySchPri,");
+		updateSql.append("  PrvRpySchPft = :PrvRpySchPft,");
 		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
@@ -431,107 +432,58 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 	}
 
 	@Override
-	public String save(FinanceProfitDetail finProfitDetails, String type) {
+	public void save(FinanceProfitDetail finProfitDetails) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinPftDetails").append(type);
-		insertSql
-				.append(" (FinReference, CustId , FinBranch , FinType , LastMdfDate , TotalPftSchd , TotalPftCpz , TotalPftPaid ,");
-		insertSql
-				.append(" TotalPftBal , TotalPftPaidInAdv , TotalPriPaid , TotalPriBal , TdSchdPft , TdPftCpz , TdSchdPftPaid ,");
-		insertSql.append(" TdSchdPftBal , PftAccrued , PftAccrueSusp , PftAmz , PftAmzSusp , TdSchdPri ,");
-		insertSql.append(" TdSchdPriPaid , TdSchdPriBal , AcrTillLBD , AmzTillLBD ,");
-		insertSql.append(" RepayFrq , CustCIF , FinCcy , FinPurpose , FinContractDate , FinApprovedDate ,");
-		insertSql
-				.append(" FinStartDate , MaturityDate , FullPaidDate , FinAmount , DownPayment , CurReducingRate , curFlatRate ,");
-		insertSql.append(" TotalpriSchd , ODPrincipal , ODProfit , PenaltyPaid , PenaltyDue , PenaltyWaived ,");
-		insertSql.append(" NSchdDate , NSchdPri , NSchdPft , NSchdPriDue , NSchdPftDue , ");
-		insertSql.append(" PftInSusp , FinStatus , FinStsReason , FinWorstStatus , ");
-		insertSql.append(" NOInst , NOPaidInst , NOODInst ,FinAccount , FinAcType , DisbAccountId ,");
-		insertSql
-				.append(" DisbActCcy , RepayAccountId , FinCustPftAccount , IncomeAccount , UEIncomeSuspAccount , FinCommitmentRef ,");
-		insertSql
-				.append(" FinIsActive , FirstRepayDate , FirstRepayAmt , FinalRepayAmt, CurODDays , FirstODDate , PrvODDate , ");
-		insertSql.append(" ClosingStatus , FinCategory , PrvRpySchDate ,  PrvRpySchPri ,  ");
-		insertSql.append(" PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff )");
-		insertSql
-				.append(" VALUES (:FinReference, :CustId , :FinBranch , :FinType , :LastMdfDate , :TotalPftSchd , :TotalPftCpz ,");
-		insertSql
-				.append(" :TotalPftPaid , :TotalPftBal , :TotalPftPaidInAdv , :TotalPriPaid , :TotalPriBal , :TdSchdPft , :TdPftCpz ,");
-		insertSql.append(" :TdSchdPftPaid , :TdSchdPftBal , :PftAccrued , :PftAccrueSusp , :PftAmz , :PftAmzSusp ,");
-		insertSql.append(" :TdSchdPri , :TdSchdPriPaid , :TdSchdPriBal , :AcrTillLBD , ");
-		insertSql
-				.append(" :AmzTillLBD , :RepayFrq , :CustCIF , :FinCcy , :FinPurpose , :FinContractDate , :FinApprovedDate ,");
-		insertSql
-				.append(" :FinStartDate , :MaturityDate , :FullPaidDate , :FinAmount , :DownPayment , :CurReducingRate , :curFlatRate ,");
-		insertSql.append(" :TotalpriSchd , :ODPrincipal , :ODProfit ,  :PenaltyPaid , :PenaltyDue , :PenaltyWaived ,");
-		insertSql.append(" :NSchdDate , :NSchdPri , :NSchdPft , :NSchdPriDue , :NSchdPftDue , ");
-		insertSql.append(" :PftInSusp , :FinStatus , :FinStsReason , :FinWorstStatus , ");
-		insertSql.append(" :NOInst , :NOPaidInst , :NOODInst , :FinAccount , :FinAcType , :DisbAccountId ,");
-		insertSql
-				.append(" :DisbActCcy , :RepayAccountId , :FinCustPftAccount , :IncomeAccount , :UEIncomeSuspAccount , :FinCommitmentRef ,");
-		insertSql
-				.append(" :FinIsActive , :FirstRepayDate , :FirstRepayAmt , :FinalRepayAmt , :CurODDays , :FirstODDate , :PrvODDate ,");
-		insertSql.append(" :ClosingStatus , :FinCategory , :PrvRpySchDate , :PrvRpySchPri , :PrvRpySchPft, ");
-		insertSql.append(" :LatestRpyDate, :LatestRpyPri, :LatestRpyPft, :TotalWriteoff )");
+		StringBuilder insertSql = new StringBuilder("Insert Into FinPftDetails");
+		insertSql.append(" (FinReference, CustId, FinBranch, FinType, LastMdfDate, TotalPftSchd,");
+		insertSql.append(" TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid,");
+		insertSql.append(" TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued,");
+		insertSql.append(" PftAccrueSusp, PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal,");
+		insertSql.append(" AcrTillLBD, AmzTillLBD, RepayFrq, CustCIF, FinCcy, FinPurpose, FinContractDate,");
+		insertSql.append(" FinApprovedDate, FinStartDate, MaturityDate, FullPaidDate, FinAmount,");
+		insertSql.append(" DownPayment, CurReducingRate, CurFlatRate, TotalpriSchd, ODPrincipal, ODProfit,");
+		insertSql.append(" PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate, NSchdPri, NSchdPft,");
+		insertSql.append(" NSchdPriDue, NSchdPftDue, PftInSusp, FinStatus, FinStsReason, FinWorstStatus,");
+		insertSql.append(" NOInst, NOPaidInst, NOODInst, FinAccount, FinAcType, DisbAccountId, DisbActCcy,");
+		insertSql.append(" RepayAccountId, FinCustPftAccount, IncomeAccount, UEIncomeSuspAccount,");
+		insertSql.append(" FinCommitmentRef, FinIsActive, FirstRepayDate, FirstRepayAmt, FinalRepayAmt,");
+		insertSql.append(" CurODDays, MaxODDays, FirstODDate, PrvODDate, ClosingStatus, FinCategory,");
+		insertSql.append(" PrvRpySchDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate, LatestRpyPri,");
+		insertSql.append(" LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri, TotalAdvPftSchd,");
+		insertSql.append(" TotalRbtSchd, TotalPriPaidInAdv, TdSchdAdvPft, TdSchdRbt, PftAmzNormal, PftAmzPD,");
+		insertSql.append(" AmzTillLBDNormal, AmzTillLBDPD, AmzTillLBDPIS, CalPftOnPD, PftOnPDMethod,");
+		insertSql.append(" PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue,");
+		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthPD, PrvMthAmzSusp, PrvMthAcr,");
+		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
+		insertSql.append(" TotalTenor) ");
+		insertSql.append(" Values");
+		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
+		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
+		insertSql.append(" :TotalPriBal, :TdSchdPft, :TdPftCpz, :TdSchdPftPaid, :TdSchdPftBal, :PftAccrued, ");
+		insertSql.append(" :PftAccrueSusp, :PftAmz, :PftAmzSusp, :TdSchdPri, :TdSchdPriPaid, :TdSchdPriBal, ");
+		insertSql.append(" :AcrTillLBD, :AmzTillLBD, :RepayFrq, :CustCIF, :FinCcy, :FinPurpose, :FinContractDate,");
+		insertSql.append(" :FinApprovedDate, :FinStartDate, :MaturityDate, :FullPaidDate, :FinAmount, ");
+		insertSql.append(" :DownPayment, :CurReducingRate, :CurFlatRate, :TotalpriSchd, :ODPrincipal, :ODProfit,");
+		insertSql.append(" :PenaltyPaid, :PenaltyDue, :PenaltyWaived, :NSchdDate, :NSchdPri, :NSchdPft,");
+		insertSql.append(" :NSchdPriDue, :NSchdPftDue, :PftInSusp, :FinStatus, :FinStsReason, :FinWorstStatus,");
+		insertSql.append(" :NOInst, :NOPaidInst, :NOODInst, :FinAccount, :FinAcType, :DisbAccountId, :DisbActCcy,");
+		insertSql.append(" :RepayAccountId, :FinCustPftAccount, :IncomeAccount, :UEIncomeSuspAccount,");
+		insertSql.append(" :FinCommitmentRef, :FinIsActive, :FirstRepayDate, :FirstRepayAmt, :FinalRepayAmt,");
+		insertSql.append(" :CurODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
+		insertSql.append(" :PrvRpySchDate, :PrvRpySchPri, :PrvRpySchPft, :LatestRpyDate, :LatestRpyPri,");
+		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri, :TotalAdvPftSchd,");
+		insertSql.append(" :TotalRbtSchd, :TotalPriPaidInAdv, :TdSchdAdvPft, :TdSchdRbt, :PftAmzNormal, :PftAmzPD,");
+		insertSql.append(" :AmzTillLBDNormal, :AmzTillLBDPD, :AmzTillLBDPIS, :CalPftOnPD, :PftOnPDMethod,");
+		insertSql.append(" :PftOnPDMrg, :TotPftOnPD, :TotPftOnPDPaid, :TotPftOnPDWaived, :TotPftOnPDDue,");
+		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthPD, :PrvMthAmzSusp, :PrvMthAcr,");
+		insertSql.append(" :PrvMthAcrSusp, :FirstDisbDate, :LatestDisbDate, :FutureInst, :RemainingTenor,");
+		insertSql.append(" :TotalTenor) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return finProfitDetails.getFinReference();
-	}
-
-	@Override
-	public void save(List<FinanceProfitDetail> finProfitDetails, String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into FinPftDetails").append(type);
-		insertSql
-				.append(" (FinReference, CustId , FinBranch , FinType , LastMdfDate , TotalPftSchd , TotalPftCpz , TotalPftPaid ,");
-		insertSql
-				.append(" TotalPftBal , TotalPftPaidInAdv , TotalPriPaid , TotalPriBal , TdSchdPft , TdPftCpz , TdSchdPftPaid ,");
-		insertSql.append(" TdSchdPftBal , PftAccrued , PftAccrueSusp , PftAmz , PftAmzSusp , TdSchdPri ,");
-		insertSql.append(" TdSchdPriPaid , TdSchdPriBal , AcrTillLBD , AmzTillLBD ,");
-		insertSql.append(" RepayFrq , CustCIF , FinCcy , FinPurpose , FinContractDate , FinApprovedDate ,");
-		insertSql
-				.append(" FinStartDate , MaturityDate , FullPaidDate , FinAmount , DownPayment , CurReducingRate , curFlatRate ,");
-		insertSql.append(" TotalpriSchd , ODPrincipal , ODProfit , PenaltyPaid , PenaltyDue , PenaltyWaived ,");
-		insertSql.append(" NSchdDate , NSchdPri , NSchdPft , NSchdPriDue , NSchdPftDue , ");
-		insertSql.append(" PftInSusp , FinStatus , FinStsReason , FinWorstStatus , ");
-		insertSql.append(" NOInst , NOPaidInst , NOODInst , FinAccount , FinAcType , DisbAccountId ,");
-		insertSql
-				.append(" DisbActCcy , RepayAccountId , FinCustPftAccount , IncomeAccount , UEIncomeSuspAccount , FinCommitmentRef ,");
-		insertSql
-				.append(" FinIsActive , FirstRepayDate , FirstRepayAmt , FinalRepayAmt , CurODDays , FirstODDate , PrvODDate , ");
-		insertSql.append(" ClosingStatus , FinCategory , PrvRpySchDate ,  PrvRpySchPri , PrvRpySchPft, ");
-		insertSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff )");
-		insertSql
-				.append(" VALUES (:FinReference, :CustId , :FinBranch , :FinType , :LastMdfDate , :TotalPftSchd , :TotalPftCpz ,");
-		insertSql
-				.append(" :TotalPftPaid , :TotalPftBal , :TotalPftPaidInAdv , :TotalPriPaid , :TotalPriBal , :TdSchdPft , :TdPftCpz ,");
-		insertSql.append(" :TdSchdPftPaid , :TdSchdPftBal , :PftAccrued , :PftAccrueSusp , :PftAmz , :PftAmzSusp ,");
-		insertSql.append(" :TdSchdPri , :TdSchdPriPaid , :TdSchdPriBal , :AcrTillLBD , ");
-		insertSql
-				.append(" :AmzTillLBD , :RepayFrq , :CustCIF , :FinCcy , :FinPurpose , :FinContractDate , :FinApprovedDate ,");
-		insertSql
-				.append(" :FinStartDate , :MaturityDate , :FullPaidDate , :FinAmount , :DownPayment , :CurReducingRate , :curFlatRate ,");
-		insertSql.append(" :TotalpriSchd , :ODPrincipal , :ODProfit , :PenaltyPaid , :PenaltyDue , :PenaltyWaived ,");
-		insertSql.append(" :NSchdDate , :NSchdPri , :NSchdPft , :NSchdPriDue , :NSchdPftDue , ");
-		insertSql.append(" :PftInSusp ,  :FinStatus , :FinStsReason , :FinWorstStatus , ");
-		insertSql.append(" :NOInst , :NOPaidInst , :NOODInst , :FinAccount , :FinAcType , :DisbAccountId ,");
-		insertSql
-				.append(" :DisbActCcy , :RepayAccountId , :FinCustPftAccount , :IncomeAccount , :UEIncomeSuspAccount , :FinCommitmentRef ,");
-		insertSql
-				.append(" :FinIsActive , :FirstRepayDate , :FirstRepayAmt , :FinalRepayAmt , :CurODDays , :FirstODDate , :PrvODDate ,");
-		insertSql.append(" :ClosingStatus , :FinCategory , :PrvRpySchDate , :PrvRpySchPri , :PrvRpySchPft, ");
-		insertSql.append(" :LatestRpyDate,  :LatestRpyPri, :LatestRpyPft, :TotalWriteoff )");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finProfitDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
