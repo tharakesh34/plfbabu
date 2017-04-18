@@ -9,4 +9,11 @@
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
 
+<changeSet id="01" author="Madhubabu">
+		<addColumn tableName="AdtFinAdvancePayments">
+			<column name="LinkedTranId" type="bigint"/>
+		</addColumn>
+	</changeSet>
+
+
 </databaseChangeLog>
