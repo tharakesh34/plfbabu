@@ -59,7 +59,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  *
  */
 
-@XmlType(propOrder = {"roleCd"})
+@XmlType(propOrder = {"roleCd","roleDesc"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class SecurityRole extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +69,7 @@ public class SecurityRole extends AbstractWorkflowEntity implements Entity {
 	
 	@XmlElement
 	private String       roleCd;
+	@XmlElement
 	private String       roleDesc;
 	private String       roleCategory;
 	private long         loginUsrId;

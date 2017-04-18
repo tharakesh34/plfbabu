@@ -1566,6 +1566,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90121", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}	
+						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
+							ErrorDetails errorDetail = new ErrorDetails();
+							String[] valueParm = new String[2];
+							valueParm[0] = "employment endDate" + DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
 					}
 					if (empDetail.getCustEmpFrom() != null && empDetail.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpFrom()) >= 0) {
 						ErrorDetails errorDetail = new ErrorDetails();
@@ -1583,7 +1590,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
 			}
-
+			
 		}
 
 		// customer Address details
@@ -1684,13 +1691,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
-		// customer document details
 		List<CustomerDocument> custDocuments = customerDetails.getCustomerDocumentsList();
 		if(custDocuments !=null){
 		for (CustomerDocument custDocument : custDocuments) {
-			auditDetail = customerDocumentService.validateCustomerDocuments(custDocument);
-			if(auditDetail != null && auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
-				return auditDetail;
+			AuditDetail auditDetail1 = customerDocumentService.validateCustomerDocuments(custDocument);
+			if(auditDetail1 != null && auditDetail1.getErrorDetails() != null && !auditDetail1.getErrorDetails().isEmpty()) {
+				return auditDetail1;
 			}
 		}
 		}

@@ -47,7 +47,8 @@ public class FinanceTypeController {
 		if(financeType != null) {
 			response.setFinType(financeType.getFinType()); 
 			response.setFinTypeDesc(financeType.getFinTypeDesc());
-			
+			response.setEndDate(financeType.getEndDate());
+			response.setStartDate(financeType.getStartDate());
 			// prepare FinanceType Basic details
 			if(finTypeRequest.isBasicDetailReq()) {
 				BasicDetail basicDetail = new BasicDetail();

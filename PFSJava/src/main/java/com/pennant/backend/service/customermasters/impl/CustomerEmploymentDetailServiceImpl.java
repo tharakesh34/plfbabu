@@ -361,6 +361,13 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+				if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
+					ErrorDetails errorDetail = new ErrorDetails();
+					String[] valueParm = new String[2];
+					valueParm[0] = "employment endDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
 			}
 			
 			if (custEmpDetails.getCustEmpFrom() != null && custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {

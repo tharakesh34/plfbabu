@@ -44,6 +44,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -1299,20 +1300,19 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
+		//planned EMI
+		errorDetails = planEMIHolidayValidation(vldGroup, finScheduleData);
+		if (errorDetails != null) {
+			return errorDetails;
+		}
 
 		//Step Loan?
 		errorDetails = stepLoanValidation(vldGroup, finScheduleData);
 		if (errorDetails != null) {
 			return errorDetails;
 		}
-
-		//Planned EMI Holidays
-		if (finMain.isStepFinance()) {
-			errorDetails = planEMIHolidayValidation(vldGroup, finScheduleData);
-			if (errorDetails != null) {
-				return errorDetails;
-			}
-		}
+		
+		
 		return errorDetails;
 	}
 
@@ -1574,9 +1574,9 @@ public class FinanceDataValidation {
 		}
 
 		//Planned EMI Holidays also requested?
-		if (finMain.isPlanEMIHAlw()) {
+		/*if (finMain.isPlanEMIHAlw()) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90150", null)));
-		}
+		}*/
 
 		//Manual Steps Requested?
 		if (finMain.isAlwManualSteps()) {
@@ -1652,6 +1652,26 @@ public class FinanceDataValidation {
 		}
 
 		if(finMain.isPlanEMIHAlw()) {
+			if(StringUtils.isBlank(finMain.getPlanEMIHMethod())){
+				String[] valueParm = new String[1];
+				valueParm[0] = "planEMIHMethod";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				return errorDetails;
+			}
+			if(finMain.getPlanEMIHMaxPerYear()<= 0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "planEMIHMaxPerYear";
+				valueParm[1] = "1";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30507", valueParm)));
+				return errorDetails;
+			}
+			if(finMain.getPlanEMIHMax()<= 0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "planEMIHMax";
+				valueParm[1] = "1";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30507", valueParm)));
+				return errorDetails;
+			}
 			// planEMIHMethod
 			if(!StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)
 					&& !StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
@@ -1673,6 +1693,47 @@ public class FinanceDataValidation {
 				valueParm[0] = String.valueOf(finMain.getNumberOfTerms() - 1);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90240", valueParm)));
 				return errorDetails;
+			}
+			if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				if (finScheduleData.getApiPlanEMIHmonths() == null || finScheduleData.getApiPlanEMIHmonths().isEmpty()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "planEMIHmonths";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					return errorDetails;
+				} else{
+					if(finScheduleData.getApiPlanEMIHmonths().size() >= finMain.getPlanEMIHMaxPerYear()){
+						String[] valueParm = new String[2];
+						valueParm[0] = "PlanEMIHmonths";
+						valueParm[1] = "PlanEMIHMaxPerYear";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90220", valueParm)));
+						return errorDetails;
+					}
+					for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths() ) {
+						if(!(detail.getPlanEMIHMonth() >=0 && detail.getPlanEMIHMonth() <=12)){
+							String[] valueParm = new String[3];
+							valueParm[0] = "holidayMonth";
+							valueParm[1] = "1";
+							valueParm[2] = "12";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+			} else if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+				if (finScheduleData.getApiPlanEMIHDates() == null || finScheduleData.getApiPlanEMIHDates().isEmpty()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "planEMIHDates";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					return errorDetails;
+				} else {
+					if(finScheduleData.getApiPlanEMIHDates().size() >= finMain.getPlanEMIHMaxPerYear()){
+						String[] valueParm = new String[2];
+						valueParm[0] = "PlanEMIHDates";
+						valueParm[1] = "PlanEMIHMaxPerYear";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90220", valueParm)));
+						return errorDetails;
+					}
+				}
 			}
 		} else if(StringUtils.isNotBlank(finMain.getPlanEMIHMethod()) || finMain.getPlanEMIHMaxPerYear() > 0
 				|| finMain.getPlanEMIHMax() > 0 || finMain.getPlanEMIHLockPeriod() > 0

@@ -48,6 +48,8 @@ public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,Finance
 			FinanceTypeResponse response = new FinanceTypeResponse();
 			if (count > 0) {
 				response = financeTypeController.getFinanceTypeDetails(finTypeReq);
+				response.setStartDate(null);
+				response.setEndDate(null);
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = finType;

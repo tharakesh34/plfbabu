@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -25,7 +26,7 @@ public class SummaryDetailService {
 	private final static Logger		logger	= Logger.getLogger(SummaryDetailService.class);
 
 	private FinanceDisbursementDAO	financeDisbursementDAO;
-	private FinODDetailsDAO			finODDetailsDAO;
+	protected FinODDetailsDAO			finODDetailsDAO;
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
@@ -44,6 +45,9 @@ public class SummaryDetailService {
 
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
+			if(finPftDetail==null){
+				finPftDetail=AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), null, DateUtility.getAppDate());
+			}
 			if(finPftDetail != null) {
 				summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 				summary.setTotalProfit(finPftDetail.getTotalPftSchd());

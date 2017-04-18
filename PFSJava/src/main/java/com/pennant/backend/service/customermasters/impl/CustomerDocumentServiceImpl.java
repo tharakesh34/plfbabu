@@ -382,7 +382,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetails errorDetail = new ErrorDetails();
-if(customerDocument !=null){
+		if(customerDocument !=null){
 		if (customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null) {
 			if (customerDocument.getCustDocIssuedOn().compareTo(customerDocument.getCustDocExpDate()) > 0) {
 				String[] valueParm = new String[2];
@@ -434,6 +434,7 @@ if(customerDocument !=null){
 			valueParm[0] = customerDocument.getCustDocCategory();
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 
 		// validate Is Customer document?

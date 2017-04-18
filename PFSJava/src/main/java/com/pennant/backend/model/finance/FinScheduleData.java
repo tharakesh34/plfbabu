@@ -76,8 +76,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "planEMIHmonths",
-		"planEMIHDates","finODDetails","financeSummary","returnStatus" })
+		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "apiPlanEMIHmonths",
+		"apiPlanEMIHDates","finODDetails","financeSummary","returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {
@@ -128,9 +128,9 @@ public class FinScheduleData {
 	private List<RateInstruction> rateInstruction = new ArrayList<RateInstruction>();
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<FinServiceInstruction>();
 	private boolean odLimitReset;
-	@XmlElement
+	
 	private List<Integer> planEMIHmonths = new ArrayList<Integer>();
-	@XmlElement
+	
 	private List<Date> planEMIHDates = new ArrayList<Date>(); 
 	
 	//TODO: To be removed(DDP)
@@ -138,7 +138,10 @@ public class FinScheduleData {
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
 	private List<BaseRate> baseRates = new ArrayList<BaseRate>();
 	private List<SplRate> splRates = new ArrayList<SplRate>();
-	
+	@XmlElement(name="planEMIHDates")
+	private List<FinPlanEmiHoliday> apiPlanEMIHDates = new ArrayList<FinPlanEmiHoliday>(); 
+	@XmlElement(name="planEMIHmonths")
+	private List<FinPlanEmiHoliday> apiPlanEMIHmonths = new ArrayList<FinPlanEmiHoliday>(); 
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -633,5 +636,21 @@ public class FinScheduleData {
 		this.splRates = splRates;
 	}
 
-	
+	public List<FinPlanEmiHoliday> getApiPlanEMIHDates() {
+		return apiPlanEMIHDates;
+	}
+
+	public void setApiPlanEMIHDates(List<FinPlanEmiHoliday> apiPlanEMIHDates) {
+		this.apiPlanEMIHDates = apiPlanEMIHDates;
+	}
+
+	public List<FinPlanEmiHoliday> getApiPlanEMIHmonths() {
+		return apiPlanEMIHmonths;
+	}
+
+	public void setApiplanEMIHmonths(List<FinPlanEmiHoliday> apiPlanEMIHmonths) {
+		this.apiPlanEMIHmonths = apiPlanEMIHmonths;
+	}
+
+
 }

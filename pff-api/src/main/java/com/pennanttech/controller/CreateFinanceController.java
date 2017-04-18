@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -160,9 +162,76 @@ public class CreateFinanceController extends SummaryDetailService {
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 					finScheduleData.setSchduleGenerated(true);
-					
+
+					//plan EMI
+					List<Date> planEMIHDates = new ArrayList<Date>();
+					List<Integer> planEMIHmonths = new ArrayList<Integer>();
+					// Plan EMI Holidays Resetting after Rescheduling
+					boolean isValidSchDate = false;
+					if (finScheduleData.getApiPlanEMIHDates() != null) {
+						if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+								FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+							for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths()) {
+								planEMIHmonths.add(detail.getPlanEMIHMonth());
+							}
+						} else {
+							for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHDates()) {
+
+								planEMIHDates.add(detail.getPlanEMIHDate());
+								List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+								for (FinanceScheduleDetail schDetail : schedules) {
+									if (DateUtility.compare(detail.getPlanEMIHDate(), schDetail.getSchDate()) == 0) {
+										isValidSchDate = true;
+										if (schDetail.getInstNumber() == 1
+												|| DateUtility.compare(financeMain.getMaturityDate(),
+														schDetail.getSchDate()) == 0
+												|| DateUtility.compare(financeMain.getFinStartDate(),
+														schDetail.getSchDate()) == 0
+												|| DateUtility.compare(financeMain.getGrcPeriodEndDate(),
+														schDetail.getSchDate()) >= 0) {
+											FinanceDetail response = new FinanceDetail();
+											String[] valueParm = new String[1];
+											valueParm[0] = "holidayDate";
+											response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91111",
+													valueParm));
+											return response;
+										}
+									}
+								}
+							}
+						}
+					}
+					if (!isValidSchDate
+							&& StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+									FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
+						FinanceDetail response = new FinanceDetail();
+						String[] valueParm = new String[1];
+						valueParm[0] = "holidayDate";
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91111", valueParm));
+						return response;
+					}
+					finScheduleData.setPlanEMIHDates(planEMIHDates);
+					finScheduleData.setPlanEMIHmonths(planEMIHmonths);
+					if (finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
+						finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
+						finScheduleData.getFinanceMain().setEventToDate(
+								finScheduleData.getFinanceMain().getMaturityDate());
+						finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayDate());
+						finScheduleData.getFinanceMain().setRecalToDate(
+								finScheduleData.getFinanceMain().getMaturityDate());
+						finScheduleData.getFinanceMain().setRecalSchdMethod(
+								finScheduleData.getFinanceMain().getScheduleMethod());
+
+						if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+								FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+							finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
+						} else {
+							finScheduleData = ScheduleCalculator.getAdhocEMIHoliday(finScheduleData);
+						}
+					}
+
 					// fees calculation
-					if(!finScheduleData.getFinFeeDetailList().isEmpty()) {
+					if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
 						finScheduleData = FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
 					}
 				}

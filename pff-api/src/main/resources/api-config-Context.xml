@@ -92,6 +92,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
 		<property name="ruleService" ref="ruleService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 	<!-- Finance/Loan Services -->
