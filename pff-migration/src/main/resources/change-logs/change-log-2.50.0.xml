@@ -942,4 +942,15 @@ FROM FinanceMain_AView T1 INNER JOIN
 		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
     </sql>
     </changeSet>
+    <changeSet id="54" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="PFTONPDMRG" type="decimal(13, 9)" />
+		</addColumn>
+		<addColumn tableName="FinPftDetails_TEMP">
+			<column name="PFTONPDMRG" type="decimal(13, 9)" />
+		</addColumn>
+		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
+			<column name="PFTONPDMRG" type="decimal(13, 9)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
