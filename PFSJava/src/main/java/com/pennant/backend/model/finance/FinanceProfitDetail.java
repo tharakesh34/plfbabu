@@ -129,7 +129,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			acrSuspTillLBD		= BigDecimal.ZERO;
 	private BigDecimal			prvMthAmz			= BigDecimal.ZERO;
 	private BigDecimal			prvMthAmzNrm		= BigDecimal.ZERO;
-	private BigDecimal			prvMthPD			= BigDecimal.ZERO;
+	private BigDecimal			prvMthAmzPD			= BigDecimal.ZERO;
 	private BigDecimal			prvMthAmzSusp		= BigDecimal.ZERO;
 	private BigDecimal			prvMthAcr			= BigDecimal.ZERO;
 	private BigDecimal			prvMthAcrSusp		= BigDecimal.ZERO;
@@ -1012,12 +1012,12 @@ public class FinanceProfitDetail implements Serializable {
 		this.prvMthAmzNrm = prvMthAmzNrm;
 	}
 
-	public BigDecimal getPrvMthPD() {
-		return prvMthPD;
+	public BigDecimal getPrvMthAmzPD() {
+		return prvMthAmzPD;
 	}
 
-	public void setPrvMthPD(BigDecimal prvMthPD) {
-		this.prvMthPD = prvMthPD;
+	public void setPrvMthAmzPD(BigDecimal prvMthAmzPD) {
+		this.prvMthAmzPD = prvMthAmzPD;
 	}
 
 	public BigDecimal getPrvMthAmzSusp() {

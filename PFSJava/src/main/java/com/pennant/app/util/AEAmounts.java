@@ -51,7 +51,6 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.PennantConstants;
@@ -532,6 +531,7 @@ public class AEAmounts implements Serializable {
 			pftDetail.setDownPayment(finMain.getDownPayment());
 			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
 			pftDetail.setFinCategory(finMain.getProductCategory());
+			pftDetail.setFinWorstStatus(finMain.getFinStatus());
 		}
 
 		//Miscellaneous Fields

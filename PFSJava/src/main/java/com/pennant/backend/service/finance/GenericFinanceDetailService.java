@@ -2801,57 +2801,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		// Save/Update Finance Profit Details
 		FinanceProfitDetail finProfitDetails = profitDetail;
-
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
-		List<FeeRule> feeRuleList = finScheduleData.getFeeRules();
-
-		if(financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-			
-			finProfitDetails.setFinReference(financeMain.getFinReference());
-			finProfitDetails.setFinBranch(financeMain.getFinBranch());
-			finProfitDetails.setFinType(financeMain.getFinType());
-			finProfitDetails.setRepayFrq(financeMain.getRepayFrq());
-			finProfitDetails.setCustCIF(financeMain.getLovDescCustCIF());
-			finProfitDetails.setFinCcy(financeMain.getFinCcy());
-			finProfitDetails.setFinPurpose(financeMain.getFinPurpose());
-			finProfitDetails.setFinContractDate(financeMain.getFinContractDate());
-			finProfitDetails.setFinApprovedDate(financeMain.getFinApprovedDate());
-			finProfitDetails.setFinStartDate(financeMain.getFinStartDate());
-			finProfitDetails.setFinAmount(financeMain.getFinAmount());
-			finProfitDetails.setDownPayment(financeMain.getDownPayment());
-			finProfitDetails.setCustId(financeMain.getCustID());
-
-
-			finProfitDetails.setDisbAccountId(financeMain.getDisbAccountId());	
-			finProfitDetails.setDisbActCcy(financeMain.getFinCcy());
-			finProfitDetails.setFinCustPftAccount(financeMain.getFinCustPftAccount());
-			finProfitDetails.setIncomeAccount("");
-			finProfitDetails.setUEIncomeSuspAccount("");
-			finProfitDetails.setFinCommitmentRef(financeMain.getFinCommitmentRef());
-			finProfitDetails.setFinIsActive(financeMain.isFinIsActive());
-		}
-		
-		if(aeAmountCodes.getFirstRepayDate() == null) {
-			finProfitDetails.setFirstRepayDate(financeMain.getFinStartDate());
-		} else {
-			finProfitDetails.setFirstRepayDate(aeAmountCodes.getFirstRepayDate());
-		}
-
-		finProfitDetails.setAcrTillLBD(finProfitDetails.getPftAccrued()); 
-
-		finProfitDetails.setFinStatus(financeMain.getFinStatus());
-		finProfitDetails.setFinStsReason(financeMain.getFinStsReason());
-		finProfitDetails.setFinAccount(financeMain.getFinAccount());	
-		finProfitDetails.setFinAcType(financeType.getFinAcType());
-		finProfitDetails.setRepayAccountId(financeMain.getRepayAccountId());	
-		finProfitDetails.setFinCategory(financeType.getFinCategory());
-		finProfitDetails.setMaturityDate(financeMain.getMaturityDate());
-		
-
-		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finProfitDetails.getFinReference(), false);
-		finProfitDetails.setFinWorstStatus(worstSts);
-
 		if (getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference()) == null) {
 			getProfitDetailsDAO().save(finProfitDetails);
 		} else {
