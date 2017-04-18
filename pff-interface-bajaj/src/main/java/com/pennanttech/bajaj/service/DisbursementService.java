@@ -11,8 +11,8 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 
@@ -35,25 +35,24 @@ public class DisbursementService {
 		this.database = database;
 	}
 
-	public void process(List<Disbursement> disbusments) {
+	public void process(List<FinAdvancePayments> disbusments) {
 		Map<String, List<Long>> config = new HashMap<>();
 
-		for (Disbursement disbursment : disbusments) {
-			Disbursement item = getDisbursment(disbursment);
+		for (FinAdvancePayments disbursment : disbusments) {
+			String configName = getConfigName(disbursment);
 
-			if (item == null) {
-				item = new Disbursement();
+			if (configName == null) {
 				if ("NEFT".equals(disbursment.getPaymentType()) || "RTGS".equals(disbursment.getPaymentType())) {
-					item.setConfigName("DISB_OTHER_NEFT_RTGS_EXPORT");
+					configName = "DISB_OTHER_NEFT_RTGS_EXPORT";
 				} else if ("CHEQUE".equals(disbursment.getPaymentType()) || "DD".equals(disbursment.getPaymentType())) {
-					item.setConfigName("DISB_OTHER_CHEQUE_DD_EXPORT");
+					configName = "DISB_OTHER_CHEQUE_DD_EXPORT";
 				}
 			}
 
-			if (!config.containsKey(item.getConfigName())) {
-				config.put(item.getConfigName(), new ArrayList<Long>());
+			if (!config.containsKey(configName)) {
+				config.put(configName, new ArrayList<Long>());
 			}
-			config.get(item.getConfigName()).add(item.getDisbusmentId());
+			config.get(configName).add(disbursment.getPaymentId());
 
 		}
 
@@ -94,13 +93,13 @@ public class DisbursementService {
 		return instance;
 	}
 
-	private Disbursement getDisbursment(Disbursement disbursment) {
+	private String getConfigName(FinAdvancePayments disbursment) {
 		MapSqlParameterSource parameter = null;
 		StringBuilder sql = null;
 
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * ");
+			sql.append(" SELECT ConfigName ");
 			sql.append(" FROM DISBURSMENT_UPLOAD_MAPPING");
 			sql.append(" WHERE BANKCODE = :BANKCODE AND PAYMENTTYPE = :PAYMENTTYPE");
 
@@ -108,8 +107,7 @@ public class DisbursementService {
 			parameter.addValue("BANKCODE", disbursment.getBankCode());
 			parameter.addValue("PAYMENTTYPE", disbursment.getPaymentType());
 
-			return jdbcTemplate.queryForObject(sql.toString(), parameter,
-					ParameterizedBeanPropertyRowMapper.newInstance(Disbursement.class));
+			return jdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
