@@ -66,17 +66,20 @@ public class AccrualService extends ServiceHelper {
 	public void processAccrual(Connection connection, long custId, Date date) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
+		String finreference = "";
+		
 		try {
 			sqlStatement = connection.prepareStatement(accrual);
 			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
-				calculateAccruals(resultSet.getString("FinReference"), date);
+				finreference = resultSet.getString("FinReference");
+				calculateAccruals(finreference, date);
 			}
 		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+			logger.error("Exception: Finreference :" + finreference, e);
+			throw new Exception("Exception: Finreference :" + finreference,  e);
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();

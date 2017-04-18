@@ -77,97 +77,23 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private boolean					isInitialise		= false;
 	private boolean					islock				= false;
 
-	protected ProcessExecution		databaseBackupBeforeEod;
-	protected ProcessExecution		dailyDownload;
-	protected ProcessExecution		amortizationCalculation;
-	protected ProcessExecution		amortizationPostings;
-	protected ProcessExecution		uploadPftDetails;
-	protected ProcessExecution		repayQueueCalculation;
-	protected ProcessExecution		provisionCalculation;
-	protected ProcessExecution		provisionPostings;
-	protected ProcessExecution		depreciationPostings;
-	protected ProcessExecution		dibursementPostings;
-	protected ProcessExecution		collateralDeMarkPostings;
-	protected ProcessExecution		ddaCancellationPostings;
-	protected ProcessExecution		postLimitUtilization;
-	protected ProcessExecution		postGLPLPostings;
-	protected ProcessExecution		postBenchmarkInfo;
-	protected ProcessExecution		postODDetails;
-	protected ProcessExecution		ddaRepresentmentPostings;
-	protected ProcessExecution		rateReviewCalculation;
-	protected ProcessExecution		databaseBackupAfterEod;
-	protected ProcessExecution		auditDataPurging;
-
-	protected ProcessExecution		repayRequest;
-	protected ProcessExecution		repayResponse;
-	protected ProcessExecution		prepareRecoveryFile;
-	protected ProcessExecution		readRecoveryFile;
-	protected ProcessExecution		capitalizationPostings;
-	protected ProcessExecution		overdueCalculation;
-	protected ProcessExecution		suspenseCalculation;
-	protected ProcessExecution		notification;
-	protected ProcessExecution		statusUpdate;
-	protected ProcessExecution		postNextPaymentDetails;
-	protected ProcessExecution		postInstallmentDueSMS;
-	protected ProcessExecution		postPastDueSMS;
-	protected ProcessExecution		financeMovement;
-	protected ProcessExecution		thirdPartyPostings;
-	protected ProcessExecution		installmentDueDatePostings;
-	protected ProcessExecution		postStudyAndDocFee;
-	protected ProcessExecution		postFXRevaluation;
-	protected ProcessExecution		archiveDocument;
-	protected ProcessExecution		sasExtract;
-	protected ProcessExecution		sendMail;
-	protected ProcessExecution		snapShotPreparation;
 	protected ProcessExecution		beforeEOD;
+	protected ProcessExecution		prepareCustomerQueue;
+
+	protected ProcessExecution		threadAllocation;
+	protected ProcessExecution		microEOD;
+
+	protected ProcessExecution		snapShotPreparation;
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
 
 	public enum PFSBatchProcessess {
-		databaseBackupBeforEod,
-		dailyDownload,
-		amortizationCalculation,
-		amortizationPostings,
-		uploadPftDetails,
-		repayQueueCalculation,
-		repayRequest,
-		prepareRecoveryFile,
-		readRecoveryFile,
-		repayResponse,
-		provisionCalculation,
-		provisionPostings,
-		depreciationPostings,
-		dibursementPostings,
-		collateralDeMarkPostings,
-		ddaCancellationPostings,
-		postLimitUtilization,
-		postGLPLPostings,
-		postBenchmarkInfo,
-		postODDetails,
-		ddaRepresentmentPostings,
-		rateReviewCalculation,
-		limitDecision,
-		databaseBackupAfterEod,
-		auditDataPurging,
-		overdueCalculation,
-		notification,
-		statusUpdate,
-		postNextPaymentDetails,
-		postStudyAndDocFee,
-		postFXRevaluation,
-		postInstallmentDueSMS,
-		postPastDueSMS,
-		financeMovement,
-		thirdPartyPostings,
-		installmentDueDatePostings,
 		beforeEOD,
-		suspenseCalculation,
-		archiveDocument,
-		sasExtract,
-		sendMail,
-		snapShotPreparation,
-		capitalizationPostings
+		prepareCustomerQueue,
+		threadAllocation,
+		microEOD,
+		snapShotPreparation
 	}
 
 	public BatchAdminCtrl() {
@@ -249,8 +175,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	private void setDates() {
 		lable_Value_Date.setValue(DateUtility.getValueDate(DateFormat.LONG_DATE));
-		lable_NextBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
-		lable_LastBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		lable_NextBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
+				.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
+		lable_LastBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
+				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 	}
 
 	private void setRunningStatus() {
@@ -283,7 +211,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 			String jobStatusMsg = "";
 
-			jobStatusMsg = jobExecution.getExecutionContext().get("DBBACKUP_STATUS") == null ? "" : (String) jobExecution.getExecutionContext().get("DBBACKUP_STATUS");
+			jobStatusMsg = jobExecution.getExecutionContext().get("DBBACKUP_STATUS") == null ? ""
+					: (String) jobExecution.getExecutionContext().get("DBBACKUP_STATUS");
 			StringBuilder clientNotifications = new StringBuilder();
 			if (StringUtils.isNotEmpty(jobStatusMsg)) {
 				clientNotifications.append("Data Base Back After EOD is Failed");
@@ -291,7 +220,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				logger.warn(clientNotifications.toString());
 			}
 
-			jobStatusMsg = jobExecution.getExecutionContext().get("AUDITPURGING_STATUS") == null ? "" : (String) jobExecution.getExecutionContext().get("AUDITPURGING_STATUS");
+			jobStatusMsg = jobExecution.getExecutionContext().get("AUDITPURGING_STATUS") == null ? ""
+					: (String) jobExecution.getExecutionContext().get("AUDITPURGING_STATUS");
 			if (StringUtils.isNotEmpty(jobStatusMsg)) {
 				if (StringUtils.isNotEmpty(clientNotifications.toString())) {
 					clientNotifications.append("/n");
@@ -317,7 +247,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		String loggedInUsers = getLoggedInUsers();
 		if (StringUtils.isNotEmpty(loggedInUsers)) {
 			loggedInUsers = "\n" + loggedInUsers;
-			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }), "info", null, null, -1);
+			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }),
+					"info", null, null, -1);
 			return;
 		}
 
@@ -329,7 +260,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_reStart_job");
 		}
 
-		conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
+		conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES
+				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
 		if (conf == MultiLineMessageBox.YES) {
 			closeOtherTabs();
@@ -348,6 +280,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			} else {
 				args[0] = this.jobExecution.getJobParameters().getString("Date");
 				PFSBatchAdmin.setArgs(args);
+				PFSBatchAdmin.setRunType("RE-START");
 			}
 
 			try {
@@ -374,7 +307,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		PFSBatchAdmin.getInstance();
 		String msg = Labels.getLabel("labe_terminate_job");
 		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
+		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES
+				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
 		if (conf == MultiLineMessageBox.YES) {
 			try {
@@ -458,8 +392,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 * This method render the Defined Executions for which value date matched
-	 * with Current value date
+	 * This method render the Defined Executions for which value date matched with Current value date
 	 * 
 	 * @param ExecutionStatus
 	 *            (status)
@@ -478,326 +411,45 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (status != null) {
 
 			switch (processName) {
-			case databaseBackupBeforEod:
-				this.databaseBackupBeforeEod.setProcess(status);
-				this.databaseBackupBeforeEod.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.databaseBackupBeforeEod);
-				}
-				break;
-			case dailyDownload:
-				this.dailyDownload.setProcess(status);
-				this.dailyDownload.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.dailyDownload);
-				}
-				break;
-			case repayQueueCalculation:
-				this.repayQueueCalculation.setProcess(status);
-				this.repayQueueCalculation.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.repayQueueCalculation);
-				}
-				break;
-			case repayRequest:
-				this.repayRequest.setProcess(status);
-				this.repayRequest.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.repayRequest);
-				}
-				break;
-			case prepareRecoveryFile:
-				this.prepareRecoveryFile.setProcess(status);
-				this.prepareRecoveryFile.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.prepareRecoveryFile);
-				}
-				break;
-			case readRecoveryFile:
-				this.readRecoveryFile.setProcess(status);
-				this.readRecoveryFile.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.readRecoveryFile);
-				}
-				break;
-			case repayResponse:
-				this.repayResponse.setProcess(status);
-				this.repayResponse.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.repayResponse);
-				}
-				break;
-			case amortizationCalculation:
-				this.amortizationCalculation.setProcess(status);
-				this.amortizationCalculation.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.amortizationCalculation);
-				}
-				break;
-			case amortizationPostings:
-				this.amortizationPostings.setProcess(status);
-				this.amortizationPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.amortizationPostings);
-				}
-				break;
-			case uploadPftDetails:
-				this.uploadPftDetails.setProcess(status);
-				this.uploadPftDetails.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.uploadPftDetails);
-				}
-				break;
-			case provisionCalculation:
-				this.provisionCalculation.setProcess(status);
-				this.provisionCalculation.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.provisionCalculation);
-				}
-				break;
-			case provisionPostings:
-				this.provisionPostings.setProcess(status);
-				this.provisionPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.provisionPostings);
-				}
-				break;
-			case depreciationPostings:
-				this.depreciationPostings.setProcess(status);
-				this.depreciationPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.depreciationPostings);
-				}
-				break;
-			case dibursementPostings:
-				this.dibursementPostings.setProcess(status);
-				this.dibursementPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.dibursementPostings);
-				}
-				break;
-			case collateralDeMarkPostings:
-				this.collateralDeMarkPostings.setProcess(status);
-				this.collateralDeMarkPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.collateralDeMarkPostings);
-				}
-				break;
-			case ddaCancellationPostings:
-				this.ddaCancellationPostings.setProcess(status);
-				this.ddaCancellationPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.ddaCancellationPostings);
-				}
-				break;
-			case postLimitUtilization:
-				this.postLimitUtilization.setProcess(status);
-				this.postLimitUtilization.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postLimitUtilization);
-				}
-				break;
-			case postGLPLPostings:
-				this.postGLPLPostings.setProcess(status);
-				this.postGLPLPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postGLPLPostings);
-				}
-				break;
-			case ddaRepresentmentPostings:
-				this.ddaRepresentmentPostings.setProcess(status);
-				this.ddaRepresentmentPostings.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.ddaRepresentmentPostings);
-				}
-				break;
-			case rateReviewCalculation:
-				this.rateReviewCalculation.setProcess(status);
-				this.rateReviewCalculation.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.rateReviewCalculation);
-				}
-				break;
-			case limitDecision:
-				if ("COMPLETED".equals(status.getStatus())) {
-					this.timer.stop();
-					setDates();
-				}
-				break;
-			case databaseBackupAfterEod:
-				this.databaseBackupAfterEod.setProcess(status);
-				this.databaseBackupAfterEod.render();
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.databaseBackupAfterEod);
-				}
-				break;
-			case auditDataPurging:
-				this.auditDataPurging.setProcess(status);
-				this.auditDataPurging.render();
-				setRunningProcess(this.auditDataPurging);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.auditDataPurging);
-				}
-				break;
-			case capitalizationPostings:
-				this.capitalizationPostings.setProcess(status);
-				this.capitalizationPostings.render();
-				setRunningProcess(this.capitalizationPostings);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.capitalizationPostings);
-				}
-				break;
-			case overdueCalculation:
-				this.overdueCalculation.setProcess(status);
-				this.overdueCalculation.render();
-				setRunningProcess(this.overdueCalculation);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.overdueCalculation);
-				}
-				break;
-			case suspenseCalculation:
-				this.suspenseCalculation.setProcess(status);
-				this.suspenseCalculation.render();
-				setRunningProcess(this.suspenseCalculation);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.suspenseCalculation);
-				}
-				break;
-			case notification:
-				this.notification.setProcess(status);
-				this.notification.render();
-				setRunningProcess(this.notification);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.notification);
-				}
-				break;
-			case postBenchmarkInfo:
-				this.postBenchmarkInfo.setProcess(status);
-				this.postBenchmarkInfo.render();
-				setRunningProcess(this.postBenchmarkInfo);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postBenchmarkInfo);
-				}
-				break;
-			case postODDetails:
-				this.postODDetails.setProcess(status);
-				this.postODDetails.render();
-				setRunningProcess(this.postODDetails);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postODDetails);
-				}
-				break;
-			case statusUpdate:
-				this.statusUpdate.setProcess(status);
-				this.statusUpdate.render();
-				setRunningProcess(this.statusUpdate);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.statusUpdate);
-				}
-				break;
-
-			case postNextPaymentDetails:
-				this.postNextPaymentDetails.setProcess(status);
-				this.postNextPaymentDetails.render();
-				setRunningProcess(this.postNextPaymentDetails);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postNextPaymentDetails);
-				}
-				break;
-			case postStudyAndDocFee:
-				this.postStudyAndDocFee.setProcess(status);
-				this.postStudyAndDocFee.render();
-				setRunningProcess(this.postStudyAndDocFee);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postStudyAndDocFee);
-				}
-				break;
-			case postFXRevaluation:
-				this.postFXRevaluation.setProcess(status);
-				this.postFXRevaluation.render();
-				setRunningProcess(this.postFXRevaluation);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postFXRevaluation);
-				}
-				break;
-			case postInstallmentDueSMS:
-				this.postInstallmentDueSMS.setProcess(status);
-				this.postInstallmentDueSMS.render();
-				setRunningProcess(this.postInstallmentDueSMS);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postInstallmentDueSMS);
-				}
-				break;
-			case postPastDueSMS:
-				this.postPastDueSMS.setProcess(status);
-				this.postPastDueSMS.render();
-				setRunningProcess(this.postPastDueSMS);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.postPastDueSMS);
-				}
-				break;
-			case financeMovement:
-				this.financeMovement.setProcess(status);
-				this.financeMovement.render();
-				setRunningProcess(this.financeMovement);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.financeMovement);
-				}
-				break;
-			case thirdPartyPostings:
-				this.thirdPartyPostings.setProcess(status);
-				this.thirdPartyPostings.render();
-				setRunningProcess(this.thirdPartyPostings);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.thirdPartyPostings);
-				}
-				break;
-			case installmentDueDatePostings:
-				this.installmentDueDatePostings.setProcess(status);
-				this.installmentDueDatePostings.render();
-				setRunningProcess(this.installmentDueDatePostings);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.installmentDueDatePostings);
-				}
-				break;
-			case archiveDocument:
-				this.archiveDocument.setProcess(status);
-				this.archiveDocument.render();
-				setRunningProcess(this.archiveDocument);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.archiveDocument);
-				}
-				break;
-			case sasExtract:
-				this.sasExtract.setProcess(status);
-				this.sasExtract.render();
-				setRunningProcess(this.sasExtract);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.sasExtract);
-				}
-				break;
-			case sendMail:
-				this.sendMail.setProcess(status);
-				this.sendMail.render();
-				setRunningProcess(this.sendMail);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.sendMail);
-				}
-				break;
-			case snapShotPreparation:
-				this.snapShotPreparation.setProcess(status);
-				this.snapShotPreparation.render();
-				setRunningProcess(this.snapShotPreparation);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.snapShotPreparation);
-				}
-				break;
 			case beforeEOD:
 				this.beforeEOD.setProcess(status);
 				this.beforeEOD.render();
 				setRunningProcess(this.beforeEOD);
 				if ("EXECUTING".equals(status.getStatus())) {
 					setRunningProcess(this.beforeEOD);
+				}
+				break;
+			case prepareCustomerQueue:
+				this.prepareCustomerQueue.setProcess(status);
+				this.prepareCustomerQueue.render();
+				setRunningProcess(this.prepareCustomerQueue);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.prepareCustomerQueue);
+				}
+				break;
+			case threadAllocation:
+				this.threadAllocation.setProcess(status);
+				this.threadAllocation.render();
+				setRunningProcess(this.threadAllocation);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.threadAllocation);
+				}
+				break;
+			case microEOD:
+				this.microEOD.setProcess(status);
+				this.microEOD.render();
+				setRunningProcess(this.microEOD);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.microEOD);
+				}
+				break;
+
+			case snapShotPreparation:
+				this.snapShotPreparation.setProcess(status);
+				this.snapShotPreparation.render();
+				setRunningProcess(this.snapShotPreparation);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.snapShotPreparation);
 				}
 				break;
 
@@ -818,131 +470,21 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	private void resetPanels() {
 
-		if (dailyDownload.getChildren() != null) {
-			dailyDownload.getChildren().clear();
-		}
-		if (repayQueueCalculation.getChildren() != null) {
-			repayQueueCalculation.getChildren().clear();
-		}
-		if (repayRequest.getChildren() != null) {
-			repayRequest.getChildren().clear();
-		}
-		if (readRecoveryFile.getChildren() != null) {
-			readRecoveryFile.getChildren().clear();
-		}
-		if (prepareRecoveryFile.getChildren() != null) {
-			prepareRecoveryFile.getChildren().clear();
-		}
-		if (repayResponse.getChildren() != null) {
-			repayResponse.getChildren().clear();
-		}
-		if (amortizationCalculation.getChildren() != null) {
-			amortizationCalculation.getChildren().clear();
-		}
-		if (amortizationPostings.getChildren() != null) {
-			amortizationPostings.getChildren().clear();
-		}
-		if (uploadPftDetails.getChildren() != null) {
-			uploadPftDetails.getChildren().clear();
-		}
-		if (provisionCalculation.getChildren() != null) {
-			provisionCalculation.getChildren().clear();
-		}
-		if (provisionPostings.getChildren() != null) {
-			provisionPostings.getChildren().clear();
-		}
-		if (depreciationPostings.getChildren() != null) {
-			depreciationPostings.getChildren().clear();
-		}
-		if (dibursementPostings.getChildren() != null) {
-			dibursementPostings.getChildren().clear();
-		}
-		if (collateralDeMarkPostings.getChildren() != null) {
-			collateralDeMarkPostings.getChildren().clear();
-		}
-		if (ddaCancellationPostings.getChildren() != null) {
-			ddaCancellationPostings.getChildren().clear();
-		}
-		if (postLimitUtilization.getChildren() != null) {
-			postLimitUtilization.getChildren().clear();
-		}
-		if (postGLPLPostings.getChildren() != null) {
-			postGLPLPostings.getChildren().clear();
-		}
-		if (ddaRepresentmentPostings.getChildren() != null) {
-			ddaRepresentmentPostings.getChildren().clear();
-		}
-		if (rateReviewCalculation.getChildren() != null) {
-			rateReviewCalculation.getChildren().clear();
-		}
-		if (databaseBackupBeforeEod.getChildren() != null) {
-			databaseBackupBeforeEod.getChildren().clear();
-		}
-		if (databaseBackupAfterEod.getChildren() != null) {
-			databaseBackupAfterEod.getChildren().clear();
-		}
-		if (auditDataPurging.getChildren() != null) {
-			auditDataPurging.getChildren().clear();
-		}
-		if (capitalizationPostings.getChildren() != null) {
-			capitalizationPostings.getChildren().clear();
-		}
-		if (overdueCalculation.getChildren() != null) {
-			overdueCalculation.getChildren().clear();
-		}
-		if (suspenseCalculation.getChildren() != null) {
-			suspenseCalculation.getChildren().clear();
-		}
-		if (postBenchmarkInfo.getChildren() != null) {
-			postBenchmarkInfo.getChildren().clear();
-		}
-		if (postODDetails.getChildren() != null) {
-			postODDetails.getChildren().clear();
-		}
-		if (notification.getChildren() != null) {
-			notification.getChildren().clear();
-		}
-		if (statusUpdate.getChildren() != null) {
-			statusUpdate.getChildren().clear();
-		}
-		if (postNextPaymentDetails.getChildren() != null) {
-			postNextPaymentDetails.getChildren().clear();
-		}
-		if (postStudyAndDocFee.getChildren() != null) {
-			postStudyAndDocFee.getChildren().clear();
-		}
-		if (postFXRevaluation.getChildren() != null) {
-			postFXRevaluation.getChildren().clear();
-		}
-		if (postInstallmentDueSMS.getChildren() != null) {
-			postInstallmentDueSMS.getChildren().clear();
-		}
-		if (postPastDueSMS.getChildren() != null) {
-			postPastDueSMS.getChildren().clear();
-		}
-		if (financeMovement.getChildren() != null) {
-			financeMovement.getChildren().clear();
-		}
-		if (thirdPartyPostings.getChildren() != null) {
-			thirdPartyPostings.getChildren().clear();
-		}
-		if (installmentDueDatePostings.getChildren() != null) {
-			installmentDueDatePostings.getChildren().clear();
-		}
-		if (archiveDocument.getChildren() != null) {
-			archiveDocument.getChildren().clear();
-		}
-		if (sasExtract.getChildren() != null) {
-			sasExtract.getChildren().clear();
-		}
-		if (sendMail.getChildren() != null) {
-			sendMail.getChildren().clear();
-		}
-		if (snapShotPreparation.getChildren() != null) {
-			snapShotPreparation.getChildren().clear();
-		}
 		if (beforeEOD.getChildren() != null) {
 			beforeEOD.getChildren().clear();
+		}
+		if (prepareCustomerQueue.getChildren() != null) {
+			prepareCustomerQueue.getChildren().clear();
+		}
+		if (threadAllocation.getChildren() != null) {
+			threadAllocation.getChildren().clear();
+		}
+		if (microEOD.getChildren() != null) {
+			microEOD.getChildren().clear();
+		}
+
+		if (snapShotPreparation.getChildren() != null) {
+			snapShotPreparation.getChildren().clear();
 		}
 
 	}
@@ -982,7 +524,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		StepExecution stepExecution = (StepExecution) batchStatus.getAttribute("data");
 
 		if (stepExecution != null) {
-			Filedownload.save(stepExecution.getExitStatus().getExitDescription(), "text/plain", stepExecution.getStepName());
+			Filedownload.save(stepExecution.getExitStatus().getExitDescription(), "text/plain",
+					stepExecution.getStepName());
 		}
 
 		logger.debug("Leacing" + event.toString());
@@ -1013,7 +556,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 						builder.append("</br>");
 					}
 					secUser = user.getSecurityUser();
-					builder.append("&bull;").append("&nbsp;").append(user.getUserId()).append("&ndash;").append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " " + secUser.getUsrLName());
+					builder.append("&bull;")
+							.append("&nbsp;")
+							.append(user.getUserId())
+							.append("&ndash;")
+							.append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " "
+									+ secUser.getUsrLName());
 				}
 			}
 		}
@@ -1040,7 +588,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private void closeOtherTabs() {
 
 		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+				.getFellow("tabBoxIndexCenter");
 		Tabs tabs = tabbox.getTabs();
 		List<Component> childs = new ArrayList<Component>(tabs.getChildren());
 

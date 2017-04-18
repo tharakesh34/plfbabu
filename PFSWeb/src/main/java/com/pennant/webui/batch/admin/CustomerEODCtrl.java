@@ -40,7 +40,7 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 	private static final long	serialVersionUID	= 4309463490869641570L;
 	private final static Logger	logger				= Logger.getLogger(CustomerEODCtrl.class);
 
-	protected Window			window_BatchAdmin;
+	protected Window			window_CustomerEOD;
 	protected Textbox			lable_LastBusiness_Date;
 	protected Textbox			lable_NextBusiness_Date;
 	protected Textbox			lable_Value_Date;
@@ -57,7 +57,7 @@ public class CustomerEODCtrl extends GFCBaseCtrl<Object> implements ApplicationC
 		super();
 	}
 
-	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+	public void onCreate$window_CustomerEOD(Event event) throws Exception {
 
 		lable_Value_Date.setValue(DateUtility.getValueDate(DateFormat.LONG_DATE));
 		lable_NextBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil

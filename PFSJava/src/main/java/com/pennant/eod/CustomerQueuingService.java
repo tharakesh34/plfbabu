@@ -23,22 +23,17 @@ public class CustomerQueuingService {
 	 */
 	public void loadCustIds(Date date) {
 		logger.debug("Entering");
-
-		long count = getCustomerQueuingDAO().getCountByProgress(date, null);
-		if (count == 0) {
-			getCustomerQueuingDAO().delete();
-			getCustomerQueuingDAO().prepareCustomerQueue(date);
-		}
-
+		getCustomerQueuingDAO().delete();
+		getCustomerQueuingDAO().prepareCustomerQueue(date);
 		logger.debug("Leaving");
 	}
 
 	public void updateNoofRows(Date date, long noOfRows, String threadId) {
-		getCustomerQueuingDAO().updateNoofRows(date, noOfRows, threadId);
+		getCustomerQueuingDAO().updateThreadIDByRowNumber(date, noOfRows, threadId);
 	}
 
 	public void updateAll(Date date, String threadId) {
-		getCustomerQueuingDAO().updateAll(date, threadId);
+		getCustomerQueuingDAO().updateThreadID(date, threadId);
 	}
 
 	/**

@@ -65,9 +65,9 @@ public class NextBussinessDateUpdation implements Tasklet {
 
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getValueDate();
-
 		logger.debug("START: Updation of Next Bussiness Date on Value Date: " + valueDate);
-		getDateService().doUpdatebeforeEod(true);
+		
+		
 
 		logger.debug("COMPLETE: Updation of Next Bussiness Date on Value Date: " + valueDate);
 		return RepeatStatus.FINISHED;

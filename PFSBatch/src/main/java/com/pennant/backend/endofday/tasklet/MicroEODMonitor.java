@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeEOD.java													*                           
+ * FileName    		:  NextBussinessDateUpdation.java										*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -50,44 +50,37 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+public class MicroEODMonitor implements Tasklet {
 
-	public BeforeEOD() {
+	private Logger				logger	= Logger.getLogger(MicroEODMonitor.class);
+
+	private CustomerQueuingDAO	customerQueuingDAO;
+
+	public MicroEODMonitor() {
 
 	}
-
-	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
-	private DateService			dateService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Before EOD On : " + valueDate);
+		logger.debug("START: Micro EOD Monitor On : " + valueDate);
 
-		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
-		dateService.doUpdatebeforeEod(true);
-		logger.debug("COMPLETE: Before EOD On :" + valueDate);
+		long running = customerQueuingDAO.getCountByProgress(DateUtility.getValueDate(), EodConstants.PROGRESS_START);
+
+		if (running != 0) {
+			return RepeatStatus.CONTINUABLE;
+		}
+
+		logger.debug("COMPLETE: Micro EOD Monitor On :" + valueDate);
 		return RepeatStatus.FINISHED;
 
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
-	}
-
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
-
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 }

@@ -56,7 +56,7 @@ public class DateRollOverService extends ServiceHelper {
 
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
-
+		String finreference = "";
 		try {
 			sqlStatement = connection.prepareStatement(prepareSelectQuery(valueDate));
 			sqlStatement.setDate(1, DateUtility.getDBDate(String.valueOf(DateUtility.getAppDate())));
@@ -70,9 +70,11 @@ public class DateRollOverService extends ServiceHelper {
 			sqlStatement.setDate(9, DateUtility.getDBDate(String.valueOf(DateUtility.getAppDate())));
 			sqlStatement.setLong(10, custId);
 			resultSet = sqlStatement.executeQuery();
+		
 
 			while (resultSet.next()) {
 
+				finreference = resultSet.getString("FinReference");
 				boolean allowGrcPeriod = resultSet.getBoolean("AllowGrcPeriod");
 				boolean allowGrcPftRvw = resultSet.getBoolean("AllowGrcPftRvw");
 				boolean allowGrcCpz = resultSet.getBoolean("AllowGrcCpz");
@@ -253,8 +255,8 @@ public class DateRollOverService extends ServiceHelper {
 
 			}
 		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+			logger.error("Exception: Finreference :" + finreference, e);
+			throw new Exception("Exception: Finreference :" + finreference,  e);
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();

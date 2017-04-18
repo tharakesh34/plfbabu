@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeEOD.java													*                           
+ * FileName    		:  EndOfMonthDecider.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -40,54 +40,39 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.endofday.tasklet;
+package com.pennant.backend.endofday.limitdecider;
 
-import java.util.Date;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.job.flow.FlowExecutionStatus;
+import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
-import org.apache.log4j.Logger;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
-
-import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+public class MicroEODDecider implements JobExecutionDecider {
 
-	public BeforeEOD() {
+	private CustomerQueuingDAO	customerQueuingDAO;
 
+	public MicroEODDecider() {
 	}
-
-	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
-	private DateService			dateService;
 
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Before EOD On : " + valueDate);
+	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
+		long failedCount = customerQueuingDAO.getCountByStatus(DateUtility.getValueDate(), EodConstants.STATUS_FAILED);
 
-		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
-		dateService.doUpdatebeforeEod(true);
-		logger.debug("COMPLETE: Before EOD On :" + valueDate);
-		return RepeatStatus.FINISHED;
+		if (failedCount > 0) {
+			jobExecution.getExecutionContext().put(EodConstants.MICRO_EOD, EodConstants.STATUS_FAILED);
+			return FlowExecutionStatus.UNKNOWN;
+		} else {
+			return FlowExecutionStatus.COMPLETED;
+		}
 
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
-
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
-	}
 }

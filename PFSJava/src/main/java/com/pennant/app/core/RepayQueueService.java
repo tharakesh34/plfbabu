@@ -58,6 +58,7 @@ public class RepayQueueService {
 	public void saveQueue(Connection connection, long custId, Date date) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
+		String finreference = "";
 		try {
 			deleteByCustID(custId);
 			sqlStatement = connection.prepareStatement(customeFinance);
@@ -66,6 +67,7 @@ public class RepayQueueService {
 			resultSet = sqlStatement.executeQuery();
 			List<FinRepayQueue> repayQueuList = new ArrayList<FinRepayQueue>();
 			while (resultSet.next()) {
+				finreference = resultSet.getString("FinReference");
 				FinRepayQueue finRepayQueue = doWriteDataToBean(resultSet);
 				repayQueuList.add(finRepayQueue);
 			}
@@ -74,8 +76,8 @@ public class RepayQueueService {
 				repayQueuList = null;
 			}
 		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+			logger.error("Exception: Finreference :" + finreference, e);
+			throw new Exception("Exception: Finreference" + finreference,  e);
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();
@@ -153,56 +155,50 @@ public class RepayQueueService {
 		BeanPropertyRowMapper<FinRepayQueue> beanPropertyRowMapper = new BeanPropertyRowMapper<>(FinRepayQueue.class);
 		FinRepayQueue finRepayQueue = beanPropertyRowMapper.mapRow(resultSet, resultSet.getRow());
 
-		try {
+		String rpyFor = FinanceConstants.SCH_TYPE_SCHEDULE;
 
-			String rpyFor = FinanceConstants.SCH_TYPE_SCHEDULE;
-
-			if (this.priorityMap != null && this.priorityMap.containsKey(finRepayQueue.getFinType())) {
-				finRepayQueue.setFinPriority(this.priorityMap.get(finRepayQueue.getFinType()));
-			} else {
-				finRepayQueue.setFinPriority(9999);
-			}
-
-			finRepayQueue.setFinRpyFor(rpyFor);
-			finRepayQueue.setPenaltyPayNow(BigDecimal.ZERO);
-
-			finRepayQueue.setSchdPft(resultSet.getBigDecimal("ProfitSchd"));
-			finRepayQueue.setSchdPri(resultSet.getBigDecimal("PrincipalSchd"));
-			finRepayQueue.setSchdPftPaid(resultSet.getBigDecimal("SchdPftpaid"));
-			finRepayQueue.setSchdPriPaid(resultSet.getBigDecimal("SchdPriPaid"));
-			finRepayQueue.setSchdPftBal(resultSet.getBigDecimal("SchdPftBal"));
-			finRepayQueue.setSchdPriBal(resultSet.getBigDecimal("SchdPriBal"));
-
-			if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
-				finRepayQueue.setSchdIsPftPaid(true);
-			} else {
-				finRepayQueue.setSchdIsPftPaid(false);
-			}
-
-			if (finRepayQueue.isSchdIsPftPaid() && finRepayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) == 0) {
-				finRepayQueue.setSchdIsPriPaid(true);
-			} else {
-				finRepayQueue.setSchdIsPriPaid(false);
-			}
-			
-			BigDecimal schdRate=BigDecimal.ZERO;
-			BigDecimal adivedRate = resultSet.getBigDecimal("AdvCalRate");
-			BigDecimal calculateRate = resultSet.getBigDecimal("CalculatedRate");
-			
-			if (adivedRate != null && adivedRate.compareTo(BigDecimal.ZERO) != 0) {
-				schdRate = adivedRate;
-			} else {
-				schdRate = calculateRate;
-			}
-			
-			finRepayQueue.setSchdRate(schdRate);
-
-			finRepayQueue.setRebate(latePaymentService.getScheduledRebateAmount(finRepayQueue));
-
-		} catch (SQLException e) {
-			logger.error("Finrefernce :", e);
-			throw e;
+		if (this.priorityMap != null && this.priorityMap.containsKey(finRepayQueue.getFinType())) {
+			finRepayQueue.setFinPriority(this.priorityMap.get(finRepayQueue.getFinType()));
+		} else {
+			finRepayQueue.setFinPriority(9999);
 		}
+
+		finRepayQueue.setFinRpyFor(rpyFor);
+		finRepayQueue.setPenaltyPayNow(BigDecimal.ZERO);
+
+		finRepayQueue.setSchdPft(resultSet.getBigDecimal("ProfitSchd"));
+		finRepayQueue.setSchdPri(resultSet.getBigDecimal("PrincipalSchd"));
+		finRepayQueue.setSchdPftPaid(resultSet.getBigDecimal("SchdPftpaid"));
+		finRepayQueue.setSchdPriPaid(resultSet.getBigDecimal("SchdPriPaid"));
+		finRepayQueue.setSchdPftBal(resultSet.getBigDecimal("SchdPftBal"));
+		finRepayQueue.setSchdPriBal(resultSet.getBigDecimal("SchdPriBal"));
+
+		if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
+			finRepayQueue.setSchdIsPftPaid(true);
+		} else {
+			finRepayQueue.setSchdIsPftPaid(false);
+		}
+
+		if (finRepayQueue.isSchdIsPftPaid() && finRepayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) == 0) {
+			finRepayQueue.setSchdIsPriPaid(true);
+		} else {
+			finRepayQueue.setSchdIsPriPaid(false);
+		}
+
+		BigDecimal schdRate = BigDecimal.ZERO;
+		BigDecimal adivedRate = resultSet.getBigDecimal("AdvCalRate");
+		BigDecimal calculateRate = resultSet.getBigDecimal("CalculatedRate");
+
+		if (adivedRate != null && adivedRate.compareTo(BigDecimal.ZERO) != 0) {
+			schdRate = adivedRate;
+		} else {
+			schdRate = calculateRate;
+		}
+
+		finRepayQueue.setSchdRate(schdRate);
+
+		finRepayQueue.setRebate(latePaymentService.getScheduledRebateAmount(finRepayQueue));
+
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}

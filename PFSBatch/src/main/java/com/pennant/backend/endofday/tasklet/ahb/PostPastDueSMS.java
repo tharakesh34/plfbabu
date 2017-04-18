@@ -1,4 +1,4 @@
-package com.pennant.backend.endofday.tasklet;
+package com.pennant.backend.endofday.tasklet.ahb;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -28,14 +28,14 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennanttech.pff.core.App;
 
-public class PostInstallmentDueSMS implements Tasklet {
+public class PostPastDueSMS implements Tasklet {
 
-	private Logger			logger	= Logger.getLogger(PostInstallmentDueSMS.class);
+	private Logger			logger	= Logger.getLogger(PostPastDueSMS.class);
 
 	private DataSource		dataSource;
 	private ExtTablesDAO	extTablesDAO;
 
-	public PostInstallmentDueSMS() {
+	public PostPastDueSMS() {
 		super();
 	}
 
@@ -50,24 +50,21 @@ public class PostInstallmentDueSMS implements Tasklet {
 		PreparedStatement sqlStatement = null;
 
 		try {
-
-			// add seven days to current date and check for the payments
-			Date sendSmsDate = DateUtility.addDays(appDate, 7);
-
+			int configureOdDays=5;
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(sendSmsDate.toString()));
+			sqlStatement.setInt(1, configureOdDays);
 			resultSet = sqlStatement.executeQuery();
 			int count=0;
 			if (resultSet.next()) {
 				count=resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL",Integer.toString(count));
+			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(sendSmsDate.toString()));
+			sqlStatement.setInt(1, configureOdDays);
 			resultSet = sqlStatement.executeQuery();
 
 			while (resultSet.next()) {
@@ -76,13 +73,13 @@ public class PostInstallmentDueSMS implements Tasklet {
 				String output = "Message inserted successfully";
 				String messageReturn = "0";
 				getExtTablesDAO().insertPushData(tabData, output, messageReturn);
-				BatchUtil.setExecution(context, "PROCESSED", Integer.toString(resultSet.getRow()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
-		} finally {
+		}finally {
 			if (resultSet != null) {
 				resultSet.close();
 			}
@@ -134,7 +131,7 @@ public class PostInstallmentDueSMS implements Tasklet {
 		addLine(tabDat, " ");
 
 		// Preparing Transaction data
-		addLine(tabDat, BatchFileUtil.SERVICEID_1023);
+		addLine(tabDat, BatchFileUtil.SERVICEID_1024);
 		addLine(tabDat, resultSet.getString("CustCIF"));
 		addLine(tabDat, "refNum");// FIXME
 		addLine(tabDat, resultSet.getString("FinBranch"));
@@ -146,10 +143,10 @@ public class PostInstallmentDueSMS implements Tasklet {
 		addLine(tabDat, ccy);
 		appendColon(tabDat, 3);// Free space
 
-		addLine(tabDat, getDate(resultSet.getDate("SchDate")));
-		addLine(tabDat, getAmt(resultSet.getBigDecimal("PrincipalSchd").add(resultSet.getBigDecimal("ProfitSchd")), ccy));
+		addLine(tabDat, getDate(resultSet.getDate("PrvODDate")));
+		addLine(tabDat, getAmt(resultSet.getBigDecimal("ODPrincipal").add(resultSet.getBigDecimal("ODProfit")), ccy));
 		addLine(tabDat, getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
-		addLine(tabDat, Integer.toString(resultSet.getInt("NOInst") - resultSet.getInt("NOPaidInst")));
+		addLine(tabDat, String.valueOf(resultSet.getInt("NOInst") - resultSet.getInt("NOPaidInst")));
 		appendColon(tabDat, 50);// Free space
 		return tabDat.toString();
 	}
@@ -159,13 +156,19 @@ public class PostInstallmentDueSMS implements Tasklet {
 	}
 
 	public String getAmt(BigDecimal amt, String ccy) {
-		return PennantApplicationUtil.formateAmount(amt, CurrencyUtil.getFormat(ccy)).toString();
+		return String.valueOf(PennantApplicationUtil.formateAmount(amt, CurrencyUtil.getFormat(ccy)));
 	}
 
 	public String getDate(Date date) {
 		return DateUtility.format(date, BatchFileUtil.DATE_FORMAT_YMD);
 	}
 
+	/**
+	 * Adding colon for specified number of times
+	 * 
+	 * @param numberoftimes
+	 * @return
+	 */
 	private void appendColon(StringBuilder tabDat, int numberoftimes) {
 		for (int i = 0; i < numberoftimes; i++) {
 			addLine(tabDat, "");
@@ -174,21 +177,19 @@ public class PostInstallmentDueSMS implements Tasklet {
 
 	private String prepareSelectQuery() {
 		StringBuilder query = new StringBuilder(" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
-		query.append(" fpd.FinCcy,s.SchDate,s.PrincipalSchd, s.ProfitSchd,fpd.TotalPriBal,fpd.TotalPftBal,");
+		query.append(" fpd.FinCcy,fpd.PrvODDate,fpd.ODPrincipal, fpd.ODProfit,fpd.TotalPriBal,fpd.TotalPftBal,");
 		query.append(" fpd.NOInst,fpd.NOPaidInst,su.UsrFName,su.UsrMName,su.UsrLName");
-		query.append(" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
-		query.append(" inner join FinPftDetails fpd on s.FinReference=fpd.FinReference ");
-		query.append(" inner join FinanceMain fm on fm.FinReference=s.FinReference");
-		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID   ");
+		query.append(" from FinPftDetails fpd  ");
+		query.append(" inner join FinanceMain fm on fm.FinReference= fpd.FinReference");
+		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.CurODDays % ?) = 0  ");
 		return query.toString();
 	}
 
 	private String getCountQuery() {
 		StringBuilder query = new StringBuilder(" SELECT Count(*) ");
-		query.append(" from (select FinReference,SchDate,ProfitSchd,PrincipalSchd from FinScheduleDetails where SchDate = ? ) s");
-		query.append(" inner join FinPftDetails fpd on s.FinReference=fpd.FinReference ");
-		query.append(" inner join FinanceMain fm on fm.FinReference=s.FinReference");
-		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID   ");
+		query.append(" from FinPftDetails fpd  ");
+		query.append(" inner join FinanceMain fm on fm.FinReference=fpd.FinReference");
+		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.CurODDays % ?) = 0   ");
 		return query.toString();
 	}
 

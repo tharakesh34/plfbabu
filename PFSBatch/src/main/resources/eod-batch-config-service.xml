@@ -86,11 +86,9 @@
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">
 	</bean>
-	
-	<!-- Date rollover-->
+	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>
-	
 	<!-- Repay queue service Service -->
 	<bean id="repayQueueService" class="com.pennant.app.core.RepayQueueService">
 		<property name="latePaymentService" ref="latePaymentService" />
@@ -116,10 +114,6 @@
 	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean name="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="1" />
-		<property name="maxPoolSize" value="5" />
-	</bean>
 	<bean name="eodTrigger" class="com.pennant.app.job.process.EodTrigger">
 		<property name="eod" ref="eod" />
 		<property name="eodDetailDAO" ref="eodDetailDAO" />
@@ -128,7 +122,6 @@
 		<property name="preEodService" ref="preEodService" />
 		<property name="postEodService" ref="postEodService" />
 		<property name="customerQueuingService" ref="customerQueuingService" />
-		<property name="threadPoolTaskExecutor" ref="threadPoolTaskExecutor" />
 	</bean>
 	<bean name="eodThread" class="com.pennant.eod.EodThread" scope="prototype">
 		<property name="eodService" ref="eodService" />

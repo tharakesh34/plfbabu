@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang" xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
 	<!-- _____________________________________________REFERENCE BEANS _________________________________________ -->
@@ -13,12 +14,10 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- only definition added -->
-	<bean name="errorDetailService"
-		class="com.pennant.backend.service.errordetail.impl.ErrorDetailServiceImpl">
+	<bean name="errorDetailService" class="com.pennant.backend.service.errordetail.impl.ErrorDetailServiceImpl">
 	</bean>
 	<!-- Basis Code -->
-	<bean id="basisCodeDAO" abstract="true"
-		class="com.pennant.backend.dao.impl.BasisCodeDAO" />
+	<bean id="basisCodeDAO" abstract="true" class="com.pennant.backend.dao.impl.BasisCodeDAO" />
 	<!-- PFS SMT Parameters -->
 	<bean id="pFSParameterDAO" class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -26,12 +25,9 @@
 	<!-- Script Engine -->
 	<!-- Script Engine object creation -->
 	<bean id="scriptEngineManager" class="javax.script.ScriptEngineManager" />
-	
-	<bean id="scriptEngine" class="javax.script.ScriptEngine"
-		factory-method="getEngineByName" factory-bean="scriptEngineManager">
+	<bean id="scriptEngine" class="javax.script.ScriptEngine" factory-method="getEngineByName" factory-bean="scriptEngineManager">
 		<constructor-arg value="javascript" />
 	</bean>
-	
 	<!-- ====================================================== -->
 	<!-- Calculation Utility Configuration -->
 	<!-- ====================================================== -->
@@ -45,7 +41,7 @@
 	<bean id="financeTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl"  parent="basisCodeDAO">
+	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- Finance Main -->
@@ -127,27 +123,21 @@
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="financePremiumDetailDAO" ref="financePremiumDetailDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		 <property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		 <property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 	</bean>
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
-		<property name="scriptEngine" ref="scriptEngine"/>
+		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
 	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-
-	<bean id="financeReferenceDetailDAO"
-		class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl"
-		parent="basisNextidDao">
+	<bean id="financeReferenceDetailDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="collateralSetupDAO"
-		class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl"
-		parent="basisCodeDAO">
+	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
 	<!-- Finance Premium Detail -->
 	<bean id="financePremiumDetailDAO" class="com.pennant.backend.dao.finance.impl.FinancePremiumDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -176,7 +166,7 @@
 		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		 <property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 	<bean id="finContributorDetailDAO" class="com.pennant.backend.dao.finance.impl.FinContributorDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -208,11 +198,6 @@
 	</bean>
 	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceImpl">
 		<property name="accountPostingProcess" ref="accountPostingProcess" />
-	</bean>
-	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.CalendarInterfaceServiceImpl">
-		<property name="dateRollOverProcess" ref="dateRollOverProcess" />
-		<property name="weekendMasterDAO" ref="weekendMasterDAO" />
-		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
 	</bean>
 	<bean id="uploadFinPftDetailService" class="com.pennant.app.eod.service.impl.UploadFinPftDetailServiceImpl">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -376,30 +361,6 @@
 	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<!-- Loop Limit Decider -->
-	<bean id="limitDecider" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="limitDeciderTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="limitDeciderTarget" class="com.pennant.backend.endofday.limitdecider.LimitDecider">
-		<property name="hostConnection" ref="hostConnection" />
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="paymentRecoveryService" ref="paymentRecoveryService" />
-		<property name="dateService" ref="dateService" />
-	</bean>
 	<bean id="amortizationService" class="com.pennant.app.eod.service.impl.AmortizationServiceImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -506,10 +467,8 @@
 		<property name="notificationsService" ref="notificationsService" />
 	</bean>
 	<bean id="reportUtil" class="com.pennant.app.util.ReportUtil" scope="prototype">
-		
 	</bean>
-	<bean id="notificationsService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="notificationsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="pfsTransactionManager" />
 		</property>
@@ -526,20 +485,13 @@
 			</props>
 		</property>
 	</bean>
-
-	<bean name="notificationsServiceTarget"
-		class="com.pennant.backend.service.notifications.impl.NotificationsServiceImpl">
+	<bean name="notificationsServiceTarget" class="com.pennant.backend.service.notifications.impl.NotificationsServiceImpl">
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
-	
-	<bean id="notificationsDAO"
-		class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl"
-		parent="basisNextidDao">
+	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="mailUtility" class="com.pennant.app.util.MailUtility"
-		scope="prototype">
+	<bean id="mailUtility" class="com.pennant.app.util.MailUtility" scope="prototype">
 		<property name="outgoingHost" value="${mail.outgoingserver.host}" />
 		<property name="outgoingPort" value="${mail.outgoingserver.port}" />
 		<property name="outgoingDebug" value="${mail.outgoingserver.debug}" />
@@ -547,19 +499,15 @@
 		<property name="outgoingUserName" value="${mail.outgoingserver.userName}" />
 		<property name="outgoingPassword" value="${mail.outgoingserver.password}" />
 		<property name="outgoingEncType" value="${mail.outgoingserver.encryptiontype}" />
-
 		<property name="incomingHost" value="${mail.incomingserver.host}" />
 		<property name="incomingPort" value="${mail.incomingserver.port}" />
 		<property name="incomingUserName" value="${mail.incomingserver.userName}" />
 		<property name="incomingPassword" value="${mail.incomingserver.password}" />
 		<property name="incomingEncType" value="${mail.incomingserver.encryptiontype}" />
-
 		<property name="incomingFolder" value="${mail.incomingserver.folder}" />
 		<property name="incomingProtocol" value="${mail.incomingserver.protocol}" />
 	</bean>
-
-	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" parent="mailUtility"
-		scope="prototype">
+	<bean id="mailUtil" class="com.pennant.app.util.MailUtil" parent="mailUtility" scope="prototype">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="notificationsService" ref="notificationsService" />
@@ -570,7 +518,18 @@
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
-		
 	</bean>
-	
+	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!-- AIB -->
+	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
+		<property name="dateRollOverProcess" ref="dateRollOverProcess" />
+		<property name="weekendMasterDAO" ref="weekendMasterDAO" />
+		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
+	</bean>
+
+
+
 </beans>

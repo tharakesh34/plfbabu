@@ -14,32 +14,22 @@ import com.pennant.app.core.SnapshotService;
 import com.pennant.app.util.DateUtility;
 
 public class SnapShotPreparation implements Tasklet {
-	private Logger logger = Logger.getLogger(SnapShotPreparation.class);
-	
-	private DataSource dataSource;
-	private SnapshotService snapshotService;
-	
-	private Date dateAppDate = null;
+	private Logger			logger	= Logger.getLogger(SnapShotPreparation.class);
+
+	private DataSource		dataSource;
+	private SnapshotService	snapshotService;
 
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {	
-		
-		dateAppDate = DateUtility.getAppDate();
-		
-		logger.debug("START: SnapShot Details for Value Date: "+  dateAppDate);		
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		Date valueDate = DateUtility.getValueDate();
+		logger.debug("START: Snap Shot Preparation On : " + valueDate);
 
-		try {
-			
-			getSnapshotService().doSnapshotPreparation(dateAppDate);
-			
-		}catch (Exception e) {
-			logger.error(e);
-			throw e;
-		}
+		getSnapshotService().doSnapshotPreparation(valueDate);
 
+		logger.debug("COMPLETE: Snap Shot Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -47,6 +37,7 @@ public class SnapShotPreparation implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
@@ -58,5 +49,5 @@ public class SnapShotPreparation implements Tasklet {
 	public void setSnapshotService(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
 	}
-	
+
 }

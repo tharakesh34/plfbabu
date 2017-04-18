@@ -9,6 +9,7 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -27,7 +28,7 @@ import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.beans.CustomerDates;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerDatesDAO;
 
 public class EodService {
@@ -48,7 +49,7 @@ public class EodService {
 	private InstallmentDueService		installmentDueService;
 
 	// Constants
-	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=?";
+	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=? And ( Progress is null or Status= ?)";
 
 	public EodService() {
 		super();
@@ -67,19 +68,11 @@ public class EodService {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(SQL);
 			sqlStatement.setString(1, threadId);
+			sqlStatement.setString(2, EodConstants.STATUS_FAILED);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 				try {
 					custId = resultSet.getLong("CustId");
-
-					CustomerDates custdate = customerDatesDAO.getCustomerDates(custId);
-					/*
-					 * date has been moved for the customer means EOD is completed no need to run again
-					 */
-					if (custdate.getAppDate().getTime() > date.getTime()) {
-						continue;
-					}
-
 					//Update start
 					customerQueuingService.updateStart(date, custId);
 					//process
@@ -87,8 +80,19 @@ public class EodService {
 					//Update Status
 					customerQueuingService.updateEnd(date, custId);
 				} catch (Exception e) {
-					logger.error("Exception :", e);
-					customerQueuingService.updateSucessFail(date, custId, e.getMessage());
+					logger.error(e.getMessage(), e);
+					String errorMsg = "";
+					StringBuilder builder = new StringBuilder(StringUtils.trimToEmpty(e.getMessage()));
+					StackTraceElement[] stackTrace = e.getStackTrace();
+					for (int i = 0; i < stackTrace.length; i++) {
+						builder.append(stackTrace[i]);
+					}
+					errorMsg = builder.toString();
+					if (errorMsg.length() > 2000) {
+						errorMsg = errorMsg.substring(0, 2000);
+					}
+
+					customerQueuingService.updateSucessFail(date, custId, errorMsg);
 				}
 			}
 		} catch (Exception e) {
@@ -159,13 +163,12 @@ public class EodService {
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-		Calendar nextBusinessDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				date);
-		if (DateUtility.matches(nextDate, nextBusinessDate.getTime())) {
+		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
+		if (DateUtility.matches(nextDate, nextBusDate.getTime())) {
 			//update customer business Dates
-			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-					nextBusinessDate.getTime()).getTime();
-			customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempnextBussDate);
+			Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
+					nextBusDate.getTime()).getTime();
+			customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
 		} else {
 			doProcess(connection, custId, nextDate);
 		}
@@ -211,7 +214,7 @@ public class EodService {
 	public void setDateRollOverService(DateRollOverService dateRollOverService) {
 		this.dateRollOverService = dateRollOverService;
 	}
-	
+
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
 	}

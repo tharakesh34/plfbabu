@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeEOD.java													*                           
+ * FileName    		:  NextBussinessDateUpdation.java										*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -50,44 +50,43 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.eod.dao.CustomerDatesDAO;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+public class PrepareCustomerQueue implements Tasklet {
 
-	public BeforeEOD() {
+	private Logger				logger	= Logger.getLogger(PrepareCustomerQueue.class);
+
+	private CustomerDatesDAO	customerDatesDAO;
+	private CustomerQueuingDAO	customerQueuingDAO;
+
+	public PrepareCustomerQueue() {
 
 	}
-
-	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
-	private DateService			dateService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+		Date appDate = DateUtility.getAppDate();
+		Date nextBusinessDate = DateUtility.getNextBusinessdate();
 		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Before EOD On : " + valueDate);
+		logger.debug("START: Prepare Customer Queue On : " + valueDate);
 
-		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
-		dateService.doUpdatebeforeEod(true);
-		logger.debug("COMPLETE: Before EOD On :" + valueDate);
+		// save customer business dates when EOD starts
+		customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
+
+		customerQueuingDAO.delete();
+		customerQueuingDAO.prepareCustomerQueue(valueDate);
+
+		logger.debug("COMPLETE: Prepare Customer Queue On :" + valueDate);
 		return RepeatStatus.FINISHED;
-
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
+	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
+		this.customerDatesDAO = customerDatesDAO;
 	}
 
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
-
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 }

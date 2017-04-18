@@ -125,6 +125,7 @@ public class RateReviewService extends ServiceHelper {
 
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
+		String finref ="";
 		try {
 			sqlStatement = connection.prepareStatement(QUERY_FINANCE);
 			sqlStatement.setString(1, baseRate.getBRType());
@@ -133,7 +134,7 @@ public class RateReviewService extends ServiceHelper {
 			resultSet = sqlStatement.executeQuery();
 
 			while (resultSet.next()) {
-				String finref = resultSet.getString("finReference");
+				 finref = resultSet.getString("finReference");
 
 				boolean rateRveCompled = false;
 				FinanceRateReview finRateReview = null;
@@ -158,8 +159,8 @@ public class RateReviewService extends ServiceHelper {
 
 			}
 		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+			logger.error("Exception: Finreference :" + finref, e);
+			throw new Exception("Exception: Finreference :" + finref,  e);
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();

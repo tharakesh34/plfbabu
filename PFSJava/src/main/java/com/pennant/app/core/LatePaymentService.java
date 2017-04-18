@@ -590,7 +590,7 @@ public class LatePaymentService extends ServiceHelper {
 		odDetails.setODChargeAmtOrPerc(rateToApply);
 		odDetails.setGraceDays(0);
 		odDetails.setODChargeType(FinanceConstants.PENALTYTYPE_PERCONDUEDAYS);
-		odDetails.setODChargeCalOn(FinanceConstants.ODCALON_STOT);
+		odDetails.setODChargeCalOn(FinanceConstants.ODCALON_SPRI);
 		odDetails.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
 
 		Date finODSchdDate = odDetails.getFinODSchdDate();

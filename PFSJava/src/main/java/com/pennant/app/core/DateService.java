@@ -65,7 +65,7 @@ public class DateService {
 	 * @param updatePhase
 	 * @return
 	 */
-	public boolean doUpdateAftereod(boolean updatePhase, boolean customerEOD) {
+	public boolean doUpdateAftereod(boolean updatePhase) {
 		logger.debug(" Entering ");
 
 		Date valueDate = DateUtility.getValueDate();
@@ -73,7 +73,7 @@ public class DateService {
 
 		// If NBD is holiday then loop continues, else end process.
 		boolean update = true;
-		if (!customerEOD && valueDate.compareTo(nextBusinessDate) != 0) {
+		if (valueDate.compareTo(nextBusinessDate) != 0) {
 			update = false;
 		}
 

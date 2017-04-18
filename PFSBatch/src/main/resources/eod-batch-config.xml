@@ -13,341 +13,54 @@
 		<listeners>
 			<listener ref="eodJobListener" />
 		</listeners>
-		<!-- Calendar Updation From Equation Core System -->
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
-			<next on="*" to="calendarUpdation" />
+			<next on="*" to="prepareCustomerQueue" />
 			<fail on="FAILED" />
 		</step>
-		<step id="calendarUpdation">
-			<tasklet ref="calendarUpdationTaskLet" />
-			<next on="*" to="nextBussDateUpdation" />
+		<step id="prepareCustomerQueue">
+			<tasklet ref="prepareCustomerQueueTaskLet" />
+			<next on="*" to="threadAllocation" />
 			<fail on="FAILED" />
 		</step>
-		<!-- Next Business Date Updation -->
-		<step id="nextBussDateUpdation">
-			<tasklet ref="nextBussDateUpdationTaskLet" />
-			<next on="*" to="removeMaintenance" />
+		<step id="threadAllocation">
+			<tasklet ref="threadAllocationTaskLet" />
+			<next on="*" to="microEOD" />
 			<fail on="FAILED" />
 		</step>
-		<!-- Remove Maintenance Details -->
-		<step id="removeMaintenance">
-			<tasklet ref="removeMaintenanceProcessTasklet" />
-			<next on="*" to="dailyDownload" />
+		<step id="microEOD">
+			<tasklet ref="microEODTaskLet" />
+			<next on="*" to="microEODMonitor" />
 			<fail on="FAILED" />
 		</step>
-		<!-- Daily Download Details -->
-		<step id="dailyDownload">
-			<tasklet ref="dailyDownloadProcessTasklet" />
-			<next on="*" to="repayQueueCalculation" />
+		<step id="microEODMonitor">
+			<tasklet ref="microEODMonitorTaskLet" />
+			<next on="*" to="microEODDecision" />
 			<fail on="FAILED" />
 		</step>
-		<!-- Schedule Repayments Queuing -->
-		<step id="repayQueueCalculation">
-			<tasklet ref="repayQueueTasklet" />
-			<next on="*" to="repayRequest" />
-			<fail on="FAILED" />
-		</step>
-		<step id="repayRequest">
-			<tasklet ref="repayRequestTasklet" />
-			<next on="*" to="prepareRecoveryFile" />
-			<fail on="FAILED" />
-		</step>
-		<step id="prepareRecoveryFile">
-			<tasklet ref="prepareRecoveryFileTasklet" />
-			<next on="*" to="readRecoveryFile" />
-			<fail on="FAILED" />
-		</step>
-		<!-- ******************************************************
-			******************************************************
-			**************** Phase 2 *****************
-			******************************************************
-			****************************************************** -->
-		<step id="readRecoveryFile">
-			<tasklet ref="readRecoveryFileTasklet" />
-			<next on="*" to="repayResponse" />
-			<fail on="FAILED" />
-		</step>
-		<step id="repayResponse">
-			<tasklet ref="repayResponseTasklet" />
-			<next on="*" to="overdueCalculation" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Schedule Overdue Calculation -->
-		<step id="overdueCalculation">
-			<tasklet ref="overdueCalculationTasklet" />
-			<next on="*" to="suspenseCalculation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="suspenseCalculation">
-			<tasklet ref="suspenseCalculationTasklet" />
-			<next on="*" to="statusUpdate" />
-			<fail on="FAILED" />
-		</step>
-		<step id="statusUpdate">
-			<tasklet ref="statusUpdateTasklet" />
-			<next on="*" to="amortizationCalculation" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Amortization Calculation -->
-		<step id="amortizationCalculation">
-			<tasklet ref="amortizationTasklet" />
-			<next on="*" to="financeMovement" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Amortization Calculation -->
-		<step id="financeMovement">
-			<tasklet ref="financeMovementTasklet" />
-			<next on="*" to="thirdPartyPostings" />
-			<fail on="FAILED" />
-		</step>
-		<step id="thirdPartyPostings">
-			<tasklet ref="thirdPartyPostingsTasklet" />
-			<next on="*" to="installmentDueDatePostings" />
-			<fail on="FAILED" />
-		</step>
-		<step id="installmentDueDatePostings">
-			<tasklet ref="installmentDueDatePostingsTasklet" />
-			<next on="*" to="dibursementPostings" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Disbursement Postings -->
-		<step id="dibursementPostings">
-			<tasklet ref="dibursementPostingsTasklet" />
-			<next on="*" to="auditPurgingDecision" />
-			<fail on="FAILED" />
-		</step>
-		<!-- End Of Month Decision For Audit Data Purging -->
-		<decision id="auditPurgingDecision" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="auditDataPurging" />
-			<next on="NotEndOfMonth" to="valueDateUpdation" />
-			<fail on="FAILED" />
-		</decision>
-		<!-- Audit Data Purging -->
-		<step id="auditDataPurging">
-			<tasklet ref="auditDataPurgingTaskLet" />
-			<next on="*" to="valueDateUpdation" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Value Date Updation -->
-		<step id="valueDateUpdation">
-			<tasklet ref="valueDateUpdationTasklet" />
-			<next on="*" to="commencementPostings" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Commencement Postings -->
-		<step id="commencementPostings">
-			<tasklet ref="commencementPostingsTasklet" />
-			<next on="*" to="rateReviewCalculation" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Profit Rate Reviews -->
-		<step id="rateReviewCalculation">
-			<tasklet ref="rateReviewCalculationTasklet" />
-			<next on="*" to="collateralDeMarkPostings" />
-			<fail on="FAILED" />
-		</step>
-		<!-- Collateral De-Marking for Finance -->
-		<step id="collateralDeMarkPostings">
-			<tasklet ref="collateralDeMarkPostingsTasklet" />
-			<next on="*" to="ddaCancellationPostings" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ddaCancellationPostings">
-			<tasklet ref="ddaCancellationPostingsTasklet" />
-			<next on="*" to="postLimitUtilization" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postLimitUtilization">
-			<tasklet ref="postLimitUtilizationTasklet" />
-			<next on="*" to="ddaRepresentmentPostings" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ddaRepresentmentPostings">
-			<tasklet ref="ddaRepresentmentPostingsTasklet" />
-			<next on="*" to="postGLPLPostings" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postGLPLPostings">
-			<tasklet ref="postGLPLPostingsTasklet" />
-			<next on="*" to="postBenchmarkInfo" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postBenchmarkInfo">
-			<tasklet ref="postBenchmarkInfoTasklet" />
-			<next on="*" to="postODDetails" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postODDetails">
-			<tasklet ref="postODDetailsTasklet" />
-			<next on="*" to="postNextPaymentDetails" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postNextPaymentDetails">
-			<tasklet ref="postNextPaymentDetailsTasklet" />
-			<next on="*" to="postStudyAndDocFee" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postStudyAndDocFee">
-			<tasklet ref="postStudyAndDocFeeTasklet" />
-			<next on="*" to="postFXRevaluation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postFXRevaluation">
-			<tasklet ref="postFXRevaluationTasklet" />
-			<next on="*" to="postInstallmentDueSMS" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postInstallmentDueSMS">
-			<tasklet ref="postInstallmentDueSMSTasklet" />
-			<next on="*" to="postPastDueSMS" />
-			<fail on="FAILED" />
-		</step>
-		<step id="postPastDueSMS">
-			<tasklet ref="postPastDueSMSTasklet" />
-			<next on="*" to="notification" />
-			<fail on="FAILED" />
-		</step>
-		<step id="notification">
-			<tasklet ref="notificationTasklet" />
-			<next on="*" to="archiveDocument" />
-			<fail on="FAILED" />
-		</step>
-		<step id="archiveDocument">
-			<tasklet ref="archiveDocumentsTaskLet" />
-			<next on="*" to="sasExtract" />
-			<fail on="FAILED" />
-		</step> 
-		<step id="sasExtract">
-			<tasklet ref="sasExtractTaskLet" />
-			<next on="*" to="sendMail" />
- 			<fail on="FAILED" />
-		</step>
-		<step id="sendMail">
-			<tasklet ref="sendMailTaskLet" />
+		<decision id="microEODDecision" decider="microEODDecider">
+			<next on="UNKNOWN" to="microEOD" />
 			<next on="*" to="snapShotPreparation" />
 			<fail on="FAILED" />
-		</step>
+		</decision>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
-			<next on="*" to="limitDecision" />
+			<next on="*" to="completeEOD" />
 			<fail on="FAILED" />
-		</step> 
-		<!-- Limit Decision For loop -->
-		<decision id="limitDecision" decider="limitDecider">
-			<next on="UNKNOWN" to="repayQueueCalculation" />
+		</step>
+		<decision id="completeEOD" decider="completeEODDecider">
 			<end on="COMPLETED" exit-code="COMPLETED" />
 			<fail on="FAILED" />
 		</decision>
-		
-				<!-- Profit Rate Change Postings -->
-<!--Not required confirmed with all team membersAs per the code there is no difference between rate review and refresh rate change. 		
-<step id="refreshRateChanges">
-			<tasklet ref="refreshRateChangesTasklet" />
-			<next on="*" to="repayQueueCalculation" />
-			<fail on="FAILED" />
-		</step> -->
-		<!-- Eod Database Backup Decision -->
-		<!-- <decision id="databaseBackupBeforeEodDecision" decider="eodBackupDecider">
-			<next on="UNKNOWN" to="databaseBackupBeforEod" />
-			<next on="*" to="calendarUpdation" />
-			<fail on="FAILED" />
-			</decision> -->
-		<!-- database backup Before EOD Process Start -->
-		<!-- <step id="databaseBackupBeforEod">
-			<tasklet ref="backupDatabaseBeforeEodTaskLet" />
-			<next on="*" to="calendarUpdation" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- End Of Month Decision For Month End Download -->
-		<!-- <decision id="monthEndDownloadDecision" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="monthEndDownload" />
-			<next on="NotEndOfMonth" to="refreshRateChanges" />
-			<fail on="FAILED" />
-			</decision> -->
-		<!-- Month End Download Details -->
-		<!-- <step id="monthEndDownload">
-			<tasklet ref="monthEndDownloadProcessTasklet" />
-			<next on="*" to="refreshRateChanges" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Capitalization Postings -->
-		<!-- <step id="capitalizationPostings">
-			<tasklet ref="capitalizationPostingsTasklet" />
-			<next on="*" to="repayQueueCalculation" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Amortization Postings -->
-		<!-- <step id="amortizationPostings">
-			<tasklet ref="amortizationPostingsTasklet" />
-			<next on="*" to="provisionCalculation" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Upload Profit Details -->
-		<!-- <step id="uploadPftDetails">
-			<tasklet ref="uploadPftDetailTasklet" />
-			<next on="*" to="provisionCalculation" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Provision Calculations -->
-		<!-- <step id="provisionCalculation">
-			<tasklet ref="provisionCalculationTasklet" />
-			<next on="*" to="dibursementPostings" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Provisions Postings -->
-		<!-- <step id="provisionPostings">
-			<tasklet ref="provisionPostingsTasklet" />
-			<next on="*" to="depreciationPostingsDecision" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- End Of Month Decision For Depreciation Postings -->
-		<!-- <decision id="depreciationPostingsDecision" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="depreciationPostings" />
-			<next on="NotEndOfMonth" to="dibursementPostings" />
-			<fail on="FAILED" />
-			</decision> -->
-		<!-- Depreciation Calculation -->
-		<!-- <step id="depreciationPostings">
-			<tasklet ref="depreciationPostingsTasklet" />
-			<next on="*" to="dibursementPostings" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Future Account Holds -->
-		<!-- <step id="futureInstallmentHolds">
-			<tasklet ref="futureInstallmentHoldsTasklet" />
-			<next on="*" to="commencementPostings" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Date Rollovers for Finance -->
-		<!-- <step id="dateRollOver">
-			<tasklet ref="dateRollOverTasklet" />
-			<next on="*" to="commitmentExpiry" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- ODDetails Daily Downlaod for Finance -->
-		<!-- <step id="oDDetailDownload">
-			<tasklet ref="oDDetailDownloadTasklet" />
-			<next on="*" to="commitmentExpiry" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- ODDetails Daily Downlaod for Finance -->
-		<!-- <step id="commitmentExpiry">
-			<tasklet ref="commitmentExpiryProcessTasklet" />
-			<next on="*" to="futureSchedulePostings" />
-			<fail on="FAILED" />
-			</step> -->
-		<!-- Eod Database Backup Decision -->
-		<!-- <decision id="databaseBackupAfterEodDecision" decider="eodBackupDecider">
-			<next on="UNKNOWN" to="databaseBackupAfterEod" />
-			<end on="COMPLETED" exit-code="COMPLETED" />
-			<fail on="FAILED" />
-			</decision> -->
-		<!-- database backup After Batch Execution -->
-		<!-- <step id="databaseBackupAfterEod">
-			<tasklet ref="backupDatabaseAfterEodTaskLet" />
-			<end on="COMPLETED" exit-code="COMPLETED" />
-			<fail on="FAILED" />
-			</step> -->
+
+		<!-- Next Business Date Updation -->
+		<!-- <step id="nextBussDateUpdation"> <tasklet ref="nextBussDateUpdationTaskLet" /> <next on="*" to="removeMaintenance" /> <fail on="FAILED" /> </step> -->
+		<!-- Value Date Updation -->
+		<!-- <step id="valueDateUpdation"> <tasklet ref="valueDateUpdationTasklet" /> <next on="*" to="commencementPostings" /> <fail on="FAILED" /> </step> -->
+		<!-- <step id="notification"> <tasklet ref="notificationTasklet" /> <next on="*" to="archiveDocument" /> <fail on="FAILED" /> </step> -->
+		<!-- <step id="sendMail"> <tasklet ref="sendMailTaskLet" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </step> -->
+		<!-- -->
+		<!-- Limit Decision For loop -->
+		<!-- -->
 	</job>
 </beans>

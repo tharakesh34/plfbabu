@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang" xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
-	<!-- _____________________________________________Tasklets _________________________________________ -->
-	<!-- Stop Auto hunting -->
+
+	<!-- beforeEOD -->
+
 	<bean id="beforeEODTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="target" ref="beforeEODTarget" />
@@ -17,12 +19,18 @@
 			</props>
 		</property>
 	</bean>
+
 	<bean id="beforeEODTarget" class="com.pennant.backend.endofday.tasklet.BeforeEOD">
+		<property name="eodProperties" ref="eodProperties" />
+		<property name="repayQueueService" ref="repayQueueService" />
+		<property name="dateService" ref="dateService" />
 	</bean>
-	<!-- Calendar Updation -->
-	<bean id="calendarUpdationTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+
+	<!-- prepareCustomerQueue -->
+
+	<bean id="prepareCustomerQueueTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="calendarUpdationTarget" />
+		<property name="target" ref="prepareCustomerQueueTarget" />
 		<property name="transactionAttributes">
 			<props>
 				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
@@ -33,10 +41,78 @@
 			</props>
 		</property>
 	</bean>
-	<bean id="calendarUpdationTarget" class="com.pennant.backend.endofday.tasklet.CalendarUpdation">
-		<property name="calendarInterfaceService" ref="calendarInterfaceService" />
-		<property name="accountsDAO" ref="accountsDAO" />
+
+	<bean id="prepareCustomerQueueTarget" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue">
+		<property name="customerDatesDAO" ref="customerDatesDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
+
+	<!-- prepareCustomerQueue -->
+
+	<bean id="threadAllocationTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="target" ref="threadAllocationTarget" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="threadAllocationTarget" class="com.pennant.backend.endofday.tasklet.ThreadAllocation">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<!-- MicroEOD -->
+	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<bean id="microEODDecider" class="com.pennant.backend.endofday.limitdecider.MicroEODDecider">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<!-- Loop Limit Decider -->
+	<bean id="completeEODDecider" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="completeEODTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="completeEODTarget" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dateService" ref="dateService" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="eodProperties" ref="eodProperties" />
+		<property name="repayQueueService" ref="repayQueueService" />
+	</bean>
+
+
+
+
+	<!-- To be deleted -->
+
+
+
 	<!-- Next Business Date Updation -->
 	<bean id="nextBussDateUpdationTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
@@ -50,31 +126,7 @@
 	<bean id="nextBussDateUpdationTarget" class="com.pennant.backend.endofday.tasklet.NextBussinessDateUpdation">
 		<property name="dateService" ref="dateService" />
 	</bean>
-	<!-- Remove Finance Maintenance Details -->
-	<bean id="removeMaintenanceProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="removeMaintenanceProcessTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="removeMaintenanceProcessTarget" class="com.pennant.backend.endofday.tasklet.RemoveMaintenanceProcess">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Daily Download Details Updation -->
-	<bean id="dailyDownloadProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="dailyDownloadProcessTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="dailyDownloadProcessTarget" class="com.pennant.backend.endofday.tasklet.DailyDownloadProcess">
-	</bean>
+
 	<!-- Repayments Queuing -->
 	<bean id="repayQueueTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
@@ -93,67 +145,7 @@
 		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<!-- Re payment request file sending -->
-	<bean id="repayRequestTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="repayRequestTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="repayRequestTarget" class="com.pennant.backend.endofday.tasklet.RepayRequest">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="paymentRecoveryService" ref="paymentRecoveryService" />
-		<property name="serviceUtil" ref="serviceUtil" />
-	</bean>
-	<!-- Recovery file Creation -->
-	<bean id="prepareRecoveryFileTasklet" class="com.pennant.backend.endofday.tasklet.PrepareRecoveryFile">
-		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Read Recovery file Creation -->
-	<bean id="readRecoveryFileTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="readRecoveryFileTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="readRecoveryFileTarget" class="com.pennant.backend.endofday.tasklet.ReadRecoveryFile">
-		<property name="paymentRecoveryDetailDAO" ref="paymentRecoveryDetailDAO" />
-	</bean>
-	<!-- Re payment response file reading -->
-	<bean id="repayResponseTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="repayResponseTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="repayResponseTarget" class="com.pennant.backend.endofday.tasklet.RepayResponse">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="repaymentService" ref="repaymentService" />
-		<property name="latePaymentService" ref="latePaymentService" />
-		<property name="paymentRecoveryService" ref="paymentRecoveryService" />
-	</bean>
+
 	<!-- Overdue Calculation -->
 	<bean id="overdueCalculationTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
@@ -260,11 +252,9 @@
 			</props>
 		</property>
 	</bean>
-	<bean id="thirdPartyPostingsTarget" class="com.pennant.backend.endofday.tasklet.ThirdPartyPostings"
-		parent="serviceHelper">
+	<bean id="thirdPartyPostingsTarget" class="com.pennant.backend.endofday.tasklet.ThirdPartyPostings" parent="serviceHelper">
 		<property name="thirdPartyPostingService" ref="thirdPartyPostingService" />
 	</bean>
-	
 	<!-- Installment due date Posting -->
 	<bean id="installmentDueDatePostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
@@ -281,7 +271,7 @@
 		</property>
 	</bean>
 	<bean id="installmentDueDatePostingsTarget" class="com.pennant.backend.endofday.tasklet.InstallmentDueDatePostings" parent="serviceHelper">
-			<property name="installmentDueService" ref="installmentDueService" />
+		<property name="installmentDueService" ref="installmentDueService" />
 	</bean>
 	<!-- Disbursement Postings -->
 	<bean id="dibursementPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -333,7 +323,7 @@
 		</property>
 	</bean>
 	<bean id="valueDateUpdationTarget" class="com.pennant.backend.endofday.tasklet.ValueDateUpdation">
-			<property name="dateService" ref="dateService" />
+		<property name="dateService" ref="dateService" />
 	</bean>
 	<!-- Commencement Postings -->
 	<bean id="commencementPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -374,167 +364,9 @@
 		<property name="rateReviewService" ref="rateReviewService" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<!-- Collateral De-Marking Postings File Place -->
-	<bean id="collateralDeMarkPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="collateralDeMarkPostingsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="collateralDeMarkPostingsTarget" class="com.pennant.backend.endofday.tasklet.CollateralDeMarkPostings">
-		<property name="collateralService" ref="collateralService" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- DDA Cancellation Postings File Place -->
-	<bean id="ddaCancellationPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="ddaCancellationPostingsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="ddaCancellationPostingsTarget" class="com.pennant.backend.endofday.tasklet.DDACancellationPostings">
-		<property name="ddaControllerService" ref="ddaControllerService" />
-		<property name="ddaProcessService" ref="ddaProcessService" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Deal Update Postings -->
-	<bean id="postLimitUtilizationTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="postLimitUtilizationTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postLimitUtilizationTarget" class="com.pennant.backend.endofday.tasklet.PostLimitUtilization">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- DDA Representment Postings File Place -->
-	<bean id="ddaRepresentmentPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="ddaRepresentmentPostingsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="ddaRepresentmentPostingsTarget" class="com.pennant.backend.endofday.tasklet.DDARepresentmentPostings">
-		<property name="ddaRepresentmentService" ref="ddaRepresentmentService" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- ERP Extracts Postings File Place -->
-	<bean id="postGLPLPostingsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="postGLPLPostingsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postGLPLPostingsTarget" class="com.pennant.backend.endofday.tasklet.PostGLPLPostings">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Post Bench mark Info -->
-	<bean id="postBenchmarkInfoTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="postBenchmarkInfoTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postBenchmarkInfoTarget" class="com.pennant.backend.endofday.tasklet.PostBenchmarkInfo">
-		<property name="extTablesDAO" ref="extTablesDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Overdue Account Postings -->
-	<bean id="postODDetailsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="postODDetailsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postODDetailsTarget" class="com.pennant.backend.endofday.tasklet.PostODDetails">
-		<property name="extTablesDAO" ref="extTablesDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Next payment Details -->
-	<bean id="postNextPaymentDetailsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="postNextPaymentDetailsTarget" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postNextPaymentDetailsTarget" class="com.pennant.backend.endofday.tasklet.PostNextPaymentDetails" parent="serviceHelper">
-	</bean>
-	<!-- S & D Fee -->
-	<bean id="postStudyAndDocFeeTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="postStudyAndDocFeeTarget" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postStudyAndDocFeeTarget" class="com.pennant.backend.endofday.tasklet.PostStudyAndDocFee" parent="serviceHelper">
-	</bean>
-	<!-- FX Revaluation -->
-	<bean id="postFXRevaluationTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="postFXRevaluationTarget" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postFXRevaluationTarget" class="com.pennant.backend.endofday.tasklet.PostFXRevaluation" parent="serviceHelper">
-	</bean>
-	<!-- Post Installment Due SMS -->
-	<bean id="postInstallmentDueSMSTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="postInstallmentDueSMSTarget" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postInstallmentDueSMSTarget" class="com.pennant.backend.endofday.tasklet.PostInstallmentDueSMS">
-		<property name="extTablesDAO" ref="extTablesDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Post Past Due SMS -->
-	<bean id="postPastDueSMSTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="postPastDueSMSTarget" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="postPastDueSMSTarget" class="com.pennant.backend.endofday.tasklet.PostPastDueSMS">
-		<property name="extTablesDAO" ref="extTablesDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
+
+
+
 	<!-- Notifications -->
 	<bean id="notificationTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
@@ -760,42 +592,8 @@
 		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
 		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
-	<!-- Not required -->
-	<bean id="archiveDocumentsTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="archiveDocumentsTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-		<bean id="archiveDocumentsTarget" class="com.pennant.backend.endofday.tasklet.ArchiveDocuments">
-		<property name="archivalService" ref="archivalService" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	
-	<bean id="sasExtractTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="sasExtractTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-		<bean id="sasExtractTarget" class="com.pennant.backend.endofday.tasklet.SASExtract">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	
+
+
 	<bean id="snapShotPreparationTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="target" ref="snapShotPreparationTarget" />
@@ -809,28 +607,9 @@
 			</props>
 		</property>
 	</bean>
-		<bean id="snapShotPreparationTarget" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
+	<bean id="snapShotPreparationTarget" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="snapshotService" ref="snapshotService" />
 	</bean>
-	
-	<bean id="sendMailTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="target" ref="sendMailTarget" />
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-		<bean id="sendMailTarget" class="com.pennant.backend.endofday.tasklet.SendMail">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="prepareMailData" ref="prepareMailData" />
-	</bean>
-	
-</beans>
 
+</beans>

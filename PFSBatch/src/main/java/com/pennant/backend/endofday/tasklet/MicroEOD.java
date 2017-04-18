@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeEOD.java													*                           
+ * FileName    		:  NextBussinessDateUpdation.java										*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -44,50 +44,85 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.eod.EodThread;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+public class MicroEOD implements Tasklet, ApplicationContextAware {
 
-	public BeforeEOD() {
+	private Logger					logger	= Logger.getLogger(MicroEOD.class);
+
+	private ApplicationContext		applicationContext;
+	private CustomerQueuingDAO		customerQueuingDAO;
+	private ThreadPoolTaskExecutor	threadPoolTaskExecutor;
+
+	public MicroEOD() {
 
 	}
-
-	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
-	private DateService			dateService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Before EOD On : " + valueDate);
+		logger.debug("START: Micro EOD On : " + valueDate);
 
-		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
-		dateService.doUpdatebeforeEod(true);
-		logger.debug("COMPLETE: Before EOD On :" + valueDate);
+		int threadCount = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
+
+		ExecutionContext executionContext = context.getStepContext().getStepExecution().getJobExecution()
+				.getExecutionContext();
+
+		String stata = (String) executionContext.get(EodConstants.MICRO_EOD);
+		if (StringUtils.equals(stata, EodConstants.STATUS_FAILED)) {
+			executionContext.put(EodConstants.MICRO_EOD, null);
+			threadPoolTaskExecutor.destroy();
+			throw new RuntimeException();
+		} else if (!StringUtils.equals(stata, EodConstants.STATUS_STARTED)) {
+			customerQueuingDAO.updateFailedThread(valueDate);
+		}
+
+		if (threadPoolTaskExecutor == null) {
+			createThreadPool(threadCount);
+		}
+
+		for (int i = 1; i <= threadCount; i++) {
+			EodThread eodThread = (EodThread) applicationContext.getBean("eodThread");
+			eodThread.setThreadId("Thread" + i);
+			eodThread.setEodDate(valueDate);
+			threadPoolTaskExecutor.execute(eodThread);
+		}
+		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;
-
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
+	private void createThreadPool(int threadCount) {
+		threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+		threadPoolTaskExecutor.setMaxPoolSize(threadCount + 1);
+		threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+		threadPoolTaskExecutor.initialize();
+		threadPoolTaskExecutor.setThreadGroupName("PFFEOD");
+		threadPoolTaskExecutor.setThreadNamePrefix("PFFEOD-");
 	}
 
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
+
 }

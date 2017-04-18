@@ -116,8 +116,6 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean name="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="1" />
-		<property name="maxPoolSize" value="5" />
 	</bean>
 	<bean name="eodTrigger" class="com.pennant.app.job.process.EodTrigger">
 		<property name="eod" ref="eod" />

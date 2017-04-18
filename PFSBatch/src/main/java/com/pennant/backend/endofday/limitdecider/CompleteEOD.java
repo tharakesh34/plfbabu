@@ -57,24 +57,25 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.DateService;
+import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.app.util.SysParamUtil.Param;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.BatchFileUtil;
-import com.pennant.eod.PaymentRecoveryService;
-import com.pennant.equation.util.HostConnection;
+import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.eod.util.EODProperties;
 
-public class LimitDecider implements JobExecutionDecider {
+public class CompleteEOD implements JobExecutionDecider {
 
-	private Logger					logger	= Logger.getLogger(LimitDecider.class);
+	private Logger				logger	= Logger.getLogger(CompleteEOD.class);
 
-	private DateService				dateService;
-	private PaymentRecoveryService	paymentRecoveryService;
-	private DataSource				dataSource;
-	private HostConnection			hostConnection;
+	private DataSource			dataSource;
+	private DateService			dateService;
 
-	public LimitDecider() {
+	private CustomerQueuingDAO	customerQueuingDAO;
+	private EODProperties		eodProperties;
+	private RepayQueueService	repayQueueService;
+
+	public CompleteEOD() {
 
 	}
 
@@ -82,9 +83,28 @@ public class LimitDecider implements JobExecutionDecider {
 		Date valueDate = DateUtility.getValueDate();
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
-		logger.debug("START: Limit Decider for generation of Loop for Value Date: " + DateUtility.addDays(valueDate, -1));
+		logger.debug("START: Complete EOD On : " + valueDate);
+
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
 
+		updateAccounts(valueDate, nextBusinessDate);
+		// Log the Customer queuing data and threads status
+		customerQueuingDAO.logCustomerQueuing();
+		//Update value dates check Holiday 
+		dateService.doUpdateValueDate();
+		boolean processed = dateService.doUpdateAftereod(true);
+		if (processed) {
+			//clear the data which is loaded in before  end of day
+			repayQueueService.clearFinanceRepayPriority();
+			eodProperties.destroy();
+			logger.debug("COMPLETE: Complete EOD On :" + valueDate);
+			return FlowExecutionStatus.COMPLETED;
+		} else {
+			return FlowExecutionStatus.UNKNOWN;
+		}
+	}
+
+	private void updateAccounts(Date valueDate, Date nextBusinessDate) {
 		Connection connection = null;
 		PreparedStatement sqlStatement = null;
 
@@ -97,72 +117,34 @@ public class LimitDecider implements JobExecutionDecider {
 			}
 
 			//Update Today Account Balances to ZeroValue
-			connection = DataSourceUtils.doGetConnection(getDataSource());
+			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(query.toString());
 			sqlStatement.executeUpdate();
 			sqlStatement.close();
 
-			getPaymentRecoveryService().moveDataToLog(BatchFileUtil.getBatchReference());
-
-			boolean processed = getDateService().doUpdateAftereod(true,false);
-
-			if (processed) {
-				SysParamUtil.updateParamDetails(Param.AUTOHUNTING.getCode(), PennantConstants.AUTOHUNT_RUNNING);
-				logger.debug("COMPLETE: Limit Decider with Value Date: " + DateUtility.addDays(valueDate, -1));
-			}
-			return FlowExecutionStatus.COMPLETED;
-
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);
-		} finally {
-			try {
-				if (sqlStatement!=null) {
-					sqlStatement.close();
-				}
-				DataSourceUtils.doReleaseConnection(connection, getDataSource());
-			} catch (SQLException e) {
-				logger.error("Exception: ", e);
-			}
 		}
-
-		logger.debug("COMPLETE: Limit Decider for generation of Loop with Value Date: " + DateUtility.addDays(valueDate, -1));
-		return FlowExecutionStatus.UNKNOWN;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public void setDateService(DateService dateService) {
+		this.dateService = dateService;
+	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
-	public DataSource getDataSource() {
-		return dataSource;
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
-	public HostConnection getHostConnection() {
-		return hostConnection;
+	public void setEodProperties(EODProperties eodProperties) {
+		this.eodProperties = eodProperties;
 	}
 
-	public void setHostConnection(HostConnection hostConnection) {
-		this.hostConnection = hostConnection;
-	}
-
-	public PaymentRecoveryService getPaymentRecoveryService() {
-		return paymentRecoveryService;
-	}
-
-	public void setPaymentRecoveryService(PaymentRecoveryService paymentRecoveryService) {
-		this.paymentRecoveryService = paymentRecoveryService;
-	}
-
-	public DateService getDateService() {
-		return dateService;
-	}
-
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
+	public void setRepayQueueService(RepayQueueService repayQueueService) {
+		this.repayQueueService = repayQueueService;
 	}
 
 }

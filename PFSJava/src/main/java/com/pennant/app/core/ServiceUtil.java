@@ -133,6 +133,8 @@ public class ServiceUtil {
 	public void processQueue(Connection connection, long custId, Date date) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
+		String finreference = "";
+
 		try {
 			//payments
 			sqlStatement = connection.prepareStatement(customerRepayQueue);
@@ -140,6 +142,7 @@ public class ServiceUtil {
 			resultSet = sqlStatement.executeQuery();
 
 			while (resultSet.next()) {
+				finreference = resultSet.getString("FinReference");
 				BeanPropertyRowMapper<FinRepayQueue> beanPropertyRowMapper = new BeanPropertyRowMapper<>(
 						FinRepayQueue.class);
 				FinRepayQueue finRepayQueue = beanPropertyRowMapper.mapRow(resultSet, resultSet.getRow());
@@ -147,8 +150,8 @@ public class ServiceUtil {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+			logger.error("Exception: Finreference :" + finreference, e);
+			throw new Exception("Exception: Finreference : " + finreference, e);
 		} finally {
 			if (resultSet != null) {
 				resultSet.close();

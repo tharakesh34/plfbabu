@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.endofday.tasklet;
+package com.pennant.backend.endofday.tasklet.ahb;
 
 import java.util.Date;
 
@@ -50,44 +50,51 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.SysParamUtil.Param;
+import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
 
-public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+public class StopAutoHunting implements Tasklet {
+	private Logger	logger	= Logger.getLogger(StopAutoHunting.class);
 
-	public BeforeEOD() {
+	public StopAutoHunting() {
 
 	}
 
-	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
-	private DateService			dateService;
-
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Before EOD On : " + valueDate);
+		Date date = DateUtility.getValueDate();
+		logger.debug("START: Request File Reading for Value Date: " + date);
 
-		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
-		dateService.doUpdatebeforeEod(true);
-		logger.debug("COMPLETE: Before EOD On :" + valueDate);
+		String status = SysParamUtil.getValueAsString(Param.AUTOHUNTING.getCode());
+
+		// check Auto hunting status before starting job
+		if (PennantConstants.AUTOHUNT_RUNNING.equals(status)) {
+			SysParamUtil.updateParamDetails(Param.AUTOHUNTING.getCode(), PennantConstants.AUTOHUNT_BATCH);
+			BatchUtil.setExecution(context, "WAIT", "Request stop auto hunting intiated.");
+		}
+
+		// wait for the stopped
+
+		while (true) {
+			
+			status = SysParamUtil.getValueAsString(Param.AUTOHUNTING.getCode());
+			if (PennantConstants.AUTOHUNT_BATCH.equals(status)) {
+				BatchUtil.setExecution(context, "WAIT", "Waiting for closing of Auto hunting");
+				continue;
+			}
+
+			if (PennantConstants.AUTOHUNT_STOPPED.equals(status)) {
+				break;
+			}
+
+		}
+
+		logger.debug("END: Request File Reading for Value Date: " + date);
 		return RepeatStatus.FINISHED;
 
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
-	}
-
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
-
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
-	}
 }

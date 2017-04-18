@@ -9,6 +9,7 @@ public interface EodConstants {
 
 	String	PROGRESS_START		= "STARTED";
 	String	PROGRESS_COMPLETED	= "COMPLETED";
+	String	MICRO_EOD			= "MICROEOD";
 
 	// Collateral De-Marking
 	String	FIN_CLOSESTS		= "M";

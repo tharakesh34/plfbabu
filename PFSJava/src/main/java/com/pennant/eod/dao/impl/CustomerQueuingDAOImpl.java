@@ -63,7 +63,24 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 	}
-	
+
+	@Override
+	public long getCountByStatus(Date date, String status) {
+		logger.debug("Entering");
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setStatus(status);
+		customerQueuing.setEodDate(date);
+		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
+		selectSql.append(" and (Status = :Status)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+	}
+
 	@Override
 	public int getProgressCountByCust(long custID) {
 		logger.debug("Entering");
@@ -71,7 +88,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custID);
 		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
-		
+
 		StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Count(CustID),0) from CustomerQueuing ");
 		selectSql.append(" where CustID = :CustID AND Progress != :Progress");
 
@@ -79,26 +96,9 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
-	@Override
-	public long getCountByStatus(Date date, String status) {
-		logger.debug("Entering");
-		
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setStatus(status);
-		customerQueuing.setEodDate(date);
-		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
-		selectSql.append(" and (Status = :Status)");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-	}
 
 	@Override
-	public void updateNoofRows(Date date, long noOfRows, String threadId) {
+	public void updateThreadIDByRowNumber(Date date, long noOfRows, String threadId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -125,7 +125,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public void updateAll(Date date, String threadId) {
+	public void updateThreadID(Date date, String threadId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -134,6 +134,30 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		StringBuilder selectSql = new StringBuilder(
 				"UPDATE CustomerQueuing set ThreadId=:ThreadId Where ThreadId IS NULL and EodDate=:EodDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+		}
+		logger.debug("Leaving");
+
+	}
+
+	@Override
+	public void updateFailedThread(Date date) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Status", EodConstants.STATUS_FAILED);
+		source.addValue("EodDate", date);
+
+		StringBuilder selectSql = new StringBuilder("UPDATE CustomerQueuing set StartTime = NULL,");
+		selectSql.append(" EndTime = NULL, Progress = NULL , ");
+		selectSql.append(" ErrorLog = NULL, Status = NULL");
+		selectSql.append(" Where Status = :Status and EodDate = :EodDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
 

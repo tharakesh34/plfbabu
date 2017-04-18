@@ -1,4 +1,4 @@
-package com.pennant.Interface.service.impl;
+package com.pennant.Interface.service.impl.aib;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
