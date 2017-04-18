@@ -139,6 +139,24 @@
 	</createTable>
 </changeSet>
 
-
+	<changeSet id="04" author="SreeRavali">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="SchCalOnRvw" type="varchar(8)" />
+			<column name="PastduePftCalMthd" type="varchar(8)" />
+			<column name="PastduePftMargin" type="decimal(13,9)" />
+			<column name="DroppingMethod" type="char(1)" />
+			<column name="RateChgAnyDay" type="bit" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet  id="05" author="SreeRavali">
+		<sql>
+			Update AdtFinanceMain set RateChgAnyDay = 1 where RateChgAnyDay is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="06" author="SreeRavali">
+		<addNotNullConstraint tableName="AdtFinanceMain" columnName="RateChgAnyDay" columnDataType="bit"/>
+	</changeSet>
 
 </databaseChangeLog>
