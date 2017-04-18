@@ -38,7 +38,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.AuditLogDetils;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.PagedListService;

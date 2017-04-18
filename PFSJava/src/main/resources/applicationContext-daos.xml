@@ -86,10 +86,6 @@
 		<property name="dataSource" ref="auditDatasource" />
 	</bean>
 
-	<bean id="auditLogDAO" class="com.pennant.backend.dao.audit.impl.AuditLogDAOImpl">
-		<property name="dataSource" ref="auditDatasource" />
-	</bean>
-
 	<!-- ====================================================== -->
 	<!-- Notes Details Configuration -->
 	<!-- ====================================================== -->
