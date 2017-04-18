@@ -617,8 +617,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		if(this.oldVar_sortOperator_scheduleMethod == Filter.OP_IN || this.oldVar_sortOperator_scheduleMethod == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
-			String selectedValues= (String) MultiSelectionSearchListBox.show(
+			String selectedValues = null;
+			if(StringUtils.isEmpty(whereClause)){
+			 selectedValues= (String) MultiSelectionSearchListBox.show(
 					this.window_FinanceSelect, "ScheduleMethod", this.scheduleMethod.getValue(), new Filter[]{});
+			}else{
+				 selectedValues= (String) MultiSelectionSearchListBox.show(
+							this.window_FinanceSelect, "ScheduleMethod", this.scheduleMethod.getValue(), new Filter[]{},whereClause);
+			}
 			if (selectedValues!= null) {
 				this.scheduleMethod.setValue(selectedValues);
 			}
