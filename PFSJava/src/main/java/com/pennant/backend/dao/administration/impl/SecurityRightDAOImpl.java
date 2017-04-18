@@ -58,6 +58,7 @@ import com.pennant.backend.dao.administration.SecurityRightDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennanttech.pff.core.Literal;
 
 public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> implements SecurityRightDAO {
 	private static Logger logger = Logger.getLogger(SecurityRightDAOImpl.class);
@@ -99,7 +100,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	 */
 	@Override
 	public List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName ");
 		sql.append("  from SecUserOperations UO ");
@@ -109,11 +110,11 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append("  inner join SecGroupRights GR on GR.GrpID = RG.GrpID ");
 		sql.append("  inner join SecRights RT on RT.RightID = GR.RightID ");
 		sql.append("  where RT.RightType <> 0  and UO.UsrID = :UsrID and  R.RoleApp = :LoginAppId ");
-		
+
 		if (StringUtils.isNotBlank(secRight.getRoleCd())) {
 			sql.append("  and R.RoleCd = :RoleCd ");
 		}
-		
+
 		sql.append("  and RT.Page = :Page ");
 
 		if (StringUtils.isNotBlank(menuRightName)) {
@@ -124,12 +125,12 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 			sql.append("')");
 		}
 
-		logger.debug("selectSql:" + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRight);
-		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
+		logger.debug(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(secRight);
+		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
