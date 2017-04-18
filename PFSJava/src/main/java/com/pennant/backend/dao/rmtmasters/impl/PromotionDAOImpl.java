@@ -103,7 +103,7 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		sql.append(" finMaxRate,active,");
 
 		if (type.contains("View")) {
-			sql.append(" finCcy, FinCategory, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
+			sql.append(" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
 		}
 
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

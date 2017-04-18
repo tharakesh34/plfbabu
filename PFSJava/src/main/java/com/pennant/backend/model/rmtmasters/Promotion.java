@@ -89,7 +89,6 @@ public class Promotion extends AbstractWorkflowEntity {
 	private Promotion befImage;
 	private LoggedInUser userDetails;
 
-	private String finCategory;
 	private String finTypeDesc;
 	private String finCcy;
 	private String downPayRuleCode;
@@ -121,7 +120,6 @@ public class Promotion extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 
-		excludeFields.add("finCategory");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("finCcy");
 		excludeFields.add("downPayRuleCode");
@@ -352,14 +350,6 @@ public class Promotion extends AbstractWorkflowEntity {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
-	}
-
-	public String getFinCategory() {
-		return finCategory;
-	}
-
-	public void setFinCategory(String finCategory) {
-		this.finCategory = finCategory;
 	}
 
 	public String getFinTypeDesc() {

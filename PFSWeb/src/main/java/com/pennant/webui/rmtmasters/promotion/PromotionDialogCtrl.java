@@ -604,7 +604,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		this.recordStatus.setValue(aPromotion.getRecordStatus());
 
-		if (StringUtils.isNotBlank(aPromotion.getFinCategory())) {
+		if (StringUtils.isNotBlank(aPromotion.getFinType())) {
 			appendFeeDetailTab();
 			//appendInsuranceDetailsTab();
 			appendAccountingDetailsTab();
