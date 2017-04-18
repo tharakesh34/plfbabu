@@ -7,24 +7,24 @@ import java.util.List;
 
 public class FinReceiptDetail {
 
-	private int receiptID = 0;// Only setting from Receipt Header
+	private long receiptID = 0;// Only setting from Receipt Header
 	private long receiptSeqID = 0;// Auto Generated
 	private String receiptType;
 	private String paymentTo;
 	private String paymentType;
-	private int payAgainstID = 0;
+	private long payAgainstID = 0;
 	private BigDecimal amount = BigDecimal.ZERO;
-	private String bankCode;
-	private String favourName;
 	private String favourNumber;
 	private Date valueDate;
+	private String bankCode;
+	private String favourName;
+	private Date depositDate;
+	private String depositNo;
+	private String paymentRef;
+	private String transactionRef;
+	private String chequeAcNo;
+	private String fundingAc;
 	private Date receivedDate;
-	private long bankBranchID = 0;
-	private String acHolderName;
-	private String accountNo;
-	private String phoneCountryCode;
-	private String phoneAreaCode;
-	private String phoneSubCode;
 	private String status;
 	private String remarks;
 	
@@ -38,13 +38,13 @@ public class FinReceiptDetail {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	
-	public int getReceiptID() {
+	public long getReceiptID() {
 		return receiptID;
 	}
-	public void setReceiptID(int receiptID) {
+	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
 	}
-	
+
 	public long getReceiptSeqID() {
 		return receiptSeqID;
 	}
@@ -73,10 +73,10 @@ public class FinReceiptDetail {
 		this.paymentType = paymentType;
 	}
 
-	public int getPayAgainstID() {
+	public long getPayAgainstID() {
 		return payAgainstID;
 	}
-	public void setPayAgainstID(int payAgainstID) {
+	public void setPayAgainstID(long payAgainstID) {
 		this.payAgainstID = payAgainstID;
 	}
 
@@ -85,20 +85,6 @@ public class FinReceiptDetail {
 	}
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
-	}
-
-	public String getBankCode() {
-		return bankCode;
-	}
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
-	}
-
-	public String getFavourName() {
-		return favourName;
-	}
-	public void setFavourName(String favourName) {
-		this.favourName = favourName;
 	}
 
 	public String getFavourNumber() {
@@ -115,53 +101,67 @@ public class FinReceiptDetail {
 		this.valueDate = valueDate;
 	}
 
+	public String getBankCode() {
+		return bankCode;
+	}
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getFavourName() {
+		return favourName;
+	}
+	public void setFavourName(String favourName) {
+		this.favourName = favourName;
+	}
+
+	public Date getDepositDate() {
+		return depositDate;
+	}
+	public void setDepositDate(Date depositDate) {
+		this.depositDate = depositDate;
+	}
+
+	public String getDepositNo() {
+		return depositNo;
+	}
+	public void setDepositNo(String depositNo) {
+		this.depositNo = depositNo;
+	}
+
+	public String getPaymentRef() {
+		return paymentRef;
+	}
+	public void setPaymentRef(String paymentRef) {
+		this.paymentRef = paymentRef;
+	}
+
+	public String getTransactionRef() {
+		return transactionRef;
+	}
+	public void setTransactionRef(String transactionRef) {
+		this.transactionRef = transactionRef;
+	}
+
+	public String getChequeAcNo() {
+		return chequeAcNo;
+	}
+	public void setChequeAcNo(String chequeAcNo) {
+		this.chequeAcNo = chequeAcNo;
+	}
+
+	public String getFundingAc() {
+		return fundingAc;
+	}
+	public void setFundingAc(String fundingAc) {
+		this.fundingAc = fundingAc;
+	}
+
 	public Date getReceivedDate() {
 		return receivedDate;
 	}
 	public void setReceivedDate(Date receivedDate) {
 		this.receivedDate = receivedDate;
-	}
-
-	public long getBankBranchID() {
-		return bankBranchID;
-	}
-	public void setBankBranchID(long bankBranchID) {
-		this.bankBranchID = bankBranchID;
-	}
-
-	public String getAcHolderName() {
-		return acHolderName;
-	}
-	public void setAcHolderName(String acHolderName) {
-		this.acHolderName = acHolderName;
-	}
-
-	public String getAccountNo() {
-		return accountNo;
-	}
-	public void setAccountNo(String accountNo) {
-		this.accountNo = accountNo;
-	}
-
-	public String getPhoneCountryCode() {
-		return phoneCountryCode;
-	}
-	public void setPhoneCountryCode(String phoneCountryCode) {
-		this.phoneCountryCode = phoneCountryCode;
-	}
-
-	public String getPhoneAreaCode() {
-		return phoneAreaCode;
-	}
-	public void setPhoneAreaCode(String phoneAreaCode) {
-		this.phoneAreaCode = phoneAreaCode;
-	}
-
-	public String getPhoneSubCode() {
-		return phoneSubCode;
-	}
-	public void setPhoneSubCode(String phoneSubCode) {
-		this.phoneSubCode = phoneSubCode;
 	}
 
 	public String getStatus() {
@@ -181,7 +181,6 @@ public class FinReceiptDetail {
 	public List<FinRepayHeader> getRepayHeaders() {
 		return repayHeaders;
 	}
-
 	public void setRepayHeaders(List<FinRepayHeader> repayHeaders) {
 		this.repayHeaders = repayHeaders;
 	}

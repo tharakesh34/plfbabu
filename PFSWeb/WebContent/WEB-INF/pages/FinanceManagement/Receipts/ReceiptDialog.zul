@@ -492,16 +492,16 @@
 												<label
 													value="${c:l('label_ReceiptDialog_ReceiptPurpose.value')}" />
 												<hbox>
-													<space
-														spacing="2px" sclass="mandatory" />
+													<space spacing="2px"
+														sclass="mandatory" />
 													<combobox
 														id="receiptPurpose" width="180px" readonly="true" />
 												</hbox>
 												<label
 													value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
 												<hbox>
-													<space
-														spacing="2px" sclass="mandatory" />
+													<space spacing="2px"
+														sclass="mandatory" />
 													<combobox
 														id="excessAdjustTo" width="180px" readonly="true" />
 												</hbox>
@@ -510,8 +510,8 @@
 												<label
 													value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
 												<hbox>
-													<space
-														spacing="2px" sclass="mandatory" />
+													<space spacing="2px"
+														sclass="mandatory" />
 													<combobox
 														id="receiptMode" width="180px" readonly="true" />
 												</hbox>
@@ -524,16 +524,16 @@
 												<label
 													value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
 												<hbox>
-													<space
-														spacing="2px" sclass="mandatory" />
+													<space spacing="2px"
+														sclass="mandatory" />
 													<combobox
 														id="allocationMethod" width="180px" readonly="true" />
 												</hbox>
 												<label
 													value="${c:l('label_ReceiptDialog_EffecScheduleMethod.value')}" />
 												<hbox>
-													<space
-														spacing="2px" sclass="mandatory" />
+													<space spacing="2px"
+														sclass="mandatory" />
 													<combobox
 														id="effScheduleMethod" width="180px" readonly="true" />
 												</hbox>
@@ -541,9 +541,9 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox id="gb_CashDetails"
+								<groupbox id="gb_ReceiptDetails"
 									visible="false">
-									<caption id="caption_cashDetail" />
+									<caption id="caption_receiptDetail" />
 									<grid fixedLayout="true"
 										sclass="GridLayoutNoBorder" style="border:0px;">
 										<columns>
@@ -555,19 +555,109 @@
 										<rows>
 											<row>
 												<label
-													id="label_ReceiptDialog_FundingAccount"
-													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
-												<accountSelectionBox
-													id="fundingAccount" />
-												<label
-													id="label_ReceiptDialog_CashReceivedDate"
-													value="${c:l('label_ReceiptDialog_CashReceivedDate.value')}" />
+													id="label_ReceiptDialog_favourNo"
+													value="${c:l('label_ReceiptDialog_favourNo.value')}" />
 												<hbox
-													id="hbox_ReceiptDialog_CashReceivedDate">
+													id="hbox_ReceiptDialog_favourNo">
+													<space
+														spacing="2px" />
+													<textbox
+														id="favourNo" width="180px" />
+												</hbox>
+												<label
+													id="label_ReceiptDialog_ValueDate"
+													value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_ValueDate">
 													<space spacing="2px"
 														sclass="mandatory" />
 													<datebox
-														id="cashReceivedDate" />
+														id="valueDate" width="100px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_BankCode"
+													value="${c:l('label_ReceiptDialog_BankCode.value')}" />
+												<extendedcombobox
+													id="bankCode" width="180px" />
+												<label
+													id="label_ReceiptDialog_favourName"
+													value="${c:l('label_ReceiptDialog_favourName.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_favourName">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<textbox
+														id="favourName" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_DepositDate"
+													value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_DepositDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="depositDate" width="100px" />
+												</hbox>
+												<label
+													id="label_ReceiptDialog_depositNo"
+													value="${c:l('label_ReceiptDialog_depositNo.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_depositNo">
+													<space
+														spacing="2px" />
+													<textbox
+														id="depositNo" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_paymentReference"
+													value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_paymentReference">
+													<space
+														spacing="2px" />
+													<textbox
+														id="paymentRef" width="180px" />
+												</hbox>
+												<label
+													id="label_ReceiptDialog_tranReference"
+													value="${c:l('label_ReceiptDialog_tranReference.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_tranReference">
+													<space
+														spacing="2px" />
+													<textbox
+														id="transactionRef" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_ChequeAccountNo"
+													value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
+												<accountSelectionBox
+													id="chequeAccountNo" width="180px" />
+											</row>
+											<row>
+												<label
+													id="label_ReceiptDialog_FundingAccount"
+													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
+												<accountSelectionBox
+													id="fundingAccount" width="180px" />
+												<label
+													id="label_ReceiptDialog_ReceivedDate"
+													value="${c:l('label_ReceiptDialog_ReceivedDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_ReceivedDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="receivedDate" width="100px" />
 												</hbox>
 											</row>
 											<row>
@@ -579,175 +669,7 @@
 													<space spacing="2px"
 														sclass="mandatory" />
 													<textbox
-														id="remarks"  />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
-								<groupbox id="gb_ChequeDetails"
-									visible="false">
-									<caption id="caption_chequeDetail" />
-									<grid fixedLayout="true"
-										sclass="GridLayoutNoBorder" style="border:0px;">
-										<columns>
-											<column width="200px" />
-											<column />
-											<column width="200px" />
-											<column />
-										</columns>
-										<rows>
-											<row>
-												<label
-													id="label_ReceiptDialog_BankCode"
-													value="${c:l('label_ReceiptDialog_BankCode.value')}" />
-												<extendedcombobox
-													id="bankCode" />
-												<label
-													id="label_ReceiptDialog_favourName"
-													value="${c:l('label_ReceiptDialog_favourName.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_liabilityHoldName">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="favourName" />
-												</hbox>
-											</row>
-											<row>
-												<label
-													id="label_ReceiptDialog_PayableLoc"
-													value="${c:l('label_ReceiptDialog_PayableLoc.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_PayableLoc">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="payableLoc" />
-												</hbox>
-												<label
-													id="label_ReceiptDialog_PrintingLoc"
-													value="${c:l('label_ReceiptDialog_PrintingLoc.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_PrintingLoc">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="printingLoc" />
-												</hbox>
-											</row>
-											<row>
-												<label
-													id="label_ReceiptDialog_ValueDate"
-													value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_ValueDate">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<datebox
-														id="valueDate" />
-												</hbox>
-												<label
-													id="label_ReceiptDialog_favourNo"
-													value="${c:l('label_ReceiptDialog_favourNo.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_favourNo">
-													<space
-														spacing="2px" />
-													<textbox
-														id="favourNo" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
-								<groupbox id="gb_NeftDetails"
-									visible="false">
-									<caption id="caption_neftDetail" />
-									<grid fixedLayout="true"
-										sclass="GridLayoutNoBorder" style="border:0px;">
-										<columns>
-											<column width="200px" />
-											<column />
-											<column width="200px" />
-											<column />
-										</columns>
-										<rows>
-											<row id="rowGetCust">
-												<button
-													id="btnGetCustBeneficiary"
-													label="${c:l('button_ReceiptDialog_Beneficiary.label')}" />
-											</row>
-											<row>
-												<label
-													id="label_ReceiptDialog_BankBranchID"
-													value="${c:l('label_ReceiptDialog_BankBranchID.value')}" />
-												<extendedcombobox
-													id="bankBranchID" />
-												<label id="label_Bank"
-													value="${c:l('label_ReceiptDialog_Bank.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<textbox id="bank"
-														readonly="true" />
-												</hbox>
-											</row>
-											<row>
-												<label id="label_Branch"
-													value="${c:l('label_ReceiptDialog_Branch.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<textbox id="branch"
-														readonly="true" />
-												</hbox>
-												<label id="label_city"
-													value="${c:l('label_ReceiptDialog_city.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<textbox id="city"
-														readonly="true" />
-												</hbox>
-											</row>
-											<row>
-												<label
-													id="label_ReceiptDialog_BeneficiaryAccNo"
-													value="${c:l('label_ReceiptDialog_BeneficiaryAccNo.value')}" />
-												<hbox>
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="beneficiaryAccNo" />
-												</hbox>
-												<label
-													id="label_ReceiptDialog_BeneficiaryName"
-													value="${c:l('label_ReceiptDialog_BeneficiaryName.value')}" />
-												<hbox>
-													<space spacing="2px"
-														sclass="mandatory" />
-													<textbox
-														id="beneficiaryName" />
-												</hbox>
-											</row>
-											<row>
-												<label
-													id="label_PhoneNumber"
-													value="${c:l('label_ReceiptDialog_PhoneNumber.value')}" />
-												<hbox>
-													<space spacing="2px"
-														sclass="mandatory" id="contactNumber" />
-													<textbox
-														id="phoneCountryCode" width="50px" />
-													<label value="-"
-														style="display:inline-block;padding-top:4px;" />
-													<textbox
-														id="phoneAreaCode" width="50px" />
-													<label value="-"
-														style="display:inline-block;padding-top:4px;" />
-													<textbox
-														id="phoneNumber" width="100px" />
+														id="remarks" width="180px" />
 												</hbox>
 											</row>
 										</rows>
