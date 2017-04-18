@@ -339,5 +339,14 @@ FROM FinanceMain_AView T1 INNER JOIN
             oldColumnName="LATESDISBDATE"
             tableName="FinPftDetails"/>
 </changeSet>
+
+<changeSet id="02" author="Irfan"> 
+     <dropPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes"/>   
+     <dropPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp"/>  
+</changeSet>
+<changeSet id="03" author="Irfan">
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusCode,FinType"/>
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusCode,FinType"/>  
+</changeSet>  
 	
 </databaseChangeLog>
