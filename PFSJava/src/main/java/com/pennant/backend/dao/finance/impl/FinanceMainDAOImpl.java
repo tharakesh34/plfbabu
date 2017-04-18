@@ -371,13 +371,15 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		source.addValue("FinReference", finReference);
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		FinanceMain finMain = new FinanceMain(); 
+		
 		try {
-			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			finMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper); 
+ 		} catch (EmptyResultDataAccessException e) {
+			finMain = null;
 		}
 		logger.debug("Leaving");
-		return null;
+		return finMain;
 	}
 	
 	/**

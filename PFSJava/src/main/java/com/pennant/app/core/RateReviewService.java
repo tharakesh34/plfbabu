@@ -290,7 +290,8 @@ public class RateReviewService extends ServiceHelper {
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		// Finance Profit Details
-		FinanceProfitDetail profitDetail = AEAmounts.calProfitDetails(finMain, schList, null, businessDate);
+		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finMain.getFinReference());
+		profitDetail = AEAmounts.calProfitDetails(finMain, schList, profitDetail, businessDate);
 		// Amount Codes Details Preparation
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finMain, profitDetail, businessDate);
 

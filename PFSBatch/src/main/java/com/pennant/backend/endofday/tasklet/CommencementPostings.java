@@ -138,7 +138,7 @@ public class CommencementPostings implements Tasklet {
 				finPftDetail = new FinanceProfitDetail();
 				finPftDetail.setFinReference(finReference);
 				finPftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
-				finPftDetail.setTdPftAmortizedSusp(resultSet.getBigDecimal("TdPftAmortizedSusp"));
+				finPftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 				finPftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
 				DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_GRACEEND, financeMain.getGrcPeriodEndDate(), financeMain.getGrcPeriodEndDate());
@@ -218,7 +218,7 @@ public class CommencementPostings implements Tasklet {
 	private String prepareSelectQuery() {
 		
 		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T3.AllowRIAInvestment, T2.AcrTillLBD, " );
-		selQuery.append(" T2.TdPftAmortizedSusp, T2.AmzTillLBD  FROM FinanceMain  T1 " );
+		selQuery.append(" T2.PftAmzSusp, T2.AmzTillLBD  FROM FinanceMain  T1 " );
 		selQuery.append(" INNER JOIN FinPftDetails  T2 ON T1.FinReference = T2.FinReference " );
 		selQuery.append(" INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType AND T3.FinAEGraceEnd != 0 " );
 		selQuery.append(" WHERE  T1.FinIsActive = 1 And T1.GrcPeriodEndDate = ? ");

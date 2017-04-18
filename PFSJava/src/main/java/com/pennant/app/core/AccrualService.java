@@ -33,14 +33,13 @@
  */
 package com.pennant.app.core;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -59,7 +58,7 @@ public class AccrualService extends ServiceHelper {
 	private static Logger		logger				= Logger.getLogger(AccrualService.class);
 	private static final long	serialVersionUID	= 6161809223570900644L;
 
-	//P.AcrTillLBD, P.TdPftAmortizedSusp,P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate
+	//P.AcrTillLBD, P.PftAmzSusp,P.AmzTillLBD, P.FirstODDate, P.PrvODDate
 	//INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference
 	public static final String	accrual				= "SELECT F.FinReference FROM "
 															+ "FinanceMain F  WHERE F.FinIsActive = 1  AND F.FinStartDate <=? And F.CustID=? ";
@@ -96,14 +95,22 @@ public class AccrualService extends ServiceHelper {
 		// get Schedule Details
 		List<FinanceScheduleDetail> scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 				finReference);
+
+		//FIXME: REMOVE THIS CODE AFTER 
+		if (StringUtils.equals(finReference, "WB1703200727") || StringUtils.equals(finReference, "WB1703200499")
+				|| StringUtils.equals(finReference, "PB1703201087") || StringUtils.equals(finReference, "PB1703201067")) {
+
+			logger.debug(" DEBUG Starts for ACCRUAL");
+
+		}
+
+		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+
 		// call the Calculations
 		Date dateCal = DateUtility.addDays(valueDate, 1);
 
-		FinanceProfitDetail finPftDetail = AEAmounts.calProfitDetails(financeMain, scheduleDetailList, null, dateCal);
-		finPftDetail.setFinStatus(financeMain.getFinStatus());
-		finPftDetail.setFinStsReason(financeMain.getFinStsReason());
-		finPftDetail.setFinIsActive(financeMain.isFinIsActive());
-		finPftDetail.setClosingStatus(financeMain.getClosingStatus());
+		FinanceProfitDetail finPftDetail = AEAmounts.calProfitDetails(financeMain, scheduleDetailList, profitDetail,
+				dateCal);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
 		getFinanceProfitDetailDAO().update(finPftDetail, false);
@@ -121,9 +128,7 @@ public class AccrualService extends ServiceHelper {
 			throws Exception {
 		logger.debug(" Entering ");
 
-		List<FinanceProfitDetail> pftDetailList = new ArrayList<FinanceProfitDetail>();
 		String finref = financeMain.getFinReference();
-		//Amount Codes preparation using FinProfitDetails
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(financeMain, finPftDetail, valueDate);
 		amountCodes.setFinReference(finref);
 
@@ -139,15 +144,20 @@ public class AccrualService extends ServiceHelper {
 		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, financeType);
 		saveAccounting(list);
 		//posting done update the accrual balance
-		pftDetailList.add(finPftDetail);
-		BigDecimal prevAmzTillLBD = finPftDetail.getAmzTillLBD();
-		finPftDetail.setAmzTillLBD(finPftDetail.getTdPftAmortized());
-		finPftDetail.setAmzTillLBDNormal(finPftDetail.getTdPftAmortizedNormal());
-		finPftDetail.setAmzTillLBDPD(finPftDetail.getTdPftAmortizedPD());
-		finPftDetail.setAmzTillLBDPIS(finPftDetail.getTdPftAmortizedSusp());
-		finPftDetail.setAmzTodayToNBD(finPftDetail.getTdPftAmortized().subtract(prevAmzTillLBD));
+		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
+		finPftDetail.setAmzTillLBDNormal(finPftDetail.getPftAmzNormal());
+		finPftDetail.setAmzTillLBDPD(finPftDetail.getPftAmzPD());
+		finPftDetail.setAmzTillLBDPIS(finPftDetail.getPftAmzSusp());
+		finPftDetail.setAcrTillLBD(finPftDetail.getPftAccrued());
+		finPftDetail.setAcrSuspTillLBD(finPftDetail.getPftAccrueSusp());
 
-		getFinanceProfitDetailDAO().updateBatchList(pftDetailList, "");
+		boolean isMonthEnd = false;
+
+		if (DateUtility.getDay(valueDate) == 1) {
+			isMonthEnd = true;
+		}
+
+		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, isMonthEnd);
 		logger.debug(" Leaving ");
 	}
 

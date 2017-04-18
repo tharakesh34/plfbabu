@@ -18,15 +18,15 @@ public class SnapshotService {
 	
 	 private static final String snapshotQuery="INSERT INTO FinPftDetails_SnapShot  SELECT :AppDate,FinReference,CustId,FinBranch,FinType,LastMdfDate,"
 	 		+ "TotalPftSchd,TotalPftCpz,TotalPftPaid,TotalPftBal,TotalPftPaidInAdv,TotalPriPaid,TotalPriBal,TdSchdPft,TdPftCpz,TdSchdPftPaid,TdSchdPftBal,"
-	 		+ "TdPftAccrued,TdPftAccrueSusp,TdPftAmortized,TdPftAmortizedSusp,TdSchdPri,TdSchdPriPaid,TdSchdPriBal,AcrTillNBD,AcrTillLBD,AcrTodayToNBD,AmzTillNBD,"
-	 		+ "AmzTillLBD,AmzTodayToNBD,RepayFrq,CustCIF,FinCcy,FinPurpose,FinContractDate,FinApprovedDate,FinStartDate,MaturityDate,FullPaidDate,FinAmount,DownPayment,"
-	 		+ "CurReducingRate,curFlatRate,TotalpriSchd,EarlyPaidAmt,ODPrincipal,ODProfit,PenaltyPaid,PenaltyDue,PenaltyWaived,NSchdDate,NSchdPri,NSchdPft,NSchdPriDue,"
-	 		+ "NSchdPftDue,AccruePft,EarnedPft,Unearned,PftInSusp,SuspPft,PftAccrueTsfd,FinStatus,FinStsReason,FinWorstStatus,AdminPaidAmt,NOInst,NOPaidInst,NOODInst,"
-	 		+ "FinAccount,FinAcType,DisbAccountId,DisbActCcy,RepayAccountId,FinCustPftAccount,IncomeAccount,UEIncomeSuspAccount,FinCommitmentRef,FinIsActive,NORepayments,"
-	 		+ "FirstRepayDate,FirstRepayAmt,LastRepayAmt,ODDays,FirstODDate,LastODDate,ClosingStatus,FinCategory,LastRpySchDate,NextRpySchDate,LastRpySchPri,LastRpySchPft,"
-	 		+ "LatestRpyDate,LatestRpyPri,LatestRpyPft,LatestWriteOffDate,TotalWriteoff,PrvPftAccrueTsfd,SuspPftAccrueTsfd,AccumulatedDepPri,DepreciatePri,AcrTsfdInSusp,"
-	 		+ "CRBFirstODDate,CRBLastODDate,CRBODPrincipal,CRBODProfit,CRBODDays,CRBODInst,TotalAdvPftSchd,TotalRbtSchd,TotalPriPaidInAdv,TdSchdAdvPft,TdSchdRbt,"
-	 		+ "TdPftAmortizedNormal,TdPftAmortizedPD,AmzTillLBDNormal,AmzTillLBDPD,AmzTillLBDPIS,InsPaidAmt,InsCal from FinPftDetails";
+	 		+ "pftAccrued,pftAccrueSusp,PftAmz,PftAmzSusp,TdSchdPri,TdSchdPriPaid,TdSchdPriBal,AcrTillLBD,"
+	 		+ "AmzTillLBD,RepayFrq,CustCIF,FinCcy,FinPurpose,FinContractDate,FinApprovedDate,FinStartDate,MaturityDate,FullPaidDate,FinAmount,DownPayment,"
+	 		+ "CurReducingRate,curFlatRate,TotalpriSchd,ODPrincipal,ODProfit,PenaltyPaid,PenaltyDue,PenaltyWaived,NSchdDate,NSchdPri,NSchdPft,NSchdPriDue,"
+	 		+ "NSchdPftDue,EarnedPft,Unearned,PftInSusp,FinStatus,FinStsReason,FinWorstStatus,NOInst,NOPaidInst,NOODInst,"
+	 		+ "FinAccount,FinAcType,DisbAccountId,DisbActCcy,RepayAccountId,FinCustPftAccount,IncomeAccount,UEIncomeSuspAccount,FinCommitmentRef,FinIsActive,"
+	 		+ "FirstRepayDate,FirstRepayAmt,FinalRepayAmt,CurODDays,FirstODDate,prvODDate,ClosingStatus,FinCategory,PrvRpySchDate,PrvRpySchPri,PrvRpySchPft,"
+	 		+ "LatestRpyDate,LatestRpyPri,LatestRpyPft,TotalWriteoff,AccumulatedDepPri,DepreciatePri,AcrTsfdInSusp,"
+	 		+ "TotalAdvPftSchd,TotalRbtSchd,TotalPriPaidInAdv,TdSchdAdvPft,TdSchdRbt,"
+	 		+ "PftAmzNormal,PftAmzPD,AmzTillLBDNormal,AmzTillLBDPD,AmzTillLBDPIS from FinPftDetails";
 	
 	/**
 	 * Method for prepare Snapshot details

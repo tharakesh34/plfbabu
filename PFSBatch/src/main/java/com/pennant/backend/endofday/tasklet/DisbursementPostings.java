@@ -142,7 +142,7 @@ public class DisbursementPostings implements Tasklet {
 				finPftDetail = new FinanceProfitDetail();
 				finPftDetail.setFinReference(resultSet.getString("FinReference"));
 				finPftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
-				finPftDetail.setTdPftAmortizedSusp(resultSet.getBigDecimal("TdPftAmortizedSusp"));
+				finPftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 				finPftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
 				DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_ADDDBSN, dateValueDate, resultSet.getDate("DisbDate"));
@@ -219,7 +219,7 @@ public class DisbursementPostings implements Tasklet {
 	private String prepareSelectQuery() {
 		
 		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbAccountId, T1.DisbAmount, " );
-		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.TdPftAmortizedSusp, T4.AmzTillLBD " );
+		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD " );
 		selQuery.append(" FROM FinDisbursementDetails  T1 " );
 		selQuery.append(" INNER JOIN FinanceMain  T2 ON T1.FinReference = T2.FinReference " );
 		selQuery.append(" INNER JOIN FinPftDetails  T4 ON T1.FinReference = T4.FinReference " );

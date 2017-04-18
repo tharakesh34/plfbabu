@@ -87,7 +87,6 @@ public class InstallmentDueService extends ServiceHelper {
 
 		//TODO: decide required or not
 		amountCodes.setdAccrue(BigDecimal.ZERO);
-		amountCodes.setNAccrue(BigDecimal.ZERO);
 
 		amountCodes.setInstpft(resultSet.getBigDecimal("SchdPft"));
 		amountCodes.setInstpri(resultSet.getBigDecimal("SchdPri"));

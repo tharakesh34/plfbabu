@@ -315,6 +315,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	
 	@Override
 	public FinODDetails getFinODSummary(String finReference,int graceDays,boolean crbCheck, String type) {
+		//FIXME: 14APR17 remove ode related to CRB
 		logger.debug("Entering");
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
@@ -354,7 +355,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
 		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, ");
 		//First and last od Date 
-		selectSql.append(" max(FinODSchdDate) FinODSchdDate ,MIN(FinODSchdDate) FinODTillDate");
+		selectSql.append(" max(FinODSchdDate) FinODSchdDate ,MIN(FinODSchdDate) FinODTillDate, MAX(FinCurODDays) finCurODDays ");
 		selectSql.append(" From FinODDetails");
 		
 		if (App.DATABASE == Database.SQL_SERVER) {
@@ -432,7 +433,6 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	/**
 	 *  Method for get the sum of Finance OverDue Amount based On Repayments Account
 	 * @param lastMdfDate
-	 * @param amzTillNBD
 	 * @return
 	 */
 	@Override

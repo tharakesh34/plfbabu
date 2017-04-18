@@ -37,6 +37,32 @@ public class DataSetFiller implements Serializable {
 	private String finRepayMethod;
 	private boolean rolloverFinance= false;
 	
+	//Accrual Fields moved to one place
+	private BigDecimal ACCRUE=BigDecimal.ZERO;
+	private BigDecimal DACCRUE =BigDecimal.ZERO;
+	private BigDecimal LACCRUE =BigDecimal.ZERO;
+	
+	private BigDecimal ACCRUE_S=BigDecimal.ZERO;
+	private BigDecimal DACCRUE_S=BigDecimal.ZERO;
+	private BigDecimal LACCRUE_S=BigDecimal.ZERO;
+
+	private BigDecimal AMZ=BigDecimal.ZERO;
+	private BigDecimal DAMZ =BigDecimal.ZERO;
+	private BigDecimal LAMZ =BigDecimal.ZERO;
+
+	private BigDecimal AMZ_N=BigDecimal.ZERO;
+	private BigDecimal DAMZ_N =BigDecimal.ZERO;
+	private BigDecimal LAMZ_N =BigDecimal.ZERO;
+
+	private BigDecimal AMZ_P=BigDecimal.ZERO;
+	private BigDecimal DAMZP =BigDecimal.ZERO;
+	private BigDecimal LAMZ_P =BigDecimal.ZERO;
+	
+	private BigDecimal AMZ_S=BigDecimal.ZERO;
+	private BigDecimal DAMZ_S =BigDecimal.ZERO;
+	private BigDecimal LAMZ_S =BigDecimal.ZERO;
+
+	
 	private BigDecimal DISBURSE=BigDecimal.ZERO;
 	private BigDecimal FEEAMOUNT=BigDecimal.ZERO;
 	private BigDecimal FEETOSCHD=BigDecimal.ZERO;
@@ -52,16 +78,11 @@ public class DataSetFiller implements Serializable {
 	private BigDecimal PRISB=BigDecimal.ZERO;
 	private BigDecimal PRIAP=BigDecimal.ZERO;
 	private BigDecimal PRIAB=BigDecimal.ZERO;
-	private BigDecimal DACCRUE =BigDecimal.ZERO;
-	private BigDecimal NACCRUE =BigDecimal.ZERO;
 	private BigDecimal PFTCHG=BigDecimal.ZERO;
 	private BigDecimal CPZCHG=BigDecimal.ZERO;
 	private BigDecimal RPPFT=BigDecimal.ZERO;
 	private BigDecimal RPPRI=BigDecimal.ZERO;
 	private BigDecimal RPTOT=BigDecimal.ZERO;
-	private BigDecimal ACCRUE=BigDecimal.ZERO;
-	private BigDecimal ACCRUE_S=BigDecimal.ZERO;
-	private BigDecimal ACCRUETSFD=BigDecimal.ZERO;
 	private BigDecimal DOWNPAY=BigDecimal.ZERO;
 	private BigDecimal DOWNPAYB=BigDecimal.ZERO;
 	private BigDecimal DOWNPAYS=BigDecimal.ZERO;
@@ -81,10 +102,7 @@ public class DataSetFiller implements Serializable {
 	private BigDecimal ADVDUE =BigDecimal.ZERO;
 	private boolean ALWDPSP =false;
 	private BigDecimal WOPAYAMT = BigDecimal.ZERO;
-	private int cPNoOfDays = 0;
-	private int cpDaysTill = 0;
 	private int tPPNoOfDays = 0;
-	private int daysDiff = 0;
 	
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private int finOverDueCntInPast = 0;
@@ -435,20 +453,6 @@ public class DataSetFiller implements Serializable {
 		PRIAB = pRIAB;
 	}
 	
-	public BigDecimal getDACCRUE() {
-    	return DACCRUE;
-    }
-	public void setDACCRUE(BigDecimal dACCRUE) {
-    	DACCRUE = dACCRUE;
-    }
-	
-	public BigDecimal getNACCRUE() {
-    	return NACCRUE;
-    }
-	public void setNACCRUE(BigDecimal nACCRUE) {
-    	NACCRUE = nACCRUE;
-    }
-	
 	public BigDecimal getPFTCHG() {
 		return PFTCHG;
 	}
@@ -482,20 +486,6 @@ public class DataSetFiller implements Serializable {
 	}
 	public void setRPTOT(BigDecimal rPTOT) {
 		RPTOT = rPTOT;
-	}
-	
-	public BigDecimal getACCRUE() {
-		return ACCRUE;
-	}
-	public void setACCRUE(BigDecimal aCCRUE) {
-		ACCRUE = aCCRUE;
-	}
-	
-	public BigDecimal getACCRUE_S() {
-		return ACCRUE_S;
-	}
-	public void setACCRUE_S(BigDecimal aCCRUES) {
-		ACCRUE_S = aCCRUES;
 	}
 	
 	public BigDecimal getDOWNPAY() {
@@ -540,32 +530,11 @@ public class DataSetFiller implements Serializable {
 		this.finOverDueInPast = finOverDueInPast;
 	}
 	
-	public int getCPNoOfDays() {
-		return cPNoOfDays;
-	}
-	public void setCPNoOfDays(int cPNoOfDays) {
-		this.cPNoOfDays = cPNoOfDays;
-	}
-	
-	public int getCpDaysTill() {
-		return cpDaysTill;
-	}
-	public void setCpDaysTill(int cpDaysTill) {
-		this.cpDaysTill = cpDaysTill;
-	}
-	
 	public int getTPPNoOfDays() {
 		return tPPNoOfDays;
 	}
 	public void setTPPNoOfDays(int tPPNoOfDays) {
 		this.tPPNoOfDays = tPPNoOfDays;
-	}
-	
-	public int getDaysDiff() {
-		return daysDiff;
-	}
-	public void setDaysDiff(int daysDiff) {
-		this.daysDiff = daysDiff;
 	}
 	
 	public int getNoOfInst() {
@@ -818,12 +787,6 @@ public class DataSetFiller implements Serializable {
     }
 	public BigDecimal getADVDUE() {
 	    return ADVDUE;
-    }
-	public void setACCRUETSFD(BigDecimal aCCRUETSFD) {
-	    ACCRUETSFD = aCCRUETSFD;
-    }
-	public BigDecimal getACCRUETSFD() {
-	    return ACCRUETSFD;
     }
 	public void setTenure(int tenure) {
 	    this.tenure = tenure;
@@ -1140,14 +1103,6 @@ public class DataSetFiller implements Serializable {
 		DEDUCTINSDISB = dEDUCTINSDISB;
 	}
 
-	public int getcPNoOfDays() {
-		return cPNoOfDays;
-	}
-
-	public void setcPNoOfDays(int cPNoOfDays) {
-		this.cPNoOfDays = cPNoOfDays;
-	}
-
 	public int gettPPNoOfDays() {
 		return tPPNoOfDays;
 	}
@@ -1187,5 +1142,150 @@ public class DataSetFiller implements Serializable {
 	public void setBPI(BigDecimal bPI) {
 		BPI = bPI;
 	}
+
+	public BigDecimal getACCRUE() {
+		return ACCRUE;
+	}
+
+	public void setACCRUE(BigDecimal aCCRUE) {
+		ACCRUE = aCCRUE;
+	}
+
+	public BigDecimal getDACCRUE() {
+		return DACCRUE;
+	}
+
+	public void setDACCRUE(BigDecimal dACCRUE) {
+		DACCRUE = dACCRUE;
+	}
+
+	public BigDecimal getLACCRUE() {
+		return LACCRUE;
+	}
+
+	public void setLACCRUE(BigDecimal lACCRUE) {
+		LACCRUE = lACCRUE;
+	}
+
+	public BigDecimal getACCRUE_S() {
+		return ACCRUE_S;
+	}
+
+	public void setACCRUE_S(BigDecimal aCCRUE_S) {
+		ACCRUE_S = aCCRUE_S;
+	}
+
+	public BigDecimal getDACCRUE_S() {
+		return DACCRUE_S;
+	}
+
+	public void setDACCRUE_S(BigDecimal dACCRUE_S) {
+		DACCRUE_S = dACCRUE_S;
+	}
+
+	public BigDecimal getLACCRUE_S() {
+		return LACCRUE_S;
+	}
+
+	public void setLACCRUE_S(BigDecimal lACCRUE_S) {
+		LACCRUE_S = lACCRUE_S;
+	}
+
+	public BigDecimal getAMZ() {
+		return AMZ;
+	}
+
+	public void setAMZ(BigDecimal aMZ) {
+		AMZ = aMZ;
+	}
+
+	public BigDecimal getDAMZ() {
+		return DAMZ;
+	}
+
+	public void setDAMZ(BigDecimal dAMZ) {
+		DAMZ = dAMZ;
+	}
+
+	public BigDecimal getLAMZ() {
+		return LAMZ;
+	}
+
+	public void setLAMZ(BigDecimal lAMZ) {
+		LAMZ = lAMZ;
+	}
+
+	public BigDecimal getAMZ_N() {
+		return AMZ_N;
+	}
+
+	public void setAMZ_N(BigDecimal aMZ_N) {
+		AMZ_N = aMZ_N;
+	}
+
+	public BigDecimal getDAMZ_N() {
+		return DAMZ_N;
+	}
+
+	public void setDAMZ_N(BigDecimal dAMZ_N) {
+		DAMZ_N = dAMZ_N;
+	}
+
+	public BigDecimal getLAMZ_N() {
+		return LAMZ_N;
+	}
+
+	public void setLAMZ_N(BigDecimal lAMZ_N) {
+		LAMZ_N = lAMZ_N;
+	}
+
+	public BigDecimal getAMZ_P() {
+		return AMZ_P;
+	}
+
+	public void setAMZ_P(BigDecimal aMZ_P) {
+		AMZ_P = aMZ_P;
+	}
+
+	public BigDecimal getDAMZP() {
+		return DAMZP;
+	}
+
+	public void setDAMZP(BigDecimal dAMZP) {
+		DAMZP = dAMZP;
+	}
+
+	public BigDecimal getLAMZ_P() {
+		return LAMZ_P;
+	}
+
+	public void setLAMZ_P(BigDecimal lAMZ_P) {
+		LAMZ_P = lAMZ_P;
+	}
+
+	public BigDecimal getAMZ_S() {
+		return AMZ_S;
+	}
+
+	public void setAMZ_S(BigDecimal aMZ_S) {
+		AMZ_S = aMZ_S;
+	}
+
+	public BigDecimal getDAMZ_S() {
+		return DAMZ_S;
+	}
+
+	public void setDAMZ_S(BigDecimal dAMZ_S) {
+		DAMZ_S = dAMZ_S;
+	}
+
+	public BigDecimal getLAMZ_S() {
+		return LAMZ_S;
+	}
+
+	public void setLAMZ_S(BigDecimal lAMZ_S) {
+		LAMZ_S = lAMZ_S;
+	}
+	
 	
 }

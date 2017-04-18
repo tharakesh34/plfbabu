@@ -1333,7 +1333,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
 				totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
 			}
-			totPftPayNow = totPftPayNow.add(tempPftDetail.getTdPftAmortized().subtract(tempPftDetail.getTdSchdPftPaid()));
+			totPftPayNow = totPftPayNow.add(tempPftDetail.getPftAmz().subtract(tempPftDetail.getTdSchdPftPaid()));
 			
 			// fore closure details
 			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>(); 

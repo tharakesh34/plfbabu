@@ -53,7 +53,7 @@ public class FinRepayQueue {
 	private boolean		rcdNotExist				= false;
 
 	private BigDecimal	acrTillLBD				= BigDecimal.ZERO;
-	private BigDecimal	tdPftAmortizedSusp		= BigDecimal.ZERO;
+	private BigDecimal	pftAmzSusp				= BigDecimal.ZERO;
 	private BigDecimal	amzTillLBD				= BigDecimal.ZERO;
 	private String		linkedFinRef;
 	private String		finStatus;
@@ -404,12 +404,12 @@ public class FinRepayQueue {
 		this.acrTillLBD = acrTillLBD;
 	}
 
-	public BigDecimal getTdPftAmortizedSusp() {
-		return tdPftAmortizedSusp;
+	public BigDecimal getPftAmzSusp() {
+		return pftAmzSusp;
 	}
 
-	public void setTdPftAmortizedSusp(BigDecimal tdPftAmortizedSusp) {
-		this.tdPftAmortizedSusp = tdPftAmortizedSusp;
+	public void setPftAmzSusp(BigDecimal pftAmzSusp) {
+		this.pftAmzSusp = pftAmzSusp;
 	}
 
 	public BigDecimal getAmzTillLBD() {

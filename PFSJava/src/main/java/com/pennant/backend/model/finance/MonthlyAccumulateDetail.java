@@ -13,8 +13,7 @@ public class MonthlyAccumulateDetail implements Serializable {
     private Date monthStartDate;
     private BigDecimal pftAccrued = BigDecimal.ZERO;
     private BigDecimal pftTsfd = BigDecimal.ZERO; // (Present Month Accrued + Total Pft Paid) - Previous Month Transfered
-    private BigDecimal suspPftAccrued = BigDecimal.ZERO;
-    private BigDecimal suspPftTsfd = BigDecimal.ZERO; // Present Month Suspense Accrued - Previous Month Suspense Accrued
+    //FIXME: PV 14APR17
     private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
     private BigDecimal depreciatePri = BigDecimal.ZERO;
   
@@ -52,20 +51,6 @@ public class MonthlyAccumulateDetail implements Serializable {
     }
 	public void setPftTsfd(BigDecimal pftTsfd) {
     	this.pftTsfd = pftTsfd;
-    }
-	
-	public BigDecimal getSuspPftAccrued() {
-    	return suspPftAccrued;
-    }
-	public void setSuspPftAccrued(BigDecimal suspPftAccrued) {
-    	this.suspPftAccrued = suspPftAccrued;
-    }
-	
-	public BigDecimal getSuspPftTsfd() {
-    	return suspPftTsfd;
-    }
-	public void setSuspPftTsfd(BigDecimal suspPftTsfd) {
-    	this.suspPftTsfd = suspPftTsfd;
     }
 	
 	public BigDecimal getAccumulatedDepPri() {

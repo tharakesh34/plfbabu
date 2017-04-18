@@ -2208,14 +2208,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	                        if(pftDetail.getFirstODDate() != null && pftDetail.getFirstODDate().compareTo(pastdueDefDateList.get(i)) == 0){
 	                        	pftDetail.setFirstODDate(null);
 	                        }
-	                        if(pftDetail.getLastODDate() != null && pftDetail.getLastODDate().compareTo(pastdueDefDateList.get(i)) == 0){
-	                        	pftDetail.setLastODDate(null);
-	                        }
-	                        if(pftDetail.getCRBFirstODDate() != null && pftDetail.getCRBFirstODDate().compareTo(pastdueDefDateList.get(i)) == 0){
-	                        	pftDetail.setCRBFirstODDate(null);
-	                        }
-	                        if(pftDetail.getCRBLastODDate() != null && pftDetail.getCRBLastODDate().compareTo(pastdueDefDateList.get(i)) == 0){
-	                        	pftDetail.setCRBLastODDate(null);
+	                        if(pftDetail.getPrvODDate() != null && pftDetail.getPrvODDate().compareTo(pastdueDefDateList.get(i)) == 0){
+	                        	pftDetail.setPrvODDate(null);
 	                        }
                         }
 						
@@ -2249,7 +2243,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				//Account Details Update
 				if (list != null && !list.isEmpty()) {
-					getAccountProcessUtil().procAccountUpdate(list, profitDetail.getTdPftAccrued());
+					getAccountProcessUtil().procAccountUpdate(list, profitDetail.getPftAccrued());
 				}
 
 				// Used for Commitment Purpose , Commented for Limit Usage
@@ -2828,22 +2822,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finProfitDetails.setDownPayment(financeMain.getDownPayment());
 			finProfitDetails.setCustId(financeMain.getCustID());
 
-			finProfitDetails.setInsPaidAmt(BigDecimal.ZERO);
-			finProfitDetails.setInsCal(BigDecimal.ZERO);
-			finProfitDetails.setAdminPaidAmt(BigDecimal.ZERO);
-
-			if(feeRuleList != null && feeRuleList.size() > 0){
-				for (FeeRule feeRule : feeRuleList) {
-					if(RuleConstants.TAKAFUL_FEE.equals(feeRule.getFeeCode()) || 
-							RuleConstants.AUTOINS_FEE.equals(feeRule.getFeeCode())){
-						finProfitDetails.setInsPaidAmt(feeRule.getPaidAmount());
-						finProfitDetails.setInsCal(feeRule.getFeeAmount());
-					}
-					if("ADMIN".equals(feeRule.getFeeCode())){
-						finProfitDetails.setAdminPaidAmt(feeRule.getPaidAmount());
-					}
-				}
-			}
 
 			finProfitDetails.setDisbAccountId(financeMain.getDisbAccountId());	
 			finProfitDetails.setDisbActCcy(financeMain.getFinCcy());
@@ -2860,8 +2838,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finProfitDetails.setFirstRepayDate(aeAmountCodes.getFirstRepayDate());
 		}
 
-		finProfitDetails.setAcrTillLBD(finProfitDetails.getTdPftAccrued()); 
-		finProfitDetails.setAmzTillLBD(finProfitDetails.getAmzTillNBD());
+		finProfitDetails.setAcrTillLBD(finProfitDetails.getPftAccrued()); 
 
 		finProfitDetails.setFinStatus(financeMain.getFinStatus());
 		finProfitDetails.setFinStsReason(financeMain.getFinStsReason());

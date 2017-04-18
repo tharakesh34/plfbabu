@@ -37,7 +37,7 @@ public class ServiceUtil {
 
 	public static final String customerRepayQueue = "	SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch,RQ.LinkedFinRef,"
 			+ "RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid,"
-			+ "(RQ.SchdPftBal+ RQ.SchdPriBal)  RepayQueueBal, PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD, "
+			+ "(RQ.SchdPftBal+ RQ.SchdPriBal)  RepayQueueBal, PD.AcrTillLBD, PD.PftAmzSusp, PD.AmzTillLBD, "
 			+ "RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal, RQ.SchdIns, RQ.SchdInsPaid, RQ.SchdInsBal, "
 			+ "RQ.SchdSuplRent, RQ.SchdSuplRentPaid, RQ.SchdSuplRentBal, "
 			+ "RQ.SchdIncrCost, RQ.SchdIncrCostPaid, RQ.SchdIncrCostBal,RQ.AdvProfit,RQ.SchdRate,RQ.Rebate, "
@@ -261,7 +261,7 @@ public class ServiceUtil {
 		finRpy.setSchdIncrCostBal(schd.getIncrCost().subtract(schd.getIncrCostPaid()));
 
 		// finRpy.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
-		// finRpy.setTdPftAmortizedSusp(resultSet.getBigDecimal("TdPftAmortizedSusp"));
+		// finRpy.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 		// finRpy.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
 		finRpy.setAdvProfit(schd.getAdvProfit());

@@ -161,7 +161,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 	/* Count Query */
 	private String queryNormalToPDCount() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select count(*) from FinPftDetails where ODDays=1 and LastODDate=? ");
+		sqlQuery.append(" select count(*) from FinPftDetails where CurODDays=1 and PrvODDate=? ");
 		return sqlQuery.toString();
 	}
 
@@ -169,7 +169,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append("select count(*) from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
 		sqlQuery.append(" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
-		sqlQuery.append(" where FinODTillDate=? and fpd.ODDays=0  ");
+		sqlQuery.append(" where FinODTillDate=? and fpd.CurODDays=0  ");
 		return sqlQuery.toString();
 	}
 
@@ -191,7 +191,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	private String getNormalToPD() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" select * from FinPftDetails where ODDays=1 and LastODDate = ? ");
+		sqlQuery.append(" select * from FinPftDetails where CurODDays=1 and PrvODDate = ? ");
 		return sqlQuery.toString();
 	}
 
@@ -199,7 +199,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append("select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate   ");
 		sqlQuery.append(" from FInODDetails group by FinReference)t inner join FinPftDetails fpd on fpd.FinReference=t.FinReference   ");
-		sqlQuery.append(" where FinODTillDate=? and fpd.ODDays=0   ");
+		sqlQuery.append(" where FinODTillDate=? and fpd.CurODDays=0   ");
 		return sqlQuery.toString();
 	}
 

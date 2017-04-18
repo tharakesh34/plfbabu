@@ -146,7 +146,7 @@ public class FinRepayQueueDAOImpl extends BasisCodeDAO<FinRepayQueue> implements
 		StringBuilder selectSql = new StringBuilder("SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch, " );
 		selectSql.append(" RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, ");
 		selectSql.append(" RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, ");
-		selectSql.append(" (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal, PD.AcrTillLBD, PD.TdPftAmortizedSusp, PD.AmzTillLBD,");
+		selectSql.append(" (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal, PD.AcrTillLBD, PD.PftAmzSusp, PD.AmzTillLBD,");
 		selectSql.append(" RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal, RQ.SchdIns, RQ.SchdInsPaid, RQ.SchdInsBal,");
 		selectSql.append(" RQ.SchdSuplRent, RQ.SchdSuplRentPaid, RQ.SchdSuplRentBal,");
 		selectSql.append(" RQ.SchdIncrCost, RQ.SchdIncrCostPaid, RQ.SchdIncrCostBal ");

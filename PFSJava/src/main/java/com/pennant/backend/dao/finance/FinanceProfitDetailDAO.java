@@ -63,6 +63,7 @@ public interface FinanceProfitDetailDAO {
 	void save(List<FinanceProfitDetail> finProfitDetails, String type);
 	BigDecimal getAccrueAmount(String finReference);
 	void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type);
+	void updateLBDAccruals(FinanceProfitDetail finProfitDetails, boolean isMonthEnd);
 	FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
 	FinanceProfitDetail getFinPftDetailForBatch(String finReference);
 	void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);

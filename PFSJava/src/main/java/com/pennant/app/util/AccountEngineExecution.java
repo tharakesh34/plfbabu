@@ -1836,24 +1836,18 @@ public class AccountEngineExecution implements Serializable {
 		dataSetFiller.setPRIAP(aeAmountCodes.getPriAP());
 		dataSetFiller.setPRIAB(aeAmountCodes.getPriAB());
 		dataSetFiller.setDACCRUE(aeAmountCodes.getDAccrue());
-		dataSetFiller.setNACCRUE(aeAmountCodes.getNAccrue());
 		dataSetFiller.setRPPFT(aeAmountCodes.getRpPft());
 		dataSetFiller.setRPPRI(aeAmountCodes.getRpPri());
 		dataSetFiller.setRPTOT(aeAmountCodes.getRpTot());
 		dataSetFiller.setACCRUE(aeAmountCodes.getAccrue());
 		dataSetFiller.setACCRUE_S(aeAmountCodes.getAccrueS());
-		dataSetFiller.setACCRUETSFD(aeAmountCodes.getAccrueTsfd());
 		dataSetFiller.setREFUND(aeAmountCodes.getRefund());
 		dataSetFiller.setINSREFUND(aeAmountCodes.getInsRefund());
 		dataSetFiller.setCPZTOT(aeAmountCodes.getCpzTot());
 		dataSetFiller.setCPZPRV(aeAmountCodes.getCpzPrv());
 		dataSetFiller.setCPZCUR(aeAmountCodes.getCpzCur());
 		dataSetFiller.setCPZNXT(aeAmountCodes.getCpzNxt());
-
-		dataSetFiller.setCPNoOfDays(aeAmountCodes.getCPNoOfDays());
-		dataSetFiller.setCpDaysTill(aeAmountCodes.getCpDaysTill());
 		dataSetFiller.setTPPNoOfDays(aeAmountCodes.getTtlDays());
-		dataSetFiller.setDaysDiff(aeAmountCodes.getDaysDiff());
 
 		dataSetFiller.setFinOverDueCntInPast(aeAmountCodes.getODInst());
 		dataSetFiller.setODDays(aeAmountCodes.getODDays());

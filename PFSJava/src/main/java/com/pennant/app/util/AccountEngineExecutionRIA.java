@@ -908,7 +908,6 @@ public class AccountEngineExecutionRIA implements Serializable {
 		amountCodesRIAFB.setDISBURSE(aeAmountCodes.getDisburse());
 		amountCodesRIAFB.setFACRUE(aeAmountCodes.getAccrue());
 		amountCodesRIAFB.setFDACRUE(aeAmountCodes.getDAccrue());
-		amountCodesRIAFB.setFNACRUE(aeAmountCodes.getNAccrue());	
 		amountCodesRIAFB.setFLACRUE(aeAmountCodes.getlAccrue());	
 		amountCodesRIAFB.setFPFT(aeAmountCodes.getPft());	
 		amountCodesRIAFB.setFPFTAB(aeAmountCodes.getPftAB());	
@@ -939,7 +938,6 @@ public class AccountEngineExecutionRIA implements Serializable {
 		// Bank Details 
 		amountCodesRIAFB.setBACRUE(aeAmountCodes.getAccrue().subtract(iAccrueTotal));	
 		amountCodesRIAFB.setBDACRUE(aeAmountCodes.getDAccrue().subtract(iDAccrueTotal));	
-		amountCodesRIAFB.setBNACRUE(aeAmountCodes.getNAccrue().subtract(iNAccrueTotal));	
 		amountCodesRIAFB.setBNKINV(aeAmountCodes.getDisburse().subtract(iInvestTotal));	
 		amountCodesRIAFB.setBPFT(aeAmountCodes.getPft().subtract(iPftTotal));	
 		amountCodesRIAFB.setBPFTAB(aeAmountCodes.getPftAB().subtract(iPftABTotal));	
@@ -1010,9 +1008,6 @@ public class AccountEngineExecutionRIA implements Serializable {
 						aeRIA.getInvestment()).divide(dataSet.getDisburseAmount(),0,
 								RoundingMode.HALF_DOWN));
 				aeRIA.setIDACRUE(aeAmountCodes.getDAccrue().multiply(
-						aeRIA.getInvestment()).divide(dataSet.getDisburseAmount(),0,
-								RoundingMode.HALF_DOWN));
-				aeRIA.setINACRUE(aeAmountCodes.getNAccrue().multiply(
 						aeRIA.getInvestment()).divide(dataSet.getDisburseAmount(),0,
 								RoundingMode.HALF_DOWN));
 				aeRIA.setILACRUE(aeAmountCodes.getlAccrue().multiply(

@@ -210,6 +210,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 				statement.close();
 
 				// Setting Accrue Transfered Amount Values reset to ZERO
+				//FIXME: PV 14APR17
 				getFinanceProfitDetailDAO().resetAcrTsfdInSusp();
 
 				// Executing Query to prepare Accrual Transfered of this month
@@ -281,12 +282,14 @@ public class AmortizationServiceImpl implements AmortizationService {
 						list.add(status);
 
 						if (list.size() == 500) {
+							//FIXME: 14APR17
 							getFinanceProfitDetailDAO().updateAcrTsfdInSusp(list);
 							list.clear();
 						}
 					}
 					finRefList = null;
 					if (list.size() > 0) {
+						//FIXME: 14APR17
 						getFinanceProfitDetailDAO().updateAcrTsfdInSusp(list);
 						list = null;
 					}
@@ -374,15 +377,14 @@ public class AmortizationServiceImpl implements AmortizationService {
 				// Amount Codes preparation using FinProfitDetails
 				AEAmountCodes amountCodes = new AEAmountCodes();
 				amountCodes.setFinReference(finReference);
-				amountCodes.setDAccrue(resultSet.getBigDecimal("AcrTodayToNBD"));
-				amountCodes.setNAccrue(resultSet.getBigDecimal("AcrTillNBD"));
+				amountCodes.setDAccrue(resultSet.getBigDecimal("PftAccrued").subtract(resultSet.getBigDecimal("AcrTillLBD")));
 				amountCodes.setPft(resultSet.getBigDecimal("TotalPftSchd").add(resultSet.getBigDecimal("TotalPftCpz")));
 				amountCodes.setPftAB(resultSet.getBigDecimal("TotalPftBal"));
 				amountCodes.setPftAP(resultSet.getBigDecimal("TotalPftPaid"));
 				amountCodes.setPftS(resultSet.getBigDecimal("TdSchdPft").add(resultSet.getBigDecimal("TdPftCpz")));
 				amountCodes.setPftSB(resultSet.getBigDecimal("TdSchdPftBal"));
 				amountCodes.setPftSP(resultSet.getBigDecimal("TdSchdPftPaid"));
-				amountCodes.setAccrueTsfd(resultSet.getBigDecimal("TdPftAccrued").subtract(resultSet.getBigDecimal("TdPftAccrueSusp")));// Distributed
+				amountCodes.setAccrueTsfd(resultSet.getBigDecimal("pftAccrued").subtract(resultSet.getBigDecimal("PftAccrueSusp")));// Distributed
 																																		// Accrual
 																																		// Amount
 
@@ -429,10 +431,10 @@ public class AmortizationServiceImpl implements AmortizationService {
 				}
 
 				pftDetail = new FinanceProfitDetail();
-				pftDetail.setAcrTillLBD(resultSet.getBigDecimal("TdPftAccrued"));
-				pftDetail.setAcrTodayToNBD(BigDecimal.ZERO);
-				pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillNBD"));
-				pftDetail.setAmzTodayToNBD(BigDecimal.ZERO);
+				pftDetail.setAcrTillLBD(resultSet.getBigDecimal("pftAccrued"));
+				
+				//FIXME: PV 14APR17 based on finPftDetails
+				pftDetail.setAmzTillLBD(resultSet.getBigDecimal(""));
 				pftDetail.setLastMdfDate(valueDate);
 				pftDetailList.add(pftDetail);
 
@@ -502,8 +504,8 @@ public class AmortizationServiceImpl implements AmortizationService {
 	 */
 	private String getSelectQuery() {
 		StringBuilder sqlQuery = new StringBuilder();
-		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.TdPftAmortizedSusp, ");
-		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.LastODDate, P.CRBFirstODDate, P.CRBLastODDate FROM FinanceMain F ");
+		sqlQuery.append(" SELECT F.FinReference, P.AcrTillLBD, P.PftAmzSusp, ");
+		sqlQuery.append(" P.AmzTillLBD, P.FirstODDate, P.PrvODDate FROM FinanceMain F ");
 		sqlQuery.append(" INNER JOIN FinPftDetails P ON F.FinReference = P.FinReference ");
 		sqlQuery.append(" WHERE P.FinIsActive = 1");
 		sqlQuery.append(" AND F.FinStartDate <=? ");
@@ -517,11 +519,9 @@ public class AmortizationServiceImpl implements AmortizationService {
 	 */
 	private String updateAccrueTsfdQuery(String type) {
 
+		//FIXME: PV 14APR17
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" Update FinPftDetails");
-		sqlQuery.append(StringUtils.trimToEmpty(type));
-		sqlQuery.append(" SET PrvPftAccrueTsfd = PftAccrueTsfd ,  SuspPftAccrueTsfd = TdPftAccrueSusp  , ");
-		sqlQuery.append(" PftAccrueTsfd = CASE WHEN PftInSusp = 1 THEN (AcrTsfdInSusp +PftAccrueTsfd) ELSE (TotalPftPaid + TdPftAccrued) END ");
 		sqlQuery.append(" where FinIsActive = 1 OR (FinIsActive = 0 AND LatestRpyDate >= ? AND LatestRpyDate <= ? )  ");
 		return sqlQuery.toString();
 	}
@@ -532,12 +532,10 @@ public class AmortizationServiceImpl implements AmortizationService {
 	 * @return sqlQuery
 	 */
 	private String resetAccrueTsfd(String type) {
-
+		//FIXME: PV 14APR17
 		StringBuilder sqlQuery = new StringBuilder();
 		sqlQuery.append(" Update FinPftDetails");
 		sqlQuery.append(StringUtils.trimToEmpty(type));
-		sqlQuery.append(" SET PrvPftAccrueTsfd = PftAccrueTsfd ,  SuspPftAccrueTsfd = 0  ");
-		sqlQuery.append(" where FinIsActive = 0 AND LatestRpyDate <= ?  AND PrvPftAccrueTsfd != PftAccrueTsfd  ");
 		return sqlQuery.toString();
 	}
 
@@ -607,7 +605,7 @@ public class AmortizationServiceImpl implements AmortizationService {
 		sqlQuery.append(" T1.DisbAccountId ,T1.RepayAccountId ,T1.FinAmount  DisburseAmount , (T1.FinAmount - T1.FinRepaymentAmount)  FinAmount ,");
 		sqlQuery.append(" T1.DownPayment , T1.NumberOfTerms, T1.FinAccount, T1.FinCustPftAccount, T4.PftInSusp, ");
 		sqlQuery.append(" T4.TotalPftSchd, T4.TotalPftCpz, T4.TotalPftPaid, T4.TotalPftBal, T4.TdSchdPft, T4.TdPftCpz, T4.TdSchdPftPaid,  ");
-		sqlQuery.append(" T4.TdSchdPftBal, T4.TdPftAccrued, T4.TdPftAccrueSusp, T4.AcrTillNBD, T4.AcrTodayToNBD, T4.AmzTillNBD ");
+		sqlQuery.append(" T4.TdSchdPftBal, T4.PftAccrued, T4.PftAccrueSusp, ");
 		sqlQuery.append(" FROM FinanceMain  T1");
 		sqlQuery.append(" INNER JOIN FinPftDetails").append(type);
 		sqlQuery.append("  T4 ON T1.FinReference = T4.FinReference ");

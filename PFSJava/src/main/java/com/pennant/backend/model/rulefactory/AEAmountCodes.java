@@ -6,27 +6,37 @@ import java.util.Date;
 public class AEAmountCodes {
 
 	private String finReference;
-	private Date lastRepayPftDate;
+	private Date prvRepayPftDate;
 	private Date nextRepayPftDate;
-	private Date lastRepayRvwDate;
+	private Date prvRepayRvwDate;
 	private Date nextRepayRvwDate;
-
-	private int cPNoOfDays = 0;
-	private int cpDaysTill = 0;
-	private int daysDiff = 0;
 
 	private BigDecimal astValO = BigDecimal.ZERO;
 	private BigDecimal astValC = BigDecimal.ZERO;
 	private BigDecimal accrue = BigDecimal.ZERO;
-	private BigDecimal accrueS = BigDecimal.ZERO;
-	private BigDecimal dAccrue = BigDecimal.ZERO;
-	private BigDecimal nAccrue = BigDecimal.ZERO;
 	private BigDecimal lAccrue = BigDecimal.ZERO;
+	private BigDecimal dAccrue = BigDecimal.ZERO;
+	
+	private BigDecimal accrueS = BigDecimal.ZERO;
+	private BigDecimal lAccrueS = BigDecimal.ZERO;
+	private BigDecimal dAccrueS = BigDecimal.ZERO;
+	
 	private BigDecimal amz = BigDecimal.ZERO;
-	private BigDecimal amzS = BigDecimal.ZERO;
 	private BigDecimal dAmz = BigDecimal.ZERO;
-	private BigDecimal nAmz = BigDecimal.ZERO;
 	private BigDecimal lAmz = BigDecimal.ZERO;
+	
+	private BigDecimal amzNRM = BigDecimal.ZERO;
+	private BigDecimal dAmzNRM = BigDecimal.ZERO;
+	private BigDecimal lAmzNRM = BigDecimal.ZERO;
+	
+	private BigDecimal amzPD = BigDecimal.ZERO;
+	private BigDecimal dAmzPD = BigDecimal.ZERO;
+	private BigDecimal lAmzPD = BigDecimal.ZERO;
+	
+	private BigDecimal amzS = BigDecimal.ZERO;
+	private BigDecimal dAmzS = BigDecimal.ZERO;
+	private BigDecimal lAmzS = BigDecimal.ZERO;
+	
 	private BigDecimal disburse = BigDecimal.ZERO;
 	private BigDecimal downpay = BigDecimal.ZERO;
 	private BigDecimal pft = BigDecimal.ZERO;
@@ -70,10 +80,8 @@ public class AEAmountCodes {
 	private int ttlMnts = 0;
 	private int ttlTerms = 0;
 	private int ODDays = 0;
-	private int CRBODDays = 0;
 	private int daysFromFullyPaid = 0;
 	private int ODInst = 0;
-	private int CRBODInst = 0;
 	private int paidInst = 0;
 
 	private BigDecimal PROVDUE = BigDecimal.ZERO;
@@ -101,26 +109,21 @@ public class AEAmountCodes {
 	private String finWorstSts;
 	private BigDecimal firstRepayAmt = BigDecimal.ZERO;
 	private Date firstRepayDate;
-	private BigDecimal lastRepayAmt = BigDecimal.ZERO;
+	private BigDecimal finalRepayAmt = BigDecimal.ZERO;
 	private BigDecimal priOD = BigDecimal.ZERO;
 	private BigDecimal pftOD = BigDecimal.ZERO;
-	private BigDecimal CRBPriOD = BigDecimal.ZERO;
-	private BigDecimal CRBPftOD = BigDecimal.ZERO;
 	private BigDecimal penaltyPaid = BigDecimal.ZERO;
 	private BigDecimal penaltyDue = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal accrueTsfd = null;
 	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
 	private Date firstODDate;
-	private Date lastODDate;
-	private Date cRBFirstODDate;
-	private Date cRBLastODDate;
+	private Date prvODDate;
 	
-	private Date 	   lastRpySchDate;//Either Partially or Fully
+	private Date 	   prvRpySchDate;//Either Partially or Fully
 	private Date 	   nextRpySchDate;//Either partially or Fully
-	private BigDecimal lastRpySchPri =  BigDecimal.ZERO;// Last paid Schedule Principal
-	private BigDecimal lastRpySchPft =  BigDecimal.ZERO;// Last paid Schedule Profit
-	private Date       latestWriteOffDate; //latest WriteOff Schedule Date
+	private BigDecimal prvRpySchPri =  BigDecimal.ZERO;
+	private BigDecimal prvRpySchPft =  BigDecimal.ZERO;
 	private BigDecimal totalWriteoff = BigDecimal.ZERO; //Total WriteOff Amount (P+P)
 	
 	//Depreciation Principal Amount
@@ -164,11 +167,11 @@ public class AEAmountCodes {
 		this.finReference = finReference;
 	}
 
-	public Date getLastRepayPftDate() {
-		return lastRepayPftDate;
+	public Date getPrvRepayPftDate() {
+		return prvRepayPftDate;
 	}
-	public void setLastRepayPftDate(Date lastRepayPftDate) {
-		this.lastRepayPftDate = lastRepayPftDate;
+	public void setPrvRepayPftDate(Date prvRepayPftDate) {
+		this.prvRepayPftDate = prvRepayPftDate;
 	}
 
 	public Date getNextRepayPftDate() {
@@ -178,11 +181,11 @@ public class AEAmountCodes {
 		this.nextRepayPftDate = nextRepayPftDate;
 	}
 
-	public Date getLastRepayRvwDate() {
-		return lastRepayRvwDate;
+	public Date getPrvRepayRvwDate() {
+		return prvRepayRvwDate;
 	}
-	public void setLastRepayRvwDate(Date lastRepayRvwDate) {
-		this.lastRepayRvwDate = lastRepayRvwDate;
+	public void setPrvRepayRvwDate(Date prvRepayRvwDate) {
+		this.prvRepayRvwDate = prvRepayRvwDate;
 	}
 
 	public Date getNextRepayRvwDate() {
@@ -190,34 +193,6 @@ public class AEAmountCodes {
 	}
 	public void setNextRepayRvwDate(Date nextRepayRvwDate) {
 		this.nextRepayRvwDate = nextRepayRvwDate;
-	}
-
-	public int getcPNoOfDays() {
-		return cPNoOfDays;
-	}
-	public void setcPNoOfDays(int cPNoOfDays) {
-		this.cPNoOfDays = cPNoOfDays;
-	}
-
-	public int getCPNoOfDays() {
-		return cPNoOfDays;
-	}
-	public void setCPNoOfDays(int cPNoOfDays) {
-		this.cPNoOfDays = cPNoOfDays;
-	}
-
-	public int getCpDaysTill() {
-		return cpDaysTill;
-	}
-	public void setCpDaysTill(int cpDaysTill) {
-		this.cpDaysTill = cpDaysTill;
-	}
-
-	public int getDaysDiff() {
-		return daysDiff;
-	}
-	public void setDaysDiff(int daysDiff) {
-		this.daysDiff = daysDiff;
 	}
 
 	public BigDecimal getAstValO() {
@@ -255,13 +230,6 @@ public class AEAmountCodes {
 		this.dAccrue = dAccrue;
 	}
 
-	public BigDecimal getNAccrue() {
-		return nAccrue;
-	}
-	public void setNAccrue(BigDecimal nAccrue) {
-		this.nAccrue = nAccrue;
-	}
-
 	public BigDecimal getlAccrue() {
 		return lAccrue;
 	}
@@ -290,13 +258,6 @@ public class AEAmountCodes {
 		this.dAmz = dAmz;
 	}
 	
-	public BigDecimal getnAmz() {
-		return nAmz;
-	}
-	public void setnAmz(BigDecimal nAmz) {
-		this.nAmz = nAmz;
-	}
-
 	public BigDecimal getlAmz() {
 		return lAmz;
 	}
@@ -654,12 +615,6 @@ public class AEAmountCodes {
 	public void setdAccrue(BigDecimal dAccrue) {
     	this.dAccrue = dAccrue;
     }
-	public BigDecimal getnAccrue() {
-    	return nAccrue;
-    }
-	public void setnAccrue(BigDecimal nAccrue) {
-    	this.nAccrue = nAccrue;
-    }
 	public Date getFullyPaidDate() {
     	return fullyPaidDate;
     }
@@ -720,11 +675,11 @@ public class AEAmountCodes {
 	public void setFirstRepayAmt(BigDecimal firstRepayAmt) {
     	this.firstRepayAmt = firstRepayAmt;
     }
-	public BigDecimal getLastRepayAmt() {
-    	return lastRepayAmt;
+	public BigDecimal getFinalRepayAmt() {
+    	return finalRepayAmt;
     }
-	public void setLastRepayAmt(BigDecimal lastRepayAmt) {
-    	this.lastRepayAmt = lastRepayAmt;
+	public void setFinalRepayAmt(BigDecimal finalRepayAmt) {
+    	this.finalRepayAmt = finalRepayAmt;
     }
 	public BigDecimal getPriOD() {
     	return priOD;
@@ -770,11 +725,11 @@ public class AEAmountCodes {
     	this.firstODDate = firstODDate;
     }
 	
-	public Date getLastODDate() {
-    	return lastODDate;
+	public Date getPrvODDate() {
+    	return prvODDate;
     }
-	public void setLastODDate(Date lastODDate) {
-    	this.lastODDate = lastODDate;
+	public void setPrvODDate(Date prvODDate) {
+    	this.prvODDate = prvODDate;
     }
 	public Date getFirstRepayDate() {
 	    return firstRepayDate;
@@ -788,11 +743,11 @@ public class AEAmountCodes {
 	public void setInsRefund(BigDecimal insRefund) {
 	    this.insRefund = insRefund;
     }
-	public Date getLastRpySchDate() {
-    	return lastRpySchDate;
+	public Date getPrvRpySchDate() {
+    	return prvRpySchDate;
     }
-	public void setLastRpySchDate(Date lastRpySchDate) {
-    	this.lastRpySchDate = lastRpySchDate;
+	public void setPrvRpySchDate(Date prvRpySchDate) {
+    	this.prvRpySchDate = prvRpySchDate;
     }
 	public Date getNextRpySchDate() {
     	return nextRpySchDate;
@@ -800,23 +755,17 @@ public class AEAmountCodes {
 	public void setNextRpySchDate(Date nextRpySchDate) {
     	this.nextRpySchDate = nextRpySchDate;
     }
-	public BigDecimal getLastRpySchPri() {
-    	return lastRpySchPri;
+	public BigDecimal getPrvRpySchPri() {
+    	return prvRpySchPri;
     }
-	public void setLastRpySchPri(BigDecimal lastRpySchPri) {
-    	this.lastRpySchPri = lastRpySchPri;
+	public void setPrvRpySchPri(BigDecimal prvRpySchPri) {
+    	this.prvRpySchPri = prvRpySchPri;
     }
-	public BigDecimal getLastRpySchPft() {
-    	return lastRpySchPft;
+	public BigDecimal getPrvRpySchPft() {
+    	return prvRpySchPft;
     }
-	public void setLastRpySchPft(BigDecimal lastRpySchPft) {
-    	this.lastRpySchPft = lastRpySchPft;
-    }
-	public Date getLatestWriteOffDate() {
-    	return latestWriteOffDate;
-    }
-	public void setLatestWriteOffDate(Date latestWriteOffDate) {
-    	this.latestWriteOffDate = latestWriteOffDate;
+	public void setPrvRpySchPft(BigDecimal prvRpySchPft) {
+    	this.prvRpySchPft = prvRpySchPft;
     }
 	public BigDecimal getTotalWriteoff() {
     	return totalWriteoff;
@@ -848,44 +797,6 @@ public class AEAmountCodes {
 	public void setDepreciatePri(BigDecimal depreciatePri) {
 	    this.depreciatePri = depreciatePri;
     }
-	
-	public Date getCRBFirstODDate() {
-	    return cRBFirstODDate;
-    }
-	public void setCRBFirstODDate(Date cRBFirstODDate) {
-	    this.cRBFirstODDate = cRBFirstODDate;
-    }
-	
-	public Date getCRBLastODDate() {
-	    return cRBLastODDate;
-    }
-	public void setCRBLastODDate(Date cRBLastODDate) {
-	    this.cRBLastODDate = cRBLastODDate;
-    }
-	public int getCRBODDays() {
-	    return CRBODDays;
-    }
-	public void setCRBODDays(int cRBODDays) {
-	    CRBODDays = cRBODDays;
-    }
-	public int getCRBODInst() {
-	    return CRBODInst;
-    }
-	public void setCRBODInst(int cRBODInst) {
-	    CRBODInst = cRBODInst;
-    }
-	public BigDecimal getCRBPriOD() {
-		return CRBPriOD;
-	}
-	public void setCRBPriOD(BigDecimal cRBPriOD) {
-		CRBPriOD = cRBPriOD;
-	}
-	public BigDecimal getCRBPftOD() {
-		return CRBPftOD;
-	}
-	public void setCRBPftOD(BigDecimal cRBPftOD) {
-		CRBPftOD = cRBPftOD;
-	}
 	
 	public boolean isFinisActive() {
 		return finisActive;
@@ -1035,4 +946,86 @@ public class AEAmountCodes {
 	public void setRepayInSusp(boolean repayInSusp) {
 		this.repayInSusp = repayInSusp;
 	}
+
+	public BigDecimal getlAccrueS() {
+		return lAccrueS;
+	}
+
+	public void setlAccrueS(BigDecimal lAccrueS) {
+		this.lAccrueS = lAccrueS;
+	}
+
+	public BigDecimal getdAccrueS() {
+		return dAccrueS;
+	}
+
+	public void setdAccrueS(BigDecimal dAccrueS) {
+		this.dAccrueS = dAccrueS;
+	}
+
+	public BigDecimal getAmzNRM() {
+		return amzNRM;
+	}
+
+	public void setAmzNRM(BigDecimal amzNRM) {
+		this.amzNRM = amzNRM;
+	}
+
+	public BigDecimal getdAmzNRM() {
+		return dAmzNRM;
+	}
+
+	public void setdAmzNRM(BigDecimal dAmzNRM) {
+		this.dAmzNRM = dAmzNRM;
+	}
+
+	public BigDecimal getlAmzNRM() {
+		return lAmzNRM;
+	}
+
+	public void setlAmzNRM(BigDecimal lAmzNRM) {
+		this.lAmzNRM = lAmzNRM;
+	}
+
+	public BigDecimal getAmzPD() {
+		return amzPD;
+	}
+
+	public void setAmzPD(BigDecimal amzPD) {
+		this.amzPD = amzPD;
+	}
+
+	public BigDecimal getdAmzPD() {
+		return dAmzPD;
+	}
+
+	public void setdAmzPD(BigDecimal dAmzPD) {
+		this.dAmzPD = dAmzPD;
+	}
+
+	public BigDecimal getlAmzPD() {
+		return lAmzPD;
+	}
+
+	public void setlAmzPD(BigDecimal lAmzPD) {
+		this.lAmzPD = lAmzPD;
+	}
+
+	public BigDecimal getdAmzS() {
+		return dAmzS;
+	}
+
+	public void setdAmzS(BigDecimal dAmzS) {
+		this.dAmzS = dAmzS;
+	}
+
+	public BigDecimal getlAmzS() {
+		return lAmzS;
+	}
+
+	public void setlAmzS(BigDecimal lAmzS) {
+		this.lAmzS = lAmzS;
+	}
+
+
 }

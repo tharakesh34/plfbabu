@@ -143,7 +143,7 @@ public class PostPastDueSMS implements Tasklet {
 		addLine(tabDat, ccy);
 		appendColon(tabDat, 3);// Free space
 
-		addLine(tabDat, getDate(resultSet.getDate("LastODDate")));
+		addLine(tabDat, getDate(resultSet.getDate("PrvODDate")));
 		addLine(tabDat, getAmt(resultSet.getBigDecimal("ODPrincipal").add(resultSet.getBigDecimal("ODProfit")), ccy));
 		addLine(tabDat, getAmt(resultSet.getBigDecimal("TotalPriBal").add(resultSet.getBigDecimal("TotalPftBal")), ccy));
 		addLine(tabDat, String.valueOf(resultSet.getInt("NOInst") - resultSet.getInt("NOPaidInst")));
@@ -177,11 +177,11 @@ public class PostPastDueSMS implements Tasklet {
 
 	private String prepareSelectQuery() {
 		StringBuilder query = new StringBuilder(" select fpd.FinBranch,fpd.CustCIF,fpd.FinReference,fpd.FinType,fpd.FinAmount,");
-		query.append(" fpd.FinCcy,fpd.LastODDate,fpd.ODPrincipal, fpd.ODProfit,fpd.TotalPriBal,fpd.TotalPftBal,");
+		query.append(" fpd.FinCcy,fpd.PrvODDate,fpd.ODPrincipal, fpd.ODProfit,fpd.TotalPriBal,fpd.TotalPftBal,");
 		query.append(" fpd.NOInst,fpd.NOPaidInst,su.UsrFName,su.UsrMName,su.UsrLName");
 		query.append(" from FinPftDetails fpd  ");
 		query.append(" inner join FinanceMain fm on fm.FinReference= fpd.FinReference");
-		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.ODDays % ?) = 0  ");
+		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.CurODDays % ?) = 0  ");
 		return query.toString();
 	}
 
@@ -189,7 +189,7 @@ public class PostPastDueSMS implements Tasklet {
 		StringBuilder query = new StringBuilder(" SELECT Count(*) ");
 		query.append(" from FinPftDetails fpd  ");
 		query.append(" inner join FinanceMain fm on fm.FinReference=fpd.FinReference");
-		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.ODDays % ?) = 0   ");
+		query.append(" inner join SecUsers su on fm.InitiateUser =su.UsrID where (fpd.CurODDays % ?) = 0   ");
 		return query.toString();
 	}
 

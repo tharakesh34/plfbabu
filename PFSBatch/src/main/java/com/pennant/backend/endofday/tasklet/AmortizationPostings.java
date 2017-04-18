@@ -133,15 +133,14 @@ public class AmortizationPostings implements Tasklet {
 				// Amount Codes preparation using FinProfitDetails
 				AEAmountCodes amountCodes = new AEAmountCodes();
 				amountCodes.setFinReference(finReference);
-				amountCodes.setDAccrue(resultSet.getBigDecimal("AcrTodayToNBD"));
-				amountCodes.setNAccrue(resultSet.getBigDecimal("AcrTillNBD"));
-				amountCodes.setPft(resultSet.getBigDecimal("TotalPftSchd").add(resultSet.getBigDecimal("TotalPftCpz")));
+				amountCodes.setDAccrue(resultSet.getBigDecimal("PftAccrued").subtract(resultSet.getBigDecimal("AcrTillLBD")));
+				amountCodes.setPft(resultSet.getBigDecimal("TotalPftSchd"));
 				amountCodes.setPftAB(resultSet.getBigDecimal("TotalPftBal"));
 				amountCodes.setPftAP(resultSet.getBigDecimal("TotalPftPaid"));
-				amountCodes.setPftS(resultSet.getBigDecimal("TdSchdPft").add(resultSet.getBigDecimal("TdPftCpz")));
+				amountCodes.setPftS(resultSet.getBigDecimal("TdSchdPft"));
 				amountCodes.setPftSB(resultSet.getBigDecimal("TdSchdPftBal"));
 				amountCodes.setPftSP(resultSet.getBigDecimal("TdSchdPftPaid"));
-				amountCodes.setAccrueTsfd(resultSet.getBigDecimal("TdPftAccrued").subtract(resultSet.getBigDecimal("TdPftAccrueSusp")));// Distributed
+				amountCodes.setAccrueTsfd(resultSet.getBigDecimal("pftAccrued").subtract(resultSet.getBigDecimal("pftAccrueSusp")));// Distributed
 
 				// **** Accounting Set Execution for Amortization ******//
 				// Get Event From Finance Suspend Headers for Accounting Set
@@ -186,10 +185,10 @@ public class AmortizationPostings implements Tasklet {
 				}
 
 				FinanceProfitDetail pftDetail = new FinanceProfitDetail();
-				pftDetail.setAcrTillLBD(resultSet.getBigDecimal("TdPftAccrued"));
-				pftDetail.setAcrTodayToNBD(BigDecimal.ZERO);
-				pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillNBD"));
-				pftDetail.setAmzTodayToNBD(BigDecimal.ZERO);
+				pftDetail.setAcrTillLBD(resultSet.getBigDecimal("pftAccrued"));
+				
+				//FIXME: PV 14APR17 based on new finpftdetails
+				pftDetail.setAmzTillLBD(resultSet.getBigDecimal(""));
 				pftDetail.setLastMdfDate(valueDate);
 				pftDetailList.add(pftDetail);
 
@@ -262,7 +261,7 @@ public class AmortizationPostings implements Tasklet {
 		sqlQuery.append(" T1.DisbAccountId ,T1.RepayAccountId ,T1.FinAmount  DisburseAmount , (T1.FinAmount - T1.FinRepaymentAmount)  FinAmount ,");
 		sqlQuery.append(" T1.DownPayment , T1.NumberOfTerms, T1.FinAccount, T1.FinCustPftAccount, T4.PftInSusp, ");
 		sqlQuery.append(" T4.TotalPftSchd, T4.TotalPftCpz, T4.TotalPftPaid, T4.TotalPftBal, T4.TdSchdPft, T4.TdPftCpz, T4.TdSchdPftPaid,  ");
-		sqlQuery.append(" T4.TdSchdPftBal, T4.TdPftAccrued, T4.TdPftAccrueSusp, T4.AcrTillNBD, T4.AcrTodayToNBD, T4.AmzTillNBD ");
+		sqlQuery.append(" T4.TdSchdPftBal, T4.pftAccrued, T4.pftAccrueSusp");
 		sqlQuery.append(" FROM FinanceMain  T1");
 		sqlQuery.append(" INNER JOIN FinPftDetails");
 		sqlQuery.append("  T4 ON T1.FinReference = T4.FinReference ");

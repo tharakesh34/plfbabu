@@ -237,7 +237,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Previous Details
 		String execEventCode = null;
 		boolean proceedFurther = true;
-		if ((Boolean) actReturnList.get(0) && financeProfitDetail.getoDDays() > 0) {
+		if ((Boolean) actReturnList.get(0) && financeProfitDetail.getCurODDays() > 0) {
 
 			if (financeProfitDetail.isPftInSusp()) {
 
@@ -658,7 +658,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			if (financeProfitDetail.isPftInSusp()) {
 				isRpySusp = true;
 			} else {
-				if (financeProfitDetail.getoDDays() > 0) {
+				if (financeProfitDetail.getCurODDays() > 0) {
 					isRpyPD = true;
 				} else {
 					// Check with in Grace Period

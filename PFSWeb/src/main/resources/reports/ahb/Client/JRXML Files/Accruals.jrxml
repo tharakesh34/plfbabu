@@ -49,8 +49,8 @@
 	<field name="ConExchgTotalPriBal" class="java.math.BigDecimal"/>
 	<field name="TotalPftBal" class="java.math.BigDecimal"/>
 	<field name="ConExchgTotalPftBal" class="java.math.BigDecimal"/>
-	<field name="TdPftAccrued" class="java.math.BigDecimal"/>
-	<field name="ConExchgTdPftAccrued" class="java.math.BigDecimal"/>
+	<field name="PftAccrued" class="java.math.BigDecimal"/>
+	<field name="ConExchgPftAccrued" class="java.math.BigDecimal"/>
 	<variable name="VarOrgFinance" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Sum">
 		<variableExpression><![CDATA[$F{ConExchgOrgFinance}]]></variableExpression>
 	</variable>
@@ -99,17 +99,17 @@
 	<variable name="FinCcyTotalPftBal" class="java.math.BigDecimal" resetType="Group" resetGroup="FinCcy" calculation="Sum">
 		<variableExpression><![CDATA[$F{TotalPftBal}]]></variableExpression>
 	</variable>
-	<variable name="VarTdPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Sum">
-		<variableExpression><![CDATA[$F{ConExchgTdPftAccrued}]]></variableExpression>
+	<variable name="VarPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgPftAccrued}]]></variableExpression>
 	</variable>
-	<variable name="ProductcodeTdPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
-		<variableExpression><![CDATA[$F{ConExchgTdPftAccrued}]]></variableExpression>
+	<variable name="ProductcodePftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgPftAccrued}]]></variableExpression>
 	</variable>
-	<variable name="FintypeTdPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="Fintype" calculation="Sum">
-		<variableExpression><![CDATA[$F{ConExchgTdPftAccrued}]]></variableExpression>
+	<variable name="FintypePftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="Fintype" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgPftAccrued}]]></variableExpression>
 	</variable>
-	<variable name="FinCcyTdPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="FinCcy" calculation="Sum">
-		<variableExpression><![CDATA[$F{TdPftAccrued}]]></variableExpression>
+	<variable name="FinCcyPftAccrued" class="java.math.BigDecimal" resetType="Group" resetGroup="FinCcy" calculation="Sum">
+		<variableExpression><![CDATA[$F{PftAccrued}]]></variableExpression>
 	</variable>
 	<variable name="VarFinReference" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Count">
 		<variableExpression><![CDATA[$F{FinReference}]]></variableExpression>
@@ -223,7 +223,7 @@
 							<font isPdfEmbedded="true"/>
 							<paragraph rightIndent="2"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{VarTdPftAccrued}:" "]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{VarPftAccrued}:" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":
@@ -340,7 +340,7 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 							<font isPdfEmbedded="true"/>
 							<paragraph rightIndent="2"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{ProductcodeTdPftAccrued}:" "]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{ProductcodePftAccrued}:" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":
@@ -457,7 +457,7 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 							<font isPdfEmbedded="true"/>
 							<paragraph rightIndent="2"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{FintypeTdPftAccrued}:" "]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{FintypePftAccrued}:" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":
@@ -575,11 +575,11 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 							<paragraph rightIndent="2"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{BranchCode}!=null?(
-$F{CcyEditField}==0 ?$V{FinCcyTdPftAccrued}:
-$F{CcyEditField}==1 ?($V{FinCcyTdPftAccrued}/10):
-$F{CcyEditField}==2 ?($V{FinCcyTdPftAccrued}/100):
-$F{CcyEditField}==3 ?($V{FinCcyTdPftAccrued}/1000):
-$F{CcyEditField}==4 ?($V{FinCcyTdPftAccrued}/10000):($V{FinCcyTdPftAccrued}/100000)):" "]]></textFieldExpression>
+$F{CcyEditField}==0 ?$V{FinCcyPftAccrued}:
+$F{CcyEditField}==1 ?($V{FinCcyPftAccrued}/10):
+$F{CcyEditField}==2 ?($V{FinCcyPftAccrued}/100):
+$F{CcyEditField}==3 ?($V{FinCcyPftAccrued}/1000):
+$F{CcyEditField}==4 ?($V{FinCcyPftAccrued}/10000):($V{FinCcyPftAccrued}/100000)):" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
 $F{CcyEditField}==1 ?"#,##0.0":
 $F{CcyEditField}==2 ?"#,##0.00":
@@ -1133,11 +1133,11 @@ $F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 					<textElement textAlignment="Right">
 						<paragraph rightIndent="3"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($F{TdPftAccrued}):
-$F{CcyEditField}==1 ?(($F{TdPftAccrued})/10):
-$F{CcyEditField}==2 ?(($F{TdPftAccrued})/100):
-$F{CcyEditField}==3 ?(($F{TdPftAccrued})/1000):
-$F{CcyEditField}==4 ?(($F{TdPftAccrued})/10000):(($F{TdPftAccrued})/100000)]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($F{PftAccrued}):
+$F{CcyEditField}==1 ?(($F{PftAccrued})/10):
+$F{CcyEditField}==2 ?(($F{PftAccrued})/100):
+$F{CcyEditField}==3 ?(($F{PftAccrued})/1000):
+$F{CcyEditField}==4 ?(($F{PftAccrued})/10000):(($F{PftAccrued})/100000)]]></textFieldExpression>
 					<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
 $F{CcyEditField}==1 ?"#,##0.0":
 $F{CcyEditField}==2 ?"#,##0.00":

@@ -59,13 +59,13 @@ public class SummaryDetailService {
 				// Total future Installments
 				int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 				summary.setFutureInst(futureInst);
-				summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNextRpySchDate(),
+				summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
 						finPftDetail.getMaturityDate()));
 				summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
 				summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
 				summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
 				summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));//doubt
-				summary.setFinLastRepayDate(finPftDetail.getLastRpySchDate());
+				summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
 				summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 				summary.setOutStandProfit(finPftDetail.getTotalPftBal());
 				summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));//doubt

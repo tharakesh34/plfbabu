@@ -101,7 +101,7 @@ public class RepaymentService extends ServiceHelper {
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		pftDetail.setFinReference(finMain.getFinReference());
 		pftDetail.setAcrTillLBD(finRepay.getAcrTillLBD());
-		pftDetail.setTdPftAmortizedSusp(finRepay.getTdPftAmortizedSusp());
+		pftDetail.setPftAmzSusp(finRepay.getPftAmzSusp());
 		pftDetail.setAmzTillLBD(finRepay.getAmzTillLBD());
 
 		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
@@ -162,7 +162,7 @@ public class RepaymentService extends ServiceHelper {
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		pftDetail.setFinReference(finMain.getFinReference());
 		pftDetail.setAcrTillLBD(finRepay.getAcrTillLBD());
-		pftDetail.setTdPftAmortizedSusp(finRepay.getTdPftAmortizedSusp());
+		pftDetail.setPftAmzSusp(finRepay.getPftAmzSusp());
 		pftDetail.setAmzTillLBD(finRepay.getAmzTillLBD());
 
 		String repaymethod = ImplementationConstants.REPAY_HIERARCHY_METHOD;
