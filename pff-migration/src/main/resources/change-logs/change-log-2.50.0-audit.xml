@@ -8,12 +8,20 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
-
 <changeSet id="01" author="Madhubabu">
 		<addColumn tableName="AdtFinAdvancePayments">
 			<column name="LinkedTranId" type="bigint"/>
 		</addColumn>
 	</changeSet>
-
+<changeSet id="02" author="Irfan">
+	<modifyDataType tableName="ADTRMTACCOUNTTYPES" columnName="ACTYPE" newDataType="varchar(15)"/>
+</changeSet>
+<changeSet id="03" author="Irfan">
+<addColumn tableName="ADTPARTNERBANKS">
+<column name="HostGLCode" type="varchar(15)"/>
+<column name="ProfitCentre" type="varchar(15)"/>
+<column name="CrossCentre" type="varchar(15)"/>
+</addColumn>
+</changeSet>
 
 </databaseChangeLog>
