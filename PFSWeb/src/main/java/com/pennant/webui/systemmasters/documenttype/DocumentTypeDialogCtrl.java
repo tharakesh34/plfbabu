@@ -693,6 +693,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 
