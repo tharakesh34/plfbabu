@@ -18,7 +18,7 @@ import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 
 public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
-	private final static Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
+	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
