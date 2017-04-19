@@ -91,7 +91,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 	 */
 	@Override
 	public GeneralDesignation getGeneralDesignationById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		GeneralDesignation generalDesignation = new GeneralDesignation();
 		generalDesignation.setId(id);
@@ -115,7 +115,8 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 			logger.error("Exception: ", e);
 			generalDesignation = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return generalDesignation;
 	}
 	
@@ -178,6 +179,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+		
 		logger.debug(Literal.LEAVING);
 		return generalDesignation.getId();
 	}
@@ -206,6 +208,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
