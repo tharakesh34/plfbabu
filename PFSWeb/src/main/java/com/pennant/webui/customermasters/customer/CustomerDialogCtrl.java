@@ -159,6 +159,7 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -361,7 +362,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Grid								grid_BankDetails;
 
 	private boolean								isRetailCustomer				= false;
-	private String								sCustGender;
 	private String								empAlocType						= "";
 
 	protected Tab								directorDetails;
@@ -3410,29 +3410,31 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return amountCodes;
 	}
 
-	// Search Button Events
-
+	/**
+	 * Salutation codes will be populated based on the selected gender code.
+	 * 
+	 * @param event
+	 */
 	public void onSelect$custGenderCode(Event event) {
-		logger.debug("Entering");
-		if (!StringUtils.equals(sCustGender, this.custGenderCode.getSelectedItem().getValue().toString())) {
-			this.custSalutationCode.setValue("");
+		logger.debug(Literal.ENTERING);
+
+		String code = custGenderCode.getSelectedItem().getValue();
+		custSalutationCode.setValue("");
+
+		if (PennantConstants.List_Select.equals(code)) {
+			custSalutationCode.setDisabled(true);
+			return;
 		}
-		if (StringUtils.equals(PennantConstants.List_Select, this.custGenderCode.getSelectedItem().getValue()
-				.toString())) {
-			this.custSalutationCode.setDisabled(true);
-		} else {
-			this.custSalutationCode.setDisabled(false);
-		}
-		sCustGender = this.custGenderCode.getSelectedItem().getValue().toString();
-		fillComboBox(this.custSalutationCode, this.custSalutationCode.getValue(),
-				PennantAppUtil.getSalutationCodes(sCustGender), "");
-		logger.debug("Leaving");
+
+		custSalutationCode.setDisabled(false);
+		fillComboBox(custSalutationCode, "", PennantAppUtil.getSalutationCodes(code), "");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Based Customer Type Code selection Fill the Segment value
-	 * 
-	 * */
+	 */
 	public void onFulfill$custTypeCode(Event event) {
 		logger.debug("Entering");
 		Object dataObject = custTypeCode.getObject();
