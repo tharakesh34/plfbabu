@@ -1190,5 +1190,56 @@ FROM FinanceMain_AView T1 INNER JOIN
 </sql>
 
 </changeSet>
+
+<changeSet id="73" author="Surekha">
+	<createTable tableName="FINANCESTATUSCODES">
+		<column name="StatusId" type="bigint">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints unique="true" nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
+<changeSet id="74" author="Surekha">
+<createTable tableName="FINANCESTATUSCODES_Temp">
+		<column name="StatusId" type="bigint">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints unique="true" nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
 	
 </databaseChangeLog>
