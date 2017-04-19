@@ -175,6 +175,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		}catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return divisionDetail.getId();
 	}
@@ -201,6 +202,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
