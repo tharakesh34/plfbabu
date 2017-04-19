@@ -42,16 +42,26 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.NationalityCode;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>NationalityCode model</b> class.<br>
  * 
  */
-public interface NationalityCodeDAO {
+public interface NationalityCodeDAO extends BasicCrudDao<NationalityCode>{
 
 	NationalityCode getNationalityCodeById(String id,String type);
-	void update(NationalityCode nationalityCodes,String type);
-	void delete(NationalityCode nationalityCodes,String type);
-	String save(NationalityCode nationalityCodes,String type);
-}
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param nationalityCode
+	 *            nationalityCode of the nationalityCode.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String nationalityCode, TableType tableType);
+	}

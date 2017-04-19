@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.NationalityCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>NationalityCode</b>.<br>
@@ -120,11 +118,11 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
 		NationalityCode nationalityCode = (NationalityCode) auditHeader.getAuditDetail().getModelData();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (nationalityCode.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (nationalityCode.isNew()) {
@@ -163,7 +161,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 			return auditHeader;
 		}
 		NationalityCode nationalityCode = (NationalityCode) auditHeader.getAuditDetail().getModelData();
-		getNationalityCodeDAO().delete(nationalityCode, "");
+		getNationalityCodeDAO().delete(nationalityCode, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -231,10 +229,16 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		NationalityCode nationalityCode = new NationalityCode();
 		BeanUtils.copyProperties((NationalityCode) auditHeader.getAuditDetail().getModelData(), nationalityCode);
 
+		getNationalityCodeDAO().delete(nationalityCode, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(nationalityCodeDAO.getNationalityCodeById(nationalityCode.getNationalityCode(), ""));
+		}
+		
 		if (nationalityCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getNationalityCodeDAO().delete(nationalityCode, "");
+			getNationalityCodeDAO().delete(nationalityCode, TableType.MAIN_TAB);
 
 		} else {
 			nationalityCode.setRoleCode("");
@@ -246,15 +250,14 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 			if (nationalityCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				nationalityCode.setRecordType("");
-				getNationalityCodeDAO().save(nationalityCode, "");
+				getNationalityCodeDAO().save(nationalityCode, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				nationalityCode.setRecordType("");
-				getNationalityCodeDAO().update(nationalityCode, "");
+				getNationalityCodeDAO().update(nationalityCode, TableType.MAIN_TAB);
 			}
 		}
 
-		getNationalityCodeDAO().delete(nationalityCode, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -290,7 +293,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		NationalityCode nationalityCode = (NationalityCode) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getNationalityCodeDAO().delete(nationalityCode, "_Temp");
+		getNationalityCodeDAO().delete(nationalityCode, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -310,7 +313,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	private AuditHeader businessValidation(AuditHeader auditHeader,
 			String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -326,91 +329,29 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		NationalityCode nationalityCode = (NationalityCode) auditDetail.getModelData();
-		NationalityCode tempNationalityCode = null;
+		String code = nationalityCode.getNationalityCode();
 
-		if (nationalityCode.isWorkflow()) {
-			tempNationalityCode = getNationalityCodeDAO().getNationalityCodeById(nationalityCode.getId(), "_Temp");
-		}
+		// Check the unique keys.
+		if (nationalityCode.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())
+				&& nationalityCodeDAO.isDuplicateKey(code, nationalityCode.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_NationalityCode") + ": " + code;
 
-		NationalityCode befNationalityCode = getNationalityCodeDAO().getNationalityCodeById(nationalityCode.getId(), "");
-		NationalityCode oldNationalityCode = nationalityCode.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = nationalityCode.getNationalityCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_NationalityCode") + ":"+ valueParm[0];
-
-		if (nationalityCode.isNew()) { // for New record or new record into work flow
-
-			if (!nationalityCode.isWorkflow()) {// With out Work flow only new records
-				if (befNationalityCode != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-
-				if (nationalityCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befNationalityCode != null
-							|| tempNationalityCode != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befNationalityCode == null
-							|| tempNationalityCode != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!nationalityCode.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befNationalityCode == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-
-					if (oldNationalityCode != null
-							&& !oldNationalityCode.getLastMntOn().equals(befNationalityCode.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempNationalityCode == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-				if (tempNationalityCode != null
-						&& oldNationalityCode != null
-						&& !oldNationalityCode.getLastMntOn().equals(tempNationalityCode.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !nationalityCode.isWorkflow()) {auditDetail.setBefImage(befNationalityCode);
-		}
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
 }

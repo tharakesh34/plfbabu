@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -48,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.NationalityCode;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>NationalityCodes model</b> class.<br>
@@ -90,6 +92,7 @@ public class NationalityCodeDAOImpl extends BasisCodeDAO<NationalityCode> implem
 	@Override
 	public NationalityCode getNationalityCodeById(final String id, String type) {
 		logger.debug("Entering");
+		
 		NationalityCode nationalityCodes = new NationalityCode();
 		nationalityCodes.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -113,6 +116,127 @@ public class NationalityCodeDAOImpl extends BasisCodeDAO<NationalityCode> implem
 		logger.debug("Leaving");
 		return nationalityCodes;
 	}
+	
+	@Override
+	public boolean isDuplicateKey(String NationalityCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "NationalityCode = :NationalityCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTNationalityCodes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTNationalityCodes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTNationalityCodes_Temp", "BMTNationalityCodes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("NationalityCode", NationalityCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(NationalityCode nationalityCodes, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTNationalityCodes");
+		sql.append(tableType.getSuffix());
+		sql.append(" (NationalityCode, NationalityDesc, NationalityIsActive,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values(:NationalityCode, :NationalityDesc, :NationalityIsActive,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nationalityCodes);
+		
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return nationalityCodes.getId();
+	}
+	
+	@Override
+	public void update(NationalityCode nationalityCodes, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTNationalityCodes");
+		sql.append(tableType.getSuffix());
+		sql.append(" set  NationalityDesc = :NationalityDesc,");
+		sql.append(" NationalityIsActive = :NationalityIsActive,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where NationalityCode =:NationalityCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nationalityCodes);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void delete(NationalityCode nationalityCodes, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from BMTNationalityCodes");
+		sql.append(tableType.getSuffix());
+		sql.append(" where NationalityCode =:NationalityCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL +  sql.toString());		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nationalityCodes);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * @param dataSource
@@ -121,149 +245,4 @@ public class NationalityCodeDAOImpl extends BasisCodeDAO<NationalityCode> implem
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
-	/**
-	 * This method Deletes the Record from the BMTNationalityCodes or
-	 * BMTNationalityCodes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Nationalities by key
-	 * NationalityCode
-	 * 
-	 * @param Nationalities
-	 *            (nationalityCodes)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(NationalityCode nationalityCodes, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-		
-		deleteSql.append("Delete From BMTNationalityCodes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where NationalityCode =:NationalityCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nationalityCodes);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",nationalityCodes.getNationalityCode(), 
-					nationalityCodes.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",nationalityCodes.getNationalityCode(), 
-					nationalityCodes.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTNationalityCodes or
-	 * BMTNationalityCodes_Temp.
-	 * 
-	 * save Nationalities
-	 * 
-	 * @param Nationalities
-	 *            (nationalityCodes)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(NationalityCode nationalityCodes, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-		
-		insertSql.append("Insert Into BMTNationalityCodes");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (NationalityCode, NationalityDesc, NationalityIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:NationalityCode, :NationalityDesc, :NationalityIsActive,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nationalityCodes);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return nationalityCodes.getId();
-	}
-
-	/**
-	 * This method updates the Record BMTNationalityCodes or
-	 * BMTNationalityCodes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Nationalities by key
-	 * NationalityCode and Version
-	 * 
-	 * @param Nationalities
-	 *            (nationalityCodes)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(NationalityCode nationalityCodes, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-		
-		updateSql.append("Update BMTNationalityCodes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  NationalityDesc = :NationalityDesc,");
-		updateSql.append(" NationalityIsActive = :NationalityIsActive,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where NationalityCode =:NationalityCode");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nationalityCodes);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003",nationalityCodes.getNationalityCode(), 
-					nationalityCodes.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String nationalityCode, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = nationalityCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_NationalityCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }
