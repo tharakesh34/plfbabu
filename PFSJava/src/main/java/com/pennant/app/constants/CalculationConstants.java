@@ -124,9 +124,9 @@ public class CalculationConstants {
 	public static final String	REMFEE_WAIVED_BY_BANK		        = "WVEB";
 
 	// PAST DUE PROFIT CALCULATION METHODS
-	public static final String	PDPFTCAL_NOTAPP						= "NOTAPP";
-	public static final String	PDPFTCAL_SCHRATE					= "SRATE";
-	public static final String	PDPFTCAL_SCHRATEMARGIN				= "SRATEMRG";
+	public static final String	PDPFTCAL_NOTAPP						= "N";
+	public static final String	PDPFTCAL_SCHRATE					= "S";
+	public static final String	PDPFTCAL_SCHRATEMARGIN				= "M";
 
 	public static final String	FIN_STATE_NORMAL					= "N";
 	public static final String	FIN_STATE_PD						= "PD";
