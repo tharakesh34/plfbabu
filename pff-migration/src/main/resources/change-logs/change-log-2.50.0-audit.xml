@@ -23,5 +23,41 @@
 <column name="CrossCentre" type="varchar(15)"/>
 </addColumn>
 </changeSet>
-
+<changeSet id="04" author="Surekha">
+	<createTable tableName="ADTFINANCESTATUSCODES">
+	<column name="AuditId" type="bigint" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditDate" type="datetime">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditSeq" type="int">
+		<constraints nullable="false"/>
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="StatusId" type="bigint">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="StatusCode" type="varchar(20)">
+		<constraints unique="true" nullable="false"/>
+		</column>
+		<column name="StatusDesc" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
 </databaseChangeLog>
