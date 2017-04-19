@@ -1241,5 +1241,28 @@ FROM FinanceMain_AView T1 INNER JOIN
 		<column name="WorkflowId" type="bigint"/>
 	</createTable>
 </changeSet>
-	
+<changeSet id="75" author="Surekha">
+<createView viewName="FINANCESTATUSCODES_View" replaceIfExists="true">
+
+SELECT    StatusId, StatusCode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         FINANCESTATUSCODES_TEMP
+UNION ALL
+SELECT    StatusId, StatusCode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM        FINANCESTATUSCODES
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          FINANCESTATUSCODES_TEMP
+                            WHERE      StatusId = FINANCESTATUSCODES.StatusId)
+
+</createView>
+</changeSet>
+<changeSet id="76" author="Surekha">
+	<createView viewName="FINANCESTATUSCODES_AView" replaceIfExists="true">
+SELECT    StatusId, StatusCode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, 
+                      NextTaskId, RecordType, WorkflowId
+FROM         FINANCESTATUSCODES
+    </createView>
+ </changeSet> 
 </databaseChangeLog>
