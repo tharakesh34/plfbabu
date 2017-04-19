@@ -45,6 +45,7 @@ package com.pennant.app.util;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -57,17 +58,24 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.rits.cloning.Cloner;
@@ -87,6 +95,7 @@ public class ReceiptCalculator implements Serializable {
 	private OverDueRecoveryPostingsUtil			recoveryPostingsUtil;
 	private FinanceMainDAO						financeMainDAO;
 	private OverdueChargeRecoveryDAO			recoveryDAO;
+	private FinODDetailsDAO						finODDetailsDAO;
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -100,43 +109,39 @@ public class ReceiptCalculator implements Serializable {
 	 * ___________________________________________________________________________________________
 	 */
 
-	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinanceMain financeMain,
-			List<FinanceScheduleDetail> financeScheduleDetails, 
+	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, 
 			boolean isReCal, String method, Date valueDate, String processMethod) {
-		return procInitiateReceipt(receiptData, financeMain, financeScheduleDetails, isReCal, method,
-				valueDate, processMethod);
+		return procInitiateReceipt(receiptData, scheduleData, isReCal, method, valueDate, processMethod);
 	}
 
 	/** To Calculate the Amounts for given schedule */
-	public FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinanceMain financeMain,
-			List<FinanceScheduleDetail> financeScheduleDetails, boolean isReCal, String method, 
-			Date valueDate, String processMethod) {
+	public FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData,
+			boolean isReCal, String method, Date valueDate, String processMethod) {
 		logger.debug("Entering");
 
 		//Reset Current Business Application Date
 		if (valueDate != null) {
 			curBussniessDate = valueDate;
 		}
-
+		
 		// Initialize Repay
 		if ("I".equals(receiptData.getBuildProcess())) {
-			receiptData = initializeReceipt(receiptData, financeMain, financeScheduleDetails);
+			receiptData = initializeReceipt(receiptData, scheduleData);
 		}
 
 		// Recalculate Repay
 		if ("R".equals(receiptData.getBuildProcess())) {
-			receiptData = recalReceipt(receiptData, financeMain, financeScheduleDetails, isReCal, method, processMethod);
+			receiptData = recalReceipt(receiptData, scheduleData, isReCal, method, processMethod);
 		}
 		logger.debug("Leaving");
 		return receiptData;
 	}
 
 	// INITIALIZE REPAY PROCESS
-	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinanceMain financeMain,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
-
+	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinScheduleData scheduleData) {
 		logger.debug("Entering");
-
+		
+		FinanceMain financeMain = scheduleData.getFinanceMain();
 		receiptData.setFinReference(financeMain.getFinReference());
 		receiptData.setRepayMain(null);
 
@@ -184,7 +189,8 @@ public class ReceiptCalculator implements Serializable {
 		repayMain.setRepayAmountExcess(BigDecimal.ZERO);
 		receiptData.setRepayMain(repayMain);
 
-		receiptData = calRepayMain(receiptData, financeScheduleDetails);
+		receiptData = calRepayMain(receiptData, scheduleData);
+		
 		logger.debug("Leaving");
 		return receiptData;
 	}
@@ -204,9 +210,12 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	// RECALCULATE REPAYMENTS PROCESS
-	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinanceMain financeMain,
-			final List<FinanceScheduleDetail> scheduleDetails, boolean isReCal, String method, String processMethod) {
+	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, 
+			boolean isReCal, String method, String processMethod) {
 		logger.debug("Entering");
+		
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 
 		//receiptData.setRepayScheduleDetails(new ArrayList<RepayScheduleDetail>());
 		balanceRepayAmount = receiptData.getRepayMain().getRepayAmountNow();
@@ -352,8 +361,252 @@ public class ReceiptCalculator implements Serializable {
 		logger.debug("Leaving");
 		return receiptData;
 	}
+	
+	/**
+	 * Method for Processing Schedule Data and Receipts to Prepare Allocation Details
+	 * @param receiptData
+	 * @param aFinScheduleData
+	 */
+	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt) {
+		logger.debug("Entering");
+		
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 
-	private FinReceiptData calRepayMain(FinReceiptData receiptData, List<FinanceScheduleDetail> financeScheduleDetails) {
+		// If no balance for repayment then return with out calculation
+		if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+			return null;
+		}
+		
+		// Fetch total overdue details
+		Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
+		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODDetailsByFinReference(financeMain.getFinReference(),"");
+		if (overdueList != null && !overdueList.isEmpty()) {
+			for (int i = 0; i < overdueList.size(); i++) {
+				if (overdueMap.containsKey(overdueList.get(i).getFinODSchdDate())) {
+					overdueMap.remove(overdueList.get(i).getFinODSchdDate());
+				}
+				overdueMap.put(overdueList.get(i).getFinODSchdDate(), overdueList.get(i));
+			}
+		}
+		
+		String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
+		boolean seperatePenalties = false;
+		if(repayHierarchy.contains("CS")){
+			seperatePenalties = true;
+		}
+		char[] rpyOrder = repayHierarchy.replace("CS", "").toCharArray();
+		Map<String, BigDecimal> allocatePaidMap = new HashMap<>();
+		int lastRenderSeq = 0;
+		
+		// Load Pending Schedules until balance available for payment
+		for (int i = 1; i < scheduleDetails.size(); i++) {
+			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+			Date schdDate = curSchd.getSchDate();
+
+			// Skip if repayment date after Current Business date
+			if (schdDate.compareTo(curBussniessDate) >= 0) {
+				break;
+			}
+
+			// Skip if not a repayment
+			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+			
+			for (int j = 0; j < rpyOrder.length; j++) {
+				
+				char repayTo = rpyOrder[j];
+				if(repayTo == RepayConstants.REPAY_PRINCIPAL){
+					BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+					if(totalReceiptAmt.compareTo(balPri) > 0){
+						totalReceiptAmt = totalReceiptAmt.subtract(balPri);
+					}else{
+						totalReceiptAmt = BigDecimal.ZERO;
+					}
+					
+					BigDecimal totPriPayNow = BigDecimal.ZERO;
+					if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PRI)){
+						totPriPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PRI);
+						allocatePaidMap.remove(RepayConstants.ALLOCATION_PRI);
+					}
+					allocatePaidMap.put(RepayConstants.ALLOCATION_PRI, totPriPayNow.add(balPri));
+				}else if(repayTo == RepayConstants.REPAY_PROFIT){
+					
+					String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
+					char[] pftPayOrder = profit.toCharArray();
+					for (char pftPayTo : pftPayOrder) {
+						if(pftPayTo == RepayConstants.REPAY_PROFIT){
+							
+							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+							if(totalReceiptAmt.compareTo(balPft) > 0){
+								totalReceiptAmt = totalReceiptAmt.subtract(balPft);
+							}else{
+								totalReceiptAmt = BigDecimal.ZERO;
+							}
+							
+							BigDecimal totPftPayNow = BigDecimal.ZERO;
+							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PFT)){
+								totPftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PFT);
+								allocatePaidMap.remove(RepayConstants.ALLOCATION_PFT);
+							}
+							allocatePaidMap.put(RepayConstants.ALLOCATION_PFT, totPftPayNow.add(balPft));
+							
+						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
+							
+							FinODDetails overdue = overdueMap.get(schdDate);
+							BigDecimal balLatePft = overdue.getTotPftBal();
+							if(totalReceiptAmt.compareTo(balLatePft) > 0){
+								totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
+							}else{
+								totalReceiptAmt = BigDecimal.ZERO;
+							}
+							
+							BigDecimal totLatePftPayNow = BigDecimal.ZERO;
+							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
+								totLatePftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_LPFT);
+								allocatePaidMap.remove(RepayConstants.ALLOCATION_LPFT);
+							}
+							allocatePaidMap.put(RepayConstants.ALLOCATION_LPFT, totLatePftPayNow.add(balLatePft));
+						}
+					}
+					
+				}else if(repayTo == RepayConstants.REPAY_PENALTY){
+					if(!seperatePenalties){
+						FinODDetails overdue = overdueMap.get(schdDate);
+						BigDecimal balPenalty = overdue.getTotPenaltyBal();
+						if(totalReceiptAmt.compareTo(balPenalty) > 0){
+							totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+						}else{
+							totalReceiptAmt = BigDecimal.ZERO;
+						}
+						
+						BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
+						if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+							totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
+							allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+						}
+						allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
+					}
+					
+				}else if(repayTo == RepayConstants.REPAY_OTHERS){
+					// Fee Detail Collection
+					for (int k = 0; k < scheduleData.getFinFeeDetailList().size(); k++) {
+						FinFeeDetail feeSchd = scheduleData.getFinFeeDetailList().get(k);
+						List<FinFeeScheduleDetail> feeSchdList = feeSchd.getFinFeeScheduleDetailList();
+						if(feeSchdList == null || feeSchdList.isEmpty()){
+							continue;
+						}
+						
+						// If Schedule Fee terms are less than actual calculated Sequence
+						if(feeSchdList.size() < lastRenderSeq){
+							continue;
+						}
+						
+						// Calculate and set Fee Amount based on Fee ID
+						for (int l = lastRenderSeq; l < feeSchdList.size(); l++) {
+							if(feeSchdList.get(l).getSchDate().compareTo(schdDate) == 0){
+								
+								BigDecimal balFee = feeSchdList.get(l).getSchAmount().subtract(feeSchdList.get(l).getPaidAmount());
+								if(totalReceiptAmt.compareTo(balFee) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(balFee);
+								}else{
+									totalReceiptAmt = BigDecimal.ZERO;
+								}
+								
+								BigDecimal totFeePayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID())){
+									totFeePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), totFeePayNow.add(balFee));
+								if(lastRenderSeq == 0){
+									lastRenderSeq = l;
+								}
+								break;
+							}
+						}
+					}
+					
+					// Insurance Details Collection
+					// Fee Detail Collection
+					for (int k = 0; k < scheduleData.getFinInsuranceList().size(); k++) {
+						FinInsurances insSchd = scheduleData.getFinInsuranceList().get(k);
+						List<FinSchFrqInsurance> insSchdList = insSchd.getFinSchFrqInsurances();
+						if(insSchdList == null || insSchdList.isEmpty()){
+							continue;
+						}
+						
+						// Calculate and set Fee Amount based on Fee ID
+						// TODO : Check/Confirm id Day of Frequency as same as Repay Frequency
+						for (int l = 0; l < insSchdList.size(); l++) {
+							if(insSchdList.get(l).getInsSchDate().compareTo(schdDate) == 0){
+								
+								BigDecimal balIns = insSchdList.get(l).getAmount();//TODO : Subtract Paid Amounts
+								if(totalReceiptAmt.compareTo(balIns) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(balIns);
+								}else{
+									totalReceiptAmt = BigDecimal.ZERO;
+								}
+								
+								BigDecimal totInsPayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId())){
+									totInsPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), totInsPayNow.add(balIns));
+								break;
+							}
+						}
+					}
+					
+					// Manual Advises TODO
+				}
+				
+				// No more Receipt amount left for next schedules
+				if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+					break;
+				}
+			}
+
+			// No more Receipt amount left for next schedules
+			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+				break;
+			}
+		}
+
+		//Set Penalty Payments for Prepared Past due Schedule Details
+		if (seperatePenalties && totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+			
+			if(!overdueMap.isEmpty()){
+				List<Date> odDateList = new ArrayList<Date>(overdueMap.keySet());
+				Collections.sort(odDateList);
+				for (int i = 0; i < odDateList.size(); i++) {
+
+					FinODDetails overdue = overdueMap.get(odDateList.get(i));
+					BigDecimal balPenalty = overdue.getTotPenaltyBal();
+					if(totalReceiptAmt.compareTo(balPenalty) > 0){
+						totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+					}else{
+						totalReceiptAmt = BigDecimal.ZERO;
+					}
+
+					BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
+					if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+						totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
+						allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+					}
+					allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
+				}
+			}
+			
+		}
+
+		logger.debug("Leaving");
+		return allocatePaidMap;
+	}
+
+	private FinReceiptData calRepayMain(FinReceiptData receiptData, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		BigDecimal priPaid = BigDecimal.ZERO;
@@ -363,6 +616,7 @@ public class ReceiptCalculator implements Serializable {
 		boolean isSkipLastDateSet = false;
 
 		RepayMain repayMain = receiptData.getRepayMain();
+		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 
 		for (int i = 0; i < financeScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -395,7 +649,7 @@ public class ReceiptCalculator implements Serializable {
 					curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
 
 			// Overdue Principal and Profit
-			if (schdDate.compareTo(curBussniessDate) < 0 && DateUtility.getDaysBetween(curBussniessDate, schdDate) >= 0) {
+			if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
 				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
 						curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
@@ -429,10 +683,108 @@ public class ReceiptCalculator implements Serializable {
 				}
 			}
 		}
-
+		
 		repayMain.setProfitBalance(repayMain.getProfit().subtract(pftPaid));
 		repayMain.setPrincipalBalance(repayMain.getPrincipal().subtract(priPaid));
+		
+		// Allocation Map and Description Details Preparation
+		if(receiptData.getAllocationMap() == null){
+			receiptData.setAllocationMap(new HashMap<String, BigDecimal>());
+		}
+		
+		// Applicable only when Fees, Insurances & Manual Advises to maintain descriptions in screen level
+		if(receiptData.getAllocationDescMap() == null){
+			receiptData.setAllocationDescMap(new HashMap<String, String>());
+		}
 
+		// Overdue Principal Amount
+		if(repayMain.getOverduePrincipal().compareTo(BigDecimal.ZERO) > 0){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getOverduePrincipal());
+		}
+		
+		if(repayMain.getOverdueProfit().compareTo(BigDecimal.ZERO) > 0){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getOverdueProfit());
+		}
+		
+		// Fetch Late Pay Profit Details
+		BigDecimal latePayPftBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
+		if(latePayPftBal.compareTo(BigDecimal.ZERO) > 0){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_LPFT, latePayPftBal);
+		}
+		
+		// Fetch Sum of Overdue Charges
+		BigDecimal penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
+		if(penaltyBal.compareTo(BigDecimal.ZERO) > 0){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
+		}
+		
+		// Fee Details
+		if(finScheduleData.getFinFeeDetailList() != null && 
+				!finScheduleData.getFinFeeDetailList().isEmpty()){
+			
+			for (int i = 0; i < finScheduleData.getFinFeeDetailList().size(); i++) {
+				FinFeeDetail feeDetail = finScheduleData.getFinFeeDetailList().get(i);
+
+				if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+					
+					// Calculate Overdue Fee Schedule Amount
+					List<FinFeeScheduleDetail> feeSchdList = feeDetail.getFinFeeScheduleDetailList();
+					BigDecimal pastFeeAmount = BigDecimal.ZERO;
+					for (int j = 0; j < feeSchdList.size(); j++) {
+						
+						FinFeeScheduleDetail feeSchd = feeSchdList.get(j);
+						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) < 0) {
+							pastFeeAmount = pastFeeAmount.add(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
+						}else{
+							break;
+						}
+					}
+					
+					// Adding Fee Details to Map
+					if(pastFeeAmount.compareTo(BigDecimal.ZERO) > 0){
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"~"+feeDetail.getFeeID(), pastFeeAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"~"+feeDetail.getFeeID(), feeDetail.getFeeTypeDesc());
+					}
+				}
+			}
+		}
+		
+		// Insurance Details
+		if(finScheduleData.getFinInsuranceList() != null && 
+				!finScheduleData.getFinInsuranceList().isEmpty()){
+			
+			for (int i = 0; i < finScheduleData.getFinInsuranceList().size(); i++) {
+				FinInsurances finInsurance = finScheduleData.getFinInsuranceList().get(i);
+
+				if(StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)){
+					
+					// Calculate Overdue Fee Schedule Amount
+					List<FinSchFrqInsurance> insSchdList = finInsurance.getFinSchFrqInsurances();
+					BigDecimal pastInsAmount = BigDecimal.ZERO;
+					for (int j = 0; j < insSchdList.size(); j++) {
+						
+						FinSchFrqInsurance insSchd = insSchdList.get(j);
+						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) < 0) {
+							pastInsAmount = pastInsAmount.add(insSchd.getAmount());// TODO : Paid To be Added in Insurance Schedules
+						}else{
+							break;
+						}
+					}
+					
+					// Adding Fee Details to Map
+					if(pastInsAmount.compareTo(BigDecimal.ZERO) > 0){
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_INS+"~"+finInsurance.getInsId(), pastInsAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_INS+"~"+finInsurance.getInsId(), 
+								finInsurance.getInsuranceTypeDesc()+"-"+finInsurance.getInsReference());
+					}
+				}
+			}
+		}
+		
+		// Manual Advises :TODO - Waiting for development completion
+		
 		logger.debug("Leaving");
 		return receiptData;
 	}
@@ -1007,6 +1359,14 @@ public class ReceiptCalculator implements Serializable {
 
 	public void setRecoveryDAO(OverdueChargeRecoveryDAO recoveryDAO) {
 		this.recoveryDAO = recoveryDAO;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

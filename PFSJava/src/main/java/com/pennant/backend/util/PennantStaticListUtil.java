@@ -771,7 +771,6 @@ public class PennantStaticListUtil {
 		if(schCalOnList == null){
 			schCalOnList = new ArrayList<ValueLabel>(5);
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_EMIINADV, Labels.getLabel("lable_Emi_In_Advance")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
 			if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,ImplementationConstants.IMPLEMENTATION_ISLAMIC)) {
@@ -2527,7 +2526,7 @@ public class PennantStaticListUtil {
 			excessAdjustTo = new ArrayList<ValueLabel>(3);
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS, Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV, Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
-			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY, Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));
+			/*excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY, Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));*/
 		}
 		return excessAdjustTo;
 	}

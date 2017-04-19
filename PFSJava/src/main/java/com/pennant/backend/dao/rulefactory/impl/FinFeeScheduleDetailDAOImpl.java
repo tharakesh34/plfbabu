@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -155,5 +156,33 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
+	
+	/**
+	 * Method for Fetching Fee schedule Details list based upon Reference
+	 */
+	@Override
+	public List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeID, boolean isWIF, String tableType) {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount " );
+		if(isWIF){
+			selectSql.append(" FROM WIFFinFeeScheduleDetail");
+		}else{
+			selectSql.append(" FROM FinFeeScheduleDetail");
+		}
+		selectSql.append(StringUtils.trimToEmpty(tableType));
+		
+		selectSql.append(" WHERE  FeeID IN(:FeeID) ");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeID", feeID);
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeSchdList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return feeSchdList;
+	}
 	
 }

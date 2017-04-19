@@ -8,6 +8,9 @@ public class FinExcessAmount {
 	private String finReference;
 	private String amountType;
 	private BigDecimal amount = BigDecimal.ZERO;
+	private BigDecimal utilisedAmt = BigDecimal.ZERO;
+	private BigDecimal reservedAmt = BigDecimal.ZERO;
+	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	
 	public FinExcessAmount() {
 		
@@ -43,6 +46,27 @@ public class FinExcessAmount {
 	}
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+
+	public BigDecimal getUtilisedAmt() {
+		return utilisedAmt;
+	}
+	public void setUtilisedAmt(BigDecimal utilisedAmt) {
+		this.utilisedAmt = utilisedAmt;
+	}
+
+	public BigDecimal getReservedAmt() {
+		return reservedAmt;
+	}
+	public void setReservedAmt(BigDecimal reservedAmt) {
+		this.reservedAmt = reservedAmt;
+	}
+
+	public BigDecimal getBalanceAmt() {
+		return balanceAmt;
+	}
+	public void setBalanceAmt(BigDecimal balanceAmt) {
+		this.balanceAmt = balanceAmt;
 	}
 	
 }

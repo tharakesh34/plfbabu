@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -102,4 +103,8 @@ public interface FinODDetailsDAO {
 	FinODDetails getTotals(String finReference);
 
 	FinODDetails getFinODSummary(String finReference);
+
+	BigDecimal getTotalPenaltyBal(String finReference);
+
+	BigDecimal getTotalODPftBal(String finReference);
 }

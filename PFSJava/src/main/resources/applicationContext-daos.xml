@@ -5632,9 +5632,20 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+	
+	<!--============ Finance Excess Amounts Details ============== -->
+
+	<bean id="finExcessAmountDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" >
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -6510,6 +6521,7 @@
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

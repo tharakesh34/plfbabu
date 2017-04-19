@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -668,6 +669,52 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		}
 		logger.debug("Leaving");
 		return finODDetails;
+	}
+	
+	@Override
+	public BigDecimal getTotalODPftBal(String finReference) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(TotPftBal),0) TotalLatePayPft ");
+		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		BigDecimal totalPenaltyBal = null;
+		
+		try {
+			totalPenaltyBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			totalPenaltyBal = null;
+		}
+		logger.debug("Leaving");
+		return totalPenaltyBal;
+	}
+	
+	@Override
+	public BigDecimal getTotalPenaltyBal(String finReference) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(TotPenaltyBal),0) TotPenaltyAmt ");
+		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		BigDecimal totalPenaltyBal = null;
+		
+		try {
+			totalPenaltyBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			totalPenaltyBal = null;
+		}
+		logger.debug("Leaving");
+		return totalPenaltyBal;
 	}
 
 }

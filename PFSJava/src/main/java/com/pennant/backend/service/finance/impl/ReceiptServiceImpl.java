@@ -28,6 +28,7 @@ import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -44,11 +45,15 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -109,6 +114,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private LimitManagement					limitManagement;
 	
 	private FinExcessAmountDAO				finExcessAmountDAO;
+	private FinFeeDetailDAO					finFeeDetailDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -152,6 +158,87 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			//Finance Type Details
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView");
 			scheduleData.setFinanceType(financeType);
+			
+			// Fee Details
+			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+			
+			// Finance Fee Schedule Details
+			if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+
+				List<Long> feeIDList = new ArrayList<>();
+				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+
+					if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+						feeIDList.add(feeDetail.getFeeID());
+					}
+				}
+
+				if(!feeIDList.isEmpty()){
+					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
+
+					if(feeScheduleList != null && !feeScheduleList.isEmpty()){
+
+						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();                        
+						for (int i = 0; i < feeScheduleList.size(); i++) {
+							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+
+							List<FinFeeScheduleDetail> schList = new ArrayList<>();
+							if (schFeeMap.containsKey(schdFee.getFeeID())) {
+								schList = schFeeMap.get(schdFee.getFeeID());
+								schFeeMap.remove(schdFee.getFeeID());
+							}
+							schList.add(schdFee);
+							schFeeMap.put(schdFee.getFeeID(), schList);
+
+						}
+
+						for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+							FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+							if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+								feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+							}
+						}
+					}
+				}
+			}
+			
+			// Insurance Details
+			if(ImplementationConstants.ALLOW_INSURANCE){
+				scheduleData.setFinInsuranceList(getFinInsurancesDAO().getFinInsuranceListByRef(finReference, "_AView",false));
+
+				// FinSchFrqInsurance Details
+				if (scheduleData.getFinInsuranceList() != null && !scheduleData.getFinInsuranceList().isEmpty()) {
+
+					List<FinSchFrqInsurance> finSchFrqInsurances = getFinInsurancesDAO().getFinSchFrqInsuranceFinRef(finReference, false, "_AView");
+
+					if(finSchFrqInsurances != null && !finSchFrqInsurances.isEmpty()){
+
+						HashMap<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();                        
+						for (int i = 0; i < finSchFrqInsurances.size(); i++) {
+							FinSchFrqInsurance finSchFrqInsurance = finSchFrqInsurances.get(i);
+
+							List<FinSchFrqInsurance> schList = new ArrayList<>();
+							if (schInsMap.containsKey(finSchFrqInsurance.getInsId())) {
+								schList = schInsMap.get(finSchFrqInsurance.getInsId());
+								schInsMap.remove(finSchFrqInsurance.getInsId());
+							}
+							schList.add(finSchFrqInsurance);
+							schInsMap.put(finSchFrqInsurance.getInsId(), schList);
+
+						}
+
+						for (int i = 0; i < scheduleData.getFinInsuranceList().size(); i++) {
+							FinInsurances finInsurance = scheduleData.getFinInsuranceList().get(i);
+							if (schInsMap.containsKey(finInsurance.getInsId())) {
+								finInsurance.setFinSchFrqInsurances(schInsMap.get(finInsurance.getInsId()));
+							}
+						}
+					}
+				}
+			}
 
 			//Finance Customer Details			
 			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
@@ -1863,5 +1950,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public FinFeeDetailDAO getFinFeeDetailDAO() {
+		return finFeeDetailDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 }

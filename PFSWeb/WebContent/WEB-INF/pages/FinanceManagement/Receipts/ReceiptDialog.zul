@@ -553,14 +553,15 @@
 											<column />
 										</columns>
 										<rows>
-											<row>
+											<row id="row_favourNo" visible="false">
 												<label
 													id="label_ReceiptDialog_favourNo"
 													value="${c:l('label_ReceiptDialog_favourNo.value')}" />
 												<hbox
 													id="hbox_ReceiptDialog_favourNo">
 													<space
-														spacing="2px" />
+														spacing="2px"
+														sclass="mandatory" />
 													<textbox
 														id="favourNo" width="180px" />
 												</hbox>
@@ -575,7 +576,7 @@
 														id="valueDate" width="100px" />
 												</hbox>
 											</row>
-											<row>
+											<row id="row_BankCode" visible="false">
 												<label
 													id="label_ReceiptDialog_BankCode"
 													value="${c:l('label_ReceiptDialog_BankCode.value')}" />
@@ -592,7 +593,7 @@
 														id="favourName" width="180px" />
 												</hbox>
 											</row>
-											<row>
+											<row id="row_DepositDate" visible="false">
 												<label
 													id="label_ReceiptDialog_DepositDate"
 													value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
@@ -609,19 +610,21 @@
 												<hbox
 													id="hbox_ReceiptDialog_depositNo">
 													<space
-														spacing="2px" />
+														spacing="2px"
+														sclass="mandatory" />
 													<textbox
 														id="depositNo" width="180px" />
 												</hbox>
 											</row>
-											<row>
+											<row id="row_PaymentRef" visible="false">
 												<label
 													id="label_ReceiptDialog_paymentReference"
 													value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
 												<hbox
 													id="hbox_ReceiptDialog_paymentReference">
 													<space
-														spacing="2px" />
+														spacing="2px"
+														sclass="mandatory" />
 													<textbox
 														id="paymentRef" width="180px" />
 												</hbox>
@@ -631,19 +634,20 @@
 												<hbox
 													id="hbox_ReceiptDialog_tranReference">
 													<space
-														spacing="2px" />
+														spacing="2px"
+														sclass="mandatory" />
 													<textbox
 														id="transactionRef" width="180px" />
 												</hbox>
 											</row>
-											<row>
+											<row id="row_ChequeAcNo" visible="false">
 												<label
 													id="label_ReceiptDialog_ChequeAccountNo"
 													value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
 												<accountSelectionBox
-													id="chequeAccountNo" width="180px" />
+													id="chequeAcNo" width="180px" />
 											</row>
-											<row>
+											<row id="row_fundingAcNo" visible="false">
 												<label
 													id="label_ReceiptDialog_FundingAccount"
 													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
@@ -660,14 +664,13 @@
 														id="receivedDate" width="100px" />
 												</hbox>
 											</row>
-											<row>
+											<row id="row_remarks" visible="false">
 												<label
 													id="label_ReceiptDialog_Remarks"
 													value="${c:l('label_ReceiptDialog_Remarks.value')}" />
 												<hbox
 													id="hbox_ReceiptDialog_Remarks">
-													<space spacing="2px"
-														sclass="mandatory" />
+													<space spacing="2px" />
 													<textbox
 														id="remarks" width="180px" />
 												</hbox>

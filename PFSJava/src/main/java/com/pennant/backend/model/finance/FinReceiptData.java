@@ -45,6 +45,8 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FinReceiptData {
 	
@@ -59,6 +61,8 @@ public class FinReceiptData {
 	private String sourceId;
 
 	private RepayMain repayMain = new RepayMain();
+	private Map<String, BigDecimal> allocationMap = new HashMap<>();
+	private Map<String, String> allocationDescMap = new HashMap<>();
 	private FinReceiptHeader receiptHeader;
 	private FinanceDetail financeDetail;
 	
@@ -152,6 +156,22 @@ public class FinReceiptData {
 	}
 	public void setReceiptHeader(FinReceiptHeader receiptHeader) {
 		this.receiptHeader = receiptHeader;
+	}
+
+	public Map<String, BigDecimal> getAllocationMap() {
+		return allocationMap;
+	}
+
+	public void setAllocationMap(Map<String, BigDecimal> allocationMap) {
+		this.allocationMap = allocationMap;
+	}
+
+	public Map<String, String> getAllocationDescMap() {
+		return allocationDescMap;
+	}
+
+	public void setAllocationDescMap(Map<String, String> allocationDescMap) {
+		this.allocationDescMap = allocationDescMap;
 	}
 
 }

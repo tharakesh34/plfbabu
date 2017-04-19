@@ -48,12 +48,10 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 
@@ -61,7 +59,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class FinExcessAmountDAOImpl extends BasisCodeDAO<FinExcessAmount> implements FinExcessAmountDAO {
+public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 	private static Logger	           logger	= Logger.getLogger(FinExcessAmountDAOImpl.class);
 	
 	// Spring Named JDBC Template
@@ -82,19 +80,18 @@ public class FinExcessAmountDAOImpl extends BasisCodeDAO<FinExcessAmount> implem
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(String finReference) {
 		logger.debug("Entering");
-		FinExcessAmount detail = new FinExcessAmount();
-		detail.setFinReference(finReference);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
 
 		StringBuilder selectSql = new StringBuilder("");
 		selectSql.append(" Select ExcessID, AmountType, Amount From FinExcessAmount");
-		selectSql.append(" Where FinReference =:FinReference  ");
+		selectSql.append(" Where FinReference =:FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmount.class);
 
-		List<FinExcessAmount> excessList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<FinExcessAmount> excessList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return excessList;
 	}
