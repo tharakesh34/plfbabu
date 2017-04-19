@@ -99,7 +99,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 	 * @return {@link List} of {@link SecurityRight}
 	 */
 	@Override
-	public List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName) {
+	public List<SecurityRight> getPageRights(SecurityRight secRight) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName ");
@@ -117,12 +117,10 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 
 		sql.append("  and RT.Page = :Page ");
 
-		if (StringUtils.isNotBlank(menuRightName)) {
+		if (StringUtils.isNotBlank(secRight.getMenuRight())) {
 			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
 			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
-			sql.append(" where TR.RightName = '");
-			sql.append(menuRightName);
-			sql.append("')");
+			sql.append(" where TR.RightName = :MenuRight )");
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
