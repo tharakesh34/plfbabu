@@ -50,7 +50,6 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.backend.model.ddapayments.DDAPayments;
-import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -146,8 +145,6 @@ public interface FinanceMainDAO {
 	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
 
 	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
-
-	List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance);
 
 	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
 

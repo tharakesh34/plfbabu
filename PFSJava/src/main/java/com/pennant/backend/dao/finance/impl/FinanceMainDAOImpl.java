@@ -55,10 +55,8 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.ddapayments.DDAPayments;
-import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
-import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -1204,36 +1202,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
     }
-
-	/**
-	 * Fetch the Records Finance Main Detail details by key field
-	 * 
-	 * @param curBD
-	 * @param nextBD
-	 * @return
-	 */
-	@Override
-	public List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance) {
-		logger.debug("Entering");
-		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
-		customerFinanceDetail.setFinReference(id); 
-		customerFinanceDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		customerFinanceDetail.setRecordStatus("Saved");
-		StringBuilder selectSql = new StringBuilder(" ");
-		selectSql.append("SELECT AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, RecordType, UsrName "); 
- 		selectSql.append(" from FinStsAprvlInquiry_View ");
- 		selectSql.append(" Where AuditReference =:FinReference and RecordType = :RecordType ");
- 		if(approvedFinance){
- 			selectSql.append(" and RecordStatus <> :RecordStatus");
- 		}
- 		selectSql.append(" Order by AuditDate ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
-		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuditTransaction.class);
-		
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
-	}
 	
 	/**
 	 * Reject Finance Details Saving For Reinstance of Finance Process
