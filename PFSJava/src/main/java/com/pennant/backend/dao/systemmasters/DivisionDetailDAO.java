@@ -42,12 +42,23 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
+import com.pennanttech.pff.core.TableType;
 
-public interface DivisionDetailDAO {
+public interface DivisionDetailDAO extends BasicCrudDao<DivisionDetail>{
 
 	DivisionDetail getDivisionDetailById(String id,String type);
-	void update(DivisionDetail divisionDetail,String type);
-	void delete(DivisionDetail divisionDetail,String type);
-	String save(DivisionDetail divisionDetail,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param divisionCode
+	 *            divisionCode of the divisionDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String divisionCode, TableType tableType);
+
 }

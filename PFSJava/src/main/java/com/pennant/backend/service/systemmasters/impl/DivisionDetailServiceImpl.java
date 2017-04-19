@@ -42,9 +42,6 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.DivisionDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>DivisionDetail</b>.<br>
@@ -137,18 +135,19 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 		
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
 		logger.debug("Entering");	
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
+		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		
 		DivisionDetail divisionDetail = (DivisionDetail) auditHeader.getAuditDetail().getModelData();
 		
+		TableType tableType = TableType.MAIN_TAB;
 		if (divisionDetail.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
-
+		
 		if (divisionDetail.isNew()) {
 			getDivisionDetailDAO().save(divisionDetail,tableType);
 		}else{
@@ -174,14 +173,14 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete",false);
+		auditHeader = businessValidation(auditHeader,"delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		
 		DivisionDetail divisionDetail = (DivisionDetail) auditHeader.getAuditDetail().getModelData();
-		getDivisionDetailDAO().delete(divisionDetail,"");
+		getDivisionDetailDAO().delete(divisionDetail, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -229,18 +228,24 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove", false);
+		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
 		DivisionDetail divisionDetail = new DivisionDetail();
 		BeanUtils.copyProperties((DivisionDetail) auditHeader.getAuditDetail().getModelData(), divisionDetail);
+		
+		getDivisionDetailDAO().delete(divisionDetail, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(divisionDetail.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(divisionDetailDAO.getDivisionDetailById(divisionDetail.getDivisionCode(), ""));
+		}
 
 		if (divisionDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getDivisionDetailDAO().delete(divisionDetail, "");
+			getDivisionDetailDAO().delete(divisionDetail, TableType.MAIN_TAB);
 
 		} else {
 			divisionDetail.setRoleCode("");
@@ -252,15 +257,14 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 			if (divisionDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				divisionDetail.setRecordType("");
-				getDivisionDetailDAO().save(divisionDetail, "");
+				getDivisionDetailDAO().save(divisionDetail, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				divisionDetail.setRecordType("");
-				getDivisionDetailDAO().update(divisionDetail, "");
+				getDivisionDetailDAO().update(divisionDetail,TableType.MAIN_TAB);
 			}
 		}
 
-		getDivisionDetailDAO().delete(divisionDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -286,7 +290,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	
 		public AuditHeader  doReject(AuditHeader auditHeader) {
 			logger.debug("Entering");
-			auditHeader = businessValidation(auditHeader,"doApprove",false);
+			auditHeader = businessValidation(auditHeader,"doApprove");
 			if (!auditHeader.isNextProcess()) {
 				return auditHeader;
 			}
@@ -294,7 +298,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 			DivisionDetail divisionDetail = (DivisionDetail) auditHeader.getAuditDetail().getModelData();
 			
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getDivisionDetailDAO().delete(divisionDetail,"_Temp");
+			getDivisionDetailDAO().delete(divisionDetail, TableType.TEMP_TAB);
 			
 			getAuditHeaderDAO().addAudit(auditHeader);
 			logger.debug("Leaving");
@@ -314,9 +318,9 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 		 */
 
 		
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
+		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
@@ -333,80 +337,30 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 		 * 5)	for any mismatch conditions Fetch the error details from getDivisionDetailDAO().getErrorDetail with Error ID and language as parameters.
 		 * 6)	if any error/Warnings  then assign the to auditHeader 
 		 * @param AuditHeader (auditHeader)
-		 * @param boolean onlineRequest
 		 * @return auditHeader
 		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
-			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-			DivisionDetail divisionDetail= (DivisionDetail) auditDetail.getModelData();
-			
-			DivisionDetail tempDivisionDetail= null;
-			if (divisionDetail.isWorkflow()){
-				tempDivisionDetail = getDivisionDetailDAO().getDivisionDetailById(divisionDetail.getId(), "_Temp");
-			}
-			DivisionDetail befDivisionDetail= getDivisionDetailDAO().getDivisionDetailById(divisionDetail.getId(), "");
-			
-			DivisionDetail oldDivisionDetail= divisionDetail.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=divisionDetail.getId();
-			errParm[0]=PennantJavaUtil.getLabel("label_DivisionCode")+":"+valueParm[0];
-			
-			if (divisionDetail.isNew()){ // for New record or new record into work flow
-				
-				if (!divisionDetail.isWorkflow()){// With out Work flow only new records  
-					if (befDivisionDetail !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-					}	
-				}else{ // with work flow
-					if (divisionDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befDivisionDetail !=null || tempDivisionDetail!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-						}
-					}else{ // if records not exists in the Main flow table
-						if (befDivisionDetail ==null || tempDivisionDetail!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-						}
-					}
-				}
-			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!divisionDetail.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befDivisionDetail ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-					}else{
-						if (oldDivisionDetail!=null && !oldDivisionDetail.getLastMntOn().equals(befDivisionDetail.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
-							}
-						}
-					}
-				}else{
-				
-					if (tempDivisionDetail==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-					
-					if (tempDivisionDetail!=null && oldDivisionDetail!=null && !oldDivisionDetail.getLastMntOn().equals(tempDivisionDetail.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-				}
-			}
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
 
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if("doApprove".equals(StringUtils.trimToEmpty(method)) || !divisionDetail.isWorkflow()){
-				auditDetail.setBefImage(befDivisionDetail);	
-			}
+		// Get the model object.
+		DivisionDetail divisionDetail = (DivisionDetail) auditDetail.getModelData();
+		String code = divisionDetail.getDivisionCode();
 
-			return auditDetail;
+		// Check the unique keys.
+		if (divisionDetail.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(divisionDetail.getRecordType())
+				&& divisionDetailDAO.isDuplicateKey(code, divisionDetail.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_DivisionCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
 
 }

@@ -705,16 +705,15 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			}
 
 			try {
-				if(doProcess(aDivisionDetail,tranType)){
+				if (doProcess(aDivisionDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
-			
+
 		}
 		logger.debug("Leaving");
 	}
@@ -786,16 +785,14 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		
 		// save it to database
 		try {
-			
-			if(doProcess(aDivisionDetail,tranType)){
-				//doWriteBeanToComponents(aDivisionDetail);
+
+			if (doProcess(aDivisionDetail, tranType)) {
+				// doWriteBeanToComponents(aDivisionDetail);
 				refreshList();
 				closeDialog();
 			}
-
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_DivisionDetailDialog,e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

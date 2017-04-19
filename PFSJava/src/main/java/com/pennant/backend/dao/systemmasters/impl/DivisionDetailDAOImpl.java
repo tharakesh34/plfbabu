@@ -40,29 +40,30 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.backend.dao.systemmasters.impl;
-
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>DivisionDetail model</b> class.<br>
@@ -91,8 +92,8 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	@Override
 	public DivisionDetail getDivisionDetailById(final String id, String type) {
 		logger.debug("Entering");
-		DivisionDetail divisionDetail = new DivisionDetail();
 		
+		DivisionDetail divisionDetail = new DivisionDetail();
 		divisionDetail.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks ");
@@ -118,6 +119,120 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		return divisionDetail;
 	}
 	
+	@Override
+	public boolean isDuplicateKey(String divisionCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "DivisionCode = :divisionCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("SMTDivisionDetail", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("SMTDivisionDetail_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "SMTDivisionDetail_Temp", "SMTDivisionDetail" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("divisionCode", divisionCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+	@Override
+	public String save(DivisionDetail divisionDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql =new StringBuilder("insert into SMTDivisionDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks ");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion)");
+		sql.append(" values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks ");
+		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:AlwPromotion)");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL +sql.toString());		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		try{
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		}catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return divisionDetail.getId();
+	}
+	
+	@Override
+	public void update(DivisionDetail divisionDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql =new StringBuilder("update SMTDivisionDetail");
+		sql.append(tableType.getSuffix()); 
+		sql.append(" set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks");
+		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
+		sql.append(" where DivisionCode =:DivisionCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void delete(DivisionDetail divisionDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from SMTDivisionDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" where DivisionCode =:DivisionCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL +  sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(divisionDetail);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(),paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * To Set  dataSource
 	 * @param dataSource
@@ -126,124 +241,4 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
-	/**
-	 * This method Deletes the Record from the SMTDivisionDetail or SMTDivisionDetail_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Division Detail by key DivisionCode
-	 * 
-	 * @param Division Detail (divisionDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(DivisionDetail divisionDetail,String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		
-		StringBuilder deleteSql = new StringBuilder("Delete From SMTDivisionDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where DivisionCode =:DivisionCode");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(divisionDetail);
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",divisionDetail.getId() ,divisionDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",divisionDetail.getId() ,divisionDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
-		}
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * This method insert new Records into SMTDivisionDetail or SMTDivisionDetail_Temp.
-	 *
-	 * save Division Detail 
-	 * 
-	 * @param Division Detail (divisionDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	
-	@Override
-	public String save(DivisionDetail divisionDetail,String type) {
-		logger.debug("Entering");
-		
-		StringBuilder insertSql =new StringBuilder("Insert Into SMTDivisionDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks ");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion)");
-		insertSql.append(" Values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks ");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:AlwPromotion)");
-		
-		logger.debug("insertSql: " + insertSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(divisionDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return divisionDetail.getId();
-	}
-	
-	/**
-	 * This method updates the Record SMTDivisionDetail or SMTDivisionDetail_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Division Detail by key DivisionCode and Version
-	 * 
-	 * @param Division Detail (divisionDetail)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	
-	@SuppressWarnings("serial")
-	@Override
-	public void update(DivisionDetail divisionDetail,String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update SMTDivisionDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
-		updateSql.append(" Where DivisionCode =:DivisionCode");
-		
-		if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
-		}
-		
-		logger.debug("updateSql: " + updateSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(divisionDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",divisionDetail.getId() ,divisionDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
-		}
-		logger.debug("Leaving");
-	}
-	
-	private ErrorDetails  getError(String errorId, String divisionCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = divisionCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DivisionCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-	
 }

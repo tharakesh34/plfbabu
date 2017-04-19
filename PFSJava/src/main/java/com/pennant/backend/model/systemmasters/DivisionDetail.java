@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -173,5 +174,8 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 
 	public void setDivSuspRemarks(String divSuspRemarks) {
 		this.divSuspRemarks = divSuspRemarks;
+	}
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }
