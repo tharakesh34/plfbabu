@@ -11,31 +11,28 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 
-public class DisbursementService {
+public class DisbursementService implements Runnable {
 	private static final Logger			logger	= Logger.getLogger(DisbursementService.class);
 
-	private DataSource					dataSource;
+	private DataSource					datasource;
 	private String						database;
 	private long						userId;
+	private List<FinAdvancePayments>	disbusments;
 
-	private static DisbursementService	instance;
-	private NamedParameterJdbcTemplate	jdbcTemplate;
-
-	private DisbursementService() {
-
-	}
-
-	private DisbursementService(DataSource dataSource, String database, long userId) {
-		this.dataSource = dataSource;
+	public DisbursementService(List<FinAdvancePayments> disbusments, String database, long userId) {
+		this.disbusments = disbusments;
 		this.database = database;
+		this.userId = userId;
+		this.datasource = (DataSource) SpringUtil.getBean("pfsDatasource");
 	}
 
-	public void process(List<FinAdvancePayments> disbusments) {
+	public void process() {
 		Map<String, List<Long>> config = new HashMap<>();
 
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -59,12 +56,12 @@ public class DisbursementService {
 		for (Entry<String, List<Long>> disbursment : config.entrySet()) {
 
 			if ("DISB_IMPS_EXPORT".equals(disbursment.getKey())) {
-				DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
+				DataEngineDBProcess proce = new DataEngineDBProcess(datasource, userId, database);
 				proce.processData(disbursment.getKey());
 				continue;
 			}
 
-			DataEngineExport export = new DataEngineExport(dataSource, userId, database);
+			DataEngineExport export = new DataEngineExport(datasource, userId, database);
 			Map<String, Object> filterMap = new HashMap<>();
 
 			filterMap.put("PAYMENTID", disbursment.getValue().toArray(new String[disbursment.getValue().size()]));
@@ -80,18 +77,7 @@ public class DisbursementService {
 
 	}
 
-	public DisbursementService getInstance(DataSource dataSource, String database, long userId) {
-		if (instance == null) {
-
-			synchronized (DisbursementService.class) {
-				if (instance == null) {
-					instance = new DisbursementService(dataSource, database, userId);
-				}
-			}
-		}
-
-		return instance;
-	}
+	private NamedParameterJdbcTemplate	jdbcTemplate;
 
 	private String getConfigName(FinAdvancePayments disbursment) {
 		MapSqlParameterSource parameter = null;
@@ -116,6 +102,12 @@ public class DisbursementService {
 			parameter = null;
 		}
 		return null;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

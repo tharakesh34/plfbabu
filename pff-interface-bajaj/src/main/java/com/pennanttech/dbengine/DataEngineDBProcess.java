@@ -27,7 +27,7 @@ public class DataEngineDBProcess extends DataEngine {
 		processData(getConfigurationByName(configName));
 	}
 
-	private void processData(Configuration config) {
+	public void processData(Configuration config) {
 		logger.debug("Entering");
 
 		Object object;
