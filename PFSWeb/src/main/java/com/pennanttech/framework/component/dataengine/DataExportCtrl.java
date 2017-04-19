@@ -490,9 +490,9 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				status = getPannelExecution(config);
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
-					dbDataEngine.processDBData(config);
+					dbDataEngine.processData(config);
 				} else {
-					DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), status);
+					DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), status, null);
 					dataEngine.setFilterMap(filterMap);
 					dataEngine.exportData(config.getName());
 				}

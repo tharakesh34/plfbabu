@@ -375,9 +375,9 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 				status = getPannelExecution(config);
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
-					dbDataEngine.processDBData(config);
+					dbDataEngine.processData(config);
 				} else {
-					DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status);
+					DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 					dataEngine.setMedia(media);
 					dataEngine.importData(config.getName());
 				}
