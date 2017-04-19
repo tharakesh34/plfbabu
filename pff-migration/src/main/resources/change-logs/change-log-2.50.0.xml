@@ -1343,5 +1343,28 @@ FROM         FINANCESTATUSCODES
 
 	</sql>
 	</changeSet>
+	 <changeSet id="80" author="Satish">
+ <sql>
+
+UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='N'  where pastduePftCalMthd='NOTAPP';
+UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='S'  where pastduePftCalMthd='SRATE';
+UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='M'  where pastduePftCalMthd='SRATEMRG';
+UPDATE RMTFINANCETYPES_TEMP set PastduePftMargin=0  where PastduePftMargin is null;
+UPDATE RMTFINANCETYPES set pastduePftCalMthd='N'  where pastduePftCalMthd='NOTAPP';
+UPDATE RMTFINANCETYPES set pastduePftCalMthd='S'  where pastduePftCalMthd='SRATE';
+UPDATE RMTFINANCETYPES set pastduePftCalMthd='M'  where pastduePftCalMthd='SRATEMRG';
+UPDATE RMTFINANCETYPES set PastduePftMargin=0  where PastduePftMargin is null;
+UPDATE FinanceMain set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+UPDATE FinanceMain set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+UPDATE FinanceMain_Temp set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+UPDATE FinanceMain_Temp set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+UPDATE FinPftDetails set PftOnPDMethod=(select pastduePftCalMthd from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
+UPDATE FinPftDetails set PftOnPDMrg=(select PastduePftMargin from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
+UPDATE FinPftDetails set CalPftOnPD=0  where PftOnPDMethod='N';
+UPDATE FinPftDetails set CalPftOnPD=1  where PftOnPDMethod != 'N';
+ 
+ </sql>
+ 
+ </changeSet>
  
 </databaseChangeLog>
