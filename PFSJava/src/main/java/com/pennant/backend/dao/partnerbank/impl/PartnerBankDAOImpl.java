@@ -105,7 +105,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		selectSql
 				.append("Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql
-				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt");
+				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCentre, CrossCentre");
 		selectSql
 				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -209,13 +209,13 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		insertSql
 				.append(" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		insertSql
-				.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt");
+				.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCentre, CrossCentre ");
 		insertSql
 				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql
 				.append(" Values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
 		insertSql
-				.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt");
+				.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCentre, :CrossCentre");
 		insertSql
 				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -251,7 +251,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		updateSql
 				.append(" Set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
 		updateSql
-				.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt");
+				.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCentre = :ProfitCentre, CrossCentre = :CrossCentre");
 		updateSql
 				.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PartnerBankId =:PartnerBankId");
@@ -328,7 +328,6 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 	
 	public void deletePartner(PartnerBank partnerBank) {
 		logger.debug("Entering");
-		int recordCount = 0;
 		PartnerBankModes partnerBankModes= new PartnerBankModes();
 		partnerBankModes.setPartnerBankId(partnerBank.getPartnerBankId());
 		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBankModes");
@@ -338,7 +337,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBankModes);
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}

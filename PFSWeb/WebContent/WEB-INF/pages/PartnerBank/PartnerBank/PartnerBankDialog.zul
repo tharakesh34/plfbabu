@@ -98,7 +98,7 @@
 								<label id="label_BankCode"
 									value="${c:l('label_PartnerBankDialog_BankCode.value')}" />
 								<extendedcombobox id="bankCode" />
-								<label id="label_BankBranchCode"
+								<label id="label_BankBranchCode" visible="false"
 									value="${c:l('label_PartnerBankDialog_BankBranchCode.value')}" />
 								<extendedcombobox id="bankBranchCode" />
 							</row>
@@ -163,13 +163,13 @@
 							</hlayout>
 							<label
 								id="label_PartnerBankDialog_ModeDisbursment"
-								value="${c:l('label_PartnerBankDialog_ModeDisbursment.value')}"  visible="false"/>
+								value="${c:l('label_PartnerBankDialog_ModeDisbursment.value')}" />
 							<hlayout>
 								<space id="space_modeDisbursments"
-									spacing="2px" sclass="mandatory" visible="false"/>
+									spacing="2px" />
 								<textbox id="modeDisbursment"
-									width="175px" readonly="true"  visible="false"/>
-								<button id="btnSearchModeDisbursment" visible="false"
+									width="175px" readonly="true" />
+								<button id="btnSearchModeDisbursment" 
 									image="/images/icons/LOVSearch.png" />
 							</hlayout>
 							</row>
@@ -184,13 +184,13 @@
 							</hlayout>
 							<label
 								id="label_PartnerBankDialog_ModeReceipts"
-								value="${c:l('label_PartnerBankDialog_ModeReceipts.value')}" visible="false" />
+								value="${c:l('label_PartnerBankDialog_ModeReceipts.value')}"  />
 							<hlayout>
 								<space id="space_modeReceipts"
-									spacing="2px" sclass="mandatory" visible="false"/>
-								<textbox id="modeReceipts" visible="false"
+									spacing="2px" />
+								<textbox id="modeReceipts" 
 									width="175px" readonly="true" />
-								<button id="btnSearchModeReceipts" visible="false"
+								<button id="btnSearchModeReceipts" 
 									image="/images/icons/LOVSearch.png" />
 							</hlayout>
 							</row>
@@ -205,13 +205,13 @@
 							</hlayout>
 							<label
 								id="label_PartnerBankDialog_ModePayments"
-								value="${c:l('label_PartnerBankDialog_ModePayments.value')}" visible="false" />
+								value="${c:l('label_PartnerBankDialog_ModePayments.value')}" />
 							<hlayout>
 								<space id="space_modePayments"
-									spacing="2px" sclass="mandatory"  visible="false"/>
+									spacing="2px"  />
 								<textbox id="modePayments"
-									width="175px" readonly="true"  visible="false"/>
-								<button id="btnSearchModePayments" visible="false"
+									width="175px" readonly="true"  />
+								<button id="btnSearchModePayments" 
 									image="/images/icons/LOVSearch.png" />
 							</hlayout>
 							</row>
@@ -234,6 +234,30 @@
 								<intbox id="inFavourLength" width="100px"
 									maxlength="5" />
 							</hlayout>
+							<label
+								id="label_PartnerBankDialog_SAPGLCode"
+								value="${c:l('label_PartnerBankDialog_SAPGLCode.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<textbox id="sapGLCode" maxlength="15" width="100"/>
+							</hlayout>
+							</row>
+							<row>
+							<label
+								id="label_PartnerBankDialog_ProfitCentre"
+								value="${c:l('label_PartnerBankDialog_ProfitCentre.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<textbox id="profitCenter" maxlength="15" width="100"/>
+							</hlayout>
+							<label
+								id="label_PartnerBankDialog_CrossCentre"
+								value="${c:l('label_PartnerBankDialog_CrossCentre.value')}" />
+							<hlayout>
+								<space spacing="2px" />
+								<textbox id="crossCentre" maxlength="15" width="100"/>
+							</hlayout>
+							
 							</row>
 							<row visible="true">
 								<label

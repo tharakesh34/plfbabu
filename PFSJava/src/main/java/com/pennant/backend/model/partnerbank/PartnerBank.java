@@ -89,6 +89,10 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private String				modeDisbursment;
 	private String				modePayments;
 	private String				modeReceipts;
+	private String				hostGLCode;
+	private String				profitCentre;
+	private String				crossCentre;
+	
 	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
 
 	public boolean isNew() {
@@ -352,6 +356,30 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 
 	public void setAlwReceipt(boolean alwReceipt) {
 		this.alwReceipt = alwReceipt;
+	}
+
+	public String getHostGLCode() {
+		return hostGLCode;
+	}
+
+	public void setHostGLCode(String hostGLCode) {
+		this.hostGLCode = hostGLCode;
+	}
+
+	public String getProfitCentre() {
+		return profitCentre;
+	}
+
+	public void setProfitCentre(String profitCentre) {
+		this.profitCentre = profitCentre;
+	}
+
+	public String getCrossCentre() {
+		return crossCentre;
+	}
+
+	public void setCrossCentre(String crossCentre) {
+		this.crossCentre = crossCentre;
 	}
 
 }

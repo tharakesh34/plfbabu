@@ -79,6 +79,7 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -127,6 +128,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Space							space_modeReceipts;
 	protected Checkbox						alwReceipts;
 	protected Label							label_PartnerBankDialog_ModeReceipts;
+	protected Textbox						sapGLCode;
+	protected Textbox						profitCenter;
+	protected Textbox 						crossCentre;
+	protected Label							label_BankBranchCode;
+	
 	
 	private PartnerBank						partnerBank;															
 	private transient PartnerBankListCtrl	partnerBankListCtrl;													
@@ -221,6 +227,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.bankBranchCode.setValueColumn("BranchCode");
 		this.bankBranchCode.setDescColumn("BranchDesc");
 		this.bankBranchCode.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchCode.setVisible(false);
 
 		this.branchMICRCode.setMaxlength(20);
 		this.branchMICRCode.setReadonly(true);
@@ -354,8 +361,15 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.partnerBankCode.setValue(aPartnerBank.getPartnerBankCode());
 		this.partnerBankName.setValue(aPartnerBank.getPartnerBankName());
 		this.bankCode.setValue(aPartnerBank.getBankCode());
-		this.bankBranchCode.setValue(aPartnerBank.getBankBranchCode());
-
+		if (aPartnerBank.getBankBranchCode() != null) {
+			this.bankBranchCode.setValue(aPartnerBank.getBankBranchCode());
+			this.bankBranchCode.setVisible(true);
+			this.label_BankBranchCode.setVisible(true);
+		} else {
+			this.bankBranchCode.setVisible(false);
+			this.label_BankBranchCode.setVisible(false);
+			this.bankBranchCode.setValue("");
+		}
 		this.branchMICRCode.setValue(aPartnerBank.getBranchMICRCode());
 		this.branchIFSCCode.setValue(aPartnerBank.getBranchIFSCCode());
 		this.branchCity.setValue(aPartnerBank.getBranchCity());
@@ -365,50 +379,47 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.reqFileDownload.setChecked(aPartnerBank.isAlwFileDownload());
 		this.inFavourLength.setValue(aPartnerBank.getInFavourLength());
 		this.active.setChecked(aPartnerBank.isActive());
-		this.alwDisburment.setChecked(aPartnerBank.isAlwDisb());
+		this.sapGLCode.setValue(aPartnerBank.getHostGLCode());
+		this.profitCenter.setValue(aPartnerBank.getProfitCentre());
+		this.crossCentre.setValue(aPartnerBank.getCrossCentre());
 		
+		this.alwDisburment.setChecked(aPartnerBank.isAlwDisb());
 		if (this.alwDisburment.isChecked()) {
-			this.label_PartnerBankDialog_ModeDisbursment.setVisible(true);
-			this.modeDisbursment.setVisible(true);
-			this.btnSearchModeDisbursment.setVisible(true);
+			this.btnSearchModeDisbursment.setDisabled(isReadOnly("button_PartnerBankDialog_ModeDisbursment"));
+			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue(StringUtils.trimToEmpty(aPartnerBank.getModeDisbursment()));
-			this.space_modeDisbursments.setVisible(true);
+			this.space_modeDisbursments.setSclass("mandatory");
 		} else {
-			this.label_PartnerBankDialog_ModeDisbursment.setVisible(false);
-			this.modeDisbursment.setVisible(false);
-			this.btnSearchModeDisbursment.setVisible(false);
+			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
-			this.space_modeDisbursments.setVisible(false);
+			this.space_modeDisbursments.setSclass("");
+			this.btnSearchModeDisbursment.setDisabled(true);
 		}
 		
 		this.alwPayments.setChecked(aPartnerBank.isAlwPayment());
 		if (this.alwPayments.isChecked()) {
-			this.label_PartnerBankDialog_ModePayments.setVisible(true);
-			this.modePayments.setVisible(true);
-			this.btnSearchModePayments.setVisible(true);
+			this.modePayments.setReadonly(true);
 			this.modePayments.setValue(StringUtils.trimToEmpty(aPartnerBank.getModePayments()));
-			this.space_modePayments.setVisible(true);
+			this.space_modePayments.setSclass("mandatory");
+			this.btnSearchModePayments.setDisabled(isReadOnly("button_PartnerBankDialog_ModePayments"));
 		} else {
-			this.label_PartnerBankDialog_ModePayments.setVisible(false);
-			this.modePayments.setVisible(false);
-			this.btnSearchModePayments.setVisible(false);
+			this.modePayments.setReadonly(true);
 			this.modePayments.setValue("");
-			this.space_modePayments.setVisible(false);
+			this.space_modePayments.setSclass("");
+			this.btnSearchModePayments.setDisabled(true);
 		}
 		
 		this.alwReceipts.setChecked(aPartnerBank.isAlwReceipt());
 		if (this.alwReceipts.isChecked()) {
-			this.label_PartnerBankDialog_ModeReceipts.setVisible(true);
-			this.modeReceipts.setVisible(true);
-			this.btnSearchModeReceipts.setVisible(true);
+			this.modeReceipts.setReadonly(true);
 			this.modeReceipts.setValue(StringUtils.trimToEmpty(aPartnerBank.getModeReceipts()));
-			this.space_modeReceipts.setVisible(true);
+			this.space_modeReceipts.setSclass("mandatory");
+			this.btnSearchModeReceipts.setDisabled(isReadOnly("button_PartnerBankDialog_ModeReceipts"));
 		} else {
-			this.label_PartnerBankDialog_ModeReceipts.setVisible(false);
-			this.modeReceipts.setVisible(false);
-			this.btnSearchModeReceipts.setVisible(false);
+			this.modeReceipts.setReadonly(true);
 			this.modeReceipts.setValue("");
-			this.space_modeReceipts.setVisible(false);
+			this.space_modeReceipts.setSclass("");
+			this.btnSearchModeReceipts.setDisabled(true);
 		}
 		
 		if (aPartnerBank.isNewRecord()) {
@@ -537,6 +548,28 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		//Host GL Code
+		try {
+			aPartnerBank.setHostGLCode(this.sapGLCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Profit Centre
+		try {
+			aPartnerBank.setProfitCentre(this.profitCenter.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Cross Centre
+		try {
+			aPartnerBank.setCrossCentre(this.crossCentre.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 
 		//Active
 		try {
@@ -668,19 +701,19 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 		
 		//Disbursement
-		if (this.modeDisbursment.isVisible()) {
+		if (!this.btnSearchModeDisbursment.isDisabled()) {
 			this.modeDisbursment.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_ModeDisbursment.value"), null, true));
 		}
 		
 		//Receipts
-		if (this.modeReceipts.isVisible()) {
+		if (!this.btnSearchModeReceipts.isDisabled()) {
 			this.modeReceipts.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_ModeReceipts.value"), null, true));
 		}
 		
 		//Payments
-		if (this.modePayments.isVisible() ) {
+		if (!this.btnSearchModePayments.isDisabled() ) {
 			this.modePayments.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_ModePayments.value"), null, true));
 		}
@@ -690,6 +723,28 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_GLCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
+		
+		//Host GL Code
+		if (!this.sapGLCode.isReadonly()) {
+			this.sapGLCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_SAPGLCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+		
+		//Profit Centre
+		if (!this.profitCenter.isReadonly()) {
+			this.profitCenter.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_ProfitCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					false));
+		}
+		
+		//Profit Centre
+		if (!this.crossCentre.isReadonly()) {
+			this.crossCentre.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_CrossCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					false));
+		}
+		
+		
 		logger.debug("Leaving");
 	}
 
@@ -711,6 +766,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeDisbursment.setConstraint("");
 		this.modeReceipts.setConstraint("");
 		this.modePayments.setConstraint("");
+		this.sapGLCode.setConstraint("");
+		this.profitCenter.setConstraint("");
+		this.crossCentre.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -747,6 +805,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeDisbursment.setErrorMessage("");
 		this.modePayments.setErrorMessage("");
 		this.modeReceipts.setErrorMessage("");
+		this.sapGLCode.setErrorMessage("");
+		this.profitCenter.setErrorMessage("");
+		this.crossCentre.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -810,11 +871,29 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (dataObject instanceof String) {
 			this.bankCode.setValue("");
 			this.bankCode.setDescription("");
+			this.bankBranchCode.setValue("");
+			this.bankBranchCode.setDescription("");
+			this.bankBranchCode.setObject(null);
+			Filter[] bankBranchCode = new Filter[1];
+			bankBranchCode[0] = new Filter("BankCode","", Filter.OP_EQUAL);
+			this.bankBranchCode.setFilters(bankBranchCode);
+			this.branchCity.setValue("");
+			this.branchMICRCode.setValue("");
+			this.branchIFSCCode.setValue("");
+			this.label_BankBranchCode.setVisible(false);
+			this.bankBranchCode.setVisible(false);
 		} else {
 			BankDetail details = (BankDetail) dataObject;
 			if (details != null) {
 				this.bankCode.setValue(String.valueOf(details.getBankCode()));
 				this.bankCode.setDescription(details.getBankName());
+				Filter[] bankBranchCode = new Filter[1];
+				bankBranchCode[0] = new Filter("BankCode",this.bankCode.getValue(), Filter.OP_EQUAL);
+				this.bankBranchCode.setFilters(bankBranchCode);
+				this.bankBranchCode.setValue("");
+				this.bankBranchCode.setDescription("");
+				this.label_BankBranchCode.setVisible(true);
+				this.bankBranchCode.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
@@ -897,6 +976,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.btnSearchModeDisbursment.setDisabled(isReadOnly("button_PartnerBankDialog_ModeDisbursment"));
 		this.btnSearchModePayments.setDisabled(isReadOnly("button_PartnerBankDialog_ModePayments"));
 		this.btnSearchModeReceipts.setDisabled(isReadOnly("button_PartnerBankDialog_ModeReceipts"));
+		this.sapGLCode.setReadonly(isReadOnly("PartnerBankDialog_HostGLCode"));
+		this.profitCenter.setReadonly(isReadOnly("PartnerBankDialog_ProfitCenter"));
+		this.crossCentre.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -986,6 +1068,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeDisbursment.setValue("");
 		this.modePayments.setValue("");
 		this.modeReceipts.setValue("");
+		this.sapGLCode.setValue("");
+		this.profitCenter.setValue("");
+		this.crossCentre.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -1373,16 +1458,15 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckDisburment() {
 		logger.debug("Entering");
 		if (this.alwDisburment.isChecked()) {
-			this.label_PartnerBankDialog_ModeDisbursment.setVisible(true);
-			this.modeDisbursment.setVisible(true);
-			this.btnSearchModeDisbursment.setVisible(true);
+			this.btnSearchModeDisbursment.setDisabled(false);
+			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
-			this.space_modeDisbursments.setVisible(true);
+			this.space_modeDisbursments.setSclass("mandatory");
 		} else {
-			this.label_PartnerBankDialog_ModeDisbursment.setVisible(false);
-			this.modeDisbursment.setVisible(false);
-			this.btnSearchModeDisbursment.setVisible(false);
-			this.space_modeDisbursments.setVisible(false);
+			this.btnSearchModeDisbursment.setDisabled(true);
+			this.modeDisbursment.setReadonly(true);
+			this.space_modeDisbursments.setSclass("");
+			this.modeDisbursment.setValue("");
 		}
 		logger.debug("Leaving");
 	}
@@ -1390,16 +1474,15 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckPayments() {
 		logger.debug("Entering");
 		if (this.alwPayments.isChecked()) {
-			this.label_PartnerBankDialog_ModePayments.setVisible(true);
-			this.modePayments.setVisible(true);
-			this.btnSearchModePayments.setVisible(true);
+			this.modePayments.setReadonly(true);
+			this.btnSearchModePayments.setDisabled(false);
 			this.modePayments.setValue("");
-			this.space_modePayments.setVisible(true);
+			this.space_modePayments.setSclass("mandatory");
 		} else {
-			this.label_PartnerBankDialog_ModePayments.setVisible(false);
-			this.modePayments.setVisible(false);
-			this.btnSearchModePayments.setVisible(false);
-			this.space_modePayments.setVisible(false);
+			this.modePayments.setReadonly(true);
+			this.btnSearchModePayments.setDisabled(true);
+			this.space_modePayments.setSclass("");
+			this.modePayments.setValue("");
 		}
 		logger.debug("Leaving");
 	}
@@ -1407,16 +1490,16 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckReceipts() {
 		logger.debug("Entering");
 		if (this.alwReceipts.isChecked()) {
-			this.label_PartnerBankDialog_ModeReceipts.setVisible(true);
-			this.modeReceipts.setVisible(true);
-			this.btnSearchModeReceipts.setVisible(true);
+			this.modeReceipts.setReadonly(true);
+			this.btnSearchModeReceipts.setDisabled(false);
 			this.modeReceipts.setValue("");
-			this.space_modeReceipts.setVisible(true);
+			this.space_modeReceipts.setSclass("mandatory");
+			
 		} else {
-			this.label_PartnerBankDialog_ModeReceipts.setVisible(false);
-			this.modeReceipts.setVisible(false);
-			this.btnSearchModeReceipts.setVisible(false);
-			this.space_modeReceipts.setVisible(false);
+			this.modeReceipts.setReadonly(true);
+			this.btnSearchModeReceipts.setDisabled(true);
+			this.space_modeReceipts.setSclass("");
+			this.modeReceipts.setValue("");
 		}
 		logger.debug("Leaving");
 	}
