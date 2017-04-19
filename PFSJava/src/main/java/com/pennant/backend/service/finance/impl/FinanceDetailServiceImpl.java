@@ -6547,10 +6547,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		Date curBDay = DateUtility.getAppDate();
 		
 		FinanceProfitDetail pftDetail =AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),null,curBDay);
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(financeMain, pftDetail, curBDay);
 
 		// Save/Update Finance Profit Details
-		doSave_PftDetails(amountCodes, financeDetail.getFinScheduleData(), pftDetail);
+		// Save/Update Finance Profit Details
+		boolean isNew = false;
+
+		if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			isNew = true;
+		}
+		
+		doSave_PftDetails(pftDetail, isNew);
 
 		financeMain.setRecordType("");
 		financeMain.setRoleCode("");

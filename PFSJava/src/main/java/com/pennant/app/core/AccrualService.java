@@ -109,11 +109,12 @@ public class AccrualService extends ServiceHelper {
 
 		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
 
+		//FIXME: The below code of adding might not be required as accrual is moved to SOD
 		// call the Calculations
-		Date dateCal = DateUtility.addDays(valueDate, 1);
+		//Date dateCal = DateUtility.addDays(valueDate, 1);
 
 		FinanceProfitDetail finPftDetail = AEAmounts.calProfitDetails(financeMain, scheduleDetailList, profitDetail,
-				dateCal);
+				valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
 		getFinanceProfitDetailDAO().update(finPftDetail, false);
