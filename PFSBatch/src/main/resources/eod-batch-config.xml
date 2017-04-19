@@ -29,7 +29,9 @@
 			<fail on="FAILED" />
 		</step>
 		<step id="microEOD">
-			<tasklet ref="microEODTaskLet" />
+			<tasklet ref="microEODTaskLet" >
+			<transaction-attributes propagation="NEVER"/>	
+			</tasklet>
 			<next on="*" to="microEODMonitor" />
 			<fail on="FAILED" />
 		</step>

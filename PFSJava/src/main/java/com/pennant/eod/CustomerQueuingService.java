@@ -62,6 +62,7 @@ public class CustomerQueuingService {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setEodDate(date);
+		customerQueuing.setErrorLog("");
 		customerQueuing.setEndTime(DateUtility.getSysDate());
 		customerQueuing.setStatus(EodConstants.STATUS_SUCCESS);
 		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);

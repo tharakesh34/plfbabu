@@ -15,12 +15,7 @@ public class EodThread implements Runnable {
 	@Override
 	public void run() {
 		logger.debug("Entering");
-		try {
-
-			getEodService().startProcess(eodDate, threadId);
-		} catch (Exception e) {
-			logger.error("Exception :",e);
-		}
+		getEodService().startProcess(eodDate, threadId);
 		logger.debug("Leaving");
 	}
 

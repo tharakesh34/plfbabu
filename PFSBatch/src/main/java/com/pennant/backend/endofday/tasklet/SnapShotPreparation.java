@@ -24,7 +24,7 @@ public class SnapShotPreparation implements Tasklet {
 		Date valueDate = DateUtility.getValueDate();
 		logger.debug("START: Snap Shot Preparation On : " + valueDate);
 
-		getSnapshotService().doSnapshotPreparation(valueDate);
+		//getSnapshotService().doSnapshotPreparation(valueDate);
 
 		logger.debug("COMPLETE: Snap Shot Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;

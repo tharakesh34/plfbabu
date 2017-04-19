@@ -72,7 +72,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setStatus(status);
 		customerQueuing.setEodDate(date);
 		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
-		selectSql.append(" and (Status = :Status)");
+		selectSql.append(" and (Status = :Status OR Status is null )");
 
 		logger.debug("selectSql: " + selectSql.toString());
 

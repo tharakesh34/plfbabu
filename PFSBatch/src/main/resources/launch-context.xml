@@ -4,40 +4,27 @@
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	
-	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-		<property name="url" value="${pfsjdbc.url}" />
-		<property name="username" value="${pfsjdbc.username}" />
-		<property name="password" value="${pfsjdbc.password}" />
-		<!-- <property name="validationQuery" value="SELECT 1" /> -->
-		<property name="testOnBorrow" value="1" />
-		<property name="maxActive" value="2" />
-		<!-- <property name="maxIdle" value="1" />
-		<property name="maxWait" value="10000" /> -->
+	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFSEC" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
-	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
-		<property name="url" value="${pffextjdbc.url}" />
-		<property name="username" value="${pffextjdbc.username}" />
-		<property name="password" value="${pffextjdbc.password}" />
-		<!-- <property name="validationQuery" value="SELECT 1" /> -->
-		<property name="testOnBorrow" value="1" />
-		<property name="maxActive" value="2" />
-		<!-- <property name="maxIdle" value="1" />
-		<property name="maxWait" value="10000" /> -->
+	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
-	<!--AUDIT Application database DSN-->
-	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-	  <property name="driverClassName" value="${pfsjdbc.driverClassName}" />
-	  <property name="url" value="${auditjdbc.url}" />
-	  <property name="username" value="${auditjdbc.username}" />
-	  <property name="password" value="${auditjdbc.password}" />
+	<bean id="auditDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFAUDIT" />
+		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
+	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFEXT" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+
 	<bean id="jobOperator"
 		class="org.springframework.batch.core.launch.support.SimpleJobOperator"
 		p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer"
@@ -75,7 +62,7 @@
       <bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor"/>
       
 	
-	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+<!-- 	<bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
 		<constructor-arg ref="configurationEncryptor" />
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="searchSystemEnvironment" value="true" />
@@ -87,7 +74,7 @@
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="order" value="1" />
-	</bean>
+	</bean> -->
 	
 	 <!--                                                                      -->
 	 <!-- Configuration for encryptor, based on environment variables.         -->

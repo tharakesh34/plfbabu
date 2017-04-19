@@ -59,7 +59,7 @@ public class EodService {
 	 * @param threadId
 	 * @throws SQLException
 	 */
-	public void startProcess(Date date, String threadId) throws SQLException {
+	public void startProcess(Date date, String threadId) {
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
@@ -95,15 +95,12 @@ public class EodService {
 					customerQueuingService.updateSucessFail(date, custId, errorMsg);
 				}
 			}
+			
+			resultSet.close();
+			sqlStatement.close();
 		} catch (Exception e) {
-			logger.warn("Exception: ", e);
+			logger.error("Exception: ", e);
 		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
 			DataSourceUtils.releaseConnection(connection, dataSource);
 		}
 	}
@@ -139,6 +136,10 @@ public class EodService {
 	}
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
+		
+		//Date roll over
+		dateRollOverService.process(connection, custId, date);
+		
 		//prepare customer queue
 		repayQueueService.saveQueue(connection, custId, date);
 
@@ -157,8 +158,7 @@ public class EodService {
 
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
-		//Date roll over
-		dateRollOverService.process(connection, custId, date);
+	
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
