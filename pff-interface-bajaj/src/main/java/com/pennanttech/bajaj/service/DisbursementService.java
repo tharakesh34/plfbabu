@@ -18,13 +18,13 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 
 public class DisbursementService extends Thread {
-	private static final Logger			logger	= Logger.getLogger(DisbursementService.class);
+	private static final Logger logger = Logger.getLogger(DisbursementService.class);
 
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	jdbcTemplate;
-	private String						database;
-	private long						userId;
-	private List<FinAdvancePayments>	disbusments;
+	private DataSource dataSource;
+	private NamedParameterJdbcTemplate jdbcTemplate;
+	private String database;
+	private long userId;
+	private List<FinAdvancePayments> disbusments;
 
 	public DisbursementService(List<FinAdvancePayments> disbusments, String database, long userId) {
 		this.disbusments = disbusments;
@@ -39,7 +39,7 @@ public class DisbursementService extends Thread {
 	}
 
 	public void process() {
-		Map<String, List<String>> config = new HashMap<>();
+		Map<String, StringBuilder> config = new HashMap<>();
 
 		for (FinAdvancePayments disbursment : disbusments) {
 			String configName = getConfigName(disbursment);
@@ -57,13 +57,19 @@ public class DisbursementService extends Thread {
 			}
 
 			if (!config.containsKey(configName)) {
-				config.put(configName, new ArrayList<String>());
+				config.put(configName, new StringBuilder());
 			}
-			config.get(configName).add(String.valueOf(disbursment.getPaymentId()));
+
+			StringBuilder builder = config.get(configName);
+
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
+			builder.append(String.valueOf(disbursment.getPaymentId()));
 
 		}
 
-		for (Entry<String, List<String>> disbursment : config.entrySet()) {
+		for (Entry<String, StringBuilder> disbursment : config.entrySet()) {
 
 			if ("DISB_IMPS_EXPORT".equals(disbursment.getKey())) {
 				DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
@@ -73,13 +79,16 @@ public class DisbursementService extends Thread {
 
 			DataEngineExport export = new DataEngineExport(dataSource, userId, database);
 			Map<String, Object> filterMap = new HashMap<>();
-
-			String[] values = disbursment.getValue().toArray(new String[disbursment.getValue().size()]);
-
-			filterMap.put("PAYMENTID", values);
+			filterMap.put("PAYMENTID", disbursment.getValue().toString());
+			
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("PRODUCT_CODE", "TL"); // FIXME
 
 			try {
 				export.setFilterMap(filterMap);
+				export.setParameterMap(parameterMap);
+				
+				
 				export.exportData(disbursment.getKey());
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
