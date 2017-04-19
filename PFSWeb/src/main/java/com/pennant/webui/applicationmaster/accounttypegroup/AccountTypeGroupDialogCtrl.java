@@ -594,9 +594,9 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 				this.parentGroupId.setAttribute("ParentGroupId", details.getGroupId());
 				this.accountTypeGroup.setParentGroup(details.getParentGroup());
 				this.accountTypeGroup.setParentGroupDesc(details.getParentGroupDesc());
-			}
-			if (this.acctTypeLevel.getValue() == 0 && this.parentGroupId.getValue() != null) {
-				this.acctTypeLevel.setValue((int) (details.getAcctTypeLevel() + 1));
+				if (this.acctTypeLevel.getValue() == 0 && this.parentGroupId.getValue() != null) {
+					this.acctTypeLevel.setValue((int) (details.getAcctTypeLevel() + 1));
+				}
 			}
 		}
 		logger.debug("Leaving" + event.toString());
