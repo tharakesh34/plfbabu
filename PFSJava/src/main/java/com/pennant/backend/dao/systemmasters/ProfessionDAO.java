@@ -42,16 +42,26 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Profession;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Profession model</b> class.<br>
  * 
  */
-public interface ProfessionDAO {
+public interface ProfessionDAO extends BasicCrudDao<Profession>{
 
 	Profession getProfessionById(String id,String type);
-	void update(Profession profession,String type);
-	void delete(Profession profession,String type);
-	String save(Profession profession,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param professionCode
+	 *            professionCode of the profession.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String professionCode, TableType tableType);
 }

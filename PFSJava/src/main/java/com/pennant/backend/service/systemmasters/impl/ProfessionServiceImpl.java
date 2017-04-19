@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.ProfessionService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Profession</b>.<br>
@@ -120,10 +118,12 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		Profession profession = (Profession) auditHeader.getAuditDetail().getModelData();
+		
+		TableType tableType = TableType.MAIN_TAB;
 		if (profession.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;;
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
@@ -162,7 +162,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 			return auditHeader;
 		}
 		Profession profession = (Profession) auditHeader.getAuditDetail().getModelData();
-		getProfessionDAO().delete(profession, "");
+		getProfessionDAO().delete(profession, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -176,7 +176,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	 *            (String)
 	 * @param type
 	 *            (String) ""/_Temp/_View
-	 * @return Profession
+	 * @return Profession""
 	 */
 	@Override
 	public Profession getProfessionById(String id) {
@@ -226,10 +226,17 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		}
 		Profession profession = new Profession();
 		BeanUtils.copyProperties((Profession) auditHeader.getAuditDetail().getModelData(), profession);
+		
+		getProfessionDAO().delete(profession, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(professionDAO.getProfessionById(profession.getProfessionCode(), ""));
+		}
+		
 		if (profession.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getProfessionDAO().delete(profession, "");
+			getProfessionDAO().delete(profession, TableType.MAIN_TAB);
 
 		} else {
 			profession.setRoleCode("");
@@ -242,15 +249,14 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				profession.setRecordType("");
-				getProfessionDAO().save(profession, "");
+				getProfessionDAO().save(profession, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				profession.setRecordType("");
-				getProfessionDAO().update(profession, "");
+				getProfessionDAO().update(profession, TableType.MAIN_TAB);
 			}
 		}
 
-		getProfessionDAO().delete(profession, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -285,7 +291,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		}
 		Profession profession = (Profession) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getProfessionDAO().delete(profession, "_Temp");
+		getProfessionDAO().delete(profession, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -303,7 +309,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -319,88 +325,28 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		Profession profession = (Profession) auditDetail.getModelData();
-		Profession tempProfession = null;
+		String code = profession.getProfessionCode();
 
-		if (profession.isWorkflow()) {
-			tempProfession = getProfessionDAO().getProfessionById(profession.getId(), "_Temp");
-		}
+		// Check the unique keys.
+		if (profession.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType())
+				&& professionDAO.isDuplicateKey(code, profession.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_ProfessionCode") + ": " + code;
 
-		Profession befProfession = getProfessionDAO().getProfessionById(profession.getId(), "");
-		Profession oldProfession = profession.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = profession.getProfessionCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_ProfessionCode") + ":"+ valueParm[0];
-
-		if (profession.isNew()) { // for New record or new record into work flow
-
-			if (!profession.isWorkflow()) {// With out Work flow only new
-				// records
-				if (befProfession != null) { // Record Already Exists in the
-					// table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-				if (profession.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befProfession != null || tempProfession != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befProfession == null || tempProfession != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!profession.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befProfession == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldProfession != null
-							&& !oldProfession.getLastMntOn().equals(befProfession.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempProfession == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-
-				if (tempProfession != null
-						&& oldProfession != null
-						&& !oldProfession.getLastMntOn().equals(tempProfession.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))|| !profession.isWorkflow()) {
-			auditDetail.setBefImage(befProfession);
-		}
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
