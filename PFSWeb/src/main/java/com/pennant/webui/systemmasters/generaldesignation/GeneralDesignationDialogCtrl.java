@@ -493,15 +493,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			}
 
 			try {
-				if(doProcess(aGeneralDesignation,tranType)){
+				if (doProcess(aGeneralDesignation, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
-			}			
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -617,15 +616,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		
 		// save it to database
 		try {
-			if(doProcess(aGeneralDesignation,tranType)){
+			if (doProcess(aGeneralDesignation, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
