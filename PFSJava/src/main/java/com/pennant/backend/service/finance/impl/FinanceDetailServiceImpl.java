@@ -109,6 +109,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -181,6 +182,8 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.bajaj.service.DisbursementService;
+import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -3575,8 +3578,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if(!isWIF){
 			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
 		}
+		
+		processDisbursmentRequets(financeDetail);
+		
 		logger.debug("Leaving");
 		return auditHeader;
+
+	}
+	
+	private void processDisbursmentRequets(FinanceDetail financeDetail) {
+		DisbursementService disbursementService = null;
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
+
+		disbursementService = new DisbursementService(list, App.DATABASE.name(), finMain.getLastMntBy());
+		Thread thread = new Thread(disbursementService);
+		try {
+			DisbursementService.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+
+		thread.start();
 
 	}
 
