@@ -42,16 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>DocumentType model</b> class.<br>
  * 
  */
-public interface DocumentTypeDAO {
+public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 
 	DocumentType getDocumentTypeById(String id,String type);
-	void update(DocumentType documentType,String type);
-	void delete(DocumentType documentType,String type);
-	String save(DocumentType documentType,String type);
+
+	/**
+	 *Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param docTypeCode
+	 *              docTypeCode of the documentType
+	 * @param tableType
+	 *               The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String docTypeCode, TableType tableType);
+	
 }

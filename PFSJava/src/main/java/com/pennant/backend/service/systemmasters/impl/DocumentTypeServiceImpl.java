@@ -60,6 +60,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>DocumentType</b>.<br>
@@ -121,12 +122,12 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		DocumentType documentType = (DocumentType) auditHeader.getAuditDetail()
 				.getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
 		if (documentType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (documentType.isNew()) {
@@ -168,7 +169,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		DocumentType documentType = (DocumentType) auditHeader.getAuditDetail()
 				.getModelData();
 
-		getDocumentTypeDAO().delete(documentType, "");
+		getDocumentTypeDAO().delete(documentType, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -235,12 +236,19 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		DocumentType documentType = new DocumentType();
 		BeanUtils.copyProperties((DocumentType) auditHeader.getAuditDetail()
 				.getModelData(), documentType);
+		
+		getDocumentTypeDAO().delete(documentType,  TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(documentType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(documentTypeDAO.getDocumentTypeById(documentType.getDocTypeCode(), ""));
+		}
+		
 
 		if (documentType.getRecordType().equals(
 				PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getDocumentTypeDAO().delete(documentType, "");
+			getDocumentTypeDAO().delete(documentType, TableType.MAIN_TAB);
 		} else {
 			documentType.setRoleCode("");
 			documentType.setNextRoleCode("");
@@ -252,15 +260,15 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				documentType.setRecordType("");
-				getDocumentTypeDAO().save(documentType, "");
+				getDocumentTypeDAO().save(documentType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				documentType.setRecordType("");
-				getDocumentTypeDAO().update(documentType, "");
+				getDocumentTypeDAO().update(documentType, TableType.MAIN_TAB);
 			}
 		}
 
-		getDocumentTypeDAO().delete(documentType, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -296,7 +304,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getDocumentTypeDAO().delete(documentType, "_Temp");
+		getDocumentTypeDAO().delete(documentType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -317,7 +325,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -336,118 +344,25 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		DocumentType documentType = (DocumentType) auditDetail.getModelData();
-		DocumentType tempDocumentType = null;
+		String code = documentType.getDocTypeCode();
 
-		if (documentType.isWorkflow()) {
-			tempDocumentType = getDocumentTypeDAO().getDocumentTypeById(
-					documentType.getId(), "_Temp");
+		// Check the unique keys.
+		if (documentType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(documentType.getRecordType())
+				&& documentTypeDAO.isDuplicateKey(code, documentType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_DocTypeCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
-		DocumentType befDocumentType = getDocumentTypeDAO()
-				.getDocumentTypeById(documentType.getId(), "");
-		DocumentType oldDocumentType = documentType.getBefImage();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = documentType.getDocTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_DocTypeCode") + ":"
-				+ valueParm[0];
-
-		if (documentType.isNew()) { // for New record or new record into work
-			// flow
-
-			if (!documentType.isWorkflow()) {// With out Work flow only new
-				// records
-				if (befDocumentType != null) { // Record Already Exists in the
-					// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (documentType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befDocumentType != null || tempDocumentType != null) { // if
-															// records already exists
-															// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befDocumentType == null || tempDocumentType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!documentType.isWorkflow()) { // With out Work flow for update
-				// and delete
-
-				if (befDocumentType == null) { // if records not exists in the
-					// main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-					if (oldDocumentType != null
-							&& !oldDocumentType.getLastMntOn().equals(
-									befDocumentType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempDocumentType == null) { // if records not exists in the
-					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempDocumentType != null
-						&& oldDocumentType != null
-						&& !oldDocumentType.getLastMntOn().equals(
-								tempDocumentType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !documentType.isWorkflow()) {
-			auditDetail.setBefImage(befDocumentType);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}

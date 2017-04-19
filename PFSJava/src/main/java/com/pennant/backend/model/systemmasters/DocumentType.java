@@ -43,6 +43,8 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -197,5 +199,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	public void setDocIssuedAuthorityMand(boolean docIssuedAuthorityMand) {
 		this.docIssuedAuthorityMand = docIssuedAuthorityMand;
 	}
-
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

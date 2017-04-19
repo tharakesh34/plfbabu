@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -48,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>DocumentType model</b> class.<br>
@@ -90,6 +92,7 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	@Override
 	public DocumentType getDocumentTypeById(final String id, String type) {
 		logger.debug("Entering");
+		
 		DocumentType documentType = new DocumentType();
 		documentType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -114,6 +117,128 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 		logger.debug("Leaving");
 		return documentType;
 	}
+	
+	@Override
+	public boolean isDuplicateKey(String docTypeCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "DocTypeCode = :docTypeCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTDocumentTypes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTDocumentTypes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTDocumentTypes_Temp", "BMTDocumentTypes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("docTypeCode", docTypeCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(DocumentType documentType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTDocumentTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand)");
+		sql.append(" values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :DocIsCustDoc," );
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand)");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(documentType);
+		
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return documentType.getId();
+	}
+	
+	@Override
+	public void update(DocumentType documentType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTDocumentTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" set DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc,");
+		sql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive ,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand,");
+		sql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand");
+		sql.append(" where DocTypeCode =:DocTypeCode ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(documentType);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	public void delete(DocumentType documentType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from BMTDocumentTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" where DocTypeCode =:DocTypeCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
+		int recordCount = 0;
+
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * @param dataSource
@@ -121,147 +246,5 @@ public class DocumentTypeDAOImpl extends BasisCodeDAO<DocumentType> implements D
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the BMTDocumentTypes or
-	 * BMTDocumentTypes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Document Types by key
-	 * DocTypeCode
-	 * 
-	 * @param Document
-	 *            Types (documentType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(DocumentType documentType, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-
-		deleteSql.append("Delete From BMTDocumentTypes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where DocTypeCode =:DocTypeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", documentType.getDocTypeCode(), documentType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", documentType.getDocTypeCode(), documentType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTDocumentTypes or
-	 * BMTDocumentTypes_Temp.
-	 * 
-	 * save Document Types
-	 * 
-	 * @param Document
-	 *            Types (documentType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(DocumentType documentType, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append("Insert Into BMTDocumentTypes");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (DocTypeCode, DocTypeDesc, DocIsMandatory, DocTypeIsActive, DocIsCustDoc," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		insertSql.append(" RecordType, WorkflowId, DocExpDateIsMand, DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand)");
-		insertSql.append(" Values(:DocTypeCode, :DocTypeDesc, :DocIsMandatory, :DocTypeIsActive, :DocIsCustDoc," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId, :DocExpDateIsMand, :DocIssueDateMand, :DocIdNumMand, :DocIssuedAuthorityMand)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return documentType.getId();
-	}
-
-	/**
-	 * This method updates the Record BMTDocumentTypes or BMTDocumentTypes_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Document Types by key DocTypeCode and Version
-	 * 
-	 * @param Document
-	 *            Types (documentType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(DocumentType documentType, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-	
-		updateSql.append("Update BMTDocumentTypes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DocTypeDesc = :DocTypeDesc, DocIsCustDoc = :DocIsCustDoc," );
-		updateSql.append(" DocIsMandatory = :DocIsMandatory, DocTypeIsActive = :DocTypeIsActive ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, DocExpDateIsMand = :DocExpDateIsMand," );
-		updateSql.append(" DocIssueDateMand= :DocIssueDateMand, DocIdNumMand = :DocIdNumMand, DocIssuedAuthorityMand = :DocIssuedAuthorityMand" );
-		updateSql.append(" Where DocTypeCode =:DocTypeCode ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", documentType.getDocTypeCode(), documentType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String docTypeCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = docTypeCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DocTypeCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 }
