@@ -1366,5 +1366,15 @@ UPDATE FinPftDetails set CalPftOnPD=1  where PftOnPDMethod != 'N';
  </sql>
  
  </changeSet>
+ <changeSet id="81" author="Surekha">
+		<createTable tableName="SeqFINANCESTATUSCODES">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="82" author="Surekha">
+		<sql>
+			INSERT INTO  SeqFINANCESTATUSCODES VALUES(0);
+		</sql>
+	</changeSet>
  
 </databaseChangeLog>
