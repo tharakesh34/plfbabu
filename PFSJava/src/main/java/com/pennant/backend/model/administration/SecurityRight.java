@@ -66,11 +66,12 @@ public class SecurityRight extends AbstractWorkflowEntity implements Entity {
 	private String         	lovValue;
 	private SecurityRight  	befImage;
 	private LoggedInUser 	userDetails;
-	
+	private String         	menuRight;
 	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("loginAppId");
+		excludeFields.add("menuRight");
 		return excludeFields;
 	}
 
@@ -243,4 +244,15 @@ public class SecurityRight extends AbstractWorkflowEntity implements Entity {
 	public int getAccessType() {
 		return accessType;
 	}
+
+
+	public String getMenuRight() {
+		return menuRight;
+	}
+
+
+	public void setMenuRight(String menuRight) {
+		this.menuRight = menuRight;
+	}
+
 }

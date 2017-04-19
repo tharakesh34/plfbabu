@@ -66,7 +66,7 @@ public interface UserService {
 
 	Collection<SecurityRight> getMenuRightsByUser(SecurityUser user);
 
-	Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
+	Collection<SecurityRight> getPageRights(SecurityRight secRight);
 
 	List<SecurityRole> getUserRolesByUserID(long userID);
 

@@ -51,7 +51,7 @@ public interface SecurityRightDAO {
 
 	List<SecurityRight> getMenuRightsByUser(SecurityUser user);
 
-	List<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName);
+	List<SecurityRight> getPageRights(SecurityRight secRight);
 
 	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
 }

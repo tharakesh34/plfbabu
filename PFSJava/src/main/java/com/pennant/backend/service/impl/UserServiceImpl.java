@@ -121,8 +121,8 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-	public Collection<SecurityRight> getPageRights(SecurityRight secRight, String menuRightName) {
-		return getSecurityRightDAO().getPageRights(secRight, menuRightName);
+	public Collection<SecurityRight> getPageRights(SecurityRight secRight) {
+		return getSecurityRightDAO().getPageRights(secRight);
 	}
 	
 	public List<SecurityRole> getUserRolesByUserID(long userID) {

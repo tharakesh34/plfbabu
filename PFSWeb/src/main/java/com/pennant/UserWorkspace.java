@@ -259,7 +259,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 			secRight.setUsrID(loggedInUser.getLoginUsrID());
 			secRight.setRoleCd(roleCode);
 			secRight.setPage(page);
-			Collection<SecurityRight> rights  = getUserService().getPageRights(secRight, menuRightName);
+			secRight.setMenuRight(menuRightName);
+			Collection<SecurityRight> rights  = getUserService().getPageRights(secRight);
 			rightsMap.put(rightKey.toString(), rights);
 			return rights;
 		}
