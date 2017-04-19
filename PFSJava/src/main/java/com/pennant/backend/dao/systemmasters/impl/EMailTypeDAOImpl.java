@@ -175,6 +175,7 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return eMailType.getId();
 	}
@@ -235,7 +236,6 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * @param dataSource
