@@ -1196,10 +1196,10 @@ FROM FinanceMain_AView T1 INNER JOIN
 		<column name="StatusId" type="bigint">
 			<constraints primaryKey="true" nullable="false"/>
 		</column>
-		<column name="StatusCode" type="varchar(20)">
+		<column name="StatusCode" type="varchar(8)">
 		<constraints unique="true" nullable="false"/>
 		</column>
-		<column name="StatusDesc" type="varchar(8)">
+		<column name="StatusDesc" type="varchar(20)">
 		<constraints nullable="false"/>
 		</column>
 		<column name="Version" type="int" >
@@ -1221,10 +1221,10 @@ FROM FinanceMain_AView T1 INNER JOIN
 		<column name="StatusId" type="bigint">
 			<constraints primaryKey="true" nullable="false"/>
 		</column>
-		<column name="StatusCode" type="varchar(20)">
+		<column name="StatusCode" type="varchar(8)">
 		<constraints unique="true" nullable="false"/>
 		</column>
-		<column name="StatusDesc" type="varchar(8)">
+		<column name="StatusDesc" type="varchar(20)">
 		<constraints nullable="false"/>
 		</column>
 		<column name="Version" type="int" >
