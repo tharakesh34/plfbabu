@@ -570,8 +570,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 				}
 
 			} catch (Exception e) {
-				logger.error("Exception", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -709,8 +708,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 			}
 
 		}  catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CountryDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

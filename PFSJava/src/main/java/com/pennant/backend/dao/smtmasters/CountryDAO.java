@@ -42,17 +42,29 @@
  */
 
 package com.pennant.backend.dao.smtmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Country model</b> class.<br>
  * 
  */
-public interface CountryDAO {
+public interface CountryDAO extends BasicCrudDao<Country>{
 
 	Country getCountryById(String id,String type);
-	void update(Country country,String type);
-	void delete(Country country,String type);
-	String save(Country country,String type);
 	String getSystemDefaultCount(String countryCode);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param countryCode
+	 *            countryCode of the country.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String countryCode, TableType tableType);
+	
+	
 }

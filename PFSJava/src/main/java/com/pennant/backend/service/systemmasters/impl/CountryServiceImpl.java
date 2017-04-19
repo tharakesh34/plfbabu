@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -60,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.CountryService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Country</b>.<br>
@@ -122,11 +121,11 @@ public class CountryServiceImpl extends GenericService<Country> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
-		Country country = (Country) auditHeader.getAuditDetail().getModelData();
 
+		Country country = (Country) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		if (country.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (country.isNew()) {
@@ -166,7 +165,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 		}
 		Country country = (Country) auditHeader.getAuditDetail().getModelData();
 
-		getCountryDAO().delete(country, "");
+		getCountryDAO().delete(country, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -233,10 +232,16 @@ public class CountryServiceImpl extends GenericService<Country> implements
 		Country country = new Country();
 		BeanUtils.copyProperties((Country) auditHeader.getAuditDetail()
 				.getModelData(), country);
+		
+		getCountryDAO().delete(country, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(countryDAO.getCountryById(country.getCountryCode(), ""));
+		}
 
 		if (country.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getCountryDAO().delete(country, "");
+			getCountryDAO().delete(country, TableType.MAIN_TAB);
 		} else {
 			country.setRoleCode("");
 			country.setNextRoleCode("");
@@ -248,15 +253,14 @@ public class CountryServiceImpl extends GenericService<Country> implements
 					.equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				country.setRecordType("");
-				getCountryDAO().save(country, "");
+				getCountryDAO().save(country, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				country.setRecordType("");
-				getCountryDAO().update(country, "");
+				getCountryDAO().update(country, TableType.MAIN_TAB);
 			}
 		}
 
-		getCountryDAO().delete(country, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -292,7 +296,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 		Country country = (Country) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCountryDAO().delete(country, "_Temp");
+		getCountryDAO().delete(country, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -314,7 +318,7 @@ public class CountryServiceImpl extends GenericService<Country> implements
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -329,130 +333,35 @@ public class CountryServiceImpl extends GenericService<Country> implements
 	 * if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
+	 * @param usrLanguagek
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		Country country = (Country) auditDetail.getModelData();
-		Country tempCountry = null;
+		String code = country.getCountryCode();
 
-		if (country.isWorkflow()) {
-			tempCountry = getCountryDAO().getCountryById(country.getId(),
-					"_Temp");
+		// Check the unique keys.
+		if (country.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())
+				&& countryDAO.isDuplicateKey(code, country.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_CountryCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-
-		Country befCountry = getCountryDAO()
-				.getCountryById(country.getId(), "");
-		Country oldCountry = country.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = country.getCountryCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_CountryCode") + ":"
-				+ valueParm[0];
-
-		if (country.isNew()) { // for New record or new record into work flow
-
-			if (!country.isWorkflow()) {// With out Work flow only new records
-				if (befCountry != null) { // Record Already Exists in the table
-											// then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (country.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befCountry != null || tempCountry != null) { // if records
-																// already exists
-																// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befCountry == null || tempCountry != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!country.isWorkflow()) { // With out Work flow for update and
-				// delete
-
-				if (befCountry == null) { // if records not exists in the main
-					// table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-
-					if (oldCountry != null
-							&& !oldCountry.getLastMntOn().equals(
-									befCountry.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempCountry == null) { // if records not exists in the Work
-											// flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempCountry != null
-						&& oldCountry != null
-						&& !oldCountry.getLastMntOn().equals(
-								tempCountry.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-		
 		if (country.isSystemDefault()) {
-			String dftCountryCode = getCountryDAO().getSystemDefaultCount(country.getCountryCode());
+			String dftCountryCode = getCountryDAO().getSystemDefaultCount(code);
 			if (StringUtils.isNotEmpty(dftCountryCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
-				        new String[]{dftCountryCode,PennantJavaUtil.getLabel("Country")}, null));
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501", new String[] {
+						dftCountryCode, PennantJavaUtil.getLabel("Country") }, null));
 			}
-        }
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !country.isWorkflow()) {
-			auditDetail.setBefImage(befCountry);
 		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
