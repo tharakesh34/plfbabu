@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.EMailTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>EMailType</b>.<br>
@@ -122,12 +120,13 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		EMailType eMailType = (EMailType) auditHeader.getAuditDetail()
 				.getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (eMailType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (eMailType.isNew()) {
@@ -169,7 +168,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 		EMailType eMailType = (EMailType) auditHeader.getAuditDetail()
 				.getModelData();
 
-		getEMailTypeDAO().delete(eMailType, "");
+		getEMailTypeDAO().delete(eMailType, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -237,9 +236,15 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 		BeanUtils.copyProperties((EMailType) auditHeader.getAuditDetail()
 				.getModelData(), eMailType);
 
+		getEMailTypeDAO().delete(eMailType, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(eMailType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(eMailTypeDAO.getEMailTypeById(eMailType.getEmailTypeCode(), ""));
+		}
+
 		if (eMailType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getEMailTypeDAO().delete(eMailType, "");
+			getEMailTypeDAO().delete(eMailType, TableType.MAIN_TAB);
 		} else {
 			eMailType.setRoleCode("");
 			eMailType.setNextRoleCode("");
@@ -251,15 +256,14 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				eMailType.setRecordType("");
-				getEMailTypeDAO().save(eMailType, "");
+				getEMailTypeDAO().save(eMailType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				eMailType.setRecordType("");
-				getEMailTypeDAO().update(eMailType, "");
+				getEMailTypeDAO().update(eMailType, TableType.MAIN_TAB);
 			}
 		}
 
-		getEMailTypeDAO().delete(eMailType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -298,7 +302,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getEMailTypeDAO().delete(eMailType, "_Temp");
+		getEMailTypeDAO().delete(eMailType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -319,7 +323,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -335,124 +339,29 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		EMailType eMailType = (EMailType) auditDetail.getModelData();
-		EMailType tempEMailType = null;
+		String code = eMailType.getEmailTypeCode();
 
-		if (eMailType.isWorkflow()) {
-			tempEMailType = getEMailTypeDAO().getEMailTypeById(
-					eMailType.getId(), "_Temp");
+		// Check the unique keys.
+		if (eMailType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(eMailType.getRecordType())
+				&& eMailTypeDAO.isDuplicateKey(code, eMailType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_EmailTypeCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
+		
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		EMailType befEMailType = getEMailTypeDAO().getEMailTypeById(
-				eMailType.getId(), "");
-		EMailType oldEMailType = eMailType.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = eMailType.getEmailTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_EmailTypeCode") + ":"
-				+ valueParm[0];
-
-		if (eMailType.isNew()) { // for New record or new record into work flow
-
-			if (!eMailType.isWorkflow()) {// With out Work flow only new records
-				if (befEMailType != null) { // Record Already Exists in the
-					// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (eMailType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befEMailType != null || tempEMailType != null) { // if
-													  // records already exists
-          											 // in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befEMailType == null || tempEMailType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!eMailType.isWorkflow()) { // With out Work flow for update and
-				// delete
-
-				if (befEMailType == null) { // if records not exists in the main
-					// table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-
-					if (oldEMailType != null
-							&& !oldEMailType.getLastMntOn().equals(
-									befEMailType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempEMailType == null) { // if records not exists in the
-					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-
-				if (tempEMailType != null
-						&& oldEMailType != null
-						&& !oldEMailType.getLastMntOn().equals(
-								tempEMailType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !eMailType.isWorkflow()) {
-			auditDetail.setBefImage(befEMailType);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
+	
 	}
-
 }

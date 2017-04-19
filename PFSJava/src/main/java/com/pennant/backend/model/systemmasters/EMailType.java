@@ -43,6 +43,8 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -150,5 +152,8 @@ public class EMailType extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }

@@ -42,16 +42,28 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EMailType;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>EMailType model</b> class.<br>
  * 
  */
-public interface EMailTypeDAO {
+public interface EMailTypeDAO extends BasicCrudDao<EMailType> {
 
 	EMailType getEMailTypeById(String id,String type);
-	void update(EMailType eMailType,String type);
-	void delete(EMailType eMailType,String type);
-	String save(EMailType eMailType,String type);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param emailTypeCode
+	 *            emailTypeCode of the eMailType
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String emailTypeCode, TableType tableType);
+	
+	
 }
