@@ -43,7 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -58,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.EmploymentTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>EmploymentType</b>.<br>
@@ -116,21 +116,18 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
+		EmploymentType employmentType = (EmploymentType) auditHeader.getAuditDetail().getModelData();
 
-		String tableType = "";
-		EmploymentType employmentType = (EmploymentType) auditHeader
-				.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
 		if (employmentType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (employmentType.isNew()) {
-			employmentType.setEmpType(getEmploymentTypeDAO().save(
-					employmentType, tableType));
+			employmentType.setEmpType(getEmploymentTypeDAO().save(employmentType, tableType));
 			auditHeader.getAuditDetail().setModelData(employmentType);
-			auditHeader.setAuditReference(employmentType
-					.getEmpType());
+			auditHeader.setAuditReference(employmentType.getEmpType());
 		} else {
 			getEmploymentTypeDAO().update(employmentType, tableType);
 		}
@@ -164,7 +161,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 
 		EmploymentType employmentType = (EmploymentType) auditHeader
 				.getAuditDetail().getModelData();
-		getEmploymentTypeDAO().delete(employmentType, "");
+		getEmploymentTypeDAO().delete(employmentType, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -230,14 +227,19 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 		}
 
 		EmploymentType employmentType = new EmploymentType();
-		BeanUtils.copyProperties((EmploymentType) auditHeader.getAuditDetail()
-				.getModelData(), employmentType);
+		BeanUtils.copyProperties((EmploymentType) auditHeader.getAuditDetail().getModelData(), employmentType);
+		
+		getEmploymentTypeDAO().delete(employmentType, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(employmentType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(employmentTypeDAO.getEmploymentTypeById(employmentType.getEmpType(), ""));
+		}
 
 		if (employmentType.getRecordType().equals(
 				PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getEmploymentTypeDAO().delete(employmentType, "");
+			getEmploymentTypeDAO().delete(employmentType, TableType.MAIN_TAB);
 
 		} else {
 			employmentType.setRoleCode("");
@@ -250,15 +252,14 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				employmentType.setRecordType("");
-				getEmploymentTypeDAO().save(employmentType, "");
+				getEmploymentTypeDAO().save(employmentType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				employmentType.setRecordType("");
-				getEmploymentTypeDAO().update(employmentType, "");
+				getEmploymentTypeDAO().update(employmentType, TableType.MAIN_TAB);
 			}
 		}
 
-		getEmploymentTypeDAO().delete(employmentType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -295,7 +296,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 		EmploymentType employmentType = (EmploymentType) auditHeader
 				.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getEmploymentTypeDAO().delete(employmentType, "_Temp");
+		getEmploymentTypeDAO().delete(employmentType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -316,7 +317,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -332,99 +333,29 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
-		EmploymentType employmentType = (EmploymentType) auditDetail
-				.getModelData();
-		EmploymentType tempEmploymentType = null;
-		if (employmentType.isWorkflow()) {
-			tempEmploymentType = getEmploymentTypeDAO().getEmploymentTypeById(
-					employmentType.getId(), "_Temp");
+		// Get the model object.
+		EmploymentType employmentType = (EmploymentType) auditDetail.getModelData();
+		String code = employmentType.getEmpType();
+
+		// Check the unique keys.
+		if (employmentType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(employmentType.getRecordType())
+				&& employmentTypeDAO.isDuplicateKey(code, employmentType.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_EmpType") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		EmploymentType befEmploymentType = getEmploymentTypeDAO()
-				.getEmploymentTypeById(employmentType.getId(), "");
 
-		EmploymentType oldEmploymentType = employmentType.getBefImage();
-
-		String[] valueParm = new String[1];
-		String[] errParm= new String[1];
-
-		valueParm[0] = employmentType.getEmpType();
-		errParm[0] = PennantJavaUtil.getLabel("label_EmpType") + ":"+ valueParm[0];
-
-		if (employmentType.isNew()) { // for New record or new record into work flow
-
-			if (!employmentType.isWorkflow()) {// With out Work flow only new
-												// records
-				if (befEmploymentType != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-				}
-			} else { // with work flow
-				
-
-				if (employmentType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befEmploymentType != null || tempEmploymentType != null) { // if records already
-														// exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befEmploymentType == null || tempEmploymentType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!employmentType.isWorkflow()) { // With out Work flow for update
-												// and delete
-
-				if (befEmploymentType == null) { // if records not exists in the
-													// main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldEmploymentType != null
-							&& !oldEmploymentType.getLastMntOn().equals(
-									befEmploymentType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempEmploymentType == null) { // if records not exists in
-													// the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempEmploymentType != null && oldEmploymentType != null
-						&& !oldEmploymentType.getLastMntOn().equals(
-								tempEmploymentType.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-			}
-		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !employmentType.isWorkflow()) {
-			auditDetail.setBefImage(befEmploymentType);
-		}
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
 }

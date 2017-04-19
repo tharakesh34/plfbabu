@@ -42,16 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EmploymentType;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>EmploymentType model</b> class.<br>
  * 
  */
-public interface EmploymentTypeDAO {
+public interface EmploymentTypeDAO extends BasicCrudDao<EmploymentType> {
 
 	EmploymentType getEmploymentTypeById(String id,String type);
-	void update(EmploymentType employmentType,String type);
-	void delete(EmploymentType employmentType,String type);
-	String save(EmploymentType employmentType,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param empType
+	 *            empType of the employmentType.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String empType, TableType tableType);
+	
 }
