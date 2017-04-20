@@ -2389,4 +2389,25 @@ Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 </sql>
 </changeSet>
+	<changeSet id="108" author="Madhubabu">
+<sql>
+DELETE from SECOPERATIONROLES where OPRID = (select OPRID from SECOPERATIONS where OPRCODE='INPUTTER') and ROLEID = (select ROLEID from SECROLES where ROLECD='BFSD_DISB_MAKER');
+DELETE FROM SECOPERATIONROLES WHERE OPRID = (select OPRID from SECOPERATIONS where OPRCODE='APPROVER') AND ROLEID = (select ROLEID from SECROLES where ROLECD='BFSD_DISB_APPROVER');
+
+insert into SECOPERATIONROLES values ((select max(OPRROLEID)+1 from SECOPERATIONROLES), (select OPRID from SECOPERATIONS where OPRCODE='INPUTTER'), (select ROLEID from SECROLES where ROLECD='BFSD_DISB_MAKER'),1,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+insert into SECOPERATIONROLES values ((select max(OPRROLEID)+1 from SECOPERATIONROLES), (select OPRID from SECOPERATIONS where OPRCODE='APPROVER'), (select ROLEID from SECROLES where ROLECD='BFSD_DISB_APPROVER'),1,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+
+UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+
+
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSPLIS' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSPLTL' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSHLTL' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSLAPIS' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSHLTUTL' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSLAPTL' and FinEvent = 'Origination' and modulename = 'FINANCE';
+update LMTFINANCEWORKFLOWDEF set workflowType = 'BFSD_ORIGINATION' where fintype = 'DSHLTUIS' and FinEvent = 'Origination' and modulename = 'FINANCE';
+
+</sql>
+</changeSet>
 </databaseChangeLog>
