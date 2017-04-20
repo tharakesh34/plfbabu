@@ -1,6 +1,5 @@
 package com.pennanttech.bajaj.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +17,18 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 
 public class DisbursementService extends Thread {
-	private static final Logger logger = Logger.getLogger(DisbursementService.class);
+	private static final Logger			logger	= Logger.getLogger(DisbursementService.class);
 
-	private DataSource dataSource;
-	private NamedParameterJdbcTemplate jdbcTemplate;
-	private String database;
-	private long userId;
-	private List<FinAdvancePayments> disbusments;
+	private String						finType;
+	private List<FinAdvancePayments>	disbusments;
+	private String						database;
+	private long						userId;
 
-	public DisbursementService(List<FinAdvancePayments> disbusments, String database, long userId) {
+	private DataSource					dataSource;
+	private NamedParameterJdbcTemplate	jdbcTemplate;
+
+	public DisbursementService(String finType, List<FinAdvancePayments> disbusments, String database, long userId) {
+		this.finType = finType;
 		this.disbusments = disbusments;
 		this.database = database;
 		this.userId = userId;
@@ -59,7 +61,7 @@ public class DisbursementService extends Thread {
 			if (!config.containsKey(configName)) {
 				config.put(configName, new StringBuilder());
 			}
-
+			
 			StringBuilder builder = config.get(configName);
 
 			if (builder.length() > 0) {
@@ -70,31 +72,43 @@ public class DisbursementService extends Thread {
 		}
 
 		for (Entry<String, StringBuilder> disbursment : config.entrySet()) {
-
 			if ("DISB_IMPS_EXPORT".equals(disbursment.getKey())) {
-				DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
-				proce.processData(disbursment.getKey());
-				continue;
-			}
-
-			DataEngineExport export = new DataEngineExport(dataSource, userId, database);
-			Map<String, Object> filterMap = new HashMap<>();
-			filterMap.put("PAYMENTID", disbursment.getValue().toString());
-			
-			Map<String, Object> parameterMap = new HashMap<>();
-			parameterMap.put("PRODUCT_CODE", "TL"); // FIXME
-
-			try {
-				export.setFilterMap(filterMap);
-				export.setParameterMap(parameterMap);
-				
-				
-				export.exportData(disbursment.getKey());
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				e.printStackTrace();
+				processImpsDisbursements(disbursment);
+			} else {
+				processOthreDisbursements(disbursment);
 			}
 		}
+	}
+
+	private void processOthreDisbursements(Entry<String, StringBuilder> disbursment) {
+		DataEngineExport export = new DataEngineExport(dataSource, userId, database);
+
+		Map<String, Object> filterMap = new HashMap<>();
+		filterMap.put("PAYMENTID", disbursment.getValue().toString());
+
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("PRODUCT_CODE", finType);
+
+		try {
+			export.setFilterMap(filterMap);
+			export.setParameterMap(parameterMap);
+			export.exportData(disbursment.getKey());
+		} catch (Exception e) {
+
+		} finally {
+		}
+	}
+
+	private void processImpsDisbursements(Entry<String, StringBuilder> disbursment) {
+		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
+
+		try {
+			proce.processData(disbursment.getKey());
+		} catch (Exception e) {
+
+		} finally {
+		}
+
 	}
 
 	private String getConfigName(FinAdvancePayments disbursment) {

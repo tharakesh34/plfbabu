@@ -3591,7 +3591,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
 
-		disbursementService = new DisbursementService(list, App.DATABASE.name(), finMain.getLastMntBy());
+		disbursementService = new DisbursementService(finMain.getFinType(), list, App.DATABASE.name(), finMain.getLastMntBy());
 		Thread thread = new Thread(disbursementService);
 		try {
 			DisbursementService.sleep(5000);

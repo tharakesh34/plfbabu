@@ -15,7 +15,7 @@ public class DataEngineDBProcess extends DataEngine {
 	private static final Logger logger = Logger.getLogger(DataEngineDBProcess.class);
 	
 	public DataEngineDBProcess(DataSource dataSource, long userId, String database) {
-		super(dataSource, userId, database, null);
+		super(dataSource, userId, database);
 	}
 	
 
