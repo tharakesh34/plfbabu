@@ -6,10 +6,8 @@ public class ImplementationConstants {
 	}
 
 	//IMPLEMENTATION TYPES
-	public static final String	IMPLEMENTATION_CONVENTIONAL		= "CONV";
-	public static final String	IMPLEMENTATION_ISLAMIC			= "ISLM";
-	public static final String	IMPLEMENTATION_BOTH				= "BOTH";
-	public static final String	IMPLEMENTATION_TYPE				= IMPLEMENTATION_CONVENTIONAL;
+	public static final boolean	IMPLEMENTATION_CONVENTIONAL		= true;
+	public static final boolean	IMPLEMENTATION_ISLAMIC			= false;
 
 	public static final boolean	ALLOW_FINACTYPES				= false;
 	public static final boolean	ALLOW_CAPITALIZE				= true;

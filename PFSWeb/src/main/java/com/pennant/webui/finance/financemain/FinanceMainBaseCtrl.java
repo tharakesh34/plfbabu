@@ -8559,8 +8559,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}
 
-				if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,
-						ImplementationConstants.IMPLEMENTATION_ISLAMIC)
+				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC
 						&& StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
 								.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
 					if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
@@ -13168,8 +13167,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * _________________________________________________________________________________________________________________
 	 */
 	protected void doEditImplementationType(FinScheduleData finScheduleData) {
-		if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,
-				ImplementationConstants.IMPLEMENTATION_CONVENTIONAL)) {
+		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 			this.row_shariaApproval.setVisible(false);
 		} else {
 			this.row_shariaApproval.setVisible(!isReadOnly("FinanceMainDialog_ShariaStatus"));

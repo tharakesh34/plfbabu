@@ -971,7 +971,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D +"' " );
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)){
-			if(StringUtils.equals(ImplementationConstants.IMPLEMENTATION_ISLAMIC, ImplementationConstants.IMPLEMENTATION_TYPE)){
+			if(ImplementationConstants.IMPLEMENTATION_ISLAMIC){
 				whereClause.append(" AND ProductCategory IN ( '" + FinanceConstants.PRODUCT_IJARAH +"','"+FinanceConstants.PRODUCT_FWIJARAH+"') " );
 			}else{
 				whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 

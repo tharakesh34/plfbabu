@@ -986,7 +986,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
 
 		Filter[] filters = null;
-		if(ImplementationConstants.IMPLEMENTATION_TYPE.equals(ImplementationConstants.IMPLEMENTATION_CONVENTIONAL)){
+		if(ImplementationConstants.IMPLEMENTATION_CONVENTIONAL){
 			filters = new Filter[1];
 			if(isOverdraft){
 				filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);

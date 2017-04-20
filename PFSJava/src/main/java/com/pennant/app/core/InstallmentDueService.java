@@ -128,7 +128,7 @@ public class InstallmentDueService extends ServiceHelper {
 				.append("SELECT FRQ.FinReference, FRQ.RpyDate, FRQ.FinType, FRQ.Branch, FRQ.SchdPft, FRQ.SchdPftPaid, FRQ.SchdPri, FRQ.SchdPriPaid ");
 		selectSql.append(",FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid ");
 
-		if (!ImplementationConstants.IMPLEMENTATION_TYPE.equals(ImplementationConstants.IMPLEMENTATION_CONVENTIONAL)) {
+		if (!ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 			selectSql.append(",FRQ.SchdSuplRent, FRQ.SchdSuplRentPaid, FRQ.SchdIncrCost, FRQ.SchdIncrCostPaid  ");
 		}
 

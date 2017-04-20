@@ -773,7 +773,7 @@ public class PennantStaticListUtil {
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
-			if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,ImplementationConstants.IMPLEMENTATION_ISLAMIC)) {
+			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("lable_Profit_Intact")));
 				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("lable_Recalculate_Intact")));
 			}
@@ -2138,10 +2138,10 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getProductCategories() {
 		if (productCategories == null) {
 			productCategories = new ArrayList<ValueLabel>(15);
-			if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE, ImplementationConstants.IMPLEMENTATION_CONVENTIONAL)) {
+			if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_CONVENTIONAL, Labels.getLabel("label_ProductCategory_Conventional.value")));
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_ODFACILITY, Labels.getLabel("label_ProductCategory_Overdraft.value")));
-			} else if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,ImplementationConstants.IMPLEMENTATION_ISLAMIC)) {
+			} else if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_FWIJARAH, Labels.getLabel("label_ProductCategory_ForwardIjarah.value")));
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_IJARAH, Labels.getLabel("label_ProductCategory_StandardIjarah.value")));
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_ISTISNA, Labels.getLabel("label_ProductCategory_Istisna.value")));

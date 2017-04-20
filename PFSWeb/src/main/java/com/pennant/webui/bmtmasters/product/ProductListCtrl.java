@@ -112,7 +112,8 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		if (StringUtils.equals(ImplementationConstants.IMPLEMENTATION_TYPE,FinanceConstants.PRODUCT_CONVENTIONAL)) {
+		//FIXME: Changed by Pradeep. Not sure about the previous condition correctness. Remove the comment after testing.
+		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);

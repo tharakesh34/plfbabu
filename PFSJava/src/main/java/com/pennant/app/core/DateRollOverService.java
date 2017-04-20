@@ -35,6 +35,7 @@ public class DateRollOverService extends ServiceHelper {
 		String finreference = "";
 
 		StringBuilder sqlString = new StringBuilder(" ");
+		
 
 		try {
 			sqlStatement = connection.prepareStatement(sltDateRollover);
