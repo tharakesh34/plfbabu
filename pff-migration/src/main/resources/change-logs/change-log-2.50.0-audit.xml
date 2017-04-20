@@ -60,4 +60,9 @@
 		<column name="WorkflowId" type="bigint"/>
 	</createTable>
 </changeSet>
+<changeSet id="05" author="Madhubabu">
+		<addColumn tableName="AdtFinSchFrqInsurance">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
