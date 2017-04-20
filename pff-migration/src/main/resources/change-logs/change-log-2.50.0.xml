@@ -1952,4 +1952,27 @@ GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTN
 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights); 
 		</sql>
 	</changeSet>
+	<changeSet author="PrasadRaju" id="96">
+	<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)"/>
+			<column name="WorkFlowType">BFSD_ORIGINATION</column>
+			<column name="WorkFlowSubType">Maker/Checker for Finance Rate Change</column>
+			<column name="WorkFlowDesc">Maker/Checker for Finance Rate Change</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+            <column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">BFSD_DISB_MAKER;BFSD_DISB_APPROVER</column>
+			<column name="FirstTaskOwner">BFSD_DISB_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">5</column>
+			<column name="LastMntBy">1000</column>		
+			<column name="LastMntOn">19-APR-2017</column>
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>	
+     		<column name="RecordType">NULL</column>		
+		</insert>	
+	</changeSet>
 </databaseChangeLog>
