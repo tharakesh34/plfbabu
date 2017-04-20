@@ -90,10 +90,11 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 	
 	@XmlElement(name="odPft")
-	private BigDecimal totPftAmt = BigDecimal.ZERO;
+	private BigDecimal lPIAmt = BigDecimal.ZERO;
 	@XmlElement(name="odPftPaid")
-	private BigDecimal totPftPaid = BigDecimal.ZERO;
-	private BigDecimal totPftBal = BigDecimal.ZERO;
+	private BigDecimal lPIPaid = BigDecimal.ZERO;
+	private BigDecimal lPIBal = BigDecimal.ZERO;
+	private BigDecimal lPIWaived = BigDecimal.ZERO;
 	
 	private Date finLMdfDate;
 	
@@ -326,28 +327,36 @@ public class FinODDetails implements java.io.Serializable {
     	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
     }
 	
-	public BigDecimal getTotPftAmt() {
-		return totPftAmt;
+	public BigDecimal getLPIAmt() {
+		return lPIAmt;
 	}
 
-	public void setTotPftAmt(BigDecimal totPftAmt) {
-		this.totPftAmt = totPftAmt;
+	public void setLPIAmt(BigDecimal lPIAmt) {
+		this.lPIAmt = lPIAmt;
 	}
 
-	public BigDecimal getTotPftPaid() {
-		return totPftPaid;
+	public BigDecimal getLPIPaid() {
+		return lPIPaid;
 	}
 
-	public void setTotPftPaid(BigDecimal totPftPaid) {
-		this.totPftPaid = totPftPaid;
+	public void setLPIPaid(BigDecimal lPIPaid) {
+		this.lPIPaid = lPIPaid;
 	}
 
-	public BigDecimal getTotPftBal() {
-		return totPftBal;
+	public BigDecimal getLPIBal() {
+		return lPIBal;
 	}
 
-	public void setTotPftBal(BigDecimal totPftBal) {
-		this.totPftBal = totPftBal;
+	public void setLPIBal(BigDecimal lPIBal) {
+		this.lPIBal = lPIBal;
+	}
+
+	public BigDecimal getLPIWaived() {
+		return lPIWaived;
+	}
+
+	public void setLPIWaived(BigDecimal lPIWaived) {
+		this.lPIWaived = lPIWaived;
 	}
 	
 

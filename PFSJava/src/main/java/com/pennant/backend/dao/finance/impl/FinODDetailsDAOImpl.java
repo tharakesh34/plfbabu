@@ -240,11 +240,11 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		insertSql.append(" (FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate, FinCurODAmt,"); 
 		insertSql.append(" FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays,");
 		insertSql.append(" FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, FinLMdfDate,");
-		insertSql.append(" TotPftAmt, TotPftPaid, TotPftBal)");
+		insertSql.append(" LPIAmt, LPIPaid, LPIBal,LPIWaived)");
 		insertSql.append(" Values(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,"); 
 		insertSql.append(" :FinCurODAmt, :FinCurODPri, :FinCurODPft, :FinMaxODAmt, :FinMaxODPri, :FinMaxODPft, :GraceDays,");
 		insertSql.append(" :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid, :TotPenaltyBal, :FinLMdfDate,");
-		insertSql.append(" :TotPftAmt, :TotPftPaid, :TotPftBal)");
+		insertSql.append(" :LPIAmt, :LPIPaid, :LPIBal,:LPIWaived)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -636,7 +636,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, " );
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid , TotPenaltyBal= :TotPenaltyBal, ");
-		updateSql.append(" TotPftAmt= :TotPftAmt , TotPftPaid= :TotPftPaid, TotPftBal=:TotPftBal ");
+		updateSql.append(" LPIAmt= :LPIAmt , LPIPaid= :LPIPaid, LPIBal=:LPIBal,LPIWaived=:LPIWaived ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -654,7 +654,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		finODDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT Sum(TotPenaltyAmt) TotPenaltyAmt, Sum(TotPenaltyPaid) TotPenaltyPaid, ");
-		selectSql.append(" sum(TotPftAmt) TotPftAmt, Sum(TotPftPaid) TotPftPaid ");
+		selectSql.append(" sum(LPIAmt) LPIAmt, Sum(LPIPaid) LPIPaid ");
 		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -678,7 +678,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		
-		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(TotPftBal),0) TotalLatePayPft ");
+		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(LPIBal),0) TotalLatePayPft ");
 		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
 		
 		logger.debug("selectSql: " + selectSql.toString());

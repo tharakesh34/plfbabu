@@ -20,6 +20,9 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
+import com.pennant.app.core.LatePayInterestService;
+import com.pennant.app.core.LatePayMarkingService;
+import com.pennant.app.core.LatePayPenaltyService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.core.ServiceUtil;
@@ -41,6 +44,10 @@ public class EodService {
 	private CustomerQueuingService		customerQueuingService;
 
 	private ServiceUtil					serviceUtil;
+	private LatePayMarkingService		latePayMarkingService;
+	private LatePayPenaltyService		latePayPenaltyService;
+	private LatePayInterestService		latePayInterestService;
+
 	private AccrualService				accrualService;
 	private RateReviewService			rateReviewService;
 	private StatusMovementService		statusMovementService;
@@ -139,7 +146,12 @@ public class EodService {
 
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
-
+		
+		
+		latePayMarkingService.processLatePayMarking(connection, custId, date);
+		
+		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
+		
 		//process payments from queue
 		serviceUtil.processQueue(connection, custId, date);
 
@@ -216,5 +228,17 @@ public class EodService {
 
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
+	}
+
+	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
+		this.latePayMarkingService = latePayMarkingService;
+	}
+
+	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
+		this.latePayPenaltyService = latePayPenaltyService;
+	}
+
+	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
+		this.latePayInterestService = latePayInterestService;
 	}
 }

@@ -44,6 +44,8 @@ package com.pennant.app.core;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -278,6 +280,15 @@ abstract public class ServiceHelper implements Serializable {
 		paidAmount = paidAmount.add(scheduleDetail.getIncrCost().subtract(scheduleDetail.getIncrCostPaid()));
 
 		return paidAmount;
+	}
+	
+	
+	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
+		BigDecimal val = resultSet.getBigDecimal(name);
+		if (val == null) {
+			val = BigDecimal.ZERO;
+		}
+		return val;
 	}
 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {

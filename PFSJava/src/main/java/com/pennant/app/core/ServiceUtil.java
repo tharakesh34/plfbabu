@@ -280,7 +280,7 @@ public class ServiceUtil {
 				finRpy.getFinRpyFor());
 		if (odDetails != null) {
 			finRpy.setPenaltyBal(odDetails.getTotPenaltyBal());
-			finRpy.setLatePayPftBal(odDetails.getTotPftBal());
+			finRpy.setLatePayPftBal(odDetails.getLPIBal());
 		}
 
 		finRpy.setRebate(latePaymentService.getScheduledRebateAmount(finRpy));
@@ -308,7 +308,7 @@ public class ServiceUtil {
 
 		if (odDetails != null) {
 			paidAmount = paidAmount.add(odDetails.getTotPenaltyBal());
-			paidAmount = paidAmount.add(odDetails.getTotPftBal());
+			paidAmount = paidAmount.add(odDetails.getLPIBal());
 		}
 
 		return paidAmount;

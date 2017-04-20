@@ -21,7 +21,9 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.util.FinanceConstants;
 
-public class RepayQueueService {
+public class RepayQueueService extends ServiceHelper{
+	private static final long	serialVersionUID	= 2478149362113489563L;
+
 	private static Logger			logger				= Logger.getLogger(RepayQueueService.class);
 
 	private FinRepayQueueDAO		finRepayQueueDAO;
@@ -228,13 +230,6 @@ public class RepayQueueService {
 		return finRepayQueue;
 	}
 
-	private BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
-		BigDecimal val = resultSet.getBigDecimal(name);
-		if (val == null) {
-			val = BigDecimal.ZERO;
-		}
-		return val;
-	}
 
 	public void setLatePaymentService(LatePaymentService latePaymentService) {
 		this.latePaymentService = latePaymentService;

@@ -65,10 +65,10 @@ import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 
-public class LatePaymentService extends ServiceHelper {
+public class LatePayInterestService extends ServiceHelper {
 
 	private static final long			serialVersionUID	= 6161809223570900644L;
-	private static Logger				logger				= Logger.getLogger(LatePaymentService.class);
+	private static Logger				logger				= Logger.getLogger(LatePayInterestService.class);
 
 	private FinODDetailsDAO				finODDetailsDAO;
 	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
@@ -77,7 +77,7 @@ public class LatePaymentService extends ServiceHelper {
 	/**
 	 * Default constructor
 	 */
-	public LatePaymentService() {
+	public LatePayInterestService() {
 		super();
 	}
 

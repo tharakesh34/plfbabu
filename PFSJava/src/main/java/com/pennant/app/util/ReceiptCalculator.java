@@ -455,7 +455,7 @@ public class ReceiptCalculator implements Serializable {
 						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
 							
 							FinODDetails overdue = overdueMap.get(schdDate);
-							BigDecimal balLatePft = overdue.getTotPftBal();
+							BigDecimal balLatePft = overdue.getLPIBal();
 							if(totalReceiptAmt.compareTo(balLatePft) > 0){
 								totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
 							}else{
