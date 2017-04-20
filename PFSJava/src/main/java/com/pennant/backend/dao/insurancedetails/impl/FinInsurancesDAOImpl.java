@@ -338,7 +338,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		}
 		insertSql.append(StringUtils.trimToEmpty(tableType));
 
-		insertSql.append(" (InsId, InsSchDate, InsuranceRate , InsuranceFrq ,Amount,");
+		insertSql.append(" (InsId, InsSchDate, InsuranceRate , InsuranceFrq ,Amount,InsurancePaid,");
 		insertSql.append(" Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId) ");
 		
 		insertSql.append(" VALUES (:InsId, :InsSchDate, :InsuranceRate , :InsuranceFrq ,:Amount,");
@@ -384,7 +384,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT InsuranceType,Reference,Module,Insreference,InsId, InsSchDate , InsuranceRate , InsuranceFrq ,ClosingBalance, " );
-		selectSql.append(" Amount ,Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId " );
+		selectSql.append(" Amount ,InsurancePaid, Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId " );
 		if(isWIF){
 			selectSql.append(" FROM WIFFinSchFrqInsurance");
 		}else {
