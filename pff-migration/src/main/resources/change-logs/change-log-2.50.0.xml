@@ -1873,4 +1873,14 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 			<column name="insurancePaid" type="number(18,0)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="93" author="Madhubabu">
+		<addColumn tableName="WIFFinSchFrqInsurance_Temp">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="94                                                                                                                                                                      " author="Madhubabu">
+		<addColumn tableName="WIFFinSchFrqInsurance">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
