@@ -1388,6 +1388,7 @@
 	<bean id="customerBankInfoDialogCtrl"
 		class="com.pennant.webui.customermasters.customer.CustomerBankInfoDialogCtrl"
 		parent="basisCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 
 

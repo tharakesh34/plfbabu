@@ -43,7 +43,6 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,14 +66,17 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -117,6 +119,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private String moduleType="";
 	private String userRole="";
 	private boolean isFinanceProcess = false;
+	protected int	accNoLength;
+	private transient BankDetailService	 bankDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -248,6 +252,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		
 		this.accountNumber.setMaxlength(50);
 		this.accountType.setMaxlength(8);
+		
+		if (StringUtils.isNotBlank(this.customerBankInfo.getBankCode())) {
+			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
+		}
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -460,6 +468,37 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		setCustomerBankInfo(aCustomerBankInfo);
 		logger.debug("Leaving");
 	}
+	
+	
+	/**
+	 * when clicks on button "CommitmentRef"
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws PFFInterfaceException
+	 */
+	public void onFulfill$bankName(Event event) throws InterruptedException {
+		logger.debug("Entering " + event.toString());
+
+		Object dataObject = this.bankName.getObject();
+
+		if (dataObject instanceof String) {
+			this.bankName.setValue(dataObject.toString(), "");
+		} else {
+			BankDetail details = (BankDetail) dataObject;
+			if (details != null) {
+				this.bankName.setValue(details.getBankCode(),
+						details.getBankName());
+				if (StringUtils.isNotBlank(details.getBankCode())) {
+					accNoLength = details.getAccNoLength();
+				}
+				if (StringUtils.isNotBlank(details.getBankCode())) {
+					accNoLength = details.getAccNoLength();
+				}
+			}
+		}
+		logger.debug("Leaving " + event.toString());
+	}
 
 	/**
 	 * Opens the Dialog window modal.
@@ -538,7 +577,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (!this.accountNumber.isReadonly()) {
-			this.accountNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.accountNumber
+					.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							true, accNoLength));
+			
 		}
 		logger.debug("Leaving");
 	}
@@ -661,16 +705,17 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			this.bankName.setReadonly(isReadOnly("CustomerBankInfoDialog_BankName"));
 			this.bankName.setMandatoryStyle(!isReadOnly("CustomerBankInfoDialog_BankName"));
+			this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
 			
 		}else{
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.bankName.setReadonly(true);
+			this.accountNumber.setReadonly(true);
 			
 		}
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
-		this.accountNumber.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountNumber"));
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
 		
 
@@ -900,7 +945,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						}
 					}
 				} else {
-					CustomerBankInfoList.add(customerBankInfo);
+					    CustomerBankInfoList.add(customerBankInfo);
 				}
 			}
 		}
@@ -1026,5 +1071,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
-	
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
 }
