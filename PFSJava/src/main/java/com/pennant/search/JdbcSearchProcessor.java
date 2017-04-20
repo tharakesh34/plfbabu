@@ -35,10 +35,7 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
- * 
  * A singleton instance of this class is maintained for each SessionFactory.
- * 
- * @author dwolverton
  */
 public class JdbcSearchProcessor implements Serializable {
 	private static final long						serialVersionUID	= 4460401213988371185L;
@@ -49,6 +46,12 @@ public class JdbcSearchProcessor implements Serializable {
 	private static final String						DISTINCT			= "distinct";
 	private transient NamedParameterJdbcTemplate	jdbcTemplate;
 
+	/**
+	 * Create a new <code>JdbcSearchProcessor</code> for the given {@link DataSource}.
+	 * 
+	 * @param dataSource
+	 *            The JDBC DataSource to access.
+	 */
 	public JdbcSearchProcessor(DataSource dataSource) {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}

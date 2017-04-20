@@ -59,7 +59,7 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	public JdbcSearchSupportImpl(DataSource dataSource) {
 		super();
-		
+
 		jdbcSearchProcessor = new JdbcSearchProcessor(dataSource);
 	}
 
@@ -68,16 +68,14 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 		return jdbcSearchProcessor.getResults(search);
 	}
 
-	public <T> String getSearchQuery(ISearch search) {
+	@Override
+	public String getSearchQuery(ISearch search) {
 		return jdbcSearchProcessor.getQuery(search);
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <T> SearchResult<T> searchAndCount(ISearch search) {
 		return jdbcSearchProcessor.searchAndCount(search);
-	}
-
-	public void setJdbcSearchProcessor(JdbcSearchProcessor jdbcSearchProcessor) {
-		this.jdbcSearchProcessor = jdbcSearchProcessor;
 	}
 }
