@@ -61,21 +61,14 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pff.core.Literal;
 
 public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> implements SecurityRightDAO {
-	private static Logger logger = Logger.getLogger(SecurityRightDAOImpl.class);
+	private static Logger				logger	= Logger.getLogger(SecurityRightDAOImpl.class);
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public SecurityRightDAOImpl() {
 		super();
 	}
 
-	/**
-	 * This Method selects all MenuRights by UserId
-	 * 
-	 * @param user
-	 *            (SecUser)
-	 * @return {@link List} of {@link SecurityRight}
-	 */
 	@Override
 	public List<SecurityRight> getMenuRightsByUser(SecurityUser user) {
 		logger.debug("Entering ");
@@ -91,15 +84,8 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	/**
-	 * This method selects all PageRights by userId
-	 * 
-	 * @param secRight
-	 *            (SecurityRight)
-	 * @return {@link List} of {@link SecurityRight}
-	 */
 	@Override
-	public List<SecurityRight> getPageRights(SecurityRight secRight) {
+	public List<SecurityRight> getPageRights(SecurityRight right) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName ");
@@ -111,20 +97,20 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append("  inner join SecRights RT on RT.RightID = GR.RightID ");
 		sql.append("  where RT.RightType <> 0  and UO.UsrID = :UsrID and  R.RoleApp = :LoginAppId ");
 
-		if (StringUtils.isNotBlank(secRight.getRoleCd())) {
+		if (StringUtils.isNotBlank(right.getRoleCd())) {
 			sql.append("  and R.RoleCd = :RoleCd ");
 		}
 
 		sql.append("  and RT.Page = :Page ");
 
-		if (StringUtils.isNotBlank(secRight.getMenuRight())) {
+		if (StringUtils.isNotBlank(right.getMenuRight())) {
 			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
 			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
 			sql.append(" where TR.RightName = :MenuRight )");
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(secRight);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(right);
 		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);

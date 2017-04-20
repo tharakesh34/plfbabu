@@ -48,10 +48,34 @@ import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityUser;
 
 public interface SecurityRightDAO {
-
+	/**
+	 * Get the menu rights for the specified user.
+	 * 
+	 * @param user
+	 *            The model object that contains the parameters.
+	 * @return The menu rights of the specified user.
+	 */
 	List<SecurityRight> getMenuRightsByUser(SecurityUser user);
 
-	List<SecurityRight> getPageRights(SecurityRight secRight);
+	/**
+	 * Get the rights that the user has for a specified page.
+	 * 
+	 * @param right
+	 *            The model object that contains the parameters.
+	 * @return The rights that the user has for a specified page.
+	 */
+	List<SecurityRight> getPageRights(SecurityRight right);
 
+	/**
+	 * Get the rights that the user has for a specified page.
+	 * 
+	 * @deprecated Use {@link #getPageRights(SecurityRight) getPageRights} instead.
+	 * @param secRight
+	 *            The model object that contains the parameters.
+	 * @param roles
+	 *            The list of roles.
+	 * @return The rights that the user has for a specified page.
+	 */
+	@Deprecated
 	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
 }
