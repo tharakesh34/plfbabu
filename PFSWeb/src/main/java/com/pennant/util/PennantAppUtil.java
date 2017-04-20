@@ -1131,12 +1131,12 @@ public class PennantAppUtil {
 	/*
 	 *  method for getting SecurityUserDivBranch List
 	 */
-	public static List<SecurityUserDivBranch> getSecurityUserDivBranchList(long usrId) {
+	public static List<SecurityUserDivBranch> getSecurityUserDivList(long usrId) {
 		JdbcSearchObject<SecurityUserDivBranch> jdbcSearchObject = new JdbcSearchObject<SecurityUserDivBranch>(SecurityUserDivBranch.class);
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		jdbcSearchObject.addTabelName("SecurityUserDivBranch");
 		jdbcSearchObject.addFilterEqual("UsrId", usrId);
-		jdbcSearchObject.addSort("UserDivision", true);
+		jdbcSearchObject.addField("Distinct UserDivision");
 		return pagedListService.getBySearchObject(jdbcSearchObject);
 	}
 	

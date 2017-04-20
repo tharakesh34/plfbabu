@@ -1116,50 +1116,41 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 */
 	public String getUsrFinAuthenticationQry(boolean isForReports) {
 		StringBuilder wherQuery = new StringBuilder();
-
+		boolean buildQry=false;
 		if (getUserWorkspace().getDivisionBranches() == null) {
 			getUserWorkspace().setDivisionBranches(
-					PennantAppUtil.getSecurityUserDivBranchList(getUserWorkspace().getLoggedInUser().getLoginUsrID()));
+					PennantAppUtil.getSecurityUserDivList(getUserWorkspace().getLoggedInUser().getLoginUsrID()));
 		}
 
 		String divisionField = "";
-		String branchField = "";
 		if (isForReports) {
 			divisionField = "FinDivision";
-			branchField = "BranchCode";
 		} else {
 			divisionField = "lovDescFinDivision";
-			branchField = "FinBranch";
-		}
-
-		String divisionCode = "";
-
-		if (getUserWorkspace().getDivisionBranches().isEmpty()) {
-			return " ( " + divisionField + "= '' and (" + branchField + "= '' ))";
 		}
 
 		for (SecurityUserDivBranch divisionBranch : getUserWorkspace().getDivisionBranches()) {
-			if (!StringUtils.isEmpty(divisionCode) && !divisionCode.equals(divisionBranch.getUserDivision())) {
-				divisionCode = divisionBranch.getUserDivision();
-				wherQuery.append("  )) or (( " + divisionField + "= '");
-				wherQuery.append(divisionCode + "' ) And " + branchField + " In( ");
-				appendWhereQuery(wherQuery, divisionCode);
-				
-			} else if (StringUtils.isEmpty(divisionCode)) {
-				divisionCode = divisionBranch.getUserDivision();
-				wherQuery.append(" ((( " + divisionField + "= '" + divisionCode + "' ) And " + branchField + " In( ");
-				appendWhereQuery(wherQuery, divisionCode);
+			
+			if(buildQry){
+				wherQuery.append(" or ");
 			}
+			wherQuery.append(" (");
+			wherQuery.append(divisionField);
+			wherQuery.append(" ='");
+			
+			wherQuery.append(divisionBranch.getUserDivision());
+			wherQuery.append("' ) And FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision ='");
+			wherQuery.append(divisionBranch.getUserDivision());
+			wherQuery.append("' and usrid =");
+			wherQuery.append(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			wherQuery.append(")");
+			buildQry=true;
 		}
 		
-		wherQuery.append(" ))) ");
-
-		return wherQuery.toString();
-	}
-
-	private void appendWhereQuery(StringBuilder wherQuery, String divisionCode) {
-		wherQuery.append("Select UserBranch from SecurityUserDivBranch where userDivision ="+ 
-				   "'"+divisionCode+"'" +" and usrid ="+ getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		if(buildQry){
+			return wherQuery.toString();	
+		}
+		return null;
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
