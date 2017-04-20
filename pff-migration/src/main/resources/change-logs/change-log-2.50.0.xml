@@ -1857,4 +1857,10 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 			{0}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="90" author="SreeRavali">
+		<sql>
+			Delete from ErrorDetails where Errorcode = '30578';
+			INSERT INTO ErrorDetails VALUES('30578','EN','E','{0} cannot be greater than the Max Allowed Years:{1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
