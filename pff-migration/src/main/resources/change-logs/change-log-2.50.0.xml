@@ -1975,4 +1975,39 @@ Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRi
      		<column name="RecordType">NULL</column>		
 		</insert>	
 	</changeSet>
+	<changeSet id="97" author="Prasad">
+	<renameColumn 
+            newColumnName="LPIAMT"
+            oldColumnName="TOTPFTAMT"
+            tableName="FINODDETAILS"/>
+</changeSet>
+<changeSet id="98" author="Prasad">
+	<renameColumn 
+            newColumnName="LPIPAID"
+            oldColumnName="TOTPFTPAID"
+            tableName="FINODDETAILS"/>
+</changeSet>
+<changeSet id="99" author="Prasad">
+	<renameColumn 
+            newColumnName="LPIBAL"
+            oldColumnName="TOTPFTBAL"
+            tableName="FINODDETAILS"/>
+</changeSet>
+<changeSet id="100" author="Prasad">
+		<addColumn tableName="FINODDETAILS">
+			<column name="LPIWAIVED" type="DECIMAL(18,0)" />
+		</addColumn>
+	</changeSet>
+<changeSet id="101" author="Prasad">
+		<createView replaceIfExists="true" viewName="FINODDETAILS_VIEW">
+		SELECT     OD.FinReference, OD.FinODSchdDate, OD.FinODFor, OD.FinBranch, OD.FinType, OD.CustID, OD.FinODTillDate, OD.FinCurODAmt, OD.FinCurODPri, OD.FinCurODPft, 
+                      OD.FinMaxODAmt, OD.FinMaxODPri, OD.FinMaxODPft, OD.GraceDays, OD.IncGraceDays, OD.FinCurODDays, OD.TotPenaltyAmt, OD.TotWaived, OD.TotPenaltyPaid,
+                      OD.LPIAMT,OD.LPIPAID,OD.LPIBAL, 
+                      OD.TotPenaltyBal, OD.FinLMdfDate,COALESCE(PR.ApplyODPenalty,0) ApplyODPenalty, COALESCE(PR.ODIncGrcDays,0) ODIncGrcDays
+                      ,COALESCE(PR.ODChargeType,'') ODChargeType, COALESCE(PR.ODGraceDays,0) ODGraceDays, COALESCE(PR.ODChargeCalOn,'') ODChargeCalOn, COALESCE(PR.ODChargeAmtOrPerc,0) ODChargeAmtOrPerc , 
+                      COALESCE(PR.ODAllowWaiver,0) ODAllowWaiver, COALESCE(PR.ODMaxWaiverPerc,0) ODMaxWaiverPerc
+FROM         FinODDetails OD LEFT OUTER JOIN
+             FinODPenalty_Latest_Rates_View PR ON OD.FinReference = PR.FinReference
+		</createView>
+	</changeSet>
 </databaseChangeLog>
