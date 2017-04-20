@@ -95,7 +95,7 @@ public class EodService {
 					customerQueuingService.updateSucessFail(date, custId, errorMsg);
 				}
 			}
-			
+
 			resultSet.close();
 			sqlStatement.close();
 		} catch (Exception e) {
@@ -136,15 +136,15 @@ public class EodService {
 	}
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
-		
-		//Date roll over
-		dateRollOverService.process(connection, custId, date);
-		
+
 		//prepare customer queue
-		repayQueueService.saveQueue(connection, custId, date);
+		repayQueueService.prepareRepayQueue(connection, custId, date);
 
 		//process payments from queue
 		serviceUtil.processQueue(connection, custId, date);
+
+		//Date roll over
+		dateRollOverService.process(connection, custId, date);
 
 		//Accrual
 		accrualService.processAccrual(connection, custId, date);
@@ -158,7 +158,6 @@ public class EodService {
 
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
-	
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);

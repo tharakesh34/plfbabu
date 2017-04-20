@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -38,6 +39,7 @@ public class DateRollOverService extends ServiceHelper {
 		
 
 		try {
+			valueDate=DateUtility.addDays(valueDate, 1);
 			sqlStatement = connection.prepareStatement(sltDateRollover);
 			sqlStatement.setLong(1, custId);
 			resultSet = sqlStatement.executeQuery();
@@ -54,9 +56,9 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setAllowGrcPftRvw(resultSet.getBoolean("AllowGrcPftRvw"));
 				finMain.setAllowRepayCpz(resultSet.getBoolean("AllowRepayCpz"));
 				finMain.setAllowRepayRvw(resultSet.getBoolean("AllowRepayRvw"));
-				
+
 				finMain.setGrcPeriodEndDate(resultSet.getDate("GrcPeriodEndDate"));
-	
+
 				finMain.setNextGrcCpzDate(resultSet.getDate("NextGrcCpzDate"));
 				finMain.setNextGrcPftDate(resultSet.getDate("NextGrcPftDate"));
 				finMain.setNextGrcPftRvwDate(resultSet.getDate("NextGrcPftRvwDate"));
@@ -78,22 +80,22 @@ public class DateRollOverService extends ServiceHelper {
 				}
 
 				//Set Next Grace Capitalization Date
-				if (finMain.getNextGrcCpzDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextGrcCpzDate() != null && finMain.getNextGrcCpzDate().compareTo(valueDate) == 0) {
 					sqlString = setNextGraceCpzDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Grace Profit Date
-				if (finMain.getNextGrcPftDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextGrcPftDate() != null && finMain.getNextGrcPftDate().compareTo(valueDate) == 0) {
 					sqlString = setNextGrcPftDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Grace Profit Review Date
-				if (finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextGrcPftRvwDate() != null && finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0) {
 					sqlString = setNextGrcPftRvwDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Repay Capitalization Date
-				if (finMain.getNextRepayCpzDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextRepayCpzDate() != null && finMain.getNextRepayCpzDate().compareTo(valueDate) == 0) {
 					sqlString = setNextRepayCpzDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
@@ -108,12 +110,12 @@ public class DateRollOverService extends ServiceHelper {
 				}
 
 				//Set Next Repayment Profit Review Date
-				if (finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextRepayRvwDate() != null && finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
 					sqlString = setNextRepayRvwDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Depreciation Date
-				if (finMain.getNextDepDate()!=null && finMain.getNextDepDate().compareTo(valueDate) == 0) {
+				if (finMain.getNextDepDate() != null && finMain.getNextDepDate().compareTo(valueDate) == 0) {
 					if (!StringUtils.isEmpty(finMain.getDepreciationFrq())) {
 						if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) < 0) {
 							finMain.setNextDepDate(FrequencyUtil.getNextDate(finMain.getDepreciationFrq(), 1,
