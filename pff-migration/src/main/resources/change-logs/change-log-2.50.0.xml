@@ -2010,4 +2010,134 @@ FROM         FinODDetails OD LEFT OUTER JOIN
              FinODPenalty_Latest_Rates_View PR ON OD.FinReference = PR.FinReference
 		</createView>
 	</changeSet>
+<changeSet id="102" author="Madhubabu">
+<sql>
+		
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_Enquiry_FinMandate');
+
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_Enquiry_FinMandate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_Mandate');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_Mandate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_MandateEnquiry');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_MandateEnquiry'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_MandateDialog_btnDelete');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_MandateDialog_btnDelete'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_MandateDialog_btnSave');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_MandateDialog_btnSave'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MandateRef');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MandateRef'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MandateType');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MandateType'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_BankBranchID');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_BankBranchID'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccNumber');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccNumber'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccHolderName');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccHolderName'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_JointAccHolderName');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_JointAccHolderName'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccType');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_AccType'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_OpenMandate');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_OpenMandate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_StartDate');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_StartDate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_ExpiryDate');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_ExpiryDate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MaxLimit');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_MaxLimit'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_Periodicity');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_Periodicity'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneCountryCode');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneCountryCode'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneAreaCode');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneAreaCode'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneNumber');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_PhoneNumber'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_Status');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_Status'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_ApprovalID');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_ApprovalID'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_validate');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_validate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinanceMainDialog_mandateId');
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinanceMainDialog_mandateId'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights); 
+		
+		
+</sql>
+	</changeSet>
 </databaseChangeLog>
