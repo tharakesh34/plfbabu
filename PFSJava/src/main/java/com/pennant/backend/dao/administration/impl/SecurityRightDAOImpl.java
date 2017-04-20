@@ -71,68 +71,70 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 
 	@Override
 	public List<SecurityRight> getMenuRightsByUser(SecurityUser user) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder(" Select distinct RightName ");
-		selectSql.append(" from UserRights_View ");
-		selectSql.append(" where RightType=0  and UsrID = :UsrID and loginAppId=:loginAppId");
-		logger.debug("selectSql:" + selectSql.toString());
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select distinct RightName");
+		sql.append(" from UserRights_View");
+		sql.append(" where RightType = 0 and UsrID = :UsrID and loginAppId = :loginAppId");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(user);
-		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
-		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(user);
+		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
+
+		logger.debug(Literal.LEAVING);
+		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
 	public List<SecurityRight> getPageRights(SecurityRight right) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("select distinct RT.RightName ");
-		sql.append("  from SecUserOperations UO ");
-		sql.append("  inner join SecOperationRoles OPR on OPR.OprID = UO.OprID ");
-		sql.append("  inner join SecRoles R on R.RoleID = OPR.RoleID ");
-		sql.append("  inner join SecRoleGroups RG on RG.RoleID = R.RoleID ");
-		sql.append("  inner join SecGroupRights GR on GR.GrpID = RG.GrpID ");
-		sql.append("  inner join SecRights RT on RT.RightID = GR.RightID ");
-		sql.append("  where RT.RightType <> 0  and UO.UsrID = :UsrID and  R.RoleApp = :LoginAppId ");
-
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
+		sql.append(" from SecUserOperations UO");
+		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
+		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
+		sql.append(" inner join SecRoleGroups RG on RG.RoleID = R.RoleID");
+		sql.append(" inner join SecGroupRights GR on GR.GrpID = RG.GrpID");
+		sql.append(" inner join SecRights RT on RT.RightID = GR.RightID ");
+		sql.append(" where RT.RightType <> 0 and UO.UsrID = :UsrID and R.RoleApp = :LoginAppId");
 		if (StringUtils.isNotBlank(right.getRoleCd())) {
-			sql.append("  and R.RoleCd = :RoleCd ");
+			sql.append(" and R.RoleCd = :RoleCd");
 		}
-
-		sql.append("  and RT.Page = :Page ");
-
+		sql.append(" and RT.Page = :Page");
 		if (StringUtils.isNotBlank(right.getMenuRight())) {
-			sql.append(" and GR.GrpID in (select TGR.GrpID from SecGroupRights TGR");
-			sql.append(" inner join SecRights TR on TR.RightID = TGR.RightID");
-			sql.append(" where TR.RightName = :MenuRight )");
+			sql.append(" and GR.GrpID in ( select TGR.GrpID from SecGroupRights TGR inner join SecRights TR");
+			sql.append(" on TR.RightID = TGR.RightID where TR.RightName = :MenuRight )");
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(right);
 		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
 	public List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(" select distinct RightName ");
-		sql.append(" from SecRolesRights_View ");
-		sql.append(" where RightType= :RightType and RoleCd In (:RoleCd) and ");
-		sql.append(" AppId = :loginAppId and Page = :Page AND UsrId = :UsrID");
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select distinct RightName");
+		sql.append(" from SecRolesRights_View");
+		sql.append(" where RightType = :RightType and RoleCd in (:RoleCd)");
+		sql.append(" and AppId = :loginAppId and Page = :Page and UsrId = :UsrID");
 
-		logger.debug("selectSql:" + sql.toString());
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(secRight);
+		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRight);
-		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
-
-		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	/**
