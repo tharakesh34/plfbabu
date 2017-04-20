@@ -282,7 +282,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Step Finance Details
 	protected Checkbox									stepFinance;																			// autoWired
 	protected ExtendedCombobox							stepPolicy;																			// autoWired
-	protected Label										label_FinanceMainDialog_StepPolicy;														// autoWired
+	protected Label										label_FinanceMainDialog_StepPolicy;													// autoWired
 	protected Label										label_FinanceMainDialog_numberOfSteps;													// autoWired
 	protected Checkbox									alwManualSteps;																		// autoWired
 	protected Intbox									noOfSteps;																				// autoWired
@@ -522,7 +522,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinScheduleData								validFinScheduleData;																	// over handed per parameters
 	private AEAmountCodes								amountCodes;																			// over handed per parameters
 	private FinanceDisbursement							disbursementDetails			= null;													// over handed per parameters
-	private transient WIFFinanceMainListCtrl			wifFinanceMainListCtrl		= null;														// over handed per parameters
+	private transient WIFFinanceMainListCtrl			wifFinanceMainListCtrl		= null;													// over handed per parameters
 	private Map<String, BigDecimal>						incAmountMap				= null;
 
 	//Sub Window Child Details Dialog Controllers
@@ -6716,27 +6716,29 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}
 
-				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC
-						&& StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
-								.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
-					if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
-							CalculationConstants.RATE_BASIS_F)) {
-						errorList.add(new ErrorDetails("StepFinance", "30553", new String[] { Labels
-								.getLabel("label_Flat") }, new String[] {}));
-					}
+				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+					if (StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
+							.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
+						if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
+								CalculationConstants.RATE_BASIS_F)) {
+							errorList.add(new ErrorDetails("StepFinance", "30553", new String[] { Labels
+									.getLabel("label_Flat") }, new String[] {}));
+						}
 
-					if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-							FinanceConstants.STEPTYPE_EMI)) {
-						if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)
-								&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
-										CalculationConstants.RATE_BASIS_R)) {
-							errorList.add(new ErrorDetails("StepFinance", "30554", new String[] {
-									Labels.getLabel("label_ScheduleMethod_Equal"), Labels.getLabel("label_Reduce") },
-									new String[] {}));
+						if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
+								FinanceConstants.STEPTYPE_EMI)) {
+							if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
+									CalculationConstants.SCHMTHD_EQUAL)
+									&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
+											CalculationConstants.RATE_BASIS_R)) {
+								errorList.add(new ErrorDetails("StepFinance", "30554",
+										new String[] { Labels.getLabel("label_ScheduleMethod_Equal"),
+												Labels.getLabel("label_Reduce") }, new String[] {}));
+							}
 						}
 					}
 				}
+
 			}
 
 			//FinanceMain Details Tab ---> 2. Grace Period Details

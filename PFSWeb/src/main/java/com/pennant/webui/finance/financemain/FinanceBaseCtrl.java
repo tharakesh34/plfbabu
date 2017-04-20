@@ -603,9 +603,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected FinScheduleData								validFinScheduleData;																	// over handed per parameters
 	protected AEAmountCodes									amountCodes;																			// over handed per parameters
 	protected FinanceDisbursement							disbursementDetails					= null;											// over handed per parameters
-	protected transient FinanceMainListCtrl					financeMainListCtrl					= null;												// over handed per parameters
+	protected transient FinanceMainListCtrl					financeMainListCtrl					= null;											// over handed per parameters
 	private transient FinFeeDetailListCtrl					finFeeDetailListCtrl;
-	protected transient FinanceSelectCtrl					financeSelectCtrl					= null;												// over handed per parameters
+	protected transient FinanceSelectCtrl					financeSelectCtrl					= null;											// over handed per parameters
 	protected Customer										customer							= null;
 
 	protected HashMap<String, ArrayList<ErrorDetails>>		overideMap							= new HashMap<String, ArrayList<ErrorDetails>>();
@@ -4002,27 +4002,29 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}
 
-				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC
-						&& StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
-								.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
-					if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
-							CalculationConstants.RATE_BASIS_F)) {
-						errorList.add(new ErrorDetails("StepFinance", "30553", new String[] { Labels
-								.getLabel("label_Flat") }, new String[] {}));
-					}
+				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+					if (StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceType()
+							.getProductCategory(), FinanceConstants.PRODUCT_MURABAHA)) {
+						if (StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
+								CalculationConstants.RATE_BASIS_F)) {
+							errorList.add(new ErrorDetails("StepFinance", "30553", new String[] { Labels
+									.getLabel("label_Flat") }, new String[] {}));
+						}
 
-					if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-							FinanceConstants.STEPTYPE_EMI)) {
-						if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)
-								&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
-										CalculationConstants.RATE_BASIS_R)) {
-							errorList.add(new ErrorDetails("StepFinance", "30554", new String[] {
-									Labels.getLabel("label_ScheduleMethod_Equal"), Labels.getLabel("label_Reduce") },
-									new String[] {}));
+						if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
+								FinanceConstants.STEPTYPE_EMI)) {
+							if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
+									CalculationConstants.SCHMTHD_EQUAL)
+									&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
+											CalculationConstants.RATE_BASIS_R)) {
+								errorList.add(new ErrorDetails("StepFinance", "30554",
+										new String[] { Labels.getLabel("label_ScheduleMethod_Equal"),
+												Labels.getLabel("label_Reduce") }, new String[] {}));
+							}
 						}
 					}
 				}
+
 			}
 
 			//Setting Step Policy Details Installments & Validations
