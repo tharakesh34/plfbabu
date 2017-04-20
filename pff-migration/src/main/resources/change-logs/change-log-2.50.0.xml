@@ -1843,4 +1843,18 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
    </sql>
  
  </changeSet>
+ <changeSet id="88" author ="SreeRavali">
+ <sql>
+ delete from SECGROUPRIGHTS where GRPID = (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='OD_ODMAINTENANCE_MAKER') and
+  RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_scheduleMethod');
+  	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS) ;
+ </sql>
+ </changeSet>
+	<changeSet id="89" author="SreeRavali">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('30578','EN','E','OD Terms cannot be
+			greater than the Max Allowed Years
+			{0}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
