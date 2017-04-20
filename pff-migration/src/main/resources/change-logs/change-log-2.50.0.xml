@@ -1384,7 +1384,7 @@ Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights); 
 Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups); 
 Delete from SECROLES where RoleCD = 'BFSD_DISB_MAKER'; 
-insert into SECROLES values ((select max(ROLEID)+1 from SECROLES),1,'BFSD_DISB_MAKER','BFSD_DISB_MAKER','',0,1000,current_timestamp,'APPROVED','null','null','null','null','null',0);
+insert into SECROLES values ((select max(ROLEID)+1 from SECROLES),1,'BFSD_DISB_MAKER','BFSD_DISB_MAKER','',0,1000,current_timestamp,'APPROVED',null,null,null,null,null,0);
  
 Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'); 
 Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'BFSD_ORIGINATION_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'BFSD_DISB_MAKER'); 
@@ -1726,7 +1726,7 @@ Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRight
  
     	 <changeSet id="87" author="Subba Rao">
  <sql>
- insert into SECROLES values ((select max(ROLEID)+1 from SECROLES),1,'BFSD_DISB_APPROVER','BFSD_DISB_APPROVER','',0,1000,current_timestamp,'APPROVED','null','null','null','null','null',0);
+ insert into SECROLES values ((select max(ROLEID)+1 from SECROLES),1,'BFSD_DISB_APPROVER','BFSD_DISB_APPROVER','',0,1000,current_timestamp,'APPROVED',null,null,null,null,null,0);
  Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerDocumentDialog_custDocType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); 
 Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_CustomerEMailDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); 
 Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'CustomerEmploymentDetailDialog_custEmpDept'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); 
