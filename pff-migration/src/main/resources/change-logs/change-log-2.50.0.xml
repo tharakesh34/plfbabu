@@ -2348,4 +2348,36 @@ Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRi
 	Update seqworkflowdetails Set SeqNo = (Select max(WorkFlowId) + 1 from WorkFlowDetails); 
 	</sql>
 	</changeSet>
+	<changeSet id="105" author="Prasad">
+	<createTable tableName="FINTYPESTATUSCODES">
+		<column name="StatusId" type="bigint">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FINTYPE" type="varchar(8)">
+		<constraints nullable="false"/>
+		</column>
+		<column name="DUEFROM" type="int">	
+		</column>
+		<column name="DUETO" type="int">	
+		</column>
+		<column name="Version" type="int" >
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(50)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+	</createTable>
+</changeSet>
+<changeSet id="106" author="Prasad">
+    	<addPrimaryKey 
+            columnNames="StatusId, FINTYPE"
+            constraintName="PK_FINTYPESTATUSCODES"
+            tableName="FINTYPESTATUSCODES"/>
+	</changeSet>
 </databaseChangeLog>
