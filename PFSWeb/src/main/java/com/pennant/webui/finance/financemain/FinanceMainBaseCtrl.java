@@ -842,9 +842,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void doCheckRights() {
 		logger.debug("Entering");
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
-
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnEdit"));
 		this.btnDelete.setVisible(false);
@@ -9940,7 +9937,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.finRepaymentAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
 						&& this.finRepaymentAmount.getActualValue().compareTo(downpay) >= 0) {
 					throw new WrongValueException(this.finRepaymentAmount, Labels.getLabel(
-							"DATE_MAXDATE",
+							"FIELD_IS_LESSER",
 							new String[] { Labels.getLabel("label_FinanceMainDialog_FinRepaymentAmount.value"),
 									Labels.getLabel("label_FinanceMainDialog_FinAmount.value") }));
 				}
