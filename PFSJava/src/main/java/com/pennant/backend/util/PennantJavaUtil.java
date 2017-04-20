@@ -92,6 +92,7 @@ import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
+import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
 import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
@@ -672,6 +673,7 @@ public class PennantJavaUtil {
 				masterWF, new String[] { "FlagCode", "FlagDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
 		ModuleUtil.register("PresentmentReasonCode", new ModuleMapping("PresentmentReasonCode", PresentmentReasonCode.class, new String[] { "PresentmentReasonCode", "PresentmentReasonCode_AView" },
 				masterWF, new String[] { "Code", "Description" }, null, 300));
+		ModuleUtil.register("FinanceStatusCode",new ModuleMapping("FinanceStatusCode", FinanceStatusCode.class, new String[]{"FINANCESTATUSCODES", "FINANCESTATUSCODES_AView"},masterWF, new String[] {"StatusCode","StatusDesc"} , null,300));
 
 		/************* Accounts *************/
 

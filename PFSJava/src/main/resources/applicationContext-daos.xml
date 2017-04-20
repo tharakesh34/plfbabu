@@ -9404,4 +9404,27 @@
 	<bean id="accountTypeGroupDAO" class="com.pennant.backend.dao.applicationmaster.impl.AccountTypeGroupDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+		<!-- FinanceStatusCode -->
+	<bean id="financeStatusCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.FinanceStatusCodeDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="financeStatusCodeService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="financeStatusCodeServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="financeStatusCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.FinanceStatusCodeServiceImpl">
+       <property name="financeStatusCodeDAO" ref="financeStatusCodeDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
 </beans>

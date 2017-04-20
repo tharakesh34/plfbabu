@@ -4554,4 +4554,14 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="holdEMIService" ref="holdEMIService" />
 	</bean>
+	
+	<!-- FinanceStatusCode -->
+	<bean id="financeStatusCodeListCtrl" class="com.pennant.webui.applicationmaster.financestatuscode.FinanceStatusCodeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeStatusCodeService" ref="financeStatusCodeService" />
+	</bean>
+	<bean id="financeStatusCodeDialogCtrl" class="com.pennant.webui.applicationmaster.financestatuscode.FinanceStatusCodeDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="financeStatusCodeService" ref="financeStatusCodeService"/>
+	</bean>
+	
 </beans>
