@@ -2140,4 +2140,212 @@ Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRi
 		
 </sql>
 	</changeSet>
+	<changeSet id="103" author="Prasad">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":"CCMS_MSTGRP1","properties":{"name":"Finance Rate Change\n","documentation":"","auditing":"","monitoring":"","executable":"true","package":"","vardefs":"","imports":"","id":"FIN_RATECHANGE","version":"","author":"","language":"English","namespaces":"","targetnamespace":"http://www.omg.org/bpmn20","expressionlanguage":"http://www.w3.org/1999/XPath","typelanguage":"http://www.w3.org/2001/XMLSchema","creationdate":"","modificationdate":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"_FF9D4911-C022-42B0-B00A-9C353226F4A7","properties":{"name":"Start","documentation":"","auditing":"","monitoring":"","dataoutputassociations":"","dataoutput":"","outputset":"","bgcolor":"#C5F970","trigger":"None"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"_5EE9B2AF-F8EA-432C-BB52-88124AA2A117"}],"bounds":{"lowerRight":{"x":116,"y":138},"upperLeft":{"x":86,"y":108}},"dockers":[]},{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF","properties":{"name":"Maker","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":false,"assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"scope=Own","onexitactions":"","taskname":"","actors":"BFSD_DISB_MAKER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_9305AD0C-8EA2-46BB-AD97-8B650D65B67D"},{"resourceId":"_14CED7D6-CEC3-49D1-A614-5168AD7F13F6"}],"bounds":{"lowerRight":{"x":250,"y":163},"upperLeft":{"x":150,"y":83}},"dockers":[]},{"resourceId":"_5EE9B2AF-F8EA-432C-BB52-88124AA2A117","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}],"bounds":{"lowerRight":{"x":149.5,"y":124},"upperLeft":{"x":116.6953125,"y":122}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}},{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A","properties":{"name":"Approver","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"User","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"","porttype":"","wsdlurl":"","bgcolor":"#FF6600","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"show_tabs=Accounting","onexitactions":"","taskname":"","actors":"BFSD_DISB_APPROVER"},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_00E367A7-32B3-4238-95E1-394CAF4A448E"}],"bounds":{"lowerRight":{"x":430,"y":163},"upperLeft":{"x":330,"y":83}},"dockers":[]},{"resourceId":"_9305AD0C-8EA2-46BB-AD97-8B650D65B67D","properties":{"name":"Submit","documentation":"Submit=Submitted","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Submitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"}],"bounds":{"lowerRight":{"x":329.78125,"y":124},"upperLeft":{"x":250.21875,"y":122}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"_77E97F8E-6071-449B-9BD7-4B0F3A5A657A"}},{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0","properties":{"name":"","documentation":"","auditing":"","monitoring":"","categories":"","assignments":"","pool":"","lanes":"","gates":"","gates_outgoingsequenceflow":"","gates_assignments":"","bgcolor":"#ffffff","gatewaytype":"XOR","xortype":"Data","markervisible":"true","defaultgate":"","gate_outgoingsequenceflow":"","gate_assignments":""},"stencil":{"id":"Exclusive_Databased_Gateway"},"childShapes":[],"outgoing":[{"resourceId":"_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56"},{"resourceId":"_2AE689CD-94CB-4752-9CE3-748559E63D53"},{"resourceId":"_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059"}],"bounds":{"lowerRight":{"x":515,"y":143},"upperLeft":{"x":475,"y":103}},"dockers":[]},{"resourceId":"_00E367A7-32B3-4238-95E1-394CAF4A448E","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"}],"bounds":{"lowerRight":{"x":474.64844687000755,"y":123.4097335362338},"upperLeft":{"x":430.62889687999245,"y":123.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"}},{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618","properties":{"name":"Complete Process","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"Service","implementation":"webService","resources":"","messageref":" ","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"doApprove","porttype":"","wsdlurl":"","bgcolor":"#ffffcc","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"","onexitactions":"","taskname":"","actors":""},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_A921FE66-42C4-42CC-BB5C-15ABAA47A008"}],"bounds":{"lowerRight":{"x":700,"y":163},"upperLeft":{"x":600,"y":83}},"dockers":[]},{"resourceId":"_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56","properties":{"name":"Approve","documentation":"Approve=Approved","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Approved'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}],"bounds":{"lowerRight":{"x":599.5117239866028,"y":123.43426377099225},"upperLeft":{"x":515.8124947633972,"y":123.16339247900775}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_DD6234E6-F810-4F4B-BD18-D36A2B5A4618"}},{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01","properties":{"name":"Approved","documentation":"","auditing":"","monitoring":"","datainputassociations":"","datainput":"","inputset":"","bgcolor":"#F47677","trigger":"None"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":793,"y":137},"upperLeft":{"x":765,"y":109}},"dockers":[]},{"resourceId":"_A921FE66-42C4-42CC-BB5C-15ABAA47A008","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01"}],"bounds":{"lowerRight":{"x":764.8984375,"y":124},"upperLeft":{"x":700.3828125,"y":122}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"_73682DD6-4D65-497A-BAA5-B80623CB6C01"}},{"resourceId":"_2AE689CD-94CB-4752-9CE3-748559E63D53","properties":{"name":"Resubmit","documentation":"Resubmit=Resubmitted","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Resubmitted'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}],"bounds":{"lowerRight":{"x":495.5,"y":102.53125},"upperLeft":{"x":200,"y":17}},"dockers":[{"x":20.5,"y":20.5},{"x":495.5,"y":17},{"x":200,"y":17},{"x":50,"y":40}],"target":{"resourceId":"_7B64C6C5-337C-44C2-98C6-A723EC862BFF"}},{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0","properties":{"name":"Cancel Process","documentation":"","auditing":"","monitoring":"","categories":"","startquantity":1,"completionquantity":1,"isforcompensation":"","assignments":"","callacitivity":"","tasktype":"Service","implementation":"webService","resources":"","messageref":"","operationref":"","instantiate":"","script":"","script_language":"","inmessagetype":"","outmessagetype":"","servicename":"","namespace":"","operation":"doReject","porttype":"","wsdlurl":"","bgcolor":"#ffffcc","looptype":"None","testbefore":"","loopcondition":"","loopmaximum":"","loopcardinality":"","loopdatainput":"","loopdataoutput":"","inputdataitem":"","outputdataitem":"","behavior":"all","complexbehaviordefinition":"","completioncondition":"","onebehavioreventref":"signal","nonebehavioreventref":"signal","properties":"","datainputset":"","dataoutputset":"","ruleflowgroup":"","onentryactions":"","onexitactions":"","taskname":"","actors":""},"stencil":{"id":"Task"},"childShapes":[],"outgoing":[{"resourceId":"_DAFA463C-32E5-4B16-BC89-284B69E70681"}],"bounds":{"lowerRight":{"x":545,"y":290},"upperLeft":{"x":445,"y":210}},"dockers":[]},{"resourceId":"_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059","properties":{"name":"Reject","documentation":"Reject=Rejected","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Rejected'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":495.4218287117048,"y":209.46875781130998},"upperLeft":{"x":495.1602025382952,"y":143.27733593869002}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}},{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA","properties":{"name":"Rejected","documentation":"","auditing":"","monitoring":"","datainputassociations":"","datainput":"","inputset":"","bgcolor":"#F47677","trigger":"None"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":509,"y":358},"upperLeft":{"x":481,"y":330}},"dockers":[]},{"resourceId":"_DAFA463C-32E5-4B16-BC89-284B69E70681","properties":{"name":"","documentation":"","auditing":"","monitoring":"","conditiontype":"None","conditionexpression":"","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA"}],"bounds":{"lowerRight":{"x":496,"y":329.78125},"upperLeft":{"x":494,"y":290.65625}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"_87A46993-91DA-47E0-811B-2F196FBAD6AA"}},{"resourceId":"_14CED7D6-CEC3-49D1-A614-5168AD7F13F6","properties":{"name":"Cancel","documentation":"Cancel=Cancelled","auditing":"Notes","monitoring":"","conditiontype":"None","conditionexpression":"vo.recordStatus == 'Cancelled'","isimmediate":"","showdiamondmarker":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}],"bounds":{"lowerRight":{"x":444.44921875,"y":250},"upperLeft":{"x":200,"y":163.6875}},"dockers":[{"x":50,"y":40},{"x":200,"y":250},{"x":50,"y":40}],"target":{"resourceId":"_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0"}}],"bounds":{"lowerRight":{"x":3000,"y":2000},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"bpmn2.0pbpm","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA["<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns="http://www.omg.org/bpmn20" xmlns:drools="http://www.jboss.org/drools" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="_Y5E4ACTtEeeMAfhe5iTxhA" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:itemDefinition id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessageType"/>
+  <bpmn2:itemDefinition id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessageType"/>
+  <bpmn2:message id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessage" itemRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessageType"/>
+  <bpmn2:message id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessage" itemRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessageType"/>
+  <bpmn2:interface id="_Y5E4FyTtEeeMAfhe5iTxhA">
+    <bpmn2:operation id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_ServiceOperation" name="doApprove">
+      <bpmn2:inMessageRef>_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_InMessage</bpmn2:inMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:interface id="_Y5E4GCTtEeeMAfhe5iTxhA">
+    <bpmn2:operation id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_ServiceOperation" name="doReject">
+      <bpmn2:inMessageRef>_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_InMessage</bpmn2:inMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:process id="FIN_RATECHANGE" name="Finance Rate Change " isExecutable="true">
+    <bpmn2:startEvent id="_FF9D4911-C022-42B0-B00A-9C353226F4A7" drools:bgcolor="#C5F970" name="Start">
+      <bpmn2:outgoing>_5EE9B2AF-F8EA-432C-BB52-88124AA2A117</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" drools:bgcolor="#FF6600" name="Maker">
+      <bpmn2:extensionElements>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>scope=Own></drools:script>
+        </drools:onEntry-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_5EE9B2AF-F8EA-432C-BB52-88124AA2A117</bpmn2:incoming>
+      <bpmn2:incoming>_2AE689CD-94CB-4752-9CE3-748559E63D53</bpmn2:incoming>
+      <bpmn2:outgoing>_9305AD0C-8EA2-46BB-AD97-8B650D65B67D</bpmn2:outgoing>
+      <bpmn2:outgoing>_14CED7D6-CEC3-49D1-A614-5168AD7F13F6</bpmn2:outgoing>
+      <bpmn2:potentialOwner id="_Y5E4ASTtEeeMAfhe5iTxhA">
+        <bpmn2:resourceAssignmentExpression id="_Y5E4AiTtEeeMAfhe5iTxhA">
+          <bpmn2:formalExpression id="_Y5E4AyTtEeeMAfhe5iTxhA">BFSD_DISB_MAKER</bpmn2:formalExpression>
+        </bpmn2:resourceAssignmentExpression>
+      </bpmn2:potentialOwner>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="_5EE9B2AF-F8EA-432C-BB52-88124AA2A117" sourceRef="_FF9D4911-C022-42B0-B00A-9C353226F4A7" targetRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF"/>
+    <bpmn2:userTask id="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" drools:bgcolor="#FF6600" name="Approver">
+      <bpmn2:extensionElements>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>show_tabs=Accounting></drools:script>
+        </drools:onEntry-script>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_9305AD0C-8EA2-46BB-AD97-8B650D65B67D</bpmn2:incoming>
+      <bpmn2:outgoing>_00E367A7-32B3-4238-95E1-394CAF4A448E</bpmn2:outgoing>
+      <bpmn2:potentialOwner id="_Y5E4BCTtEeeMAfhe5iTxhA">
+        <bpmn2:resourceAssignmentExpression id="_Y5E4BSTtEeeMAfhe5iTxhA">
+          <bpmn2:formalExpression id="_Y5E4BiTtEeeMAfhe5iTxhA">BFSD_DISB_APPROVER</bpmn2:formalExpression>
+        </bpmn2:resourceAssignmentExpression>
+      </bpmn2:potentialOwner>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="_9305AD0C-8EA2-46BB-AD97-8B650D65B67D" name="Submit" sourceRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" targetRef="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A">
+      <bpmn2:documentation id="_Y5E4ByTtEeeMAfhe5iTxhA">Submit=Submitted></bpmn2:documentation>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_Y5E4CCTtEeeMAfhe5iTxhA">vo.recordStatus == 'Submitted'></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" drools:bgcolor="#ffffff" drools:dg="" name="" gatewayDirection="Diverging">
+      <bpmn2:incoming>_00E367A7-32B3-4238-95E1-394CAF4A448E</bpmn2:incoming>
+      <bpmn2:outgoing>_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56</bpmn2:outgoing>
+      <bpmn2:outgoing>_2AE689CD-94CB-4752-9CE3-748559E63D53</bpmn2:outgoing>
+      <bpmn2:outgoing>_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="_00E367A7-32B3-4238-95E1-394CAF4A448E" sourceRef="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" targetRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0"/>
+    <bpmn2:serviceTask id="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" drools:bgcolor="#ffffcc" drools:servicetaskoperation="doApprove" name="Complete Process" operationRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618_ServiceOperation">
+      <bpmn2:incoming>_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56</bpmn2:incoming>
+      <bpmn2:outgoing>_A921FE66-42C4-42CC-BB5C-15ABAA47A008</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56" name="Approve" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618">
+      <bpmn2:documentation id="_Y5E4CSTtEeeMAfhe5iTxhA">Approve=Approved></bpmn2:documentation>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_Y5E4CiTtEeeMAfhe5iTxhA">vo.recordStatus == 'Approved'></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="_73682DD6-4D65-497A-BAA5-B80623CB6C01" drools:bgcolor="#F47677" name="Approved">
+      <bpmn2:incoming>_A921FE66-42C4-42CC-BB5C-15ABAA47A008</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="_A921FE66-42C4-42CC-BB5C-15ABAA47A008" sourceRef="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" targetRef="_73682DD6-4D65-497A-BAA5-B80623CB6C01"/>
+    <bpmn2:sequenceFlow id="_2AE689CD-94CB-4752-9CE3-748559E63D53" name="Resubmit" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF">
+      <bpmn2:documentation id="_Y5E4CyTtEeeMAfhe5iTxhA">Resubmit=Resubmitted></bpmn2:documentation>
+      <bpmn2:auditing id="_Y5E4DCTtEeeMAfhe5iTxhA">
+        <bpmn2:documentation id="_Y5E4DSTtEeeMAfhe5iTxhA">Notes</bpmn2:documentation>
+      </bpmn2:auditing>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_Y5E4DiTtEeeMAfhe5iTxhA">vo.recordStatus == 'Resubmitted'></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:serviceTask id="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" drools:bgcolor="#ffffcc" drools:servicetaskoperation="doReject" name="Cancel Process" operationRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0_ServiceOperation">
+      <bpmn2:incoming>_14CED7D6-CEC3-49D1-A614-5168AD7F13F6</bpmn2:incoming>
+      <bpmn2:incoming>_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059</bpmn2:incoming>
+      <bpmn2:outgoing>_DAFA463C-32E5-4B16-BC89-284B69E70681</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059" name="Reject" sourceRef="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0">
+      <bpmn2:documentation id="_Y5E4DyTtEeeMAfhe5iTxhA">Reject=Rejected></bpmn2:documentation>
+      <bpmn2:auditing id="_Y5E4ECTtEeeMAfhe5iTxhA">
+        <bpmn2:documentation id="_Y5E4ESTtEeeMAfhe5iTxhA">Notes</bpmn2:documentation>
+      </bpmn2:auditing>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_Y5E4EiTtEeeMAfhe5iTxhA">vo.recordStatus == 'Rejected'></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="_87A46993-91DA-47E0-811B-2F196FBAD6AA" drools:bgcolor="#F47677" name="Rejected">
+      <bpmn2:incoming>_DAFA463C-32E5-4B16-BC89-284B69E70681</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="_DAFA463C-32E5-4B16-BC89-284B69E70681" sourceRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" targetRef="_87A46993-91DA-47E0-811B-2F196FBAD6AA"/>
+    <bpmn2:sequenceFlow id="_14CED7D6-CEC3-49D1-A614-5168AD7F13F6" name="Cancel" sourceRef="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" targetRef="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0">
+      <bpmn2:documentation id="_Y5E4EyTtEeeMAfhe5iTxhA">Cancel=Cancelled></bpmn2:documentation>
+      <bpmn2:auditing id="_Y5E4FCTtEeeMAfhe5iTxhA">
+        <bpmn2:documentation id="_Y5E4FSTtEeeMAfhe5iTxhA">Notes</bpmn2:documentation>
+      </bpmn2:auditing>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_Y5E4FiTtEeeMAfhe5iTxhA">vo.recordStatus == 'Cancelled'></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_Y5E4GSTtEeeMAfhe5iTxhA">
+    <bpmndi:BPMNPlane id="_Y5E4GiTtEeeMAfhe5iTxhA" bpmnElement="FIN_RATECHANGE">
+      <bpmndi:BPMNShape id="_Y5E4GyTtEeeMAfhe5iTxhA" bpmnElement="_FF9D4911-C022-42B0-B00A-9C353226F4A7">
+        <dc:Bounds height="30.0" width="30.0" x="86.0" y="108.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_Y5E4HCTtEeeMAfhe5iTxhA" bpmnElement="_7B64C6C5-337C-44C2-98C6-A723EC862BFF">
+        <dc:Bounds height="80.0" width="100.0" x="150.0" y="83.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4HSTtEeeMAfhe5iTxhA" bpmnElement="_5EE9B2AF-F8EA-432C-BB52-88124AA2A117">
+        <di:waypoint xsi:type="dc:Point" x="101.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4HiTtEeeMAfhe5iTxhA" bpmnElement="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A">
+        <dc:Bounds height="80.0" width="100.0" x="330.0" y="83.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4HyTtEeeMAfhe5iTxhA" bpmnElement="_9305AD0C-8EA2-46BB-AD97-8B650D65B67D">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="380.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4ICTtEeeMAfhe5iTxhA" bpmnElement="_C0021C4A-21DA-4AB3-83DF-43DE36042CD0">
+        <dc:Bounds height="40.0" width="40.0" x="475.0" y="103.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4ISTtEeeMAfhe5iTxhA" bpmnElement="_00E367A7-32B3-4238-95E1-394CAF4A448E">
+        <di:waypoint xsi:type="dc:Point" x="380.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4IiTtEeeMAfhe5iTxhA" bpmnElement="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618">
+        <dc:Bounds height="80.0" width="100.0" x="600.0" y="83.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4IyTtEeeMAfhe5iTxhA" bpmnElement="_0C53F5CF-91B6-48EF-AA7A-0FFB1BDC9D56">
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="650.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4JCTtEeeMAfhe5iTxhA" bpmnElement="_73682DD6-4D65-497A-BAA5-B80623CB6C01">
+        <dc:Bounds height="28.0" width="28.0" x="765.0" y="109.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4JSTtEeeMAfhe5iTxhA" bpmnElement="_A921FE66-42C4-42CC-BB5C-15ABAA47A008">
+        <di:waypoint xsi:type="dc:Point" x="650.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="779.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_Y5E4JiTtEeeMAfhe5iTxhA" bpmnElement="_2AE689CD-94CB-4752-9CE3-748559E63D53">
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="17.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="17.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="123.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4JyTtEeeMAfhe5iTxhA" bpmnElement="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0">
+        <dc:Bounds height="80.0" width="100.0" x="445.0" y="210.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4KCTtEeeMAfhe5iTxhA" bpmnElement="_A96EF8F0-08CB-4FD7-8DAC-5CF5E6E1F059">
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="250.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_Y5E4KSTtEeeMAfhe5iTxhA" bpmnElement="_87A46993-91DA-47E0-811B-2F196FBAD6AA">
+        <dc:Bounds height="28.0" width="28.0" x="481.0" y="330.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_Y5E4KiTtEeeMAfhe5iTxhA" bpmnElement="_DAFA463C-32E5-4B16-BC89-284B69E70681">
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="250.0"/>
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="344.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_Y5E4KyTtEeeMAfhe5iTxhA" bpmnElement="_14CED7D6-CEC3-49D1-A614-5168AD7F13F6">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="250.0"/>
+        <di:waypoint xsi:type="dc:Point" x="495.0" y="250.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmn2:relationship id="_Y5E4LCTtEeeMAfhe5iTxhA" type="jBPMProcessSimulation">
+    <bpmn2:extensionElements>
+      <drools:ProcessAnalysisData>
+        <drools:Scenario xsi:type="drools:Scenario" id="default" name="Simulationscenario">
+          <drools:ScenarioParameters xsi:type="drools:ScenarioParameters_._type"/>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_DD6234E6-F810-4F4B-BD18-D36A2B5A4618" id="_Y5E4LSTtEeeMAfhe5iTxhA">
+            <drools:CostParameters xsi:type="drools:CostParameters"/>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_5F12FFE5-4B96-49AF-A35C-73A4DBEE36B0" id="_Y5E4LiTtEeeMAfhe5iTxhA">
+            <drools:CostParameters xsi:type="drools:CostParameters"/>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_77E97F8E-6071-449B-9BD7-4B0F3A5A657A" id="_Y5E4LyTtEeeMAfhe5iTxhA">
+            <drools:ResourceParameters xsi:type="drools:ResourceParameters"/>
+            <drools:CostParameters xsi:type="drools:CostParameters"/>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_7B64C6C5-337C-44C2-98C6-A723EC862BFF" id="_Y5E4MCTtEeeMAfhe5iTxhA">
+            <drools:ResourceParameters xsi:type="drools:ResourceParameters"/>
+            <drools:CostParameters xsi:type="drools:CostParameters"/>
+          </drools:ElementParameters>
+        </drools:Scenario>
+      </drools:ProcessAnalysisData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_Y5E4ACTtEeeMAfhe5iTxhA</bpmn2:source>
+    <bpmn2:target>_Y5E4ACTtEeeMAfhe5iTxhA</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>"]]></column>
+		<where>workflowtype='BFSD_ORIGINATION'and workflowactive=1</where>
+		</update>
+	</changeSet>
+	<changeSet author="Prasad" id="104">
+	<sql>
+	Update seqworkflowdetails Set SeqNo = (Select max(WorkFlowId) + 1 from WorkFlowDetails); 
+	</sql>
+	</changeSet>
 </databaseChangeLog>
