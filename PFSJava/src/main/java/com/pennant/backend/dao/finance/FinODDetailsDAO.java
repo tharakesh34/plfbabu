@@ -107,4 +107,6 @@ public interface FinODDetailsDAO {
 	BigDecimal getTotalPenaltyBal(String finReference);
 
 	BigDecimal getTotalODPftBal(String finReference);
+	
+	boolean isODExist(String finReference, Date schdDate);
 }

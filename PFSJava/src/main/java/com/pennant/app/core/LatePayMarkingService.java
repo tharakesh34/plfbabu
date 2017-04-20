@@ -61,18 +61,8 @@ public class LatePayMarkingService extends ServiceHelper {
 	private FinODPenaltyRateDAO	finODPenaltyRateDAO;
 
 	//TODO Query TO be changed
-	public static final String	customerRepayQueue	= "	SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch,RQ.LinkedFinRef,"
-															+ "RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, RQ.SchdPftBal, "
-															+ "RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid,"
-															+ "(RQ.SchdPftBal+ RQ.SchdPriBal)  RepayQueueBal, PD.AcrTillLBD, PD.PftAmzSusp, PD.AmzTillLBD, "
-															+ "RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal, RQ.SchdIns, RQ.SchdInsPaid, RQ.SchdInsBal, "
-															+ "RQ.SchdSuplRent, RQ.SchdSuplRentPaid, RQ.SchdSuplRentBal, "
-															+ "RQ.SchdIncrCost, RQ.SchdIncrCostPaid, RQ.SchdIncrCostBal,RQ.AdvProfit,RQ.SchdRate,RQ.Rebate, "
-															+ "FM.ProfitDaysBasis, RQ.PenaltyPayNow, RQ.LatePayPftPayNow "
-															+ "FROM FinRpyQueue RQ  INNER JOIN FinPftDetails PD ON PD.FinReference = RQ.FinReference "
-															+ "INNER JOIN FinanceMain FM ON FM.FinReference = RQ.FinReference "
-															+ "WHERE RQ.CustomerID=? "
-															+ "ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor , RQ.LinkedFinRef ASC ";
+	public static final String	sqlCustRepayQueue	= "	SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
+															+ "FROM FinRpyQueue WHERE CustomerID=?";
 
 	/**
 	 * Default constructor
@@ -88,7 +78,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		try {
 			//payments
-			sqlStatement = connection.prepareStatement(customerRepayQueue);
+			sqlStatement = connection.prepareStatement(sqlCustRepayQueue);
 			sqlStatement.setLong(1, custId);
 			resultSet = sqlStatement.executeQuery();
 
@@ -97,7 +87,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				BeanPropertyRowMapper<FinRepayQueue> beanPropertyRowMapper = new BeanPropertyRowMapper<>(
 						FinRepayQueue.class);
 				FinRepayQueue finRepayQueue = beanPropertyRowMapper.mapRow(resultSet, resultSet.getRow());
-				processLatePayInEOD(finRepayQueue, date);
+				latePayMarking(finRepayQueue, date);
 			}
 
 		} catch (Exception e) {
@@ -122,98 +112,76 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<ReturnDataSet> processLatePayInEOD(FinRepayQueue finRepayQueue, Date dateValueDate) throws Exception {
+	private void latePayMarking(FinRepayQueue finRepayQueue, Date dateValueDate) throws Exception {
 		logger.debug("Entering");
 
-		FinODDetails finODDetails = finODDetailsDAO.getFinODDetailsForBatch(finRepayQueue.getFinReference(),
-				finRepayQueue.getRpyDate(), finRepayQueue.getFinRpyFor());
+		boolean isODExist = finODDetailsDAO.isODExist(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate());
 
 		// Finance Overdue Details Save or Updation
-		if (finODDetails == null) {
-			if (!finRepayQueue.isSchdIsPftPaid() || !finRepayQueue.isSchdIsPriPaid()) {
-				finODDetails = createODDetails(finRepayQueue, dateValueDate);
-			}
+		if (isODExist) {
+			updateODDetails(finRepayQueue, dateValueDate, 1);
 		} else {
-			finODDetails = updateODDetails(finODDetails, finRepayQueue, dateValueDate, 1);
+			createODDetails(finRepayQueue, dateValueDate);
 		}
 
 		logger.debug("Leaving");
-		return Collections.emptyList();
 	}
 
 	/**
 	 * Method for Preparing OverDue Details
 	 * 
-	 * @param queue
+	 * @param finRepayQueue
 	 * @param valueDate
 	 * @return
 	 */
-	private FinODDetails createODDetails(FinRepayQueue queue, Date valueDate) {
+	private void createODDetails(FinRepayQueue finRepayQueue, Date valueDate) {
 		logger.debug(" Entering ");
 
+		if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) <= 0
+				&& finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
 		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(queue.getFinReference());
-		finODDetails.setFinODSchdDate(queue.getRpyDate());
-		finODDetails.setFinODFor(queue.getFinRpyFor());
-		finODDetails.setFinBranch(queue.getBranch());
-		finODDetails.setFinType(queue.getFinType());
-		finODDetails.setCustID(queue.getCustomerID());
-		// Prepare Overdue Penalty rate Details & set to Finance Overdue
-		// Details
-		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinReference(), "_AView");
-		if (penaltyRate != null) {
-			finODDetails.setApplyODPenalty(penaltyRate.isApplyODPenalty());
-			finODDetails.setODIncGrcDays(penaltyRate.isODIncGrcDays());
-			finODDetails.setODChargeType(penaltyRate.getODChargeType());
-			finODDetails.setODChargeAmtOrPerc(penaltyRate.getODChargeAmtOrPerc());
-			finODDetails.setODChargeCalOn(penaltyRate.getODChargeCalOn());
-			finODDetails.setODGraceDays(penaltyRate.getODGraceDays());
-			finODDetails.setODAllowWaiver(penaltyRate.isODAllowWaiver());
-			finODDetails.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
-		}
-
-		finODDetails.setFinCurODAmt(queue.getSchdPft().add(queue.getSchdPri()).subtract(queue.getSchdPftPaid())
-				.subtract(queue.getSchdPriPaid()));
-		finODDetails.setFinCurODPri(queue.getSchdPri().subtract(queue.getSchdPriPaid()));
-		finODDetails.setFinCurODPft(queue.getSchdPft().subtract(queue.getSchdPftPaid()));
-		finODDetails.setFinMaxODAmt(finODDetails.getFinCurODAmt());
-		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPri());
-		finODDetails.setFinMaxODPft(finODDetails.getFinCurODPft());
-		if (finODDetails.getTotPenaltyPaid().compareTo(BigDecimal.ZERO) == 0) {
-			finODDetails.setGraceDays(finODDetails.getODGraceDays());
-			finODDetails.setIncGraceDays(finODDetails.isODIncGrcDays());
-		}
+		finODDetails.setFinReference(finRepayQueue.getFinReference());
+		finODDetails.setFinODSchdDate(finRepayQueue.getRpyDate());
+		finODDetails.setFinODFor(finRepayQueue.getFinRpyFor());
+		finODDetails.setFinBranch(finRepayQueue.getBranch());
+		finODDetails.setFinType(finRepayQueue.getFinType());
+		finODDetails.setCustID(finRepayQueue.getCustomerID());
 		finODDetails.setFinODTillDate(valueDate);
-		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(valueDate, finODDetails.getFinODSchdDate()) + 1);
+		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPftBal().add(finRepayQueue.getSchdPftBal()));
+		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
+		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
+		finODDetails.setFinMaxODAmt(finODDetails.getFinCurODPri());
+		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPri());
+		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPft());
+		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), valueDate));
 		finODDetails.setFinLMdfDate(valueDate);
-		if (finODDetails.getFinODSchdDate().compareTo(valueDate) <= 0) {
-			finODDetailsDAO.save(finODDetails);
-		}
 
-		return finODDetails;
+		finODDetailsDAO.save(finODDetails);
 	}
 
 	/**
 	 * Method for Preparing OverDue Details
 	 * 
 	 * @param details
-	 * @param queue
+	 * @param finRepayQueue
 	 * @param valueDate
 	 * @param increment
 	 * @return
 	 */
-	private FinODDetails updateODDetails(FinODDetails details, FinRepayQueue queue, Date valueDate, int increment) {
+	private void updateODDetails(FinRepayQueue finRepayQueue, Date valueDate, int increment) {
+		FinODDetails finODDetails = new FinODDetails();
 
-		details.setFinCurODAmt(queue.getSchdPft().add(queue.getSchdPri()).subtract(queue.getSchdPftPaid())
-				.subtract(queue.getSchdPriPaid()));
-		details.setFinCurODPri(queue.getSchdPri().subtract(queue.getSchdPriPaid()));
-		details.setFinCurODPft(queue.getSchdPft().subtract(queue.getSchdPftPaid()));
-		details.setFinODTillDate(valueDate);
-		details.setFinCurODDays(DateUtility.getDaysBetween(valueDate, details.getFinODSchdDate()) + increment);
-		details.setFinLMdfDate(valueDate);
-		finODDetailsDAO.updateBatch(details);
+		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPftBal().add(finRepayQueue.getSchdPftBal()));
+		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
+		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
+		finODDetails.setFinODTillDate(valueDate);
+		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), valueDate));
+		finODDetails.setFinLMdfDate(valueDate);
+		finODDetailsDAO.updateBatch(finODDetails);
 
-		return details;
 	}
 
 	// ******************************************************//
