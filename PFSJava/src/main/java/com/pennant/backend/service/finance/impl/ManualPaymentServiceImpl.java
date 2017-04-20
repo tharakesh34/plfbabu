@@ -73,7 +73,6 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -85,7 +84,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
-	private final static Logger				logger	= Logger.getLogger(ManualPaymentServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(ManualPaymentServiceImpl.class);
 
 	private FinanceRepayPriorityDAO			financeRepayPriorityDAO;
 	private FinRepayQueueDAO				finRepayQueueDAO;

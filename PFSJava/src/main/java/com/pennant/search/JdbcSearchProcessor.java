@@ -80,30 +80,19 @@ public class JdbcSearchProcessor implements Serializable {
 		query.validate();
 
 		// Change the query to retrieve a portion of the rows.
-		boolean offset = false;
-		if (search.getFirstResult() > 0) {
-			offset = true;
-		}
-
-		String sql = getLimitRowsSql(query.toString(), offset, search.getFirstResult(), search.getMaxResults());
+		String sql = getLimitRowsSql(query, search);
 		logger.trace(Literal.SQL + sql);
 
-		List resultList = null;
-
+		// Execute the SQL, binding the arguments.
 		if (search.getSearchClass() != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
-			try {
-				resultList = jdbcTemplate.query(sql, rowMapper);
 
-			} catch (Exception e) {
-				logger.warn(e);
-			}
+			return jdbcTemplate.query(sql, rowMapper);
 		} else {
 			Map<String, Object> paramMap = new HashMap<>();
-			resultList = jdbcTemplate.queryForList(sql, paramMap);
-		}
 
-		return resultList;
+			return (List<T>) jdbcTemplate.queryForList(sql, paramMap);
+		}
 	}
 
 	public String getQuery(ISearch search) {
@@ -139,6 +128,7 @@ public class JdbcSearchProcessor implements Serializable {
 		addWhereClause(query, search);
 		query.validate();
 
+		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + query.toString());
 		Map<String, Object> namedParameters = new HashMap<>();
 
@@ -170,23 +160,30 @@ public class JdbcSearchProcessor implements Serializable {
 		return result;
 	}
 
-	private String getLimitRowsSql(String sql, boolean hasOffset, int offset, int pageSize) {
+	private String getLimitRowsSql(SelectQuery query, ISearch search) {
+		int offset = search.getFirstResult();
+		int pageSize = search.getMaxResults();
+
+		boolean hasOffset = false;
+		if (search.getFirstResult() > 0) {
+			hasOffset = true;
+		}
+
 		switch (App.DATABASE) {
 		case SQL_SERVER:
-			return getMSSQLLimitString(sql, hasOffset, offset, pageSize);
+			return getMSSQLLimitString(query.toString(), hasOffset, offset, pageSize);
 		case ORACLE:
-			return getORACLELimitString(sql, hasOffset, offset, pageSize);
+			return getORACLELimitString(query.toString(), hasOffset, offset, pageSize);
 		case DB2:
-			return getDB2LimitString(sql, hasOffset, offset, pageSize);
+			return getDB2LimitString(query.toString(), hasOffset, offset, pageSize);
 		case MYSQL:
-			return getMYSQLLimitString(sql, hasOffset, offset, pageSize);
+			return getMYSQLLimitString(query.toString(), hasOffset, offset, pageSize);
 		default:
 			return null;
 		}
 	}
 
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-
 		return new StringBuffer(sql.length() + 20).append(sql)
 				.append(hasOffset ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
 	}

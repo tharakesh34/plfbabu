@@ -40,12 +40,8 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -68,8 +64,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class DocumentTypeServiceImpl extends GenericService<DocumentType>
 		implements DocumentTypeService {
-	
-	private final static Logger logger = Logger.getLogger(DocumentTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DocumentTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DocumentTypeDAO documentTypeDAO;
