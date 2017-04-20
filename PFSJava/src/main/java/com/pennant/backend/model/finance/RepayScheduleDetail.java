@@ -41,6 +41,12 @@ public class RepayScheduleDetail {
 	private BigDecimal profitSchdBal = BigDecimal.ZERO;
 	private BigDecimal profitSchdPayNow = BigDecimal.ZERO;
 	
+	// Profit Amount
+	private BigDecimal latePftSchd = BigDecimal.ZERO;
+	private BigDecimal latePftSchdPaid = BigDecimal.ZERO;
+	private BigDecimal latePftSchdBal = BigDecimal.ZERO;
+	private BigDecimal latePftSchdPayNow = BigDecimal.ZERO;
+	
 	// Principal Amount
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchdPaid = BigDecimal.ZERO;
@@ -436,5 +442,39 @@ public class RepayScheduleDetail {
 	public void setRepayID(long repayID) {
 		this.repayID = repayID;
 	}
+
+	public BigDecimal getLatePftSchd() {
+		return latePftSchd;
+	}
+
+	public void setLatePftSchd(BigDecimal latePftSchd) {
+		this.latePftSchd = latePftSchd;
+	}
+
+	public BigDecimal getLatePftSchdPaid() {
+		return latePftSchdPaid;
+	}
+
+	public void setLatePftSchdPaid(BigDecimal latePftSchdPaid) {
+		this.latePftSchdPaid = latePftSchdPaid;
+	}
+
+	public BigDecimal getLatePftSchdBal() {
+		return latePftSchdBal;
+	}
+
+	public void setLatePftSchdBal(BigDecimal latePftSchdBal) {
+		this.latePftSchdBal = latePftSchdBal;
+	}
+
+	public BigDecimal getLatePftSchdPayNow() {
+		return latePftSchdPayNow;
+	}
+
+	public void setLatePftSchdPayNow(BigDecimal latePftSchdPayNow) {
+		this.latePftSchdPayNow = latePftSchdPayNow;
+	}
+	
+	
 	
 }

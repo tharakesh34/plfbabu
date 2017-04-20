@@ -58,6 +58,10 @@ public class RepayConstants {
 	public static final char	REPAY_OTHERS			= 'F';
 	public static final char	REPAY_LATEPAY_PROFIT	= 'L';
 	
+	// Manual Receipts Usage
+	public static final char	REPAY_FEE				= 'F';
+	public static final char	REPAY_INS				= 'N';
+	
 	// Excess Amounts to in Receipts
 	public static final String	EXAMOUNTTYPE_EXCESS		= "E";
 	public static final String	EXAMOUNTTYPE_EMIINADV	= "A";
@@ -89,6 +93,7 @@ public class RepayConstants {
 	public static final String	ALLOCATION_FEE			= "FEE";
 	public static final String	ALLOCATION_INS			= "INS";
 	public static final String	ALLOCATION_MANADV		= "MANADV";
+	public static final String	ALLOCATION_BAL			= "BAL";
 	
 	// Receipt Types
 	public static final String	RECEIPTTYPE_RECIPT		= "R";

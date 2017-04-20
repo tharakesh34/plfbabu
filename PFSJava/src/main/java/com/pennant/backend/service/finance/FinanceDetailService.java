@@ -172,6 +172,7 @@ public interface FinanceDetailService {
 	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType);
 	BigDecimal getFinAssetValue(String finReference);
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
+	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
 	
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);

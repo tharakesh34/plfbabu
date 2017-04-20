@@ -4165,7 +4165,7 @@
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
-
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -6508,10 +6508,6 @@
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator"
 		scope="prototype">
 		<aop:scoped-proxy />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 

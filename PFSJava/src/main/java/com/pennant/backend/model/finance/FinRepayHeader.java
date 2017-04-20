@@ -13,6 +13,8 @@ public class FinRepayHeader {
 	private String finEvent;
 	private BigDecimal priAmount;
 	private BigDecimal pftAmount;
+	private BigDecimal latePftAmount;
+	private BigDecimal totalPenalty;
 	private BigDecimal totalIns;
 	private BigDecimal totalSuplRent;
 	private BigDecimal totalIncrCost;
@@ -181,7 +183,6 @@ public class FinRepayHeader {
 	public List<RepayScheduleDetail> getRepayScheduleDetails() {
 		return repayScheduleDetails;
 	}
-
 	public void setRepayScheduleDetails(List<RepayScheduleDetail> repayScheduleDetails) {
 		this.repayScheduleDetails = repayScheduleDetails;
 	}
@@ -189,9 +190,22 @@ public class FinRepayHeader {
 	public int getReceiptSeqID() {
 		return receiptSeqID;
 	}
-
 	public void setReceiptSeqID(int receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
+	}
+
+	public BigDecimal getLatePftAmount() {
+		return latePftAmount;
+	}
+	public void setLatePftAmount(BigDecimal latePftAmount) {
+		this.latePftAmount = latePftAmount;
+	}
+
+	public BigDecimal getTotalPenalty() {
+		return totalPenalty;
+	}
+	public void setTotalPenalty(BigDecimal totalPenalty) {
+		this.totalPenalty = totalPenalty;
 	}
 	
 }
