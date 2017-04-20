@@ -1878,9 +1878,78 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 			<column name="insurancePaid" type="number(18,0)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="94                                                                                                                                                                      " author="Madhubabu">
+	<changeSet id="94" author="Madhubabu">
 		<addColumn tableName="WIFFinSchFrqInsurance">
 			<column name="insurancePaid" type="number(18,0)" />
 		</addColumn>
+	</changeSet>
+	<changeSet id="95" author="Madhubabu">                                                                                                                                                              
+		<sql>
+		insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_bankBranchID'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_contactNumber'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_bankCode'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_payableLoc'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_printingLoc'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_valueDate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsList_NewFinAdvancePaymentsDetail'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_FinAdvancePaymentsDialog_btnSave'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'button_FinAdvancePaymentsDialog_btnDelete'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_paymentDetail'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_liabilityHoldName'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_beneficiaryName'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_description'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_amtToBeReleased'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_beneficiaryAccNo'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_paymentType'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_llDate'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_custContribution'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_sellerContribution'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_remarks'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where 
+GRPCODE = 'BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'FinAdvancePaymentsDialog_partnerBankID'), 
+1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights); 
+		</sql>
 	</changeSet>
 </databaseChangeLog>
