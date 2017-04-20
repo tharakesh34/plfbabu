@@ -13,21 +13,11 @@
 	<!-- ====================================================== -->
 
 	<bean id="jdbcSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<property name="jdbcSearchProcessor">
-			<bean class="com.pennant.search.JdbcSearchProcessor"
-				factory-method="getInstanceForDataSource">
-				<constructor-arg ref="pfsDatasource" />
-			</bean>
-		</property>
+		<constructor-arg ref="pfsDatasource" />
 	</bean>
 
 	<bean id="jdbcExtSearchSupport" class="com.pennant.backend.dao.impl.JdbcSearchSupportImpl">
-		<property name="jdbcSearchProcessor">
-			<bean class="com.pennant.search.JdbcSearchProcessor"
-				factory-method="getInstanceForDataSource">
-				<constructor-arg ref="pfsExtDatasource" />
-			</bean>
-		</property>
+		<constructor-arg ref="pfsExtDatasource" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -4175,7 +4165,7 @@
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
-		
+
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -4381,7 +4371,8 @@
 	<!-- Finance Log Entry Details -->
 
 	<bean id="finLogEntryDetailDAO"
-		class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl" parent="basisNextidDao">
+		class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl"
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -5640,11 +5631,11 @@
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
-	
+
 	<!--============ Finance Excess Amounts Details ============== -->
 
 	<bean id="finExcessAmountDAO"
-		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" >
+		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -9382,26 +9373,34 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- AccountTypeGroup -->
-	<bean id="accountTypeGroupService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
-	   <property name="target"><ref bean="accountTypeGroupServiceTarget"/></property>
-       <property name="transactionAttributes">
-           <props>
-               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
-			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
-			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-           </props>
-       </property>
-   </bean>
+	<bean id="accountTypeGroupService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="accountTypeGroupServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
 
- 	<bean name="accountTypeGroupServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.AccountTypeGroupServiceImpl">
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
-       <property name="accountTypeGroupDAO" ref="accountTypeGroupDAO" />
-   </bean>
-   
-	<bean id="accountTypeGroupDAO" class="com.pennant.backend.dao.applicationmaster.impl.AccountTypeGroupDAOImpl" parent="basisNextidDao">
+	<bean name="accountTypeGroupServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.AccountTypeGroupServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="accountTypeGroupDAO" ref="accountTypeGroupDAO" />
+	</bean>
+
+	<bean id="accountTypeGroupDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.AccountTypeGroupDAOImpl"
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 		<!-- FinanceStatusCode -->

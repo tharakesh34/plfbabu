@@ -33,7 +33,7 @@ public class SearchResult<T> implements Serializable {
 	protected int totalCount = -1;
 
 	public SearchResult() {
-		
+		super();
 	}
 	
 	/**

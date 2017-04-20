@@ -45,6 +45,8 @@ package com.pennant.backend.dao.impl;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.pennant.backend.dao.JdbcSearchSupport;
 import com.pennant.search.ISearch;
 import com.pennant.search.JdbcSearchProcessor;
@@ -55,8 +57,10 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	private JdbcSearchProcessor	jdbcSearchProcessor;
 
-	public JdbcSearchSupportImpl() {
+	public JdbcSearchSupportImpl(DataSource dataSource) {
 		super();
+		
+		jdbcSearchProcessor = new JdbcSearchProcessor(dataSource);
 	}
 
 	@Override

@@ -12,6 +12,7 @@
  */
 package com.pennant.search;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,26 +40,17 @@ import com.pennanttech.pff.core.util.ModuleUtil;
  * 
  * @author dwolverton
  */
-public class JdbcSearchProcessor {
-	private static final Logger							logger		= Logger.getLogger(JdbcSearchProcessor.class);
+public class JdbcSearchProcessor implements Serializable {
+	private static final long						serialVersionUID	= 4460401213988371185L;
+	private static final Logger						logger				= Logger.getLogger(JdbcSearchProcessor.class);
 
-	private static final String							SELECT		= "select";
-	private static final String							FROM		= "from";
-	private static final String							DISTINCT	= "distinct";
+	private static final String						SELECT				= "select";
+	private static final String						FROM				= "from";
+	private static final String						DISTINCT			= "distinct";
+	private transient NamedParameterJdbcTemplate	jdbcTemplate;
 
-	private static Map<DataSource, JdbcSearchProcessor>	map			= new HashMap<>();
-	private NamedParameterJdbcTemplate					namedParameterJdbcTemplate;
-
-	public static JdbcSearchProcessor getInstanceForDataSource(DataSource dataSource) {
-		logger.debug("Entering");
-		JdbcSearchProcessor instance = map.get(dataSource);
-		if (instance == null) {
-			instance = new JdbcSearchProcessor();
-			instance.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-			map.put(dataSource, instance);
-		}
-		logger.debug("Leaving");
-		return instance;
+	public JdbcSearchProcessor(DataSource dataSource) {
+		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -83,33 +75,29 @@ public class JdbcSearchProcessor {
 		addWhereClause(query, search);
 		addOrderByExpression(query, search);
 		query.validate();
-		
-		// Prepare the 
 
-		boolean firstResult = false;
+		// Change the query to retrieve a portion of the rows.
+		boolean offset = false;
 		if (search.getFirstResult() > 0) {
-			firstResult = true;
+			offset = true;
 		}
-		logger.trace(Literal.SQL
-				+ getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()));
+
+		String sql = getLimitRowsSql(query.toString(), offset, search.getFirstResult(), search.getMaxResults());
+		logger.trace(Literal.SQL + sql);
 
 		List resultList = null;
 
 		if (search.getSearchClass() != null) {
 			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 			try {
-				resultList = namedParameterJdbcTemplate.query(
-						getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
-						rowMapper);
+				resultList = jdbcTemplate.query(sql, rowMapper);
 
 			} catch (Exception e) {
 				logger.warn(e);
 			}
 		} else {
 			Map<String, Object> paramMap = new HashMap<>();
-			resultList = namedParameterJdbcTemplate.queryForList(
-					getLimitString(query.toString(), firstResult, search.getFirstResult(), search.getMaxResults()),
-					paramMap);
+			resultList = jdbcTemplate.queryForList(sql, paramMap);
 		}
 
 		return resultList;
@@ -151,7 +139,7 @@ public class JdbcSearchProcessor {
 		logger.trace(Literal.SQL + query.toString());
 		Map<String, Object> namedParameters = new HashMap<>();
 
-		return namedParameterJdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
+		return jdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
 	}
 
 	/**
@@ -161,7 +149,7 @@ public class JdbcSearchProcessor {
 	 * 
 	 * @see ISearch
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SearchResult searchAndCount(ISearch search) {
 		if (search == null) {
 			return null;
@@ -179,16 +167,16 @@ public class JdbcSearchProcessor {
 		return result;
 	}
 
-	public static String getLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
+	private String getLimitRowsSql(String sql, boolean hasOffset, int offset, int pageSize) {
 		switch (App.DATABASE) {
 		case SQL_SERVER:
-			return getMSSQLLimitString(sql, hasOffset, startRow, endRow);
+			return getMSSQLLimitString(sql, hasOffset, offset, pageSize);
 		case ORACLE:
-			return getORACLELimitString(sql, hasOffset, startRow, endRow);
+			return getORACLELimitString(sql, hasOffset, offset, pageSize);
 		case DB2:
-			return getDB2LimitString(sql, hasOffset, startRow, endRow);
+			return getDB2LimitString(sql, hasOffset, offset, pageSize);
 		case MYSQL:
-			return getMYSQLLimitString(sql, hasOffset, startRow, endRow);
+			return getMYSQLLimitString(sql, hasOffset, offset, pageSize);
 		default:
 			return null;
 		}
@@ -357,7 +345,7 @@ public class JdbcSearchProcessor {
 
 	}
 
-	public static String getORACLELimitString(String sql, boolean hasOffset, int startRow, int endRow) {
+	private String getORACLELimitString(String sql, boolean hasOffset, int startRow, int endRow) {
 		// Condition added to by pass the usage of valid item in extended combo box
 		if (startRow > 1 || endRow > 1) {
 			sql = sql.trim();
@@ -366,7 +354,7 @@ public class JdbcSearchProcessor {
 				sql = sql.substring(0, sql.length() - 11);
 				isForUpdate = true;
 			}
-			StringBuffer pagingSelect = new StringBuffer(sql.length() + 100);
+			StringBuilder pagingSelect = new StringBuilder();
 			if (hasOffset) {
 				pagingSelect.append("select * from ( select row_.*, rownum rownum_ from ( ");
 			} else {
