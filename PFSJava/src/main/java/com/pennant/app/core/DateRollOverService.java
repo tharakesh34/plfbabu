@@ -29,16 +29,13 @@ public class DateRollOverService extends ServiceHelper {
 															+ "NextGrcCpzDate, NextGrcPftDate, NextGrcPftRvwDate, NextRepayCpzDate, NextRepayDate,"
 															+ "NextRepayPftDate,NextRepayRvwDate FROM FinanceMain WHERE FinIsActive = 1 and CustID = ?";
 
-	private static final String	updDateRollover		= "Update  FinanceMain set LastRepayCpzDate=:LastRepayCpzDate, LastRepayDate=:LastRepayDate,"
-															+ "LastRepayPftDate=:LastRepayPftDate,LastRepayRvwDate=:LastRepayRvwDate,NextDepDate=:NextDepDate,"
-															+ "NextGrcCpzDate=:NextGrcCpzDate,NextGrcPftDate=:NextGrcPftDate,NextGrcPftRvwDate=:NextGrcPftRvwDate,"
-															+ "NextRepayCpzDate=:NextRepayCpzDate,NextRepayDate=:NextRepayDate,NextRepayPftDate=:NextRepayPftDate,"
-															+ "NextRepayRvwDate=:NextRepayRvwDate where FinReference = :FinReference ";
-
 	public void process(Connection connection, long custId, Date valueDate) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		String finreference = "";
+
+		StringBuilder sqlString = new StringBuilder(" ");
+
 		try {
 			sqlStatement = connection.prepareStatement(sltDateRollover);
 			sqlStatement.setLong(1, custId);
@@ -79,63 +76,39 @@ public class DateRollOverService extends ServiceHelper {
 					datesMap.put(finSchdDetails.get(i).getSchDate(), i);
 				}
 
-				boolean isUpdateReq = false;
-				boolean isNextDateFound = false;
-
 				//Set Next Grace Capitalization Date
 				if (finMain.getNextGrcCpzDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextGraceCpzDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextGraceCpzDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Grace Profit Date
 				if (finMain.getNextGrcPftDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextGrcPftDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextGrcPftDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Grace Profit Review Date
 				if (finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextGrcPftRvwDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextGrcPftRvwDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Repay Capitalization Date
 				if (finMain.getNextRepayCpzDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextRepayCpzDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextRepayCpzDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Repayment Date
 				if (finMain.getNextRepayDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextRepayDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextRepayDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Repayment Profit Date
 				if (finMain.getNextRepayPftDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextRepayPftDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextRepayPftDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Repayment Profit Review Date
 				if (finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
-					isNextDateFound = setNextRepayRvwDate(datesMap, finSchdDetails, finMain);
-					if (isNextDateFound) {
-						isUpdateReq = true;
-					}
+					sqlString = setNextRepayRvwDate(datesMap, finSchdDetails, finMain, sqlString);
 				}
 
 				//Set Next Depreciation Date
@@ -149,12 +122,23 @@ public class DateRollOverService extends ServiceHelper {
 						if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) > 0) {
 							finMain.setNextDepDate(finMain.getMaturityDate());
 						}
+
+						sqlString.append(" NextDepDate=:NextDepDate");
 					}
 				}
 
-				if (isUpdateReq) {
+				if (!StringUtils.isEmpty(sqlString.toString())) {
+
+					if (sqlString.toString().trim().endsWith(",")) {
+						sqlString.deleteCharAt(sqlString.lastIndexOf(","));
+					}
+
+					StringBuilder updString = new StringBuilder("Update  FinanceMain set  ");
+					updString.append(sqlString);
+					sqlString.append(" where FinReference = :FinReference ");
+
 					NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(getDataSource());
-					jdbcTemplate.update(updDateRollover, new BeanPropertySqlParameterSource(finMain));
+					jdbcTemplate.update(updString.toString(), new BeanPropertySqlParameterSource(finMain));
 				}
 
 				datesMap.clear();
@@ -174,15 +158,15 @@ public class DateRollOverService extends ServiceHelper {
 
 	}
 
-	private boolean setNextGraceCpzDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextGraceCpzDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (!finMain.isAllowGrcCpz()) {
-			return false;
+			return sqlString;
 		}
 
 		if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextGrcCpzDate());
@@ -196,18 +180,19 @@ public class DateRollOverService extends ServiceHelper {
 
 			if (curSchd.isCpzOnSchDate()) {
 				finMain.setNextGrcCpzDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" NextGrcCpzDate=:NextGrcCpzDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextGrcPftDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextGrcPftDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextGrcPftDate());
@@ -221,22 +206,24 @@ public class DateRollOverService extends ServiceHelper {
 
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 				finMain.setNextGrcPftDate(finSchdDetails.get(i).getSchDate());
-				return true;
+
+				sqlString.append(" NextGrcPftDate=:NextGrcPftDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextGrcPftRvwDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextGrcPftRvwDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (!finMain.isAllowGrcPftRvw()) {
-			return false;
+			return sqlString;
 		}
 
 		if (finMain.getNextGrcPftRvwDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextGrcPftRvwDate());
@@ -250,22 +237,23 @@ public class DateRollOverService extends ServiceHelper {
 
 			if (curSchd.isRvwOnSchDate()) {
 				finMain.setNextGrcPftRvwDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" NextGrcPftRvwDate=:NextGrcPftRvwDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextRepayCpzDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextRepayCpzDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (!finMain.isAllowRepayCpz()) {
-			return false;
+			return sqlString;
 		}
 
 		if (finMain.getNextRepayCpzDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextRepayCpzDate());
@@ -280,18 +268,19 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isCpzOnSchDate()) {
 				finMain.setLastRepayCpzDate(finMain.getNextRepayCpzDate());
 				finMain.setNextRepayCpzDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" LastRepayCpzDate=:LastRepayCpzDate, NextRepayCpzDate=:NextRepayCpzDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextRepayDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextRepayDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (finMain.getNextRepayDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextRepayDate());
@@ -306,18 +295,19 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 				finMain.setLastRepayDate(finMain.getNextRepayDate());
 				finMain.setNextRepayDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" LastRepayDate=:LastRepayDate, NextRepayDate=:NextRepayDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextRepayPftDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextRepayPftDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (finMain.getNextRepayPftDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextRepayPftDate());
@@ -332,22 +322,23 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isPftOnSchDate()) {
 				finMain.setLastRepayPftDate(finMain.getNextRepayPftDate());
 				finMain.setNextRepayPftDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" LastRepayPftDate=:LastRepayPftDate, NextRepayPftDate=:NextRepayPftDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
-	private boolean setNextRepayRvwDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
-			FinanceMain finMain) {
+	private StringBuilder setNextRepayRvwDate(Map<Date, Integer> datesMap, List<FinanceScheduleDetail> finSchdDetails,
+			FinanceMain finMain, StringBuilder sqlString) {
 
 		if (!finMain.isAllowRepayRvw()) {
-			return false;
+			return sqlString;
 		}
-		
+
 		if (finMain.getNextRepayRvwDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return false;
+			return sqlString;
 		}
 
 		int i = datesMap.get(finMain.getNextRepayRvwDate());
@@ -362,11 +353,12 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isRvwOnSchDate()) {
 				finMain.setLastRepayRvwDate(finMain.getNextRepayRvwDate());
 				finMain.setNextRepayRvwDate(finSchdDetails.get(i).getSchDate());
-				return true;
+				sqlString.append(" LastRepayRvwDate=:LastRepayRvwDate, NextRepayRvwDate=:NextRepayRvwDate,");
+				return sqlString;
 			}
 		}
 
-		return false;
+		return sqlString;
 	}
 
 }
