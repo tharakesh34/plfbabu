@@ -2380,4 +2380,13 @@ Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRi
             constraintName="PK_FINTYPESTATUSCODES"
             tableName="FINTYPESTATUSCODES"/>
 	</changeSet>
+	<changeSet id="107" author="Madhubabu">
+<sql>
+INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 3, 'FinAdvancePaymentsDialog_llReferenceNo','FinAdvancePaymentsDialog',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='FinAdvancePayments_Maker'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='FinAdvancePaymentsDialog_llReferenceNo'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CL_ORIGINATION_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='FinAdvancePaymentsDialog_llReferenceNo'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+</sql>
+</changeSet>
 </databaseChangeLog>
