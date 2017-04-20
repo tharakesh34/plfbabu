@@ -1863,4 +1863,14 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 			INSERT INTO ErrorDetails VALUES('30578','EN','E','{0} cannot be greater than the Max Allowed Years:{1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="91" author="Madhubabu">
+		<addColumn tableName="FinSchFrqInsurance_Temp">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="92" author="Madhubabu">
+		<addColumn tableName="FinSchFrqInsurance">
+			<column name="insurancePaid" type="number(18,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
