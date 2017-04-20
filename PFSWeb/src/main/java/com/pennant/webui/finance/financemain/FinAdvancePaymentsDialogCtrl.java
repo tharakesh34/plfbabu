@@ -521,7 +521,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		//3
 		this.bankCode.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankCode"));
 		this.liabilityHoldName.setReadonly(isReadOnly("FinAdvancePaymentsDialog_liabilityHoldName"));
-		this.llReferenceNo.setReadonly(true);
+		this.llReferenceNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_llReferenceNo"));
 		this.payableLoc.setReadonly(isReadOnly("FinAdvancePaymentsDialog_payableLoc"));
 		this.printingLoc.setReadonly(isReadOnly("FinAdvancePaymentsDialog_printingLoc"));
 		this.valueDate.setReadonly(isReadOnly("FinAdvancePaymentsDialog_valueDate"));
