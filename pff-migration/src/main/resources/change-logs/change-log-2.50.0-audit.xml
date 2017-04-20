@@ -38,10 +38,10 @@
 		<constraints nullable="false"/>
 		</column>
 		<column name="StatusId" type="bigint">
-			<constraints primaryKey="true" nullable="false"/>
+			<constraints  nullable="false"/>
 		</column>
 		<column name="StatusCode" type="varchar(8)">
-		<constraints unique="true" nullable="false"/>
+		<constraints  nullable="false"/>
 		</column>
 		<column name="StatusDesc" type="varchar(20)">
 		<constraints nullable="false"/>
