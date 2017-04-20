@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -38,7 +37,7 @@ public class RepayQueueService {
 																+ " AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
 																+ " OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
 																+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
-																+ " AND CustID=?  order by S.SchDate, F.LinkedFinRef asc";
+																+ " AND CustID=? ";
 
 	public static final String		customeFinance_ISLM	= " SELECT F.FinReference, F.FinBranch Branch, F.FinType ,F.CustID CustomerID ,F.LinkedFinRef, S.SchDate RpyDate,"
 																+ "  S.PrincipalSchd, S.SchdPriPaid, S.ProfitSchd, S.SchdPftpaid, S.SuplRent SchdSuplRent, S.SuplRentPaid SchdSuplRentPaid,"
@@ -48,7 +47,7 @@ public class RepayQueueService {
 																+ " AND F.FinIsActive = 1  AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
 																+ "  OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
 																+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
-																+ " AND CustID=?  order by  S.SchDate, F.LinkedFinRef asc";
+																+ " AND CustID=? ";
 
 	public RepayQueueService() {
 		super();
@@ -161,10 +160,31 @@ public class RepayQueueService {
 	public FinRepayQueue doWriteDataToBean(ResultSet resultSet) throws SQLException {
 		logger.debug("Entering");
 
-		BeanPropertyRowMapper<FinRepayQueue> beanPropertyRowMapper = new BeanPropertyRowMapper<>(FinRepayQueue.class);
-		FinRepayQueue finRepayQueue = beanPropertyRowMapper.mapRow(resultSet, resultSet.getRow());
+		FinRepayQueue finRepayQueue = new FinRepayQueue();
+		finRepayQueue.setFinReference(resultSet.getString("FinReference"));
+		finRepayQueue.setBranch(resultSet.getString("FinBranch"));
+		finRepayQueue.setFinType(resultSet.getString("FinType"));
+		finRepayQueue.setCustomerID(resultSet.getLong("CustID"));
+		finRepayQueue.setLinkedFinRef(resultSet.getString("LinkedFinRef"));
+		finRepayQueue.setRpyDate(resultSet.getDate("SchDate"));
 
-		String rpyFor = FinanceConstants.SCH_TYPE_SCHEDULE;
+		finRepayQueue.setSchdPri(getDecimal(resultSet, "PrincipalSchd"));
+		finRepayQueue.setSchdPriPaid(getDecimal(resultSet, "SchdPriPaid"));
+		finRepayQueue.setSchdPriBal(finRepayQueue.getSchdPri().subtract(finRepayQueue.getSchdPriPaid()));
+
+		finRepayQueue.setSchdPft(getDecimal(resultSet, "ProfitSchd"));
+		finRepayQueue.setSchdPftPaid(getDecimal(resultSet, "SchdPftpaid"));
+		finRepayQueue.setSchdPftBal(finRepayQueue.getSchdPft().subtract(finRepayQueue.getSchdPftPaid()));
+
+		finRepayQueue.setSchdFee(getDecimal(resultSet, "FeeSchd"));
+		finRepayQueue.setSchdFeePaid(getDecimal(resultSet, "SchdFeePaid"));
+		finRepayQueue.setSchdPftBal(finRepayQueue.getSchdFee().subtract(finRepayQueue.getSchdFeePaid()));
+
+		finRepayQueue.setSchdIns(getDecimal(resultSet, "InsSchd"));
+		finRepayQueue.setSchdInsPaid(getDecimal(resultSet, "SchdInsPaid"));
+		finRepayQueue.setSchdPftBal(finRepayQueue.getSchdIns().subtract(finRepayQueue.getSchdInsPaid()));
+
+		finRepayQueue.setSchdRate(getDecimal(resultSet, "CalculatedRate"));
 
 		if (this.priorityMap != null && this.priorityMap.containsKey(finRepayQueue.getFinType())) {
 			finRepayQueue.setFinPriority(this.priorityMap.get(finRepayQueue.getFinType()));
@@ -172,15 +192,8 @@ public class RepayQueueService {
 			finRepayQueue.setFinPriority(9999);
 		}
 
-		finRepayQueue.setFinRpyFor(rpyFor);
+		finRepayQueue.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
 		finRepayQueue.setPenaltyPayNow(BigDecimal.ZERO);
-
-		finRepayQueue.setSchdPft(resultSet.getBigDecimal("ProfitSchd"));
-		finRepayQueue.setSchdPri(resultSet.getBigDecimal("PrincipalSchd"));
-		finRepayQueue.setSchdPftPaid(resultSet.getBigDecimal("SchdPftpaid"));
-		finRepayQueue.setSchdPriPaid(resultSet.getBigDecimal("SchdPriPaid"));
-		finRepayQueue.setSchdPftBal(resultSet.getBigDecimal("SchdPftBal"));
-		finRepayQueue.setSchdPriBal(resultSet.getBigDecimal("SchdPriBal"));
 
 		if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
 			finRepayQueue.setSchdIsPftPaid(true);
@@ -194,22 +207,33 @@ public class RepayQueueService {
 			finRepayQueue.setSchdIsPriPaid(false);
 		}
 
-		BigDecimal schdRate = BigDecimal.ZERO;
-		BigDecimal adivedRate = resultSet.getBigDecimal("AdvCalRate");
-		BigDecimal calculateRate = resultSet.getBigDecimal("CalculatedRate");
+		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+			finRepayQueue.setSchdSuplRent(getDecimal(resultSet, "SuplRent"));
+			finRepayQueue.setSchdSuplRentPaid(getDecimal(resultSet, "SuplRentPaid"));
+			finRepayQueue.setSchdSuplRentBal(finRepayQueue.getSchdSuplRent().subtract(
+					finRepayQueue.getSchdSuplRentPaid()));
 
-		if (adivedRate != null && adivedRate.compareTo(BigDecimal.ZERO) != 0) {
-			schdRate = adivedRate;
-		} else {
-			schdRate = calculateRate;
+			finRepayQueue.setSchdIncrCost(getDecimal(resultSet, "IncrCost"));
+			finRepayQueue.setSchdIncrCostPaid(getDecimal(resultSet, "IncrCostPaid"));
+			finRepayQueue.setSchdIncrCostBal(finRepayQueue.getSchdIncrCost().subtract(
+					finRepayQueue.getSchdIncrCostPaid()));
+			BigDecimal adivedRate = getDecimal(resultSet, "AdvCalRate");
+			if (adivedRate.compareTo(BigDecimal.ZERO) != 0) {
+				finRepayQueue.setSchdRate(adivedRate);
+			}
+			finRepayQueue.setRebate(latePaymentService.getScheduledRebateAmount(finRepayQueue));
 		}
-
-		finRepayQueue.setSchdRate(schdRate);
-
-		finRepayQueue.setRebate(latePaymentService.getScheduledRebateAmount(finRepayQueue));
 
 		logger.debug("Leaving");
 		return finRepayQueue;
+	}
+
+	private BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
+		BigDecimal val = resultSet.getBigDecimal(name);
+		if (val == null) {
+			val = BigDecimal.ZERO;
+		}
+		return val;
 	}
 
 	public void setLatePaymentService(LatePaymentService latePaymentService) {
