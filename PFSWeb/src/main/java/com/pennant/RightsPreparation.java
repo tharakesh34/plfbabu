@@ -1,6 +1,8 @@
 package com.pennant;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -22,18 +24,27 @@ public class RightsPreparation {
 		boolean firstRow = true;
 		String group = "";
 		String role = "";
-		String excelFilePath = "C:/Users/chaitanya.ch/Desktop/Rights/RightsPrearation.xls";
+		String excelFilePath = "D:/BFSDWorkFlowRights.xls";
 		
 		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 		Workbook workbook = new HSSFWorkbook(inputStream);
 		Sheet firstSheet = workbook.getSheetAt(0);
+		
 		Iterator<Row> iterator = firstSheet.iterator();
+		FileWriter fstream = new FileWriter("D:/BFSDWorkFlowRights_Scripts.sql");
+        BufferedWriter out = new BufferedWriter(fstream);
+       // out.write("Hello Java");
+        //Close the output stream
+        
+		
+		
+		
 
-		System.out.println("Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);");
-		System.out.println("Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);");
-		System.out.println("Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);");
-		System.out.println("Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);");
-		System.out.println();
+		out.write("Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);");
+		out.write("Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);");
+		out.write("Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);");
+		out.write("Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);");
+	//	out.write();
 		
 		while (iterator.hasNext()) {
 			Row nextRow = iterator.next();
@@ -58,53 +69,54 @@ public class RightsPreparation {
 			if ("Y".equals(newGroup)) {
 				groupDesc = getValue(cellIterator.next());
 				role = getValue(cellIterator.next());
-				System.out.println("Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = '" + group + "');");
-				System.out.println("Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = '" + group + "')"
+				out.write("Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = '" + group + "');");
+				out.write("Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = '" + group + "')"
 						+ " And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = '" + role + "');");
-				System.out.println("Delete from SecGroups where GrpCode = '" + group + "';");
-				System.out.println("INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), '" + group
+				out.write("Delete from SecGroups where GrpCode = '" + group + "';");
+				out.write("INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), '" + group
 						+ "'," + "'" + groupDesc + "', 1, 1000, GetDate(), NULL, NULL, NULL, NULL, NULL, NULL,0)");
-				System.out.println();
+			//	out.write();
 			}
 
 			if ("Y".equals(newRight)) {
 				script = "Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = '"
 						+ rightName + "');";
-				System.out.println(script);
+				out.write(script);
 
 				script = "Delete from SecRights where RightName = '" + rightName + "';";
-				System.out.println(script);
+				out.write(script);
 				
 				script = "Insert into SecRights Values((Select max(RightID) + 1 from SecRights), " + rightType + ", '"
 						+ rightName + "', '" + page + "', 1, 1000, GetDate(), null, null, null, null, null, null, 0 );";
 
-				System.out.println(script);
+				out.write(script);
 			}
 
 			script = "Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), "
 					+ "(Select GrpID from SecGroups where GrpCode = '" + group + "'), "
 					+ "(Select RightID from SecRights where RightName = '" + rightName
 					+ "'), 1, 1, 1000, GetDate(), null, null, null, null, null, null, 0 );";
-			System.out.println(script);
+			out.write(script);
 			
 			script = "INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), "
 					+ "(Select MAX(GrpId) from SecGroups WHERE GrpCode = '" + group + "'), "
 					+ "(Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, GetDate(), NULL, NULL, NULL, NULL, NULL, NULL, 0);";
 			
 			if ("Y".equals(newGroup)) {
-				System.out.println("INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), "
+				out.write("INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), "
 						+ "(Select MAX(GrpId) from SecGroups WHERE GrpCode = '" + group +"'), "
 								+ "(Select MAX(RoleID) from SecRoles WHERE RoleCd = '" + role + "'), 0, 1000, GetDate(), NULL, NULL, NULL, NULL, NULL, NULL, 0);");
 			}
 
-			System.out.println();
+		//	out.write();
 		}
 		// workbook.close();
 		inputStream.close();
-		System.out.println("Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);");
-		System.out.println("Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);");
-		System.out.println("Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);");
-		System.out.println("Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);");
+		out.write("Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);");
+		out.write("Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);");
+		out.write("Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);");
+		out.write("Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);");
+		out.close();
 	}
 
 	private static String getValue(Cell cell) {
