@@ -85,6 +85,7 @@ import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.model.systemmasters.NationalityCode;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
@@ -106,6 +107,7 @@ import com.pennant.backend.service.customermasters.validation.CustomerIncomeVali
 import com.pennant.backend.service.customermasters.validation.CustomerPRelationValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerRatingValidation;
+import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -172,6 +174,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerBankInfoValidation customerBankInfoValidation;
 	private CustomerChequeInfoValidation customerChequeInfoValidation;
 	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
+	private LovFieldDetailService lovFieldDetailService;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -1550,7 +1553,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			List<CustomerEmploymentDetail> custEmpDetails = customerDetails.getEmploymentDetailsList();
 			if (custEmpDetails != null) {
 				for (CustomerEmploymentDetail empDetail : custEmpDetails) {
-					auditDetail.setErrorDetail(validateMasterCode("EmployerDetail", "EmployerId", 
+					auditDetail.setErrorDetail(validateMasterCode("EmployerDetail_AView", "EmployerId", 
 							String.valueOf(empDetail.getCustEmpName())));
 					auditDetail.setErrorDetail(validateMasterCode("RMTEmpTypes", "EmpType", empDetail.getCustEmpType()));
 					auditDetail.setErrorDetail(validateMasterCode("RMTGenDesignations", "Gendesignation", empDetail.getCustEmpDesg()));
@@ -1569,7 +1572,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
 							ErrorDetails errorDetail = new ErrorDetails();
 							String[] valueParm = new String[2];
-							valueParm[0] = "employment endDate" + DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+							valueParm[0] = "employment endDate" + DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -1706,8 +1709,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (custBankDetails != null) {
 			for (CustomerBankInfo custBankInfo : custBankDetails) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTBankDetail", "BankCode", custBankInfo.getBankName()));
-				auditDetail.setErrorDetail(validateMasterCode("RMTAccountTypes", "AcType",
-						custBankInfo.getAccountType()));
+			
+				LovFieldDetail lovFieldDetail=getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",custBankInfo.getAccountType());
+				if (lovFieldDetail == null) {
+					ErrorDetails errorDetail = new ErrorDetails();
+					String[] valueParm = new String[2];
+					valueParm[0] = "Acctype";
+					valueParm[1] = custBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
 			}
 		}
 
@@ -4842,6 +4853,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean getCustomerByCoreBankId(String custCoreBank) {
 		return getCustomerDAO().getCustomerByCoreBankId(custCoreBank);
+	}
+
+	public LovFieldDetailService getLovFieldDetailService() {
+		return lovFieldDetailService;
+	}
+
+	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
+		this.lovFieldDetailService = lovFieldDetailService;
 	}
 
 }

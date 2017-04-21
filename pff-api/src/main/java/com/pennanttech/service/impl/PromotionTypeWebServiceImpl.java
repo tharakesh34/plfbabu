@@ -5,9 +5,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinanceTypeController;
@@ -24,8 +26,8 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 
 	private FinanceTypeController financeTypeController;
 	private ValidationUtility validationUtility;
-	private FinanceTypeService financeTypeService;
 	private StepPolicyService stepPolicyService;
+	private PromotionService promotionService;
 
 	/**
 	 * Fetch promotion type details
@@ -39,23 +41,25 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 
 		if (finTypeReq != null) {
 			// Mandatory validation
-			if (StringUtils.isBlank(finTypeReq.getFinType())) {
+			if (StringUtils.isBlank(finTypeReq.getPromotionType())) {
 				validationUtility.fieldLevelException();
 			}
 
 			// validate financeType
-			String finType = finTypeReq.getFinType();
-			int count = financeTypeService.getPromotionTypeCountById(finType);
+			String promotionCode = finTypeReq.getPromotionType();
+			Promotion promotion = promotionService.getApprovedPromotionById(promotionCode,
+					FinanceConstants.MODULEID_PROMOTION, false);
 
 			FinanceTypeResponse response = new FinanceTypeResponse();
-			if (count > 0) {
-				response = financeTypeController.getFinanceTypeDetails(finTypeReq);
-				response.setPromotionDesc(response.getFinTypeDesc());
-				response.setStartDate(response.getStartDate());
-				response.setEndDate(response.getEndDate());
+			if (promotion != null) {
+				finTypeReq.setFinType(promotion.getFinType());
+				response = financeTypeController.getFinanceTypeDetails(finTypeReq, true);
+				response.setPromotionDesc(promotion.getPromotionDesc());
+				response.setStartDate(promotion.getStartDate());
+				response.setEndDate(promotion.getEndDate());
 			} else {
 				String[] valueParm = new String[1];
-				valueParm[0] = finType;
+				valueParm[0] = promotionCode;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90222", valueParm));
 			}
 
@@ -101,30 +105,29 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 	/**
 	 * Fetch list of promotion details from system.
 	 * 
-	 * @param productCode
+	 * @param finType
 	 */
 	@Override
-	public FinanceTypeResponse getPromotions(String productCode) throws ServiceException {
+	public FinanceTypeResponse getPromotions(String finType) throws ServiceException {
 		logger.debug("Entering");
 
 		// Mandatory validation
-		if (StringUtils.isBlank(productCode)) {
+		if (StringUtils.isBlank(finType)) {
 			validationUtility.fieldLevelException();
 		}
 
 		FinanceTypeResponse response = new FinanceTypeResponse();
 
 		// validate productCode
-		int productCount = financeTypeService.getProductCountById(productCode);
-		if (productCount == 0) {
+		int financeTypeCount = promotionService.getFinanceTypeCountById(finType);
+		if (financeTypeCount == 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = productCode;
+			valueParm[0] = finType;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90222", valueParm));
-
 			return response;
 		}
 
-		response = financeTypeController.getPromotionsByProduct(productCode);
+		response = financeTypeController.getPromotionsByFinType(finType);
 
 		logger.debug("Leaving");
 		return response;
@@ -139,14 +142,12 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-
-	@Autowired
-	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
-		this.financeTypeService = financeTypeService;
-	}
-
 	@Autowired
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
+	}
+	@Autowired
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
 	}
 }

@@ -1278,6 +1278,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[0] = custCIF;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN"));
 			} else {
+				if(!limitHeader.isNew()){
+				int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(), customer.getCustID());
+				if(count <= 0){
+					String[] valueParm = new String[1];
+					valueParm[0] = "Cif :"+custCIF + " And LimitId: " +limitHeader.getHeaderId();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm), "EN"));
+				}
+				}
+				
 				if(limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(), "_AView");
 					if(headerDetail != null) {
@@ -1313,7 +1322,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		// validate structure code
-		if(limitHeader.isNew()) {
+		
 			String structureCode = limitHeader.getLimitStructureCode();
 			int recordCount = getLimitStructureDetailDAO().getLimitStructureCountById(structureCode, "");
 			if(recordCount <= 0) {
@@ -1321,7 +1330,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[0] = structureCode;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90801", "", valueParm), "EN"));
 			}
-		}
+		
 
 		// validate currency code
 		if(StringUtils.isNotBlank(limitHeader.getLimitCcy())) {

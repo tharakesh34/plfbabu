@@ -46,7 +46,7 @@ public class SummaryDetailService {
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if(finPftDetail==null){
-				finPftDetail=AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), null, DateUtility.getAppDate());
+				finPftDetail=AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
 			}
 			if(finPftDetail != null) {
 				summary.setTotalCpz(finPftDetail.getTotalPftCpz());

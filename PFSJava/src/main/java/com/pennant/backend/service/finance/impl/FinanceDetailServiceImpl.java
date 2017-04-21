@@ -3581,9 +3581,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		if(!isWIF){
 			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
+			processDisbursmentRequets(financeDetail);
 		}
 		
-		processDisbursmentRequets(financeDetail);
+		
 		
 		logger.debug("Leaving");
 		return auditHeader;

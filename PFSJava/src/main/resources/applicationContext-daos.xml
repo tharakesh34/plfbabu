@@ -2609,6 +2609,7 @@
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->

@@ -2850,9 +2850,7 @@ public class FinanceDataValidation {
 		} else {
 			calculatedAmt = financeMain.getFinAmount().subtract(financeMain.getDownPayment());
 		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 2,
-				RoundingMode.HALF_DOWN);
-		calculatedAmt = PennantApplicationUtil.unFormateAmount(calculatedAmt, formatter);
+		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100));
 		return calculatedAmt;
 	}
 	

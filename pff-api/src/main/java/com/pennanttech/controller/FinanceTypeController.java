@@ -10,9 +10,12 @@ import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.ws.model.financetype.BasicDetail;
 import com.pennanttech.ws.model.financetype.FinanceTypeRequest;
 import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
@@ -34,77 +37,88 @@ public class FinanceTypeController {
 	private StepPolicyService stepPolicyService;
 	private ProductDAO productDAO;
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
+	private PromotionService promotionService;
 	
 	
-	public FinanceTypeResponse getFinanceTypeDetails(FinanceTypeRequest finTypeRequest) {
+	public FinanceTypeResponse getFinanceTypeDetails(FinanceTypeRequest finTypeRequest, boolean isPromotion) {
 		logger.debug("Entering");
 
 		FinanceTypeResponse response = new FinanceTypeResponse();
 
 		// fetch FinanceType details
 		FinanceType financeType = financeTypeService.getApprovedFinanceTypeById(finTypeRequest.getFinType());
-		
-		if(financeType != null) {
-			response.setFinType(financeType.getFinType()); 
+
+		if (isPromotion) {
+			Promotion promotion = promotionService.getApprovedPromotionById(finTypeRequest.getPromotionType(),
+					FinanceConstants.MODULEID_PROMOTION, true);
+			financeType.setFInTypeFromPromotiion(promotion);
+			financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
+			financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
+			financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
+		}
+
+		if (financeType != null) {
+			response.setFinType(financeType.getFinType());
 			response.setFinTypeDesc(financeType.getFinTypeDesc());
 			response.setEndDate(financeType.getEndDate());
 			response.setStartDate(financeType.getStartDate());
 			// prepare FinanceType Basic details
-			if(finTypeRequest.isBasicDetailReq()) {
+			if (finTypeRequest.isBasicDetailReq()) {
 				BasicDetail basicDetail = new BasicDetail();
 				BeanUtils.copyProperties(financeType, basicDetail);
 				response.setBasicDetail(basicDetail);
 			}
-			
+
 			// prepare FinanceType Grace details
-			if(finTypeRequest.isGrcDetailReq()) {
+			if (finTypeRequest.isGrcDetailReq()) {
 				GraceDetail graceDetail = new GraceDetail();
 				BeanUtils.copyProperties(financeType, graceDetail);
 				response.setGraceDetail(graceDetail);
 			}
-			
+
 			// prepare FinanceType Repay details
-			if(finTypeRequest.isRepayDetailReq()) {
+			if (finTypeRequest.isRepayDetailReq()) {
 				RepayDetail repayDetail = new RepayDetail();
 				BeanUtils.copyProperties(financeType, repayDetail);
 				response.setRepayDetail(repayDetail);
 			}
-			
+
 			// prepare FinanceType Overdue details
-			if(finTypeRequest.isOverdueDetailReq()) {
+			if (finTypeRequest.isOverdueDetailReq()) {
 				OverdueDetail overdueDetail = new OverdueDetail();
 				BeanUtils.copyProperties(financeType, overdueDetail);
 				response.setOverdueDetail(overdueDetail);
 			}
-			
+
 			// prepare FinanceType OverdueProfit details
-			if(finTypeRequest.isOverdueProfitDetailReq()) {
+			if (finTypeRequest.isOverdueProfitDetailReq()) {
 				OverdueProfitDetail overduProfit = new OverdueProfitDetail();
 				BeanUtils.copyProperties(financeType, overduProfit);
 				response.setOverdueProfitDetail(overduProfit);
 			}
-			
+
 			// prepare FinanceType Insurance details
-			if(finTypeRequest.isInsuranceDetailReq()) {
+			if (finTypeRequest.isInsuranceDetailReq()) {
 				Insurance insurance = new Insurance();
 				BeanUtils.copyProperties(financeType, insurance);
 				response.setInsurance(insurance);
 			}
-			
+
 			// prepare FinanceType Step details
-			if(finTypeRequest.isStepDetailReq()) {
+			if (finTypeRequest.isStepDetailReq()) {
 				StepDetail stepDetail = new StepDetail();
 				BeanUtils.copyProperties(financeType, stepDetail);
 				response.setStepDetail(stepDetail);
 			}
-			
+
 			// prepare FinanceType Fee details
 			if (finTypeRequest.isFeeReq()) {
 				if (financeType.getFinTypeFeesList() != null) {
 					response.setFinTypeFeesList(financeType.getFinTypeFeesList());
 				}
 			}
-			response.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(finTypeRequest.getFinType(),"_View"));
+			response.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(
+					finTypeRequest.getFinType(), "_View"));
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
@@ -183,32 +197,27 @@ public class FinanceTypeController {
 	 * @param productCode
 	 * @return
 	 */
-	public FinanceTypeResponse getPromotionsByProduct(String productCode) {
+	public FinanceTypeResponse getPromotionsByFinType(String finType) {
 		logger.debug("Entering");
 
 		FinanceTypeResponse response = new FinanceTypeResponse();
 		try {
-			// fetch All promotions by productCode
-			List<FinanceType> financeTypes = financeTypeService.getFinanceTypeByProduct(productCode);
-
-			response.setFinType(productCode);
-			
-			String productDesc = financeTypeService.getFinanceTypeDesc(productCode);
-			response.setFinTypeDesc(productDesc);
-
+			// fetch All promotions by FinanceType
+			List<Promotion> promoton = promotionService.getPromotionsByFinType(finType, "_AView");
 			List<PromotionType> promotions = new ArrayList<PromotionType>();
 
-			for (FinanceType financeType : financeTypes) {
+			for (Promotion detail : promoton) {
 				PromotionType promotionType = new PromotionType();
-				promotionType.setPromotionCode(financeType.getFinType());
-				promotionType.setPromotionDesc(financeType.getFinTypeDesc());
-
+				promotionType.setPromotionCode(detail.getPromotionCode());
+				promotionType.setPromotionDesc(detail.getPromotionDesc());
+				response.setFinType(detail.getFinType());
+				response.setFinTypeDesc(detail.getFinTypeDesc());
 				promotions.add(promotionType);
 			}
 
 			response.setPromotions(promotions);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			
+
 		} catch (Exception e) {
 			logger.error(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -232,5 +241,9 @@ public class FinanceTypeController {
 
 	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
+	}
+
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
 	}
 }

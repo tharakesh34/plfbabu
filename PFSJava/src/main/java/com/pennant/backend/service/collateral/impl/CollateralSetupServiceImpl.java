@@ -2398,7 +2398,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					valueParm[0] = coOwnerDetail.getAddrCountry();
 					valueParm[1] = coOwnerDetail.getAddrProvince();
 					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90907", "", valueParm), "EN"));
+							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN"));
 				}
 			}
 			

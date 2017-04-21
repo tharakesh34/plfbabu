@@ -43,6 +43,10 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -302,5 +306,66 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	/**
+	 * Fetch record count of product
+	 * 
+	 * @param productCode
+	 * @return Integer
+	 */
+	@Override
+	public int getFinanceTypeCountById(String finType) {
+		logger.debug("Entering");
+
+		int financeTypeCount = 0;
+		Promotion promotion = new Promotion();
+		promotion.setFinType(finType);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinType) ");
+		selectSql.append(" From Promotions Where FinType =:FinType");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+
+		try {
+			financeTypeCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			financeTypeCount = 0;
+		}
+		logger.debug("Leaving");
+		return financeTypeCount;
+	}
+
+	/**
+	 * Fetch the Promotions Based on the finType
+	 * 
+	 * @param productCode
+	 */
+	@Override
+	public List<Promotion> getPromotionsByFinType(String finType, String type) {
+		logger.debug("Entering");
+
+		Promotion promotion = new Promotion();
+		promotion.setFinType(finType);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT FinType, FinTypeDesc,PromotionCode,PromotionDesc");
+		selectSql.append(" From Promotions");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinType =:FinType");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		List<Promotion> PromotionList = new ArrayList<>();
+		try {
+			PromotionList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(dae);
+			return Collections.emptyList();
+		}
+
+		logger.debug("Leaving");
+		return PromotionList;
 	}
 }

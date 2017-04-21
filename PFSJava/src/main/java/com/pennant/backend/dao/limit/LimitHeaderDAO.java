@@ -32,5 +32,7 @@ public interface LimitHeaderDAO {
 	void updateRebuild(long headerId, boolean rebuild, String type);
 
 	int getLimitHeaderCountById(long headerId, String type);
+	
+	int getLimitHeaderAndCustCountById(long headerId, long CustID);
 
 }

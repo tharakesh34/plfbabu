@@ -1,7 +1,6 @@
 package com.pennanttech.ws.model.financetype;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class FinanceTypeResponse implements Serializable {
 	
 	@XmlElementWrapper(name="fees")
 	@XmlElement(name="fee")
-	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
+	private List<FinTypeFees> finTypeFeesList;
 
 	@XmlElementWrapper(name="vas")
 	@XmlElement(name="vas")

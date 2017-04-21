@@ -423,6 +423,8 @@ public class FinanceDetailController extends SummaryDetailService {
 			}
 			//summary
 			FinanceDetail financeDetail = new FinanceDetail();
+			//used for AEAMOUNTS class 
+			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);;
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finSchduleList);
 			finScheduleData.setFinanceSummary(getFinanceSummary(financeDetail));

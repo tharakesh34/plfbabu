@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.rmtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.Promotion;
 
@@ -55,4 +57,6 @@ public interface PromotionService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	boolean getPromtionExist(String promotionCode, String type);
+	int getFinanceTypeCountById(String finType);
+	List<Promotion> getPromotionsByFinType(String finType, String type);
 }

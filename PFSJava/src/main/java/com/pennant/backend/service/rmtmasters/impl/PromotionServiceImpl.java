@@ -788,4 +788,31 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	public void setFinTypeAccountingService(FinTypeAccountingService finTypeAccountingService) {
 		this.finTypeAccountingService = finTypeAccountingService;
 	}
+
+	/**
+	 * Fetch record count of Promotions by using financeType
+	 * 
+	 * @param financeType
+	 */
+	@Override
+	public int getFinanceTypeCountById(String finType)  {
+		logger.debug("Entering");
+		int financeTypeCount = 0;
+		financeTypeCount = getPromotionDAO().getFinanceTypeCountById(finType);
+		logger.debug("Leaving");
+		
+		return financeTypeCount;
+	}
+
+	/**
+	 * Fetch the Promotions Based on the finType
+	 * 
+	 * @param productCode
+	 */
+	@Override
+	public List<Promotion> getPromotionsByFinType(String finType,String type) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
+		return getPromotionDAO().getPromotionsByFinType(finType,type);
+	}
 }

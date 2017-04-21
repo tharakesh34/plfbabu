@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -31,7 +30,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -110,8 +108,9 @@ public class FeeDetailService {
 					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap,
 							finScheduleData.getFinanceMain().getFinCcy());
 					finFeeDetail.setCalculatedAmount(feeResult);
-					int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
-					BigDecimal calcAmount = PennantApplicationUtil.unFormateAmount(finFeeDetail.getCalculatedAmount(), formatter);
+					/*int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+					BigDecimal calcAmount = PennantApplicationUtil.unFormateAmount(finFeeDetail.getCalculatedAmount(), formatter);*/
+					BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
 					
 					if (!finFeeDetail.isAlwModifyFee()
 							&& finFeeDetail.getActualAmount().compareTo(calcAmount) != 0) {
@@ -133,7 +132,7 @@ public class FeeDetailService {
 					}
 					BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
 					BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100));
-					finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
+					//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
 					if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Waiver amount";
