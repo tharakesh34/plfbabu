@@ -534,7 +534,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		try {
 			BigDecimal totalAssignedPerc = getCollateralAssignment().getTotAssignedPerc();
 			
-			if (totalAssignedPerc.compareTo(new BigDecimal(100)) <= 0) {
+			if (totalAssignedPerc.compareTo(new BigDecimal(100)) == 0) {
 				throw new WrongValueException(this.assignValuePerc, Labels.getLabel("label_CollateralAssignment_AssignValuePerc"));
 			}
 			
