@@ -10,37 +10,41 @@ import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennanttech.dataengine.model.DBConfiguration;
+import com.pennanttech.dataengine.DataAccess;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-public class DBProcessEngine extends DataEngineDBAccess {
+public class DBProcessEngine extends DataAccess {
 	private static final Logger logger = Logger.getLogger(DBProcessEngine.class);
 
 	protected int processedCount;
 	protected int successCount;
 	protected int failedCount;
 	protected int totalRecords;
-	
-	protected DataSource appDataSource;
-	
-	public DBProcessEngine(DataSource appDataSource, String appDBName, DataEngineStatus executionStatus) {
-		super(appDataSource, appDBName, executionStatus);
-		this.appDataSource = appDataSource;
+
+	public DBProcessEngine(DataSource appDataSource, String dataBase, DataEngineStatus executionStatus) {
+		super(appDataSource, executionStatus, dataBase);
+		this.database = dataBase;
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(appDataSource);
 	}
 
-	protected Connection getConnection(DBConfiguration dbConfiguration) throws Exception {
+	protected void saveBatchLog(MapSqlParameterSource source, String sql) throws Exception {
+		this.jdbcTemplate.update(sql.toString(), source);
+	}
+
+	protected Connection getConnection(Configuration config) throws Exception {
 		logger.debug("Entering");
-		
+
 		try {
-			if (dbConfiguration == null || dbConfiguration.isLocalDB()) {
-				return DataSourceUtils.doGetConnection(this.appDataSource);
+			if (config == null || config.isLocalDB()) {
+				return DataSourceUtils.doGetConnection(dataSource);
 			} else {
-				return createConnection(dbConfiguration);
+				return createConnection(config);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
@@ -50,15 +54,15 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		}
 	}
 
-	private Connection createConnection(DBConfiguration dbConfiguration) throws Exception {
+	private Connection createConnection(Configuration config) throws Exception {
 		logger.debug("Entering");
-		
+
 		Connection connection = null;
 
-		String url = dbConfiguration.getUrl();
-		String driverClassName = dbConfiguration.getDriverClass();
-		String usrName = dbConfiguration.getUserName();
-		String password = dbConfiguration.getPassword();
+		String url = config.getUrl();
+		String driverClassName = config.getDriverClass();
+		String usrName = config.getUserName();
+		String password = config.getPassword();
 		try {
 			Class.forName(driverClassName);
 			connection = DriverManager.getConnection(url, usrName, password);
@@ -66,7 +70,7 @@ public class DBProcessEngine extends DataEngineDBAccess {
 			logger.error("Exception :", e);
 			throw e;
 		}
-		
+
 		logger.debug("Leaving");
 		return connection;
 	}
@@ -75,70 +79,72 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		return new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	
-	protected String getValue(ResultSet rs, String columnName) {
-		
+	protected String getValue(ResultSet rs, String columnName) throws Exception {
 		String value = null;
 		try {
 			value = rs.getString(columnName);
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
-		return StringUtils.trimToEmpty(value);
+		return value;
 	}
 
-	protected long getLongValue(ResultSet rs, String columnName) {
+	protected long getLongValue(ResultSet rs, String columnName) throws Exception {
 		long value = 0;
 		try {
 			value = rs.getLong(columnName);
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
 		return value;
 	}
 
-	protected String getAmountValue(ResultSet rs, String columnName) {
+	protected String getAmountValue(ResultSet rs, String columnName) throws Exception {
 		String value = null;
 		try {
 			value = rs.getString(columnName);
-			if (StringUtils.trimToNull(value) == null) {
-				value = "0";
-			}
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
-		return StringUtils.trimToEmpty(value);
+		return value;
 	}
 
-	protected int getIntValue(ResultSet rs, String columnName) {
+	protected int getIntValue(ResultSet rs, String columnName) throws Exception {
 		int value = 0;
 		try {
 			value = rs.getInt(columnName);
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
 		return value;
 	}
-	
-	protected BigDecimal getBigDecimal(ResultSet rs, String columnName) {
+
+	protected BigDecimal getBigDecimal(ResultSet rs, String columnName) throws Exception {
+		BigDecimal value = BigDecimal.ZERO;
 		try {
-			return rs.getBigDecimal(columnName);
+			value = rs.getBigDecimal(columnName);
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
-		return BigDecimal.ZERO;
+		return value;
 	}
 
-	protected Date getDateValue(ResultSet rs, String columnName) {
+	protected Date getDateValue(ResultSet rs, String columnName) throws Exception {
 		Date date = null;
 		try {
 			date = rs.getDate(columnName);
 		} catch (SQLException e) {
 			logger.error("Exception:", e);
+			throw e;
 		}
 		return date;
 	}
-	
+
 	protected String getFileName(String configName) {
 		return configName.concat("_").concat(String.valueOf(new Timestamp(System.currentTimeMillis())));
 	}
@@ -161,7 +167,7 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		} catch (Exception e) {
 			logger.info("Exception :", e);
 		}
-		
+
 		try {
 			if (sourceCon != null) {
 				sourceCon.close();
@@ -169,8 +175,8 @@ public class DBProcessEngine extends DataEngineDBAccess {
 		} catch (Exception e) {
 			logger.info("Exception :", e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 }

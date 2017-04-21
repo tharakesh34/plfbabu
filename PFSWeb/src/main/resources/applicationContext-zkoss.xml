@@ -4193,19 +4193,21 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 
-	<!-- MandateRegistration -->
-	<bean id="mandateRegistrationListCtrl"
-		class="com.pennant.webui.mandate.mandate.MandateRegistrationListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="mandateService" ref="mandateService" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
 
 	<bean id="mandateRegistrationDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
 	</bean>
-
+	
+	<!-- Inteface bajaj Upload and downloads -->
+	<bean id="disbursementRegistrationListCtrl" class="com.pennanttech.interfacebajaj.DisbursementRegistrationListCtrl" parent="basisListCtrl" scope="prototype"/>	
+	<bean id="mandateRegistrationListCtrl" class="com.pennanttech.interfacebajaj.MandateRegistrationListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="mandateService" ref="mandateService" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="fileDownloadListCtrl" class="com.pennanttech.interfacebajaj.FileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
+	
+	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"
 		class="com.pennant.webui.mandate.mandate.MandateFileUploadListCtrl"

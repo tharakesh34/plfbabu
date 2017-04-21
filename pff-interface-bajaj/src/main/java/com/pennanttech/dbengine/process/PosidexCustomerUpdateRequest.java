@@ -14,7 +14,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
@@ -52,9 +51,8 @@ public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 			fileId = executionStatus.getId();
 
 			executionStatus.setRemarks("Loading destination database connection...");
-			DBConfiguration dbConfiguration = config.getDbConfiguration();
-			destConnection = DataSourceUtils.doGetConnection(appDataSource);
-			sourceConnection = getConnection(dbConfiguration);
+			destConnection = DataSourceUtils.doGetConnection(dataSource);
+			sourceConnection = getConnection(config);
 			executionStatus.setRemarks("Fetching data from source table...");
 			
 			resultSet = getSourceData();

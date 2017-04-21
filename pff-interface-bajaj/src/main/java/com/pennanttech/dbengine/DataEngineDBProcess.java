@@ -17,7 +17,6 @@ public class DataEngineDBProcess extends DataEngine {
 	public DataEngineDBProcess(DataSource dataSource, long userId, String database) {
 		super(dataSource, userId, database);
 	}
-	
 
 	public DataEngineDBProcess(DataSource dataSource, long userId, String database, DataEngineStatus executionStatus) {
 		super(dataSource, userId, database, executionStatus, null);

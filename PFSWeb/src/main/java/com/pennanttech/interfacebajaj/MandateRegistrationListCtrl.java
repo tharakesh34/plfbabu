@@ -41,7 +41,7 @@
  ********************************************************************************************
  */
 
-package com.pennant.webui.mandate.mandate;
+package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,11 +56,13 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
@@ -71,6 +73,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -91,6 +97,7 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
+import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.App;
 
 /**
@@ -165,8 +172,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "Mandate";
-		super.pageRightName = "MandateList";
+		super.moduleCode = "MandateRegistration";
+		super.pageRightName = "MandateRegistration";
 		super.tableName = "Mandates_AView";
 		super.queueTableName = "Mandates_AView";
 	}
@@ -216,6 +223,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		search();
 		
 		doSetFieldProperties();
+		
+		if(listBoxMandateRegistration.getItems().size() > 0){
+			listHeader_CheckBox_Comp.setDisabled(false);
+		} else  {
+			listHeader_CheckBox_Comp.setDisabled(true);
+		}
 	}
 
 	private void doSetFieldProperties() {
@@ -335,26 +348,27 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
 	}
-	
-	
-	
+	 
 	/**
 	 * Getting the mandate list using JdbcSearchObject with search criteria..
 	 */
 	private List<Long> getMandateList() {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		searchObject.addFilter(Filter.isNotNull("OrgReference"));
 		searchObject.addField("mandateID");
 		searchObject.addTabelName(this.tableName);
-		searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 
-		//FIXME the filters adding
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+			if (filter != null) {
+				searchObject.addFilter(filter);
+			}
+		}	
+		
 		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-
 		List<Long> mandateLst = new ArrayList<Long>();
 
 		if (list != null && !list.isEmpty()) {
@@ -364,7 +378,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			}
 		}
 		return mandateLst;
-
 	}
 	
 	/**
@@ -378,6 +391,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.mandateIdMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		search();
+		
+		if (listBoxMandateRegistration.getItems().size() > 0) {
+			listHeader_CheckBox_Comp.setDisabled(false);
+		} else {
+			listHeader_CheckBox_Comp.setDisabled(true);
+		}
 	}
 
 	/**
@@ -490,7 +509,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		if (conf == MultiLineMessageBox.NO) {
 			return;
 		}
-		//FIXME the process monitor
 		try {
 			btnDownload.setDisabled(true);
 			DataEngineExport dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser().getLoginUsrID(), App.DATABASE.name());
@@ -500,7 +518,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			dataEngine.setFilterMap(filterMap);
 
 			dataEngine.exportData("MANDATES_EXPORT");
-
+			
+			MessageUtil.showMessage("Download files process initiated. Please check the progress at File Downloads.");
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
+			
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 		} finally {
@@ -512,7 +533,34 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 	}
 
+	protected void createNewPage(String uri, String tabName, Map<String, Object> args) {
+		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Center center = bl.getCenter();
+		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");	
+		
+		Tab tab = null;
+		if(tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_"))  != null) {
+			tab = (Tab)tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));		
+			if(tab != null) {
+				tab.close();
+			}
+		}
+		tab = new Tab();
+		tab.setId(tabName.trim().replace("menu_Item_", "tab_"));
+		tab.setLabel(Labels.getLabel(tabName));
+		tab.setClosable(true);
+		tab.setParent(tabs);
 
+		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
+		final Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setHeight("100%");
+		tabpanel.setStyle("padding: 0px;");
+		tabpanel.setParent(tabpanels);
+		
+		Executions.createComponents(uri, tabpanel, args);
+		tab.setSelected(true);
+	}
+	
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
 	}

@@ -92,7 +92,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	
 	
 
-	private List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
+	protected List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
 	protected transient PagedListService pagedListService;
 
 	protected AbstractListController() {

@@ -123,11 +123,10 @@
 		<menuItem id="menu_Item_CustomerGroup" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupList.zul"  rightName="menuItem_CustomerMasters_CustomerGroup"/>
 		<menuItem id="menu_Item_UpdateCoreCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/UpdateCoreCustomer/UpdateCoreCustomerDialog.zul"  rightName="menuItem_CustomerMasters_UpdateCoreCustomer"/>
 		<menuItem id="menu_Item_Mandate" zulNavigation="/WEB-INF/pages/Mandate/MandateList.zul" rightName="menuItem_Mandate"/>
-		<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/Mandate/MandateRegistrationList.zul" rightName="menuItem_MandateRegistration"/>
 		<!-- <menuItem id="menu_Item_MandateStatusUpdate" zulNavigation="/WEB-INF/pages/Mandate/MandateFileUploadList.zul" rightName="menuItem_MandateFileUpload"/> -->
 		<menuItem id="menu_Item_Beneficiary" zulNavigation="/WEB-INF/pages/Beneficiary/BeneficiaryList.zul"  rightName="menuItem_Beneficiary"/>
-		
-<!-- 		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
+<!-- 		
+		<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/>
  -->		
 		<!-- <menuItem id="menu_Item_CustomerAddres" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresList.zul"  rightName="menuItem_CustomerMasters_CustomerAddres"/>
 		<menuItem id="menu_Item_CustomerBalanceSheet" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerBalanceSheet/CustomerBalanceSheetList.zul" rightName="menuItem_CustomerMasters_CustomerBalanceSheet"/> 
@@ -144,6 +143,16 @@
 		<menuItem id="menu_Item_CustomerRating" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingList.zul" rightName="menuItem_CustomerMasters_CustomerRating"/> -->
 	</menu>
 
+	<!-- Interface bajaj Upload and downloads -->
+	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
+		<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul" rightName="menuItem_MandateRegistration"/>
+		<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul" rightName="menuItem_MandateFileDownlaods"/>
+ 	</menu>
+	<menu id="menu_Category_Disbursement"  rightName="menuCat_Disbursement" >
+		<menuItem id="menu_Item_DisbursementRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul" rightName="menuItem_DisbursementRegistration"/>
+		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul" rightName="menuItem_DisbursementFileDownlaods"/>
+ 	</menu>
+ 	
 	<!-- Rules   Factory -->
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >
 	    <menuItem id="menu_Item_AccountingSet" zulNavigation="/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetList.zul"  rightName="menuItem_RulesFactory_AccountingSet"/>

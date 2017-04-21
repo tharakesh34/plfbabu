@@ -84,7 +84,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onCreate$window_DataImportCtrl(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		// Set the page level components.
 		setPageComponents(window);
 
@@ -96,26 +96,19 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		parsers[0] = ParserNames.READER.name();
 		parsers[1] = ParserNames.DBREADER.name();
 		List<Configuration> configList = dataEngineConfig.getMenuList(parsers, true);
-		
+
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		
+
 		for (Configuration config : configList) {
-			valueLabel = new ValueLabel(String.valueOf(config.getParser()),config.getName());
+			valueLabel = new ValueLabel(config.getName(), config.getName());
 			if (getUserWorkspace().isAllowed(config.getName())) {
 				menuList.add(valueLabel);
-				doFillExePanels(config,dataEngineConfig.getLatestExecution(config.getName()));
+				doFillExePanels(config, dataEngineConfig.getLatestExecution(config.getName()));
 			}
 		}
 		fillComboBox(fileConfiguration, "", menuList, "");
-		doSetFieldProperties();
-		logger.debug("Leaving");
-	}
 
-	/**
-	 * Setting the default properties of the fields
-	 */
-	private void doSetFieldProperties() {
-		// Present no fields have default properties
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -126,17 +119,15 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onChange$fileConfiguration(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		try {
 			String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
-			String parserId = this.fileConfiguration.getSelectedItem().getValue().toString();
-			
 			fileName.setValue("");
 			serverFileName.setValue("");
 			row1.setVisible(false);
 			if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
 				this.btnImport.setDisabled(false);
-				config = dataEngineConfig.getConfiguration(fileConfig, Integer.valueOf(parserId));
+				config = dataEngineConfig.getConfigurationByName(fileConfig);
 			} else {
 				this.btnImport.setDisabled(true);
 				return;
@@ -165,11 +156,11 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		String path = config.getUploadPath();
 		String uploadLoc = config.getUploadLocation();
-		
+
 		if (!path.endsWith(File.separator)) {
 			path = path + File.separator;
 		}
-		
+
 		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(true);
 		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
@@ -177,7 +168,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			serverFiles = new ArrayList<ValueLabel>();
 			File file = new File(path);
 			File[] files = file.listFiles();
-			
+
 			if (files != null) {
 				for (File file2 : files) {
 					if (StringUtils.startsWith(file2.getName(), config.getFilePrefixName())) {
@@ -189,8 +180,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Setting the components visibility based on the flag
 	 */
@@ -200,7 +190,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setVisible(isVisible);
 		serverFileName.setVisible(!isVisible);
 	}
-	
+
 	/**
 	 * When user clicks on "btnImport"
 	 * 
@@ -209,9 +199,9 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
-		
+
 		if (status != null && ExecutionStatus.I.name().equals(status.getStatus())) {
 			MessageUtil.showErrorMessage("Export is in progress for the selected configuration.");
 			return;
@@ -225,7 +215,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showErrorMessage(e.getMessage());
 			return;
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -263,14 +253,14 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-					
+
 					String status = pe.getProcess().getStatus();
 					if (ExecutionStatus.I.name().equals(status)) {
 						this.btnImport.setDisabled(true);
 					} else {
 						this.btnImport.setDisabled(false);
 					}
-					
+
 					String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
 					if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
 						this.btnImport.setDisabled(false);
@@ -284,15 +274,13 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	private void doFillExePanels(Configuration config, DataEngineStatus ds) throws Exception {
-		Configuration configuration = null;
 		if (ds == null) {
 			ds = new DataEngineStatus();
 		}
-		configuration = dataEngineConfig.getConfiguration(config.getName(), config.getParser());
-		doFillPanel(ds, configuration);
+		doFillPanel(ds);
 	}
-	
-	private void doFillPanel(DataEngineStatus ds, Configuration config) {
+
+	private void doFillPanel(DataEngineStatus ds) {
 		ProcessExecution pannelExecution = new ProcessExecution();
 		pannelExecution.setId(config.getName());
 		pannelExecution.setBorder("normal");
@@ -329,7 +317,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	private DataEngineStatus getPannelExecution(Configuration config) {
+	private DataEngineStatus getPannelExecution() {
 		DataEngineStatus status = null;
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
@@ -367,17 +355,20 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			this.userId = userId;
 			this.config = config;
 		}
+
 		byte[] fileData;
+
 		@Override
 		public void run() {
 			DataEngineStatus status = null;
 			try {
-				status = getPannelExecution(config);
+				status = getPannelExecution();
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
-					dbDataEngine.processData(config);
+					dbDataEngine.processData(config.getName());
 				} else {
-					DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
+					DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status,
+							null);
 					dataEngine.setMedia(media);
 					dataEngine.importData(config.getName());
 				}

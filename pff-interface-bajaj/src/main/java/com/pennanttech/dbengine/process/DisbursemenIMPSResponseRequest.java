@@ -16,7 +16,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
@@ -53,14 +52,13 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 			saveBatchStatus();
 
 			executionStatus.setRemarks("Loading destination database connection...");
-			DBConfiguration dbConfiguration = config.getDbConfiguration();
-			sourceConnection = getConnection(dbConfiguration);
-			destConnection = DataSourceUtils.doGetConnection(appDataSource);
+			sourceConnection = getConnection(config);
+			destConnection = DataSourceUtils.doGetConnection(dataSource);
 
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
 
-			this.jdbcTemplate = getJdbcTemplate(appDataSource);
+			this.jdbcTemplate = getJdbcTemplate(dataSource);
 
 			if (resultSet != null) {
 				resultSet.last();

@@ -320,10 +320,12 @@ import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.model.ModuleMapping;
 import com.pennanttech.pff.core.util.ClassUtil;
 import com.pennanttech.pff.core.util.ModuleUtil;
+
 
 public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
@@ -1832,6 +1834,16 @@ public class PennantJavaUtil {
 				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
 				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
 		
+		ModuleUtil.register("DisbursementRegistration", new ModuleMapping("DisbursementRegistration",
+				FinAdvancePayments.class, new String[] { "INT_DISBURSEMENT_EXPORT_VIEW",
+						" INT_DISBURSEMENT_EXPORT_VIEW" }, null, new String[] { "PAYMENTID", "FINREFERENCE" }, null, 300));
+
+		ModuleUtil.register("MandateRegistration", new ModuleMapping("Mandate", Mandate.class, new String[] {
+				"Mandates", "Mandates_AView" }, null, new String[] { "MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" }, null, 700));
+
+		ModuleUtil.register("FileDownload", new ModuleMapping("FileDownload", FileDownlaod.class, new String[] {
+				"FileDownload", "FILE_DOWNLOAD_VIEW" }, null, new String[] { "NAME", "FileName" }, null, 700));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

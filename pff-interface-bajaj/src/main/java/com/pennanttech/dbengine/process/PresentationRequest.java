@@ -12,7 +12,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
@@ -47,8 +46,7 @@ public class PresentationRequest extends DBProcessEngine {
 			saveBatchStatus();
 
 			executionStatus.setRemarks("Loading destination database connection...");
-			DBConfiguration dbConfiguration = config.getDbConfiguration();
-			destConnection = getConnection(dbConfiguration);
+			destConnection = getConnection(config);
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
 
@@ -170,7 +168,7 @@ public class PresentationRequest extends DBProcessEngine {
 		ResultSet rs = null;
 		StringBuilder sql = null;
 		try {
-			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
+			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
 			sql = new StringBuilder();
 			sql.append(" SELECT * from PresentationRequest_Staging ");
 

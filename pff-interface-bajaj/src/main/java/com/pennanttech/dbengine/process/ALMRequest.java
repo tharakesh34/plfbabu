@@ -14,7 +14,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.dbengine.util.DateUtil;
@@ -52,9 +51,8 @@ public class ALMRequest extends DBProcessEngine {
 			fileId = executionStatus.getId();
 			
 			executionStatus.setRemarks("Loading destination database connection...");
-			DBConfiguration dbConfiguration = config.getDbConfiguration();
-			destConnection = getConnection(dbConfiguration);
-			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
+			destConnection = getConnection(config);
+			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
 

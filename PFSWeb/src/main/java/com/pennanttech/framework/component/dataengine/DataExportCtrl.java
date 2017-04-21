@@ -117,10 +117,10 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		for (Configuration config : configList) {
-			valueLabel = new ValueLabel(String.valueOf(config.getParser()), config.getName());
+			valueLabel = new ValueLabel(config.getName(), config.getName());
 			if (getUserWorkspace().isAllowed(config.getName())) {
 				menuList.add(valueLabel);
-				doFillExePanels(config,dataEngineConfig.getLatestExecution(config.getName()));
+				doFillExePanels(dataEngineConfig.getLatestExecution(config.getName()));
 			}
 		}
 		fillComboBox(fileConfiguration, "", menuList, "");
@@ -135,6 +135,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private void doFillFileNames() {
 		String configName = this.fileConfiguration.getSelectedItem().getLabel();
+		
 		if (StringUtils.equals(PennantConstants.List_Select, configName)) {
 			fillComboBox(this.fileNames, "", new ArrayList<ValueLabel>(), "");
 			this.fileDownload.setVisible(false);
@@ -168,10 +169,9 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			doClear();
 			String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
-			String parserId = this.fileConfiguration.getSelectedItem().getValue().toString();
 			if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
 				this.btnExport.setDisabled(false);
-				config = dataEngineConfig.getConfiguration(fileConfig, Integer.valueOf(parserId));
+				config = dataEngineConfig.getConfigurationByName(fileConfig);
 				doFillFileNames();
 			} else {
 				doFillFileNames();
@@ -218,7 +218,6 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				} else {
 					this.fileDownload.setVisible(false);
 				}
-				// doFillPanel(ds, config);
 			}
 		} catch (Exception e) {
 			exceptionTrace(e);
@@ -391,16 +390,14 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	private void doFillExePanels(Configuration config, DataEngineStatus ds) throws Exception {
-		Configuration configuration = null;
+	private void doFillExePanels( DataEngineStatus ds) throws Exception {
 		if (ds == null) {
 			ds = new DataEngineStatus();
 		}
-		configuration = dataEngineConfig.getConfiguration(config.getName(), config.getParser());
-		doFillPanel(ds, configuration);
+		doFillPanel(ds);
 	}
 
-	private void doFillPanel(DataEngineStatus ds, Configuration config) {
+	private void doFillPanel(DataEngineStatus ds) {
 		ProcessExecution pannelExecution = new ProcessExecution();
 		pannelExecution.setId(config.getName());
 		pannelExecution.setBorder("normal");
@@ -490,7 +487,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				status = getPannelExecution(config);
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
-					dbDataEngine.processData(config);
+					dbDataEngine.processData(config.getName());
 				} else {
 					DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), status, null);
 					dataEngine.setFilterMap(filterMap);

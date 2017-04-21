@@ -1,5 +1,6 @@
 package com.pennanttech.dbengine.process;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,12 +8,12 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DBConfiguration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
@@ -47,9 +48,8 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			saveBatchStatus();
 
 			executionStatus.setRemarks("Loading destination database connection...");
-			DBConfiguration dbConfiguration = config.getDbConfiguration();
-			destConnection = getConnection(dbConfiguration);
-			sourceConnection = DataSourceUtils.doGetConnection(appDataSource);
+			destConnection = getConnection(config);
+			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
 			
 			executionStatus.setRemarks("Fetching data from source table...");
 			resultSet = getSourceData();
@@ -117,13 +117,11 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" update FinAdvancePayments  set STATUS  =  ? Where AGREEMENTID = ?  AND  PaymentSeq = ? AND  DisbSeq = ? ");
+			sb.append(" update FinAdvancePayments  set STATUS  =  ? Where  PaymentId = ? ");
 			
 			ps = sourceConnection.prepareStatement(sb.toString());
 			ps.setString(1, Status.AC.name());
-			ps.setString(2, getValue(rs, "AGREEMENTID"));
-			ps.setInt(3, getIntValue(rs, "PaymentSeq"));
-			ps.setInt(4, getIntValue(rs, "DisbSeq"));
+			ps.setLong(2, getLongValue(rs, "PaymentId"));
 			
 			// execute query
 			ps.executeUpdate();
@@ -144,31 +142,33 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" INSERT INTO INT_DSBIMPS_REQUEST (");
-			sb.append("	CHANNELPARTNERID, BCAGENTID, SENDERID, RECEIVERNAME, RECEIVER_MOBILE_NO, RECEIVEREMAILID,IFSCODE ,BANK ");
-			sb.append(" RECEVIER_BANK_STATE, RECEVIER_BANK_CITY, RECEVIER_BANK_BRANCH, RECEVIERACCOUNTNUMBER, AMOUNT, REMARKS,");
-			sb.append(" REMARKS, CHANNELPARTNERREFNO, PICKUP_FLAG, AGREEMENTID)");
-			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+			sb.append("	CHANNELPARTNERID, BCAGENTID, SENDERID, RECEIVERNAME, RECEIVERMOBILENO, RECEIVEREMAILID, IFSCODE ,BANK");
+			sb.append(" , RECEVIERBANKSTATE, RECEVIERBANKCITY, RECEVIERBANKBRANCH, RECEVIERACCOUNTNUMBER, AMOUNT");
+			sb.append(" , REMARKS, CHANNELPARTNERREFNO, PICKUPFLAG, AGREEMENTID)");
+			sb.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 			ps = destConnection.prepareStatement(sb.toString());
 
-			ps.setString(1, getValue(rs, "CHANNELPARTNERID"));
-			ps.setString(2, getValue(rs, "BCAGENTID"));
-			ps.setString(3, getValue(rs, "SENDERID"));
-			ps.setString(4, getValue(rs, "RECEIVERNAME"));
-			ps.setString(5, getValue (rs, "RECEIVER_MOBILE_NO"));
-			ps.setString(6, getValue(rs, "RECEIVEREMAILID"));
-			ps.setString(7, getValue(rs, "IFSCODE"));
-			ps.setString(8, getValue(rs, "BANK"));
-			ps.setString(9, getValue(rs, "RECEVIER_BANK_STATE"));
-			ps.setString(10, getValue(rs, "RECEVIER_BANK_CITY"));
-			ps.setString(11, getValue(rs, "RECEVIER_BANK_BRANCH"));
-			ps.setString(12, getValue(rs, "RECEVIERACCOUNTNUMBER"));
-			ps.setBigDecimal(13, getBigDecimal(rs, "AMOUNT"));
-			ps.setString(14, getValue(rs, "CHANNELPARTNERREFNO"));
-			ps.setString(15, getValue(rs, "N"));
-			ps.setBigDecimal(16, getBigDecimal(rs, "AGREEMENTID"));
-			// execute query
+			ps.setString(1, null);
+			ps.setString(2, null);
+			ps.setString(3, null);
+			ps.setString(4, getValue(rs, "BENEFICIARYNAME"));
+			ps.setString(5, StringUtils.trimToEmpty(getValue (rs, "BENEFICIARY_MOBILE")));//From disb befiniciary 
+			ps.setString(6, StringUtils.trimToEmpty(getValue(rs, "CUSTOMER_EMAIL")));//From customer email
+			ps.setString(7, getValue(rs, "IFSC"));
+			ps.setString(8, getValue(rs, "BANKNAME"));
+			ps.setString(9, getValue(rs, "CPPROVINCENAME") == null ? " " : getValue(rs, "CPPROVINCENAME"));
+			ps.setString(10, getValue(rs, "PCCITYNAME") == null ? " " : getValue(rs, "PCCITYNAME"));
+			ps.setString(11, getValue(rs, "BRANCHDESC") == null ? " " : getValue(rs, "BRANCHDESC"));
+			ps.setString(12, getValue(rs, "BENEFICIARYACCNO") == null ? " " : getValue(rs, "BENEFICIARYACCNO"));
+			ps.setBigDecimal(13, getBigDecimal(rs, "AMTTOBERELEASED"));
+			ps.setString(14, getValue(rs, "REMARKS") == null ? " " : StringUtils.substring(getValue(rs, "REMARKS"), 0, 9));
+			ps.setString(15, getValue(rs, "PAYMENTID"));
+			ps.setString(16, Status.N.name());
+			ps.setBigDecimal(17, BigDecimal.ZERO);//Discuss with required for finreference 
 			ps.executeUpdate();
+			
+			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -185,7 +185,7 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * FROM INT_DISB_IMPS_VIEW ");
+			sql.append(" SELECT * FROM INT_DISBURSEMENT_EXPORT_VIEW ");
 
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery();
