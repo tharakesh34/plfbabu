@@ -99,19 +99,7 @@ public class AccrualService extends ServiceHelper {
 		List<FinanceScheduleDetail> scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 				finReference);
 
-		//FIXME: REMOVE THIS CODE AFTER 
-		if (StringUtils.equals(finReference, "WB1703200727") || StringUtils.equals(finReference, "WB1703200499")
-				|| StringUtils.equals(finReference, "PB1703201087") || StringUtils.equals(finReference, "PB1703201067")) {
-
-			logger.debug(" DEBUG Starts for ACCRUAL");
-
-		}
-
 		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-
-		//FIXME: The below code of adding might not be required as accrual is moved to SOD
-		// call the Calculations
-		//Date dateCal = DateUtility.addDays(valueDate, 1);
 
 		FinanceProfitDetail finPftDetail = AEAmounts.calProfitDetails(financeMain, scheduleDetailList, profitDetail,
 				valueDate);

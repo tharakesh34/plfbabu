@@ -405,8 +405,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
 		updateSql.append(" AmzTillLBD = :AmzTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
 		updateSql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
-		// AcrTillLBD = :AcrTillLBD,
-		updateSql.append(" AcrTillLBD = :AcrTillLBD, PrvMthAmz = :PrvMthAmz,");
+		updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD, PrvMthAmz = :PrvMthAmz,");
 		updateSql.append(" PrvMthAmzNrm = :PrvMthAmzNrm, PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
 		updateSql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp");
 		updateSql.append(" Where FinReference =:FinReference");
