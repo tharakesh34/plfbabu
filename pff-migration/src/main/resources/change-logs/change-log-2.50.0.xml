@@ -5955,5 +5955,36 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="117" author="Surekha">
+		<createTable tableName="NPABUCKETSCONFIG_Temp">
+			<column name="ConfigID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProductCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SuspendProfit" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	
 </databaseChangeLog>
