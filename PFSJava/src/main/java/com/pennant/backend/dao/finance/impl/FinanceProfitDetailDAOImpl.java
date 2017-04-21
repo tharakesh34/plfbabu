@@ -304,7 +304,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TdSchdPri = :TdSchdPri, TdSchdPriPaid = :TdSchdPriPaid, TdSchdPriBal = :TdSchdPriBal,");
 		updateSql.append(" CalPftOnPD = :CalPftOnPD, PftOnPDMethod = :PftOnPDMethod, PftOnPDMrg = :PftOnPDMrg,");
 		updateSql.append(" TotPftOnPD = :TotPftOnPD,TotPftOnPDPaid = :TotPftOnPDPaid,");
-		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived,");
+//		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived,");
 		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived, TotPftOnPDDue = :TotPftOnPDDue,");
 		updateSql.append(" NOInst = :NOInst, NOPaidInst = :NOPaidInst, NOODInst = :NOODInst,");
 		updateSql.append(" FutureInst = :FutureInst, RemainingTenor = :RemainingTenor, TotalTenor = :TotalTenor,");
@@ -405,7 +405,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
 		updateSql.append(" AmzTillLBD = :AmzTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
 		updateSql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
-		updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrTillLBD = :AcrTillLBD, PrvMthAmz = :PrvMthAmz,");
+		// AcrTillLBD = :AcrTillLBD,
+		updateSql.append(" AcrTillLBD = :AcrTillLBD, PrvMthAmz = :PrvMthAmz,");
 		updateSql.append(" PrvMthAmzNrm = :PrvMthAmzNrm, PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
 		updateSql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp");
 		updateSql.append(" Where FinReference =:FinReference");

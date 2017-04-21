@@ -121,7 +121,7 @@ public class AEAmounts implements Serializable {
 		//Last Repayments
 		aeAmountCodes.setPrvRpySchDate(pftDetail.getPrvRpySchDate());
 		aeAmountCodes.setFinalRepayAmt(pftDetail.getFinalRepayAmt());
-		;
+		
 		aeAmountCodes.setPrvRpySchPft(pftDetail.getPrvRpySchPft());
 		aeAmountCodes.setPrvRpySchPri(pftDetail.getPrvRpySchPri());
 		//next Repayments
