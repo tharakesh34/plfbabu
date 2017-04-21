@@ -2826,6 +2826,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}else {
 							data.setSchDate("");
 						}
+						data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 						data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 						data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
 						data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
@@ -2876,6 +2877,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}else {
 						data.setSchDate("");
 					}
+					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
 					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
@@ -2922,6 +2924,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}else {
 						data.setSchDate("");
 					}
+					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setTdsAmount("");
@@ -2942,15 +2945,16 @@ public class FinScheduleListItemRenderer implements Serializable{
 			// Hold EMI Information 
 			if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
 				data = new FinanceScheduleReportData();	
-				data.setLabel(Labels.getLabel("listcell_EMIHold_label.label"));
+				data.setLabel(Labels.getLabel("listcell_EMIHold_label.label", 
+						new String[]{ DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())}));
 				data.setSchDate("");
-				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
-				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
-				data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));				
-				data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-				data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+				data.setEndBal("");
+				data.setSchdFee("");
+				data.setTdsAmount("");
+				data.setPftAmount("");				
+				data.setSchdPft("");				
+				data.setSchdPri("");
+				data.setTotalAmount("");
 				reportList.add(data);
 				count = 2;
 
@@ -2977,6 +2981,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}else{
 					data.setSchDate("");
 				}
+				data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 				data.setSchdPft("");
@@ -3015,6 +3020,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 							
 							data.setLabel(label);
+							data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 							if (count == 1){
 								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 								if( aScheduleDetail.isRvwOnSchDate()){
@@ -3118,6 +3124,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}else {
 						data.setSchDate("");
 					}
+					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
 					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
@@ -3163,6 +3170,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					data.setSchdFee("");
+					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
 					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
@@ -3262,6 +3270,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}
 
 				data.setLabel(label);
+				data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
 				if (count == 1) {
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
 					if( aScheduleDetail.isRvwOnSchDate()) {

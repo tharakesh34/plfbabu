@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 public class FinanceScheduleReportData {
 
 	private String label;
+	private String instNumber;
 	private String schdSeqNo;
 	private String schDate;
 	private String pftAmount;
@@ -190,6 +191,14 @@ public class FinanceScheduleReportData {
 	}
 	public void setSchdFee(String schdFee) {
 		this.schdFee = schdFee;
+	}
+
+	public String getInstNumber() {
+		return instNumber;
+	}
+
+	public void setInstNumber(String instNumber) {
+		this.instNumber = instNumber;
 	}
 	
 
