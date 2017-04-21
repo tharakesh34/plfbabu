@@ -5846,4 +5846,21 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			update SecRoles set roleDesc='ADMIN ROLE'  where rolecd='ADMIN' and roleDesc='ADMIN ROLE ';
 		</sql>
 	</changeSet>
+	<changeSet id="112" author="Surekha">
+		<createView viewName="SECURITYUSERDIVBRANCH_VIEW" replaceIfExists="true">
+			SELECT     T1.UsrID, T1.UserDivision, T1.UserBranch, T2.BranchDesc UserBranchDesc, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+                      T1.NextRoleCode, T1.TaskId, T1.NextTaskID, T1.RecordType, T1.WorkFlowId,T2.BranchSwiftBrnCde
+				FROM          SecurityUserDivBranch_Temp T1 INNER JOIN
+				                       RMTBranches T2 ON T1.UserBranch = T2.BranchCode
+				UNION ALL
+				SELECT     T1.UsrID, T1.UserDivision, T1.UserBranch, T2.BranchDesc UserBranchDesc, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+				                      T1.NextRoleCode, T1.TaskId, T1.NextTaskID, T1.RecordType, T1.WorkFlowId,T2.BranchSwiftBrnCde
+				FROM          SecurityUserDivBranch T1 INNER JOIN
+				                       RMTBranches T2 ON T1.UserBranch = T2.BranchCode
+				WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM           SecurityUserDivBranch_Temp
+				                            WHERE      UsrID = T1.UsrID)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
