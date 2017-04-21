@@ -164,23 +164,49 @@ public class JdbcSearchProcessor implements Serializable {
 		int offset = search.getFirstResult();
 		int pageSize = search.getMaxResults();
 
-		boolean hasOffset = false;
-		if (search.getFirstResult() > 0) {
-			hasOffset = true;
-		}
-
 		switch (App.DATABASE) {
-		case SQL_SERVER:
-			return getMSSQLLimitString(query.toString(), hasOffset, offset, pageSize);
 		case ORACLE:
-			return getORACLELimitString(query.toString(), hasOffset, offset, pageSize);
+			return getOracleLimitRowsSql(query.toString(), offset > 0, offset, pageSize);
+		case SQL_SERVER:
+			return getMSSQLLimitString(query.toString(), offset > 0, offset, pageSize);
 		case DB2:
-			return getDB2LimitString(query.toString(), hasOffset, offset, pageSize);
+			return getDB2LimitString(query.toString(), offset > 0, offset, pageSize);
 		case MYSQL:
-			return getMYSQLLimitString(query.toString(), hasOffset, offset, pageSize);
+			return getMYSQLLimitString(query.toString(), offset > 0, offset, pageSize);
 		default:
 			return null;
 		}
+	}
+
+	private String getOracleLimitRowsSql(String sql, boolean hasOffset, int offset, int pageSize) {
+		// Condition added to by pass the usage of valid item in extended combo box
+		if (offset > 1 || pageSize > 1) {
+			sql = sql.trim();
+			boolean isForUpdate = false;
+			if (sql.toLowerCase().endsWith(" for update")) {
+				sql = sql.substring(0, sql.length() - 11);
+				isForUpdate = true;
+			}
+			StringBuilder pagingSelect = new StringBuilder();
+			if (hasOffset) {
+				pagingSelect.append("select * from ( select row_.*, rownum rownum_ from ( ");
+			} else {
+				pagingSelect.append("select * from ( ");
+			}
+			pagingSelect.append(sql);
+			if (hasOffset) {
+				pagingSelect.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
+			} else {
+				pagingSelect.append(" ) where rownum <= " + pageSize);
+			}
+			if (isForUpdate) {
+				pagingSelect.append(" for update");
+			}
+
+			return pagingSelect.toString();
+		}
+
+		return sql;
 	}
 
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
@@ -343,37 +369,6 @@ public class JdbcSearchProcessor implements Serializable {
 
 		return pagingSelect.toString();
 
-	}
-
-	private String getORACLELimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-		// Condition added to by pass the usage of valid item in extended combo box
-		if (startRow > 1 || endRow > 1) {
-			sql = sql.trim();
-			boolean isForUpdate = false;
-			if (sql.toLowerCase().endsWith(" for update")) {
-				sql = sql.substring(0, sql.length() - 11);
-				isForUpdate = true;
-			}
-			StringBuilder pagingSelect = new StringBuilder();
-			if (hasOffset) {
-				pagingSelect.append("select * from ( select row_.*, rownum rownum_ from ( ");
-			} else {
-				pagingSelect.append("select * from ( ");
-			}
-			pagingSelect.append(sql);
-			if (hasOffset) {
-				pagingSelect.append(" ) row_ ) where rownum_ <= " + (endRow + startRow) + " and rownum_ > " + startRow);
-			} else {
-				pagingSelect.append(" ) where rownum <= " + endRow);
-			}
-			if (isForUpdate) {
-				pagingSelect.append(" for update");
-			}
-
-			return pagingSelect.toString();
-		}
-
-		return sql;
 	}
 
 	private static String getRowNumber(String sql) {
