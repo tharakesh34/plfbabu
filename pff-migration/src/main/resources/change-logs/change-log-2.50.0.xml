@@ -5841,4 +5841,9 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="111" author="Surekha">
+		<sql>
+			update SecRoles set roleDesc='ADMIN ROLE'  where rolecd='ADMIN' and roleDesc='ADMIN ROLE ';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
