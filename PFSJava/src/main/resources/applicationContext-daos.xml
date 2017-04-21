@@ -9422,5 +9422,51 @@
        <property name="financeStatusCodeDAO" ref="financeStatusCodeDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
+   
+   <!-- NPABucketConfiguration -->
+	<bean id="nPABucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="nPABucketConfigurationService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="nPABucketConfigurationServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="nPABucketConfigurationServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.NPABucketConfigurationServiceImpl">
+       <property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+		<!-- DPDBucketConfiguration -->
+	<bean id="dPDBucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="dPDBucketConfigurationService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="dPDBucketConfigurationServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="dPDBucketConfigurationServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.DPDBucketConfigurationServiceImpl">
+       <property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 	
 </beans>

@@ -90,6 +90,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -97,6 +98,7 @@ import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
+import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
@@ -676,6 +678,13 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PresentmentReasonCode", new ModuleMapping("PresentmentReasonCode", PresentmentReasonCode.class, new String[] { "PresentmentReasonCode", "PresentmentReasonCode_AView" },
 				masterWF, new String[] { "Code", "Description" }, null, 300));
 		ModuleUtil.register("FinanceStatusCode",new ModuleMapping("FinanceStatusCode", FinanceStatusCode.class, new String[]{"FINANCESTATUSCODES", "FINANCESTATUSCODES_AView"},masterWF, new String[] {"StatusCode","StatusDesc"} , null,300));
+		ModuleUtil.register("NPABucketConfiguration",new ModuleMapping("NPABucketConfiguration", NPABucketConfiguration.class, new String[]{"NPABUCKETSCONFIG", "NPABUCKETSCONFIG_AView"}, masterWF,new String[] {"ConfigID","DueDays"} , null, 300));
+		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
+		 
+
+ 
+
+
 
 		/************* Accounts *************/
 
@@ -1413,7 +1422,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("SecurityUserDivBranch", new ModuleMapping("SecurityUserDivBranch",
 				SecurityUserDivBranch.class, new String[] { "SecurityUserDivBranch", "SecurityUserDivBranch" }, null,
 				null, null, 300));
-
+		ModuleUtil.register("UserDivBranch", new ModuleMapping("UserDivBranch",
+				SecurityUserDivBranch.class, new String[] { "SecurityUserDivBranch_view"}, null,
+				new String[] { "UsrID", "UserBranchDesc"}, null, 300));
 		ModuleUtil.register("SecurityUsers", new ModuleMapping("SecurityUser", SecurityUser.class,
 				new String[] { "SecUsers" }, securityWF,
 				new String[] { "UsrLogin", "UsrFName", "UsrMName", "UsrLName" }, null, 600));
