@@ -78,9 +78,9 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal finMaxODAmt = BigDecimal.ZERO;
 	private BigDecimal finMaxODPri = BigDecimal.ZERO;
 	private BigDecimal finMaxODPft = BigDecimal.ZERO;
-	private int graceDays;
+	private int graceDays=0;
 	private boolean incGraceDays;
-	private int finCurODDays;
+	private int finCurODDays=0;
 	
 	private BigDecimal totWaived = BigDecimal.ZERO;
 	@XmlElement(name="odCharge")
@@ -326,7 +326,7 @@ public class FinODDetails implements java.io.Serializable {
 	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
     	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
     }
-	
+//	
 	public BigDecimal getLPIAmt() {
 		return lPIAmt;
 	}

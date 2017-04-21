@@ -215,6 +215,33 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		
 		return repaymentList;
 	}
+	
+	
+	@Override
+	public List<FinanceRepayments> getByFinRefAndSchdDate(String finReference,Date finSchdDate) {
+		logger.debug("Entering");
+		
+		List<FinanceRepayments> repaymentList = new ArrayList<FinanceRepayments>();
+		
+		FinanceRepayments financeRepayments = new FinanceRepayments();
+		financeRepayments.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate,");
+		selectSql.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, ");
+		selectSql.append(" T1.FinTotSchdPaid ");
+		selectSql.append(" From FinRepayDetails");
+		selectSql.append(" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate ");
+
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
+		RowMapper<FinanceRepayments> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceRepayments.class);
+		
+		logger.debug("Leaving");
+		repaymentList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		
+		return repaymentList;
+	}
 
 	@Override
     public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference) {

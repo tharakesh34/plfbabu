@@ -35,6 +35,10 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -73,6 +77,11 @@ public class LatePayInterestService extends ServiceHelper {
 	private FinODDetailsDAO				finODDetailsDAO;
 	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
 	private OverdueChargeRecoveryDAO	recoveryDAO;
+	
+	public static final String			customerODDetails	= "SELECT FO.FinReference,FO.FinODSchdDate,FO.CustID, FO.FinCurODAmt,FO.FinCurODPri,FO.FinCurODPft,"
+			+ "FO.FinCurODDays,FO.TotPenaltyAmt,FO.TotWaived,FO.TotPenaltyPaid,FO.TotPenaltyBal,"
+			+ "FO.LPIAmt,FO.LPIPaid,FO.LPIBal,FM.ProfitDaysBasis "
+			+ "FROM FinODDetails FO INNER JOIN FinanceMain FM ON FM.FINREFERENCE=FO.FINREFERENCE where FO.CustID=?";
 
 	/**
 	 * Default constructor
@@ -81,45 +90,58 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	/**
-	 * @param finMain
-	 * @param finRepay
-	 * @return
-	 * @throws Exception
-	 */
-	public List<ReturnDataSet> processLPPenaltyRequest(FinanceMain finMain, FinRepayQueue finRepay) throws Exception {
-		logger.debug(" Entering ");
+	
+	public void processLatePayInterest(Connection connection, long custId, Date date) throws Exception {
+		ResultSet resultSet = null;
+		PreparedStatement sqlStatement = null;
+		String finreference = "";
 
-		Date schdDate = finRepay.getRpyDate();
-		FinODDetails finODDetails = getFinODDetailsForBatch(finRepay.getFinReference(), schdDate,
-				finRepay.getFinRpyFor());
+		try {
+			//payments
+			sqlStatement = connection.prepareStatement(customerODDetails);
+			sqlStatement.setLong(1, custId);
+			resultSet = sqlStatement.executeQuery();
 
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		if (finODDetails != null) {
+			while (resultSet.next()) {
+				finreference = resultSet.getString("FinReference");
+				FinODDetails finODDetails = getFinODDetails(resultSet);
+			}
 
-			BigDecimal penalty = finODDetails.getTotPenaltyBal();
-			BigDecimal waiverAmt = finODDetails.getTotWaived();
-
-			if (penalty.compareTo(BigDecimal.ZERO) > 0) {
-				// DataSet Creation
-				DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_LATEPAY,
-						DateUtility.getValueDate(), schdDate);
-				dataSet.setNewRecord(false);
-
-				AEAmountCodes amountCodes = new AEAmountCodes();
-				amountCodes.setFinReference(finMain.getFinReference());
-				amountCodes.setPENALTY(penalty);
-				amountCodes.setWAIVER(waiverAmt);
-				FinanceType financeType = getFinanceType(finRepay.getFinType());
-
-				list = prepareAccounting(dataSet, amountCodes, financeType);
-				list = setOtherDetails(list, finMain.getSecondaryAccount(), finRepay);
+		} catch (Exception e) {
+			logger.error("Exception: Finreference :" + finreference, e);
+			throw new Exception("Exception: Finreference : " + finreference, e);
+		} finally {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+			if (sqlStatement != null) {
+				sqlStatement.close();
 			}
 		}
-
-		logger.debug(" Leaving ");
-		return list;
 	}
+
+	private FinODDetails getFinODDetails(ResultSet resultSet) throws SQLException {
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinBranch(resultSet.getString("FinReference"));
+		finODDetails.setFinODSchdDate(resultSet.getDate("FinODSchdDate"));
+		finODDetails.setCustID(resultSet.getLong("CustID"));
+		finODDetails.setFinCurODAmt(getDecimal(resultSet, "FinCurODAmt"));
+		finODDetails.setFinCurODPri(getDecimal(resultSet, "FinCurODPri"));
+		finODDetails.setFinCurODPft(getDecimal(resultSet, "FinCurODPft"));
+		finODDetails.setFinCurODDays(resultSet.getInt("FinCurODDays"));
+		finODDetails.setTotWaived(getDecimal(resultSet, "TotWaived"));
+		finODDetails.setTotPenaltyAmt(getDecimal(resultSet, "TotPenaltyAmt"));
+		finODDetails.setTotPenaltyPaid(getDecimal(resultSet, "TotPenaltyPaid"));
+		finODDetails.setTotPenaltyBal(getDecimal(resultSet, "TotPenaltyBal"));
+		finODDetails.setLPIAmt(getDecimal(resultSet, "LPIAmt"));
+		finODDetails.setLPIPaid(getDecimal(resultSet, "LPIPaid"));
+		finODDetails.setLPIBal(getDecimal(resultSet, "LPIBal"));
+		return finODDetails;
+
+	}
+	
+	
+	
 
 	/**
 	 * Method for Preparation or Update of OverDue Details data

@@ -37,20 +37,15 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinODPenaltyRate;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class LatePayMarkingService extends ServiceHelper {
 
@@ -58,11 +53,9 @@ public class LatePayMarkingService extends ServiceHelper {
 	private static Logger		logger				= Logger.getLogger(LatePayMarkingService.class);
 
 	private FinODDetailsDAO		finODDetailsDAO;
-	private FinODPenaltyRateDAO	finODPenaltyRateDAO;
 
-	//TODO Query TO be changed
 	public static final String	sqlCustRepayQueue	= "	SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
-															+ "FROM FinRpyQueue WHERE CustomerID=?";
+															+ " FROM FinRpyQueue WHERE CustomerID=?";
 
 	/**
 	 * Default constructor
@@ -191,9 +184,4 @@ public class LatePayMarkingService extends ServiceHelper {
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
-
-	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
-		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
-	}
-
 }

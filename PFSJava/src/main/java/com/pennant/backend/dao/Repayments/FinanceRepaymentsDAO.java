@@ -28,5 +28,6 @@ public interface FinanceRepaymentsDAO {
 	void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String string);
 	void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String string);
 	BigDecimal getPaidPft(String finReference, Date finPostDate);
+	List<FinanceRepayments> getByFinRefAndSchdDate(String finReference,Date finSchdDate);
 
 }

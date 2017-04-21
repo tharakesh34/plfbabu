@@ -823,5 +823,29 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		logger.debug("Leaving");
 		return ocr;
 	}
+	
+	
+	@Override
+	public void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String type) {
+		logger.debug("Entering");
+		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		overdueChargeRecovery.setFinReference(finReferece);
+		overdueChargeRecovery.setFinODSchdDate(schdDate);
+
+		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where FinReference =:FinReference and FinODSchdDate=:FinODSchdDate");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 
 }

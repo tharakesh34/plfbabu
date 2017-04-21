@@ -146,12 +146,16 @@ public class EodService {
 
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
-		
-		
+
+		//late pay marking
 		latePayMarkingService.processLatePayMarking(connection, custId, date);
-		
+
+		//late pay penalty
 		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
 		
+		//late pay interest
+		latePayInterestService.processLatePayInterest(connection, custId, date);
+
 		//process payments from queue
 		serviceUtil.processQueue(connection, custId, date);
 
