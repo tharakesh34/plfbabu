@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.webui.util;
 
 import java.io.Serializable;
@@ -53,28 +52,12 @@ import org.zkoss.zk.ui.util.ConventionWires;
 import org.zkoss.zul.Window;
 
 /**
- * Base controller for creating the controllers of the zul files with the
- * <b>use</b> tag.
- * 
+ * Base controller for creating the controllers of the zul files with the <b>use</b> tag.
  */
 public abstract class WindowBaseCtrl extends Window implements AfterCompose, Serializable {
+	private static final long				serialVersionUID	= -2179229704315045689L;
 
-	private static final long serialVersionUID = -2179229704315045689L;
-	//protected transient AnnotateDataBinder binder;
-
-	protected transient Map<String, Object> args;
-
-	/*public void doOnCreateCommon(Window w) throws Exception {
-		binder = new AnnotateDataBinder(w);
-		binder.loadAll();
-	}*/
-
-	
-/*	public void doOnCreateCommon(Window w, Event fe) throws Exception {
-		doOnCreateCommon(w);
-		CreateEvent ce = (CreateEvent) ((ForwardEvent) fe).getOrigin();
-		args = (Map<String, Object>) ce.getArg();
-	}*/
+	protected transient Map<String, Object>	args;
 
 	public WindowBaseCtrl() {
 		super();
@@ -84,19 +67,15 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose, Ser
 	@Override
 	public void afterCompose() {
 		processRecursive(this, this);
-
-		// Components.wireVariables(this, this); // auto wire variables
-		// Components.addForwards(this, this); // auto forward
 	}
 
 	/**
-	 * Go recursive through all founded components and wires all vars and added
-	 * all forwarders for ALL window components. <br>
+	 * Go recursive through all founded components and wires all vars and added all forwarders for ALL window
+	 * components. <br>
 	 * 
 	 * @param main
 	 * @param child
 	 */
-	
 	private void processRecursive(Window main, Window child) {
 		ConventionWires.wireVariables(main, child);
 		ConventionWires.addForwards(main, this);
@@ -107,5 +86,4 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose, Ser
 			}
 		}
 	}
-
 }
