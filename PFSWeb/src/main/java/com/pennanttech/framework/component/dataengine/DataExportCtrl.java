@@ -120,7 +120,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 			valueLabel = new ValueLabel(config.getName(), config.getName());
 			if (getUserWorkspace().isAllowed(config.getName())) {
 				menuList.add(valueLabel);
-				doFillExePanels(dataEngineConfig.getLatestExecution(config.getName()));
+				doFillExePanels(config, dataEngineConfig.getLatestExecution(config.getName()));
 			}
 		}
 		fillComboBox(fileConfiguration, "", menuList, "");
@@ -390,14 +390,14 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	private void doFillExePanels( DataEngineStatus ds) throws Exception {
+	private void doFillExePanels(Configuration config, DataEngineStatus ds) throws Exception {
 		if (ds == null) {
 			ds = new DataEngineStatus();
 		}
-		doFillPanel(ds);
+		doFillPanel(ds, config);
 	}
 
-	private void doFillPanel(DataEngineStatus ds) {
+	private void doFillPanel(DataEngineStatus ds, Configuration config) {
 		ProcessExecution pannelExecution = new ProcessExecution();
 		pannelExecution.setId(config.getName());
 		pannelExecution.setBorder("normal");
@@ -487,7 +487,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 				status = getPannelExecution(config);
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
-					dbDataEngine.processData(config.getName());
+					dbDataEngine.processData(config);
 				} else {
 					DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), status, null);
 					dataEngine.setFilterMap(filterMap);

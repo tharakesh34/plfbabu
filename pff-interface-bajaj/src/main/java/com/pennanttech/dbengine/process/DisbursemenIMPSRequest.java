@@ -153,8 +153,8 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			ps.setString(2, null);
 			ps.setString(3, null);
 			ps.setString(4, getValue(rs, "BENEFICIARYNAME"));
-			ps.setString(5, StringUtils.trimToEmpty(getValue (rs, "BENEFICIARY_MOBILE")));//From disb befiniciary 
-			ps.setString(6, StringUtils.trimToEmpty(getValue(rs, "CUSTOMER_EMAIL")));//From customer email
+			ps.setString(5, getValue(rs, "BENEFICIARY_MOBILE") == null ? " " : getValue(rs, "BENEFICIARY_MOBILE"));//From disb befiniciary 
+			ps.setString(6, getValue(rs, "CUSTOMER_EMAIL") == null ? " " : getValue(rs, "CUSTOMER_EMAIL"));//From customer email
 			ps.setString(7, getValue(rs, "IFSC"));
 			ps.setString(8, getValue(rs, "BANKNAME"));
 			ps.setString(9, getValue(rs, "CPPROVINCENAME") == null ? " " : getValue(rs, "CPPROVINCENAME"));
@@ -165,7 +165,7 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			ps.setString(14, getValue(rs, "REMARKS") == null ? " " : StringUtils.substring(getValue(rs, "REMARKS"), 0, 9));
 			ps.setString(15, getValue(rs, "PAYMENTID"));
 			ps.setString(16, Status.N.name());
-			ps.setBigDecimal(17, BigDecimal.ZERO);//Discuss with required for finreference 
+			ps.setBigDecimal(17, BigDecimal.ZERO);//Discuss with required for finreference // Remove first 6 chars
 			ps.executeUpdate();
 			
 			

@@ -277,10 +277,10 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		if (ds == null) {
 			ds = new DataEngineStatus();
 		}
-		doFillPanel(ds);
+		doFillPanel(ds, config);
 	}
-
-	private void doFillPanel(DataEngineStatus ds) {
+	
+	private void doFillPanel(DataEngineStatus ds, Configuration config) {
 		ProcessExecution pannelExecution = new ProcessExecution();
 		pannelExecution.setId(config.getName());
 		pannelExecution.setBorder("normal");
@@ -317,7 +317,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	private DataEngineStatus getPannelExecution() {
+	private DataEngineStatus getPannelExecution(Configuration config) {
 		DataEngineStatus status = null;
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
@@ -362,7 +362,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		public void run() {
 			DataEngineStatus status = null;
 			try {
-				status = getPannelExecution();
+				status = getPannelExecution(config);
 				if (ParserNames.DB.name().equals(config.getParserName())) {
 					DataEngineDBProcess dbDataEngine = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name(), status);
 					dbDataEngine.processData(config.getName());
