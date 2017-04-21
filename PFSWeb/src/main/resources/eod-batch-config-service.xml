@@ -48,12 +48,34 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 	</bean>
-	<!-- Over Due -->
+	<!-- Over Due TO be removed after the work new classes completed -->
 	<bean id="latePaymentService" class="com.pennant.app.core.LatePaymentService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
+
+	<!-- Late Pay Marking -->
+	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+	</bean>
+
+	<!-- Late Pay Interest -->
+	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+	</bean>
+
+	<!-- Late Pay Penalty -->
+	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+	</bean>
+
+
 	<!-- Suspense -->
 	<bean id="coreSuspenseService" class="com.pennant.app.core.SuspenseService" parent="serviceHelper">
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
@@ -86,8 +108,7 @@
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">
 	</bean>
-	
-	<!-- Date rollover-->
+	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>
 	<!-- Repay queue service Service -->
@@ -115,8 +136,6 @@
 	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean name="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-	</bean>
 	<bean name="eodTrigger" class="com.pennant.app.job.process.EodTrigger">
 		<property name="eod" ref="eod" />
 		<property name="eodDetailDAO" ref="eodDetailDAO" />
@@ -125,7 +144,6 @@
 		<property name="preEodService" ref="preEodService" />
 		<property name="postEodService" ref="postEodService" />
 		<property name="customerQueuingService" ref="customerQueuingService" />
-		<property name="threadPoolTaskExecutor" ref="threadPoolTaskExecutor" />
 	</bean>
 	<bean name="eodThread" class="com.pennant.eod.EodThread" scope="prototype">
 		<property name="eodService" ref="eodService" />
@@ -143,6 +161,9 @@
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
+		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />

@@ -63,7 +63,7 @@
 	<!-- Late Pay Interest -->
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 

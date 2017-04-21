@@ -71,6 +71,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	private FinanceRepaymentsDAO		financeRepaymentsDAO;
 
 	public static final String			customerODDetails	= "SELECT FO.FinReference,FO.FinODSchdDate,FO.CustID, FO.FinCurODAmt,FO.FinCurODPri,FO.FinCurODPft,"
+																	+ "FO.FinMAxODAmt,FO.FinMaxODPri,FO.FinMaxODPft,"
 																	+ "FO.FinCurODDays,FO.TotPenaltyAmt,FO.TotWaived,FO.TotPenaltyPaid,FO.TotPenaltyBal,"
 																	+ "FO.LPIAmt,FO.LPIPaid,FO.LPIBal,FM.ProfitDaysBasis "
 																	+ "FROM FinODDetails FO INNER JOIN FinanceMain FM ON FM.FINREFERENCE=FO.FINREFERENCE where FO.CustID=?";
@@ -114,12 +115,17 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private FinODDetails getFinODDetails(ResultSet resultSet) throws SQLException {
 		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinBranch(resultSet.getString("FinReference"));
+		finODDetails.setFinReference(resultSet.getString("FinReference"));
 		finODDetails.setFinODSchdDate(resultSet.getDate("FinODSchdDate"));
 		finODDetails.setCustID(resultSet.getLong("CustID"));
 		finODDetails.setFinCurODAmt(getDecimal(resultSet, "FinCurODAmt"));
 		finODDetails.setFinCurODPri(getDecimal(resultSet, "FinCurODPri"));
 		finODDetails.setFinCurODPft(getDecimal(resultSet, "FinCurODPft"));
+
+		finODDetails.setFinMaxODAmt(getDecimal(resultSet, "FinMaxODAmt"));
+		finODDetails.setFinMaxODPri(getDecimal(resultSet, "FinMaxODPri"));
+		finODDetails.setFinMaxODPft(getDecimal(resultSet, "FinMaxODPft"));
+
 		finODDetails.setFinCurODDays(resultSet.getInt("FinCurODDays"));
 		finODDetails.setTotWaived(getDecimal(resultSet, "TotWaived"));
 		finODDetails.setTotPenaltyAmt(getDecimal(resultSet, "TotPenaltyAmt"));
@@ -187,6 +193,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 				recovery.setRcdCanDel(true);
 				recovery.setMovementDate(finODDateCal);
 				recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
+				recovery.setPenalty(calculatePenaltyAmount(recovery, valueDate, recovery.getMovementDate(),
+						profitDaysBasis));
+				recovery.setPenaltyBal(getPenaltyBal(recovery));
 				recoveryDAO.save(recovery, "");
 			} else {
 				recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
@@ -250,7 +259,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				finCurODPri = finCurODPri.subtract(financeRepayments.getFinSchdPriPaid());
 				finCurODPft = finCurODPft.subtract(financeRepayments.getFinSchdPftPaid());
 				total = finCurODPft.add(finCurODPri);
-				if (total.compareTo(BigDecimal.ZERO)==0) {
+				if (total.compareTo(BigDecimal.ZERO) == 0) {
 					continue;
 				}
 				//prepare odDate
@@ -343,8 +352,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 	 */
 	private void updateLPPenaltInODDetails(FinODDetails odDetails) {
 
-		String odfor = odDetails.getFinODFor();
-
+		String odfor = FinanceConstants.SCH_TYPE_SCHEDULE;
+		odDetails.setFinODFor(odfor);
 		OverdueChargeRecovery odctotals = recoveryDAO.getTotals(odDetails.getFinReference(),
 				odDetails.getFinODSchdDate(), odfor);
 		odDetails.setTotPenaltyAmt(getValue(odctotals.getPenalty()));
@@ -400,6 +409,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

@@ -32,19 +32,19 @@ public class RepayQueueService extends ServiceHelper{
 
 	private Map<String, Integer>	priorityMap;
 
-	public static final String		customeFinance		= " SELECT F.FinReference, F.FinBranch Branch, F.FinType ,F.CustID CustomerID ,F.LinkedFinRef,  S.SchDate RpyDate,"
-																+ "  S.PrincipalSchd, S.SchdPriPaid, S.ProfitSchd, S.SchdPftpaid, S.FeeSchd SchdFee , S.SchdFeePaid ,"
-																+ " S.InsSchd SchdIns, S.SchdInsPaid , S.CalculatedRate FROM FinanceMain F , FinScheduleDetails S "
+	public static final String		customeFinance		= " SELECT F.FinReference, F.FinBranch, F.FinType ,F.CustID ,F.LinkedFinRef,  S.SchDate,"
+																+ "  S.PrincipalSchd, S.SchdPriPaid, S.ProfitSchd, S.SchdPftpaid, S.FeeSchd , S.SchdFeePaid ,"
+																+ " S.InsSchd, S.SchdInsPaid , S.CalculatedRate FROM FinanceMain F , FinScheduleDetails S "
 																+ " WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? AND F.FinIsActive = 1 "
 																+ " AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
 																+ " OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
 																+ " OR S.FeeSchd <> S.SchdFeePaid OR S.InsSchd <>  S.SchdInsPaid ) "
 																+ " AND CustID=? ";
 
-	public static final String		customeFinance_ISLM	= " SELECT F.FinReference, F.FinBranch Branch, F.FinType ,F.CustID CustomerID ,F.LinkedFinRef, S.SchDate RpyDate,"
+	public static final String		customeFinance_ISLM	= " SELECT F.FinReference, F.FinBranch, F.FinType ,F.CustID ,F.LinkedFinRef, S.SchDate,"
 																+ "  S.PrincipalSchd, S.SchdPriPaid, S.ProfitSchd, S.SchdPftpaid, S.SuplRent SchdSuplRent, S.SuplRentPaid SchdSuplRentPaid,"
-																+ " S.IncrCost SchdIncrCost, S.IncrCostPaid SchdIncrCostPaid, S.FeeSchd SchdFee , S.SchdFeePaid , "
-																+ " S.InsSchd SchdIns, S.SchdInsPaid SchdInsPaid, S.AdvCalRate, S.AdvProfit, S.CalculatedRate "
+																+ " S.IncrCost SchdIncrCost, S.IncrCostPaid SchdIncrCostPaid, S.FeeSchd , S.SchdFeePaid , "
+																+ " S.InsSchd, S.SchdInsPaid, S.AdvCalRate, S.AdvProfit, S.CalculatedRate "
 																+ " FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  AND S.SchDate <= ? "
 																+ " AND F.FinIsActive = 1  AND (S.PrincipalSchd <> S.SchdPriPaid OR S.ProfitSchd <> S.SchdPftPaid "
 																+ "  OR S.SuplRent <> S.SuplRentPaid OR  S.IncrCost <> S.IncrCostPaid "
@@ -180,11 +180,11 @@ public class RepayQueueService extends ServiceHelper{
 
 		finRepayQueue.setSchdFee(getDecimal(resultSet, "FeeSchd"));
 		finRepayQueue.setSchdFeePaid(getDecimal(resultSet, "SchdFeePaid"));
-		finRepayQueue.setSchdPftBal(finRepayQueue.getSchdFee().subtract(finRepayQueue.getSchdFeePaid()));
+		finRepayQueue.setSchdFeeBal(finRepayQueue.getSchdFee().subtract(finRepayQueue.getSchdFeePaid()));
 
 		finRepayQueue.setSchdIns(getDecimal(resultSet, "InsSchd"));
 		finRepayQueue.setSchdInsPaid(getDecimal(resultSet, "SchdInsPaid"));
-		finRepayQueue.setSchdPftBal(finRepayQueue.getSchdIns().subtract(finRepayQueue.getSchdInsPaid()));
+		finRepayQueue.setSchdInsBal(finRepayQueue.getSchdIns().subtract(finRepayQueue.getSchdInsPaid()));
 
 		finRepayQueue.setSchdRate(getDecimal(resultSet, "CalculatedRate"));
 

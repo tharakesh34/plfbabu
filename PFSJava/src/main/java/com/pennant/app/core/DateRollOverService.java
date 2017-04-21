@@ -26,7 +26,7 @@ public class DateRollOverService extends ServiceHelper {
 	private static Logger		logger				= Logger.getLogger(DateRollOverService.class);
 
 	private static final String	sltDateRollover		= "SELECT FinReference, NextDepDate, DepreciationFrq,"
-															+ "AllowGrcCpz, AllowGrcPftRvw, AllowRepayCpz, AllowRepayRvw, GrcPeriodEndDate,"
+															+ "AllowGrcCpz, AllowGrcPftRvw, AllowRepayCpz, AllowRepayRvw, GrcPeriodEndDate,MaturityDate,"
 															+ "NextGrcCpzDate, NextGrcPftDate, NextGrcPftRvwDate, NextRepayCpzDate, NextRepayDate,"
 															+ "NextRepayPftDate,NextRepayRvwDate FROM FinanceMain WHERE FinIsActive = 1 and CustID = ?";
 
@@ -35,7 +35,7 @@ public class DateRollOverService extends ServiceHelper {
 		PreparedStatement sqlStatement = null;
 		String finreference = "";
 
-		StringBuilder sqlString = new StringBuilder(" ");
+		StringBuilder sqlString = new StringBuilder("");
 		
 
 		try {
@@ -58,6 +58,7 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setAllowRepayRvw(resultSet.getBoolean("AllowRepayRvw"));
 
 				finMain.setGrcPeriodEndDate(resultSet.getDate("GrcPeriodEndDate"));
+				finMain.setMaturityDate(resultSet.getDate("MaturityDate"));
 
 				finMain.setNextGrcCpzDate(resultSet.getDate("NextGrcCpzDate"));
 				finMain.setNextGrcPftDate(resultSet.getDate("NextGrcPftDate"));
@@ -130,7 +131,7 @@ public class DateRollOverService extends ServiceHelper {
 					}
 				}
 
-				if (!StringUtils.isEmpty(sqlString.toString())) {
+				if (!StringUtils.isBlank(sqlString.toString())) {
 
 					if (sqlString.toString().trim().endsWith(",")) {
 						sqlString.deleteCharAt(sqlString.lastIndexOf(","));
@@ -138,7 +139,7 @@ public class DateRollOverService extends ServiceHelper {
 
 					StringBuilder updString = new StringBuilder("Update  FinanceMain set  ");
 					updString.append(sqlString);
-					sqlString.append(" where FinReference = :FinReference ");
+					updString.append(" where FinReference = :FinReference ");
 
 					NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(getDataSource());
 					jdbcTemplate.update(updString.toString(), new BeanPropertySqlParameterSource(finMain));
