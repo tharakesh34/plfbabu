@@ -1687,7 +1687,9 @@ public class PennantStaticListUtil {
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS,Labels.getLabel("label_PaymentType_RTGS")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,Labels.getLabel("label_PaymentType_CHEQUE")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,Labels.getLabel("label_PaymentType_DD")));
+		if(addSwitchTransfer){
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,Labels.getLabel("label_PaymentType_CASH")));
+		}
 		return paymentTypes;
 	}
 

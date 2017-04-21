@@ -131,7 +131,6 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox						sapGLCode;
 	protected Textbox						profitCenter;
 	protected Textbox 						crossCentre;
-	protected Label							label_BankBranchCode;
 	
 	
 	private PartnerBank						partnerBank;															
@@ -361,15 +360,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.partnerBankCode.setValue(aPartnerBank.getPartnerBankCode());
 		this.partnerBankName.setValue(aPartnerBank.getPartnerBankName());
 		this.bankCode.setValue(aPartnerBank.getBankCode());
-		if (aPartnerBank.getBankBranchCode() != null) {
-			this.bankBranchCode.setValue(aPartnerBank.getBankBranchCode());
-			this.bankBranchCode.setVisible(true);
-			this.label_BankBranchCode.setVisible(true);
-		} else {
-			this.bankBranchCode.setVisible(false);
-			this.label_BankBranchCode.setVisible(false);
-			this.bankBranchCode.setValue("");
-		}
+		this.bankBranchCode.setValue(aPartnerBank.getBankBranchCode());
+		this.bankBranchCode.setVisible(true);
 		this.branchMICRCode.setValue(aPartnerBank.getBranchMICRCode());
 		this.branchIFSCCode.setValue(aPartnerBank.getBranchIFSCCode());
 		this.branchCity.setValue(aPartnerBank.getBranchCity());
@@ -880,8 +872,6 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.branchCity.setValue("");
 			this.branchMICRCode.setValue("");
 			this.branchIFSCCode.setValue("");
-			this.label_BankBranchCode.setVisible(false);
-			this.bankBranchCode.setVisible(false);
 		} else {
 			BankDetail details = (BankDetail) dataObject;
 			if (details != null) {
@@ -892,8 +882,6 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 				this.bankBranchCode.setFilters(bankBranchCode);
 				this.bankBranchCode.setValue("");
 				this.bankBranchCode.setDescription("");
-				this.label_BankBranchCode.setVisible(true);
-				this.bankBranchCode.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
@@ -1406,7 +1394,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeDisbursment.setErrorMessage("");
 		Textbox txtbx = (Textbox) btnSearchModeDisbursment.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
-				"AccountTypeModes", txtbx.getValue());
+				"AccountTypeDisbModes", txtbx.getValue());
 		if (selectedValues != null) {
 			txtbx.setValue(selectedValues);
 		}
@@ -1418,7 +1406,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modePayments.setErrorMessage("");
 		Textbox txtbx = (Textbox) btnSearchModePayments.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
-				"AccountTypeModes", txtbx.getValue());
+				"AccountTypePayModes", txtbx.getValue());
 		if (selectedValues != null) {
 			txtbx.setValue(selectedValues);
 		}
@@ -1430,7 +1418,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeReceipts.setErrorMessage("");
 		Textbox txtbx = (Textbox) btnSearchModeReceipts.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
-				"AccountTypeModes", txtbx.getValue());
+				"AccountTypeRecptModes", txtbx.getValue());
 		if (selectedValues != null) {
 			txtbx.setValue(selectedValues);
 		}

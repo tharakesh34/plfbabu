@@ -98,7 +98,7 @@
 								<label id="label_BankCode"
 									value="${c:l('label_PartnerBankDialog_BankCode.value')}" />
 								<extendedcombobox id="bankCode" />
-								<label id="label_BankBranchCode" visible="false"
+								<label id="label_BankBranchCode" 
 									value="${c:l('label_PartnerBankDialog_BankBranchCode.value')}" />
 								<extendedcombobox id="bankBranchCode" />
 							</row>
