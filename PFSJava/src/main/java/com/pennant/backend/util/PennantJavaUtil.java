@@ -99,6 +99,7 @@ import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
+import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
@@ -682,10 +683,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NPABucketConfiguration",new ModuleMapping("NPABucketConfiguration", NPABucketConfiguration.class, new String[]{"NPABUCKETSCONFIG", "NPABUCKETSCONFIG_AView"}, masterWF,new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
 		 
-
- 
-
-
 
 		/************* Accounts *************/
 
@@ -1841,11 +1838,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("InsuranceTypePolicy", new ModuleMapping("InsuranceTypePolicy",
 				InsurancePolicy.class, new String[] { "InsurancePolicy", "InsurancePolicy_View" },
 				masterWF, new String[] { "InsuranceType", "InsuranceTypeDesc" }, null, 300));
-		
+
 		ModuleUtil.register("AmountCode", new ModuleMapping("Amountcode",
 				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
 				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
-		
 		ModuleUtil.register("DisbursementRegistration", new ModuleMapping("DisbursementRegistration",
 				FinAdvancePayments.class, new String[] { "INT_DISBURSEMENT_EXPORT_VIEW",
 						" INT_DISBURSEMENT_EXPORT_VIEW" }, null, new String[] { "PAYMENTID", "FINREFERENCE" }, null, 300));
@@ -1858,7 +1854,11 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
 			"DPDBUCKETS", "DPDBUCKETS_AView" }, null, new String[] { "BucketID", "BucketDesc" }, null, 700));
-
+		
+		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
+				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
+				new String[] {"BucketID","BucketDesc"} , null,300));
+		 
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
