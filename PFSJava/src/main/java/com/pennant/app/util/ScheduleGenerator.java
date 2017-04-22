@@ -583,7 +583,7 @@ public class ScheduleGenerator {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		Date startCalFrom = null;
 		if (financeMain.isAllowRepayRvw() && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			if(!FrequencyUtil.isFrqCodeMatch(financeMain.getRepayRvwFrq(), financeMain.getRepayPftFrq())){
+			if(!FrequencyUtil.isFrqCodeMatch(financeMain.getRepayRvwFrq(), financeMain.getRepayFrq())){
 
 				FinanceScheduleDetail prvSchd = null;
 				for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
