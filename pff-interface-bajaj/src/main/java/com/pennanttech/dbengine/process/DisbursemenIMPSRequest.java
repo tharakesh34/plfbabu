@@ -24,17 +24,17 @@ import com.pennanttech.dbengine.constants.DataEngineDBConstants.Status;
 public class DisbursemenIMPSRequest extends DBProcessEngine {
 
 	private static final Logger logger = Logger.getLogger(DisbursemenIMPSRequest.class);
-	
+
 	private Connection destConnection = null;
 	private Connection sourceConnection = null;
 	private DataEngineStatus executionStatus = null;
-	
+
 	public DisbursemenIMPSRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
 		this.executionStatus = executionStatus;
 	}
 
-	public void process(long userId, Configuration config) {
+	public void process(long userId, Configuration config, String paymentIds) {
 		logger.debug("Entering");
 
 		executionStatus.setStartTime(DateUtil.getSysDate());
@@ -44,6 +44,7 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		executionStatus.setStatus(ExecutionStatus.I.name());
 		executionStatus.setRemarks("Loading configuration..");
 
+		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
 		long keyValue = 0;
@@ -53,13 +54,14 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			executionStatus.setFileName(getFileName(config.getName()));
 			saveBatchStatus();
 			fileId = executionStatus.getId();
-			
+
 			executionStatus.setRemarks("Loading destination database connection...");
 			destConnection = getConnection(config);
 			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
-			
+
 			executionStatus.setRemarks("Fetching data from source table...");
-			resultSet = getSourceData();
+			statement = getStatement(paymentIds);
+			resultSet = getResultSet(paymentIds, statement);
 
 			if (resultSet != null) {
 				resultSet.last();
@@ -72,8 +74,8 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 				try {
 					processedCount++;
 					keyValue = getIntValue(resultSet, "PAYMENTID");
-					saveData(resultSet);
-					updateData(resultSet);
+					saveDisbursement(resultSet);
+					updateDisbursement(keyValue);
 					successCount++;
 					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "S", "Success.", null);
 				} catch (Exception e) {
@@ -104,18 +106,21 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 					remarks.append(", Sucess: ");
 					remarks.append(successCount + ".");
 				}
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
-			}  else {
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount,
+						failedCount, totalRecords);
+			} else {
 				remarks.append("No records found for the selected configuration.");
-				updateBatchStatus(ExecutionStatus.F.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
+				updateBatchStatus(ExecutionStatus.F.name(), remarks.toString(), processedCount, successCount,
+						failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount,
+					totalRecords);
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(resultSet, destConnection, sourceConnection);
+			releaseResorces(resultSet, statement, destConnection);
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
 		}
@@ -123,35 +128,34 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		logger.debug("Leaving");
 	}
 
-	
-	private void updateData(ResultSet rs) throws Exception {
-		
-		logger.debug("Entering");
-		PreparedStatement ps = null;
+	private void updateDisbursement(long paymentId) throws Exception {
+		PreparedStatement statement = null;
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(" update FinAdvancePayments  set STATUS  =  ? Where  PaymentId = ? ");
-			
-			ps = sourceConnection.prepareStatement(sb.toString());
-			ps.setString(1, Status.AC.name());
-			ps.setLong(2, getLongValue(rs, "PaymentId"));
-			
+			sb.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  ? WHERE  PAYMENTID = ?");
+
+			statement = sourceConnection.prepareStatement(sb.toString());
+			statement.setString(1, "AC");
+			statement.setLong(2, paymentId);
+
 			// execute query
-			ps.executeUpdate();
-			
+			statement.executeUpdate();
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			ps = null;
+			if (statement != null) {
+				statement.close();
+				statement = null;
+			}
+
 		}
-		logger.debug("Leaving");
-	
 	}
-	
-	private void saveData(ResultSet rs) throws Exception {
+
+	private void saveDisbursement(ResultSet rs) throws Exception {
 		logger.debug("Entering");
-		PreparedStatement ps = null;
+		PreparedStatement statement = null;
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" INSERT INTO INT_DSBIMPS_REQUEST (");
@@ -160,60 +164,90 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			sb.append(" , REMARKS, CHANNELPARTNERREFNO, PICKUPFLAG, AGREEMENTID)");
 			sb.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-			ps = destConnection.prepareStatement(sb.toString());
+			statement = destConnection.prepareStatement(sb.toString());
 
-			ps.setString(1, null);
-			ps.setString(2, null);
-			ps.setString(3, null);
-			ps.setString(4,  getValue(rs, "BENEFICIARYNAME") == null ? " " : getValue(rs, "BENEFICIARYNAME"));
-			ps.setString(5, getValue(rs, "BENEFICIARY_MOBILE") == null ? " " : getValue(rs, "BENEFICIARY_MOBILE"));//From disb befiniciary 
-			ps.setString(6, getValue(rs, "CUSTOMER_EMAIL") == null ? " " : getValue(rs, "CUSTOMER_EMAIL"));//From customer email
-			ps.setString(7, getValue(rs, "IFSC") == null ? " " : getValue(rs, "IFSC"));
-			ps.setString(8, getValue(rs, "BANKNAME") == null ? " " : getValue(rs, "BANKNAME"));
-			ps.setString(9, getValue(rs, "CPPROVINCENAME") == null ? " " : getValue(rs, "CPPROVINCENAME"));
-			ps.setString(10, getValue(rs, "PCCITYNAME") == null ? " " : getValue(rs, "PCCITYNAME"));
-			ps.setString(11, getValue(rs, "BRANCHDESC") == null ? " " : getValue(rs, "BRANCHDESC"));
-			ps.setString(12, getValue(rs, "BENEFICIARYACCNO") == null ? " " : getValue(rs, "BENEFICIARYACCNO"));
-			ps.setBigDecimal(13, getBigDecimal(rs, "AMTTOBERELEASED"));
-			ps.setString(14, getValue(rs, "REMARKS") == null ? " " : StringUtils.substring(getValue(rs, "REMARKS"), 0, 9));
-			ps.setString(15, getValue(rs, "PAYMENTID"));
-			ps.setString(16, Status.N.name());
-			ps.setBigDecimal(17, BigDecimal.ZERO);//Discuss with required for finreference // Remove first 6 chars
-			ps.executeUpdate();
-			
-			
+			statement.setString(1, null);
+			statement.setString(2, null);
+			statement.setString(3, null);
+			statement.setString(4, getValue(rs, "BENEFICIARYNAME") == null ? " " : getValue(rs, "BENEFICIARYNAME"));
+			statement.setString(5, getValue(rs, "BENEFICIARY_MOBILE") == null ? " "
+					: getValue(rs, "BENEFICIARY_MOBILE"));// From disb befiniciary
+			statement.setString(6, getValue(rs, "CUSTOMER_EMAIL") == null ? " " : getValue(rs, "CUSTOMER_EMAIL"));// From
+																													// customer
+																													// email
+			statement.setString(7, getValue(rs, "IFSC") == null ? " " : getValue(rs, "IFSC")); // FIXME
+			statement.setString(8, getValue(rs, "BANKNAME") == null ? " " : getValue(rs, "BANKNAME"));
+			statement.setString(9, getValue(rs, "CPPROVINCENAME") == null ? " " : getValue(rs, "CPPROVINCENAME"));
+			statement.setString(10, getValue(rs, "PCCITYNAME") == null ? " " : getValue(rs, "PCCITYNAME"));
+			statement.setString(11, getValue(rs, "BRANCHDESC") == null ? " " : getValue(rs, "BRANCHDESC"));
+			statement.setString(12, getValue(rs, "BENEFICIARYACCNO") == null ? " " : getValue(rs, "BENEFICIARYACCNO"));
+			statement.setBigDecimal(13, getBigDecimal(rs, "AMTTOBERELEASED"));
+			statement.setString(14,
+					getValue(rs, "REMARKS") == null ? " " : StringUtils.substring(getValue(rs, "REMARKS"), 0, 9));
+			statement.setString(15, getValue(rs, "PAYMENTID"));
+			statement.setString(16, Status.N.name());
+			statement.setBigDecimal(17, BigDecimal.ZERO);// Discuss with required for finreference // Remove first 6
+															// chars
+			statement.executeUpdate();
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			ps = null;
+			releaseResorces(statement);
 		}
 		logger.debug("Leaving");
 	}
 
-	private ResultSet getSourceData() throws Exception {
-		logger.debug("Entering");
+	private ResultSet getResultSet(String paymentIds, PreparedStatement statement) throws Exception {
+		String[] paymentId = paymentIds.split(",");
 
 		ResultSet rs = null;
+		try {
+
+			for (int i = 1; i <= paymentId.length; i++) {
+				statement.setLong(i, Long.parseLong(paymentId[i - 1]));
+			}
+
+			rs = statement.executeQuery();
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		return rs;
+	}
+
+	private PreparedStatement getStatement(String paymentIds) throws Exception {
+		PreparedStatement statement = null;
+
+		String[] paymentId = paymentIds.split(",");
+
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT * FROM INT_DISBURSEMENT_EXPORT_VIEW ");
+			sql.append(" SELECT * FROM INT_DISBURSEMENT_EXPORT_VIEW WHERE PAYMENTID IN (");
 
-			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery();
+			for (int i = 0; i < paymentId.length; i++) {
+				if (i > 0) {
+					sql.append(",");
+				}
+				sql.append("?");
+
+			}
+			sql.append(")");
+
+			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+
 		} catch (SQLException e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			sql = null;
+			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
-		return rs;
+		return statement;
 	}
-	
-	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
-		
+
+	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks,
+			Date valueDate) throws Exception {
+
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
 		try {
@@ -225,12 +259,12 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			source.addValue("CATEGORY", category);
 			source.addValue("STATUS", status);
 			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
-			source.addValue("VALUEDATE",  DateUtil.getSysDate());
-			
+			source.addValue("VALUEDATE", DateUtil.getSysDate());
+
 			sql = new StringBuilder();
 			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
 			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
-			
+
 			saveBatchLog(source, sql.toString());
 		} finally {
 			sql = null;
