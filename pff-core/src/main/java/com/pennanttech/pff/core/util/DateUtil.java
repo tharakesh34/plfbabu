@@ -34,14 +34,10 @@ public class DateUtil {
 	 * Enumerates the date format patterns.
 	 */
 	public enum DateFormat {
-		SHORT_DATE("dd/MM/yyyy"),
-		LONG_DATE("dd-MMM-yyyy"),
-		SHORT_TIME("HH:mm"),
-		LONG_TIME("HH:mm:ss"),
-		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
-		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
+		SHORT_DATE("dd/MM/yyyy"), LONG_DATE("dd-MMM-yyyy"), SHORT_TIME("HH:mm"), LONG_TIME("HH:mm:ss"), SHORT_DATE_TIME(
+				"dd/MM/yyyy HH:mm"), LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
 
-		private final String	pattern;
+		private final String pattern;
 
 		private DateFormat(String pattern) {
 			this.pattern = pattern;
@@ -302,6 +298,31 @@ public class DateUtil {
 
 		return convert(new GregorianCalendar(year, month, day));
 	}
+	
+	// FIXME  ADD Comments
+	public static Date addMonths(Date date, int months) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MONTH, months);
+		return cal.getTime();
+	}
+	
+	// FIXME  ADD Comments
+	public static Date addDays(Date date, int days) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_MONTH, days);
+		return cal.getTime();
+	}
+	
+	// FIXME  ADD Comments
+	public static java.sql.Date getSqlDate(Date date) {
+		if (date == null) {
+			throw new IllegalArgumentException();
+		}
+
+		return new java.sql.Date(date.getTime());
+	}
 
 	private static GregorianCalendar convert(Date date) {
 		if (date == null) {
@@ -331,6 +352,11 @@ public class DateUtil {
 
 	private static boolean isLeapYear(int year) {
 		return new GregorianCalendar().isLeapYear(year);
+	}
+
+	public static Object getPrevMonthDate() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
