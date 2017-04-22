@@ -49,6 +49,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -58,14 +59,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
@@ -83,15 +85,15 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 	
 	@Override
     public BlackListCustomers getBlackListCustomers() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BlackListCustomers blackListCustomers = new BlackListCustomers();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blackListCustomers;
     }
 	
 	@Override
     public BlackListCustomers getBlacklistCustomerById(String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		BlackListCustomers blacklistCustomer= new BlackListCustomers();
 		blacklistCustomer.setId(id);
@@ -118,7 +120,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 			blacklistCustomer = null;
 		}
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blacklistCustomer;
     }
 	
@@ -135,7 +137,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 
 	@Override
     public void saveList(List<FinBlacklistCustomer> blackList,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
     	StringBuilder insertSql = new StringBuilder("Insert Into FinBlackListDetail");
     	insertSql.append(StringUtils.trimToEmpty(type));
@@ -153,12 +155,12 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		        .createBatch(blackList.toArray());
 		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
     }
 	
 	@Override
     public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		BlackListCustomers blackListCustomer = new BlackListCustomers();
 		blackListCustomer.setFinReference(finReference);
@@ -176,13 +178,13 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
 		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 	
 	@Override
     public List<FinBlacklistCustomer> fetchFinBlackList(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		FinBlacklistCustomer finBlacklistCustomer = new FinBlacklistCustomer();
 		finBlacklistCustomer.setFinReference(finReference);
@@ -197,13 +199,13 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
 		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
     public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		StringBuilder selectSql = new StringBuilder(" Select CustCIF , CustFName , CustLName , ");
 		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer ");
@@ -214,13 +216,13 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blCustData);
 		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
     }
 
 	@Override
     public void updateList(List<FinBlacklistCustomer> blackList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		StringBuilder updateSql = new StringBuilder("Update FinBlackListDetail");
 		updateSql.append(" Set CustFName = :CustFName," );
@@ -234,13 +236,13 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
 		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	    
     }
 	
 	@Override
     public void deleteList(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		BlackListCustomers blackListCustomer = new BlackListCustomers();
 		blackListCustomer.setFinReference(finReference);
@@ -252,81 +254,70 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
     }
 
 	@SuppressWarnings("serial")
 	@Override
-	public void update(BlackListCustomers finBlacklistCustomer, String type) {
-		logger.debug("Entering");
+	public void update(BlackListCustomers finBlacklistCustomer, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("Update BlackListCustomer");
-		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
 		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
 		updateSql.append(" Employer=:Employer,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" WHERE CustCIF=:CustCIF ");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails = getError("41003",finBlacklistCustomer.getCustCIF(), finBlacklistCustomer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	@SuppressWarnings("serial")
 	@Override
-	public void delete(BlackListCustomers finBlacklistCustomer, String type) {
-		logger.debug("Entering");
+	public void delete(BlackListCustomers finBlacklistCustomer, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 
 		deleteSql.append("Delete From BlackListCustomer");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where CustCIF =:CustCIF");
-
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		logger.trace(Literal.SQL + deleteSql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",finBlacklistCustomer.getCustCIF(), 
-						finBlacklistCustomer.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",finBlacklistCustomer.getCustCIF(), 
-					finBlacklistCustomer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
-		
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
 
+		logger.debug(Literal.LEAVING);
 	}
 	@Override
-	public String save(BlackListCustomers finBlacklistCustomer, String type) {
-		logger.debug("Entering");
+	public String save(BlackListCustomers finBlacklistCustomer, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into BlackListCustomer");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ");
 		insertSql.append(" Employer,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
@@ -335,22 +326,17 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		insertSql.append(" :Employer, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		
-		logger.debug("Leaving");
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
 		return finBlacklistCustomer.getId();
 	}
-	
-	private ErrorDetails  getError(String errorId, String custCIF, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = String.valueOf(custCIF);
-		parms[0][0] = PennantJavaUtil.getLabel("label_custCIF")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-	
 	
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -384,5 +370,40 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 	    logger.debug(" Leaving ");
 	    
     }
+
+	@Override
+	public boolean isDuplicateKey(String custCIF, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "CustCIF =:CustCIF";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BlackListCustomer", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BlackListCustomer_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BlackListCustomer_Temp", "BlackListCustomer" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustCIF", custCIF);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 
 }

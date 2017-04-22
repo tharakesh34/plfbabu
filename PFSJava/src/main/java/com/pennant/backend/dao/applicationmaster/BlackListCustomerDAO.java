@@ -43,14 +43,16 @@
 package com.pennant.backend.dao.applicationmaster;
 import java.util.List;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>BlackListCustomers model</b> class.<br>
  * 
  */
-public interface BlackListCustomerDAO {
+public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 
 	void saveList(List<FinBlacklistCustomer> finBlackList,String type);
 	List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode);
@@ -58,12 +60,19 @@ public interface BlackListCustomerDAO {
 	void updateList(List<FinBlacklistCustomer> finBlackList);
 	void deleteList(String finReference);
 	List<FinBlacklistCustomer> fetchFinBlackList(String finReference);
-	
 	BlackListCustomers getBlackListCustomers();
 	BlackListCustomers getNewBlacklistCustomer();
 	BlackListCustomers getBlacklistCustomerById(String id, String type);
-	void update(BlackListCustomers blacklistCustomer, String type);
-	void delete(BlackListCustomers blacklistCustomer, String type);
-	String save(BlackListCustomers blacklistCustomer, String type);
 	void moveData(String finReference, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param CustCIF
+	 *            of BlackListCustomers
+	 * @param tableType
+	 *            of BlackListCustomers
+	 * @return
+	 */
+	boolean isDuplicateKey(String custCIF, TableType tableType);
 }

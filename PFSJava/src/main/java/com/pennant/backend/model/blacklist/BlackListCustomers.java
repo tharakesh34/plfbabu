@@ -1,5 +1,6 @@
 package com.pennant.backend.model.blacklist;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -308,5 +309,9 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 
 	public void setLikeCustLName(String likeCustLName) {
 		this.likeCustLName = likeCustLName;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }

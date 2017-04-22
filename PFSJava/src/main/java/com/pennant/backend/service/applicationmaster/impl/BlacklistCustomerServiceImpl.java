@@ -1,8 +1,5 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -17,6 +14,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BlacklistCustomerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustomers> implements BlacklistCustomerService {
 
@@ -40,11 +38,11 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		TableType tableType = TableType.MAIN_TAB;
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditHeader.getAuditDetail().getModelData();
 
 		if (blackListCustomers.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (blackListCustomers.isNew()) {
@@ -82,7 +80,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 			return auditHeader;
 		}
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditHeader.getAuditDetail().getModelData();
-		getBlacklistCustomerDAO().delete(blackListCustomers, "");
+		getBlacklistCustomerDAO().delete(blackListCustomers, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		
@@ -100,9 +98,14 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		}
 		BlackListCustomers blackListCustomers = new BlackListCustomers();
 		BeanUtils.copyProperties((BlackListCustomers) auditHeader.getAuditDetail().getModelData(), blackListCustomers);
+		getBlacklistCustomerDAO().delete(blackListCustomers, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					blacklistCustomerDAO.getBlacklistCustomerById(blackListCustomers.getId(), ""));
+		}
 		if (blackListCustomers.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getBlacklistCustomerDAO().delete(blackListCustomers, "");
+			getBlacklistCustomerDAO().delete(blackListCustomers, TableType.MAIN_TAB);
 		} else {
 			blackListCustomers.setRoleCode("");
 			blackListCustomers.setNextRoleCode("");
@@ -113,14 +116,14 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 			if (blackListCustomers.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				blackListCustomers.setRecordType("");
-				getBlacklistCustomerDAO().save(blackListCustomers, "");
+				getBlacklistCustomerDAO().save(blackListCustomers, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				blackListCustomers.setRecordType("");
-				getBlacklistCustomerDAO().update(blackListCustomers, "");
+				getBlacklistCustomerDAO().update(blackListCustomers, TableType.MAIN_TAB);
 			}
 		}
-		getBlacklistCustomerDAO().delete(blackListCustomers, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -142,7 +145,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		}
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getBlacklistCustomerDAO().delete(blackListCustomers, "_Temp");
+		getBlacklistCustomerDAO().delete(blackListCustomers, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -150,7 +153,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -158,84 +161,26 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		return auditHeader;
     }
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditDetail.getModelData();
-		BlackListCustomers tempBlackListCustomers = null;
-
-		if (blackListCustomers.isWorkflow()) {
-			tempBlackListCustomers = getBlacklistCustomerDAO().getBlacklistCustomerById(blackListCustomers.getId(), "_Temp");
+		// Check the unique keys.
+		if (blackListCustomers.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
+				&& blacklistCustomerDAO.isDuplicateKey(blackListCustomers.getId(),
+						blackListCustomers.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ blackListCustomers.getCustCIF();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-
-		BlackListCustomers befBlackListCustomers = getBlacklistCustomerDAO().getBlacklistCustomerById(blackListCustomers.getId(), "");
-		BlackListCustomers oldBlackListCustomers = blackListCustomers.getBefImage() ;
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = blackListCustomers.getCustCIF();
-		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ valueParm[0];
-
-		if (blackListCustomers.isNew()) { // for New record or new record into work flow
-
-			if (!blackListCustomers.isWorkflow()) {// With out Work flow only new records
-				if (befBlackListCustomers != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-				if (blackListCustomers.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
-					if (befBlackListCustomers != null || tempBlackListCustomers != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befBlackListCustomers == null || tempBlackListCustomers != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!blackListCustomers.isWorkflow()) { // With out Work flow for update and delete
-				if (befBlackListCustomers == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldBlackListCustomers != null
-							&& !oldBlackListCustomers.getLastMntOn().equals(befBlackListCustomers.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-				if (tempBlackListCustomers == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-
-				if (tempBlackListCustomers != null
-						&& oldBlackListCustomers != null
-						&& !oldBlackListCustomers.getLastMntOn().equals(tempBlackListCustomers.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
-		}
-
+	
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !blackListCustomers.isWorkflow()) {
-			auditDetail.setBefImage(befBlackListCustomers);
-		}
+
 		logger.debug("Leaving");
 		return auditDetail;
-    }
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
