@@ -5599,6 +5599,7 @@ public class ScheduleCalculator {
 		BigDecimal incrLimit = BigDecimal.ZERO;
 		Date startCalFrom = finMain.getFinStartDate();
 		boolean inclStartDate = false;
+		boolean inclEndDate = true;
 		List<OverdraftScheduleDetail> oldOverdraftList = new ArrayList<>();
 		BigDecimal totalOSLimit = BigDecimal.ZERO;
 		OverdraftScheduleDetail prvODSchd = null;
@@ -5648,6 +5649,9 @@ public class ScheduleCalculator {
 						startCalFrom = FrequencyUtil
 								.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false)
 								.getNextFrequencyDate();
+						if(DateUtility.compare(startCalFrom, finMain.getMaturityDate()) >= 0){
+							startCalFrom = finMain.getMaturityDate();
+						}
 						inclStartDate = true;
 					}
 					break;
@@ -5713,7 +5717,7 @@ public class ScheduleCalculator {
 		}
 		
 		// Building Schedule terms with Dates
-		FrequencyDetails frequencyDetails =	FrequencyUtil.getTerms(finMain.getDroplineFrq(), startCalFrom, finMain.getMaturityDate(), inclStartDate, true);
+		FrequencyDetails frequencyDetails =	FrequencyUtil.getTerms(finMain.getDroplineFrq(), startCalFrom, finMain.getMaturityDate(), inclStartDate, inclEndDate);
 
 		// Validate Frequency Schedule Details
 		if (frequencyDetails.getErrorDetails() != null) {

@@ -2832,7 +2832,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 						data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
 						data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-						data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+						data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
 						data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
 						if(odAvailAmt.compareTo(BigDecimal.ZERO)>0){
 							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
@@ -2883,7 +2883,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
 					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
 					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
 					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
@@ -3066,7 +3066,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}
 							
 							if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)>0){
-								data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));			
+								data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));			
 							}else{
 								data.setTotalAmount("");				
 							}
@@ -3131,7 +3131,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
 					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));				
 					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount(),false,false));
+					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
 
 					if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
 						data.setTotalLimit(formatAmt(odAvailAmt,false,false));
@@ -3654,11 +3654,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data = new FinanceScheduleReportData();	
 				data.setSchdSeqNo(String.valueOf(schdSeqNo+1));
 				data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				data.setInstNumber(String.valueOf(curSchd.getInstNumber()));
+				data.setSchdFee(formatAmt(curSchd.getFeeSchd(),false,false));
+				data.setTdsAmount(formatAmt(curSchd.getTDSAmount(),false,false));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(),false,true));
 				data.setPftAmount(formatAmt(curSchd.getProfitCalc(),false,true));				
 				data.setSchdPft(formatAmt(curSchd.getProfitSchd(),false,true));				
 				data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(),false,true));
-				data.setTotalAmount(formatAmt(curSchd.getRepayAmount(),false,true));
+				data.setTotalAmount(formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()),false,true));
 
 				//Exclude Grace Schedule term Details
 				if(curSchd.getSchDate().compareTo(aFinScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0){
