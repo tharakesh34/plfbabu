@@ -105,10 +105,6 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 
 		super.doAfterCompose(comp);
 		try {
-			/*userName = ((UserImpl) SecurityContextHolder.getContext()
-					.getAuthentication().getPrincipal()).getUsername();
-			listSecRoles = ((UserImpl) SecurityContextHolder.getContext()
-					.getAuthentication().getPrincipal()).getSecurityRole();*/
 			LoggedInUser user = getUserWorkspace().getLoggedInUser();			
 			userName = user.getUserName();			
 			listSecRoles = getUserWorkspace().getSecurityRoles();
