@@ -6564,4 +6564,100 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			INSERT INTO SeqDPDBUCKETSCONFIG VALUES(0);
 		</sql>
 	</changeSet>
+	<changeSet id="141" author="Surekha">
+		<createTable tableName="ManualAdvise">
+			<column name="AdviseID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AdviseType" type="int">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Sequence" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="142" author="Surekha">
+		<createTable tableName="ManualAdvise_Temp">
+			<column name="AdviseID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AdviseType" type="int">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Sequence" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="143" author="Surekha">
+		<createTable tableName="SeqManualAdvise">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="144" author="Surekha">
+		<sql>
+			INSERT INTO SeqManualAdvise VALUES(0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>

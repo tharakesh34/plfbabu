@@ -191,4 +191,59 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 		</changeSet>
+		<changeSet id="08" author="Surekha">
+		<createTable tableName="AdtManualAdvise">
+		<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AdviseID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="AdviseType" type="int">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Sequence" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="nvarchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
 </databaseChangeLog>
