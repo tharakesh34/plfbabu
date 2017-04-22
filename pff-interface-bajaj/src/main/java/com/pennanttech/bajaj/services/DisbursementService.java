@@ -1,4 +1,4 @@
-package com.pennanttech.bajaj.service;
+package com.pennanttech.bajaj.services;
 
 import java.util.HashMap;
 import java.util.List;
