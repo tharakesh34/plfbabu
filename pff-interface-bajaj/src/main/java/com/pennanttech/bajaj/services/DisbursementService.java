@@ -3,10 +3,10 @@ package com.pennanttech.bajaj.services;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,15 +17,15 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 
 public class DisbursementService extends Thread {
-	private static final Logger			logger	= Logger.getLogger(DisbursementService.class);
+	private static final Logger logger = Logger.getLogger(DisbursementService.class);
 
-	private String						finType;
-	private List<FinAdvancePayments>	disbusments;
-	private String						database;
-	private long						userId;
+	private String finType;
+	private List<FinAdvancePayments> disbusments;
+	private String database;
+	private long userId;
 
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	jdbcTemplate;
+	private DataSource dataSource;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	public DisbursementService(String finType, List<FinAdvancePayments> disbusments, String database, long userId) {
 		this.finType = finType;
@@ -41,69 +41,90 @@ public class DisbursementService extends Thread {
 	}
 
 	public void process() {
-		Map<String, StringBuilder> config = new HashMap<>();
-
+		Map<String, StringBuilder> paymentTypes = new HashMap<>();
+		String partnerbankCode = null;
 		for (FinAdvancePayments disbursment : disbusments) {
-			String configName = getConfigName(disbursment);
-
-			if (configName == null) {
-				if ("NEFT".equals(disbursment.getPaymentType()) || "RTGS".equals(disbursment.getPaymentType())) {
-					configName = "DISB_OTHER_NEFT_RTGS_EXPORT";
-				} else if ("CHEQUE".equals(disbursment.getPaymentType()) || "DD".equals(disbursment.getPaymentType())) {
-					configName = "DISB_OTHER_CHEQUE_DD_EXPORT";
-				} else if ("IMPS".equals(disbursment.getPaymentType())) {
-					configName = "DISB_IMPS_EXPORT";
-				} else {
-					continue;
-				}
+			String paymentType = StringUtils.trimToEmpty(disbursment.getPaymentType());
+			partnerbankCode = disbursment.getPartnerbankCode();
+			if (!paymentTypes.containsKey(paymentType)) {
+				paymentTypes.put(paymentType, new StringBuilder());
 			}
 
-			if (!config.containsKey(configName)) {
-				config.put(configName, new StringBuilder());
-			}
-			
-			StringBuilder builder = config.get(configName);
+			StringBuilder builder = paymentTypes.get(paymentType);
 
 			if (builder.length() > 0) {
 				builder.append(",");
 			}
 			builder.append(String.valueOf(disbursment.getPaymentId()));
-
 		}
 
-		for (Entry<String, StringBuilder> disbursment : config.entrySet()) {
-			if ("DISB_IMPS_EXPORT".equals(disbursment.getKey())) {
-				processImpsDisbursements(disbursment);
+		for (FinAdvancePayments disbursment : disbusments) {
+			String configName = getConfigName(disbursment);
+			if (configName == null) {
+				if ("NEFT".equals(disbursment.getPaymentType()) || "RTGS".equals(disbursment.getPaymentType())) {
+					configName = "DISB_OTHER_NEFT_RTGS_EXPORT";
+					process(paymentTypes, configName, partnerbankCode);
+				} else if ("CHEQUE".equals(disbursment.getPaymentType()) || "DD".equals(disbursment.getPaymentType())) {
+					configName = "DISB_OTHER_CHEQUE_DD_EXPORT";
+					process(paymentTypes, configName, partnerbankCode);
+
+				} else if ("IMPS".equals(disbursment.getPaymentType())) {
+					configName = "DISB_IMPS_EXPORT";
+					process(paymentTypes, configName, partnerbankCode);
+				} else {
+					continue;
+				}
 			} else {
-				processOthreDisbursements(disbursment);
+				process(paymentTypes, configName, partnerbankCode);
 			}
+		}
+
+	}
+
+	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode) {
+		if (paymentTypes.get("IMPS") != null && "DISB_IMPS_EXPORT".equals(configName)) {
+			processImpsDisbursements(configName, paymentTypes.get("IMPS"));
+			paymentTypes.remove("IMPS");
+		} else if (paymentTypes.get("NEFT") != null) {
+			processOthreDisbursements(configName, paymentTypes.get("NEFT"), "NEFT", partnerbankCode);
+			paymentTypes.remove("NEFT");
+		} else if (paymentTypes.get("RTGS") != null) {
+			processOthreDisbursements(configName, paymentTypes.get("RTGS"), "RTGS", partnerbankCode);
+			paymentTypes.remove("RTGS");
+		} else if (paymentTypes.get("DD") != null) {
+			processOthreDisbursements(configName, paymentTypes.get("DD"), "DD", partnerbankCode);
+			paymentTypes.remove("DD");
+		} else if (paymentTypes.get("CHEQUE") != null) {
+			processOthreDisbursements(configName, paymentTypes.get("CHEQUE"), "CHEQUE", partnerbankCode);
+			paymentTypes.remove("CHEQUE");
 		}
 	}
 
-	private void processOthreDisbursements(Entry<String, StringBuilder> disbursment) {
+	private synchronized void processOthreDisbursements(String configName, StringBuilder paymentIds, String paymentType, String partnerbankCode) {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, database);
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("PAYMENTID", disbursment.getValue().toString());
+		filterMap.put("PAYMENTID", paymentIds.toString());
 
 		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("PRODUCT_CODE", finType);
+		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
+		parameterMap.put("PAYMENT_TYPE", paymentType);
+		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		try {
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
-			export.exportData(disbursment.getKey());
+			export.exportData(configName);
 		} catch (Exception e) {
 
 		} finally {
 		}
 	}
 
-	private void processImpsDisbursements(Entry<String, StringBuilder> disbursment) {
+	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds) {
 		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
-
 		try {
-			proce.processData(disbursment.getKey());
+			proce.processData(configName, paymentIds.toString());
 		} catch (Exception e) {
 
 		} finally {

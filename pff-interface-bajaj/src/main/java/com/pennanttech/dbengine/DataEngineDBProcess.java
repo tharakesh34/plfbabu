@@ -22,21 +22,42 @@ public class DataEngineDBProcess extends DataEngine {
 		super(dataSource, userId, database, executionStatus, null);
 	}
 	
-	public void processData(String configName) {
-		processData(getConfigurationByName(configName));
+	public void processData(String configName, String paymentId) {
+		processData(getConfigurationByName(configName), paymentId);
 	}
 
+	
 	public void processData(Configuration config) {
 		logger.debug("Entering");
 
 		Object object;
 		try {
 			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, database, executionStatus);
-			Object[] parms = new Object[2];
+			Object[] parms = new Object[3];
 			parms[0] = this.userId;
 			parms[1] = config;
 
 			Method method = object.getClass().getMethod("process", long.class, Configuration.class);
+			method.invoke(object, parms);
+		} catch (Exception e) {
+			executionStatus.setRemarks(e.getMessage());
+			executionStatus.setStatus(ExecutionStatus.F.name());
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void processData(Configuration config, String paymentId) {
+		logger.debug("Entering");
+
+		Object object;
+		try {
+			object = (Object) Class.forName(config.getClassName()).getConstructor(DataSource.class, String.class, DataEngineStatus.class).newInstance(dataSource, database, executionStatus);
+			Object[] parms = new Object[3];
+			parms[0] = this.userId;
+			parms[1] = config;
+			parms[2] = paymentId;
+
+			Method method = object.getClass().getMethod("process", long.class, Configuration.class, String.class);
 			method.invoke(object, parms);
 		} catch (Exception e) {
 			executionStatus.setRemarks(e.getMessage());

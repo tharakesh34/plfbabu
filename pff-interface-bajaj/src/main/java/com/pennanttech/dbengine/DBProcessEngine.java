@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import javax.sql.DataSource;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import com.google.common.util.concurrent.Service.State;
 import com.pennanttech.dataengine.DataAccess;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -169,6 +171,42 @@ public class DBProcessEngine extends DataAccess {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	protected void releaseResorces(ResultSet resultSet, Statement statement, Connection connection) {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+				resultSet = null;
+			}
+
+			if (statement != null) {
+				statement.close();
+				statement = null;
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+		}
+
+		try {
+			if (connection != null) {
+				connection.close();
+				connection = null;
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+		}
+	}
+	
+	protected void releaseResorces(Statement statement) {
+		try {
+			if (statement != null) {
+				statement.close();
+				statement = null;
+			}
+		} catch (Exception e) {
+			logger.info("Exception :", e);
+		}
 	}
 
 }
