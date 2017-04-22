@@ -773,4 +773,11 @@ FROM    	Mandates  T1 INNER JOIN
 			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode
 			</createView>
 	</changeSet>
+	  <changeSet id="15" author="prasad">
+		<sql>
+		delete from errordetails where errorcode ='90320';
+			insert into errordetails (errorcode, errorlanguage, errorseverity, errormessage, recordstatus, workflowid, lastmnton, lastmntby, version) 
+  				values ('90320', 'EN', 'E', 'The installment amount against the mandate is more than the max limit.', 'Approved', 0, sysdate, 1000, 1);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
