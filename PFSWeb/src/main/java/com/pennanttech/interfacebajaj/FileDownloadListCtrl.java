@@ -48,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -205,7 +206,13 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 			if (0 == fileDownlaod.getAlwFileDownload()) {
 				downlaod.setTooltiptext("Not allowed to downlaod.");
+			} 
+			
+			if(StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")){
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("IMPS Disbursement.");
 			}
+			
 			lc.setParent(item);
 			
 		}
