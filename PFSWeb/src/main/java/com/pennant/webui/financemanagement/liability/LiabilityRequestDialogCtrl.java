@@ -101,7 +101,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -585,17 +584,19 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 
-						String nextRoleCodes = getLiabilityRequest().getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(getLiabilityRequest().getFinReference())) {
-								String reference = getLiabilityRequest().getFinReference();
-								getEventManager().publish(
-										Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + reference,
-										notify, to);
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+						if (StringUtils.isNotEmpty(getLiabilityRequest().getNextRoleCode())) {
+							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(getLiabilityRequest().getRecordStatus())) {
+								String[] to = getLiabilityRequest().getNextRoleCode().split(",");
+								String message;
+
+								if (StringUtils.isBlank(getLiabilityRequest().getNextTaskId())) {
+									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
+								} else {
+									message = Labels.getLabel("REC_PENDING_MESSAGE");
+								}
+								message += " with Reference" + ":" + getLiabilityRequest().getFinReference();
+
+								getEventManager().publish(message, to, finDivision, getLiabilityRequest().getFinBranch());
 							}
 						}
 					}
