@@ -82,10 +82,12 @@ import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.applicationmaster.ChequePurpose;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
+import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
@@ -104,6 +106,7 @@ import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
+import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.applicationmaster.Query;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -1858,7 +1861,19 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
 				new String[] {"BucketID","BucketDesc"} , null,300));
-		 
+		
+		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
+				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
+				"Category", "ReturnID", "Active" }, null, 600));
+
+		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
+				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",
+				"ProfitCenterDesc", "Active" }, null, 600));
+
+		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
+				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc",
+				"Active" }, null, 600));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
