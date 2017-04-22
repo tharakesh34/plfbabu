@@ -663,6 +663,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		FinanceMain finMain = getFinScheduleData().getFinanceMain();
 		doClearMessage();
+		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
@@ -681,11 +682,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if(this.rateChange.intValue()< 0){
-				throw new WrongValueException(this.rateChange, Labels.getLabel("NUMBER_NOT_NEGATIVE",
-						new String[] { Labels.getLabel("label_RateChangeDialog_Rate.value") }));
-			} 
-			 /*else if(this.rateChange.getValue().compareTo(finMain.getRpyMaxRate())>0){
+			if (this.rateChange.getValue() != null && !this.rateChange.isReadonly()) {
+				if(this.rateChange.getValue().compareTo(BigDecimal.ZERO)<0){
+					throw new WrongValueException(this.rateChange, Labels.getLabel("NUMBER_NOT_NEGATIVE",
+							new String[] { Labels.getLabel("label_RateChangeDialog_Rate.value") }));
+				} 
+				/*else if(this.rateChange.getValue().compareTo(finMain.getRpyMaxRate())>0){
 			throw new WrongValueException(this.rateChange,Labels.getLabel("NUMBER_MAXVALUE_EQ" ,new String[]{
 					Labels.getLabel("label_RateChangeDialog_Rate.value"),finMain.getRpyMaxRate().toString()}));
 		}else if(this.rateChange.getValue().compareTo(finMain.getRpyMinRate())<0){
@@ -693,7 +695,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					new String[]{Labels.getLabel("label_RateChangeDialog_Rate.value"),finMain.getRpyMinRate().toString()}));
 		}
 		 for base*/
-			finServiceInstruction.setActualRate(this.rateChange.getValue());
+				finServiceInstruction.setActualRate(this.rateChange.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -4495,7 +4495,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 
-		if (StringUtils.isEmpty(moduleDefiner) && finFeeDetailListCtrl != null
+		if (StringUtils.isEmpty(moduleDefiner) && finFeeDetailListCtrl != null && 
+				(finFeeDetailListCtrl.getFinInsuranceList().size() > 0 || oldVar_finInsuranceList.size() >0)
 				&& finFeeDetailListCtrl.getFinInsuranceList() != oldVar_finInsuranceList) {
 			return true;
 		}
@@ -4537,7 +4538,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (this.repayProfitRate.isVisible() && !this.repayProfitRate.isReadonly()) {
 			this.repayProfitRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, true, false));
+					.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, true, false,9999));
 		}
 		if (this.gb_RolloverFinance.isVisible()) {
 			if (!recSave && this.custPayAccId.isVisible() && this.custPayAccId.isMandatory()
@@ -4890,7 +4891,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (!this.odMnthlyTerms.isReadonly()) {
 				this.odMnthlyTerms.setConstraint(new PTNumberValidator(Labels
-						.getLabel("label_FinanceMainDialog_ODTenor.value"), false, false));
+						.getLabel("label_FinanceMainDialog_ODTenor.value"), false, false,0,11));
 			}
 
 		}
@@ -7905,8 +7906,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.graceRate.getMarginValue() != null) {
 				RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(), this.finCcy.getValue(),
 						this.graceRate.getSpecialValue(), this.graceRate.getMarginValue() == null ? BigDecimal.ZERO
-								: this.graceRate.getMarginValue(), this.finGrcMinRate.getValue(), this.finGrcMaxRate
-								.getValue());
+								: this.graceRate.getMarginValue(), this.finGrcMinRate
+								.getValue()!=null && this.finGrcMinRate
+								.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finGrcMinRate
+										.getValue(), this.finGrcMaxRate
+										.getValue()!=null && this.finGrcMaxRate
+										.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finGrcMaxRate
+												.getValue());
 				this.graceRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 						.doubleValue(), 2));
 			}
@@ -8247,8 +8253,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.repayRate.getMarginValue() != null) {
 				RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
 						this.repayRate.getSpecialValue(), this.repayRate.getMarginValue() == null ? BigDecimal.ZERO
-								: this.repayRate.getMarginValue(), this.finMinRate.getValue(), this.finMaxRate
-								.getValue());
+								: this.repayRate.getMarginValue(), this.finMinRate
+								.getValue()!=null && this.finMinRate
+								.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finMinRate
+										.getValue(), this.finMaxRate
+										.getValue()!=null && this.finMaxRate
+										.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finMaxRate
+												.getValue());
 				this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 						.doubleValue(), 2));
 			}
@@ -8741,7 +8752,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//FinanceMain Details Tab ---> 3. Repayment Period Details
-
+			if(this.odYearlyTerms.getValue()!=null && this.odMnthlyTerms.getValue()!=null){
+				int tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
+				 int maxalwdyears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS") *12 ;
+				 if(tenor > maxalwdyears){
+					 errorList.add(new ErrorDetails("odyearlyTerms", "30578", new String[] {Labels
+								.getLabel("label_FinanceMainDialog_ODTenor.value"),String.valueOf(SysParamUtil.getValueAsInt("MAX_FIN_YEARS")) }, null));
+				 }
+			}
 			if (!this.repayRate.isBaseReadonly() && StringUtils.isEmpty(this.repayRate.getBaseValue())) {
 				errorList.add(new ErrorDetails("repayBaseRate", "30513", new String[] {}, null));
 			}
@@ -9649,7 +9667,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, this.grcRateBasis.getSelectedItem()
 							.getValue().toString())
 							&& StringUtils.isNotEmpty(financeType.getFinGrcBaseRate())) {
-
+						if(this.finGrcMinRate.getValue()!=null && this.finGrcMaxRate.getValue()!=null){
+							if(finGrcMaxRate.getValue().compareTo(finGrcMinRate.getValue())<0){
+								throw new WrongValueException(this.finGrcMaxRate, Labels.getLabel("FIELD_IS_GREATER",
+										new String[] { Labels.getLabel("label_FinanceMainDialog_FinGrcMaxRate.value"), Labels.getLabel("label_FinanceMainDialog_FinGrcMinRate.value") }));
+							}
+						}
 						aFinanceMain.setGrcMinRate(this.finGrcMinRate.getValue());
 						aFinanceMain.setGrcMaxRate(this.finGrcMaxRate.getValue());
 					}
@@ -10067,7 +10090,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem().getValue()
 					.toString())
 					&& StringUtils.isNotEmpty(financeType.getFinBaseRate())) {
-
+				if(this.finMinRate.getValue()!=null && this.finMaxRate.getValue()!=null){
+					if(finMaxRate.getValue().compareTo(finMinRate.getValue())<0){
+						throw new WrongValueException(this.finGrcMaxRate, Labels.getLabel("FIELD_IS_GREATER",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_FinMaxRate.value"), Labels.getLabel("label_FinanceMainDialog_FinMinRate.value") }));
+					}
+				}
 				aFinanceMain.setRpyMinRate(this.finMinRate.getValue());
 				aFinanceMain.setRpyMaxRate(this.finMaxRate.getValue());
 			}
@@ -10106,13 +10134,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner) || isOverDraft) {
 				String frqCode = this.repayFrq.getFrqCodeValue();
-				if (this.odYearlyTerms.intValue() < 1) {
-					if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) && this.odMnthlyTerms.getValue() < 4) {
-						throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel("label_FrqValidation",
-								new String[] { String.valueOf(4) }));
-					} else if (FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode) && this.odMnthlyTerms.getValue() < 6) {
-						throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel("label_FrqValidation",
-								new String[] { String.valueOf(6) }));
+
+				if(this.odYearlyTerms.intValue()<1 && this.odMnthlyTerms.intValue()>0){
+					if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 4){
+						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(4)}));
+					}else if(FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 6){
+						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(6)}));
+
+
 					}
 				}
 			}
@@ -10129,7 +10158,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-		} catch (WrongValueException we) {
+		}catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -10433,8 +10462,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// in overDraftMaintenance if the finassetValue is less than the org_finAssetValue then validation is thrown
 
-				if (org_finAssetValue.compareTo(BigDecimal.ZERO) > 0) {
-					if (this.finAssetValue.getActualValue().compareTo(org_finAssetValue) < 0) {
+				if(org_finAssetValue.compareTo(BigDecimal.ZERO)>0){
+					if(this.finAssetValue.getActualValue().compareTo(PennantAppUtil.formateAmount(org_finAssetValue, formatter))<0){
 						throw new WrongValueException(this.finAssetValue.getCcyTextBox(), Labels.getLabel(
 								"NUMBER_MINVALUE_EQ",
 								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
@@ -10522,25 +10551,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.odYearlyTerms,
 							"Either Monthly or Yearly Terms need to be entered");
 				}
-
-				if (this.odYearlyTerms.intValue() > 20) {
-					String years = 20 + "years";
-					throw new WrongValueException(this.odYearlyTerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
-							Labels.getLabel("label_FinanceMainDialog_ODTenor.value"), years }));
-
-				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 				procToCalMaturity = false;
 			}
 			try {
-				if (this.odMnthlyTerms.intValue() > 11) {
-					String months = 11 + "months";
-					throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
-							Labels.getLabel("label_FinanceMainDialog_ODTenor.value"), months }));
-
+				int tenor = 0;
+				if (this.odMnthlyTerms.intValue() >= 0) {
+					tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
 				}
-				int tenor = ((this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue());
 
 				//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
 				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
@@ -10593,7 +10612,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					}
 
-					if (DateUtility.compare(this.firstDroplineDate.getValue(), this.odMaturityDate.getValue()) >= 0) {
+					if (this.odMaturityDate.getValue()!=null && DateUtility.compare(this.firstDroplineDate.getValue(), this.odMaturityDate.getValue()) >= 0) {
 						throw new WrongValueException(this.firstDroplineDate, Labels.getLabel(
 								"DATE_ALLOWED_BEFORE",
 								new String[] { Labels.getLabel("label_FinanceMainDialog_DroplineDate.value"),
@@ -12325,8 +12344,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
 						this.repayRate.getSpecialValue(), this.repayRate.getMarginValue() == null ? BigDecimal.ZERO
-								: this.repayRate.getMarginValue(), this.finMinRate.getValue(), this.finMaxRate
-								.getValue());
+								: this.repayRate.getMarginValue(), this.finMinRate
+								.getValue()!=null && this.finMinRate
+								.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finMinRate
+										.getValue(), this.finMaxRate
+								.getValue()!=null && this.finMaxRate
+								.getValue().compareTo(BigDecimal.ZERO)<=0? BigDecimal.ZERO:this.finMaxRate
+										.getValue());
 
 				if (rateDetail.getErrorDetails() == null) {
 					this.repayRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
@@ -15563,20 +15587,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.finStartDate.getValue() == null) {
 			return null;
 		}
-		int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());
-		if (tenorMonths <= 0) {
-			return null;
-		}
 
-		frq = "M00" + StringUtils.leftPad(String.valueOf(DateUtility.getDay(this.finStartDate.getValue())), 2, "0");
-		List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, tenorMonths, this.finStartDate.getValue(),
-				HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
+		if(this.odYearlyTerms.intValue()<=SysParamUtil.getValueAsInt("MAX_FIN_YEARS") && this.odMnthlyTerms.getValue()<=11){
+			int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());
+			if(tenorMonths <= 0){
+				return null;
+			}
 
-		if (scheduleDateList != null) {
-			Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-			readOnlyComponent(true, this.odMaturityDate);
-			this.odMaturityDate.setValue(calendar.getTime());
-			this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+			frq = "M00" + StringUtils.leftPad(String.valueOf(DateUtility.getDay(this.finStartDate.getValue())), 2, "0");
+			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, tenorMonths,
+					this.finStartDate.getValue(), HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
+
+			if (scheduleDateList != null) {
+				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+				readOnlyComponent(true, this.odMaturityDate);
+				this.odMaturityDate.setValue(calendar.getTime());
+				this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+			}
 		}
 		return odMaturityDate.getValue();
 	}

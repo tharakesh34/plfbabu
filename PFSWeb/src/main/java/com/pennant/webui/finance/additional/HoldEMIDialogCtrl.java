@@ -275,46 +275,46 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
  */
 	private void getholdEMIFrqToDate(){
 		logger.debug("Entering");
-		
+
 		holdEMIFrqToDate.getItems().clear();
-		
+
 		Date hldEMIMaxAlwdDays = DateUtility.addDays( (Date)this.holdEMIFromDate.getSelectedItem().getValue(),SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
-		String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
-		
-		int hldEMIMaxAlwdMnth  = DateUtility.getMonth(hldEMIMaxAlwdDays);
-		int hldEMIMaxAlwdYear  = DateUtility.getYear(hldEMIMaxAlwdDays);
-		Date date = null;
-		List<Date> frqAlwdDate = new ArrayList<Date>();
-		
-		for (int i = 0; i < frqAlwdDays.length; i++) {
-			
-			int frqDay  = Integer.parseInt(frqAlwdDays[i]);
-			int emiFromDay = DateUtility.getDay((Date)this.holdEMIFromDate.getSelectedItem().getValue());
-			
-			if(frqDay>emiFromDay){
-				int emiFromMnth = DateUtility.getMonth((Date)this.holdEMIFromDate.getSelectedItem().getValue());
-				date= DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth-1, frqDay);
-				if(DateUtility.getMonth(date)<=emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 &&
-						DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0 ){
-					frqAlwdDate.add(date);
+		if(getFinScheduleData().getFinanceType().getFrequencyDays()!=null){
+			String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
+			int hldEMIMaxAlwdMnth  = DateUtility.getMonth(hldEMIMaxAlwdDays);
+			int hldEMIMaxAlwdYear  = DateUtility.getYear(hldEMIMaxAlwdDays);
+			Date date = null;
+			List<Date> frqAlwdDate = new ArrayList<Date>();
+
+			for (int i = 0; i < frqAlwdDays.length; i++) {
+
+				int frqDay  = Integer.parseInt(frqAlwdDays[i]);
+				int emiFromDay = DateUtility.getDay((Date)this.holdEMIFromDate.getSelectedItem().getValue());
+
+				if(frqDay>emiFromDay){
+					int emiFromMnth = DateUtility.getMonth((Date)this.holdEMIFromDate.getSelectedItem().getValue());
+					date= DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth-1, frqDay);
+					if(DateUtility.getMonth(date)<=emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 &&
+							DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0 ){
+						frqAlwdDate.add(date);
+					}
+				}else{
+					date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth-1, frqDay);
+					if(DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 && DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0){
+						frqAlwdDate.add(date);
+					}
 				}
-			}else{
-				date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth-1, frqDay);
-				if(DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 && DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0){
-					frqAlwdDate.add(date);
-				}
+				DateUtility.formatToLongDate(date);
 			}
-			DateUtility.formatToLongDate(date);
+			Collections.sort(frqAlwdDate);
+			fillSchFrqToDates(holdEMIFrqToDate, frqAlwdDate);
+
 		}
-		Collections.sort(frqAlwdDate);
-		fillSchFrqToDates(holdEMIFrqToDate, frqAlwdDate);
-		
-		
-	
-		if(holdEMIFrqToDate.getItemCount()<0){
+		if(holdEMIFrqToDate.getItemCount()<=0){
 			this.row_hldEmiFrqToDate.setVisible(false);
 			this.row_hldEmiToDate.setVisible(true);
 		}
+
 		logger.debug("Leaving");
 	}
 	/**
@@ -432,7 +432,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
-				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())){
+				if(StringUtils.isNotEmpty(curSchd.getBpiOrHoliday()) || (curSchd.isSchPftPaid() && curSchd.isSchPriPaid())){
 					continue;
 				}
 				
@@ -443,6 +443,9 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 				
 				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
+					continue;
+				}
+				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0){
 					continue;
 				}
 				
