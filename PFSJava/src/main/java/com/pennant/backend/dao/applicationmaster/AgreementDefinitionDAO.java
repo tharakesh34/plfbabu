@@ -41,13 +41,22 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennanttech.pff.core.TableType;
 
-public interface AgreementDefinitionDAO {
+public interface AgreementDefinitionDAO extends BasicCrudDao<AgreementDefinition> {
 
 	AgreementDefinition getAgreementDefinitionByCode(String aggCode, String type);
 	AgreementDefinition getAgreementDefinitionById(long id, String type);
-	void update(AgreementDefinition agreementDefinition, String type);
-	void delete(AgreementDefinition agreementDefinition, String type);
-	long save(AgreementDefinition agreementDefinition, String type);
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param aggCode
+	 *            of AgreementDefinition
+	 * @param tableType
+	 *            of AgreementDefinition
+	 * @return
+	 */
+	boolean isDuplicateKey(String aggCode, TableType tableType);
 }

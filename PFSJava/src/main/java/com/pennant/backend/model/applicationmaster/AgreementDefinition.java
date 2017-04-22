@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -226,5 +228,9 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }

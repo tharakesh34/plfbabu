@@ -42,9 +42,6 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>AgreementDefinition</b>.<br>
@@ -113,11 +111,11 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		TableType tableType = TableType.MAIN_TAB;
 		AgreementDefinition agreementDefinition = (AgreementDefinition) auditHeader.getAuditDetail().getModelData();
 
 		if (agreementDefinition.isWorkflow()) {
-			tableType="_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (agreementDefinition.isNew()) {
@@ -151,7 +149,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 		}
 
 		AgreementDefinition agreementDefinition = (AgreementDefinition) auditHeader.getAuditDetail().getModelData();
-		getAgreementDefinitionDAO().delete(agreementDefinition,"");
+		getAgreementDefinitionDAO().delete(agreementDefinition, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -204,11 +202,17 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 
 		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		BeanUtils.copyProperties((AgreementDefinition) auditHeader.getAuditDetail().getModelData(), agreementDefinition);
+		
+		getAgreementDefinitionDAO().delete(agreementDefinition, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(agreementDefinition.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(agreementDefinitionDAO.getAgreementDefinitionByCode(
+							agreementDefinition.getAggCode(), ""));
+		}
 
 		if (agreementDefinition.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
 
-			getAgreementDefinitionDAO().delete(agreementDefinition,"");
+			getAgreementDefinitionDAO().delete(agreementDefinition, TableType.MAIN_TAB);
 
 		} else {
 			agreementDefinition.setRoleCode("");
@@ -220,15 +224,15 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 			if (agreementDefinition.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType=PennantConstants.TRAN_ADD;
 				agreementDefinition.setRecordType("");
-				getAgreementDefinitionDAO().save(agreementDefinition,"");
+				getAgreementDefinitionDAO().save(agreementDefinition, TableType.MAIN_TAB);
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				agreementDefinition.setRecordType("");
-				getAgreementDefinitionDAO().update(agreementDefinition,"");
+				getAgreementDefinitionDAO().update(agreementDefinition, TableType.MAIN_TAB);
 			}
 		}
 
-		getAgreementDefinitionDAO().delete(agreementDefinition,"_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -262,7 +266,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 		AgreementDefinition agreementDefinition = (AgreementDefinition) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAgreementDefinitionDAO().delete(agreementDefinition,"_Temp");
+		getAgreementDefinitionDAO().delete(agreementDefinition, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -284,7 +288,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -303,7 +307,29 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		AgreementDefinition agreementDefinition= (AgreementDefinition) auditDetail.getModelData();
+		// Check the unique keys.
+		if (agreementDefinition.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(agreementDefinition.getRecordType())
+				&& agreementDefinitionDAO.isDuplicateKey(agreementDefinition.getAggCode(),
+						agreementDefinition.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_AggCode")+":"+ agreementDefinition.getAggCode();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+		}
+	
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+	/*private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
 		AgreementDefinition agreementDefinition= (AgreementDefinition) auditDetail.getModelData();
@@ -380,6 +406,6 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 		}
 
 		return auditDetail;
-	}
+	}*/
 
 }

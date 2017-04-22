@@ -47,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>AgreementDefinition model</b> class.<br>
@@ -86,7 +89,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 */
 	@Override
 	public AgreementDefinition getAgreementDefinitionById(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		
 		agreementDefinition.setId(id);
@@ -114,7 +117,8 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 			logger.warn("Exception: ", e);
 			agreementDefinition = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return agreementDefinition;
 	}
 
@@ -128,7 +132,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 */
 	@Override
 	public AgreementDefinition getAgreementDefinitionByCode(final String aggCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		AgreementDefinition agreementDefinition = new AgreementDefinition();
 		agreementDefinition.setAggCode(aggCode);
@@ -154,7 +158,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 			logger.warn("Exception: ", e);
 			agreementDefinition = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreementDefinition;
 	}
 	
@@ -179,32 +183,29 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(AgreementDefinition agreementDefinition, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(AgreementDefinition agreementDefinition, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
+		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder("Delete From BMTAggrementDef");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where AggCode =:AggCode");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		logger.trace(Literal.SQL +  deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",agreementDefinition.getAggCode() ,
-						agreementDefinition.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",agreementDefinition.getAggCode() ,
-					agreementDefinition.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -220,8 +221,8 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 * 
 	 */
 	@Override
-	public long save(AgreementDefinition agreementDefinition,String type) {
-		logger.debug("Entering");
+	public String save(AgreementDefinition agreementDefinition, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		if (agreementDefinition.getId()==Long.MIN_VALUE){
 			agreementDefinition.setId(getNextidviewDAO().getNextId("SeqBMTAggrementDef"));
@@ -229,7 +230,7 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		}
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into BMTAggrementDef");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (AggId, AggCode, AggName, AggDesc, AggReportName, AggReportPath, " );
 		insertSql.append(" AggIsActive , Aggtype, AggImage, AgrRule, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
@@ -239,12 +240,16 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleType, :AllowMultiple, :ModuleName)");
 		
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return agreementDefinition.getId();
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return String.valueOf(agreementDefinition.getId());
 	}
 	
 	/**
@@ -261,11 +266,12 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(AgreementDefinition agreementDefinition, String type) {
+	public void update(AgreementDefinition agreementDefinition, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
 		int recordCount = 0;
-		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update BMTAggrementDef");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set AggCode = :AggCode, AggName = :AggName, AggDesc = :AggDesc, " );
 		updateSql.append(" AggReportName = :AggReportName, AggReportPath = :AggReportPath, " );
 		updateSql.append(" AggIsActive = :AggIsActive , Aggtype = :Aggtype, AggImage = :AggImage, AgrRule=:AgrRule, ");
@@ -274,32 +280,52 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ModuleType = :ModuleType, AllowMultiple= :AllowMultiple, ModuleName = :ModuleName");
 		updateSql.append(" Where AggId =:AggId");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-		
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",agreementDefinition.getAggCode() ,
-					agreementDefinition.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 	
-	private ErrorDetails  getError(String errorId, String aggCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = aggCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_AggCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
+	@Override
+	public boolean isDuplicateKey(String aggCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "AggCode =:AggCode";
 
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTAggrementDef", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTAggrementDef_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTAggrementDef_Temp", "BMTAggrementDef" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("AggCode", aggCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 	
 }
