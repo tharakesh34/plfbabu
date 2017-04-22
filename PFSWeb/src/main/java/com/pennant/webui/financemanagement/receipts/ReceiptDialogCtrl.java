@@ -989,12 +989,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doFillAllocationDetail(null, null, false);
 		
 		// Allocation Process start
+		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
+		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
+		
 		if(!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
 			
 			//Setting remaining Balance on Manual Allocation
 			if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
-				int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-				BigDecimal totReceiptAmount = getTotalReceiptAmount();
 				
 				BigDecimal totalPaid = BigDecimal.ZERO;
 				if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
@@ -1015,7 +1019,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Calling for Past due Amount Auto Calculation Process
 		FinScheduleData aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView");
 		Map<String, BigDecimal> paidAllocationMap = getReceiptCalculator().recalAutoAllocation(aFinScheduleData, 
-				getTotalReceiptAmount(), tempReceiptPurpose);
+				totReceiptAmount, tempReceiptPurpose);
 		doFillAllocationDetail(null, paidAllocationMap, true);
 		
 		logger.debug("Leaving");

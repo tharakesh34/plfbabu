@@ -4536,10 +4536,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAmount.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_FinanceMainDialog_FinAmount.value"), finFormatter, true, false));
 		}
-		if (this.repayProfitRate.isVisible() && !this.repayProfitRate.isReadonly()) {
-			this.repayProfitRate.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, true, false,9999));
-		}
+		
 		if (this.gb_RolloverFinance.isVisible()) {
 			if (!recSave && this.custPayAccId.isVisible() && this.custPayAccId.isMandatory()
 					&& !this.custPayAccId.isReadonly()) {
@@ -4686,7 +4683,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (this.gracePftRate.isVisible() && !this.gracePftRate.isReadonly()) {
 				this.gracePftRate.setConstraint(new PTDecimalValidator(Labels
-						.getLabel("label_FinanceMainDialog_GracePftRate.value"), 9, true, false));
+						.getLabel("label_FinanceMainDialog_GracePftRate.value"), 9, false, false, 0, 9999));
 			}
 			if (!this.graceRate.isMarginReadonly()) {
 				this.graceRate.setMarginConstraint(new PTDecimalValidator(Labels
@@ -4782,9 +4779,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"), true));
 		}
-		this.repayRate.getEffRateComp().setConstraint(
-				new PTDecimalValidator(Labels.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, false));
 
+		if (this.repayProfitRate.isVisible() && !this.repayProfitRate.isReadonly()) {
+			this.repayProfitRate.setConstraint(new PTDecimalValidator(Labels
+					.getLabel("label_FinanceMainDialog_ProfitRate.value"), 9, false, false,0, 9999));
+		}
+		
 		if (!this.repayRate.isMarginReadonly()) {
 			this.repayRate.setMarginConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_FinanceMainDialog_RepayMargin.value"), 9, false, true, -9999, 9999));
