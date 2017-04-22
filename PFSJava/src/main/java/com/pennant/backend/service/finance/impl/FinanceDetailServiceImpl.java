@@ -148,6 +148,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -4946,6 +4947,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		validateMandate(auditDetail, financeDetail);
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
@@ -4953,6 +4956,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		return auditDetail;
+	}
+
+	/**
+	 * Validate the mandate assigned to the finance.
+	 * 
+	 * @param auditDetail
+	 * @param financeDetail
+	 * @param financeMain
+	 */
+	private void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Mandate mandate = financeDetail.getMandate();
+
+		if (mandate != null) {
+			BigDecimal exposure = financeMain.getTotalRepayAmt();
+
+			if (mandate.isUseExisting()) {
+				exposure = exposure.add(
+						getFinanceMainDAO().getTotalRepayAmount(mandate.getMandateID(), financeMain.getFinReference()));
+			}
+
+			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
+				auditDetail.setErrorDetail(90103);
+			}
+		}
 	}
 
 	/**

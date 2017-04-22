@@ -2667,4 +2667,22 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("selectSql: " + selectSql.toString());
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 	}
+
+	@Override
+	public BigDecimal getTotalRepayAmount(long mandateId, String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select coalesce(sum(TotalRepayAmt), 0) from FinanceMain_View");
+		sql.append(" where mandateid = :MandateId and finreference != :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("MandateId", mandateId);
+		paramSource.addValue("FinReference", finReference);
+
+		logger.debug(Literal.LEAVING);
+		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+	}
 }

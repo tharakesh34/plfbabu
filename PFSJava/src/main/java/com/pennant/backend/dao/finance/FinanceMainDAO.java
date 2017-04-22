@@ -242,4 +242,14 @@ public interface FinanceMainDAO {
 
 	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
 
+	/**
+	 * Get the total re-payment amount against the specified mandate excluding the finance.
+	 * 
+	 * @param mandateId
+	 *            Mandate id for which the total re-payment amount to be fetched.
+	 * @param finReference
+	 *            Finance reference that need to be excluded.
+	 * @return The total re-payment amount against the specified mandate excluding the finance.
+	 */
+	BigDecimal getTotalRepayAmount(long mandateId, String finReference);
 }
