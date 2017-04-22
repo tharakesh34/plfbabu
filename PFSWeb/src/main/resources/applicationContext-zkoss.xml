@@ -4566,5 +4566,17 @@
 	<bean id="financeStatusCodeDialogCtrl" class="com.pennant.webui.applicationmaster.financestatuscode.FinanceStatusCodeDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="financeStatusCodeService" ref="financeStatusCodeService"/>
 	</bean>
+		
+	<!-- DPDBucket -->
+	<bean id="dPDBucketListCtrl" class="com.pennant.webui.applicationmaster.dpdbucket.DPDBucketListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="dPDBucketService" ref="dPDBucketService" />
+	</bean>
+	<bean id="dPDBucketDialogCtrl" class="com.pennant.webui.applicationmaster.dpdbucket.DPDBucketDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="pagedListService" ref="pagedListService"/>
+		<property name="dPDBucketService" ref="dPDBucketService"/>
+	</bean>
+	
+	
 	
 </beans>

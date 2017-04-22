@@ -9468,5 +9468,28 @@
        <property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
+   
+    <!-- DPDBucket -->
+	<bean id="dPDBucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="dPDBucketService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="dPDBucketServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="dPDBucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.DPDBucketServiceImpl">
+       <property name="dPDBucketDAO" ref="dPDBucketDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 	
 </beans>

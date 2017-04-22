@@ -90,6 +90,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
+import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
@@ -1854,6 +1855,9 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FileDownload", new ModuleMapping("FileDownload", FileDownlaod.class, new String[] {
 				"FileDownload", "FILE_DOWNLOAD_VIEW" }, null, new String[] { "NAME", "FileName" }, null, 700));
+		
+		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
+			"DPDBUCKETS", "DPDBUCKETS_AView" }, null, new String[] { "BucketID", "BucketDesc" }, null, 700));
 
 	}
 

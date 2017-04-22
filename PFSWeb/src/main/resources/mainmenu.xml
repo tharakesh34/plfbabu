@@ -50,7 +50,8 @@
 		<menuItem id="menu_Item_SubSector" zulNavigation="/WEB-INF/pages/SystemMaster/SubSector/SubSectorList.zul"  rightName="menuItem_SystemMaster_SubSector"/>		
 <!-- 		<menuItem id="menu_Item_Segment" zulNavigation="/WEB-INF/pages/SystemMaster/Segment/SegmentList.zul"  rightName="menuItem_SystemMaster_Segment"/>
 		<menuItem id="menu_Item_SubSegment" zulNavigation="/WEB-INF/pages/SystemMaster/SubSegment/SubSegmentList.zul"  rightName="menuItem_SystemMaster_SubSegment"/>
- -->	</menu>
+ -->	
+ 	</menu>
 
 	<!-- Application Masters Menu Tree -->
 	
@@ -100,7 +101,12 @@
 	    <menuItem id="menu_Item_ChequePurpose" zulNavigation="/WEB-INF/pages/ApplicationMaster/ChequePurpose/ChequePurposeList.zul" rightName="menuItem_ApplicationMaster_ChequePurpose"/> -->		
 		<!-- <menuItem id="menu_Item_SysNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=N" />		
 	    <menuItem id="menu_Item_SendNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=Y" /> -->
-	    <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName="menuItem_applicationmaster_FinanceStatusCodes"/>
+	    <!-- <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName="menuItem_applicationmaster_FinanceStatusCodes"/>
+	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucket"/>
+		<menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
+	    <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName=""/>
+	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" rightName=""/>
+		<menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" rightName=""/>
 	</menu>
 
 	<!-- Account Menu Tree -->
@@ -600,6 +606,6 @@
 		<menuItem id="menu_Item_CollateralAssignmentEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentEnquiryList.zul"  rightName="menuItem_Collateral_CollateralAssignmentEnquiry"/>
 	 </menu> 
   -->
-	 
+	 	
 <!--//APPEND AFTER THIS//-->
 </ns2:XMLRootMenu>
