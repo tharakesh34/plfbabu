@@ -5998,14 +5998,18 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		<createView viewName="NPABUCKETSCONFIG_View" replaceIfExists="true">
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	NPABUCKETSCONFIG_Temp  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG_Temp  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
 			UNION ALL
 			
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 						,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	NPABUCKETSCONFIG  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
 			WHERE     NOT EXISTS (SELECT 1 FROM NPABUCKETSCONFIG_TEMP WHERE ConfigID = T1.ConfigID)
 			
 		</createView>
@@ -6014,8 +6018,10 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		<createView viewName="NPABUCKETSCONFIG_AView" replaceIfExists="true">
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	NPABUCKETSCONFIG  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
 			
 		</createView>
 	</changeSet>
@@ -6085,14 +6091,18 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		<createView viewName="DPDBUCKETSCONFIG_View" replaceIfExists="true">
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	DPDBUCKETSCONFIG_Temp  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG_Temp  T1  INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
 			UNION ALL
 			
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 						,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	DPDBUCKETSCONFIG  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
 			WHERE     NOT EXISTS (SELECT 1 FROM DPDBUCKETSCONFIG_TEMP WHERE ConfigID = T1.ConfigID)
 			
 		</createView>
@@ -6101,8 +6111,10 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		<createView viewName="DPDBUCKETSCONFIG_AView" replaceIfExists="true">
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
 			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
-                      T1.NextTaskId, T1.RecordType, T1.WorkflowId
-			FROM    	DPDBUCKETSCONFIG  T1 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode INNER JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
 			
 		</createView>
 	</changeSet>
@@ -6532,5 +6544,25 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			FROM    	DPDBUCKETS  T1 
 			
 		</createView>
+	</changeSet>
+	<changeSet id="137" author="Surekha">
+		<createTable tableName="SeqNPABUCKETSCONFIG">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="138" author="Surekha">
+		<sql>
+			INSERT INTO SeqNPABUCKETSCONFIG VALUES(0);
+		</sql>
+	</changeSet>
+	<changeSet id="139" author="Surekha">
+		<createTable tableName="SeqDPDBUCKETSCONFIG">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="140" author="Surekha">
+		<sql>
+			INSERT INTO SeqDPDBUCKETSCONFIG VALUES(0);
+		</sql>
 	</changeSet>
 </databaseChangeLog>
