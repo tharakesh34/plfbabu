@@ -152,6 +152,10 @@ public class EventManager implements ServletContextListener {
 	public void publish(String message, Notify notify, String[] to) throws Exception {
 		publish(message, "SYSTEM", notify, to);
 	}
+	
+	public void publish(String message, Notify notify, String[] to, String division, String branch) throws Exception {
+		publish(message, "SYSTEM", notify, to);
+	}
 
 	/**
 	 * Gets active, logged-in, users along with their desktop status
