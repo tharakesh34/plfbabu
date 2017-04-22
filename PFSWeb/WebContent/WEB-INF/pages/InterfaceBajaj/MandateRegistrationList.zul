@@ -65,18 +65,13 @@
 									<listbox id="sortOperator_ExpiryDate" width="43px" mold="select" rows="1" />
 									<datebox id="expiryDate" width="171px" />
 								</row>
+								
 								<row>
 									<label id="label_MandateList_Status" value="${c:l('label_MandateList_Status.value')}" />
 									<listbox id="sortOperator_Status" width="43px" mold="select" rows="1" />
 									<combobox id="status" width="171px" />
-									<label id="label_MandateList_InputDate" value="${c:l('label_MandateList_InputDate.value')}" />
-									<listbox id="sortOperator_InputDate" width="43px" mold="select" rows="1" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<datebox id="inputDate" width="171px" />
-									</hbox>
-									
 								</row>
+								 
 								<row visible="false">
 									<label id="label_MandateList_JointAccHolderName" value="${c:l('label_MandateList_JointAccHolderName.value')}" />
 									<listbox id="sortOperator_JointAccHolderName" width="43px" mold="select" rows="1" />
@@ -89,6 +84,40 @@
 								</row>
 							</rows>
 						</grid>
+
+						<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="150px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+								<label value="${c:l('label_Branches.value')}" />
+									<hbox>
+									    <space spacing="12px"></space>
+										<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
+										<space spacing="8px"></space>
+										<uppercasebox id="branchDetails" width="320px" />
+										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
+									</hbox>
+								</row>
+								<row>
+								<label  value="${c:l('label_MandateList_InputDate.value')}" />
+								
+								<hlayout spacing="2px">
+								 <space spacing="12px"></space>
+									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="fromDate" width="130px" />
+									<space spacing="10px" />
+									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1" />
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="toDate" width="130px" />
+								</hlayout>
+								</row>
+							</rows>
+						</grid>
+
 						<listbox id="listBoxMandateRegistration" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="true" autopaging="true">
 							<listhead sizable="true">
 								<listheader id="listHeader_CheckBox_Name"   hflex="min" align="center"/>
