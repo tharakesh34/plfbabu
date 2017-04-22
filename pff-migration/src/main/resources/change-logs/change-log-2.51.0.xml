@@ -316,4 +316,20 @@ null,0,20,0,0,2,1,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null
 		</sql>
 		
 		</changeSet>
+		
+	<changeSet id="09" author="Durgaprasad G">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true"> 
+  SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,T1.REASON,T1.MANDATECCY,T2.CUSTCIF,T2.CUSTSHRTNAME, 
+       T3.BANKCODE, T3.BRANCHCODE,T3.BRANCHDESC,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate, T1.Active, 1 useExisting,T1.OrgReference
+FROM    	Mandates  T1 INNER JOIN
+			Customers  T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BANKBRANCHES  T3 on T1.BANKBRANCHID = T3.BANKBRANCHID  left outer join
+			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode
+			</createView>
+	</changeSet>
 </databaseChangeLog>
