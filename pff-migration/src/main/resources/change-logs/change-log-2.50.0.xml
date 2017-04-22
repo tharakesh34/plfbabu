@@ -5924,6 +5924,14 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DIS.PARTNERBANKID order by L.ID desc
 	</createView>
 </changeSet> -->
+	<changeSet id="115" author="Sai">
+		<sql>
+			<![CDATA[
+			insert into errordetails (errorcode, errorlanguage, errorseverity, errormessage, recordstatus, workflowid, lastmnton, lastmntby, version) 
+  				values ('90103', 'EN', 'E', 'The total repayments against the mandate is more than the max limit.', 'Approved', 0, sysdate, 1000, 1);
+			]]>
+		</sql>
+	</changeSet>
 <changeSet id="116" author="Surekha">
 		<createTable tableName="NPABUCKETSCONFIG">
 			<column name="ConfigID" type="bigint">
