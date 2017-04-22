@@ -150,7 +150,13 @@ public class AEAmountCodes {
 	private boolean preApprovalExpired = false;
 	private boolean preApprovalFinance = false;
 
-	
+	private BigDecimal			excessAmt			= BigDecimal.ZERO;
+	private BigDecimal			emiInAdvance		= BigDecimal.ZERO;
+	private BigDecimal			payableAdvise		= BigDecimal.ZERO;
+	private BigDecimal			excessAmtResv		= BigDecimal.ZERO;
+	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
+	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
+
 	
 	public AEAmountCodes() {
 		
@@ -1025,6 +1031,54 @@ public class AEAmountCodes {
 
 	public void setlAmzS(BigDecimal lAmzS) {
 		this.lAmzS = lAmzS;
+	}
+
+	public BigDecimal getExcessAmt() {
+		return excessAmt;
+	}
+
+	public void setExcessAmt(BigDecimal excessAmt) {
+		this.excessAmt = excessAmt;
+	}
+
+	public BigDecimal getEmiInAdvance() {
+		return emiInAdvance;
+	}
+
+	public void setEmiInAdvance(BigDecimal emiInAdvance) {
+		this.emiInAdvance = emiInAdvance;
+	}
+
+	public BigDecimal getPayableAdvise() {
+		return payableAdvise;
+	}
+
+	public void setPayableAdvise(BigDecimal payableAdvise) {
+		this.payableAdvise = payableAdvise;
+	}
+
+	public BigDecimal getExcessAmtResv() {
+		return excessAmtResv;
+	}
+
+	public void setExcessAmtResv(BigDecimal excessAmtResv) {
+		this.excessAmtResv = excessAmtResv;
+	}
+
+	public BigDecimal getEmiInAdvanceResv() {
+		return emiInAdvanceResv;
+	}
+
+	public void setEmiInAdvanceResv(BigDecimal emiInAdvanceResv) {
+		this.emiInAdvanceResv = emiInAdvanceResv;
+	}
+
+	public BigDecimal getPayableAdviseResv() {
+		return payableAdviseResv;
+	}
+
+	public void setPayableAdviseResv(BigDecimal payableAdviseResv) {
+		this.payableAdviseResv = payableAdviseResv;
 	}
 
 

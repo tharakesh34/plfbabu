@@ -138,6 +138,12 @@ public class FinanceProfitDetail implements Serializable {
 	private int					futureInst			= 0;
 	private int					remainingTenor		= 0;
 	private int					totalTenor			= 0;
+	private BigDecimal			excessAmt			= BigDecimal.ZERO;
+	private BigDecimal			emiInAdvance		= BigDecimal.ZERO;
+	private BigDecimal			payableAdvise		= BigDecimal.ZERO;
+	private BigDecimal			excessAmtResv		= BigDecimal.ZERO;
+	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
+	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
 
 	public FinanceProfitDetail() {
 
@@ -939,7 +945,6 @@ public class FinanceProfitDetail implements Serializable {
 		this.calPftOnPD = calPftOnPD;
 	}
 
-
 	public String getPftOnPDMethod() {
 		return pftOnPDMethod;
 	}
@@ -1082,6 +1087,54 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setTotalTenor(int totalTenor) {
 		this.totalTenor = totalTenor;
+	}
+
+	public BigDecimal getExcessAmt() {
+		return excessAmt;
+	}
+
+	public void setExcessAmt(BigDecimal excessAmt) {
+		this.excessAmt = excessAmt;
+	}
+
+	public BigDecimal getEmiInAdvance() {
+		return emiInAdvance;
+	}
+
+	public void setEmiInAdvance(BigDecimal emiInAdvance) {
+		this.emiInAdvance = emiInAdvance;
+	}
+
+	public BigDecimal getPayableAdvise() {
+		return payableAdvise;
+	}
+
+	public void setPayableAdvise(BigDecimal payableAdvise) {
+		this.payableAdvise = payableAdvise;
+	}
+
+	public BigDecimal getExcessAmtResv() {
+		return excessAmtResv;
+	}
+
+	public void setExcessAmtResv(BigDecimal excessAmtResv) {
+		this.excessAmtResv = excessAmtResv;
+	}
+
+	public BigDecimal getEmiInAdvanceResv() {
+		return emiInAdvanceResv;
+	}
+
+	public void setEmiInAdvanceResv(BigDecimal emiInAdvanceResv) {
+		this.emiInAdvanceResv = emiInAdvanceResv;
+	}
+
+	public BigDecimal getPayableAdviseResv() {
+		return payableAdviseResv;
+	}
+
+	public void setPayableAdviseResv(BigDecimal payableAdviseResv) {
+		this.payableAdviseResv = payableAdviseResv;
 	}
 
 }

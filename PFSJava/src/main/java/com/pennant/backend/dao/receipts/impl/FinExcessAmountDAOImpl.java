@@ -93,7 +93,7 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		source.addValue("FinReference", finReference);
 
 		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(" Select ExcessID, AmountType, BalanceAmt From FinExcessAmount");
+		selectSql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
 		selectSql.append(" Where FinReference =:FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());

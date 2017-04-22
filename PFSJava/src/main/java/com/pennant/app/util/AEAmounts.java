@@ -47,6 +47,8 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -54,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 
 public class AEAmounts implements Serializable {
 	private static final long			serialVersionUID	= 4594615740716296558L;
@@ -61,6 +64,7 @@ public class AEAmounts implements Serializable {
 	private static FinanceSuspHeadDAO	suspHeadDAO;
 	private static FinODDetailsDAO		finODDetailsDAO;
 	private static CustomerDAO			customerDAO;
+	private static FinExcessAmountDAO	finExcessAmountDAO;
 
 	public AEAmounts() {
 		super();
@@ -121,7 +125,7 @@ public class AEAmounts implements Serializable {
 		//Last Repayments
 		aeAmountCodes.setPrvRpySchDate(pftDetail.getPrvRpySchDate());
 		aeAmountCodes.setFinalRepayAmt(pftDetail.getFinalRepayAmt());
-		
+
 		aeAmountCodes.setPrvRpySchPft(pftDetail.getPrvRpySchPft());
 		aeAmountCodes.setPrvRpySchPri(pftDetail.getPrvRpySchPri());
 		//next Repayments
@@ -178,6 +182,13 @@ public class AEAmounts implements Serializable {
 		aeAmountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		aeAmountCodes.setlAmzS(pftDetail.getAmzTillLBDPIS());
 		aeAmountCodes.setdAmzS(aeAmountCodes.getlAmzS().subtract(aeAmountCodes.getAmzS()));
+
+		aeAmountCodes.setEmiInAdvance(pftDetail.getEmiInAdvance());
+		aeAmountCodes.setExcessAmt(pftDetail.getExcessAmt());
+		aeAmountCodes.setPayableAdvise(pftDetail.getPayableAdvise());
+		aeAmountCodes.setEmiInAdvanceResv(pftDetail.getEmiInAdvanceResv());
+		aeAmountCodes.setExcessAmtResv(pftDetail.getExcessAmtResv());
+		aeAmountCodes.setPayableAdviseResv(pftDetail.getPayableAdviseResv());
 
 		// +++++++++++++++++++
 		//		aeAmountCodes.setCpzNxt();
@@ -466,13 +477,12 @@ public class AEAmounts implements Serializable {
 		BigDecimal calPart2 = pftDetail.getTotalpriSchd().subtract(pftDetail.getTotalPftCpz());
 		BigDecimal daysFactor = CalculationUtil.getInterestDays(pftDetail.getFinStartDate(),
 				pftDetail.getMaturityDate(), finMain.getProfitDaysBasis());
-		if (calPart2.compareTo(BigDecimal.ZERO)>0) {
+		if (calPart2.compareTo(BigDecimal.ZERO) > 0) {
 			pftDetail.setCurFlatRate(calPart1.multiply(new BigDecimal(100)).divide(calPart2.multiply(daysFactor), 9,
 					RoundingMode.HALF_DOWN));
 		} else {
 			pftDetail.setCurFlatRate(BigDecimal.ZERO);
 		}
-
 
 		pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
@@ -487,7 +497,6 @@ public class AEAmounts implements Serializable {
 			pftDetail.setPftInSusp(false);
 			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
 		}
-
 
 		// OD Details
 		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
@@ -634,6 +643,29 @@ public class AEAmounts implements Serializable {
 		pftDetail.setRemainingTenor(0);
 		pftDetail.setTotalTenor(0);
 
+		//Set Excess Amounts
+		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+		if (finExcessAmounts.size() > 0) {
+			for (int i = 0; i < finExcessAmounts.size(); i++) {
+				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
+						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
+				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+
+				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+					pftDetail.setExcessAmt(totBalAvailable);
+					pftDetail.setExcessAmtResv(reservedAmt);
+				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+					pftDetail.setEmiInAdvance(totBalAvailable);
+					pftDetail.setEmiInAdvanceResv(reservedAmt);
+				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+					pftDetail.setPayableAdvise(totBalAvailable);
+					pftDetail.setPayableAdviseResv(totBalAvailable);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -744,5 +776,9 @@ public class AEAmounts implements Serializable {
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		AEAmounts.customerDAO = customerDAO;
+	}
+
+	public static void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		AEAmounts.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }
