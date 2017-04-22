@@ -84,7 +84,9 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit, ");
-
+		if (type.contains("View")) {
+			sql.append(" ProductCodeName, BucketIDName,");
+		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From DPDBUCKETSCONFIG");
 		sql.append(type);
@@ -162,6 +164,10 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		sql.append(" :configID, :productCode, :bucketID, :dueDays, :suspendProfit, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
+		// Get the identity sequence number.
+		if (dPDBucketConfiguration.getConfigID() <= 0) {
+			dPDBucketConfiguration.setConfigID(getNextidviewDAO().getNextId("SeqDPDBUCKETSCONFIG"));
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucketConfiguration);

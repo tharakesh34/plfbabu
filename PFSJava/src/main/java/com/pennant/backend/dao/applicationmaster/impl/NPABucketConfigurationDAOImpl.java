@@ -84,7 +84,9 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit, ");
-
+		if (type.contains("View")) {
+			sql.append(" ProductCodeName, BucketIDName,");
+		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From NPABUCKETSCONFIG");
 		sql.append(type);
@@ -162,6 +164,9 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		sql.append(" :configID, :productCode, :bucketID, :dueDays, :suspendProfit, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
+		if (nPABucketConfiguration.getConfigID() <= 0) {
+			nPABucketConfiguration.setConfigID(getNextidviewDAO().getNextId("SeqNPABUCKETSCONFIG"));
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucketConfiguration);

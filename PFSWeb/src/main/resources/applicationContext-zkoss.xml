@@ -4587,4 +4587,21 @@
 		<property name="pagedListService" ref="pagedListService"/>
 		<property name="nPABucketService" ref="nPABucketService"/>
 	</bean>
+	<!-- NPABucketConfiguration -->
+	<bean id="nPABucketConfigurationListCtrl" class="com.pennant.webui.applicationmaster.npabucketconfiguration.NPABucketConfigurationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="nPABucketConfigurationService" ref="nPABucketConfigurationService" />
+	</bean>
+	<bean id="nPABucketConfigurationDialogCtrl" class="com.pennant.webui.applicationmaster.npabucketconfiguration.NPABucketConfigurationDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="nPABucketConfigurationService" ref="nPABucketConfigurationService"/>
+	</bean>
+		
+	<!-- DPDBucketConfiguration -->
+	<bean id="dPDBucketConfigurationListCtrl" class="com.pennant.webui.applicationmaster.dpdbucketconfiguration.DPDBucketConfigurationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="dPDBucketConfigurationService" ref="dPDBucketConfigurationService" />
+	</bean>
+	<bean id="dPDBucketConfigurationDialogCtrl" class="com.pennant.webui.applicationmaster.dpdbucketconfiguration.DPDBucketConfigurationDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="dPDBucketConfigurationService" ref="dPDBucketConfigurationService"/>
+	</bean>
 </beans>

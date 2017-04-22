@@ -78,6 +78,8 @@
 		 -->
 		<menuItem id="menu_Item_CustomerStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeList.zul"  rightName="menuItem_ApplicationMaster_CustomerStatusCode"/>
 		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul"  rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
+		<menuItem id="menu_Item_DPDBucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul" rightName="menuItem_applicationmaster_DPDBucketConfiguration"/>
+		<menuItem id="menu_Item_NPABucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"  rightName="menuItem_applicationmaster_NPABucketConfiguration"/>
 		<menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" rightName="menuItem_ApplicationMaster_BlacklistCustomer"/>
 		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" />

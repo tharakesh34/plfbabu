@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import javax.sql.DataSource;
@@ -75,20 +75,20 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 	public DPDBucketDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public DPDBucket getDPDBucket(long bucketID,String type) {
+	public DPDBucket getDPDBucket(long bucketID, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode, bucketDesc, active, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From DPDBUCKETS");
 		sql.append(type);
 		sql.append(" Where bucketID = :bucketID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -107,10 +107,10 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long bucketID,String bucketCode, TableType tableType) {
+	public boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -134,7 +134,7 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("bucketID", bucketID);
 		paramSource.addValue("bucketCode", bucketCode);
-		
+
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -145,20 +145,24 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(DPDBucket dPDBucket,TableType tableType) {
+	public String save(DPDBucket dPDBucket, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder("insert into DPDBUCKETS ");
+		StringBuilder sql = new StringBuilder("insert into DPDBUCKETS ");
 		sql.append(tableType.getSuffix());
 		sql.append(" (bucketID, bucketCode, bucketDesc, active, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :bucketID, :bucketCode, :bucketDesc, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
+		// Get the identity sequence number.
+		if (dPDBucket.getBucketID() <= 0) {
+			dPDBucket.setBucketID(getNextidviewDAO().getNextId("SeqDPDBUCKETS"));
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
@@ -171,14 +175,14 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(dPDBucket.getBucketID());
-	}	
+	}
 
 	@Override
-	public void update(DPDBucket dPDBucket,TableType tableType) {
+	public void update(DPDBucket dPDBucket, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update DPDBUCKETS" );
+		StringBuilder sql = new StringBuilder("update DPDBUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append("  set bucketCode = :bucketCode, bucketDesc = :bucketDesc, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -186,10 +190,10 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bucketID = :bucketID ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
 		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
@@ -197,7 +201,7 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -239,5 +243,5 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
-}	
+
+}
