@@ -168,14 +168,6 @@ public class DBProcessEngine extends DataAccess {
 			logger.info("Exception :", e);
 		}
 
-		try {
-			if (sourceCon != null) {
-				sourceCon.close();
-			}
-		} catch (Exception e) {
-			logger.info("Exception :", e);
-		}
-
 		logger.debug("Leaving");
 	}
 

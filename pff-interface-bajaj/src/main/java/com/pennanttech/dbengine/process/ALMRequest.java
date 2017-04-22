@@ -16,7 +16,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dbengine.DBProcessEngine;
-import com.pennanttech.dbengine.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class ALMRequest extends DBProcessEngine {
 
@@ -161,8 +161,8 @@ public class ALMRequest extends DBProcessEngine {
 			sql = new StringBuilder();
 			sql.append(" SELECT * from INT_ALM_VIEW  Where DUEDATE >= ? AND DUEDATE <= ? ");
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stmt.setDate(1, DateUtil.getMonthStartDate(DateUtil.getPrevMonthDate()));
-			stmt.setDate(2, DateUtil.getMonthEndDate(DateUtil.getPrevMonthDate()));
+			stmt.setDate(1, DateUtil.getSqlDate(DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1))));
+			stmt.setDate(2, DateUtil.getSqlDate(DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1))));
 			
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
@@ -175,6 +175,7 @@ public class ALMRequest extends DBProcessEngine {
 		return rs;
 	}
 	
+
 	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
 		
 		MapSqlParameterSource source = null;

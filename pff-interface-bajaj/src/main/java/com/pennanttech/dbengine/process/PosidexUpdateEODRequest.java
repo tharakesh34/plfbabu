@@ -16,7 +16,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dbengine.DBProcessEngine;
-import com.pennanttech.dbengine.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class PosidexUpdateEODRequest extends DBProcessEngine {
 
@@ -134,8 +134,8 @@ public class PosidexUpdateEODRequest extends DBProcessEngine {
 			sql.append(" SELECT * from INT_POSIDEX_UPDATE_EOD_VIEW Where LastMntOn > ? AND LastMntOn < ?");
 
 			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stmt.setDate(1, new java.sql.Date(DateUtil.getPreviousDate().getTime()));
-			stmt.setDate(2, new java.sql.Date(DateUtil.getAfterDate().getTime()));
+			stmt.setDate(1, DateUtil.getSqlDate(DateUtil.addDays(DateUtil.getSysDate(), -1)));
+			stmt.setDate(2, DateUtil.getSqlDate(DateUtil.addDays(DateUtil.getSysDate(), 1)));
 			
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {

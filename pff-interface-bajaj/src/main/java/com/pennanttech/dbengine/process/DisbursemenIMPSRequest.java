@@ -2,6 +2,7 @@ package com.pennanttech.dbengine.process;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -44,9 +46,14 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
+		long keyValue = 0;
+		long fileId;
 		try {
-			saveBatchStatus();
 
+			executionStatus.setFileName(getFileName(config.getName()));
+			saveBatchStatus();
+			fileId = executionStatus.getId();
+			
 			executionStatus.setRemarks("Loading destination database connection...");
 			destConnection = getConnection(config);
 			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
@@ -64,11 +71,14 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 				executionStatus.setRemarks("Saving data to destination table...");
 				try {
 					processedCount++;
+					keyValue = getIntValue(resultSet, "PAYMENTID");
 					saveData(resultSet);
 					updateData(resultSet);
 					successCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
+					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -95,6 +105,9 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 					remarks.append(successCount + ".");
 				}
 				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
+			}  else {
+				remarks.append("No records found for the selected configuration.");
+				updateBatchStatus(ExecutionStatus.F.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
@@ -152,11 +165,11 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			ps.setString(1, null);
 			ps.setString(2, null);
 			ps.setString(3, null);
-			ps.setString(4, getValue(rs, "BENEFICIARYNAME"));
+			ps.setString(4,  getValue(rs, "BENEFICIARYNAME") == null ? " " : getValue(rs, "BENEFICIARYNAME"));
 			ps.setString(5, getValue(rs, "BENEFICIARY_MOBILE") == null ? " " : getValue(rs, "BENEFICIARY_MOBILE"));//From disb befiniciary 
 			ps.setString(6, getValue(rs, "CUSTOMER_EMAIL") == null ? " " : getValue(rs, "CUSTOMER_EMAIL"));//From customer email
-			ps.setString(7, getValue(rs, "IFSC"));
-			ps.setString(8, getValue(rs, "BANKNAME"));
+			ps.setString(7, getValue(rs, "IFSC") == null ? " " : getValue(rs, "IFSC"));
+			ps.setString(8, getValue(rs, "BANKNAME") == null ? " " : getValue(rs, "BANKNAME"));
 			ps.setString(9, getValue(rs, "CPPROVINCENAME") == null ? " " : getValue(rs, "CPPROVINCENAME"));
 			ps.setString(10, getValue(rs, "PCCITYNAME") == null ? " " : getValue(rs, "PCCITYNAME"));
 			ps.setString(11, getValue(rs, "BRANCHDESC") == null ? " " : getValue(rs, "BRANCHDESC"));
@@ -197,5 +210,31 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		}
 		logger.debug("Leaving");
 		return rs;
+	}
+	
+	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks, Date valueDate) throws Exception {
+		
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		try {
+			source = new MapSqlParameterSource();
+			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
+			source.addValue("SEQNO", Long.valueOf(seqNo));
+			source.addValue("FILEID", fileId);
+			source.addValue("REFID1", ref);
+			source.addValue("CATEGORY", category);
+			source.addValue("STATUS", status);
+			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
+			source.addValue("VALUEDATE",  DateUtil.getSysDate());
+			
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
+			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
+			
+			saveBatchLog(source, sql.toString());
+		} finally {
+			sql = null;
+			source = null;
+		}
 	}
 }
