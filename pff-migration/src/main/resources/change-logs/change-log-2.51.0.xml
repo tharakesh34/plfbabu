@@ -20,5 +20,35 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	
+	<changeSet id="01" author="Surekha">
+		<createView viewName="DPDBUCKETSCONFIG_View" replaceIfExists="true">
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG_Temp  T1  INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
+			UNION ALL
+			
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+						,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
+			WHERE     NOT EXISTS (SELECT 1 FROM DPDBUCKETSCONFIG_TEMP WHERE ConfigID = T1.ConfigID)
+			
+		</createView>
+	</changeSet>
+	<changeSet id="02" author="Surekha">
+		<createView viewName="DPDBUCKETSCONFIG_AView" replaceIfExists="true">
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	DPDBUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						DPDBUCKETS T3 ON T1.BucketID = T3.BucketID
+			
+		</createView>
+	</changeSet>
 </databaseChangeLog>
