@@ -1853,7 +1853,7 @@ public class PennantJavaUtil {
 				"FileDownload", "FILE_DOWNLOAD_VIEW" }, null, new String[] { "NAME", "FileName" }, null, 700));
 		
 		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
-			"DPDBUCKETS", "DPDBUCKETS_AView" }, null, new String[] { "BucketID", "BucketDesc" }, null, 700));
+			"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketID", "BucketDesc" }, null, 700));
 		
 		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,

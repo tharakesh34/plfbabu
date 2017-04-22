@@ -4573,7 +4573,6 @@
 		<property name="dPDBucketService" ref="dPDBucketService" />
 	</bean>
 	<bean id="dPDBucketDialogCtrl" class="com.pennant.webui.applicationmaster.dpdbucket.DPDBucketDialogCtrl" parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService"/>
 		<property name="dPDBucketService" ref="dPDBucketService"/>
 	</bean>
 	

@@ -172,7 +172,7 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into DPDBUCKETS ");
+		StringBuilder sql = new StringBuilder("insert into DPDBUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append(" (bucketID, bucketCode, bucketDesc, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -210,7 +210,7 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bucketID = :bucketID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -234,7 +234,7 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		StringBuilder sql = new StringBuilder("delete from DPDBUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append(" where bucketID = :bucketID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
