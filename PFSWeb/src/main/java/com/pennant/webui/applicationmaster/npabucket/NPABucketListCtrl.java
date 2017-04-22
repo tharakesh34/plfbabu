@@ -43,7 +43,6 @@
 
 package com.pennant.webui.applicationmaster.npabucket;
 
-import java.awt.Checkbox;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -52,6 +51,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
