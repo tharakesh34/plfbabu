@@ -53,7 +53,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			// proceeding for insertion
 			workFlowDetails.setNewRecord(true);
 			workFlowDetails.setWorkFlowActive(true); 
-			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting getting FirstTaskOwners and Actors.
+			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
 			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
 			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
 			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
