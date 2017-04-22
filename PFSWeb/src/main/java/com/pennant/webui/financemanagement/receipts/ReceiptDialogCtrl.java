@@ -1267,6 +1267,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ReceiptDialog);
 				finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate, false);
+				
+				if(aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
+						aFinScheduleData.getFinFeeDetailList() != null && !aFinScheduleData.getFinFeeDetailList().isEmpty()){
+					finRender.renderOrg(map, prvSchDetail, false, true, false, aFinScheduleData.getFinFeeDetailList(), showRate, false);
+				}else{
+					finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate, false);
+				}
 
 				if (i == sdSize - 1) {
 					finRender.render(map, prvSchDetail, true, true, false, feeChargesMap, showRate, false);

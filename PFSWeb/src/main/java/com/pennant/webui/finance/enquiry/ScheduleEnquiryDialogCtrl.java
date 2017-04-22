@@ -345,11 +345,11 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			BigDecimal totalAdvPft = BigDecimal.ZERO;
 
 			for (int i = 0; i < sdSize; i++) {
-				FinanceScheduleDetail aScheduleDetail = finScheduleData.getFinanceScheduleDetails().get(i);
+				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 				boolean showRate = false;
 				boolean showAdvRate = false;
 				if (i == 0) {
-					prvSchDetail = aScheduleDetail;
+					prvSchDetail = curSchd;
 					showRate = true;
 					
 					if (finScheduleData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_STRUCTMUR)) {
@@ -357,20 +357,20 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 					}
 				} else {
 					prvSchDetail = finScheduleData.getFinanceScheduleDetails().get(i - 1);
-					if(aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate())!=0){
+					if(curSchd.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate())!=0){
 						showRate = true;
 					}
-					if(aScheduleDetail.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate())!=0){
+					if(curSchd.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate())!=0){
 						showAdvRate = true;
 					}
 				}
 				
 				//Preparing Total Advance Profit Amount
-				totalAdvPft = totalAdvPft.add(aScheduleDetail.getAdvProfit());
+				totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finSchdData", finScheduleData);
-				map.put("financeScheduleDetail", aScheduleDetail);
+				map.put("financeScheduleDetail", curSchd);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("accrueValue", finScheduleData.getAccrueValue());
@@ -378,7 +378,13 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				map.put("totalAdvPft", totalAdvPft);
 				map.put("showAdvRate", showAdvRate);
 				
-				finRender.render(map, prvSchDetail, false, false,true, feeChargesMap, showRate, false);
+				if(curSchd.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
+						finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()){
+					finRender.renderOrg(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate, false);
+				}else{
+					finRender.render(map, prvSchDetail, false, false, true, feeChargesMap, showRate,false);
+				}
+
 				
 				if(i == sdSize-1){						
 					finRender.render(map, prvSchDetail, true, false,true, feeChargesMap, showRate, false);				
