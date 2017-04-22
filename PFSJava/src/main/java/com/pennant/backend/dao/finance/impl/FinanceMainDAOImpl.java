@@ -2669,12 +2669,14 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	}
 
 	@Override
-	public BigDecimal getTotalRepayAmount(long mandateId, String finReference) {
+	public BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select coalesce(sum(TotalRepayAmt), 0) from FinanceMain_View");
-		sql.append(" where mandateid = :MandateId and finreference != :FinReference");
+		StringBuilder sql = new StringBuilder("select coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
+		sql.append(" where FinReference in (select FinReference from FinanceMain_View ");
+		sql.append(" where MandateId = :MandateId and FinIsActive = 1 and FinReference != :FinReference)");
+		sql.append(" group by FinReference");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);

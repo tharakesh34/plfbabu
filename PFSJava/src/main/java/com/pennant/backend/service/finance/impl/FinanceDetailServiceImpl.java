@@ -4966,15 +4966,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param financeMain
 	 */
 	private void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Mandate mandate = financeDetail.getMandate();
 
 		if (mandate != null) {
-			BigDecimal exposure = financeMain.getTotalRepayAmt();
+			BigDecimal exposure = BigDecimal.ZERO;
+
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+			for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+				if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
+					exposure = schedule.getRepayAmount();
+				}
+			}
 
 			if (mandate.isUseExisting()) {
-				exposure = exposure.add(
-						getFinanceMainDAO().getTotalRepayAmount(mandate.getMandateID(), financeMain.getFinReference()));
+				exposure = exposure.add(getFinanceMainDAO().getTotalMaxRepayAmount(mandate.getMandateID(),
+						financeMain.getFinReference()));
 			}
 
 			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
