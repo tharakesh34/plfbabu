@@ -484,13 +484,8 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 					refreshList();
 					closeDialog();
 				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
-			}
-
-			catch (Exception e) {
-				MessageUtil.showErrorMessage(e);
+			}catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving ");
@@ -653,15 +648,10 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 				// Close the Existing Dialog
 				closeDialog();
 			}
-
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_AccounTypeGroupDialog, e);
+			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving ");
+		logger.debug("Leaving");
 	}
 
 	/**

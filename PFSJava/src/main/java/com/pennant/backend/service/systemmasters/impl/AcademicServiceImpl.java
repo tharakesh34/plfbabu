@@ -81,7 +81,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -126,7 +126,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -193,7 +193,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -259,7 +259,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -286,8 +286,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
