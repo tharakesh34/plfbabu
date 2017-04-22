@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.service.rmtmasters.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -57,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>CustomerType</b>.<br>
@@ -110,16 +110,16 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 				
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		TableType tableType = TableType.MAIN_TAB;
 		CustomerType customerType = (CustomerType) auditHeader.getAuditDetail().getModelData();
 
 		if (customerType.isWorkflow()) {
-			tableType="_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (customerType.isNew()) {
@@ -127,7 +127,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 			auditHeader.getAuditDetail().setModelData(customerType);
 			auditHeader.setAuditReference(customerType.getCustTypeCode());
 		}else{
-			getCustomerTypeDAO().update(customerType,tableType);
+			getCustomerTypeDAO().update(customerType, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -151,14 +151,14 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		CustomerType customerType = (CustomerType) auditHeader.getAuditDetail().getModelData();
-		getCustomerTypeDAO().delete(customerType,"");
+		getCustomerTypeDAO().delete(customerType,TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -217,7 +217,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -226,12 +226,18 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 		CustomerType customerType = new CustomerType();
 		BeanUtils.copyProperties((CustomerType) auditHeader.getAuditDetail().getModelData(),
 				customerType);
+		getCustomerTypeDAO().delete(customerType, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(customerType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+customerTypeDAO.getCustomerTypeById(
+							customerType.getId(), ""));
+		}
 
 		if (customerType.getRecordType().equals(
 				PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getCustomerTypeDAO().delete(customerType, "");
+			getCustomerTypeDAO().delete(customerType, TableType.MAIN_TAB);
 
 		} else {
 			customerType.setRoleCode("");
@@ -244,15 +250,14 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerType.setRecordType("");
-				getCustomerTypeDAO().save(customerType, "");
+				getCustomerTypeDAO().save(customerType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerType.setRecordType("");
-				getCustomerTypeDAO().update(customerType, "");
+				getCustomerTypeDAO().update(customerType, TableType.MAIN_TAB);
 			}
 		}
-
-		getCustomerTypeDAO().delete(customerType, "_Temp");
+	
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -280,7 +285,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -288,7 +293,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 
 		CustomerType customerType = (CustomerType) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCustomerTypeDAO().delete(customerType, "_Temp");
+		getCustomerTypeDAO().delete(customerType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -305,11 +310,10 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -325,95 +329,28 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
+		// Get the model object.
 		CustomerType customerType = (CustomerType) auditDetail.getModelData();
-		CustomerType tempCustomerType = null;
-		if (customerType.isWorkflow()) {
-			tempCustomerType = getCustomerTypeDAO().getCustomerTypeById(
-					customerType.getId(), "_Temp");
+		// Check the unique keys.
+		if (customerType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(customerType.getRecordType())
+				&& customerTypeDAO.isDuplicateKey(customerType.getId(),
+						customerType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_CustTypeCode") + ":"+ customerType.getCustTypeCode();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
 		}
-		CustomerType befCustomerType = getCustomerTypeDAO()
-				.getCustomerTypeById(customerType.getId(), "");
-
-		CustomerType oldCustomerType = customerType.getBefImage();
-
-		String[] valueParm = new String[1];
-		String[] errParm= new String[1];
-
-		valueParm[0] = customerType.getCustTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_CustTypeCode") + ":"+ valueParm[0];
-
-		if (customerType.isNew()) { // for New record or new record into workFlow
-
-			if (!customerType.isWorkflow()) {// With out Work flow only new
-												// records
-				if (befCustomerType != null) { // Record Already Exists in the
-												// table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-				}
-			} else { // with work flow
-				if (customerType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					if (befCustomerType != null || tempCustomerType != null) { // if records already exists
-						// in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befCustomerType == null || tempCustomerType != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
-					}
-				}
- 			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!customerType.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befCustomerType == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldCustomerType != null
-							&& !oldCustomerType.getLastMntOn().equals(
-									befCustomerType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempCustomerType == null) { // if records not exists in the
-												// Work flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempCustomerType != null && oldCustomerType != null
-						&& !oldCustomerType.getLastMntOn().equals(
-								tempCustomerType.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-			}
-		}
+	
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerType.isWorkflow()) {
-			auditDetail.setBefImage(befCustomerType);
-		}
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
-
+	
 }

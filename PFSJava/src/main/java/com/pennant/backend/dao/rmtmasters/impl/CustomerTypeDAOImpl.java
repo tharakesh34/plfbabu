@@ -48,27 +48,29 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>CustomerType model</b> class.<br>
  * 
  */
-public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
-		CustomerTypeDAO {
+public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements CustomerTypeDAO {
 
 	private static Logger logger = Logger.getLogger(CustomerTypeDAOImpl.class);
 
@@ -78,7 +80,7 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	public CustomerTypeDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Customer Types details by key field
 	 * 
@@ -90,27 +92,25 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	 */
 	@Override
 	public CustomerType getCustomerTypeById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerType customerType = new CustomerType();
 		customerType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select CustTypeCode, CustTypeCtg, CustTypeDesc,CustTypeIsActive," );
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
+		StringBuilder selectSql = new StringBuilder("Select CustTypeCode, CustTypeCtg, CustTypeDesc,CustTypeIsActive,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTCustTypes");
-		selectSql.append(StringUtils.trimToEmpty(type) );
+		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustTypeCode =:CustTypeCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				customerType);
-		RowMapper<CustomerType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerType.class);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
+		RowMapper<CustomerType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerType.class);
 
 		try {
-			customerType = this.namedParameterJdbcTemplate.queryForObject(
-					selectSql.toString(), beanParameters, typeRowMapper);
+			customerType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			customerType = null;
@@ -128,9 +128,8 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTCustTypes or
-	 * RMTCustTypes_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Customer Types by key CustTypeCode
+	 * This method Deletes the Record from the RMTCustTypes or RMTCustTypes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Customer Types by key CustTypeCode
 	 * 
 	 * @param Customer
 	 *            Types (customerType)
@@ -141,33 +140,29 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(CustomerType customerType, String type) {
-		logger.debug("Entering");
+	public void delete(CustomerType customerType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
 		int recordCount = 0;
-		
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTCustTypes");
-		deleteSql.append(StringUtils.trimToEmpty(type)); 
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where CustTypeCode =:CustTypeCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
-				customerType);
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.trace(Literal.SQL + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",customerType.getCustTypeCode(),
-						customerType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails=getError("41006",customerType.getCustTypeCode(),
-					customerType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -184,30 +179,33 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	 * 
 	 */
 	@Override
-	public String save(CustomerType customerType, String type) {
-		logger.debug("Entering");
+	public String save(CustomerType customerType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCustTypes");
-		insertSql.append(StringUtils.trimToEmpty(type)); 
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (CustTypeCode, CustTypeCtg, CustTypeDesc, CustTypeIsActive,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:CustTypeCode, :CustTypeCtg, :CustTypeDesc, :CustTypeIsActive,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.trace(Literal.SQL + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
 		return customerType.getId();
 	}
 
 	/**
-	 * This method updates the Record RMTCustTypes or RMTCustTypes_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Customer Types by key CustTypeCode and Version
+	 * This method updates the Record RMTCustTypes or RMTCustTypes_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Customer Types by key CustTypeCode and Version
 	 * 
 	 * @param Customer
 	 *            Types (customerType)
@@ -219,35 +217,30 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(CustomerType customerType, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
+	public void update(CustomerType customerType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
+		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTCustTypes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustTypeCtg= :CustTypeCtg, CustTypeDesc = :CustTypeDesc," );
-		updateSql.append(" CustTypeIsActive = :CustTypeIsActive," );
+		updateSql.append(tableType.getSuffix());
+		updateSql.append(" Set CustTypeCtg= :CustTypeCtg, CustTypeDesc = :CustTypeDesc,");
+		updateSql.append(" CustTypeIsActive = :CustTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId"); 
+		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustTypeCode =:CustTypeCode");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails=getError("41004",customerType.getCustTypeCode(),
-					customerType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -259,7 +252,7 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 	 */
 	@Override
 	public int validateTypeAndCategory(String custTypeCode, String custCtgCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerType customerType = new CustomerType();
 		customerType.setId(custTypeCode);
@@ -273,21 +266,49 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements
 
 		int recordCount = 0;
 		try {
-			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			recordCount = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return recordCount;
 	}
-	
-	private ErrorDetails  getError(String errorId,String custTypeCode, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		
-		parms[1][0] = custTypeCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustTypeCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
+
+	@Override
+	public boolean isDuplicateKey(String customerTypeCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "CustTypeCode =:CustTypeCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTCustTypes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTCustTypes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCustTypes_Temp", "RMTCustTypes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustTypeCode", customerTypeCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
+
 }

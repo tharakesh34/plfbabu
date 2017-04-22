@@ -49,7 +49,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -537,12 +536,11 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 					closeDialog(); 
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showMessage(e);
+			}catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving ");
 	}
 
 	/**
@@ -667,9 +665,8 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 				// Close the Existing Dialog
 				closeDialog();
 			}
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showMessage(e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
