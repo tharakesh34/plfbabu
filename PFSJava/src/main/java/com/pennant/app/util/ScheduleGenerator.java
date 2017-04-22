@@ -341,7 +341,7 @@ public class ScheduleGenerator {
 
 	public ScheduleGenerator(FinScheduleData scheduleData, String frequency, Date grcStartDate, Date rpyStartDate,
 			Date endDate) {
-		scheduleData.getFinanceScheduleDetails().clear();
+		
 		scheduleData = maintainFrqSchdProcess(scheduleData, frequency, grcStartDate, rpyStartDate, endDate);
 		List<Date> schdDateKeyList = new ArrayList<Date>(scheduleData.getScheduleMap().keySet());
 
@@ -578,7 +578,31 @@ public class ScheduleGenerator {
 			Date grcStartDate, Date rpyStartDate, Date endDate) {
 		logger.debug("Entering");
 
+		
+		
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		Date startCalFrom = null;
+		if (financeMain.isAllowRepayRvw() && StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			if(!FrequencyUtil.isFrqCodeMatch(financeMain.getRepayRvwFrq(), financeMain.getRepayPftFrq())){
+
+				FinanceScheduleDetail prvSchd = null;
+				for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+					if(DateUtility.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) >= 0){
+						if(prvSchd == null){
+							startCalFrom = FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, financeMain.getFinStartDate(), "A", false).getNextFrequencyDate();
+						}else{
+							startCalFrom = FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate();
+						}
+						break;
+					}
+					prvSchd = curSchd;
+				}
+
+			}
+
+		}
+		finScheduleData.getFinanceScheduleDetails().clear();
 		if (financeMain.isAllowGrcPeriod() && grcStartDate != null
 				&& grcStartDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 
@@ -640,8 +664,15 @@ public class ScheduleGenerator {
 
 		// Load Repay profit review dates
 		if (financeMain.isAllowRepayRvw()) {
-			finScheduleData = getSchedule(finScheduleData, getFrequency(financeMain.getRepayRvwFrq(), frequency),
-					rpyStartDate, financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
+
+			if(startCalFrom == null){
+				finScheduleData = getSchedule(finScheduleData, getFrequency(financeMain.getRepayRvwFrq(), frequency),
+						rpyStartDate, financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
+			}else{
+
+				finScheduleData = getSchedule(finScheduleData, financeMain.getRepayRvwFrq(),
+						startCalFrom, financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
+			}
 		}
 
 		// Load Repay capitalize dates
@@ -668,7 +699,10 @@ public class ScheduleGenerator {
 	 * @return
 	 */
 	private static String getFrequency(String frq1, String frq2) {
-
+		
+		if(frq2.substring(3).equals("00")){
+			return frq1;
+		}
 		char frqCode = frq1.charAt(0);
 		String returnfrq = "";
 		switch (frqCode) {
@@ -776,7 +810,10 @@ public class ScheduleGenerator {
 					schedule.setPftOnSchDate(true);
 					schedule.setRepayOnSchDate(true);
 					schedule.setFrqDate(true);
-					financeMain.setNumberOfTerms(frequencyDetails.getScheduleList().size());
+					
+					if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+						financeMain.setNumberOfTerms(frequencyDetails.getScheduleList().size());
+					}
 				}
 
 				finScheduleData.setScheduleMap(schedule);
