@@ -51,6 +51,37 @@
 			
 		</createView>
 	</changeSet>
+	<changeSet id="03" author="Surekha">
+		<createView viewName="NPABUCKETSCONFIG_View" replaceIfExists="true">
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG_Temp  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
+			UNION ALL
+			
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+						,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
+			WHERE     NOT EXISTS (SELECT 1 FROM NPABUCKETSCONFIG_TEMP WHERE ConfigID = T1.ConfigID)
+			
+		</createView>
+	</changeSet>
+	<changeSet id="04" author="Surekha">
+		<createView viewName="NPABUCKETSCONFIG_AView" replaceIfExists="true">
+			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
+			,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ProductDesc ProductCodeName, T3.BucketDesc BucketIDName
+			FROM    	NPABUCKETSCONFIG  T1 INNER JOIN
+						BMTProduct T2 ON T1.ProductCode = T2.ProductCode LEFT JOIN
+						NPABUCKETS T3 ON T1.BucketID = T3.BucketID
+			
+		</createView>
+	</changeSet>
 	
 	<changeSet id="05" author="Durgaprasad G">
 	<sql>
@@ -272,7 +303,7 @@
 	</changeSet>
 
 
-	<changeSet id="07" author="Durgaprasad G">
+	<!-- <changeSet id="07" author="Durgaprasad G">
 		<createView viewName="INT_DISBURSEMENT_EXPORT_VIEW" replaceIfExists="true">
 				SELECT DISB.PAYMENTTYPE, FM.CUSTID, DISB.BENEFICIARYACCNO, DISB.AMTTOBERELEASED/100 AS AMTTOBERELEASED, DISB.BENEFICIARYNAME, DISB.LIABILITYHOLDNAME, DISB.PAYABLELOC, '' BENEFICIARYCITY, DISB.PRINTINGLOC,
 	'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
@@ -293,6 +324,416 @@
 	WHERE DISB.STATUS='APPROVED'	
 			
 		</createView>
+	</changeSet> -->
+		<changeSet id="09" author="Surekha">
+		<createTable tableName="CostCenters">
+			<column name="CostCenterID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CostCenterCode" type="varchar(15)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="CostCenterDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="10" author="Surekha">
+		<createTable tableName="ProfitCenters">
+			<column name="ProfitCenterID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProfitCenterCode" type="varchar(15)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ProfitCenterDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="11" author="Surekha">
+		<createTable tableName="PresentmentHeader">
+			<column name="PresentmentID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MandateType" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PartnerBankID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentmentDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="12" author="Surekha">
+		<createTable tableName="PresentmentDetails">
+			<column name="DetailID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PresentmentID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MandateID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchAmtDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPriDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPftDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchFeeDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchInsDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPenaltyDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdvanceAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentmentAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcludeReason" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BounceID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="13" author="Surekha">
+		<createTable tableName="BounceReasons">
+			<column name="BounceID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BounceCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ReasonType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Category" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Action" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reason" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReturnID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="15" author="Surekha">
+		<createTable tableName="CostCenters_Temp">
+			<column name="CostCenterID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CostCenterCode" type="varchar(15)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="CostCenterDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="16" author="Surekha">
+		<createTable tableName="ProfitCenters_Temp">
+			<column name="ProfitCenterID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProfitCenterCode" type="varchar(15)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ProfitCenterDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="17" author="Surekha">
+		<createTable tableName="PresentmentHeader_Temp">
+			<column name="PresentmentID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MandateType" type="varchar(20)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PartnerBankID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentmentDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="18" author="Surekha">
+		<createTable tableName="PresentmentDetails_Temp">
+			<column name="DetailID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PresentmentID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MandateID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchAmtDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPriDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPftDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchFeeDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchInsDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchPenaltyDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdvanceAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentmentAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcludeReason" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BounceID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="19" author="Surekha">
+		<createTable tableName="BounceReasons_Temp">
+			<column name="BounceID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BounceCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ReasonType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Category" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Action" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reason" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReturnID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="20" author="Surekha">
+		<createTable tableName="SeqDPDBUCKETS">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="21" author="Surekha">
+		<sql>
+			INSERT INTO SeqDPDBUCKETS VALUES(0);
+		</sql>
 	</changeSet>
 		<changeSet id="08" author="pruthvi">
 		<sql>
