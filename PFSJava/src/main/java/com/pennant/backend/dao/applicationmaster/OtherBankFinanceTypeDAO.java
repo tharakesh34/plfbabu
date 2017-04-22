@@ -42,15 +42,22 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
+import com.pennanttech.pff.core.TableType;
 
-public interface OtherBankFinanceTypeDAO {
+public interface OtherBankFinanceTypeDAO extends BasicCrudDao<OtherBankFinanceType> {
 
 	OtherBankFinanceType getOtherBankFinanceTypeById(String id, String type);
-
-	void update(OtherBankFinanceType otherBankFinanceType, String type);
-
-	void delete(OtherBankFinanceType otherBankFinanceType, String type);
-
-	String save(OtherBankFinanceType otherBankFinanceType, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param finType
+	 *            of OtherBankFinanceType
+	 * @param tableType
+	 *            of OtherBankFinanceType
+	 * @return
+	 */
+	boolean isDuplicateKey(String finType, TableType tableType);
 }

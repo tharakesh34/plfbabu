@@ -42,9 +42,6 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.OtherBankFinanceTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>OtherBankFinanceType</b>.<br>
@@ -124,11 +122,11 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		TableType tableType = TableType.MAIN_TAB;
 		OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) auditHeader.getAuditDetail().getModelData();
 		
 		if (otherBankFinanceType.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (otherBankFinanceType.isNew()) {
@@ -163,7 +161,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 		}
 		
 		OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) auditHeader.getAuditDetail().getModelData();
-		getOtherBankFinanceTypeDAO().delete(otherBankFinanceType,"");
+		getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -220,11 +218,14 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 		OtherBankFinanceType otherBankFinanceType = new OtherBankFinanceType();
 		BeanUtils.copyProperties((OtherBankFinanceType) auditHeader.getAuditDetail().getModelData(),
 				otherBankFinanceType);
-
+		getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(otherBankFinanceType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(otherBankFinanceTypeDAO.getOtherBankFinanceTypeById(otherBankFinanceType.getId(), ""));
+		}
 		if (otherBankFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, "");
+			getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, TableType.MAIN_TAB);
 
 		} else {
 			otherBankFinanceType.setRoleCode("");
@@ -236,15 +237,15 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 			if (otherBankFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				otherBankFinanceType.setRecordType("");
-				getOtherBankFinanceTypeDAO().save(otherBankFinanceType, "");
+				getOtherBankFinanceTypeDAO().save(otherBankFinanceType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				otherBankFinanceType.setRecordType("");
-				getOtherBankFinanceTypeDAO().update(otherBankFinanceType, "");
+				getOtherBankFinanceTypeDAO().update(otherBankFinanceType, TableType.MAIN_TAB);
 			}
 		}
 
-		getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -279,7 +280,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 			OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) auditHeader.getAuditDetail().getModelData();
 			
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getOtherBankFinanceTypeDAO().delete(otherBankFinanceType,"_Temp");
+			getOtherBankFinanceTypeDAO().delete(otherBankFinanceType, TableType.TEMP_TAB);
 			
 			getAuditHeaderDAO().addAudit(auditHeader);
 			logger.debug("Leaving");
@@ -302,7 +303,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 		
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
@@ -310,75 +311,24 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 			return auditHeader;
 		}
 
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-			OtherBankFinanceType otherBankFinanceType= (OtherBankFinanceType) auditDetail.getModelData();
-			
-			OtherBankFinanceType tempOtherBankFinanceType= null;
-			if (otherBankFinanceType.isWorkflow()){
-				tempOtherBankFinanceType = getOtherBankFinanceTypeDAO().getOtherBankFinanceTypeById(otherBankFinanceType.getId(), "_Temp");
-			}
-			OtherBankFinanceType befOtherBankFinanceType= getOtherBankFinanceTypeDAO().getOtherBankFinanceTypeById(otherBankFinanceType.getId(), "");
-			
-			OtherBankFinanceType oldOtherBankFinanceType= otherBankFinanceType.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=otherBankFinanceType.getId();
-			errParm[0]=PennantJavaUtil.getLabel("label_FinType")+":"+valueParm[0];
-			
-			if (otherBankFinanceType.isNew()){ // for New record or new record into work flow
-				
-				if (!otherBankFinanceType.isWorkflow()){// With out Work flow only new records  
-					if (befOtherBankFinanceType !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-					}	
-				}else{ // with work flow
-					if (otherBankFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befOtherBankFinanceType !=null || tempOtherBankFinanceType!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-						}
-					}else{ // if records not exists in the Main flow table
-						if (befOtherBankFinanceType ==null || tempOtherBankFinanceType!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-						}
-					}
-				}
-			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!otherBankFinanceType.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befOtherBankFinanceType ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-					}else{
-						if (oldOtherBankFinanceType!=null && !oldOtherBankFinanceType.getLastMntOn().equals(befOtherBankFinanceType.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
-							}
-						}
-					}
-				}else{
-				
-					if (tempOtherBankFinanceType==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-					
-					if (tempOtherBankFinanceType!=null && oldOtherBankFinanceType!=null && !oldOtherBankFinanceType.getLastMntOn().equals(tempOtherBankFinanceType.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-				}
-			}
 
+			// Get the model object.
+			OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) auditDetail.getModelData();
+			// Check the unique keys.
+			if (otherBankFinanceType.isNew()
+					&& PennantConstants.RECORD_TYPE_NEW.equals(otherBankFinanceType.getRecordType())
+					&& otherBankFinanceTypeDAO.isDuplicateKey(otherBankFinanceType.getId(),
+							otherBankFinanceType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_FinType")+":"+ otherBankFinanceType.getId();
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+		
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if("doApprove".equals(StringUtils.trimToEmpty(method)) || !otherBankFinanceType.isWorkflow()){
-				otherBankFinanceType.setBefImage(befOtherBankFinanceType);	
-			}
 
+			logger.debug("Leaving");
 			return auditDetail;
 		}
 
