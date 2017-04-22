@@ -445,7 +445,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
 					continue;
 				}
-				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0){
+				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
 					continue;
 				}
 				
