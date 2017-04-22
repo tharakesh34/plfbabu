@@ -339,6 +339,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("FinType");
 		searchObject.addField("BranchCode");
 		searchObject.addField("BranchDesc");
+		searchObject.addField("PARTNERBANKCODE");
 		searchObject.addTabelName(this.tableName);
 		
 		for (SearchFilterControl searchControl : searchControls) {
@@ -360,6 +361,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				finAdvancePayments.setPaymentId(paymentid);
 				finAdvancePayments.setPaymentType(String.valueOf(map.get("PaymentType")));
 				finAdvancePayments.setPartnerBankID(Long.parseLong(String.valueOf(map.get("PartnerBankId"))));
+				finAdvancePayments.setPartnerbankCode(String.valueOf(map.get("PARTNERBANKCODE")));
+				
 				disbMap.put(paymentid, finAdvancePayments);
 			}
 		}
@@ -456,7 +459,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		// Show a confirm box
 		
-		String msg = " " + this.pagingDisbursementList.getTotalSize() + "/" + this.disbursementMap.size() + " Selected.\n Do you want to continue? ";
+		String msg = " " + this.pagingDisbursementList.getTotalSize() + "/" + this.disbursementMap.size() + " Disbursements selected for process.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
@@ -468,14 +471,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 			disbursementService = new DisbursementService(this.finType.getValue(), disbushmentList, App.DATABASE.name(),  getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			Thread thread = new Thread(disbursementService);
-			try {
-				DisbursementService.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			thread.start();
 		
-			MessageUtil.showMessage("File Download process initiated.");
+			MessageUtil.showMessage("File download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
 			
 		} finally {
