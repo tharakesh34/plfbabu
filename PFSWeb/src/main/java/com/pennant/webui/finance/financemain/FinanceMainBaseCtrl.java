@@ -6082,12 +6082,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									String message;
 
 									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-										message = Labels.getLabel("REC_FINALIZED_MESSAGE") + " with Reference" + ":"
-												+ reference;
+										message = Labels.getLabel("REC_FINALIZED_MESSAGE");
 									} else {
-										message = Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-												+ reference;
+										message = Labels.getLabel("REC_PENDING_MESSAGE");
 									}
+									message += " with Reference" + ":" + reference;
 
 									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
 								}
