@@ -9502,10 +9502,10 @@
 	
 <!-- NPABucket -->
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl"  parent="basisNextidDao">
-		<property name="dataSource" ref="pffDatasource" />
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="nPABucketService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-       <property name="transactionManager" ><ref bean="pffTransactionManager" /></property>
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
 	   <property name="target"><ref bean="nPABucketServiceTarget"/></property>
        <property name="transactionAttributes">
            <props>
