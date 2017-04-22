@@ -85,7 +85,7 @@ public class EventManager implements ServletContextListener {
 		data[3] = to;
 
 		// Publish the event
-		EventQueue<Event> queue = null;
+		EventQueue<Event> queue;
 
 		if (Executions.getCurrent() == null) {
 			queue = EventQueues.lookup(QUEUE_NAME, WebManager.getWebManager(servletContext).getWebApp(), true);
@@ -112,7 +112,7 @@ public class EventManager implements ServletContextListener {
 		}
 
 		Map<String, Boolean> activeUsers = new HashMap<>();
-		List<OfflineUsersMessagesBackup> offlineMessages = new ArrayList<OfflineUsersMessagesBackup>();
+		List<OfflineUsersMessagesBackup> offlineMessages = new ArrayList<>();
 		if (Executions.getCurrent() != null) {
 			activeUsers = getActiveUsers();
 		}
@@ -131,7 +131,7 @@ public class EventManager implements ServletContextListener {
 			}
 		}
 
-		if (offlineMessages.size() > 0) {
+		if (!offlineMessages.isEmpty()) {
 			messagesService.saveOfflineUsersMessages(offlineMessages);
 		}
 	}

@@ -793,13 +793,8 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	
 	@Override
 	public List<String> getUsrMailsByRoleIds(String roleCode) {
-		
 		return getSecurityUserOperationsDAO().getUsrMailsByRoleIds(roleCode);
 	}
-
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	public SecurityUserOperationsDAO getSecurityUserOperationsDAO() {
 		return securityUserOperationsDAO;
@@ -813,8 +808,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		return auditHeaderDAO;
 	}
 
-	public void setSecurityRoleGroupsDAO(
-			SecurityRoleGroupsDAO securityRoleGroupsDAO) {
+	public void setSecurityRoleGroupsDAO(SecurityRoleGroupsDAO securityRoleGroupsDAO) {
 		this.securityRoleGroupsDAO = securityRoleGroupsDAO;
 	}
 
@@ -826,13 +820,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		return securityOperationRolesDAO;
 	}
 
-	public void setSecurityOperationRolesDAO(
-			SecurityOperationRolesDAO securityOperationRolesDAO) {
+	public void setSecurityOperationRolesDAO(SecurityOperationRolesDAO securityOperationRolesDAO) {
 		this.securityOperationRolesDAO = securityOperationRolesDAO;
 	}
 
-	public void setSecurityUserOperationsDAO(
-			SecurityUserOperationsDAO securityUserOperationsDAO) {
+	public void setSecurityUserOperationsDAO(SecurityUserOperationsDAO securityUserOperationsDAO) {
 		this.securityUserOperationsDAO = securityUserOperationsDAO;
 	}
 
@@ -848,14 +840,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		return securityOperationDAO;
 	}
 
-	public void setSecurityOperationDAO(
-			SecurityOperationDAO securityOperationDAO) {
+	public void setSecurityOperationDAO(SecurityOperationDAO securityOperationDAO) {
 		this.securityOperationDAO = securityOperationDAO;
 	}
-
-	
-
-	
-
-
 }
