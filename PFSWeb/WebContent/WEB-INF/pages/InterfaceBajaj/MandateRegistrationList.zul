@@ -71,7 +71,11 @@
 									<combobox id="status" width="171px" />
 									<label id="label_MandateList_InputDate" value="${c:l('label_MandateList_InputDate.value')}" />
 									<listbox id="sortOperator_InputDate" width="43px" mold="select" rows="1" />
-									<datebox id="inputDate" width="171px" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="inputDate" width="171px" />
+									</hbox>
+									
 								</row>
 								<row visible="false">
 									<label id="label_MandateList_JointAccHolderName" value="${c:l('label_MandateList_JointAccHolderName.value')}" />
@@ -88,17 +92,17 @@
 						<listbox id="listBoxMandateRegistration" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="true" autopaging="true">
 							<listhead sizable="true">
 								<listheader id="listHeader_CheckBox_Name"   hflex="min" align="center"/>
-								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_BankName" label="${c:l('listheader_BankName.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_AccNumber" label="${c:l('listheader_AccNumber.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_AccType" label="${c:l('listheader_AccType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_Amount" label="${c:l('listheader_Amount.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ExpiryDate" label="${c:l('listheader_ExpiryDate.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_InputDate" label="${c:l('listheader_InputDate.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" visible="false" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" visible="false" />
+								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}"  hflex="min" />
+								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}"  hflex="min" />
+								<listheader id="listheader_BankName" label="${c:l('listheader_BankName.label')}"  hflex="min" />
+								<listheader id="listheader_AccNumber" label="${c:l('listheader_AccNumber.label')}"  hflex="min" />
+								<listheader id="listheader_AccType" label="${c:l('listheader_AccType.label')}"  hflex="min" />
+								<listheader id="listheader_Amount" label="${c:l('listheader_Amount.label')}"  hflex="min" />
+								<listheader id="listheader_ExpiryDate" label="${c:l('listheader_ExpiryDate.label')}"  hflex="min" />
+								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}"  hflex="min" />
+								<listheader id="listheader_InputDate" label="${c:l('listheader_InputDate.label')}"  hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"  hflex="min" visible="false" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"  hflex="min" visible="false" />
 							</listhead>
 						</listbox>
 					</div>

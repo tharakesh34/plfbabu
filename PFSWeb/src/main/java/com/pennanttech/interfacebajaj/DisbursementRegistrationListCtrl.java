@@ -87,7 +87,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.bajaj.service.DisbursementService;
+import com.pennanttech.bajaj.services.DisbursementService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
@@ -173,6 +173,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerButton(button_Search);
 		registerField("paymentid");
 		registerField("BranchDesc");
+		registerField("LLDATE");
 		
 		registerField("PartnerBankId", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes, sortOperator_DisbType, Operators.STRING);
@@ -231,7 +232,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.branch.setValueColumn("BranchCode");
 		this.branch.setDescColumn("BranchDesc");
 		this.branch.setValidateColumns(new String[] { "BranchCode" });
-		this.branch.setMandatoryStyle(true);
 	}
 
 	/**

@@ -57,9 +57,11 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
@@ -199,7 +201,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		// Set the page level components.
 		setPageComponents(window_MandateRegistrationList, borderLayout_MandateList, listBoxMandateRegistration, pagingMandateList);
 		setItemRender(new MandateListModelItemRenderer());
-
+		
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
 
@@ -390,6 +392,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public void onClick$button_MandateList_MandateSearch(Event event) {
 		this.mandateIdMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
+		
+		doSetValidations();
 		search();
 		
 		if (listBoxMandateRegistration.getItems().size() > 0) {
@@ -397,6 +401,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
+	}
+	
+	
+	private void doSetValidations() {
+		
+		Clients.clearWrongValue(this.inputDate);
+		this.inputDate.setErrorMessage("");
+	
+		if(this.inputDate.getValue() == null){
+			throw new WrongValueException(this.inputDate, "InputDate should be mandatory. ");
+		}
+		
 	}
 
 	/**
@@ -515,6 +531,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("MANDATEID", mandateIdList);
+			filterMap.put("INPUTDATE", this.inputDate.getValue());
 			dataEngine.setFilterMap(filterMap);
 
 			dataEngine.exportData("MANDATES_EXPORT");
