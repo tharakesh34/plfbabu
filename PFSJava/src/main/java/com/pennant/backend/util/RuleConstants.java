@@ -1,13 +1,7 @@
 package com.pennant.backend.util;
 
 public class RuleConstants {
-
-	public RuleConstants() {
-		super();
-	}
-
 	public static final String RULEFIELD_CCY = "CCY";
-	public static final int RULEFIELD_CCY_AMT = 100;
 
 	public static final String TAKAFUL_FEE = "TAKAFUL";
 	public static final String AUTOINS_FEE = "AUTOINS";
@@ -133,4 +127,7 @@ public class RuleConstants {
 	public static final String COMPONENTTYPE_PERCENTAGE = "Percentage"; 	
 	public static final String COMPONENTTYPE_EXTENDEDCOMBOBOX = "ExtendedCombobox"; 	
 	
+	private RuleConstants() {
+		super();
+	}
 }
