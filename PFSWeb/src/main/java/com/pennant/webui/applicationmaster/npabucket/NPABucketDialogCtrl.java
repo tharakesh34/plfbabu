@@ -132,8 +132,8 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		
 		try {
 			// Get the required arguments.
-			this.nPABucket = (NPABucket) arguments.get("nPABucket");
-			this.nPABucketListCtrl = (NPABucketListCtrl) arguments.get("nPABucketListCtrl");
+			this.nPABucket = (NPABucket) arguments.get("npabucket");
+			this.nPABucketListCtrl = (NPABucketListCtrl) arguments.get("npabucketListCtrl");
 
 			if (this.nPABucket == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
