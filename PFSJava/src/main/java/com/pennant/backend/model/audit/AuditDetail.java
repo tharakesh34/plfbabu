@@ -54,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.util.ClassUtil;
 
@@ -298,6 +299,10 @@ public class AuditDetail implements java.io.Serializable, Entity {
 		}
 
 		errors.add(errorDetails);
+	}
+
+	public void setErrorDetail(long errorCode) {
+		setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, String.valueOf(errorCode), null, null));
 	}
 
 	public void setLovDescAuditRef(Object lovDescAuditRef) {
