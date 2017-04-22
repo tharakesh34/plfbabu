@@ -72,8 +72,28 @@ public interface SecurityUserOperationsService {
 	int getSecurityUserOprInQueue(long oprID, String tableType);
 
 	AuditHeader delete(AuditHeader auditHeader);
-	
+
+	/**
+	 * Get the user logins for the specified roles.
+	 * 
+	 * @param roleCodes
+	 *            List of roles.
+	 * @return The user logins for the specified roles.
+	 */
 	List<String> getUsersByRoles(String[] roleCodes);
-	
+
+	/**
+	 * Get the user logins for the specified roles those have access to the division and branch.
+	 * 
+	 * @param roleCodes
+	 *            List of roles.
+	 * @param division
+	 *            Division code.
+	 * @param branch
+	 *            Branch code.
+	 * @return The user logins for the specified roles those have access to the division and branch.
+	 */
+	List<String> getUsersByRoles(String[] roleCodes, String division, String branch);
+
 	List<String> getUsrMailsByRoleIds(String roleCode);
 }

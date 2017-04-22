@@ -70,11 +70,12 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserOperations;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
 
 public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements
 		SecurityUserOperationsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserOperationsDAOImpl.class);
-	private NamedParameterJdbcTemplate JdbcTemplate;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	/**
 	 * This method returns new SecurityUserOperations Object
@@ -105,7 +106,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 	 */
 
 	public void setDataSource(DataSource dataSource) {
-		this.JdbcTemplate = new NamedParameterJdbcTemplate(
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(
 				dataSource);
 	}
 
@@ -138,7 +139,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 		logger.debug("Leaving ");
-		return this.JdbcTemplate.query(selectSql.toString(),
+		return this.jdbcTemplate.query(selectSql.toString(),
 				beanParameters, typeRowMapper);
 	}
 
@@ -173,7 +174,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 				.newInstance(SecurityUserOperations.class);
 
 		try {
-			secUserOperations = this.JdbcTemplate.queryForObject(
+			secUserOperations = this.jdbcTemplate.queryForObject(
 					selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -206,7 +207,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 					securityUserOperations);
-			recordCount = this.JdbcTemplate.update(
+			recordCount = this.jdbcTemplate.update(
 					deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				ErrorDetails errorDetails = getError("41004",
@@ -245,7 +246,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				userOperations);
-		this.JdbcTemplate.update(deleteSql.toString(),
+		this.jdbcTemplate.update(deleteSql.toString(),
 				beanParameters);
 		logger.debug("Leaving");
 	}
@@ -275,7 +276,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("insertSql:" + sql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserOperations);
-		this.JdbcTemplate.update(sql.toString(),
+		this.jdbcTemplate.update(sql.toString(),
 				beanParameters);
 		logger.debug("Leaving ");
 		return securityUserOperations.getId();
@@ -318,7 +319,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("updateSql:" + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
 				securityUserOperations);
-		recordCount = this.JdbcTemplate.update(
+		recordCount = this.jdbcTemplate.update(
 				sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
@@ -348,7 +349,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			count = this.JdbcTemplate
+			count = this.jdbcTemplate
 					.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -374,7 +375,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			status = this.JdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
+			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			status = 0;
@@ -421,7 +422,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 					.append(" (select RoleID from UserRoles_AView where UsrID = :UsrID)");
 		}
 		logger.debug("selectSql:" + selectSql);
-		secOperationsList = this.JdbcTemplate.query(
+		secOperationsList = this.jdbcTemplate.query(
 				selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving ");
 		return secOperationsList;
@@ -444,7 +445,7 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 		source.addValue("OprID", oprID);
 
 		try {
-			return this.JdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 		} finally {
@@ -465,28 +466,51 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 				PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
 				userLanguage);
 	}
-	
-	
+
 	@Override
 	public List<String> getUsersByRoles(String[] roleCodes) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Build the parameter source
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RoleCodes", Arrays.asList(roleCodes));
-
-		// Build the SQL
-		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct U.UsrLogin");
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select distinct U.UsrLogin");
 		sql.append(" from SecUsers U");
-		sql.append(" inner join SecUserOperations UO on UO.UsrID = U.UsrID ");
-		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID  ");
+		sql.append(" inner join SecUserOperations UO on UO.UsrID = U.UsrID");
+		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
 		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
 		sql.append(" where R.RoleCd in (:RoleCodes)");
-		logger.debug("SQL: " + sql.toString());
 
-		logger.debug("Leaving ");
-		return this.JdbcTemplate.queryForList(sql.toString(), source, String.class);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("RoleCodes", Arrays.asList(roleCodes));
+
+		logger.debug(Literal.LEAVING);
+		return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+	}
+
+	@Override
+	public List<String> getUsersByRoles(String[] roleCodes, String division, String branch) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select distinct U.UsrLogin");
+		sql.append(" from SecUsers U");
+		sql.append(" inner join SecUserOperations UO on UO.UsrID = U.UsrID");
+		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
+		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
+		sql.append(" inner join SecurityUserDivBranch UDB on UDB.UsrID = U.UsrID");
+		sql.append(" where R.RoleCd in (:RoleCodes)");
+		sql.append(" and UDB.UserDivision = :UserDivision and UDB.UserBranch = :UserBranch");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("RoleCodes", Arrays.asList(roleCodes));
+		paramSource.addValue("UserDivision", division);
+		paramSource.addValue("UserBranch", branch);
+
+		logger.debug(Literal.LEAVING);
+		return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
 	}
 
 	/**
@@ -507,8 +531,6 @@ public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUs
 
 		logger.debug("selectSql:" + selectSql);
 		logger.debug("Leaving ");
-		return this.JdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
-
-	
 }

@@ -687,6 +687,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	}
 
 	@Override
+	public List<String> getUsersByRoles(String[] roleCodes, String division, String branch) {
+		return securityUserOperationsDAO.getUsersByRoles(roleCodes, division, branch);
+	}
+
+	@Override
 	public List<String> getUsrMailsByRoleIds(String roleCode) {
 		return securityUserOperationsDAO.getUsrMailsByRoleIds(roleCode);
 	}

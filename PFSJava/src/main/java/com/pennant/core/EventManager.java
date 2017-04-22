@@ -152,9 +152,11 @@ public class EventManager implements ServletContextListener {
 	public void publish(String message, Notify notify, String[] to) throws Exception {
 		publish(message, "SYSTEM", notify, to);
 	}
-	
-	public void publish(String message, Notify notify, String[] to, String division, String branch) throws Exception {
-		publish(message, "SYSTEM", notify, to);
+
+	public void publish(String message, String[] toRoles, String division, String branch) throws Exception {
+		List<String> userLogins = securityUserOperationsService.getUsersByRoles(toRoles, division, branch);
+
+		publish(message, "SYSTEM", Notify.USER, userLogins.toArray(new String[0]));
 	}
 
 	/**
