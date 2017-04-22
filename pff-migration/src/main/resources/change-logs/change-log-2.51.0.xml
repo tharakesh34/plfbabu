@@ -317,7 +317,7 @@ null,0,20,0,0,2,1,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null
 		
 		</changeSet>
 		
-	<changeSet id="09" author="Durgaprasad G">
+	<changeSet id="14" author="Durgaprasad G">
 		<createView viewName="MANDATES_AVIEW" replaceIfExists="true"> 
   SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
 			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
