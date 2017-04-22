@@ -26,10 +26,10 @@ import com.pennant.backend.service.messages.MessagesService;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class EventManager implements ServletContextListener {
-	public static final String QUEUE_NAME = "AppNotificationQueue";
-	private static ServletContext servletContext;
-	private SecurityUserOperationsService securityUserOperationsService;
-	private MessagesService messagesService;
+	public static final String				QUEUE_NAME	= "AppNotificationQueue";
+	private static ServletContext			servletContext;
+	private SecurityUserOperationsService	securityUserOperationsService;
+	private MessagesService					messagesService;
 
 	public enum Notify {
 		USER, ROLE
@@ -43,11 +43,9 @@ public class EventManager implements ServletContextListener {
 	 * Publishes the message on behalf of the sender
 	 * 
 	 * @param message
-	 *            The message that need to be published and will be formatted to
-	 *            include sender information
+	 *            The message that need to be published and will be formatted to include sender information
 	 * @param from
-	 *            The login name of the sender, if not provided defaulted to
-	 *            "SYSTEM"
+	 *            The login name of the sender, if not provided defaulted to "SYSTEM"
 	 * @param notify
 	 *            Type of recipients
 	 * @param to
@@ -107,7 +105,7 @@ public class EventManager implements ServletContextListener {
 			int i = 0;
 
 			for (String login : userLogins) {
-				recipients[i++] =login;
+				recipients[i++] = login;
 			}
 		}
 
@@ -140,8 +138,7 @@ public class EventManager implements ServletContextListener {
 	 * Publishes the message on behalf of the System
 	 * 
 	 * @param message
-	 *            The message that need to be published and will be formatted to
-	 *            include sender information
+	 *            The message that need to be published and will be formatted to include sender information
 	 * @param notify
 	 *            Type of recipients
 	 * @param to
@@ -162,7 +159,7 @@ public class EventManager implements ServletContextListener {
 	 * @return A map of active users and their desktop status
 	 */
 	public static Map<String, Boolean> getActiveUsers() {
-		Map<String, Boolean> users = new HashMap<String, Boolean>();
+		Map<String, Boolean> users = new HashMap<>();
 
 		for (String userId : SessionUtil.getCurrentLoginUsers().keySet()) {
 			users.put(userId, true);
