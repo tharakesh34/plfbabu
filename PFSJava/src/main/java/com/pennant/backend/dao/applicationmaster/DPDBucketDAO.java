@@ -39,16 +39,17 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster;
+
+import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennanttech.pff.core.TableType;
 
 public interface DPDBucketDAO extends BasicCrudDao<DPDBucket> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +59,8 @@ public interface DPDBucketDAO extends BasicCrudDao<DPDBucket> {
 	 *            The type of the table.
 	 * @return DPDBucket
 	 */
-	DPDBucket getDPDBucket(long bucketID,String type);
+	DPDBucket getDPDBucket(long bucketID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +72,8 @@ public interface DPDBucketDAO extends BasicCrudDao<DPDBucket> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType);
+
+	List<DPDBucket> getDPDBuckets();
+
 }

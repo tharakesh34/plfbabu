@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennanttech.pff.core.TableType;
@@ -74,4 +76,5 @@ public interface DPDBucketConfigurationDAO extends BasicCrudDao<DPDBucketConfigu
 	 */
 	boolean isDuplicateKey(long configID, String productCode, long bucketID, TableType tableType);
 
+	List<DPDBucketConfiguration> getDPDBucketConfigurations();
 }

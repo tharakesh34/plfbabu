@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -239,6 +241,26 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	
+	@Override
+	public List<DPDBucketConfiguration> getDPDBucketConfigurations() {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit, ");
+		sql.append(" From DPDBUCKETSCONFIG");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DPDBucketConfiguration.class);
+		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);;
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
+
+	
 
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
@@ -249,5 +271,6 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
 
 }

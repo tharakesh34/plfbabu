@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -108,7 +110,26 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;
 	}
+	
+	@Override
+	public List<DPDBucket> getDPDBuckets() {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" bucketID, bucketCode");
+		sql.append(" From DPDBUCKETS");
+		sql.append(" Where bucketID = :bucketID");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
 
+		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
+		List<DPDBucket> dPDBucket = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+		logger.debug(Literal.LEAVING);
+		return dPDBucket;
+	}
+	
 	@Override
 	public boolean isDuplicateKey(long bucketID, String bucketCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -243,5 +264,4 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
 }
