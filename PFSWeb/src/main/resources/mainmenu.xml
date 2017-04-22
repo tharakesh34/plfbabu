@@ -101,12 +101,9 @@
 	    <menuItem id="menu_Item_ChequePurpose" zulNavigation="/WEB-INF/pages/ApplicationMaster/ChequePurpose/ChequePurposeList.zul" rightName="menuItem_ApplicationMaster_ChequePurpose"/> -->		
 		<!-- <menuItem id="menu_Item_SysNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=N" />		
 	    <menuItem id="menu_Item_SendNotifications" zulNavigation="/WEB-INF/pages/ApplicationMaster/SystemNotifications/SysNotificationList.zul?sendNotification=Y" /> -->
-	    <!-- <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName="menuItem_applicationmaster_FinanceStatusCodes"/>
+	    <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName="menuItem_applicationmaster_FinanceStatusCodes"/>
 	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucket"/>
-		<menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
-	    <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName=""/>
-	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" rightName=""/>
-		<menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" rightName=""/>
+		<menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/>
 	</menu>
 
 	<!-- Account Menu Tree -->
