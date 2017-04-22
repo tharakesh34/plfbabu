@@ -773,7 +773,7 @@ FROM    	Mandates  T1 INNER JOIN
 			BMTBankDetail  T4  ON T3.BankCode=T4.BankCode
 			</createView>
 	</changeSet>
-	  <changeSet id="15" author="prasad">
+	  <changeSet id="22" author="prasad">
 		<sql>
 		delete from errordetails where errorcode ='90320';
 			insert into errordetails (errorcode, errorlanguage, errorseverity, errormessage, recordstatus, workflowid, lastmnton, lastmntby, version) 
