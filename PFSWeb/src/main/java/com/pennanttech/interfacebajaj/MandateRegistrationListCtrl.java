@@ -519,7 +519,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		
 		// Show a confirm box
-		String msg = " Out of " + this.pagingMandateList.getTotalSize() + " records, " + this.mandateIdMap.size() + " records are ready for download.\n Are you sure to download? ";
+		String msg = " " + this.pagingMandateList.getTotalSize() + "/" + this.mandateIdMap.size() + " Selected.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
@@ -536,7 +536,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 			dataEngine.exportData("MANDATES_EXPORT");
 			
-			MessageUtil.showMessage("Download files process initiated. Please check the progress at File Downloads.");
+			MessageUtil.showMessage("File Download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
 			
 		} catch (Exception e) {
@@ -567,6 +567,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		tab.setLabel(Labels.getLabel(tabName));
 		tab.setClosable(true);
 		tab.setParent(tabs);
+		tab.setLabel("Download");
 
 		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
 		final Tabpanel tabpanel = new Tabpanel();

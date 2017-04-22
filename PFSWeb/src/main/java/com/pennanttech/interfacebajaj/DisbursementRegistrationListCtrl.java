@@ -209,7 +209,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 		
 		this.finType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.finType.setMandatoryStyle(true);
 		this.finType.setModuleName("FinanceWorkFlow");
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("LovDescFinTypeName");
@@ -219,7 +218,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(true), "");
 		
 		this.partnerBank.setModuleName("PartnerBank");
-		this.partnerBank.setMandatoryStyle(true);
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setDescColumn("PartnerBankName");
@@ -227,7 +225,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.partnerBank.setMandatoryStyle(true);
 		
 		this.branch.setModuleName("BankBranch");
-		this.branch.setMandatoryStyle(true);
 		this.branch.setDisplayStyle(2);
 		this.branch.setValueColumn("BranchCode");
 		this.branch.setDescColumn("BranchDesc");
@@ -458,7 +455,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		
 		// Show a confirm box
-		String msg = " Out of " + this.pagingDisbursementList.getTotalSize() + " records, " + this.disbursementMap.size() + " records are ready for download.\n Are you sure to download? ";
+		
+		String msg = " " + this.pagingDisbursementList.getTotalSize() + "/" + this.disbursementMap.size() + " Selected.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
@@ -477,7 +475,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 			thread.start();
 		
-			MessageUtil.showMessage("Download files process initiated. Please check the progress at File Downloads.");
+			MessageUtil.showMessage("File Download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
 			
 		} finally {
@@ -506,6 +504,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		tab.setLabel(Labels.getLabel(tabName));
 		tab.setClosable(true);
 		tab.setParent(tabs);
+		tab.setLabel("Download");
 
 		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
 		final Tabpanel tabpanel = new Tabpanel();

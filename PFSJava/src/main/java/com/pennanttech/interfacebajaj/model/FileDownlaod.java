@@ -6,7 +6,7 @@ public class FileDownlaod {
 	private String fileName;
 	private String fileLocation;
 	private String partnerBankName;
-	private int    allowFileDownload;
+	private int    alwFileDownload;
 	private String status;
 
 	public String getName() {
@@ -41,12 +41,12 @@ public class FileDownlaod {
 		this.partnerBankName = partnerBankName;
 	}
 
-	public int getAllowFileDownload() {
-		return allowFileDownload;
+	public int getAlwFileDownload() {
+		return alwFileDownload;
 	}
 
-	public void setAllowFileDownload(int allowFileDownload) {
-		this.allowFileDownload = allowFileDownload;
+	public void setAlwFileDownload(int alwFileDownload) {
+		this.alwFileDownload = alwFileDownload;
 	}
 
 	public String getStatus() {

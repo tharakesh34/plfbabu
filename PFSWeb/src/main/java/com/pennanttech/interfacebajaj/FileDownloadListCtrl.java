@@ -105,10 +105,17 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 	public void onCreate$window_FleDownloadList(Event event) throws Exception {
 		logger.debug("Entering");
-
+		
 		// Set the page level components.
 		setPageComponents(window_FleDownloadList, borderLayout_FileDownloadList, listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
+		
+		registerField("Name");
+		registerField("FileName");
+		registerField("FileLocation");
+		registerField("PartnerBankName");
+		registerField("AlwFileDownload");
+		registerField("Status");
 		
 		doRenderPage();
 		search();
@@ -192,11 +199,11 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			downlaod.setLabel("Download");
 			downlaod.setAttribute("object", fileDownlaod);
 			
-			if (0 == fileDownlaod.getAllowFileDownload() || !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			if (0 == fileDownlaod.getAlwFileDownload() || !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
 			}
 
-			if (0 == fileDownlaod.getAllowFileDownload()) {
+			if (0 == fileDownlaod.getAlwFileDownload()) {
 				downlaod.setTooltiptext("Not allowed to downlaod.");
 			}
 			lc.setParent(item);
