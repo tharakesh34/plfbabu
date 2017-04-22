@@ -5913,7 +5913,7 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 	 </sql>
 	</changeSet>
 	
-	<!-- <changeSet id="114" author="DurgPrasad G">
+	 <changeSet id="114" author="DurgPrasad G">
 	<createView viewName="FILE_DOWNLOAD_VIEW" replaceIfExists="true">
 		Select DC.NAME, DC.UPLOADPATH FileLocation, DS.FILENAME, PB.PARTNERBANKNAME, DIS.PARTNERBANKID, PB.ALWFILEDOWNLOAD, DS.STATUS from DATA_ENGINE_PROCESS_LOG L
 		INNER JOIN FINADVANCEPAYMENTS DIS ON DIS.PAYMENTID = L.REFID1
@@ -5921,15 +5921,8 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		inner join DATA_ENGINE_CONFIG DC on DC.name = DS.name
 		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DIS.PARTNERBANKID order by L.ID desc
 	</createView>
-</changeSet> -->
-	<!-- <changeSet id="115" author="Sai">
-		<sql>
-			<![CDATA[
-			insert into errordetails (errorcode, errorlanguage, errorseverity, errormessage, recordstatus, workflowid, lastmnton, lastmntby, version) 
-  				values ('90103', 'EN', 'E', 'The total repayments against the mandate is more than the max limit.', 'Approved', 0, sysdate, 1000, 1);
-			]]>
-		</sql>
-	</changeSet> -->
+</changeSet>
+	
 <changeSet id="116" author="Surekha">
 		<createTable tableName="NPABUCKETSCONFIG">
 			<column name="ConfigID" type="bigint">
