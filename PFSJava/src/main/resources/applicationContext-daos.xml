@@ -9500,4 +9500,26 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
+<!-- NPABucket -->
+	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pffDatasource" />
+	</bean>
+	<bean id="nPABucketService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pffTransactionManager" /></property>
+	   <property name="target"><ref bean="nPABucketServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="nPABucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.NPABucketServiceImpl">
+       <property name="nPABucketDAO" ref="nPABucketDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 </beans>
