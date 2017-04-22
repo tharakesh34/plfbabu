@@ -159,6 +159,10 @@ public class NPABucketDAOImpl extends BasisNextidDaoImpl<NPABucket> implements N
 		sql.append(" :bucketID, :bucketCode, :bucketDesc, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
+		// Get the identity sequence number.
+		if (nPABucket.getBucketID() <= 0) {
+			nPABucket.setBucketID(getNextidviewDAO().getNextId("SeqNPABUCKETS"));
+				}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucket);
