@@ -6564,6 +6564,7 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			INSERT INTO SeqDPDBUCKETSCONFIG VALUES(0);
 		</sql>
 	</changeSet>
+
 	<changeSet id="141" author="Surekha">
 		<createTable tableName="ManualAdvise">
 			<column name="AdviseID" type="bigint">
@@ -6783,4 +6784,185 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+
+		<changeSet id="149" author="pruthvi">
+		<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+		  Select FM.FinReference,FM.finamount/100 LoanAmount,
+	   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FM.RepayProfitRate ROI,
+	   FP.noinst Tenure,(TotalPriPaid + TotalPftPaid)/100 EMIReceived,
+	   0.00 PreferredCardLimit,(PRVRPYSCHPRI + PRVRPYSCHPFT)/100 PrevInstAmt,
+	   FM.RepayRateBasis intRateType,FD.disbdate LastDisbursalDate,
+	   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+	   '0.00/ 0' AdvInstAmt,FP.FinIsActive Status,(totalPriBal+TotalPftBal)/100 FutureInstAmt,
+	   NOInst-NOPaidInst FutureInstNo,totalPriBal/100 FuturePriComponent,TotalPftBal/100 Future_inst_comp,
+	   FR.PenaltyPaid Charge_coll_cust,
+	   0 Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+	   '' Repo_Status,'' Repo_Date,FM.FinContractDate Sale_Date,FM.MaturityDate Release_Date,FM.MaturityDate Closure_Date
+From FinanceMain FM inner join
+	 FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+	 (Select FinReference,MAX(DisbDate)disbdate from FinDisbursementDetails
+	  group by FinReference) FD on FP.FinReference = FD.FinReference left join
+	  ( Select FinReference,SUM(PenaltyPaid) PenaltyPaid from FinODCRecovery
+	 group by FinReference) FR on FR.FinReference = FD.FinReference
+		
+		</createView>
+	</changeSet>
+			<changeSet id="150" author="pruthvi">
+		<createView viewName="RPT_PASTDUESUMMARY_VIEW" replaceIfExists="true">
+		SELECT  T4.branchCode  FinBranch, T.FinIsActive,T.Region,T.FinStatus,T.TotalPastdue Measure
+			FROM(SELECT   T1.FinBranch,'Past Due Amount' Region,T1.Finstatus, T1.FinIsActive,
+					      CAST(SUM( ${add.schema}UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T1.FinCCY,'INR')) AS decimal(18,3))TotalPastdue
+				 FROM	  FinanceMain T1 INNER JOIN
+						  FinODDetails T2 ON T1.FinReference = T2.FinReference INNER JOIN
+						  FinPftDetails T3 ON T1.FinReference = T3.FinReference INNER JOIN 
+						  RMTCurrencies on T1.FinCCY=CCYCode
+				WHERE	  FinCurODAmt > 0 AND (T1.ClosingStatus !='C' or T1.ClosingStatus is null) and T1.Finstatus is not null   
+				GROUP BY  T1.FinBranch,T1.Finstatus,T1.FinIsActive
+				UNION ALL			
+				SELECT    T1.FinBranch,'Profit Suspended',T1.Finstatus,  T1.FinIsActive,
+						  Cast(SUM( ${add.schema}UDF_ConvertCurrency(PFTACCRUESUSP,T1.FinCCY,'INR')) AS decimal(18,3))ProfitSuspended
+				FROM	  FinanceMain T1 INNER JOIN
+						  FinODDetails T2 ON T1.FinReference = T2.FinReference INNER JOIN
+						  FinPftDetails T3 ON T1.FinReference = T3.FinReference INNER JOIN 
+						  RMTCurrencies on T1.FinCCY=CCYCode
+				WHERE	  FinCurODAmt  > 0 AND (T1.ClosingStatus !='C' or T1.ClosingStatus is null) and T1.Finstatus is not null  
+				Group By T1.FinBranch,T1.Finstatus,T1.FinIsActive		
+				UNION ALL			
+				SELECT   T1.FinBranch,'Count',T1.Finstatus,  T1.FinIsActive,
+					     Cast(Count(T2.FinReference) as decimal(18,3))  Count
+				FROM	 FinanceMain T1 INNER JOIN
+						 FinODDetails T2 ON T1.FinReference = T2.FinReference INNER JOIN
+						 FinPftDetails T3 ON T1.FinReference = T3.FinReference INNER JOIN 
+						 RMTCurrencies on T1.FinCCY=CCYCode	WHERE FinCurODAmt  > 0 
+						 AND (T1.ClosingStatus !='C' or T1.ClosingStatus is null) and T1.Finstatus is not null
+				Group By T1.FinBranch,T1.Finstatus,T1.FinIsActive  )T   INNER JOIN
+			RMTBranches T4 ON T4.BranchCode=T.FinBranch
+		
+			</createView>
+	</changeSet>
+	
+			<changeSet id="151" author="pruthvi">
+		<createView viewName="RPT_PROJECTFINACCRUALDTL_VIEW" replaceIfExists="true">
+		 SELECT T6.FinDivision ,
+          T3.CustCIF ,
+         coalesce(T3.CustFName, ' ') ${call.concatenate} ' ' ${call.concatenate}  coalesce(T3.CustMName, ' ') ${call.concatenate} ' ' ${call.concatenate} coalesce(T3.CustLName, ' ') CustomerName  ,
+          T1.FinType ,
+          T1.FinReference ,
+          ${call.substr}(T4.BranchCode, 1, 1) FLBranch  ,
+          T4.BranchCode ,
+          T4.BranchDesc ,
+          T1.FinStartDate ,
+          T1.MaturityDate ,
+          T1.CurReducingRate ,
+          T1.Finccy FinCCY  ,
+          T5.CcyEditField ,
+          T1.FinisActive ,
+          T5.CcySpotRate ,
+          T1.TotalPriBal ,
+          T1.TotalPftBal ,
+          (CASE 
+                WHEN T1.FinApprovedDate = ( SELECT SysParmValue 
+                                            FROM SMTparameters 
+                                              WHERE SysParmCode = 'APP_DATE' ) THEN 0
+          ELSE T1.PFTACCRUED
+             END) CurrentAccuredPft  ,
+          T2.PostAmount ProjectedAccuredPft  ,
+          (CASE 
+                WHEN T1.FinApprovedDate = ( SELECT SysParmValue 
+                                            FROM SMTparameters 
+                                              WHERE SysParmCode = 'APP_DATE' ) THEN T2.PostAmount
+          ELSE T2.PostAmount - T1.PFTACCRUED
+             END) LastDayIncome  ,
+          ${add.schema}UDF_ConvertCurrency((CASE 
+                                    WHEN T1.FinApprovedDate = ( SELECT SysParmValue 
+                                                                FROM SMTparameters 
+                                                                  WHERE SysParmCode = 'APP_DATE' ) THEN T2.PostAmount
+                              ELSE T2.PostAmount - T1.PFTACCRUED
+                                 END), T1.FinCcy, 'INR') ConExchgLastDayIncome  ,
+          T2.Account IncomeAccount  ,
+          T2.TranDesc ,
+          T2.PostStatus ,
+          T2.AcCcy ,
+          T2.ValueDate 
+     FROM Postings_Temp T2
+            JOIN FinPftDetails T1
+             ON T1.FinReference = T2.FinReference
+            JOIN Customers T3
+             ON T1.CustCIF = T3.CustCIF
+            JOIN RMTBranches T4
+             ON T4.BranchCode = T1.FinBranch
+            JOIN RMTCurrencies T5
+             ON T1.FinCCY = T5.CCYCode
+            JOIN RMTFinanceTypes T6
+             ON T6.FinType = T1.FinType
+            JOIN SMTDivisionDetail T7
+             ON T7.DivisionCode = T6.FinDivision
+     WHERE coalesce(T1.ClosingStatus, ' ') != 'C'
+             AND T1.FinIsActive = '1'
+             AND T2.TranDesc = 'Murabaha Income'
+             AND T2.FinEvent = 'AMZ'
+		
+					</createView>
+	</changeSet>
+	
+		<changeSet id="152" author="pruthvi">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+		 select  ApplicationNo AGREEMENTNO,cast(null as numeric(8,0)) AGREEMENTID,T2.FinType PRODUCTFLAG,
+		cast(T10.PromotionCode as numeric(8,0)) SCHEMEID,cast(T2.FinBranch as numeric(8,0)) BRANCHID,'' NPA_STAGEID,cast(T2.FinIsActive as varchar(1)) LOAN_STATUS,
+		case when FinCurrAssetValue>0 then 'PD' else 'FD' end DISB_STATUS,
+		FirstRepayDate FIRST_DUE_DATE,T2.MaturityDate MATURITY_DATE,T1.FinAmount/CcyMinorCcyUnits AMTFIN,cast(null as numeric(8,0))  DISBURSED_AMOUNT,
+		(T2.ODPrincipal+T2.ODProfit)/CcyMinorCcyUnits EMI_DUE,
+		T2.ODPrincipal/CcyMinorCcyUnits PRINCIPAL_DUE,T2.ODProfit/CcyMinorCcyUnits INTEREST_DUE,
+		(T2.TotalPriPaid+T2.TotalPftPaid)/CcyMinorCcyUnits  EMI_RECEIVED,
+		T2.TotalPriPaid/CcyMinorCcyUnits PRINCIPAL_RECEIVED,T2.TotalPftPaid/CcyMinorCcyUnits INTEREST_RECEIVED,
+		(T2.TotalPriBal+T2.TotalPftBal)/CcyMinorCcyUnits EMI_OS,
+		T2.TotalPriBal/CcyMinorCcyUnits PRINCIPAL_OS,T2.TotalPftBal/CcyMinorCcyUnits INTEREST_OS,
+		cast(null as numeric(8,0))  BULK_REFUND,cast(null as numeric(8,0))  PRINCIPAL_WAIVED,cast(null as numeric(8,0))  EMI_PRINCIPAL_WAIVED,cast(null as numeric(8,0))  EMI_INTEREST_WAIVED,
+		cast(null as numeric(8,0))  PRINCIPAL_AT_TERM,cast(null as numeric(8,0))  ADVANCE_EMI,cast(null as numeric(8,0))  ADVANCE_EMI_BILLED,cast(null as numeric(8,0))  MIGRATED_ADVANCE_EMI,
+		cast(null as numeric(8,0))  MIGR_ADV_EMI_BILLED,cast(null as numeric(8,0))  MIGRATED_ADVANCE_EMI_UNBILLED,cast(null as numeric(8,0))  CLOSED_CAN_ADV_EMI,
+		T2.TotalPriBal/CcyMinorCcyUnits PRINCIPAL_BALANCE,T2.TotalPftBal/CcyMinorCcyUnits INTEREST_BALANCE,
+		(T2.TotalPriBal+T2.TotalPftBal)/CcyMinorCcyUnits SOH_BALANCE,(NOInst-NOPaidInst) NO_OF_UNBILLED_EMI,
+		T2.TotalPftSchd/CcyMinorCcyUnits TOTAL_INTEREST,T2.PFTACCRUED/CcyMinorCcyUnits ACCRUED_AMOUNT,'' BALANCE_UMFC,
+		cast(null as numeric(8,0))  EMI_IN_ADV_RCVD_MAKER,cast(null as numeric(8,0))  EMI_IN_ADVANCE_BILLED,cast(null as numeric(8,0)) EMI_IN_ADVANCE_UNBILLED,
+		cast(null as numeric(8,0))  MIG_ADV_EMI_BILLED_PRINCOMP,cast(null as numeric(8,0))  MIG_ADV_EMI_BILLED_INTCOMP,cast(null as numeric(8,0))  MIG_ADV_EMI_UNBILLED_PRINCOMP,
+		cast(null as numeric(8,0))  MIG_ADV_EMI_UNBILLED_INTCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_BILLED_PRINCOMP,
+		cast(null as numeric(8,0)) EMI_IN_ADV_BILLED_INTCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_UNBILLED_PRINCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_UNBILLED_INTCOMP,
+		cast(null as numeric(8,0)) CLOS_CAN_ADV_EMI_PRINCOMP,cast(null as numeric(8,0)) CLOS_CAN_ADV_EMI_INTCOMP,cast(null as numeric(8,0)) SECURITY_DEPOSIT,
+		cast(null as numeric(8,0)) SECURITY_DEPOSIT_ADJUSTED,cast(null as numeric(8,0)) ROUNDING_DIFF_RECEIVABLE,cast(null as numeric(8,0)) ROUNDING_DIFF_RECEIVED,
+		cast(null as numeric(8,0)) MIG_DIFFERENCE_RECEIVABLE,cast(null as numeric(8,0)) MIG_DIFFERENCE_RECEIVED,cast(null as numeric(8,0)) MIG_DIFFERENCE_PAYABLE,cast(null as numeric(8,0)) MIG_DIFFERENCE_PAID,
+		(UnPaidSchdPri+UnPaidSchdPft)/CcyMinorCcyUnits WRITEOFF_DUE,
+		 ((WriteoffPrincipal+WriteoffProfit)-(UnPaidSchdPri+UnPaidSchdPft))/CcyMinorCcyUnits WRITEOFF_RECEIVED,
+		cast(null as numeric(8,0)) SOLD_SEIZE_RECEIVABLE,cast(null as numeric(8,0)) SOLD_SEIZE_RECEIVED,cast(null as numeric(8,0)) SOLD_SEIZE_PAYABLE,cast(null as numeric(8,0)) SOLD_SEIZE_PAID,
+		cast(null as numeric(8,0)) NET_EXCESS_RECEIVED,cast(null as numeric(8,0)) NET_EXCESS_ADJUSTED,PenaltyBal/CcyMinorCcyUnits LPP_CHARGES_RECEIVABLE,
+		T4.PenaltyPaid/CcyMinorCcyUnits LPP_CHARGES_RECEIVED,cast(null as numeric(8,0)) PDC_SWAP_CHARGES_RECEIVABLE,cast(null as numeric(8,0)) PDC_SWAP_CHARGES_RECEIVED,
+		cast(null as numeric(8,0)) REPO_CHARGES_RECEIVABLE,cast(null as numeric(8,0)) REPO_CHARGES_RECEIVED,cast(null as numeric(8,0)) FORECLOSURE_CHARGES_DUE,cast(null as numeric(8,0)) FORECLOSURE_CHARGES_RCVD,
+		cast(null as numeric(8,0)) BOUNCE_CHARGES_DUE,cast(null as numeric(8,0)) BOUNCE_CHARGES_RCVD,cast(null as numeric(8,0)) INSUR_RENEW_CHARGE,cast(null as numeric(8,0)) INSUR_RENEW_CHARGE_RECD,
+		cast(null as numeric(8,0)) INSUR_RECEIVABLE,cast(null as numeric(8,0)) INSUR_RECEIVED,cast(null as numeric(8,0)) INSUR_PAYABLE,cast(null as numeric(8,0)) INSUR_PAID,
+		T5.CustID CUSTOMERID,(coalesce(CustFName,'')${call.concatenate}coalesce(CustMName,'')${call.concatenate}coalesce(CustLName,'')) CUSTOMERNAME,
+		T2.NOInst SANCTIONED_TENURE,T13.RepayAmount LOAN_EMI,RepayBaseRate FLAT_RATE,
+		T1.EffectiveRateOfReturn EFFECTIVE_RATE,T1.FinContractDate AGREEMENTDATE,T6.DisbDate DISBURSALDATE,
+		(select LatestRpyDate from FinPftDetails where FinIsActive='0') CLOSUREDATE,cast(null as numeric(8,0)) NO_OF_ADVANCE_EMIS,cast(null as numeric(8,0)) ASSETCOST,
+		(NOInst-NOPaidInst) NO_OF_EMI_OS,T2.CURODDAYS DPD,cast(null as numeric(3,0)) CURRENT_BUCKET,
+		T2.FinBranch BRANCH_NAME,FinTypeDesc SCHEME_NAME,cast(null as numeric(3,0)) DERIVED_BUCKET,'' ASSETDESC,
+		'' MAKE,'' CHASISNUM,'' REGDNUM,'' ENGINENUM,cast(null as numeric(16,2)) INVOICEAMT,'' SUPPLIERDESC,
+		'' INSTRUMENT,sysdate  REPO_DATE,'' LOCAL_OUTSTATION_FLAG,
+		T2.FirstODDate FIRST_REPAYDUE_DATE
+ from   FinanceMain T1 Inner join
+		FinPftDetails T2 on T2.FinReference=T1.FinReference Inner join
+		FinWriteoffDetail T3 on T3.FinReference=T1.FinReference Inner join
+		FinODCRecovery T4 on T4.FinReference=T1.Finreference Inner join
+		Customers T5 on T5.CustID=T1.CustID Inner jOin
+		(select FinReference,MIN(DisbDate) DisbDate from FinDisbursementDetails
+		 group by FinReference)T6 on T6.FinReference=T1.FinReference Inner Join
+		FinStatusDetail T7 on T7.FinReference=T1.FinReference Inner Join
+		RMTFinanceTypes T8 on T8.FinType=T1.FinType Inner join
+		RMTCurrencies T9 on T9.CcyCode=T1.FinCcy Left Join 
+		Promotions T10 On t10.FinType=T2.FinType Inner join
+		(select T11.FinReference,RepayAmount from FinPftDetails T11 
+		Inner Join FinScheduleDetails T12 on T11.FinReference=T12.FinReference
+		) T13 on T1.FinReference=T13.FinReference
+		
+							</createView>
+	</changeSet>
+
 </databaseChangeLog>
