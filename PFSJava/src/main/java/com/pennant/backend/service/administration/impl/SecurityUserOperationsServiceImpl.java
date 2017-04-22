@@ -81,28 +81,12 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	private SecurityOperationRolesDAO	securityOperationRolesDAO;
 	private SecurityOperationDAO		securityOperationDAO;
 	private SecurityUserDAO				securityUserDAO;
-
 	private AuditHeaderDAO				auditHeaderDAO;
 	private NextidviewDAO				nextidviewDAO;
 
+	@Override
 	public SecurityUserOperations getSecurityUserOperations() {
-		return getSecurityUserOperationsDAO().getSecurityUserOperations();
-
-	}
-
-	/**
-	 * @return the securityUsersDAO
-	 */
-	public SecurityUserDAO getSecurityUserDAO() {
-		return securityUserDAO;
-	}
-
-	/**
-	 * @param securityUsersDAO
-	 *            the securityUsersDAO to set
-	 */
-	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
-		this.securityUserDAO = securityUserDAO;
+		return securityUserOperationsDAO.getSecurityUserOperations();
 	}
 
 	/**
@@ -135,11 +119,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 
 		if (securityUser.isWorkflow()) {
 			if (securityUser.isNewRecord()) {
-				getSecurityUserDAO().save(securityUser, "_RTEMP");
+				securityUserDAO.save(securityUser, "_RTEMP");
 				auditHeader.getAuditDetail().setModelData(securityUser);
 				auditHeader.setAuditReference(String.valueOf(securityUser.getUsrID()));
 			} else {
-				getSecurityUserDAO().update(securityUser, "_RTEMP");
+				securityUserDAO.update(securityUser, "_RTEMP");
 			}
 		}
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -148,7 +132,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			auditDetails.addAll(processingDetailList(auditHeader.getAuditDetails(), tableType, securityUser));
 		}
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving ");
 		return auditHeader;
 
@@ -200,10 +184,10 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 
 		SecurityUser tempSecurityUser = null;
 		if (secUser.isWorkflow()) {
-			tempSecurityUser = getSecurityUserDAO().getSecurityUserById(secUser.getId(), "_RTemp");
+			tempSecurityUser = securityUserDAO.getSecurityUserById(secUser.getId(), "_RTemp");
 		}
 
-		SecurityUser befSecurityUser = getSecurityUserDAO().getSecurityUserById(secUser.getId(), "");
+		SecurityUser befSecurityUser = securityUserDAO.getSecurityUserById(secUser.getId(), "");
 		SecurityUser oldSecurityUser = secUser.getBefImage();
 
 		String[] errParm = new String[1];
@@ -284,7 +268,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			}
 		}
 
-		if (getSecurityUserOperationsDAO().getOprById(getSecurityUserOperations().getOprID(), "_View") > 0) {
+		if (securityUserOperationsDAO.getOprById(getSecurityUserOperations().getOprID(), "_View") > 0) {
 			throw new WrongValueException(Labels.getLabel("RECORD_IN_USE",
 					new String[] { Labels.getLabel("label_SecurityUserOperationsDialog_OperationID.label"),
 							Long.toString(getSecurityUserOperations().getOprID()) }));
@@ -370,7 +354,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		long seqNumber = getNextidviewDAO().getSeqNumber("SeqSecUserOperations");
+		long seqNumber = nextidviewDAO.getSeqNumber("SeqSecUserOperations");
 		int count = 0;
 
 		List<AuditDetail> list = new ArrayList<AuditDetail>();
@@ -441,15 +425,15 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 
 			}
 			if (saveRecord) {
-				getSecurityUserOperationsDAO().save(suo, type);
+				securityUserOperationsDAO.save(suo, type);
 			}
 
 			if (updateRecord) {
-				getSecurityUserOperationsDAO().update(suo, type);
+				securityUserOperationsDAO.update(suo, type);
 			}
 
 			if (deleteRecord) {
-				getSecurityUserOperationsDAO().delete(suo, type);
+				securityUserOperationsDAO.delete(suo, type);
 			}
 
 			if (saveRecord || updateRecord || deleteRecord) {
@@ -463,7 +447,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		}
 
 		if (count != 0) {
-			getNextidviewDAO().setSeqNumber("SeqSecUserOperations", seqNumber + count);
+			nextidviewDAO.setSeqNumber("SeqSecUserOperations", seqNumber + count);
 		}
 
 		logger.debug("Leaving ");
@@ -477,7 +461,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	 * @return List<SecurityRoleGroups>
 	 */
 	public List<SecurityRoleGroups> getApprovedRoleGroupsByRoleId(long roleId) {
-		return getSecurityRoleGroupsDAO().getRoleGroupsByRoleID(roleId, "_AView");
+		return securityRoleGroupsDAO.getRoleGroupsByRoleID(roleId, "_AView");
 	}
 
 	/**
@@ -489,7 +473,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	 * @return List<SecurityOperationRoles>
 	 */
 	public List<SecurityOperationRoles> getOperationRolesByOprId(SecurityUserOperations securityUserOperations) {
-		return getSecurityOperationRolesDAO().getSecOprRolesByOprID(securityUserOperations, "_AView");
+		return securityOperationRolesDAO.getSecOprRolesByOprID(securityUserOperations, "_AView");
 
 	}
 
@@ -503,7 +487,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	 *            (boolean)
 	 */
 	public List<SecurityOperation> getOperationsByUserId(long userId, boolean isAssigned) {
-		return getSecurityUserOperationsDAO().getOperationsByUserId(userId, isAssigned);
+		return securityUserOperationsDAO.getOperationsByUserId(userId, isAssigned);
 	}
 
 	/**
@@ -511,23 +495,23 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	 * SecurityUsersOperationsDAO's getUserOperationsByUsrAndRoleIds)
 	 */
 	public SecurityUserOperations getUserOperationsByUsrAndRoleIds(long userId, long roleId) {
-		return getSecurityUserOperationsDAO().getUserOperationsByUsrAndRoleIds(userId, roleId);
+		return securityUserOperationsDAO.getUserOperationsByUsrAndRoleIds(userId, roleId);
 
 	}
 
 	@Override
 	public List<SecurityOperation> getApprovedOperations() {
-		return getSecurityOperationDAO().getApprovedSecurityOperation();
+		return securityOperationDAO.getApprovedSecurityOperation();
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getSecurityUserDAO().delete with
-	 * parameters securityUser,"" b) NEW Add new record in to main table by using getSecurityUserDAO().save with
-	 * parameters securityUser,"" c) EDIT Update record in the main table by using getSecurityUserDAO().update with
-	 * parameters securityUser,"" 3) Delete the record from the workFlow table by using getSecurityUserDAO().delete with
-	 * parameters securityUser,"_Temp" 4) Audit the record in to AuditHeader and AdtSecurityUsers by using
+	 * following actions a) DELETE Delete the record from the main table by using securityUserDAO.delete with parameters
+	 * securityUser,"" b) NEW Add new record in to main table by using securityUserDAO.save with parameters
+	 * securityUser,"" c) EDIT Update record in the main table by using securityUserDAO.update with parameters
+	 * securityUser,"" 3) Delete the record from the workFlow table by using securityUserDAO.delete with parameters
+	 * securityUser,"_Temp" 4) Audit the record in to AuditHeader and AdtSecurityUsers by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSecurityUsers by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
@@ -556,16 +540,16 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			auditDetails = processingAuditDetailList(auditHeader.getAuditDetails(), "", securityUser);
 		}
 
-		getSecurityUserOperationsDAO().deleteById(securityUser.getUsrID(), "_Temp");
-		getSecurityUserDAO().delete(securityUser, "_RTEMP");
+		securityUserOperationsDAO.deleteById(securityUser.getUsrID(), "_Temp");
+		securityUserDAO.delete(securityUser, "_RTEMP");
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader = resetAuditDetails(auditHeader, securityUser, tranType);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 
@@ -630,8 +614,8 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getSecurityUserDAO().delete with parameters securityUser,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using securityUserDAO.delete with parameters securityUser,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -649,11 +633,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getSecurityUserDAO().delete(securityUser, "_RTEMP");
-		getSecurityUserOperationsDAO().deleteById(securityUser.getUsrID(), "_Temp");
+		securityUserDAO.delete(securityUser, "_RTEMP");
+		securityUserOperationsDAO.deleteById(securityUser.getUsrID(), "_Temp");
 		auditHeader.setAuditDetail(null);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -682,11 +666,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getSecurityUserDAO().delete(securityUser, "_RTEMP");
-		getSecurityUserOperationsDAO().deleteById(securityUser.getUsrID(), "_Temp");
-		getSecurityUserOperationsDAO().getOprById(getSecurityUserOperations().getOprID(), "_View");
+		securityUserDAO.delete(securityUser, "_RTEMP");
+		securityUserOperationsDAO.deleteById(securityUser.getUsrID(), "_Temp");
+		securityUserOperationsDAO.getOprById(getSecurityUserOperations().getOprID(), "_View");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -694,66 +678,44 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 	@Override
 	public int getSecurityUserOprInQueue(long oprID, String tableType) {
 		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getSecurityUserOperationsDAO().getOprById(oprID, "_View");
+		return securityUserOperationsDAO.getOprById(oprID, "_View");
 	}
 
 	@Override
 	public List<String> getUsersByRoles(String[] roleCodes) {
-		return getSecurityUserOperationsDAO().getUsersByRoles(roleCodes);
+		return securityUserOperationsDAO.getUsersByRoles(roleCodes);
 	}
 
 	@Override
 	public List<String> getUsrMailsByRoleIds(String roleCode) {
-
-		return getSecurityUserOperationsDAO().getUsrMailsByRoleIds(roleCode);
-	}
-
-	public SecurityUserOperationsDAO getSecurityUserOperationsDAO() {
-		return securityUserOperationsDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setSecurityRoleGroupsDAO(SecurityRoleGroupsDAO securityRoleGroupsDAO) {
-		this.securityRoleGroupsDAO = securityRoleGroupsDAO;
-	}
-
-	public SecurityRoleGroupsDAO getSecurityRoleGroupsDAO() {
-		return securityRoleGroupsDAO;
-	}
-
-	public SecurityOperationRolesDAO getSecurityOperationRolesDAO() {
-		return securityOperationRolesDAO;
-	}
-
-	public void setSecurityOperationRolesDAO(SecurityOperationRolesDAO securityOperationRolesDAO) {
-		this.securityOperationRolesDAO = securityOperationRolesDAO;
+		return securityUserOperationsDAO.getUsrMailsByRoleIds(roleCode);
 	}
 
 	public void setSecurityUserOperationsDAO(SecurityUserOperationsDAO securityUserOperationsDAO) {
 		this.securityUserOperationsDAO = securityUserOperationsDAO;
 	}
 
-	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
-		this.nextidviewDAO = nextidviewDAO;
+	public void setSecurityRoleGroupsDAO(SecurityRoleGroupsDAO securityRoleGroupsDAO) {
+		this.securityRoleGroupsDAO = securityRoleGroupsDAO;
 	}
 
-	public NextidviewDAO getNextidviewDAO() {
-		return nextidviewDAO;
-	}
-
-	public SecurityOperationDAO getSecurityOperationDAO() {
-		return securityOperationDAO;
+	public void setSecurityOperationRolesDAO(SecurityOperationRolesDAO securityOperationRolesDAO) {
+		this.securityOperationRolesDAO = securityOperationRolesDAO;
 	}
 
 	public void setSecurityOperationDAO(SecurityOperationDAO securityOperationDAO) {
 		this.securityOperationDAO = securityOperationDAO;
+	}
+
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setNextidviewDAO(NextidviewDAO nextidviewDAO) {
+		this.nextidviewDAO = nextidviewDAO;
 	}
 }
