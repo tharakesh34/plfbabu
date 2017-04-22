@@ -6076,23 +6076,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
 							}
 						} else {
-							String nextRoleCodes = aFinanceMain.getNextRoleCode();
+							if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
+									String[] to = aFinanceMain.getNextRoleCode().split(",");
+									String message;
 
-							if (StringUtils.isNotEmpty(nextRoleCodes)) {
-								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(reference)) {
-									if (!PennantConstants.RCD_STATUS_CANCELLED
-											.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
-										if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-											getEventManager().publish(Labels.getLabel("REC_FINALIZED_MESSAGE")
-													+ " with Reference" + ":" + reference, Notify.ROLE, to);
-										} else {
-											getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")
-													+ " with Reference" + ":" + reference, Notify.ROLE, to);
-										}
+									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
+										message = Labels.getLabel("REC_FINALIZED_MESSAGE") + " with Reference" + ":"
+												+ reference;
+									} else {
+										message = Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
+												+ reference;
 									}
-								} else {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.ROLE, to);
+
+									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
 								}
 							}
 						}
