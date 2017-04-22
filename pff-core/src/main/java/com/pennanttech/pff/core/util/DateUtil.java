@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,10 +34,14 @@ public class DateUtil {
 	 * Enumerates the date format patterns.
 	 */
 	public enum DateFormat {
-		SHORT_DATE("dd/MM/yyyy"), LONG_DATE("dd-MMM-yyyy"), SHORT_TIME("HH:mm"), LONG_TIME("HH:mm:ss"), SHORT_DATE_TIME(
-				"dd/MM/yyyy HH:mm"), LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
+		SHORT_DATE("dd/MM/yyyy"),
+		LONG_DATE("dd-MMM-yyyy"),
+		SHORT_TIME("HH:mm"),
+		LONG_TIME("HH:mm:ss"),
+		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
+		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
 
-		private final String pattern;
+		private final String	pattern;
 
 		private DateFormat(String pattern) {
 			this.pattern = pattern;
@@ -262,4 +267,70 @@ public class DateUtil {
 
 		return calendar.getTime();
 	}
+
+	/**
+	 * Returns month start {@link Date} for the specified {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object which is used to get the month start date.
+	 * @return A {@link Date} representing the month start date
+	 */
+	public static Date getMonthEnd(Date date) {
+		int[] daysInAMonth = { 29, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		int month = getMonth(date);
+		int year = getYear(date);
+		int day = daysInAMonth[month];
+
+		if (isLeapYear(year) && month == 2) {
+			day++;
+		}
+
+		return convert(new GregorianCalendar(year, month - 1, day));
+	}
+
+	/**
+	 * Returns month end {@link Date} for the specified {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object which is used to get the month end date.
+	 * @return A {@link Date} representing the month end date
+	 */
+	public static Date getMonthStart(Date date) {
+		int month = getMonth(date) - 1;
+		int year = getYear(date);
+		int day = 01;
+
+		return convert(new GregorianCalendar(year, month, day));
+	}
+
+	private static GregorianCalendar convert(Date date) {
+		if (date == null) {
+			return null;
+		}
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(date);
+		return gc;
+	}
+
+	private static Date convert(GregorianCalendar date) {
+		return date == null ? null : new Date(date.getTime().getTime());
+	}
+
+	@SuppressWarnings("unused")
+	private static int getDay(Date date) {
+		return date == null ? -1 : convert(date).get(Calendar.DATE);
+	}
+
+	private static int getMonth(Date date) {
+		return date == null ? -1 : convert(date).get(Calendar.MONTH) + 1;
+	}
+
+	private static int getYear(java.util.Date date) {
+		return date == null ? -1 : convert(date).get(Calendar.YEAR);
+	}
+
+	private static boolean isLeapYear(int year) {
+		return new GregorianCalendar().isLeapYear(year);
+	}
+
 }
