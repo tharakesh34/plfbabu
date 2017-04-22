@@ -135,7 +135,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 		}
 
 		if (nPABucket.isNew()) {
-			nPABucket.setId(getNPABucketDAO().save(nPABucket,tableType));
+			nPABucket.setId(Long.valueOf(getNPABucketDAO().save(nPABucket,tableType)));
 			auditHeader.getAuditDetail().setModelData(nPABucket);
 			auditHeader.setAuditReference(String.valueOf(nPABucket.getBucketID()));
 		}else{
@@ -244,7 +244,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 
 		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(nPABucket.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(nPABucketDAO.getNPABucketById(nPABucket.getNPABucketID(), ""));
+			auditHeader.getAuditDetail().setBefImage(nPABucketDAO.getNPABucket(nPABucket.getBucketID(), ""));
 		}
 
 		if (nPABucket.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
