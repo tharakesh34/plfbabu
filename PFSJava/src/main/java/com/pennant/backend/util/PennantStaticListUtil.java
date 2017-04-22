@@ -2555,6 +2555,22 @@ public class PennantStaticListUtil {
 		}
 		return allocationMethods;
 	}
+
 	
+	public static ArrayList<ValueLabel> getReasonType(){
+	
+		return null;
+	}
+	
+	public static ArrayList<ValueLabel> getAssetType(){
+		
+		return null;
+	}
+
+	public static ArrayList<ValueLabel> getAction(){
+		
+		return null;
+	}
+
 }
 
