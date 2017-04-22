@@ -55,6 +55,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -68,6 +69,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * DAO methods implementation for the <b>SecUser model</b> class.<br>
@@ -225,20 +227,24 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 	 */
 	@Override
 	public List<SecurityRole> getUserRolesByUserID(final long userID) {
-		logger.debug("Entering ");
-		SecurityRole secRoles = new SecurityRole();
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("UsrID", userID);
+		paramSource.addValue("RoleApp", App.ID);
+		
+		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc,RoleCategory ");
+		sql.append(" from SecUserOperations UO  ");
+		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID ");
+		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID ");
+		sql.append("  where UO.UsrID = :UsrID and R.RoleApp = :RoleApp ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		secRoles.setLoginUsrId(userID);
-		secRoles.setLoginAppCode(App.CODE);
-
-		String selectListSql = "SELECT UsrID ,RoleID, RoleApp, AppCode, RoleCd, RoleDesc,RoleCategory, Version, LastMntBy,LastMntOn FROM UserOperationRoles_View where UsrID= :LoginUsrId AND AppCode=:loginAppCode";
-		logger.debug("selectSql: " + selectListSql);
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
-		logger.debug("Leaving ");
-		return this.namedParameterJdbcTemplate.query(selectListSql, beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
 
+		
+		return this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	/**

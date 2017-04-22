@@ -74,10 +74,15 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select distinct RightName");
-		sql.append(" from UserRights_View");
-		sql.append(" where RightType = 0 and UsrID = :UsrID and loginAppId = :loginAppId");
-
+		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
+		sql.append(" from SecUserOperations UO");
+		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
+		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
+		sql.append(" inner join SecRoleGroups RG on RG.RoleID = R.RoleID");
+		sql.append(" inner join SecGroupRights GR on GR.GrpID = RG.GrpID");
+		sql.append(" inner join SecRights RT on RT.RightID = GR.RightID ");
+		sql.append(" where UO.UsrID = :UsrID and R.RoleApp = :LoginAppId and RT.RightType = 0 ");
+	
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(user);
@@ -99,7 +104,7 @@ public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> impl
 		sql.append(" inner join SecRoleGroups RG on RG.RoleID = R.RoleID");
 		sql.append(" inner join SecGroupRights GR on GR.GrpID = RG.GrpID");
 		sql.append(" inner join SecRights RT on RT.RightID = GR.RightID ");
-		sql.append(" where RT.RightType <> 0 and UO.UsrID = :UsrID and R.RoleApp = :LoginAppId");
+		sql.append(" where UO.UsrID = :UsrID and R.RoleApp = :LoginAppId and RT.RightType <> 0 ");
 		if (StringUtils.isNotBlank(right.getRoleCd())) {
 			sql.append(" and R.RoleCd = :RoleCd");
 		}
