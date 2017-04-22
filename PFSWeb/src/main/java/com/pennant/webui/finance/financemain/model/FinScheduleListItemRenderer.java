@@ -3134,7 +3134,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)>0){
 								data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));			
 							}else{
-								data.setTotalAmount("");				
+								data.setTotalAmount(formatAmt(aScheduleDetail.getFeeSchd(),false,false));				
 							}
 						
 							if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
@@ -3163,22 +3163,11 @@ public class FinScheduleListItemRenderer implements Serializable{
 		
 			if (aScheduleDetail.isRepayOnSchDate() ||
 					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-				if(!(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0)) {
+				if(!(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) && 
+						aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					data = new FinanceScheduleReportData();	
 
 					String label = Labels.getLabel("label_listcell_repay.label");
-					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-						label = Labels.getLabel("label_listcell_BPIAmount.label");
-						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-						}
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-					}
 					data.setLabel(label);
 					if (count == 1){
 						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
