@@ -477,8 +477,7 @@ FROM FinanceMain_AView T1 INNER JOIN
 			'ReceiptDialog_ManualAdvice','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,'
 			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 
-			-- Security
-			Groups Creation
+			-- Security Groups Creation
 
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM
 			SECGROUPS),
