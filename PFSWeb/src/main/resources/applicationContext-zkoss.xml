@@ -4603,4 +4603,31 @@
 	<bean id="dPDBucketConfigurationDialogCtrl" class="com.pennant.webui.applicationmaster.dpdbucketconfiguration.DPDBucketConfigurationDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="dPDBucketConfigurationService" ref="dPDBucketConfigurationService"/>
 	</bean>
+	
+	<!-- CostCenter -->
+	<bean id="costCenterListCtrl" class="com.pennant.webui.applicationmaster.costcenter.CostCenterListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="costCenterService" ref="costCenterService" />
+	</bean>
+	<bean id="costCenterDialogCtrl" class="com.pennant.webui.applicationmaster.costcenter.CostCenterDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="costCenterService" ref="costCenterService"/>
+	</bean>
+	
+	<!-- ProfitCenter -->
+	<bean id="profitCenterListCtrl" class="com.pennant.webui.applicationmaster.profitcenter.ProfitCenterListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="profitCenterService" ref="profitCenterService" />
+	</bean>
+	<bean id="profitCenterDialogCtrl" class="com.pennant.webui.applicationmaster.profitcenter.ProfitCenterDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="profitCenterService" ref="profitCenterService"/>
+	</bean>
+		
+	<!-- BounceReason -->
+	<bean id="bounceReasonListCtrl" class="com.pennant.webui.applicationmaster.bouncereason.BounceReasonListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bounceReasonService" ref="bounceReasonService" />
+	</bean>
+	<bean id="bounceReasonDialogCtrl" class="com.pennant.webui.applicationmaster.bouncereason.BounceReasonDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="bounceReasonService" ref="bounceReasonService"/>
+	</bean>
 </beans>
