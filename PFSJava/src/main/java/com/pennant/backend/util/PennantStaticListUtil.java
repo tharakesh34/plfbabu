@@ -2550,8 +2550,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAllocationMethods(){
 		if(allocationMethods == null){
 			allocationMethods = new ArrayList<ValueLabel>(2);
-			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATION_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
-			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATION_MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
+			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
+			allocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
 		}
 		return allocationMethods;
 	}

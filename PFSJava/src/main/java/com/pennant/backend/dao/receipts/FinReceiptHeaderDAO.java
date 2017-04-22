@@ -1,7 +1,13 @@
 package com.pennant.backend.dao.receipts;
 
+import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennanttech.pff.core.TableType;
+
 public interface FinReceiptHeaderDAO {
 
-
+	FinReceiptHeader getReceiptHeaderByRef(String finReference, String type);
+	long save(FinReceiptHeader receiptHeader, TableType tableType);
+	void update(FinReceiptHeader receiptHeader, TableType tableType);
+	void deleteByReceiptID(long receiptID, TableType tableType);
 
 }

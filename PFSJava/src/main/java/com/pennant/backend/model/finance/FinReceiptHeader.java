@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FinReceiptHeader {
+import com.pennant.backend.model.Entity;
+
+public class FinReceiptHeader implements Entity {
 
 	private long receiptID = 0;// Auto Generated Sequence
 	private Date receiptDate;
@@ -31,6 +33,21 @@ public class FinReceiptHeader {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return receiptID;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.receiptID = id;
+	}
+	
 	public long getReceiptID() {
 		return receiptID;
 	}

@@ -685,6 +685,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				
+				// Customer CIF Setting
+				finScheduleData.getFinanceMain().setLovDescCustCIF(this.custCIF_header.getValue());
+				
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
@@ -696,10 +699,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		/*if(getLoanEnquiry().getFinanceMainList()!=null && getLoanEnquiry().getFinanceMainList().size()>0){
-			ReportGenerationUtil.generateReport("LoanEnquiry", getLoanEnquiry(),
-					getLoanEnquiry().getFinanceMainList(),true, 1, getUserWorkspace().getUserDetails().getUsername(),null);
-		}*/
 		logger.debug("Leaving " + event.toString());
 	}
 

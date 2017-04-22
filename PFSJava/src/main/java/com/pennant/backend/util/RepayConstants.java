@@ -82,8 +82,8 @@ public class RepayConstants {
 	public static final String	RECEIPTMODE_EXCESS		= "EXCESS";
 	
 	// Allocation Methods
-	public static final String	ALLOCATION_AUTO			= "A";
-	public static final String	ALLOCATION_MANUAL		= "M";
+	public static final String	ALLOCATIONTYPE_AUTO		= "A";
+	public static final String	ALLOCATIONTYPE_MANUAL	= "M";
 
 	// Allocation Types
 	public static final String	ALLOCATION_PRI			= "PRI";
@@ -93,7 +93,6 @@ public class RepayConstants {
 	public static final String	ALLOCATION_FEE			= "FEE";
 	public static final String	ALLOCATION_INS			= "INS";
 	public static final String	ALLOCATION_MANADV		= "MANADV";
-	public static final String	ALLOCATION_BAL			= "BAL";
 	
 	// Receipt Types
 	public static final String	RECEIPTTYPE_RECIPT		= "R";

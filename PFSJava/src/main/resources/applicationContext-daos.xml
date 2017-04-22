@@ -5584,7 +5584,6 @@
 	<bean name="receiptServiceTarget"
 		class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
-		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
@@ -5597,37 +5596,25 @@
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
-		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="agreementDetailService" ref="finAgreementDetailService" />
+		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="ddaControllerService" ref="ddaControllerService" />
-		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
-		<property name="handlingInstructionService" ref="handlingInstructionService" />
-		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
-		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
-		<property name="ddaRepresentmentService" ref="ddaRepresentmentService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
-		<property name="contractorAssetDetailService" ref="finContractorAssetDetailService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="ruleService" ref="ruleService" />
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="repayCalculator" ref="repayCalculator" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5637,6 +5624,27 @@
 
 	<bean id="finExcessAmountDAO"
 		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!--============ Finance Receipt Header Details ============== -->
+
+	<bean id="finReceiptHeaderDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!--============ Finance Receipt Detail Details ============== -->
+
+	<bean id="finReceiptDetailDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<!--============ Receipt Allocation Details ============== -->
+
+	<bean id="receiptAllocationDetailDAO"
+		class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 

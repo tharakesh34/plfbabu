@@ -69,6 +69,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -286,7 +287,8 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		FinRepayHeader header = new FinRepayHeader();
 		header.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference , ValueDate , FinEvent , RepayAmount , PriAmount , PftAmount , TotalRefund , " );
+		StringBuilder selectSql = new StringBuilder("Select RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , ");
+		selectSql.append(" RepayAmount , PriAmount , PftAmount , LatePftAmount, TotalPenalty, TotalRefund , " );
 		selectSql.append(" TotalWaiver , InsRefund ,RepayAccountId , EarlyPayEffMtd , EarlyPayDate, SchdRegenerated, LinkedTranId, ");
 		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment ");
 		selectSql.append(" From FinRepayHeader");
@@ -335,7 +337,7 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 	}
 
 	@Override
-    public void saveFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
+    public Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder(" Insert Into FinRepayHeader");
@@ -352,6 +354,7 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
+		return Long.valueOf(0);
     }
 
 	@SuppressWarnings("serial")
@@ -538,6 +541,47 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		return totalPftPaid;
 	}
 	
+	@Override
+	public List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type) {
+		logger.debug("Entering");
+		
+		FinRepayHeader header = new FinRepayHeader();
+		header.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , ");
+		selectSql.append(" RepayAmount , PriAmount , PftAmount , LatePftAmount, TotalPenalty, TotalRefund , " );
+		selectSql.append(" TotalWaiver , InsRefund ,RepayAccountId , EarlyPayEffMtd , EarlyPayDate, SchdRegenerated, LinkedTranId, ");
+		selectSql.append(" TotalIns , TotalSuplRent , TotalIncrCost, TotalSchdFee, PayApportionment ");
+		selectSql.append(" From FinRepayHeader");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where FinReference =:FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
+
+		List<FinRepayHeader> rpyHeaderList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return rpyHeaderList;
+	}
+
+	@Override
+	public void deleteByRef(String finReference, TableType tableType) {
+		logger.debug("Entering");
+		
+		FinRepayHeader header = new FinRepayHeader();
+		header.setFinReference(finReference);
+		
+		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
+		deleteSql.append(tableType.getSuffix());
+		deleteSql.append(" where FinReference=:FinReference ");
+ 
+		logger.debug("selectSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
 	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
 		String[][] parms = new String[2][1];
 		parms[1][0] = finReference;
@@ -545,5 +589,5 @@ public class FinanceRepaymentsDAOImpl extends BasisCodeDAO<FinanceRepayments> im
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 		        parms[0], parms[1]), userLanguage);
 	}
-	
+
 }

@@ -42,22 +42,31 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class FinReceiptDetailDAOImpl extends BasisCodeDAO<FinReceiptDetail> implements FinReceiptDetailDAO {
+public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail> implements FinReceiptDetailDAO {
 	private static Logger	           logger	= Logger.getLogger(FinReceiptDetailDAOImpl.class);
-	
+
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
@@ -72,7 +81,70 @@ public class FinReceiptDetailDAOImpl extends BasisCodeDAO<FinReceiptDetail> impl
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
-	
-	
+
+	@Override
+	public List<FinReceiptDetail> getReceiptHeaderByID(long receiptID, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		StringBuilder selectSql = new StringBuilder("Select ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , ");
+		selectSql.append(" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
+		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , Remarks ");
+		selectSql.append(" From FinReceiptDetail");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where ReceiptID =:ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+
+		List<FinReceiptDetail> receiptList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return receiptList;
+	}
+
+	@Override
+	public long save(FinReceiptDetail receiptDetail, TableType tableType) {
+		logger.debug("Entering");
+		if (receiptDetail.getId() == Long.MIN_VALUE) {
+			receiptDetail.setId(getNextidviewDAO().getNextId("SeqFinReceiptDetail"));
+			logger.debug("get NextID:" + receiptDetail.getId());
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptDetail");
+		insertSql.append(tableType.getSuffix());
+		insertSql.append(" (ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , Amount  , ");
+		insertSql.append(" FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
+		insertSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , Remarks)");
+		insertSql.append(" Values(:ReceiptID , :ReceiptSeqID , :ReceiptType , :PaymentTo , :PaymentType , :PayAgainstID  , :Amount  , ");
+		insertSql.append(" :FavourNumber , :ValueDate , :BankCode , :FavourName , :DepositDate , :DepositNo , :PaymentRef , ");
+		insertSql.append(" :TransactionRef , :ChequeAcNo , :FundingAc , :ReceivedDate , :Status , :Remarks)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptDetail);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+		return receiptDetail.getId();
+	}
+
+	@Override
+	public void deleteByReceiptID(long receiptID, TableType tableType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		StringBuilder deleteSql = new StringBuilder(" DELETE From FinReceiptDetail");
+		deleteSql.append(tableType.getSuffix());
+		deleteSql.append(" where ReceiptID=:ReceiptID ");
+
+		logger.debug("selectSql: " + deleteSql.toString());
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+
+
 }

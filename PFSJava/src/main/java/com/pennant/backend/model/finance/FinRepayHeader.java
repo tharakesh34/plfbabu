@@ -7,18 +7,16 @@ import java.util.List;
 
 public class FinRepayHeader {
 
+	private long repayID = 0;// Auto Generated Sequence
+	private long receiptSeqID = 0;// Only setting from Receipt Details
 	private String finReference;
 	private Date valueDate;
-	private BigDecimal repayAmount;
 	private String finEvent;
+	private BigDecimal repayAmount;
 	private BigDecimal priAmount;
 	private BigDecimal pftAmount;
 	private BigDecimal latePftAmount;
 	private BigDecimal totalPenalty;
-	private BigDecimal totalIns;
-	private BigDecimal totalSuplRent;
-	private BigDecimal totalIncrCost;
-	private BigDecimal totalSchdFee;
 	private BigDecimal totalRefund;
 	private BigDecimal totalWaiver;
 	private BigDecimal insRefund;
@@ -27,8 +25,10 @@ public class FinRepayHeader {
 	private Date earlyPayDate;
 	private boolean schdRegenerated;
 	private long linkedTranId = 0;
-	private long repayID = 0;// Auto Generated Sequence
-	private int receiptSeqID = 0;// Only setting from Receipt Details
+	private BigDecimal totalIns;
+	private BigDecimal totalSuplRent;
+	private BigDecimal totalIncrCost;
+	private BigDecimal totalSchdFee;
 	private String payApportionment;
 	
 	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<RepayScheduleDetail>(1);
@@ -187,10 +187,10 @@ public class FinRepayHeader {
 		this.repayScheduleDetails = repayScheduleDetails;
 	}
 
-	public int getReceiptSeqID() {
+	public long getReceiptSeqID() {
 		return receiptSeqID;
 	}
-	public void setReceiptSeqID(int receiptSeqID) {
+	public void setReceiptSeqID(long receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
 	}
 

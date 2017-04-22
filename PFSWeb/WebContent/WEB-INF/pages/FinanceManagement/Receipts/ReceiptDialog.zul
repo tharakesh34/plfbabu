@@ -538,6 +538,17 @@
 														id="effScheduleMethod" width="180px" readonly="true" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													value="${c:l('label_ReceiptDialog_RemBalAfterAllocation.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="remBalAfterAllocation" width="180px" disabled="true"
+														style="font-weight:bold;" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

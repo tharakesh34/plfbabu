@@ -98,22 +98,22 @@ public class ReceiptCalculator implements Serializable {
 	 * ___________________________________________________________________________________________
 	 */
 
-	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData) {
-		return procInitiateReceipt(receiptData, scheduleData);
+	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
+		return procInitiateReceipt(receiptData, scheduleData, receiptPurpose);
 	}
 
 	/** To Calculate the Amounts for given schedule */
-	public FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData) {
+	public FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 
 		// Initialize Repay
 		if ("I".equals(receiptData.getBuildProcess())) {
-			receiptData = initializeReceipt(receiptData, scheduleData);
+			receiptData = initializeReceipt(receiptData, scheduleData, receiptPurpose);
 		}
 
 		// Recalculate Repay
 		if ("R".equals(receiptData.getBuildProcess())) {
-			receiptData = recalReceipt(receiptData, scheduleData);
+			receiptData = recalReceipt(receiptData, scheduleData, receiptPurpose);
 		}
 		
 		logger.debug("Leaving");
@@ -126,7 +126,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param scheduleData
 	 * @return
 	 */
-	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinScheduleData scheduleData) {
+	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -177,7 +177,7 @@ public class ReceiptCalculator implements Serializable {
 		repayMain.setRepayAmountExcess(BigDecimal.ZERO);
 		receiptData.setRepayMain(repayMain);
 
-		receiptData = calSummaryDetail(receiptData, scheduleData);
+		receiptData = calSummaryDetail(receiptData, scheduleData, receiptPurpose);
 		
 		logger.debug("Leaving");
 		return receiptData;
@@ -189,7 +189,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param scheduleData
 	 * @return
 	 */
-	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData) {
+	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -262,7 +262,8 @@ public class ReceiptCalculator implements Serializable {
 				RepayScheduleDetail rsd = null;
 
 				// Skip if repayment date after Current Business date
-				if (schdDate.compareTo(curBussniessDate) >= 0) {
+				if (schdDate.compareTo(curBussniessDate) > 0 && 
+						!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 					break;
 				}
 
@@ -661,7 +662,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param receiptData
 	 * @param aFinScheduleData
 	 */
-	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt) {
+	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, String receiptPurpose) {
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -699,7 +700,8 @@ public class ReceiptCalculator implements Serializable {
 			Date schdDate = curSchd.getSchDate();
 
 			// Skip if repayment date after Current Business date
-			if (schdDate.compareTo(curBussniessDate) >= 0) {
+			if (schdDate.compareTo(curBussniessDate) >= 0 && 
+					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
 			}
 
@@ -925,11 +927,6 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 		
-		// Still have balance from Receipt Amount, default adjust as Excess/Extra Amount 
-		if(totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0){
-			allocatePaidMap.put(RepayConstants.ALLOCATION_BAL, totalReceiptAmt);
-		}
-
 		logger.debug("Leaving");
 		return allocatePaidMap;
 	}
@@ -937,7 +934,7 @@ public class ReceiptCalculator implements Serializable {
 	/**
 	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
 	 */
-	private FinReceiptData calSummaryDetail(FinReceiptData receiptData, FinScheduleData finScheduleData) {
+	private FinReceiptData calSummaryDetail(FinReceiptData receiptData, FinScheduleData finScheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 
 		BigDecimal priPaid = BigDecimal.ZERO;
@@ -947,10 +944,20 @@ public class ReceiptCalculator implements Serializable {
 		boolean isSkipLastDateSet = false;
 
 		RepayMain repayMain = receiptData.getRepayMain();
-		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> scheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		
+		Cloner cloner = new Cloner();
+		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
+		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
 
-		for (int i = 0; i < financeScheduleDetails.size(); i++) {
-			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+		boolean setEarlyPayRecord = false;
+		FinanceScheduleDetail curSchd = null;
+		FinanceScheduleDetail prvSchd = null;
+		for (int i = 0; i < tempScheduleDetails.size(); i++) {
+			curSchd = tempScheduleDetails.get(i);
+			if(i != 0){
+				prvSchd = tempScheduleDetails.get(i - 1);
+			}
 			Date schdDate = curSchd.getSchDate();
 
 			// Finance amount and current finance amount
@@ -962,6 +969,43 @@ public class ReceiptCalculator implements Serializable {
 
 			if (schdDate.compareTo(curBussniessDate) < 0) {
 				repayMain.setCurFinAmount(repayMain.getCurFinAmount().subtract(curSchd.getCpzAmount()));
+			}else{
+				
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+					if (DateUtility.getDaysBetween(curBussniessDate, schdDate) == 0) {
+						repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
+						repayMain.setEarlyRepayNewSchd(null);
+						setEarlyPayRecord = true;
+					} else {
+						if (!setEarlyPayRecord) {
+
+							setEarlyPayRecord = true;
+							if ("NONSCH".equals(SysParamUtil.getValueAsString("EARLYPAY_TERM_INS"))) {
+								repayMain.setEarlyPayOnSchDate(curBussniessDate);
+								repayMain.setEarlyPayNextSchDate(curSchd.getSchDate());
+							} else {
+								repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
+							}
+
+							FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(repayMain.getFinReference());
+							newSchdlEP.setDefSchdDate(repayMain.getEarlyPayOnSchDate());
+							newSchdlEP.setSchDate(repayMain.getEarlyPayOnSchDate());
+							newSchdlEP.setSchSeq(1);
+							newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+							newSchdlEP.setRepayOnSchDate(true);
+							newSchdlEP.setPftOnSchDate(true);
+							newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
+							newSchdlEP.setBaseRate(prvSchd.getBaseRate());
+							newSchdlEP.setSplRate(prvSchd.getSplRate());
+							newSchdlEP.setMrgRate(prvSchd.getMrgRate());
+							newSchdlEP.setActRate(prvSchd.getActRate());
+							newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
+							newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
+							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
+							repayMain.setEarlyRepayNewSchd(newSchdlEP);
+						}
+					}
+				}
 			}
 
 			// Profit scheduled and Paid
@@ -1028,17 +1072,26 @@ public class ReceiptCalculator implements Serializable {
 			receiptData.setAllocationDescMap(new HashMap<String, String>());
 		}
 
-		// Overdue Principal Amount
-		if(repayMain.getOverduePrincipal().compareTo(BigDecimal.ZERO) > 0){
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getOverduePrincipal());
+		// Principal Amount
+		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getPrincipalBalance());
+		}else{
+			if(repayMain.getOverduePrincipal().compareTo(BigDecimal.ZERO) > 0){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getOverduePrincipal());
+			}
 		}
 		
-		if(repayMain.getOverdueProfit().compareTo(BigDecimal.ZERO) > 0){
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getOverdueProfit());
+		// Profit Amount
+		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getProfitBalance());
+		}else{
+			if(repayMain.getOverdueProfit().compareTo(BigDecimal.ZERO) > 0){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getOverdueProfit());
+			}
 		}
 		
 		// Fetch Late Pay Profit Details
-		BigDecimal latePayPftBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
+		BigDecimal latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference());
 		if(latePayPftBal.compareTo(BigDecimal.ZERO) > 0){
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_LPFT, latePayPftBal);
 		}
@@ -1066,7 +1119,8 @@ public class ReceiptCalculator implements Serializable {
 					for (int j = 0; j < feeSchdList.size(); j++) {
 						
 						FinFeeScheduleDetail feeSchd = feeSchdList.get(j);
-						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) < 0) {
+						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) < 0 || 
+								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 							pastFeeAmount = pastFeeAmount.add(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
 						}else{
 							break;
@@ -1097,7 +1151,8 @@ public class ReceiptCalculator implements Serializable {
 					for (int j = 0; j < insSchdList.size(); j++) {
 						
 						FinSchFrqInsurance insSchd = insSchdList.get(j);
-						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) < 0) {
+						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) < 0 ||
+								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 							pastInsAmount = pastInsAmount.add(insSchd.getAmount().subtract(insSchd.getInsurancePaid()));
 						}else{
 							break;

@@ -7,6 +7,7 @@ import java.util.List;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceRepaymentsDAO {
 
@@ -16,7 +17,7 @@ public interface FinanceRepaymentsDAO {
 	
 	//Manual Repayment Details :  Finance Repay Header Details & Finance Repay Schedule Details
 	FinRepayHeader getFinRepayHeader(String finReference, String type);
-	void saveFinRepayHeader(FinRepayHeader finRepayHeader, String type);
+	Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type);
 	void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type);
 	void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type);
 	
@@ -29,5 +30,9 @@ public interface FinanceRepaymentsDAO {
 	void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String string);
 	BigDecimal getPaidPft(String finReference, Date finPostDate);
 	List<FinanceRepayments> getByFinRefAndSchdDate(String finReference,Date finSchdDate);
+	
+	// Receipts : Repay Header List & Repayment Schedule Detail list
+	List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type);
+	void deleteByRef(String finReference, TableType tableType);
 
 }
