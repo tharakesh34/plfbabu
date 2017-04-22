@@ -55,7 +55,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	private FinODDetailsDAO		finODDetailsDAO;
 
 	public static final String	sqlCustRepayQueue	= "	SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
-															+ " FROM FinRpyQueue WHERE CustomerID=?";
+															+ " FROM FinRpyQueue WHERE CustomerID=? AND FINRPYFOR = 'S'";
 
 	/**
 	 * Default constructor
