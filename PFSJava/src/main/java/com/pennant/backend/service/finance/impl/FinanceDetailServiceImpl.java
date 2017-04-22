@@ -186,7 +186,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
-import com.pennanttech.bajaj.service.DisbursementService;
+import com.pennanttech.bajaj.services.DisbursementService;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
