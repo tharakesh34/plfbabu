@@ -6691,4 +6691,96 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 				FROM    	ManualAdvise  T1 
 		</createView>
 	</changeSet>
+	<changeSet id="148" author="Surekha">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'MANUALADVISE_NEW', 'Allow create new ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'MANUALADVISE_EDIT', 'Allow editing of ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'MANUALADVISE_DELETE', 'Allow deleting of ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'MANUALADVISE_MAKER', 'WF Maker for ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'MANUALADVISE_VERIFIER', 'WF Verifier for ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'MANUALADVISE_APPROVER', 'WF Approver for ManualAdvise', 0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_finance_ManualAdvise','MENU',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_finance_ManualAdviseEnquiry','MENU',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_ManualAdviseList_PrintList','ManualAdviseList',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_ManualAdviseList_NewManualAdvise','ManualAdviseList',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_ManualAdviseDialog_btnNew','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_ManualAdviseDialog_btnEdit','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_ManualAdviseDialog_btnDelete','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_ManualAdviseDialog_btnSave','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'ManualAdviseDialog_AdviseID','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'ManualAdviseDialog_AdviseType','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ManualAdviseDialog_FinReference','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'ManualAdviseDialog_FeeTypeID','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'ManualAdviseDialog_Sequence','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'ManualAdviseDialog_AdviseAmount','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'ManualAdviseDialog_PaidAmount','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+8) from SeqSecRights),3,'ManualAdviseDialog_WaivedAmount','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+9) from SeqSecRights),3,'ManualAdviseDialog_Remarks','ManualAdviseDialog',0,1000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			-- for New
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Edit
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Delete
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _MAKER
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+6) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+7) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+8) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+8) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+9) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+9) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			-- For _Verifier
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+21+9) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+22+9) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+23+9) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Approver
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+9) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_finance'),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+9) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+9) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+				
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='MANUALADVISE_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='MANUALADVISE_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'ManualAdvise','menu_Item_ManualAdvise','/WEB-INF/pages/finance/ManualAdvise/ManualAdviseList.zul',0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0,'menuItem_finance_ManualAdvise' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'ManualAdviseEnquiry','menu_Item_ManualAdviseEnquiry?enqiryModule=Y" ','/WEB-INF/pages/finance/ManualAdvise/ManualAdviseEnquiryList.zul',0,10000,'2017-04-22 10:56:52','Approved',' ',' ',' ',' ',' ',0,'menuItem_finance_ManualAdvise' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
