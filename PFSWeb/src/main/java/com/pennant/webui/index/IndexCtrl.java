@@ -73,12 +73,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.PTDateFormat;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/index.zul file.
@@ -139,20 +137,15 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		LoggedInUser user = getUserWorkspace().getLoggedInUser();
 		logger.info("User Name: " + user.getUserName());
 		
-		final String userName = user.getUserName();
-		final String loginTime = PennantAppUtil.getTime(user.getLogonTime()).toString();
-		final String loginDate = DateUtility.getAppDate(DateFormat.SHORT_DATE);
-		final String branchCode = user.getBranchCode();
-		final String departmentCode = user.getDepartmentCode();
-		
 		final String version = zkVersion + " | " + appVersion;
 		final String tableSchemaName = "public";
 		
-		EventQueues.lookup("loginTimeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLoginTime", null, loginTime));
-		EventQueues.lookup("loginDateEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLoginDate", null, loginDate));
-		EventQueues.lookup("userNameEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeUser", null, userName));
-		EventQueues.lookup("branchCodeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeBranch", null, branchCode));
-		EventQueues.lookup("departmentCodeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangedepartment", null, departmentCode));
+		//EventQueues.lookup("loginTimeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLoginTime", null, loginTime));
+		//EventQueues.lookup("loginDateEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeLoginDate", null, loginDate));
+		//EventQueues.lookup("userNameEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeUser", null, userName));
+		//EventQueues.lookup("branchCodeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeBranch", null, branchCode));
+		//EventQueues.lookup("departmentCodeEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangedepartment", null, departmentCode));
+		
 		EventQueues.lookup("appVersionEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeAppVersion", null, version));
 		EventQueues.lookup("tableSchemaEventQueue", EventQueues.DESKTOP, true).publish(new Event("onChangeTableSchema", null, tableSchemaName));
 		

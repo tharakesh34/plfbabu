@@ -69,6 +69,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.service.MenuDetailsService;
+import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -102,7 +103,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
     protected Window outerIndexWindow; // autowired
     protected Menuitem menuitem_logout;
     protected Menuitem menuitem_changePasssword;
-    
+    LoggedInUser user =null;
 	private transient MenuDetailsService menuDetailsService;
 
 	/**
@@ -116,7 +117,10 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	public void doAfterCompose(Component comp) throws Exception {
 		logger.debug("Entering ");
 		super.doAfterCompose(comp);
+		user = getUserWorkspace().getLoggedInUser();
 
+		
+	/*	
 		// Listener for loginTime
 		EventQueues.lookup("loginTimeEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
 			@Override
@@ -126,6 +130,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				doShowLabel();
 			}
 		});
+	
 		// Listener for loginDate
 		EventQueues.lookup("loginDateEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
 			@Override
@@ -146,6 +151,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			}
 		});
 
+
 		// Listener for BranchCode
 		EventQueues.lookup("branchCodeEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
 			@Override
@@ -165,6 +171,15 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			}
 		});
 		
+		*/
+		
+		set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
+		set_LoginDateText(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+		set_UserText(user.getUserName());
+		set_BranchCodeText(user.getBranchCode());
+		set_DepartmentCodeText(user.getDepartmentCode());
+		doShowLabel();
+
 		// Listener for Last Login
 		EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
