@@ -1866,4 +1866,178 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			INSERT INTO SeqBounceReasons VALUES(0);
 		</sql>
 	</changeSet>
+	<changeSet id="96" author="Surekha">
+		<sql>
+			delete from PTMenuDetails where MenuCode='ProfitCenter';
+			delete from PTMenuDetails where MenuCode='ProfitCenterEnquiry';
+			
+			delete from SecRoleGroups where GrpId=(select GrpId from SecGroups where GrpCode='PROFITCENTER_MAKER');
+			delete from SecRoleGroups where GrpId=(select GrpId from SecGroups where GrpCode='PROFITCENTER_APPROVER');
+			
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='PROFITCENTER_MAKER') ;
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='PROFITCENTER_APPROVER');
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='PROFITCENTER_VIEW');
+			
+			delete from SecRights where RightName='menuItem_applicationmaster_ProfitCenter';
+			delete from SecRights where RightName='menuItem_applicationmaster_ProfitCenterEnquiry';
+			delete from SecRights where RightName='button_ProfitCenterList_PrintList';
+			delete from SecRights where RightName='button_ProfitCenterList_NewProfitCenter';
+			delete from SecRights where RightName='button_ProfitCenterDialog_btnNew';
+			delete from SecRights where RightName='button_ProfitCenterDialog_btnEdit';
+			delete from SecRights where RightName='button_ProfitCenterDialog_btnDelete';
+			delete from SecRights where RightName='button_ProfitCenterDialog_btnSave';
+			delete from SecRights where RightName='ProfitCenterDialog_ProfitCenterID';
+			delete from SecRights where RightName='ProfitCenterDialog_ProfitCenterCode';
+			delete from SecRights where RightName='ProfitCenterDialog_ProfitCenterDesc';
+			delete from SecRights where RightName='ProfitCenterDialog_Active';
+			
+			delete from SecGroups where GrpCode='PROFITCENTER_VIEW';
+			delete from SecGroups where GrpCode='PROFITCENTER_MAKER';
+			delete from SecGroups where GrpCode='PROFITCENTER_APPROVER';
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'PROFITCENTER_VIEW', 'Allow to view ProfitCenter', 0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'PROFITCENTER_MAKER', 'WF Maker for ProfitCenter', 0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'PROFITCENTER_APPROVER', 'WF Approver for ProfitCenter', 0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_applicationmaster_ProfitCenter','MENU',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_applicationmaster_ProfitCenterEnquiry','MENU',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_ProfitCenterList_PrintList','ProfitCenterList',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_ProfitCenterList_NewProfitCenter','ProfitCenterList',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_ProfitCenterDialog_btnNew','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_ProfitCenterDialog_btnEdit','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_ProfitCenterDialog_btnDelete','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_ProfitCenterDialog_btnSave','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'ProfitCenterDialog_ProfitCenterID','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'ProfitCenterDialog_ProfitCenterCode','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ProfitCenterDialog_ProfitCenterDesc','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'ProfitCenterDialog_Active','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			-- for View
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmasterEnquiry'),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _MAKER
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22 06:46:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Approver
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+				
+			
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'ProfitCenter','menu_Item_ProfitCenter','/WEB-INF/pages/applicationmaster/ProfitCenter/ProfitCenterList.zul',0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_ProfitCenter' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'ProfitCenterEnquiry','menu_Item_ProfitCenterEnquiry?enqiryModule=Y" ','/WEB-INF/pages/applicationmaster/ProfitCenter/ProfitCenterEnquiryList.zul',0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_ProfitCenter' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+		</sql>
+	</changeSet>
+	<changeSet id="97" author="Surekha">
+		<sql>
+			delete from PTMenuDetails where MenuCode='CostCenter';
+			delete from PTMenuDetails where MenuCode='CostCenterEnquiry';
+			
+			delete from SecRoleGroups where GrpId=(select GrpId from SecGroups where GrpCode='COSTCENTER_MAKER');
+			delete from SecRoleGroups where GrpId=(select GrpId from SecGroups where GrpCode='COSTCENTER_APPROVER');
+			
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='COSTCENTER_MAKER') ;
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='COSTCENTER_APPROVER');
+			delete from SecGroupRights where GrpId=(select GrpId from SecGroups where GrpCode='COSTCENTER_VIEW');
+			
+			delete from SecRights where RightName='menuItem_applicationmaster_CostCenter';
+			delete from SecRights where RightName='menuItem_applicationmaster_CostCenterEnquiry';
+			delete from SecRights where RightName='button_CostCenterList_PrintList';
+			delete from SecRights where RightName='button_CostCenterList_NewCostCenter';
+			delete from SecRights where RightName='button_CostCenterDialog_btnNew';
+			delete from SecRights where RightName='button_CostCenterDialog_btnEdit';
+			delete from SecRights where RightName='button_CostCenterDialog_btnDelete';
+			delete from SecRights where RightName='button_CostCenterDialog_btnSave';
+			delete from SecRights where RightName='CostCenterDialog_CostCenterID';
+			delete from SecRights where RightName='CostCenterDialog_CostCenterCode';
+			delete from SecRights where RightName='CostCenterDialog_CostCenterDesc';
+			delete from SecRights where RightName='CostCenterDialog_Active';
+			
+			delete from SecGroups where GrpCode='COSTCENTER_VIEW';
+			delete from SecGroups where GrpCode='COSTCENTER_MAKER';
+			delete from SecGroups where GrpCode='COSTCENTER_APPROVER';
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'COSTCENTER_VIEW', 'Allow to view CostCenter', 0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'COSTCENTER_MAKER', 'WF Maker for CostCenter', 0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'COSTCENTER_APPROVER', 'WF Approver for CostCenter', 0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_applicationmaster_CostCenter','MENU',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_applicationmaster_CostCenterEnquiry','MENU',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_CostCenterList_PrintList','CostCenterList',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_CostCenterList_NewCostCenter','CostCenterList',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_CostCenterDialog_btnNew','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_CostCenterDialog_btnEdit','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_CostCenterDialog_btnDelete','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_CostCenterDialog_btnSave','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'CostCenterDialog_CostCenterID','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'CostCenterDialog_CostCenterCode','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'CostCenterDialog_CostCenterDesc','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'CostCenterDialog_Active','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			-- for View
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmasterEnquiry'),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _MAKER
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22 06:46:38',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Approver
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+				
+			
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'CostCenter','menu_Item_CostCenter','/WEB-INF/pages/applicationmaster/CostCenter/CostCenterList.zul',0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_CostCenter' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'CostCenterEnquiry','menu_Item_CostCenterEnquiry?enqiryModule=Y" ','/WEB-INF/pages/applicationmaster/CostCenter/CostCenterEnquiryList.zul',0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_CostCenter' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
