@@ -86,7 +86,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 	protected Listheader listheader_BounceCode;
 	protected Listheader listheader_ReasonType;
 	protected Listheader listheader_Category;
-	protected Listheader listheader_ReturnID;
+	protected Listheader listheader_ReturnCode;
 	protected Listheader listheader_Active;
 
 	// checkRights
@@ -97,13 +97,13 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 	protected Textbox bounceCode; // autowired
     protected Combobox reasonType; // autowired
     protected Combobox category; // autowired
-	protected Textbox returnID; // autowired
+	protected Textbox returnCode; // autowired
 	protected Checkbox active; // autowired
 	
 	protected Listbox sortOperator_BounceCode;
 	protected Listbox sortOperator_ReasonType;
 	protected Listbox sortOperator_Category;
-	protected Listbox sortOperator_ReturnID;
+	protected Listbox sortOperator_ReturnCode;
 	protected Listbox sortOperator_Active;
 	
 	private transient BounceReasonService bounceReasonService;
@@ -144,16 +144,11 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		registerField("bounceID");
 		registerField("bounceCode", listheader_BounceCode, SortOrder.NONE, bounceCode, sortOperator_BounceCode, Operators.STRING);
 		registerField("reasonType", listheader_ReasonType, SortOrder.NONE, reasonType, sortOperator_ReasonType, Operators.STRING);
-		registerField("reasonTypeName");
 		registerField("category", listheader_Category, SortOrder.NONE, category, sortOperator_Category, Operators.STRING);
-		registerField("categoryName");
 		registerField("reason");		
 		registerField("action");		
-		registerField("actionName");
 		registerField("feeID");		
-		registerField("feeIDName");
-		registerField("returnID", listheader_ReturnID, SortOrder.NONE, returnID, sortOperator_ReturnID, Operators.STRING);
-		registerField("returnIDName");
+		registerField("returnCode", listheader_ReturnCode, SortOrder.NONE, returnCode, sortOperator_ReturnCode, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -252,11 +247,11 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("bouncereason", bouncereason);
-		arg.put("bouncereasonListCtrl", this);
+		arg.put("bounceReason", bouncereason);
+		arg.put("bounceReasonListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.applicationmaster/BounceReason/BounceReasonDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -302,7 +297,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
-
+	
 	public void setBounceReasonService(BounceReasonService bounceReasonService) {
 		this.bounceReasonService = bounceReasonService;
 	}

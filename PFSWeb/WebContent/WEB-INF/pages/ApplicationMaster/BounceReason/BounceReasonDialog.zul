@@ -80,25 +80,47 @@
 							<row id="row0">
 								<label id="label_BounceCode"
 									value="${c:l('label_BounceReasonDialog_BounceCode.value')}" />
-								<uppercasebox id="bounceCode"
-									maxlength="8" width="72px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<uppercasebox id="bounceCode"
+										maxlength="8" width="72px" />
+								</hbox>
 								<label id="label_ReasonType"
 									value="${c:l('label_BounceReasonDialog_ReasonType.value')}" />
-								<combobox id="reasonType" width="90px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="reasonType"
+										width="90px" />
+								</hbox>
 							</row>
 							<row id="row1">
 								<label id="label_Category"
 									value="${c:l('label_BounceReasonDialog_Category.value')}" />
-								<combobox id="category" width="90px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="category"
+										width="90px" />
+								</hbox>
 								<label id="label_Reason"
 									value="${c:l('label_BounceReasonDialog_Reason.value')}" />
-								<textbox id="reason" maxlength="50"
-									width="450px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="reason" maxlength="50"
+										width="450px" />
+								</hbox>
 							</row>
 							<row id="row2">
 								<label id="label_Action"
 									value="${c:l('label_BounceReasonDialog_Action.value')}" />
-								<combobox id="action" width="90px" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="action" width="90px" />
+								</hbox>
 								<label id="label_FeeID"
 									value="${c:l('label_BounceReasonDialog_FeeID.value')}" />
 								<extendedcombobox id="feeID" />
@@ -106,7 +128,11 @@
 							<row id="row3">
 								<label id="label_ReturnID"
 									value="${c:l('label_BounceReasonDialog_ReturnCode.value')}" />
-								<textbox id="returnCode" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="returnCode" />
+								</hbox>
 								<label id="label_Active"
 									value="${c:l('label_BounceReasonDialog_Active.value')}" />
 								<checkbox id="active" checked="false" />

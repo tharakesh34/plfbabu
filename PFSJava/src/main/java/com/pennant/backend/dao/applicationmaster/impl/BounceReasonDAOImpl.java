@@ -83,8 +83,10 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" feeID, returnID, active, ");
-		
+		sql.append(" feeID, returnCode, active, ");
+		if (type.contains("View")) {
+			sql.append(" feeIDName, feeCode,");
+		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BounceReasons");
 		sql.append(type);
@@ -155,12 +157,16 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		StringBuilder sql =new StringBuilder(" insert into BounceReasons");
 		sql.append(tableType.getSuffix());
 		sql.append("(bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" feeID, returnID, active, ");
+		sql.append(" feeID, returnCode, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :bounceID, :bounceCode, :reasonType, :category, :reason, :action, ");
-		sql.append(" :feeID, :returnID, :active, ");
+		sql.append(" :feeID, :returnCode, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		if (bounceReason.getBounceID() <= 0) {
+			bounceReason.setBounceID(getNextidviewDAO().getNextId("SeqBounceReasons"));
+		}
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -185,7 +191,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		sql.append(tableType.getSuffix());
 		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
 		sql.append(" reason = :reason, action = :action, feeID = :feeID, ");
-		sql.append(" returnID = :returnID, active = :active, ");
+		sql.append(" returnCode = :returnCode, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

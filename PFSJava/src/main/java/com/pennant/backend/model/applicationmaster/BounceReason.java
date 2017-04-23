@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,16 +67,13 @@ private static final long serialVersionUID = 1L;
 	private long bounceID = 0;
 	private String bounceCode;
 	private int reasonType;
-	private String reasonTypeName;
 	private int category;
-	private String categoryName;
 	private String reason;
 	private int action;
-	private String actionName;
 	private long feeID=0;
 	private String feeIDName;
-	private long returnID=0;
-	private String returnIDName;
+	private String feeCode;
+	private String returnCode;
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord=false;
@@ -101,11 +99,8 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("reasonTypeName");
-			excludeFields.add("categoryName");
-			excludeFields.add("actionName");
 			excludeFields.add("feeIDName");
-			excludeFields.add("returnIDName");
+			excludeFields.add("feeCode");
 	return excludeFields;
 	}
 
@@ -136,13 +131,6 @@ private static final long serialVersionUID = 1L;
 	public void setReasonType(int reasonType) {
 		this.reasonType = reasonType;
 	}
-	public String getReasonTypeName() {
-		return this.reasonTypeName;
-	}
-
-	public void setReasonTypeName (String reasonTypeName) {
-		this.reasonTypeName = reasonTypeName;
-	}
 	
 	public int getCategory() {
 		return category;
@@ -150,14 +138,6 @@ private static final long serialVersionUID = 1L;
 	public void setCategory(int category) {
 		this.category = category;
 	}
-	public String getCategoryName() {
-		return this.categoryName;
-	}
-
-	public void setCategoryName (String categoryName) {
-		this.categoryName = categoryName;
-	}
-	
 	public String getReason() {
 		return reason;
 	}
@@ -171,14 +151,6 @@ private static final long serialVersionUID = 1L;
 	public void setAction(int action) {
 		this.action = action;
 	}
-	public String getActionName() {
-		return this.actionName;
-	}
-
-	public void setActionName (String actionName) {
-		this.actionName = actionName;
-	}
-	
 	public long getFeeID() {
 		return feeID;
 	}
@@ -191,20 +163,6 @@ private static final long serialVersionUID = 1L;
 
 	public void setFeeIDName (String feeIDName) {
 		this.feeIDName = feeIDName;
-	}
-	
-	public long getReturnID() {
-		return returnID;
-	}
-	public void setReturnID(long returnID) {
-		this.returnID = returnID;
-	}
-	public String getReturnIDName() {
-		return this.returnIDName;
-	}
-
-	public void setReturnIDName (String returnIDName) {
-		this.returnIDName = returnIDName;
 	}
 	
 	public boolean isActive() {
@@ -246,4 +204,23 @@ private static final long serialVersionUID = 1L;
 		this.userDetails = userDetails;
 	}
 
+	public String getReturnCode() {
+		return returnCode;
+	}
+
+	public void setReturnCode(String returnCode) {
+		this.returnCode = returnCode;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getFeeCode() {
+		return feeCode;
+	}
+
+	public void setFeeCode(String feeCode) {
+		this.feeCode = feeCode;
+	}
 }

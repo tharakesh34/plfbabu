@@ -66,6 +66,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -101,15 +102,15 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 	protected Textbox 		reason; 
  	protected Combobox 		action; 
     protected ExtendedCombobox 		feeID; 
-    protected ExtendedCombobox 		returnID; 
-  protected Checkbox 		active; 
+    protected Textbox 		returnCode; 
+    protected Checkbox 		active; 
 	private BounceReason bounceReason; // overhanded per param
 
 	private transient BounceReasonListCtrl bounceReasonListCtrl; // overhanded per param
 	private transient BounceReasonService bounceReasonService;
 	
 	private List<ValueLabel> listReasonType=PennantStaticListUtil.getReasonType();
-	private List<ValueLabel> listCategory=PennantStaticListUtil.getAssetType();
+	private List<ValueLabel> listCategory=PennantStaticListUtil.getCategoryType();
 	private List<ValueLabel> listAction=PennantStaticListUtil.getAction();
 
 	/**
@@ -193,17 +194,14 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.bounceCode.setMaxlength(8);
 			this.reason.setMaxlength(50);
 			this.feeID.setModuleName("FeeType");
-			this.feeID.setValueColumn("feeID");
-			this.feeID.setDescColumn("feeIDName");
-			this.feeID.setValidateColumns(new String[] {"feeID"});
+			this.feeID.setMandatoryStyle(true);
+			this.feeID.setValueColumn("FeeTypeCode");
+			this.feeID.setDescColumn("FeeTypeDesc");
+			this.feeID.setValidateColumns(new String[] {"FeeTypeCode"});
 			Filter[] filters = new Filter[1] ;
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 			this.feeID.setFilters(filters);
-			this.returnID.setModuleName("ReturnCode");
-			this.returnID.setValueColumn("returnID");
-			this.returnID.setDescColumn("returnIDName");
-			this.returnID.setValidateColumns(new String[] {"returnID"});
-			Filter[] filters1 = new Filter[1] ;
-			this.returnID.setFilters(filters1);
+			
 		
 		setStatusDetails();
 		
@@ -333,44 +331,24 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.LEAVING);
 	}
 	
+	public void onFulfill$feeID(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = feeID.getObject();
+		if (dataObject instanceof String) {
+			this.feeID.setValue(dataObject.toString());
+			this.feeID.setDescription("");
+		} else {
+			FeeType details = (FeeType) dataObject;
+			if (details != null) {
+				this.feeID.setAttribute("FeeID", details.getFeeTypeID());
+				this.bounceReason.setFeeCode(details.getFeeTypeCode());
+				this.bounceReason.setFeeIDName(details.getFeeTypeDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
 
-
-
-
-
-
-      public void onFulfillFeeID(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.feeID.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-      public void onFulfillReturnID(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.returnID.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
-
-	/**
+   	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param bounceReason
@@ -384,21 +362,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			fillComboBox(this.category, String.valueOf(aBounceReason.getCategory()), listCategory,"");
 			this.reason.setValue(aBounceReason.getReason());
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
-			if(aBounceReason.getFeeID()!=0){
-				this.feeID.setValue(String.valueOf(aBounceReason.getFeeID()));
+			
+			if (aBounceReason.getFeeID() != Long.MIN_VALUE && aBounceReason.getFeeID() != 0) {
+				this.feeID.setAttribute("FeeID", aBounceReason.getFeeID());
+				this.feeID.setValue(aBounceReason.getFeeCode(), aBounceReason.getFeeIDName());
 			}
-			if(aBounceReason.getReturnID()!=0){
-				this.returnID.setValue(String.valueOf(aBounceReason.getReturnID()));
-			}
+			this.returnCode.setValue(aBounceReason.getReturnCode());
 			this.active.setChecked(aBounceReason.isActive());
-		
-		if (aBounceReason.isNewRecord()){
-			   this.feeID.setDescription("");
-			   this.returnID.setDescription("");
-		}else{
-			   this.feeID.setDescription(aBounceReason.getFeeIDName());
-			   this.returnID.setDescription(aBounceReason.getReturnIDName());
-		}
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -482,13 +452,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		//Return ID
+		//Return Code
 		try {
-			this.returnID.getValidatedValue();
-			Object obj = this.returnID.getAttribute("ReturnID");
-			if (obj != null) {
-				aBounceReason.setReturnID(Long.valueOf(String.valueOf(obj)));
-			}
+		    aBounceReason.setReturnCode(this.returnCode.getValue());
 			}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -561,7 +527,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.bounceCode.isReadonly()){
-			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.reasonType.isReadonly()){
 			this.reasonType.setConstraint(new StaticListValidator(listReasonType,Labels.getLabel("label_BounceReasonDialog_ReasonType.value")));
@@ -570,13 +536,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.category.setConstraint(new StaticListValidator(listCategory,Labels.getLabel("label_BounceReasonDialog_Category.value")));
 		}
 		if (!this.reason.isReadonly()){
-			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
 		}
 		if (!this.feeID.isReadonly()){
-			this.feeID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_FeeID.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.feeID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_FeeID.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
-		if (!this.returnID.isReadonly()){
-			this.returnID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnID.value"),PennantRegularExpressions.REGEX_NAME,false));
+		if (!this.returnCode.isReadonly()){
+			this.returnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 	
 		logger.debug(Literal.LEAVING);
@@ -594,7 +560,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		this.reason.setConstraint("");
 		this.action.setConstraint("");
 		this.feeID.setConstraint("");
-		this.returnID.setConstraint("");
+		this.returnCode.setConstraint("");
 	
 	logger.debug(Literal.LEAVING);
 	}
@@ -714,7 +680,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.feeID);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnID"), this.returnID);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
 			
 			if (isWorkFlowEnabled()) {
@@ -748,7 +714,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(true, this.reason);
 			readOnlyComponent(true, this.action);
 			readOnlyComponent(true, this.feeID);
-			readOnlyComponent(true, this.returnID);
+			readOnlyComponent(true, this.returnCode);
 			readOnlyComponent(true, this.active);
 
 			if (isWorkFlowEnabled()) {
@@ -776,8 +742,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			 	this.action.setSelectedIndex(0);
 			  	this.feeID.setValue("");
 			  	this.feeID.setDescription("");
-			  	this.returnID.setValue("");
-			  	this.returnID.setDescription("");
+			  	this.returnCode.setValue("");
 				this.active.setChecked(false);
 
 			logger.debug("Leaving");
