@@ -108,8 +108,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
 		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, FinStartDate, ");
-//		selectSql.append(" ExcessAmt, EmiInAdvance, ");
-//		selectSql.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
+		selectSql.append(" ExcessAmt, EmiInAdvance, ");
+		selectSql.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -272,7 +272,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		selectSql.append(" NOInst, MaturityDate, FirstRepayAmt, NSchdDate, NSchdPri, NSchdPft, FirstRepayDate,");
 		selectSql.append(" NSchdDate, PrvRpySchDate, ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, ");
 		selectSql.append(" TotalPftPaidInAdv, TotalPriPaidInAdv,");
-//		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise");
+		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -307,7 +307,6 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TdSchdPri = :TdSchdPri, TdSchdPriPaid = :TdSchdPriPaid, TdSchdPriBal = :TdSchdPriBal,");
 		updateSql.append(" CalPftOnPD = :CalPftOnPD, PftOnPDMethod = :PftOnPDMethod, PftOnPDMrg = :PftOnPDMrg,");
 		updateSql.append(" TotPftOnPD = :TotPftOnPD,TotPftOnPDPaid = :TotPftOnPDPaid,");
-		//		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived,");
 		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived, TotPftOnPDDue = :TotPftOnPDDue,");
 		updateSql.append(" NOInst = :NOInst, NOPaidInst = :NOPaidInst, NOODInst = :NOODInst,");
 		updateSql.append(" FutureInst = :FutureInst, RemainingTenor = :RemainingTenor, TotalTenor = :TotalTenor,");
@@ -325,9 +324,9 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
 		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv,");
-//		updateSql.append(" ExcessAmt = :ExcessAmt, ");
-//		updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ExcessAmtResv = :ExcessAmtResv,");
-//		updateSql.append(" EmiInAdvanceResv = :EmiInAdvanceResv, PayableAdviseResv = :PayableAdviseResv,  ");
+		updateSql.append(" ExcessAmt = :ExcessAmt, ");
+		updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ExcessAmtResv = :ExcessAmtResv,");
+		updateSql.append(" EmiInAdvanceResv = :EmiInAdvanceResv, PayableAdviseResv = :PayableAdviseResv,  ");
 		updateSql.append(" LastMdfDate = :LastMdfDate");
 		if (isRpyProcess) {
 			updateSql
@@ -463,8 +462,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr,");
 		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
 		insertSql.append(" TotalTenor");
-//		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
-//		insertSql.append(" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv ");
+		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
+		insertSql.append(" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv ");
 		insertSql.append(" ) Values");
 		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
 		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
@@ -487,8 +486,8 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthAmzPD, :PrvMthAmzSusp, :PrvMthAcr,");
 		insertSql.append(" :PrvMthAcrSusp, :FirstDisbDate, :LatestDisbDate, :FutureInst, :RemainingTenor,");
 		insertSql.append(" :TotalTenor ");
-//		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
-//		insertSql.append(" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv ");
+		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
+		insertSql.append(" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv ");
 		insertSql.append(" ) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
