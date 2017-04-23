@@ -181,9 +181,9 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 
 		this.bucketID.setModuleName("DPDBucket");
 		this.bucketID.setMandatoryStyle(true);
-		this.bucketID.setValueColumn("BucketID");
+		this.bucketID.setValueColumn("BucketCode");
 		this.bucketID.setDescColumn("BucketDesc");
-		this.bucketID.setValidateColumns(new String[] { "BucketID" });
+		this.bucketID.setValidateColumns(new String[] { "BucketCode" });
 		Filter[] filters1 = new Filter[1] ;
 		filters1[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.bucketID.setFilters(filters1);
@@ -316,13 +316,14 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		}
 		this.dueDays.setValue(aDPDBucketConfiguration.getDueDays());
 		this.suspendProfit.setChecked(aDPDBucketConfiguration.isSuspendProfit());
-
+		if (aDPDBucketConfiguration.getBucketID() != Long.MIN_VALUE && aDPDBucketConfiguration.getBucketID() != 0) {
+			this.bucketID.setAttribute("BucketID", aDPDBucketConfiguration.getBucketID());
+			this.bucketID.setValue(aDPDBucketConfiguration.getBucketCode(), aDPDBucketConfiguration.getBucketIDName());
+		}
 		if (aDPDBucketConfiguration.isNewRecord()) {
 			this.productCode.setDescription("");
-			this.bucketID.setDescription("");
 		} else {
 			this.productCode.setDescription(aDPDBucketConfiguration.getProductCodeName());
-			this.bucketID.setDescription(aDPDBucketConfiguration.getBucketIDName());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -350,9 +351,9 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		//Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
-			Object obj = this.bucketID.getAttribute("BucketID");
+			Long obj = (Long) this.bucketID.getAttribute("BucketID");
 			if (obj != null) {
-				aDPDBucketConfiguration.setBucketID(Long.valueOf(String.valueOf(obj)));
+				aDPDBucketConfiguration.setBucketID(obj);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -510,8 +511,6 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 			DPDBucket details = (DPDBucket) dataObject;
 			if (details != null) {
 				this.bucketID.setAttribute("BucketID", details.getBucketID());
-				this.bucketID.setValue(String.valueOf(details.getBucketID()));
-				this.bucketID.setDescription(details.getBucketDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

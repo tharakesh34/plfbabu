@@ -274,6 +274,11 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 			this.parentGroupId.setAttribute("ParentGroupId", aAccountTypeGroup.getParentGroupId());
 			this.parentGroupId.setValue(aAccountTypeGroup.getParentGroup(), aAccountTypeGroup.getParentGroupDesc());
 		}
+		if(this.acctTypeLevel.getValue() > 1){
+			this.parentGroupId.setMandatoryStyle(true);
+		}else{
+			this.parentGroupId.setSclass("");
+		}
 		this.recordStatus.setValue(aAccountTypeGroup.getRecordStatus());
 		logger.debug("Leaving ");
 	}
@@ -308,9 +313,9 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 
 		try {
 			this.parentGroupId.getValidatedValue();
-			Object obj = this.parentGroupId.getAttribute("ParentGroupId");
+			Long obj = (Long) this.parentGroupId.getAttribute("ParentGroupId");
 			if (obj != null) {
-				aAccountTypeGroup.setParentGroupId(Long.valueOf(String.valueOf(obj)));
+				aAccountTypeGroup.setParentGroupId((obj));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -399,9 +404,15 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 					PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		if (!this.parentGroupId.isReadonly()) {
+			if(this.acctTypeLevel.getValue() > 1){
+			this.parentGroupId.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null,
+					true));
+		}else{
 			this.parentGroupId.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_AccounTypeGroupDialog_ParentGroup.value"), null,
 					false));
+		}
 		}
 		logger.debug("Leaving ");
 	}
@@ -570,6 +581,10 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 				Filter[] filters = new Filter[1];
 				filters[0] = new Filter("AcctTypeLevel", this.acctTypeLevel.getValue() - 1, Filter.OP_EQUAL);
 				this.parentGroupId.setFilters(filters);
+			}if(this.acctTypeLevel.getValue() > 1){
+				this.parentGroupId.setMandatoryStyle(true);
+			}else{
+				this.parentGroupId.setMandatoryStyle(false);
 			}
 		} else {
 			this.acctTypeLevel.setValue(0);
@@ -586,8 +601,6 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 			AccountTypeGroup details = (AccountTypeGroup) dataObject;
 			if (details != null) {
 				this.parentGroupId.setAttribute("ParentGroupId", details.getGroupId());
-				this.accountTypeGroup.setParentGroup(details.getParentGroup());
-				this.accountTypeGroup.setParentGroupDesc(details.getParentGroupDesc());
 				if (this.acctTypeLevel.getValue() == 0 && this.parentGroupId.getValue() != null) {
 					this.acctTypeLevel.setValue((int) (details.getAcctTypeLevel() + 1));
 				}

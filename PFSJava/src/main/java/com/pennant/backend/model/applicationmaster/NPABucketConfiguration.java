@@ -69,6 +69,7 @@ private static final long serialVersionUID = 1L;
 	private String productCodeName;
 	private long bucketID;
 	private String bucketIDName;
+	private String bucketCode;
 	private int dueDays;
 	private boolean suspendProfit;
 	@XmlTransient
@@ -97,6 +98,7 @@ private static final long serialVersionUID = 1L;
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("productCodeName");
 			excludeFields.add("bucketIDName");
+			excludeFields.add("bucketCode");
 	return excludeFields;
 	}
 
@@ -190,6 +192,14 @@ private static final long serialVersionUID = 1L;
 	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getBucketCode() {
+		return bucketCode;
+	}
+
+	public void setBucketCode(String bucketCode) {
+		this.bucketCode = bucketCode;
 	}
 
 }

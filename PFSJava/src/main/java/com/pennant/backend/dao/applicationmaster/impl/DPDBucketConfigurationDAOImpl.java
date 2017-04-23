@@ -87,7 +87,7 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit, ");
 		if (type.contains("View")) {
-			sql.append(" ProductCodeName, BucketIDName,");
+			sql.append(" ProductCodeName, BucketIDName,BucketCode,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From DPDBUCKETSCONFIG");

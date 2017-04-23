@@ -182,9 +182,9 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 				
 		this.bucketID.setModuleName("NPABucket");
 		this.bucketID.setMandatoryStyle(true);
-		this.bucketID.setValueColumn("BucketID");
+		this.bucketID.setValueColumn("BucketCode");
 		this.bucketID.setDescColumn("BucketDesc");
-		this.bucketID.setValidateColumns(new String[] { "BucketID" });
+		this.bucketID.setValidateColumns(new String[] { "BucketCode" });
 		Filter[] filters1 = new Filter[1] ;
 		filters1[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.bucketID.setFilters(filters1);
@@ -312,18 +312,18 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		logger.debug(Literal.ENTERING);
 
 		this.productCode.setValue(aNPABucketConfiguration.getProductCode());
-		if (aNPABucketConfiguration.getBucketID() != Long.MIN_VALUE && aNPABucketConfiguration.getBucketID() != 0) {
-			this.bucketID.setValue(String.valueOf(aNPABucketConfiguration.getBucketID()));
-		}
 		this.dueDays.setValue(aNPABucketConfiguration.getDueDays());
 		this.suspendProfit.setChecked(aNPABucketConfiguration.isSuspendProfit());
-
+		
+		if (aNPABucketConfiguration.getBucketID() != Long.MIN_VALUE && aNPABucketConfiguration.getBucketID() != 0) {
+			this.bucketID.setAttribute("BucketID", aNPABucketConfiguration.getBucketID());
+			this.bucketID.setValue(aNPABucketConfiguration.getBucketCode(), aNPABucketConfiguration.getBucketIDName());
+		}
+		
 		if (aNPABucketConfiguration.isNewRecord()) {
 			this.productCode.setDescription("");
-			this.bucketID.setDescription("");
 		} else {
 			this.productCode.setDescription(aNPABucketConfiguration.getProductCodeName());
-			this.bucketID.setDescription(aNPABucketConfiguration.getBucketIDName());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -351,9 +351,9 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		//Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
-			Object obj = this.bucketID.getAttribute("BucketID");
+			Long obj = (Long) this.bucketID.getAttribute("BucketID");
 			if (obj != null) {
-				aNPABucketConfiguration.setBucketID(Long.valueOf(String.valueOf(obj)));
+				aNPABucketConfiguration.setBucketID(obj);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -511,8 +511,6 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 			NPABucket details = (NPABucket) dataObject;
 			if (details != null) {
 				this.bucketID.setAttribute("BucketID", details.getBucketID());
-				this.bucketID.setValue(String.valueOf(details.getBucketID()));
-				this.bucketID.setDescription(details.getBucketDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
