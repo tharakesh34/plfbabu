@@ -95,7 +95,6 @@ public class GeneralLabelLocator implements LabelLocator {
 		// check if the file exists
 		File fmr = new File(menuResPath);
 		if (!fmr.exists()){
-			System.out.println(menuResFilename + "Not Exists");
 			menuResFilename = MENU_FILE_NAME + MENU_FILE_SUFFIX;
 			fmr = new File(Sessions.getCurrent().getWebApp().getRealPath("/WEB-INF/" + menuResFilename));
 		}
