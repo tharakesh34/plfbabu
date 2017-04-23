@@ -981,4 +981,14 @@ FROM    	Mandates  T1 INNER JOIN
 			<column name="CustNationality" />
 		</createIndex>
 	</changeSet>
+	<changeSet id="42" author="Sai">
+		<createIndex tableName="customers" indexName="ix_cust_type">
+			<column name="CUSTTYPECODE" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="43" author="Sai">
+		<createIndex tableName="customers_temp" indexName="ix_tcust_type">
+			<column name="CUSTTYPECODE"></column>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
