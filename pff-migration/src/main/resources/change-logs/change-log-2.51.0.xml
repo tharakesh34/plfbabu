@@ -2040,4 +2040,26 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
 		</sql>
 	</changeSet>
+	<changeSet id="98" author="Sai">
+		<createIndex tableName="FinanceMain_Temp" indexName="ix_tfm_ft">
+			<column name="FINTYPE" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="99" author="Sai">
+		<createIndex tableName="FinanceMain_Temp" indexName="ix_tfm_cust_id">
+			<column name="CUSTID" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="100" author="Sai">
+		<createIndex tableName="FinanceMain" indexName="ix_fm_rcd_mnt_sts">
+			<column name="CUSTID" />
+			<column name="RCDMAINTAINSTS" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="101" author="Sai">
+		<createIndex tableName="FinanceMain_Temp" indexName="ix_tfm_rcd_mnt_sts">
+			<column name="CUSTID" />
+			<column name="RCDMAINTAINSTS" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
