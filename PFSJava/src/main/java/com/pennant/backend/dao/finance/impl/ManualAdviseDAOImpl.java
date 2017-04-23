@@ -86,7 +86,9 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, ");
 		sql.append(" paidAmount, waivedAmount, remarks, ");
-		
+		if(type.contains("View")){
+			sql.append(" FeeTypeCode, FeeTypeDesc," );
+		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From ManualAdvise");
 		sql.append(type);
@@ -126,6 +128,12 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, ");
 		sql.append(" :paidAmount, :waivedAmount, :remarks, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		// Get the identity sequence number.
+		if (manualAdvise.getAdviseID() <= 0) {
+			manualAdvise.setAdviseID(getNextidviewDAO().getNextId("seqManualAdvise"));
+		}
+
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

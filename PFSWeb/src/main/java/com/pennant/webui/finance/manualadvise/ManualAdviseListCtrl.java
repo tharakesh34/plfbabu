@@ -43,6 +43,7 @@
 
 package com.pennant.webui.finance.manualadvise;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -59,8 +60,10 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -100,6 +103,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listbox sortOperator_FeeTypeID;
 	
 	private transient ManualAdviseService manualAdviseService;
+	private List<ValueLabel> listAdviseType=PennantStaticListUtil.getManualAdviseTypes();
 
 	/**
 	 * default constructor.<br>
@@ -112,7 +116,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected void doSetProperties() {
 		super.moduleCode = "ManualAdvise";
 		super.pageRightName = "ManualAdviseList";
-		super.tableName = "ManualAdvise_AView";
+		super.tableName = "ManualAdvise";
 		super.queueTableName = "ManualAdvise_View";
 		super.enquiryTableName = "ManualAdvise_View";
 	}
@@ -136,17 +140,11 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 
 		registerField("adviseID");
 		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType, Operators.STRING);
-		//registerField("adviseTypeName");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
-		//registerField("finReferenceName");
-		registerField("feeTypeID", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID, Operators.STRING);
-		//registerField("feeTypeIDName");
-		registerField("sequence");		
-		registerField("adviseAmount");		
-		registerField("paidAmount");		
-		registerField("waivedAmount");		
-		registerField("remarks");		
-
+		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID, Operators.STRING);
+ 	
+		//comboBox list
+		fillComboBox(this.adviseType, "", listAdviseType,"");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -243,8 +241,8 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("manualadvise", manualadvise);
-		arg.put("manualadviseListCtrl", this);
+		arg.put("manualAdvise", manualadvise);
+		arg.put("manualAdviseListCtrl", this);
 		
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null, arg);

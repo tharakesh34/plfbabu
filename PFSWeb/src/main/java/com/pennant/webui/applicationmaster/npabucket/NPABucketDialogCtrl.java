@@ -400,6 +400,8 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		}
 
 		doWriteBeanToComponents(nPABucket);
+		
+		this.btnDelete.setVisible(false);
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);

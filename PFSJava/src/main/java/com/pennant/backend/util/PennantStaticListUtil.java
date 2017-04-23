@@ -2564,8 +2564,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getManualAdviseTypes(){
 		if(ManualAdviseTypes == null){
 			ManualAdviseTypes = new ArrayList<ValueLabel>(2);
-			ManualAdviseTypes.add(new ValueLabel(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, Labels.getLabel("label_ManualAdvise_Receivable")));
-			ManualAdviseTypes.add(new ValueLabel(FinanceConstants.MANUAL_ADVISE_PAYABLE, Labels.getLabel("label_ManualAdvise_Payable")));
+			ManualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE), Labels.getLabel("label_ManualAdvise_Receivable")));
+			ManualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE), Labels.getLabel("label_ManualAdvise_Payable")));
 		}
 		return ManualAdviseTypes;
 	}

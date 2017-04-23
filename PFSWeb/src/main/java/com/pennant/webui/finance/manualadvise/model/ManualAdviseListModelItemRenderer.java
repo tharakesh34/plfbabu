@@ -51,6 +51,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 
 /**
@@ -70,11 +71,12 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 	public void render(Listitem item, ManualAdvise manualAdvise, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(manualAdvise.getAdviseTypeName());
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(manualAdvise.getAdviseType()),
+					PennantStaticListUtil.getManualAdviseTypes()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(manualAdvise.getFinReference());
 		lc.setParent(item);
-	  	lc = new Listcell(manualAdvise.getFeeTypeIDName());
+	  	lc = new Listcell(manualAdvise.getFeeTypeDesc());
 		lc.setParent(item);
 	  	lc = new Listcell(manualAdvise.getRecordStatus());
 		lc.setParent(item);

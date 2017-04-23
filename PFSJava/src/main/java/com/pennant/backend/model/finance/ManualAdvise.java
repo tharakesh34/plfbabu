@@ -103,7 +103,8 @@ private static final long serialVersionUID = 1L;
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("adviseTypeName");
 			excludeFields.add("finReferenceName");
-			excludeFields.add("feeTypeIDName");
+			excludeFields.add("feeTypeDesc");
+			excludeFields.add("feeTypeCode");
 	return excludeFields;
 	}
 
