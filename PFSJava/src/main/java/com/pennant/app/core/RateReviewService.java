@@ -42,13 +42,12 @@
  */
 package com.pennant.app.core;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -62,7 +61,6 @@ import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -88,243 +86,157 @@ public class RateReviewService extends ServiceHelper {
 	private FinanceRateReviewDAO	financeRateReviewDAO;
 
 	//fetch rates changed yesterday or effective date is today
-	public static final String		QUERY_BASERATE		= "SELECT BRType,Currency,BREffDate,BRRate,LastMdfDate FROM RMTBaserates";
-	public static final String		QUERY_FINANCE		= "SELECT rv.FinReference FROM  (Select Distinct FSD.FinReference FinReference FROM FinScheduleDetails FSD WHERE"
-																+ " FSD.RvwOnSchDate = 1 AND FSD.BaseRate = ? ) rv  INNER JOIN Financemain fm ON fm.FinReference = rv.FinReference"
-																+ " WHERE fm.finccy = ? AND fm.finisActive=1 AND fm.custid = ? ";
 
 	public RateReviewService() {
 		super();
 	}
 
-	public void processRateReview(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		try {
+	public List<FinEODEvent> processRateReview(Connection connection, List<FinEODEvent> finEODEvents) throws Exception {
 
-			sqlStatement = connection.prepareStatement(QUERY_BASERATE);
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				BaseRate baseRate = prepareBaseRate(resultSet);
-				processRateReview(connection, custId, baseRate, date);
-			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
-		}
-	}
-
-	private void processRateReview(Connection connection, long custId, BaseRate baseRate, Date date) throws Exception {
-
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finref ="";
-		try {
-			sqlStatement = connection.prepareStatement(QUERY_FINANCE);
-			sqlStatement.setString(1, baseRate.getBRType());
-			sqlStatement.setString(2, baseRate.getCurrency());
-			sqlStatement.setLong(3, custId);
-			resultSet = sqlStatement.executeQuery();
-
-			while (resultSet.next()) {
-				 finref = resultSet.getString("finReference");
-
-				boolean rateRveCompled = false;
-				FinanceRateReview finRateReview = null;
-				List<FinanceRateReview> list = financeRateReviewDAO.getFinanceRateReviewById(finref, date);
-				if (!list.isEmpty()) {
-					rateRveCompled = true;
-					finRateReview = list.get(0);
-				}
-
-				if (!rateRveCompled) {
-					doRateReview(finref, date, baseRate);
-				} else {
-					if (finRateReview != null) {
-						finRateReview.setFinReference(finref);
-						finRateReview.setRateType(baseRate.getBRType());
-						finRateReview.setCurrency(baseRate.getCurrency());
-						finRateReview.setValueDate(date);
-						finRateReview.setEffectiveDate(baseRate.getBREffDate());
-						financeRateReviewDAO.save(finRateReview);
-					}
-				}
-
-			}
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finref, e);
-			throw new Exception("Exception: Finreference :" + finref,  e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
-		}
-
-	}
-
-	private void doRateReview(String finref, Date date, BaseRate baseRate) throws Exception {
-
-		//rate review will be on start Day.
-		Date businessDate = DateUtility.addDays(date, 1);
-		FinScheduleData finScheduleData = getFinSchDataByFinRef(finref, "_AView");
-
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType finType = finScheduleData.getFinanceType();
-		List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
-		String rvwAppFor = StringUtils.trimToEmpty(finType.getFinRvwRateApplFor());
-
-		// if not auto rate review 
-		if ("".equals(rvwAppFor) || rvwAppFor.equals(CalculationConstants.RATEREVIEW_NORVW)) {
-			return;
-		}
-
-		if (businessDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
-			if (!finMain.isAllowGrcPftRvw()) {
-				return;
-			}
-		} else {
-			if (!finMain.isAllowRepayRvw()) {
-				return;
-			}
-		}
-
-		//the base rate is not applicable for the finance if effective date is after maturity or before loan start
-		if (baseRate.getBREffDate().compareTo(finMain.getMaturityDate()) >= 0
-				|| baseRate.getBREffDate().compareTo(finMain.getFinStartDate()) < 0) {
-			return;
-		}
-
-		if (finMain.getNextRepayRvwDate().compareTo(finMain.getMaturityDate()) == 0) {
-			return;
-		}
-		
-		
-		Date effectiveDate = null;
-
-		//if rate change allowed any date , then check last modified date is grater than yesterday and get the effective date 
-		//else check next review date of the loan is equal to value date.
-		if (finType.isRateChgAnyDay()) {
-
-			java.sql.Date yesterDay = DateUtility.addDays(date, -1);
-
-			if (baseRate.getLastMdfDate().compareTo(yesterDay) > 0) {
-				effectiveDate = baseRate.getBREffDate();
-			} else {
-				return;
-			}
-
-		} else {
-			if (finMain.getNextRepayRvwDate().compareTo(date) == 0
-					&& baseRate.getBREffDate().compareTo(finMain.getNextRepayRvwDate()) <= 0) {
-				effectiveDate = finMain.getNextRepayRvwDate();
-			} else {
-				return;
-			}
-		}
-
-		if (effectiveDate == null) {
-			return;
-		}
-		
-
-		//Rate review required
-
-		//Log Entry before the schedule change Saving for Total Finance Detail
-		listSave(finScheduleData, "_Log", date);
-
-		Date eventFromDate = null;
-		Date eventToDate = finMain.getMaturityDate();
-		String rvwCalon = finType.getFinSchCalCodeOnRvw();
-
-		Date nextReviewDate = null;
-		Date nextUnpaiddate = null;
-
-		for (FinanceScheduleDetail finSchDetail : schList) {
-
-			Date schdate = finSchDetail.getSchDate();
-
-			if (schdate.compareTo(effectiveDate) < 0) {
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			if (!finEODEvent.isRateReview()) {
 				continue;
 			}
 
-			if (schdate.compareTo(businessDate) < 0) {
+			processRateReview(finEODEvent);
+
+			if (finEODEvent.isRateReview()) {
+				doRateReview(finEODEvent);
+			}
+		}
+
+		return finEODEvents;
+	}
+
+	private void processRateReview(FinEODEvent finEODEvent) throws Exception {
+		Date valueDate = finEODEvent.getEodValueDate();
+		FinanceMain finMain = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
+
+		int i = datesMap.get(valueDate);
+		int iNext = i + 1;
+
+		finEODEvent.setRateReview(false);
+
+		//No Rate Review on start date
+		if (valueDate.compareTo(finMain.getFinStartDate()) == 0) {
+			return;
+		}
+
+		//No Rate Review on Maturity date
+		if (valueDate.compareTo(finMain.getFinStartDate()) == 0) {
+			return;
+		}
+
+		for (int j = i; j < finSchdDetails.size(); j++) {
+
+			if (StringUtils.isEmpty(finSchdDetails.get(j).getBaseRate())) {
 				continue;
 			}
 
-			//grace review
-			if (nextReviewDate == null) {
-				nextReviewDate = schdate;
-			}
+			finEODEvent.setRateReview(true);
+			break;
+		}
 
-			if (nextUnpaiddate == null
-					&& (finSchDetail.isRepayOnSchDate() && !finSchDetail.isSchPftPaid() && !finSchDetail.isSchPriPaid())) {
-				nextUnpaiddate = schdate;
-			}
+		//No base Rate found after the new review date
+		if (!finEODEvent.isRateReview()) {
+			return;
+		}
 
-			if (nextReviewDate != null && nextUnpaiddate != null) {
+		finEODEvent.setRateReview(false);
+
+		FinanceScheduleDetail curSchd = null;
+
+		//SET Event From Date
+		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWALL)) {
+			finEODEvent.setEventFromDate(valueDate);
+			finEODEvent.setRateReview(true);
+			finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
+		} else if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
+			for (int j = iNext; j < finSchdDetails.size(); j++) {
+				curSchd = finSchdDetails.get(i);
+				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
+						&& curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
+					continue;
+				}
+
+				finEODEvent.setRateReview(true);
+				finEODEvent.setEventFromDate(finSchdDetails.get(j - 1).getSchDate());
+				finEODEvent.setRateOnChgDate(finSchdDetails.get(j - 1).getBaseRate());
 				break;
 			}
-
 		}
 
-		if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
-			eventFromDate = nextUnpaiddate;
-		} else if (rvwAppFor.equals(CalculationConstants.RATEREVIEW_RVWALL)) {
-			eventFromDate = nextReviewDate;
+		if (!finEODEvent.isRateReview()) {
+			return;
 		}
 
-		finMain.setEventFromDate(eventFromDate);
-		finMain.setEventToDate(eventToDate);
-		finMain.setRecalType(rvwCalon);
+		finEODEvent.setEventToDate(finMain.getMaturityDate());
+		finEODEvent.setRecalToDate(finMain.getMaturityDate());
+
+		//SET RECAL From Date
+		finEODEvent.setRecalType(finMain.getSchCalOnRvw());
+
+		if (StringUtils.isEmpty(finEODEvent.getRecalType())) {
+			finEODEvent.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		}
+
+		if (StringUtils.equals(finEODEvent.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			finEODEvent.setRecalFromDate(finMain.getMaturityDate());
+		} else {
+			finEODEvent = findRecalFromDate(finEODEvent, iNext);
+		}
+
+	}
+
+	private void doRateReview(FinEODEvent finEODEvent) throws Exception {
+
+		String finRef = finEODEvent.getFinanceMain().getFinReference();
+		Date businessDate = finEODEvent.getEodValueDate();
+		FinScheduleData finScheduleData = getFinSchDataByFinRef(finRef, "_AView");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
+
+		finMain.setEventFromDate(finEODEvent.getEventFromDate());
+		finMain.setEventToDate(finEODEvent.getEventToDate());
+		finMain.setRecalFromDate(finEODEvent.getRecalFromDate());
+		finMain.setRecalToDate(finEODEvent.getRecalToDate());
+		finMain.setRecalSchdMethod(finEODEvent.getRecalType());
+
+		//Log Entry before the schedule change Saving for Total Finance Detail
+		listSave(finScheduleData, "_Log", finEODEvent.getEodDate());
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		// Finance Profit Details
-		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finMain.getFinReference());
+		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(
+				finMain.getFinReference());
 		profitDetail = AEAmounts.calProfitDetails(finMain, schList, profitDetail, businessDate);
 		// Amount Codes Details Preparation
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finMain, profitDetail, businessDate);
 
 		// DataSet preparation
-		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_RATCHG, date, businessDate);
+		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_RATCHG, businessDate, businessDate);
 		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, finScheduleData.getFinanceType());
 		saveAccounting(list);
 		// Update New Finance Schedule Details Data
 		saveOrUpdate(finScheduleData, profitDetail);
 		FinanceRateReview rateReview = new FinanceRateReview();
-		rateReview.setFinReference(finref);
-		rateReview.setRateType(baseRate.getBRType());
-		rateReview.setCurrency(baseRate.getCurrency());
-		rateReview.setValueDate(date);
-		rateReview.setEffectiveDate(baseRate.getBREffDate());
-		rateReview.setEventFromDate(eventFromDate);
-		rateReview.setEventToDate(eventToDate);
+		rateReview.setFinReference(finRef);
+		rateReview.setRateType(finEODEvent.getRateOnChgDate());
+		rateReview.setCurrency(finMain.getFinCcy());
+		rateReview.setValueDate(businessDate);
+		rateReview.setEffectiveDate(businessDate);
+		rateReview.setEventFromDate(finEODEvent.getEventFromDate());
+		rateReview.setEventToDate(finEODEvent.getEventToDate());
 		rateReview.setRecalFromdate(finMain.getRecalFromDate());
 		rateReview.setRecalToDate(finMain.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
 
-	}
 
-	private BaseRate prepareBaseRate(ResultSet resultSet) throws SQLException {
-		BaseRate baseRate = new BaseRate();
-		baseRate.setBRType(resultSet.getString("BRType"));
-		baseRate.setCurrency(resultSet.getString("Currency"));
-		baseRate.setBREffDate(resultSet.getDate("BREffDate"));
-		baseRate.setBRRate(resultSet.getBigDecimal("BRRate"));
-		baseRate.setLastMdfDate(resultSet.getDate("LastMdfDate"));
-
-		return baseRate;
 	}
 
 	/**
@@ -428,6 +340,36 @@ public class RateReviewService extends ServiceHelper {
 		repayInstructionDAO.saveList(finDetail.getRepayInstructions(), tableType, false);
 
 		logger.debug("Leaving ");
+	}
+
+	private FinEODEvent findRecalFromDate(FinEODEvent finEODEvent, int iNext) {
+
+		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
+		int sdSize = finSchdDetails.size();
+		Date schdDate = new Date();
+
+		for (int i = iNext; i < sdSize; i++) {
+			curSchd = finSchdDetails.get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (schdDate.compareTo(finEODEvent.getEventFromDate()) <= 0) {
+				continue;
+			}
+
+			//SET RECAL FROMDATE
+			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
+				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0
+						&& curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) == 0) {
+					finEODEvent.setRecalFromDate(schdDate);
+				}
+
+				break;
+			}
+		}
+
+		return finEODEvent;
+
 	}
 
 	// ******************************************************//
