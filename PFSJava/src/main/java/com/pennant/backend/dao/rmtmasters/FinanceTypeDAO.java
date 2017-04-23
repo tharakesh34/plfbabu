@@ -81,4 +81,6 @@ public interface FinanceTypeDAO {
 	FinanceType getOrgFinanceTypeByID(String finType, String type);
 
 	int getFinTypeCount(String finType, String type);
+
+	FinanceType getProductDetails(String finype);
 }
