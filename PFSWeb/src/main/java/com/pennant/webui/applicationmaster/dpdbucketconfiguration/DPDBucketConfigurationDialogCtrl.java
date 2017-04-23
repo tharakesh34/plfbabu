@@ -60,12 +60,14 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.DPDBucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -182,8 +184,11 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		this.bucketID.setValueColumn("BucketID");
 		this.bucketID.setDescColumn("BucketDesc");
 		this.bucketID.setValidateColumns(new String[] { "BucketID" });
-
-		this.dueDays.setMaxlength(10);
+		Filter[] filters1 = new Filter[1] ;
+		filters1[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.bucketID.setFilters(filters1);
+		
+		this.dueDays.setMaxlength(5);
 
 		setStatusDetails();
 
@@ -292,30 +297,6 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void onFulfillProductCode(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		if (!this.productCode.getDescription().equals("")) {
-
-		} else {
-
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void onFulfillBucketID(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		if (!this.bucketID.getDescription().equals("")) {
-
-		} else {
-
-		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -454,16 +435,16 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		if (!this.productCode.isReadonly()) {
 			this.productCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_DPDBucketConfigurationDialog_ProductCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, false));
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.bucketID.isReadonly()) {
 			this.bucketID.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_DPDBucketConfigurationDialog_BucketID.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.dueDays.isReadonly()) {
 			this.dueDays.setConstraint(new PTNumberValidator(Labels
-					.getLabel("label_DPDBucketConfigurationDialog_DueDays.value"), false, false, 0));
+					.getLabel("label_DPDBucketConfigurationDialog_DueDays.value"), true, false, 0));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -517,7 +498,25 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 
 		logger.debug(Literal.LEAVING);
 	}
-
+	
+	
+	public void onFulfill$bucketID(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = bucketID.getObject();
+		if (dataObject instanceof String) {
+			this.bucketID.setValue(dataObject.toString());
+			this.bucketID.setDescription("");
+		} else {
+			DPDBucket details = (DPDBucket) dataObject;
+			if (details != null) {
+				this.bucketID.setAttribute("BucketID", details.getBucketID());
+				this.bucketID.setValue(String.valueOf(details.getBucketID()));
+				this.bucketID.setDescription(details.getBucketDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	/**
 	 * Deletes a DPDBucketConfiguration object from database.<br>
 	 * 
@@ -532,7 +531,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDPDBucketConfiguration.getConfigID();
+				+ aDPDBucketConfiguration.getProductCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 

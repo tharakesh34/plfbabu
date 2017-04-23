@@ -94,7 +94,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 
 	// Search Fields
 	protected Textbox productCode; // autowired
-	protected Textbox bucketID; // autowired
+	protected Intbox bucketID; // autowired
   	protected Intbox dueDays; // autowired
 	protected Checkbox suspendProfit; // autowired
 	
@@ -140,9 +140,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 
 		registerField("configID");
 		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
-		//registerField("productCodeName");
-		registerField("bucketID", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.STRING);
-		//registerField("bucketIDName");
+		registerField("bucketID", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
 		registerField("suspendProfit", listheader_SuspendProfit, SortOrder.NONE, suspendProfit, sortOperator_SuspendProfit,
 				Operators.BOOLEAN);

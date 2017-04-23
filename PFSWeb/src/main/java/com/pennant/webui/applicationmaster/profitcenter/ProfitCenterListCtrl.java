@@ -235,11 +235,11 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("profitcenter", profitcenter);
-		arg.put("profitcenterListCtrl", this);
+		arg.put("profitCenter", profitcenter);
+		arg.put("profitCenterListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.applicationmaster/ProfitCenter/ProfitCenterDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);

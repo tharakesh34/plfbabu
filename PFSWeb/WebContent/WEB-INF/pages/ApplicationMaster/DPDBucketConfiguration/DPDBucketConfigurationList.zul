@@ -82,8 +82,8 @@
 									<listbox id="sortOperator_BucketID"
 										width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="bucketID" width="72px"
-										maxlength="19" />
+									<intbox id="bucketID" width="72px"
+										maxlength="5" />
 								</row>
 								<row>
 									<label
@@ -93,7 +93,7 @@
 										width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<intbox id="dueDays" width="72px"
-										maxlength="10" />
+										maxlength="5" />
 									<label
 										id="label_DPDBucketConfigurationList_SuspendProfit"
 										value="${c:l('label_DPDBucketConfigurationList_SuspendProfit.value')}" />

@@ -91,13 +91,13 @@
 								<hbox>
 									<space spacing="2px" sclass="mandatory"/>
 									<intbox id="dueDays" width="90px"
-										maxlength="14" />
+										maxlength="4" />
 								</hbox>
 								<label id="label_SuspendProfit"
 									value="${c:l('label_DPDBucketConfigurationDialog_SuspendProfit.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory"/>
-									<checkbox id="suspendProfit"
+									<space spacing="2px" />
+									<checkbox id="suspendProfit" width="90px"
 										checked="false" />
 								</hbox>
 							</row>

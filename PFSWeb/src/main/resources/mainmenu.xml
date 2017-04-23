@@ -78,8 +78,6 @@
 		 -->
 		<menuItem id="menu_Item_CustomerStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeList.zul"  rightName="menuItem_ApplicationMaster_CustomerStatusCode"/>
 		<!-- <menuItem id="menu_Item_InterestRateType" zulNavigation="/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeList.zul"  rightName="menuItem_ApplicationMaster_InterestRateType"/> -->
-		<menuItem id="menu_Item_DPDBucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul" rightName="menuItem_applicationmaster_DPDBucketConfiguration"/>
-		<menuItem id="menu_Item_NPABucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"  rightName="menuItem_applicationmaster_NPABucketConfiguration"/>
 		<menuItem id="menu_Item_OtherBankFinanceType" zulNavigation="/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeList.zul" rightName="menuItem_ApplicationMaster_BlacklistCustomer"/>
 		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" />
@@ -107,6 +105,8 @@
 	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" rightName="menuItem_applicationmaster_DPDBucket"/>
 		<!-- <menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
 		<menuItem id="menu_Item_NPABucket" zulNavigation="/WEB-INF/pages/applicationmaster/NPABucket/NPABucketList.zul" rightName="menuItem_applicationmaster_NPABucket"/>
+		<menuItem id="menu_Item_DPDBucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul" rightName="menuItem_applicationmaster_DPDBucketConfiguration"/>
+		<menuItem id="menu_Item_NPABucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"  rightName="menuItem_applicationmaster_NPABucketConfiguration"/>
 	    <menuItem id="menu_Item_BounceReason" zulNavigation="/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonList.zul" rightName="menuItem_applicationmaster_BounceReason"/>
 	    <menuItem id="menu_Item_CostCenter" zulNavigation="/WEB-INF/pages/applicationmaster/CostCenter/CostCenterList.zul" rightName="menuItem_applicationmaster_CostCenter"/>
 	    <menuItem id="menu_Item_ProfitCenter" zulNavigation="/WEB-INF/pages/applicationmaster/ProfitCenter/ProfitCenterList.zul" rightName="menuItem_applicationmaster_ProfitCenter"/>

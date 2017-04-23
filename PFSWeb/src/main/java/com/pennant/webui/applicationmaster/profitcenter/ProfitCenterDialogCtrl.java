@@ -422,10 +422,10 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.profitCenterCode.isReadonly()){
-			this.profitCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.profitCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.profitCenterDesc.isReadonly()){
-			this.profitCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.profitCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,false));
 		}
 	
 		logger.debug(Literal.LEAVING);
@@ -494,7 +494,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aProfitCenter.getProfitCenterID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aProfitCenter.getProfitCenterCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		

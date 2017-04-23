@@ -80,7 +80,7 @@
 							<row id="row0">
 								<label id="label_ProductCode"
 									value="${c:l('label_NPABucketConfigurationDialog_ProductCode.value')}" />
-								<extendedcombobox id="productCode" />
+								<extendedcombobox id="productCode" sclass="mandatory"/>
 								<label id="label_BucketID"
 									value="${c:l('label_NPABucketConfigurationDialog_BucketID.value')}" />
 								<extendedcombobox id="bucketID" />
@@ -89,9 +89,9 @@
 								<label id="label_DueDays"
 									value="${c:l('label_NPABucketConfigurationDialog_DueDays.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory"/>
 									<intbox id="dueDays" width="90px"
-										maxlength="14" />
+										maxlength="4" />
 								</hbox>
 								<label id="label_SuspendProfit"
 									value="${c:l('label_NPABucketConfigurationDialog_SuspendProfit.value')}" />

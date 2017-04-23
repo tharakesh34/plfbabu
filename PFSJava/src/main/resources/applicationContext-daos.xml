@@ -9549,4 +9549,75 @@
        <property name="nPABucketDAO" ref="nPABucketDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
+   
+   	<!-- BounceReason -->
+	<bean id="bounceReasonDAO" class="com.pennant.backend.dao.applicationmaster.impl.BounceReasonDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="bounceReasonService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="bounceReasonServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="bounceReasonServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.BounceReasonServiceImpl">
+       <property name="bounceReasonDAO" ref="bounceReasonDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   	<!-- ProfitCenter -->
+	<bean id="profitCenterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ProfitCenterDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="profitCenterService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="profitCenterServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="profitCenterServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ProfitCenterServiceImpl">
+       <property name="profitCenterDAO" ref="profitCenterDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   	<!-- CostCenter -->
+	<bean id="costCenterDAO" class="com.pennant.backend.dao.applicationmaster.impl.CostCenterDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="costCenterService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="costCenterServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="costCenterServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.CostCenterServiceImpl">
+       <property name="costCenterDAO" ref="costCenterDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   
 </beans>

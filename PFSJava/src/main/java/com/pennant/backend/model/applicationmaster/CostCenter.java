@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -159,6 +160,10 @@ private static final long serialVersionUID = 1L;
 
 	public void setUserDetails( LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
 }
