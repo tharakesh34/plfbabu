@@ -30,7 +30,7 @@ public class DateRollOverService extends ServiceHelper {
 	private static final String	sltDateRollover		= "SELECT FinReference, NextDepDate, DepreciationFrq,"
 															+ "AllowGrcCpz, AllowGrcPftRvw, AllowRepayCpz, AllowRepayRvw, GrcPeriodEndDate,MaturityDate,"
 															+ "NextGrcCpzDate, NextGrcPftDate, NextGrcPftRvwDate, NextRepayCpzDate, NextRepayDate,"
-															+ "NextRepayPftDate,NextRepayRvwDate, FinRvwRateApplFor, SchCalOnRvw FROM FinanceMain WHERE FinIsActive = 1 and CustID = ?";
+															+ "NextRepayPftDate,NextRepayRvwDate, RvwRateApplFor, SchCalOnRvw FROM FinanceMain WHERE FinIsActive = 1 and CustID = ?";
 
 	public List<FinEODEvent> process(Connection connection, List<FinEODEvent> finEODEvents) throws Exception {
 
@@ -106,8 +106,6 @@ public class DateRollOverService extends ServiceHelper {
 				NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(getDataSource());
 				jdbcTemplate.update(updString.toString(), new BeanPropertySqlParameterSource(finMain));
 			}
-
-			datesMap.clear();
 
 		}
 
