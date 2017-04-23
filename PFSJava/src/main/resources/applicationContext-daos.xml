@@ -6394,6 +6394,8 @@
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<!--============ Account process Util ============== -->
@@ -7056,6 +7058,7 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
+		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 	</bean>
 
 	<bean name="approvalStatusEnquiryService"

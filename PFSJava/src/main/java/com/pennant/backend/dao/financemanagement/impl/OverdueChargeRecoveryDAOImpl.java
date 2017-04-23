@@ -826,15 +826,16 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	
 	
 	@Override
-	public void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String type) {
+	public void deleteByFinRefAndSchdate(String finReferece, Date schdDate,String finODFor ,String type) {
 		logger.debug("Entering");
 		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
 		overdueChargeRecovery.setFinReference(finReferece);
 		overdueChargeRecovery.setFinODSchdDate(schdDate);
+		overdueChargeRecovery.setFinODFor(finODFor);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference and FinODSchdDate=:FinODSchdDate");
+		deleteSql.append(" Where FinReference =:FinReference and FinODSchdDate=:FinODSchdDate and FinODFor=:FinODFor");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);

@@ -144,6 +144,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			excessAmtResv		= BigDecimal.ZERO;
 	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
 	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
+	private String 				productCategory;
 
 	public FinanceProfitDetail() {
 
@@ -1135,6 +1136,14 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setPayableAdviseResv(BigDecimal payableAdviseResv) {
 		this.payableAdviseResv = payableAdviseResv;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
 	}
 
 }

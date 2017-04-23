@@ -58,6 +58,8 @@
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
 	<!-- Late Pay Interest -->

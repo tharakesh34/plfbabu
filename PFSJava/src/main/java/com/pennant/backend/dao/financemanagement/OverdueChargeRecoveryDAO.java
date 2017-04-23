@@ -76,5 +76,5 @@ public interface OverdueChargeRecoveryDAO {
 	OverdueChargeRecovery getChargeRecoveryById(String finReference, Date finSchDate, String finOdFor);
 	OverdueChargeRecovery getTotals(String finReference, Date finSchDate, String finOdFor);
 	OverdueChargeRecovery getODCRecoveryDetails(OverdueChargeRecovery ocr);
-	void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String type);
+	void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String finODFor, String type);
 }

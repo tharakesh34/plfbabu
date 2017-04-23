@@ -15,7 +15,7 @@
  * FILE HEADER *
  ******************************************************************************************** 
  * 
- * FileName : OverDueRecoveryPostingsUtil.java *
+ * FileName : LatePayInterestService.java *
  * 
  * Author : PENNANT TECHONOLOGIES *
  * 
@@ -66,7 +66,7 @@ public class LatePayInterestService extends ServiceHelper {
 	private OverdueChargeRecoveryDAO	recoveryDAO;
 	private FinanceRepaymentsDAO		financeRepaymentsDAO;
 
-	public static final String			customerODDetails	= "SELECT FO.FinReference,FO.FinODSchdDate,FO.CustID, FO.FinCurODAmt,FO.FinCurODPri,FO.FinCurODPft,FO.FinCurODDays,"
+	public static final String			CUSTOMER_ODDETAILS	= "SELECT FO.FinReference,FO.FinODSchdDate,FO.CustID, FO.FinCurODAmt,FO.FinCurODPri,FO.FinCurODPft,FO.FinCurODDays,"
 																	+ " FO.FinMAxODAmt,FO.FinMaxODPri,FO.FinMaxODPft,"
 																	+ " FO.TotPenaltyAmt,FO.TotWaived,FO.TotPenaltyPaid,FO.TotPenaltyBal,FO.LPIAmt,FO.LPIPaid,FO.LPIBal, FSD.PFTDAYSBASIS,"
 																	+ " FSD.CalculatedRate, FM.PastduePftCalMthd, FM.PastduePftMargin "
@@ -88,7 +88,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 		try {
 			//payments
-			sqlStatement = connection.prepareStatement(customerODDetails);
+			sqlStatement = connection.prepareStatement(CUSTOMER_ODDETAILS);
 			sqlStatement.setLong(1, custId);
 			resultSet = sqlStatement.executeQuery();
 
@@ -136,6 +136,8 @@ public class LatePayInterestService extends ServiceHelper {
 	}
 
 	public void computeLPI(ResultSet resultSet, Date valueDate) throws Exception {
+		
+		Date businessDate = DateUtility.addDays(valueDate, 1);
 
 		String calMethod = resultSet.getString("PastduePftCalMthd");
 
@@ -159,7 +161,7 @@ public class LatePayInterestService extends ServiceHelper {
 		BigDecimal total = finCurODPft.add(finCurODPri);
 
 		List<OverdueChargeRecovery> recoveries = new ArrayList<OverdueChargeRecovery>();
-		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, valueDate);
+		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, finODSchdDate);
 
 		if (list == null || list.isEmpty()) {
 
@@ -177,8 +179,8 @@ public class LatePayInterestService extends ServiceHelper {
 			recovery.setPenaltyAmtPerc(rateToApply);
 			recovery.setRcdCanDel(true);
 			recovery.setMovementDate(finODSchdDate);
-			recovery.setODDays(DateUtility.getDaysBetween(valueDate, recovery.getMovementDate()));
-			recovery.setPenalty(CalculationUtil.calInterest(valueDate, recovery.getMovementDate(), finCurODPri,
+			recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
+			recovery.setPenalty(CalculationUtil.calInterest(businessDate, recovery.getMovementDate(), finCurODPri,
 					profitDaysBasis, rateToApply));
 			recovery.setPenaltyBal(getPenaltyBal(recovery));
 			recoveries.add(recovery);
@@ -191,7 +193,7 @@ public class LatePayInterestService extends ServiceHelper {
 				map.put(financeRepayments.getFinValueDate(), financeRepayments);
 			}
 
-			Date movementDate = finODSchdDate;
+			Date movementDate = DateUtility.addDays(finODSchdDate, 1);;;
 			for (FinanceRepayments financeRepayments : list) {
 				Date payDate = financeRepayments.getFinValueDate();
 
@@ -231,7 +233,7 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		if (!recoveries.isEmpty()) {
-			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate, "");
+			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate,finODFor, "");
 			for (OverdueChargeRecovery overdueChargeRecovery : recoveries) {
 				recoveryDAO.save(overdueChargeRecovery, "");
 			}

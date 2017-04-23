@@ -2245,7 +2245,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							statusDetail.setValueDate(dateValueDate);
 							statusDetail.setCustId(financeMain.getCustID());
 							statusDetail.setFinStatus(curFinStatus);
-							statusDetail.setFinStatusReason(finStsReason);
+//							statusDetail.setFinStatusReason(finStsReason);
 
 							getFinStatusDetailDAO().saveOrUpdateFinStatus(statusDetail);
 						}

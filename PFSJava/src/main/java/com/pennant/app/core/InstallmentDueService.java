@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -25,13 +26,13 @@ public class InstallmentDueService extends ServiceHelper {
 	private Logger				logger				= Logger.getLogger(InstallmentDueService.class);
 
 	private static final String	INSTALLMENTDUE		= "SELECT FRQ.FinReference, FRQ.SchDate, FPD.FinType, FPD.FinBranch, FRQ.PROFITSCHD,"
-															+ " FRQ.SCHDPFTPAID, FRQ.PRINCIPALSCHD, FRQ.SCHDPRIPAID,FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid,"
+															+ " FRQ.SCHDPFTPAID, FRQ.PRINCIPALSCHD, FRQ.SCHDPRIPAID,FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid"
 															+ " FROM FINSCHEDULEDETAILS "
-															+ "FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE;";
+															+ " FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE WHERE FPD.CustID = ? AND FRQ.SchDate = ?";
 	private static final String	INSTALLMENTDUE_ISM	= "SELECT FRQ.FinReference, FRQ.SchDate, FPD.FinType, FPD.FinBranch, FRQ.PROFITSCHD,"
 															+ " FRQ.SCHDPFTPAID, FRQ.PRINCIPALSCHD, FRQ.SCHDPRIPAID,FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid,FRQ.SUPLRENT,"
 															+ " FRQ.SUPLRENTPAID, FRQ.INCRCOST, FRQ.INCRCOSTPAID FROM FINSCHEDULEDETAILS "
-															+ "FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE;";
+															+ "FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE WHERE FPD.CustID = ? AND FRQ.SchDate = ?";
 
 	/**
 	 * @param custId
@@ -43,7 +44,11 @@ public class InstallmentDueService extends ServiceHelper {
 		PreparedStatement sqlStatement = null;
 		try {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
+			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+				sqlStatement = connection.prepareStatement(INSTALLMENTDUE_ISM);
+			} else {
+				sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
+			}
 			sqlStatement.setLong(1, custId);
 			sqlStatement.setDate(2, DateUtility.getDBDate(date.toString()));
 			resultSet = sqlStatement.executeQuery();
@@ -128,21 +133,4 @@ public class InstallmentDueService extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-//	public String getQueryString() {
-//		logger.debug(" Entering ");
-//		StringBuilder selectSql = new StringBuilder();
-//		selectSql
-//				.append("SELECT FRQ.FinReference, FRQ.RpyDate, FRQ.FinType, FRQ.Branch, FRQ.SchdPft, FRQ.SchdPftPaid, FRQ.SchdPri, FRQ.SchdPriPaid ");
-//		selectSql.append(",FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid ");
-//
-//		if (!ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
-//			selectSql.append(",FRQ.SchdSuplRent, FRQ.SchdSuplRentPaid, FRQ.SchdIncrCost, FRQ.SchdIncrCostPaid  ");
-//		}
-//
-//		selectSql.append("FROM FINRPYQUEUE FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE ");
-//		selectSql.append("WHERE FRQ.CUSTOMERID = ? AND FRQ.RPYDATE = ?");
-//
-//		logger.debug(" Leaving ");
-//		return selectSql.toString();
-//	}
 }

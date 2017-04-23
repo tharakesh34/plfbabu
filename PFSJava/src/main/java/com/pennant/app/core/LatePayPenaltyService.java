@@ -203,7 +203,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 
 		} else {
-			computeDueDaysPenalty(penaltyrate, odDetails, valueDate, profitDaysBasis);
+			computeDueDaysPenalty(penaltyrate, odDetails, businessDate, profitDaysBasis);
 		}
 
 		updateLPPenaltInODDetails(odDetails);
@@ -211,7 +211,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		logger.debug("Leaving");
 	}
 
-	public void computeDueDaysPenalty(FinODPenaltyRate penaltyrate, FinODDetails odDetails, Date valueDate,
+	public void computeDueDaysPenalty(FinODPenaltyRate penaltyrate, FinODDetails odDetails, Date businessDate,
 			String profitDaysBasis) throws Exception {
 		String finODFor = FinanceConstants.SCH_TYPE_SCHEDULE;
 		String finReference = odDetails.getFinReference();
@@ -221,7 +221,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal total = finCurODPft.add(finCurODPri);
 
 		List<OverdueChargeRecovery> recoveries = new ArrayList<OverdueChargeRecovery>();
-		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, valueDate);
+		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, finODSchdDate);
 
 		if (list == null || list.isEmpty()) {
 			OverdueChargeRecovery recovery = new OverdueChargeRecovery();
@@ -238,8 +238,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 			recovery.setPenaltyAmtPerc(penaltyrate.getODChargeAmtOrPerc());
 			recovery.setRcdCanDel(true);
 			recovery.setMovementDate(finODSchdDate);
-			recovery.setODDays(DateUtility.getDaysBetween(valueDate, recovery.getMovementDate()));
-			recovery.setPenalty(calculatePenaltyAmount(recovery, valueDate, recovery.getMovementDate(), profitDaysBasis));
+			recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
+			recovery.setPenalty(calculatePenaltyAmount(recovery, businessDate, recovery.getMovementDate(), profitDaysBasis));
 			recovery.setPenaltyBal(getPenaltyBal(recovery));
 			recoveries.add(recovery);
 		}
@@ -250,7 +250,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			map.put(financeRepayments.getFinValueDate(), financeRepayments);
 		}
 
-		Date movementDate = finODSchdDate;
+		Date movementDate = DateUtility.addDays(finODSchdDate, 1);;
 		for (FinanceRepayments financeRepayments : list) {
 			Date payDate = financeRepayments.getFinValueDate();
 
@@ -287,7 +287,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		if (!recoveries.isEmpty()) {
-			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate, "");
+			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate,finODFor, "");
 			for (OverdueChargeRecovery overdueChargeRecovery : recoveries) {
 				recoveryDAO.save(overdueChargeRecovery, "");
 			}

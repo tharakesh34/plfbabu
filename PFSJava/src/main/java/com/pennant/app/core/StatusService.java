@@ -87,7 +87,7 @@ public class StatusService implements Serializable {
 		checkMaturity(finRepayQueue.getFinReference());
 
 		String curFinStatus = customerStatusCodeDAO.getFinanceStatus(finRepayQueue.getFinReference(), true);
-		String finStsReason = finRepayQueue.getFinStsReason();
+//		String finStsReason = finRepayQueue.getFinStsReason();
 		boolean isStsChanged = false;
 
 		if (!StringUtils.trimToEmpty(finRepayQueue.getFinStatus()).equals(curFinStatus)) {
@@ -103,7 +103,7 @@ public class StatusService implements Serializable {
 			statusDetail.setValueDate(date);
 			statusDetail.setCustId(finRepayQueue.getCustomerID());
 			statusDetail.setFinStatus(curFinStatus);
-			statusDetail.setFinStatusReason(finStsReason);
+//			statusDetail.setODDays(finStsReason);
 
 			finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
 

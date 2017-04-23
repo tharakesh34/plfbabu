@@ -143,25 +143,31 @@ public class EodService {
 	}
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
-		
+
 		//Rate review
 		//FIXME Rate review process should checked after the completion new method in schedule calculator
 		rateReviewService.processRateReview(connection, custId, date);
-		
+
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
 
 		//late pay marking
 		latePayMarkingService.processLatePayMarking(connection, custId, date);
 
+		//DPD Bucketing
+//		latePayMarkingService.processDPDBuketing(connection, custId, date);
+
+		//customer status update
+//		latePayMarkingService.processCustomerStatus(connection, custId, date);
+
 		//late pay penalty
 		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
-		
+
 		//late pay interest
 		latePayInterestService.processLatePayInterest(connection, custId, date);
 
 		//process payments from queue
-//		serviceUtil.processQueue(connection, custId, date);
+		//		serviceUtil.processQueue(connection, custId, date);
 
 		//Date roll over
 		dateRollOverService.process(connection, custId, date);
@@ -170,10 +176,10 @@ public class EodService {
 		accrualService.processAccrual(connection, custId, date);
 
 		//Status movements
-//		statusMovementService.processMovements(connection, custId, date);
+		//		statusMovementService.processMovements(connection, custId, date);
 
 		//installment 
-//		installmentDueService.processDueDatePostings(connection, custId, date);
+		installmentDueService.processDueDatePostings(connection, custId, date);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);

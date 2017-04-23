@@ -7,7 +7,7 @@ public class FinStatusDetail {
 	private Date valueDate;
 	private long custId;
 	private String finStatus;
-	private String finStatusReason;
+	private int ODDays;
 	
 	public FinStatusDetail() {
 		
@@ -37,11 +37,11 @@ public class FinStatusDetail {
 	public void setFinStatus(String finStatus) {
     	this.finStatus = finStatus;
     }
-	public void setFinStatusReason(String finStatusReason) {
-	    this.finStatusReason = finStatusReason;
+	public void setODDays(int ODDays) {
+	    this.ODDays = ODDays;
     }
-	public String getFinStatusReason() {
-	    return finStatusReason;
+	public int getODDays() {
+	    return ODDays;
     }
 
 }

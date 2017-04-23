@@ -36,8 +36,8 @@ public class FinStatusDetailDAOImpl implements FinStatusDetailDAO {
 		logger.debug("Entering");
 		 
 		StringBuilder insertSql = new StringBuilder(" Insert Into FinStatusDetail ");
-		insertSql.append(" (FinReference, ValueDate, CustId, FinStatus, FinStatusReason ) values");
-		insertSql.append(" (:FinReference, :ValueDate, :CustId, :FinStatus, :FinStatusReason)");
+		insertSql.append(" (FinReference, ValueDate, CustId, FinStatus, ODDays ) values");
+		insertSql.append(" (:FinReference, :ValueDate, :CustId, :FinStatus, :ODDays)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		try {
