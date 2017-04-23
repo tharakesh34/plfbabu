@@ -248,7 +248,7 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit, ");
+		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
 		sql.append(" From DPDBUCKETSCONFIG");
 
 		// Execute the SQL, binding the arguments.

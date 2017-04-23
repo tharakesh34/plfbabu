@@ -119,7 +119,6 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bucketID, bucketCode");
 		sql.append(" From DPDBUCKETS");
-		sql.append(" Where bucketID = :bucketID");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
