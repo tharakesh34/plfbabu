@@ -325,4 +325,12 @@
 		</addColumn>
 	</changeSet>
 	
+			<changeSet id="10" author="Chaitanya.ch">
+		<renameColumn tableName="AdtRMTAccountTypes" oldColumnName="ProfitCenter" newColumnName="ProfitCenterID"/>
+	</changeSet>
+	
+	<changeSet id="11" author="Chaitanya.ch">
+		<renameColumn tableName="AdtRMTAccountTypes" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
+	</changeSet>
+	
 </databaseChangeLog>
