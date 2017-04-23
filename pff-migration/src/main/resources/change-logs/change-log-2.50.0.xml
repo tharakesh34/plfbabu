@@ -7250,5 +7250,36 @@ FROM    	NPABUCKETS  T1
 			MAX(menuId) FROM PTMenuDetails);
 		</sql>
 	</changeSet>
+	<changeSet id="72" author="Siva">
+		<createTable tableName="FinExcessAmount">
+	<column name="ExcessID" type="bigint">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="FinReference" type="char(19)" />
+	<column name="AmountType" type="char(1)" />
+	<column name="Amount" type="number(18,0)"/>
+	<column name="UtilisedAmt" type="number(18,0)"/>
+	<column name="ReservedAmt" type="number(18,0)"/>
+	<column name="BalanceAmt" type="number(18,0)"/>
+</createTable>
+</changeSet>
+<changeSet id="78" author="Siva">
+ <sql>
+	Drop Table FinExcessAmount;
+ </sql>
+</changeSet>
+<changeSet id="79" author="Siva">
+		<createTable tableName="FinExcessAmount">
+	<column name="ExcessID" type="bigint">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="FinReference" type="varchar(20)" />
+	<column name="AmountType" type="char(1)" />
+	<column name="Amount" type="number(18,0)"/>
+	<column name="UtilisedAmt" type="number(18,0)"/>
+	<column name="ReservedAmt" type="number(18,0)"/>
+	<column name="BalanceAmt" type="number(18,0)"/>
+</createTable>
+</changeSet>
 
 </databaseChangeLog>
