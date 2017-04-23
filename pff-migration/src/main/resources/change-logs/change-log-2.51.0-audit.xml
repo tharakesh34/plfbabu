@@ -307,4 +307,11 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 		</changeSet>
+		
+	<changeSet id="7" author="Siva">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="RvwRateApplFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

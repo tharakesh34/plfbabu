@@ -1063,15 +1063,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		financeDetail.setFinScheduleData(getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView"));
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		
 
 		String method = getComboboxValue(this.effScheduleMethod);
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
 			
 			receiptData.getRepayMain().setEarlyPayAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), 
-					receiptData.getRepayMain().getLovDescFinFormatter()));
+					CurrencyUtil.getFormat(this.finCcy.getValue())));
 
 			if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)
 					|| StringUtils.equals(method, CalculationConstants.EARLYPAY_ADMPFI)) {
@@ -1088,7 +1090,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
-				if (detail.getDefSchdDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0) {
+				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0) {
 					if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
 						detail.setEarlyPaid(detail.getEarlyPaid().add(receiptData.getRepayMain().getEarlyPayAmount())
 								.subtract(detail.getRepayAmount()));
@@ -1099,7 +1101,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								receiptData.getRepayMain().getEarlyPayAmount().add(earlypaidBal));
 					}
 				}
-				if (detail.getDefSchdDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
+				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
 					detail.setEarlyPaid(BigDecimal.ZERO);
 					detail.setEarlyPaidBal(BigDecimal.ZERO);
 				}
@@ -1183,7 +1185,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceScheduleDetail prvSchDetail = null;
-
 		FinScheduleListItemRenderer finRender = new FinScheduleListItemRenderer();
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 		if (sdSize > 0) {
@@ -1245,8 +1246,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
-			this.listBoxSchedule.setSizedByContent(true);
-			this.listBoxSchedule.setStyle("hflex:min;");
+			/*this.listBoxSchedule.setSizedByContent(true);
+			this.listBoxSchedule.setStyle("hflex:min;");*/
 
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
@@ -1270,7 +1271,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ReceiptDialog);
-				finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate, false);
 				
 				if(aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
 						aFinScheduleData.getFinFeeDetailList() != null && !aFinScheduleData.getFinFeeDetailList().isEmpty()){

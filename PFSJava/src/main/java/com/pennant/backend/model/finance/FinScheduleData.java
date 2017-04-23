@@ -312,7 +312,6 @@ public class FinScheduleData {
 			this.financeMain.setAllowGrcRepay(financeType.isFinIsAlwGrcRepay());
 			this.financeMain.setGrcSchdMthd(financeType.getFinGrcSchdMthd());
 			this.financeMain.setGrcMargin(financeType.getFinGrcMargin());
-			this.financeMain.setFinGrcRvwRateApplFor(financeType.getFinGrcRvwRateApplFor());
 
 			this.financeMain.setGrcAdvBaseRate(financeType.getGrcAdvBaseRate());
 			this.financeMain.setGrcAdvMargin(financeType.getGrcAdvMargin());
@@ -365,7 +364,7 @@ public class FinScheduleData {
 		this.financeMain.setLovDescIsSchdGenerated(false);
 		this.financeMain.setDefferments(financeType.getFinMaxDifferment());
 		this.financeMain.setPlanDeferCount(financeType.getPlanDeferCount());
-		this.financeMain.setFinRvwRateApplFor(financeType.getFinRvwRateApplFor());
+		this.financeMain.setRvwRateApplFor(financeType.getFinRvwRateApplFor());
 		this.financeMain.setFinRepayMethod(financeType.getFinRepayMethod());
 		this.financeMain.setRpyAdvBaseRate(financeType.getRpyAdvBaseRate());
 		this.financeMain.setRpyAdvMargin(financeType.getRpyAdvMargin());

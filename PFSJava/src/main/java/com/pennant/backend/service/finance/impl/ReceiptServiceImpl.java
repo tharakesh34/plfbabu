@@ -419,6 +419,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//Finance Schedule Details
 		listDeletion(finReference, tableType.getSuffix());
 		listSave(scheduleData, tableType.getSuffix(), 0);
+		
+		//Fee & Insurance Schedule Details updations for paid amounts TODO
 
 		// Save Document Details
 		if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null

@@ -14,7 +14,7 @@ tr.noBorder td {
 </style>
 </head>
 <body bgcolor="#2B4F81">
-	<table border="0" style="width: 100%">
+	<table style="border:0px;width: 100%">
 		<tr>
 			<td>
 				<div align="left">

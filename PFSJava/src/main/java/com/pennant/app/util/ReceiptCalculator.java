@@ -276,20 +276,22 @@ public class ReceiptCalculator implements Serializable {
 							BigDecimal priAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_PRI);
 							if(priAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 								BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-								if(totalReceiptAmt.compareTo(priAllocateBal) >= 0 && priAllocateBal.compareTo(balPri) < 0){
-									balPri = priAllocateBal;
-								}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0){
-									balPri = totalReceiptAmt;
+								if(balPri.compareTo(BigDecimal.ZERO) > 0){
+									if(totalReceiptAmt.compareTo(priAllocateBal) >= 0 && priAllocateBal.compareTo(balPri) < 0){
+										balPri = priAllocateBal;
+									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0){
+										balPri = totalReceiptAmt;
+									}
+									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri);
+
+									// Reset Total Receipt Amount
+									totalReceiptAmt = totalReceiptAmt.subtract(balPri);
+									totPriPaidNow = totPriPaidNow.add(balPri);
+									paidAllocationMap.put(RepayConstants.ALLOCATION_PRI, priAllocateBal.subtract(balPri));
+
+									// Update Schedule to avoid on Next loop Payment
+									curSchd.setSchdPriPaid(curSchd.getSchdPriPaid().add(balPri));
 								}
-								rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri);
-								
-								// Reset Total Receipt Amount
-								totalReceiptAmt = totalReceiptAmt.subtract(balPri);
-								totPriPaidNow = totPriPaidNow.add(balPri);
-								paidAllocationMap.put(RepayConstants.ALLOCATION_PRI, priAllocateBal.subtract(balPri));
-								
-								// Update Schedule to avoid on Next loop Payment
-								curSchd.setSchdPriPaid(curSchd.getSchdPriPaid().add(balPri));
 							}
 						}
 					}else if(repayTo == RepayConstants.REPAY_PROFIT){
@@ -303,20 +305,22 @@ public class ReceiptCalculator implements Serializable {
 									BigDecimal pftAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_PFT);
 									if(pftAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 										BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-										if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0 && pftAllocateBal.compareTo(balPft) < 0){
-											balPft = pftAllocateBal;
-										}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0){
-											balPft = totalReceiptAmt;
+										if(balPft.compareTo(BigDecimal.ZERO) > 0){
+											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0 && pftAllocateBal.compareTo(balPft) < 0){
+												balPft = pftAllocateBal;
+											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0){
+												balPft = totalReceiptAmt;
+											}
+											rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft);
+
+											// Reset Total Receipt Amount
+											totalReceiptAmt = totalReceiptAmt.subtract(balPft);
+											totPftPaidNow = totPftPaidNow.add(balPft);
+											paidAllocationMap.put(RepayConstants.ALLOCATION_PFT, pftAllocateBal.subtract(balPft));
+
+											// Update Schedule to avoid on Next loop Payment
+											curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(balPft));
 										}
-										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft);
-										
-										// Reset Total Receipt Amount
-										totalReceiptAmt = totalReceiptAmt.subtract(balPft);
-										totPftPaidNow = totPftPaidNow.add(balPft);
-										paidAllocationMap.put(RepayConstants.ALLOCATION_PFT, pftAllocateBal.subtract(balPft));
-										
-										// Update Schedule to avoid on Next loop Payment
-										curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(balPft));
 									}
 								}
 
@@ -328,20 +332,23 @@ public class ReceiptCalculator implements Serializable {
 										FinODDetails overdue = overdueMap.get(schdDate);
 										if(overdue != null){
 											BigDecimal balLatePft = overdue.getLPIBal();
-											if(totalReceiptAmt.compareTo(latePftAllocateBal) >= 0 && latePftAllocateBal.compareTo(balLatePft) < 0){
-												balLatePft = latePftAllocateBal;
-											}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0){
-												balLatePft = totalReceiptAmt;
+											if(balLatePft.compareTo(BigDecimal.ZERO) > 0){
+												if(totalReceiptAmt.compareTo(latePftAllocateBal) >= 0 && latePftAllocateBal.compareTo(balLatePft) < 0){
+													balLatePft = latePftAllocateBal;
+												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0){
+													balLatePft = totalReceiptAmt;
+												}
+												rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft);
+
+												// Reset Total Receipt Amount
+												totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
+												totLPftPaidNow = totLPftPaidNow.add(balLatePft);
+												paidAllocationMap.put(RepayConstants.ALLOCATION_LPFT, latePftAllocateBal.subtract(balLatePft));
+
+												// Update Schedule to avoid on Next loop Payment
+												overdue.setLPIBal(overdue.getLPIBal().subtract(balLatePft));
+												overdue.setLPIPaid(overdue.getLPIPaid().add(balLatePft));
 											}
-											rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft);
-											
-											// Reset Total Receipt Amount
-											totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
-											totLPftPaidNow = totLPftPaidNow.add(balLatePft);
-											paidAllocationMap.put(RepayConstants.ALLOCATION_LPFT, latePftAllocateBal.subtract(balLatePft));
-											
-											// Update Schedule to avoid on Next loop Payment
-											overdue.setLPIBal(overdue.getLPIBal().add(balLatePft));
 										}
 									}
 								}
@@ -356,21 +363,24 @@ public class ReceiptCalculator implements Serializable {
 								FinODDetails overdue = overdueMap.get(schdDate);
 								if(overdue != null){
 									BigDecimal balPenalty = overdue.getTotPenaltyBal();
-									if(totalReceiptAmt.compareTo(penaltyAllocateBal) >= 0 && penaltyAllocateBal.compareTo(balPenalty) < 0){
-										balPenalty = penaltyAllocateBal;
-									}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0){
-										balPenalty = totalReceiptAmt;
-									}
-									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty);
-									
-									// Reset Total Receipt Amount
-									totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
-									totPenaltyPaidNow = totPenaltyPaidNow.add(balPenalty);
+									if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
+										if(totalReceiptAmt.compareTo(penaltyAllocateBal) >= 0 && penaltyAllocateBal.compareTo(balPenalty) < 0){
+											balPenalty = penaltyAllocateBal;
+										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0){
+											balPenalty = totalReceiptAmt;
+										}
+										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty);
 
-									paidAllocationMap.put(RepayConstants.ALLOCATION_ODC, penaltyAllocateBal.subtract(balPenalty));
-									
-									// Update Schedule to avoid on Next loop Payment
-									overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().add(balPenalty));
+										// Reset Total Receipt Amount
+										totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+										totPenaltyPaidNow = totPenaltyPaidNow.add(balPenalty);
+
+										paidAllocationMap.put(RepayConstants.ALLOCATION_ODC, penaltyAllocateBal.subtract(balPenalty));
+
+										// Update Schedule to avoid on Next loop Payment
+										overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().subtract(balPenalty));
+										overdue.setTotPenaltyPaid(overdue.getTotPenaltyPaid().add(balPenalty));
+									}
 								}
 							}
 						}
@@ -407,21 +417,23 @@ public class ReceiptCalculator implements Serializable {
 											BigDecimal feeAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
 											if(feeAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 												BigDecimal balFee = feeSchdList.get(l).getSchAmount().subtract(feeSchdList.get(l).getPaidAmount());
-												if(totalReceiptAmt.compareTo(feeAllocateBal) >= 0 && feeAllocateBal.compareTo(balFee) < 0){
-													balFee = feeAllocateBal;
-												}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0){
-													balFee = totalReceiptAmt;
+												if(balFee.compareTo(BigDecimal.ZERO) > 0){
+													if(totalReceiptAmt.compareTo(feeAllocateBal) >= 0 && feeAllocateBal.compareTo(balFee) < 0){
+														balFee = feeAllocateBal;
+													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0){
+														balFee = totalReceiptAmt;
+													}
+													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balFee);
+
+													// Reset Total Receipt Amount
+													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
+													totFeePaidNow = totFeePaidNow.add(balFee);
+
+													paidAllocationMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), feeAllocateBal.subtract(balFee));
+
+													// Update Schedule to avoid on Next loop Payment
+													feeSchdList.get(l).setPaidAmount(feeSchdList.get(l).getPaidAmount().add(balFee));
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, repayTo, balFee);
-												
-												// Reset Total Receipt Amount
-												totalReceiptAmt = totalReceiptAmt.subtract(balFee);
-												totFeePaidNow = totFeePaidNow.add(balFee);
-												
-												paidAllocationMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), feeAllocateBal.subtract(balFee));
-												
-												// Update Schedule to avoid on Next loop Payment
-												feeSchdList.get(l).setPaidAmount(feeSchdList.get(l).getPaidAmount().add(balFee));
 											}
 										}
 										if(lastRenderSeq == 0){
@@ -459,21 +471,23 @@ public class ReceiptCalculator implements Serializable {
 											BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
 											if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 												BigDecimal balIns = insSchdList.get(l).getAmount().subtract(insSchdList.get(l).getInsurancePaid());
-												if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balIns) < 0){
-													balIns = insAllocateBal;
-												}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0){
-													balIns = totalReceiptAmt;
+												if(balIns.compareTo(BigDecimal.ZERO) > 0){
+													if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balIns) < 0){
+														balIns = insAllocateBal;
+													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0){
+														balIns = totalReceiptAmt;
+													}
+													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balIns);
+
+													// Reset Total Receipt Amount
+													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
+													totInsPaidNow = totInsPaidNow.add(balIns);
+
+													paidAllocationMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), insAllocateBal.subtract(balIns));
+
+													// Update Schedule to avoid on Next loop Payment
+													insSchdList.get(l).setInsurancePaid(insSchdList.get(l).getInsurancePaid().add(balIns));
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, repayTo, balIns);
-												
-												// Reset Total Receipt Amount
-												totalReceiptAmt = totalReceiptAmt.subtract(balIns);
-												totInsPaidNow = totInsPaidNow.add(balIns);
-												
-												paidAllocationMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), insAllocateBal.subtract(balIns));
-												
-												// Update Schedule to avoid on Next loop Payment
-												insSchdList.get(l).setInsurancePaid(insSchdList.get(l).getInsurancePaid().add(balIns));
 											}
 										}
 										break;
@@ -481,7 +495,6 @@ public class ReceiptCalculator implements Serializable {
 								}
 							}
 						}
-						// Manual Advises TODO
 					}
 
 					// No more Receipt amount left for next schedules
@@ -503,6 +516,8 @@ public class ReceiptCalculator implements Serializable {
 				// Sequence Order Increment to reduce loops on Fee setting
 				lastRenderSeq++;
 			}
+			
+			// Manual Advises TODO
 			
 			FinRepayHeader repayHeader = null;
 			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0){
@@ -879,8 +894,6 @@ public class ReceiptCalculator implements Serializable {
 							}
 						}
 					}
-					
-					// Manual Advises TODO
 				}
 				
 				// No more Receipt amount left for next schedules
@@ -926,6 +939,8 @@ public class ReceiptCalculator implements Serializable {
 				}
 			}
 		}
+		
+		// Manual Advises TODO
 		
 		logger.debug("Leaving");
 		return allocatePaidMap;

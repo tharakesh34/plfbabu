@@ -396,8 +396,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String recalType;
 	private String recalSchdMethod;
 	private BigDecimal desiredProfit = BigDecimal.ZERO;
-	private String finRvwRateApplFor;
-	private String finGrcRvwRateApplFor;
+	private String rvwRateApplFor;
 	private boolean lovDescAdjClosingBal;
 	private BigDecimal totalPriAmt = BigDecimal.ZERO;
 	private BigDecimal schPriDue = BigDecimal.ZERO;
@@ -1796,20 +1795,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescAccruedTillLBD = lovDescAccruedTillLBD;
 	}
 
-	public String getFinRvwRateApplFor() {
-		return finRvwRateApplFor;
+	public String getRvwRateApplFor() {
+		return rvwRateApplFor;
 	}
 
-	public void setFinRvwRateApplFor(String finRvwRateApplFor) {
-		this.finRvwRateApplFor = finRvwRateApplFor;
-	}
-
-	public String getFinGrcRvwRateApplFor() {
-		return finGrcRvwRateApplFor;
-	}
-
-	public void setFinGrcRvwRateApplFor(String finGrcRvwRateApplFor) {
-		this.finGrcRvwRateApplFor = finGrcRvwRateApplFor;
+	public void setRvwRateApplFor(String finRvwRateApplFor) {
+		this.rvwRateApplFor = finRvwRateApplFor;
 	}
 
 	public String getLovDescProductCodeName() {

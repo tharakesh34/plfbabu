@@ -624,11 +624,10 @@ public class ExtFinanceUploadService {
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility.formatUtilDate(
 					financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
-			financeMain.setFinRvwRateApplFor(finType.getFinRvwRateApplFor());
 		} else {
 			financeMain.setRepayRvwFrq("");
-			financeMain.setFinRvwRateApplFor("");
 		}
+		financeMain.setRvwRateApplFor(finType.getFinRvwRateApplFor());
 
 		// Allow Repay Capitalization
 		if (finType.isFinIsIntCpz()) {
@@ -757,13 +756,9 @@ public class ExtFinanceUploadService {
 				financeMain.setNextGrcPftRvwDate(financeMain.getGrcPeriodEndDate());
 			}
 
-			// Review Rate Applied For in Grace
-			financeMain.setFinGrcRvwRateApplFor(finType.getFinGrcRvwRateApplFor());
-
 		} else {
 			financeMain.setNextGrcPftRvwDate(SysParamUtil.getValueAsDate("APP_DFT_ENDDATE"));
 			financeMain.setGrcPftRvwFrq("");
-			financeMain.setFinGrcRvwRateApplFor("");
 		}
 
 		// Allow Grace Capitalization
@@ -1097,11 +1092,10 @@ public class ExtFinanceUploadService {
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility.formatUtilDate(
 					financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
-			financeMain.setFinRvwRateApplFor(finType.getFinRvwRateApplFor());
 		} else {
 			financeMain.setRepayRvwFrq("");
-			financeMain.setFinRvwRateApplFor("");
 		}
+		financeMain.setRvwRateApplFor(finType.getFinRvwRateApplFor());
 
 		// Allow Repay Capitalization
 		if (finType.isFinIsIntCpz()) {

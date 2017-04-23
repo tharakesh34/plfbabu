@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -478,6 +479,12 @@ public class ScheduleCalculator {
 		finMain.setEventFromDate(earlyPayOnSchdl);
 		finMain.setEventToDate(earlyPayOnSchdl);
 		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
+		if(ImplementationConstants.EARLYPAY_ADJ_PRI){
+			if(earlyPayOnNextSchdl != null){
+				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+			}
+		}
 
 		if (StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, method)
 				|| StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
@@ -486,7 +493,7 @@ public class ScheduleCalculator {
 			final BigDecimal totalDesiredProfit = finMain.getTotalGrossPft();
 
 			//TODO: PV 19JAN17 schedule method should be sent correctly
-			finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getScheduleMethod());
+			finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getRecalSchdMethod());
 
 			List<FinanceScheduleDetail> finSchdlDetailList = finScheduleData.getFinanceScheduleDetails();
 			int size = finScheduleData.getFinanceScheduleDetails().size();
@@ -518,7 +525,7 @@ public class ScheduleCalculator {
 
 			// Schedule Repayment Change
 			//TODO: PV 19JAN17 schedule method should be sent correctly
-			finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getScheduleMethod());
+			finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getRecalSchdMethod());
 
 			// Schedule ReCalculations afetr Early Repayment Period based upon
 			// Schedule Method
@@ -2838,7 +2845,7 @@ public class ScheduleCalculator {
 		}
 
 		// FIND ALLOWED RATE CHANGE DATE
-		String rvwRateApplFor = finMain.getFinGrcRvwRateApplFor();
+		String rvwRateApplFor = finMain.getRvwRateApplFor();
 		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(FinanceConstants.RVW_ALL)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor, dateAllowedChange);
 		}
@@ -2899,7 +2906,7 @@ public class ScheduleCalculator {
 		}
 
 		// FIND ALLOWED RATE CHANGE DATE
-		String rvwRateApplFor = finMain.getFinRvwRateApplFor();
+		String rvwRateApplFor = finMain.getRvwRateApplFor();
 		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(FinanceConstants.RVW_ALL)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor, dateAllowedChange);
 		}

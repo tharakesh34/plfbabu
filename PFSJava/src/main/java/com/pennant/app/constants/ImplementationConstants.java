@@ -87,7 +87,10 @@ public class ImplementationConstants {
 	public static final String	NBFC							= "NBFC";
 	public static final String	BANK							= "BANK";
 	public static final String	CLIENTTYPE						=  NBFC;
-
+	
+	// Partial Payment only with Principal Amount Adjustment
+	public static final boolean	EARLYPAY_ADJ_PRI				=  true;
+	
 	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
 	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
 }
