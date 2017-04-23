@@ -106,7 +106,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String finGrcCpzFrq;
 	private boolean finGrcIsRvwAlw;
 	private String finGrcRvwFrq;
-	private String finGrcRvwRateApplFor;
 	private boolean finIsIntCpzAtGrcEnd;
 	private int finMinTerm;
 	private int finMaxTerm;
@@ -872,14 +871,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setFinAlwRateChangeAnyDate(boolean finAlwRateChangeAnyDate) {
 		this.finAlwRateChangeAnyDate = finAlwRateChangeAnyDate;
-	}
-
-	public String getFinGrcRvwRateApplFor() {
-		return finGrcRvwRateApplFor;
-	}
-
-	public void setFinGrcRvwRateApplFor(String finGrcRvwRateApplFor) {
-		this.finGrcRvwRateApplFor = finGrcRvwRateApplFor;
 	}
 
 	public long getDownPayRule() {

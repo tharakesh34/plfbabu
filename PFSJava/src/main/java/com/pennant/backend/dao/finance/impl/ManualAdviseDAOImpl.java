@@ -42,8 +42,11 @@
 */
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -207,5 +210,32 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
  
+	@Override
+	public List<ManualAdvise> getManualAdviseByRef(String finReference , int adviseType, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount " );
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" , FeeTypeDesc ");
+		}
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType ");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setAdviseType(adviseType);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		List<ManualAdvise> adviseList = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return adviseList;
+	}		
 	
 }	

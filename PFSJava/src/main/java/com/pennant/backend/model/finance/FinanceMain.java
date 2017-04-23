@@ -619,8 +619,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("reqTerms");
 		excludeFields.add("errorDetails");
 		excludeFields.add("proceedDedup");
-		excludeFields.add("finRvwRateApplFor");
-		excludeFields.add("finGrcRvwRateApplFor");
 		excludeFields.add("curDisbursementAmt");
 		excludeFields.add("amount");
 		excludeFields.add("exception");

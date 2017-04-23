@@ -314,4 +314,8 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet author="Siva" id="8">
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinGrcRvwRateApplFor" />
+	</changeSet>
+	
 </databaseChangeLog>

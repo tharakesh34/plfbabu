@@ -6520,6 +6520,7 @@
 		scope="prototype">
 		<aop:scoped-proxy />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

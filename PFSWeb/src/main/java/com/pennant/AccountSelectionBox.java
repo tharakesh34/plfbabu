@@ -45,13 +45,10 @@ package com.pennant;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -69,13 +66,11 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pff.core.Literal;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
@@ -138,7 +133,7 @@ public class AccountSelectionBox extends Hbox {
 		this.textbox.setMaxlength(LengthConstants.LEN_ACCOUNT);
 
 		// If input allowed set text box editable
-		this.textbox.addForward("onChange", this, "onChangeTextbox");
+		//this.textbox.addForward("onChange", this, "onChangeTextbox");
 		if (alwManualInput) {
 			this.textbox.setReadonly(false);
 		} else {
@@ -360,7 +355,7 @@ public class AccountSelectionBox extends Hbox {
 	 * @throws WrongValueException 
 	 */
 	public void validateValue() throws InterruptedException {
-		logger.trace(Literal.ENTERING);
+		/*logger.trace(Literal.ENTERING);
 
 		String accountNo = textbox.getValue().replace("-", "");
 
@@ -399,7 +394,7 @@ public class AccountSelectionBox extends Hbox {
 			doWrite();
 		}
 
-		logger.trace(Literal.LEAVING);
+		logger.trace(Literal.LEAVING);*/
 	}
 	
 	/**

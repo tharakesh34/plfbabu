@@ -164,6 +164,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.fusioncharts.ChartSetElement;
@@ -244,14 +245,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
 	protected Label											label_ReceiptDialog_favourNo;
-	protected Textbox										favourNo;
+	protected Uppercasebox									favourNo;
 	protected Datebox										valueDate;
 	protected ExtendedCombobox								bankCode;
 	protected Textbox										favourName;
 	protected Datebox										depositDate;
-	protected Textbox										depositNo;
-	protected Textbox										paymentRef;
-	protected Textbox										transactionRef;
+	protected Uppercasebox									depositNo;
+	protected Uppercasebox									paymentRef;
+	protected Uppercasebox									transactionRef;
 	protected AccountSelectionBox							chequeAcNo;
 	protected AccountSelectionBox							fundingAccount;
 	protected Datebox										receivedDate;
@@ -466,6 +467,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
 				this.listBoxPayment.setHeight(getListBoxHeight(6));
 				this.listBoxSchedule.setHeight(getListBoxHeight(6));
+				
+				this.listBoxPastdues.setHeight(getListBoxHeight(8));
+				this.listBoxManualAdvises.setHeight(getListBoxHeight(8));
 				this.receiptDetailsTab.setSelected(true);
 
 				// Setting tile Name based on Service Action
@@ -554,11 +558,29 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.fundingAccount.setButtonVisible(false);
 		this.fundingAccount.setMandatory(true);
 		this.fundingAccount.setAcountDetails("", "", true);
+		this.fundingAccount.setTextBoxWidth(180);
+		
+		this.chequeAcNo.setButtonVisible(false);
+		this.chequeAcNo.setMandatory(true);
+		this.chequeAcNo.setAcountDetails("", "", true);
+		this.chequeAcNo.setTextBoxWidth(180);
+		
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
-		this.favourName.setMaxlength(100);
+		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.favourNo.setMaxlength(50);
+		this.depositDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.depositNo.setMaxlength(50);
+		this.paymentRef.setMaxlength(50);
+		this.transactionRef.setMaxlength(50);
+		
+		this.bankCode.setModuleName("BankDetail");
+		this.bankCode.setMandatoryStyle(true);
+		this.bankCode.setValueColumn("BankCode");
+		this.bankCode.setDescColumn("BankName");
+		this.bankCode.setDisplayStyle(2);
+		this.bankCode.setValidateColumns(new String[] { "BankCode" });
 
 		// Allocation Details
 		this.allocation_finType.setMaxlength(8);
@@ -891,6 +913,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			// Due to changes in Receipt Amount, call Auto Allocations
 			if(isUserAction){
+				
+				
+				
+				
+				
 				setAutoAllocationPayments();
 			}
 		} else{
@@ -905,6 +932,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
+				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
 				this.row_remarks.setVisible(false);
@@ -923,6 +951,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
+				this.bankCode.setMandatoryStyle(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
@@ -932,6 +961,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} else {
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
+				this.bankCode.setMandatoryStyle(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_fundingAcNo.setVisible(false);
@@ -994,6 +1024,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
 		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
+		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
 		
 		if(!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
 			
@@ -1001,12 +1032,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
 				
 				BigDecimal totalPaid = BigDecimal.ZERO;
+				BigDecimal totalAdvPaid = BigDecimal.ZERO;
 				if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
 					Label paid = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalPaid");
 					totalPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
 				}
+				if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid") != null){
+					Label paid = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid");
+					totalAdvPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
+				}
 				
-				BigDecimal remBal = totReceiptAmount.subtract(totalPaid);
+				BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid);
 				if(remBal.compareTo(BigDecimal.ZERO) < 0){
 					remBal = BigDecimal.ZERO;
 				}
@@ -1844,7 +1880,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
-		String processType = header.getReceiptPurpose();
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
@@ -1857,6 +1892,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+
+		// Receipt Mode Details , if FinReceiptDetails Exists
+		checkByReceiptMode(header.getReceiptMode(), false);
 		
 		// Separating Receipt Amounts based on user entry, if exists
 		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
@@ -1868,13 +1906,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
+					this.favourNo.setValue(receiptDetail.getFavourNumber());
+					this.valueDate.setValue(receiptDetail.getValueDate());
+					this.bankCode.setValue(receiptDetail.getBankCode());
+					this.favourName.setValue(receiptDetail.getFavourName());
+					this.depositDate.setValue(receiptDetail.getDepositDate());
+					this.depositNo.setValue(receiptDetail.getDepositNo());
+					this.paymentRef.setValue(receiptDetail.getPaymentRef());
+					this.transactionRef.setValue(receiptDetail.getTransactionRef());
+					this.chequeAcNo.setValue(receiptDetail.getChequeAcNo());
+					this.fundingAccount.setValue(receiptDetail.getFundingAc());
+					this.receivedDate.setValue(receiptDetail.getReceivedDate());
+					this.remarks.setValue(receiptDetail.getRemarks());
 				}
 			}
 		}
-
-		// Receipt Mode Details , if FinReceiptDetails Exists
-		String receiptPaidMode = header.getReceiptMode();
-		checkByReceiptMode(receiptPaidMode, false);
 
 		// Render Excess Amount Details
 		doFillExcessAmounts(receiptAmountsMap);
@@ -1896,7 +1942,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doFillAllocationDetail(header.getAllocations(), null, false);
 
 		// Only In case of partial settlement process, Display details for effective Schedule
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, processType)) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, header.getReceiptPurpose())) {
 
 			FinanceDetail financeDetail = getFinanceDetail();
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1992,7 +2038,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			BigDecimal paidAmount = BigDecimal.ZERO;//TODO: Entered Excess Amounts from Receipt Details
+			BigDecimal paidAmount = BigDecimal.ZERO;
 			if(StringUtils.equals(excessAmtType, RepayConstants.EXAMOUNTTYPE_EXCESS) && 
 					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EXCESS)){
 				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EXCESS);
@@ -2067,6 +2113,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totalDueAmount = BigDecimal.ZERO;
 		BigDecimal totalPaidAmount = BigDecimal.ZERO;
 		BigDecimal totalWaivedAmount = BigDecimal.ZERO;
+		BigDecimal totalAdvDueAmount = BigDecimal.ZERO;
+		BigDecimal totalAdvPaidAmount = BigDecimal.ZERO;
+		BigDecimal totalAdvWaivedAmount = BigDecimal.ZERO;
 		
 		for (int i = 0; i < allocateTypes.size(); i++) {
 
@@ -2085,7 +2134,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			item = new Listitem();
 			String label = Labels.getLabel("label_RecceiptDialog_AllocationType_"+allocationType);
 			if(allocateTypes.get(i).contains("~")){
-				label = label+" : "+getReceiptData().getAllocationDescMap().get(allocateTypes.get(i));
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
+					label = getReceiptData().getAllocationDescMap().get(allocateTypes.get(i));
+				}else{
+					label = label+" : "+getReceiptData().getAllocationDescMap().get(allocateTypes.get(i));
+				}
 			}
 			lc = new Listcell(label);
 			lc.setStyle("font-weight:bold;color: #191a1c;");
@@ -2102,8 +2155,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			setProps(allocationPaid, false, finFormatter, 120);
 			allocationPaid.setId("AllocatePaid_"+allocateTypes.get(i));
 			if(allocatePaidMap != null){
-				if(allocatePaidMap.containsKey(allocationType)){
-					BigDecimal autoCalPaidAmt = allocatePaidMap.get(allocationType);
+				if(allocatePaidMap.containsKey(allocateTypes.get(i))){
+					BigDecimal autoCalPaidAmt = allocatePaidMap.get(allocateTypes.get(i));
 					allocationPaid.setValue(PennantApplicationUtil.formateAmount(autoCalPaidAmt, finFormatter));
 				}else{
 					allocationPaid.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
@@ -2172,6 +2225,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
 				this.listBoxManualAdvises.appendChild(item);
+				totalAdvDueAmount = totalAdvDueAmount.add(totalCalAmount);
+				totalAdvPaidAmount = totalAdvPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
+				totalAdvWaivedAmount = totalAdvWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
 			}else{
 				this.listBoxPastdues.appendChild(item);
 				totalDueAmount = totalDueAmount.add(totalCalAmount);
@@ -2180,42 +2236,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		// Creating Totals to verify against calculations & for validation
+		// Creating Pastdue Totals to verify against calculations & for validation
 		if(totalDueAmount.compareTo(BigDecimal.ZERO) > 0){
-
-			item = new Listitem();
-			item.setStyle("background-color: #C0EBDF;");
-			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_Totals"));
-			lc.setStyle("font-weight:bold;");
-			lc.setParent(item);
-			
-			lc = new Listcell();
-			Label label = new Label(PennantAppUtil.amountFormate(totalDueAmount, finFormatter));
-			label.setId("allocation_totalDue");
-			lc.setStyle("text-align:right;font-weight:bold;");
-			lc.appendChild(label);
-			lc.setParent(item);
-
-			lc = new Listcell();
-			label = new Label(PennantAppUtil.amountFormate(totalPaidAmount, finFormatter));
-			label.setId("allocation_totalPaid");
-			lc.setStyle("text-align:right;font-weight:bold;");
-			lc.appendChild(label);
-			lc.setParent(item);
-			
-			lc = new Listcell();
-			label = new Label(PennantAppUtil.amountFormate(totalWaivedAmount, finFormatter));
-			label.setId("allocation_totalWaived");
-			lc.setStyle("text-align:right;font-weight:bold;");
-			lc.appendChild(label);
-			lc.setParent(item);
-			this.listBoxPastdues.appendChild(item);
-			
+			addFooter(totalDueAmount, totalPaidAmount, totalWaivedAmount, finFormatter, true);
+		}
+		
+		// Creating Manual Advise Totals to verify against calculations & for validation
+		if(totalAdvDueAmount.compareTo(BigDecimal.ZERO) > 0){
+			addFooter(totalAdvDueAmount, totalAdvPaidAmount, totalAdvWaivedAmount, finFormatter, false);
 		}
 		
 		// Setting Valid Components to open based upon Remaining Balance
 		BigDecimal totReceiptAmount = getTotalReceiptAmount();
-		BigDecimal remBal = totReceiptAmount.subtract(totalPaidAmount);
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaidAmount).subtract(totalAdvPaidAmount);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
 		}
@@ -2238,6 +2271,56 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Adding footer to show Totals
+	 * @param dueAmount
+	 * @param paidAmount
+	 * @param waivedAmount
+	 * @param formatter
+	 * @param isPastDue
+	 */
+	private void addFooter(BigDecimal dueAmount,BigDecimal paidAmount,BigDecimal waivedAmount, int formatter, boolean isPastDue){
+		
+		String compId = "allocation_"; 
+		if(!isPastDue){
+			compId = "manAdvise_"; 
+		}
+
+		// Creating Totals to verify against calculations & for validation
+		Listitem item = new Listitem();
+		item.setStyle("background-color: #C0EBDF;align:bottom;");
+		Listcell lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_Totals"));
+		lc.setStyle("font-weight:bold;");
+		lc.setParent(item);
+
+		lc = new Listcell();
+		Label label = new Label(PennantAppUtil.amountFormate(dueAmount, formatter));
+		label.setId(compId+"totalDue");
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.appendChild(label);
+		lc.setParent(item);
+
+		lc = new Listcell();
+		label = new Label(PennantAppUtil.amountFormate(paidAmount, formatter));
+		label.setId(compId+"totalPaid");
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.appendChild(label);
+		lc.setParent(item);
+
+		lc = new Listcell();
+		label = new Label(PennantAppUtil.amountFormate(waivedAmount, formatter));
+		label.setId(compId+"totalWaived");
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.appendChild(label);
+		lc.setParent(item);
+		
+		if(isPastDue){
+			this.listBoxPastdues.appendChild(item);
+		}else{
+			this.listBoxManualAdvises.appendChild(item);
+		}
 	}
 	
 	/**
@@ -3407,6 +3490,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totalDue = BigDecimal.ZERO;
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
+		// Past due Details
 		if(this.listBoxPastdues.getFellowIfAny("allocation_totalDue") != null){
 			Label due = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalDue");
 			totalDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
@@ -3422,8 +3506,27 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			totalWaived = PennantApplicationUtil.unFormateAmount(new BigDecimal(waived.getValue().replaceAll(",", "")), formatter);
 		}
 		
+		BigDecimal totalAdvDue = BigDecimal.ZERO;
+		BigDecimal totalAdvPaid = BigDecimal.ZERO;
+		BigDecimal totalAdvWaived = BigDecimal.ZERO;
+		// Manual Advises
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue") != null){
+			Label due = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue");
+			totalAdvDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid") != null){
+			Label paid = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid");
+			totalAdvPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalWaived") != null){
+			Label waived = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalWaived");
+			totalAdvWaived = PennantApplicationUtil.unFormateAmount(new BigDecimal(waived.getValue().replaceAll(",", "")), formatter);
+		}
+		
 		// User entered Receipt amounts and paid on manual Allocation validation
-		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalWaived);
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalWaived).subtract(totalAdvPaid).subtract(totalAdvWaived);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_InsufficientAmount"));
 			return false;
@@ -3437,10 +3540,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts
-		BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived));
-		if(earlySettleBal.compareTo(BigDecimal.ZERO) < 0){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
-			return false;
+		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived)).subtract(totalAdvDue.subtract(totalAdvWaived));
+			if(earlySettleBal.compareTo(BigDecimal.ZERO) < 0){
+				MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
+				return false;
+			}
 		}
 
 		logger.debug("Leaving");

@@ -58,6 +58,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -69,6 +70,7 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -85,6 +87,7 @@ public class ReceiptCalculator implements Serializable {
 
 	Date										curBussniessDate	= DateUtility.getAppDate();
 	private FinODDetailsDAO						finODDetailsDAO;
+	private ManualAdviseDAO						manualAdviseDAO;
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -200,10 +203,23 @@ public class ReceiptCalculator implements Serializable {
 		if(receiptDetailList == null || receiptDetailList.isEmpty()){
 			return null;//TODO: Add Error to display
 		}
+		
+		// Fetch total Advise details
+		Map<Long, ManualAdvise> adviseMap = new HashMap<Long, ManualAdvise>();
+		List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(), 
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		if (advises != null && !advises.isEmpty()) {
+			for (int i = 0; i < advises.size(); i++) {
+				if (adviseMap.containsKey(advises.get(i).getAdviseID())) {
+					adviseMap.remove(advises.get(i).getAdviseID());
+				}
+				adviseMap.put(advises.get(i).getAdviseID(), advises.get(i));
+			}
+		}
 
 		// Fetch total overdue details
 		Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
-		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODDetailsByFinReference(financeMain.getFinReference(),"");
+		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		if (overdueList != null && !overdueList.isEmpty()) {
 			for (int m = 0; m < overdueList.size(); m++) {
 				if (overdueMap.containsKey(overdueList.get(m).getFinODSchdDate())) {
@@ -347,7 +363,6 @@ public class ReceiptCalculator implements Serializable {
 
 												// Update Schedule to avoid on Next loop Payment
 												overdue.setLPIBal(overdue.getLPIBal().subtract(balLatePft));
-												overdue.setLPIPaid(overdue.getLPIPaid().add(balLatePft));
 											}
 										}
 									}
@@ -379,7 +394,6 @@ public class ReceiptCalculator implements Serializable {
 
 										// Update Schedule to avoid on Next loop Payment
 										overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().subtract(balPenalty));
-										overdue.setTotPenaltyPaid(overdue.getTotPenaltyPaid().add(balPenalty));
 									}
 								}
 							}
@@ -517,7 +531,41 @@ public class ReceiptCalculator implements Serializable {
 				lastRenderSeq++;
 			}
 			
-			// Manual Advises TODO
+			// Manual Advises 
+			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+				if(!adviseMap.isEmpty()){
+					List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
+					Collections.sort(adviseIdList);
+					for (int a = 0; a < adviseIdList.size(); a++) {
+
+						ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
+						if(advise != null){
+							
+							if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
+								BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+								if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
+									BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+									if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
+										if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balAdvise) < 0){
+											balAdvise = insAllocateBal;
+										}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0){
+											balAdvise = totalReceiptAmt;
+										}
+										//rsd = prepareRpyRecord(curSchd, rsd, repayTo, balAdvise); TODO
+
+										// Reset Total Receipt Amount
+										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+										//totInsPaidNow = totInsPaidNow.add(balAdvise);
+
+										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			
 			FinRepayHeader repayHeader = null;
 			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0){
@@ -688,9 +736,22 @@ public class ReceiptCalculator implements Serializable {
 			return null;
 		}
 		
-		// Fetch total overdue details
+		// Fetch total Advise details
+		Map<Long, ManualAdvise> adviseMap = new HashMap<Long, ManualAdvise>();
+		List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(), 
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		if (advises != null && !advises.isEmpty()) {
+			for (int i = 0; i < advises.size(); i++) {
+				if (adviseMap.containsKey(advises.get(i).getAdviseID())) {
+					adviseMap.remove(advises.get(i).getAdviseID());
+				}
+				adviseMap.put(advises.get(i).getAdviseID(), advises.get(i));
+			}
+		}
+		
+		// Fetch manual Advise Details details
 		Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
-		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODDetailsByFinReference(financeMain.getFinReference(),"");
+		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		if (overdueList != null && !overdueList.isEmpty()) {
 			for (int i = 0; i < overdueList.size(); i++) {
 				if (overdueMap.containsKey(overdueList.get(i).getFinODSchdDate())) {
@@ -725,19 +786,21 @@ public class ReceiptCalculator implements Serializable {
 				char repayTo = rpyOrder[j];
 				if(repayTo == RepayConstants.REPAY_PRINCIPAL){
 					BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-					if(totalReceiptAmt.compareTo(balPri) > 0){
-						totalReceiptAmt = totalReceiptAmt.subtract(balPri);
-					}else{
-						balPri = totalReceiptAmt;
-						totalReceiptAmt = BigDecimal.ZERO;
+					if(balPri.compareTo(BigDecimal.ZERO) > 0){
+						if(totalReceiptAmt.compareTo(balPri) > 0){
+							totalReceiptAmt = totalReceiptAmt.subtract(balPri);
+						}else{
+							balPri = totalReceiptAmt;
+							totalReceiptAmt = BigDecimal.ZERO;
+						}
+
+						BigDecimal totPriPayNow = BigDecimal.ZERO;
+						if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PRI)){
+							totPriPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PRI);
+							allocatePaidMap.remove(RepayConstants.ALLOCATION_PRI);
+						}
+						allocatePaidMap.put(RepayConstants.ALLOCATION_PRI, totPriPayNow.add(balPri));
 					}
-					
-					BigDecimal totPriPayNow = BigDecimal.ZERO;
-					if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PRI)){
-						totPriPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PRI);
-						allocatePaidMap.remove(RepayConstants.ALLOCATION_PRI);
-					}
-					allocatePaidMap.put(RepayConstants.ALLOCATION_PRI, totPriPayNow.add(balPri));
 				}else if(repayTo == RepayConstants.REPAY_PROFIT){
 					
 					String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
@@ -746,37 +809,41 @@ public class ReceiptCalculator implements Serializable {
 						if(pftPayTo == RepayConstants.REPAY_PROFIT){
 							
 							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							if(totalReceiptAmt.compareTo(balPft) > 0){
-								totalReceiptAmt = totalReceiptAmt.subtract(balPft);
-							}else{
-								balPft = totalReceiptAmt;
-								totalReceiptAmt = BigDecimal.ZERO;
+							if(balPft.compareTo(BigDecimal.ZERO) > 0){
+								if(totalReceiptAmt.compareTo(balPft) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(balPft);
+								}else{
+									balPft = totalReceiptAmt;
+									totalReceiptAmt = BigDecimal.ZERO;
+								}
+
+								BigDecimal totPftPayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PFT)){
+									totPftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PFT);
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_PFT);
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_PFT, totPftPayNow.add(balPft));
 							}
-							
-							BigDecimal totPftPayNow = BigDecimal.ZERO;
-							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PFT)){
-								totPftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PFT);
-								allocatePaidMap.remove(RepayConstants.ALLOCATION_PFT);
-							}
-							allocatePaidMap.put(RepayConstants.ALLOCATION_PFT, totPftPayNow.add(balPft));
 							
 						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
 							
 							FinODDetails overdue = overdueMap.get(schdDate);
 							if(overdue != null){
 								BigDecimal balLatePft = overdue.getLPIBal();
-								if(totalReceiptAmt.compareTo(balLatePft) > 0){
-									totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
-								}else{
-									totalReceiptAmt = BigDecimal.ZERO;
-								}
+								if(balLatePft.compareTo(BigDecimal.ZERO) > 0){
+									if(totalReceiptAmt.compareTo(balLatePft) > 0){
+										totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
+									}else{
+										totalReceiptAmt = BigDecimal.ZERO;
+									}
 
-								BigDecimal totLatePftPayNow = BigDecimal.ZERO;
-								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
-									totLatePftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_LPFT);
-									allocatePaidMap.remove(RepayConstants.ALLOCATION_LPFT);
+									BigDecimal totLatePftPayNow = BigDecimal.ZERO;
+									if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
+										totLatePftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_LPFT);
+										allocatePaidMap.remove(RepayConstants.ALLOCATION_LPFT);
+									}
+									allocatePaidMap.put(RepayConstants.ALLOCATION_LPFT, totLatePftPayNow.add(balLatePft));
 								}
-								allocatePaidMap.put(RepayConstants.ALLOCATION_LPFT, totLatePftPayNow.add(balLatePft));
 							}
 						}
 					}
@@ -786,19 +853,21 @@ public class ReceiptCalculator implements Serializable {
 						FinODDetails overdue = overdueMap.get(schdDate);
 						if(overdue != null){
 							BigDecimal balPenalty = overdue.getTotPenaltyBal();
-							if(totalReceiptAmt.compareTo(balPenalty) > 0){
-								totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
-							}else{
-								balPenalty = totalReceiptAmt;
-								totalReceiptAmt = BigDecimal.ZERO;
-							}
+							if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
+								if(totalReceiptAmt.compareTo(balPenalty) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+								}else{
+									balPenalty = totalReceiptAmt;
+									totalReceiptAmt = BigDecimal.ZERO;
+								}
 
-							BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
-								totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
-								allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+								BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+									totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
 							}
-							allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
 						}
 					}
 					
@@ -831,19 +900,21 @@ public class ReceiptCalculator implements Serializable {
 								if(feeSchdList.get(l).getSchDate().compareTo(schdDate) == 0){
 
 									BigDecimal balFee = feeSchdList.get(l).getSchAmount().subtract(feeSchdList.get(l).getPaidAmount());
-									if(totalReceiptAmt.compareTo(balFee) > 0){
-										totalReceiptAmt = totalReceiptAmt.subtract(balFee);
-									}else{
-										balFee = totalReceiptAmt;
-										totalReceiptAmt = BigDecimal.ZERO;
-									}
+									if(balFee.compareTo(BigDecimal.ZERO) > 0){
+										if(totalReceiptAmt.compareTo(balFee) > 0){
+											totalReceiptAmt = totalReceiptAmt.subtract(balFee);
+										}else{
+											balFee = totalReceiptAmt;
+											totalReceiptAmt = BigDecimal.ZERO;
+										}
 
-									BigDecimal totFeePayNow = BigDecimal.ZERO;
-									if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID())){
-										totFeePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
-										allocatePaidMap.remove(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+										BigDecimal totFeePayNow = BigDecimal.ZERO;
+										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID())){
+											totFeePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+											allocatePaidMap.remove(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+										}
+										allocatePaidMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), totFeePayNow.add(balFee));
 									}
-									allocatePaidMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), totFeePayNow.add(balFee));
 									if(lastRenderSeq == 0){
 										lastRenderSeq = l;
 									}
@@ -876,19 +947,21 @@ public class ReceiptCalculator implements Serializable {
 								if(insSchdList.get(l).getInsSchDate().compareTo(schdDate) == 0){
 
 									BigDecimal balIns = insSchdList.get(l).getAmount().subtract(insSchdList.get(l).getInsurancePaid());
-									if(totalReceiptAmt.compareTo(balIns) > 0){
-										totalReceiptAmt = totalReceiptAmt.subtract(balIns);
-									}else{
-										balIns = totalReceiptAmt;
-										totalReceiptAmt = BigDecimal.ZERO;
-									}
+									if(balIns.compareTo(BigDecimal.ZERO) > 0){
+										if(totalReceiptAmt.compareTo(balIns) > 0){
+											totalReceiptAmt = totalReceiptAmt.subtract(balIns);
+										}else{
+											balIns = totalReceiptAmt;
+											totalReceiptAmt = BigDecimal.ZERO;
+										}
 
-									BigDecimal totInsPayNow = BigDecimal.ZERO;
-									if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId())){
-										totInsPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
-										allocatePaidMap.remove(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+										BigDecimal totInsPayNow = BigDecimal.ZERO;
+										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId())){
+											totInsPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+											allocatePaidMap.remove(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+										}
+										allocatePaidMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), totInsPayNow.add(balIns));
 									}
-									allocatePaidMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), totInsPayNow.add(balIns));
 									break;
 								}
 							}
@@ -922,25 +995,56 @@ public class ReceiptCalculator implements Serializable {
 					FinODDetails overdue = overdueMap.get(odDateList.get(i));
 					if(overdue != null){
 						BigDecimal balPenalty = overdue.getTotPenaltyBal();
-						if(totalReceiptAmt.compareTo(balPenalty) > 0){
-							totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
-						}else{
-							balPenalty = totalReceiptAmt;
-							totalReceiptAmt = BigDecimal.ZERO;
-						}
+						if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
+							if(totalReceiptAmt.compareTo(balPenalty) > 0){
+								totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+							}else{
+								balPenalty = totalReceiptAmt;
+								totalReceiptAmt = BigDecimal.ZERO;
+							}
 
-						BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-						if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
-							totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
-							allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+							BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
+							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+								totPenaltyPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_ODC);
+								allocatePaidMap.remove(RepayConstants.ALLOCATION_ODC);
+							}
+							allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
 						}
-						allocatePaidMap.put(RepayConstants.ALLOCATION_ODC, totPenaltyPayNow.add(balPenalty));
 					}
 				}
 			}
 		}
 		
-		// Manual Advises TODO
+		// Manual Advises
+		if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+			if(!adviseMap.isEmpty()){
+				List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
+				Collections.sort(adviseIdList);
+				for (int i = 0; i < adviseIdList.size(); i++) {
+
+					ManualAdvise advise = adviseMap.get(adviseIdList.get(i));
+					if(advise != null){
+						BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+						if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
+							if(totalReceiptAmt.compareTo(balAdvise) > 0){
+								totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+							}else{
+								balAdvise = totalReceiptAmt;
+								totalReceiptAmt = BigDecimal.ZERO;
+							}
+
+							BigDecimal totAdvisePayNow = BigDecimal.ZERO;
+							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
+								totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+								allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+							}
+							allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
+						}
+					}
+				}
+			}
+		}
 		
 		logger.debug("Leaving");
 		return allocatePaidMap;
@@ -1184,7 +1288,19 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 		
-		// Manual Advises :TODO - Waiting for development completion
+		// Manual Advises 
+		List<ManualAdvise> adviseList = getManualAdviseDAO().getManualAdviseByRef(repayMain.getFinReference(), 
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		if(adviseList != null && !adviseList.isEmpty()){
+			for (ManualAdvise advise : adviseList) {
+				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+				// Adding Advise Details to Map
+				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
+					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), adviseBal);
+					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), advise.getFeeTypeDesc());
+				}
+			}
+		}
 		
 		logger.debug("Leaving");
 		return receiptData;
@@ -1206,6 +1322,14 @@ public class ReceiptCalculator implements Serializable {
 	}
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

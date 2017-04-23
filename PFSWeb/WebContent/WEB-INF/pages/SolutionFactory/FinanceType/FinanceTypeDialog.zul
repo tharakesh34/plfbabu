@@ -706,7 +706,7 @@
 											<frequencybox
 												id="finGrcRvwFrq" />
 										</row>
-										<row visible="false">
+										<row id="row_FinGrcRvwRateApplFor" visible="false">
 											<label
 												id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
 												value="${c:l('label_FinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />

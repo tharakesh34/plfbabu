@@ -240,6 +240,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox finGrcIsRvwAlw; // autoWired
 	protected FrequencyBox finGrcRvwFrq; // autoWired
 	protected Combobox cbfinGrcRvwRateApplFor; // autoWired
+	protected Row row_FinGrcRvwRateApplFor; // autoWired
 	protected Checkbox finIsIntCpzAtGrcEnd; // autoWired
 
 	protected Checkbox applyGrcPricing;
@@ -1086,7 +1087,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finGrcIsRvwAlw.setChecked(aFinanceType.isFinGrcIsRvwAlw());
 		this.finGrcRvwFrq.setValue(aFinanceType.getFinGrcRvwFrq());
 
-		fillComboBox(this.cbfinGrcRvwRateApplFor, aFinanceType.getFinGrcRvwRateApplFor(),
+		fillComboBox(this.cbfinGrcRvwRateApplFor, aFinanceType.getFinRvwRateApplFor(),
 				PennantStaticListUtil.getReviewRateAppliedPeriods(), "");
 
 		this.finIsIntCpzAtGrcEnd.setChecked(aFinanceType.isFinIsIntCpzAtGrcEnd());
@@ -2014,10 +2015,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				this.cbfinGrcRvwRateApplFor.setErrorMessage("");
-				if (validate && this.finGrcIsRvwAlw.isChecked()) {
-					//isValidComboValue(this.cbfinGrcRvwRateApplFor, Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwRateApplFor.value"));
+				if (validate && this.finGrcIsRvwAlw.isChecked() && !this.finIsRvwAlw.isChecked()) {
+					isValidComboValue(this.cbfinGrcRvwRateApplFor, Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwRateApplFor.value"));
 				}
-				aFinanceType.setFinGrcRvwRateApplFor(getComboboxValue(this.cbfinGrcRvwRateApplFor));
+				aFinanceType.setFinRvwRateApplFor(getComboboxValue(this.cbfinGrcRvwRateApplFor));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -5011,9 +5012,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onCheck$finIsRvwAlw(Event event) {
 		logger.debug("Entering" + event.toString());
-		
 		doCheckRpeayReview(true);
-		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -5084,6 +5083,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			}
 			this.row_rateChgAnyDay.setVisible(true);
+			this.row_FinGrcRvwRateApplFor.setVisible(false);
+			this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
+			
 		} else {
 			if (checkAction) {
 				this.finRvwFrq.setValue("");
@@ -5099,6 +5101,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finRvwFrq.setDisabled(true);
 			this.cbfinRvwRateApplFor.setDisabled(true);
 			this.cbfinSchCalCodeOnRvw.setDisabled(true);
+			if(this.finGrcIsRvwAlw.isChecked()){
+				this.row_FinGrcRvwRateApplFor.setVisible(true);
+			}else{
+				this.row_FinGrcRvwRateApplFor.setVisible(false);
+				this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
+			}
 		}
 		
 		logger.debug("Leaving");
@@ -5538,6 +5546,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.cbfinGrcRvwRateApplFor.setDisabled(false);
 				this.space_FinGrcRvwRateApplFor.setSclass(PennantConstants.mandateSclass);
 			}
+			if(!this.finIsRvwAlw.isChecked()){
+				this.row_FinGrcRvwRateApplFor.setVisible(true);
+			}
 		} else {
 			this.finGrcRvwFrq.setValue("");
 			this.finGrcRvwFrq.setMandatoryStyle(false);
@@ -5545,6 +5556,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_FinGrcRvwRateApplFor.setSclass("none");
 			this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
 			this.cbfinGrcRvwRateApplFor.setDisabled(true);
+			this.row_FinGrcRvwRateApplFor.setVisible(false);
 		}
 		logger.debug("Leaving doDisableGrcRVFrequency()");
 	}

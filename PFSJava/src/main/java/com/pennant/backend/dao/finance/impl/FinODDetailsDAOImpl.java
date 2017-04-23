@@ -784,4 +784,32 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		return totalPenaltyBal;
 	}
 
+	/**
+	 * Method for get the FinODDetails Object by Key finReference
+	 */
+	@Override
+	public List<FinODDetails> getFinODBalByFinRef(String finReference) {
+		logger.debug("Entering");
+
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select FinODSchdDate, TotPenaltyBal, LPIBal ");
+		selectSql.append(" From FinODDetails");
+		selectSql.append(" Where FinReference =:FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finODDetails = null;
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+
 }
