@@ -2607,7 +2607,19 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 	<changeSet id="126" author="Chaitanya.ch">
 		<renameColumn tableName="RMTAccountTypes" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
 	</changeSet>
- 
- 
+	
+	<changeSet author="Kesav" id="127">
+		<addColumn tableName="FeeTypes">
+			<column name="ApplicableFor" type="int"/>
+			<column name="AccountingSetId" type="number(19,0)"/>			
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="128">
+		<addColumn tableName="FeeTypes_Temp">
+			<column name="ApplicableFor" type="int"/>
+			<column name="AccountingSetId" type="number(19,0)"/>			
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
