@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="1" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="ExcessAmt" type="decimal(18,0)" />
+			<column name="EmiInAdvance" type="decimal(18,0)" />
+			<column name="PayableAdvise" type="decimal(18,0)" />
+			<column name="ProductCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="2" author="Prasad">
+		<addColumn tableName="finpftdetails_temp">
+			<column name="ExcessAmt" type="decimal(18,0)" />
+			<column name="EmiInAdvance" type="decimal(18,0)" />
+			<column name="PayableAdvise" type="decimal(18,0)" />
+			<column name="ProductCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="3" author="Prasad">
+		<addColumn tableName="finpftdetails_snapshot">
+			<column name="ExcessAmt" type="decimal(18,0)" />
+			<column name="EmiInAdvance" type="decimal(18,0)" />
+			<column name="PayableAdvise" type="decimal(18,0)" />
+			<column name="ProductCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4" author="Prasad">
+		<sql>
+			update FinPftDetails set excessAmt=0 where excessAmt is null;
+			update FinPftDetails set emiInAdvance=0 where emiInAdvance is null;
+			update FinPftDetails set payableAdvise=0 where payableAdvise is null;
+			update FinPftDetails set payableAdvise=0 where payableAdvise is null;
+			update finpftdetails_temp set excessAmt=0 where excessAmt is null;
+			update finpftdetails_temp set emiInAdvance=0 where emiInAdvance is null;
+			update finpftdetails_temp set payableAdvise=0 where payableAdvise is null;
+			update
+			finpftdetails_snapshot set excessAmt=0 where excessAmt is null;
+			update finpftdetails_snapshot set emiInAdvance=0 where emiInAdvance is null;
+			update finpftdetails_snapshot set payableAdvise=0 where payableAdvise is null;
+		</sql>
+	</changeSet>
+	<changeSet id="5" author="Prasad">
+		<addNotNullConstraint tableName="FinPftDetails" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+	</changeSet>
+
+
+	<changeSet id="6" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="ResvexcessAmt" type="decimal(18,0)" />
+			<column name="ResvemiInAdvance" type="decimal(18,0)" />
+			<column name="ResvpayableAdvise" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="7" author="Prasad">
+		<addColumn tableName="finpftdetails_temp">
+			<column name="ResvexcessAmt" type="decimal(18,0)" />
+			<column name="ResvemiInAdvance" type="decimal(18,0)" />
+			<column name="ResvpayableAdvise" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="8" author="Prasad">
+		<addColumn tableName="finpftdetails_snapshot">
+			<column name="ResvexcessAmt" type="decimal(18,0)" />
+			<column name="ResvemiInAdvance" type="decimal(18,0)" />
+			<column name="ResvpayableAdvise" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="9" author="Prasad">
+		<sql>
+			update FinPftDetails set resvexcessAmt=0 where resvexcessAmt is null;
+			update FinPftDetails set resvemiInAdvance=0 where resvemiInAdvance is null;
+			update FinPftDetails set resvpayableAdvise=0 where resvpayableAdvise is null;
+			update finpftdetails_temp set resvexcessAmt=0 where resvexcessAmt is null;
+			update finpftdetails_temp set resvemiInAdvance=0 where resvemiInAdvance is null;
+			update finpftdetails_temp set resvpayableAdvise=0 where resvpayableAdvise is null;
+			update finpftdetails_snapshot set
+			resvexcessAmt=0 where resvexcessAmt is null;
+			update finpftdetails_snapshot set resvemiInAdvance=0 where resvemiInAdvance is null;
+			update finpftdetails_snapshot set resvpayableAdvise=0 where resvpayableAdvise is null;
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Prasad">
+		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+	</changeSet>
+	<changeSet id="11" author="satish">
+		<addColumn tableName="FINSTATUSDETAIL">
+			<column name="ODDays" type="int" />
+		</addColumn>
+
+	</changeSet>
+	<changeSet id="12" author="satish">
+		<dropColumn tableName="FINSTATUSDETAIL" columnName="FINSTATUSREASON" />
+	</changeSet>
+
+	<!-- <changeSet id="13" author="satish">
+		<addColumn tableName="FinanceMain">
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="14" author="satish">
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="15" author="satish">
+		<addColumn tableName="FinanceMain_PA">
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="16" author="satish">
+		<addColumn tableName="WIFFinanceMain">
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="satish">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet> -->
+
+
+
+</databaseChangeLog>

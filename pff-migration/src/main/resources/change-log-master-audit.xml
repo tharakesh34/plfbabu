@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<include file="change-logs/change-log-2.26-unicode_char_cleanup-audit.xml" />
 	<include file="change-logs/change-log-2.26-bool-correction-audit.xml" />
 	<include file="change-logs/change-log-2.26-audit.xml" />
 	<include file="change-logs/change-log-2.27-bool-correction-audit.xml" />
 	<include file="change-logs/change-log-2.27-audit.xml" />
-	<include
-		file="change-logs/change-log-2.31-unicode_char_cleanup_oracle-audit.xml" />
-	<include
-		file="change-logs/change-log-2.31-unicode_char_cleanup_mssql-audit.xml" />
+	<include file="change-logs/change-log-2.31-unicode_char_cleanup_oracle-audit.xml" />
+	<include file="change-logs/change-log-2.31-unicode_char_cleanup_mssql-audit.xml" />
 	<include file="change-logs/change-log-2.31-bool-correction-audit.xml" />
 	<include file="change-logs/change-log-2.31.0-audit.xml" />
 	<include file="change-logs/change-log-2.32.0-audit.xml" />
@@ -22,14 +18,15 @@
 	<include file="change-logs/change-log-2.37.0-audit.xml" />
 	<include file="change-logs/change-log-2.38.0-audit.xml" />
 	<include file="change-logs/change-log-2.40.0-audit.xml" />
-	<include file="change-logs/change-log-2.41.0-audit.xml" />	
+	<include file="change-logs/change-log-2.41.0-audit.xml" />
 	<include file="change-logs/change-log-2.42.0-audit.xml" />
-	<include file="change-logs/change-log-2.44.0-audit.xml" />	
+	<include file="change-logs/change-log-2.44.0-audit.xml" />
 	<include file="change-logs/change-log-2.45.0-audit.xml" />
 	<include file="change-logs/change-log-2.46.0-audit.xml" />
 	<include file="change-logs/change-log-2.47.0-audit.xml" />
 	<include file="change-logs/change-log-2.48.0-audit.xml" />
 	<include file="change-logs/change-log-2.49.0-audit.xml" />
 	<include file="change-logs/change-log-2.50.0-audit.xml" />
+	<include file="change-logs/change-log-eod-audit.xml" />
 	<include file="change-logs/change-log-2.51.0-audit.xml" />
 </databaseChangeLog>
