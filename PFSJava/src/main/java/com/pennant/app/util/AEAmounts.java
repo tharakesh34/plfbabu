@@ -48,11 +48,13 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.PennantConstants;
@@ -65,6 +67,7 @@ public class AEAmounts implements Serializable {
 	private static FinODDetailsDAO		finODDetailsDAO;
 	private static CustomerDAO			customerDAO;
 	private static FinExcessAmountDAO	finExcessAmountDAO;
+	private static FinanceTypeDAO		financeTypeDAO;
 
 	public AEAmounts() {
 		super();
@@ -543,8 +546,10 @@ public class AEAmounts implements Serializable {
 			pftDetail.setFinAmount(finMain.getFinAmount());
 			pftDetail.setDownPayment(finMain.getDownPayment());
 			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
-			pftDetail.setFinCategory(finMain.getProductCategory());
 			pftDetail.setFinWorstStatus(finMain.getFinStatus());
+			FinanceType finType = financeTypeDAO.getProductDetails(finMain.getFinType());
+			pftDetail.setFinCategory(finType.getFinCategory());
+			pftDetail.setProductCategory(finType.getProductCategory());
 		}
 
 		//Miscellaneous Fields
@@ -644,27 +649,27 @@ public class AEAmounts implements Serializable {
 		pftDetail.setTotalTenor(0);
 
 		//Set Excess Amounts
-		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
-		if (finExcessAmounts.size() > 0) {
-			for (int i = 0; i < finExcessAmounts.size(); i++) {
-				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
-						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
-				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
-
-				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-					pftDetail.setExcessAmt(totBalAvailable);
-					pftDetail.setExcessAmtResv(reservedAmt);
-				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-					pftDetail.setEmiInAdvance(totBalAvailable);
-					pftDetail.setEmiInAdvanceResv(reservedAmt);
-				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
-					pftDetail.setPayableAdvise(totBalAvailable);
-					pftDetail.setPayableAdviseResv(totBalAvailable);
-				}
-			}
-		}
+//		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+//		if (finExcessAmounts.size() > 0) {
+//			for (int i = 0; i < finExcessAmounts.size(); i++) {
+//				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
+//						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
+//				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+//
+//				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+//					pftDetail.setExcessAmt(totBalAvailable);
+//					pftDetail.setExcessAmtResv(reservedAmt);
+//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+//						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+//					pftDetail.setEmiInAdvance(totBalAvailable);
+//					pftDetail.setEmiInAdvanceResv(reservedAmt);
+//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+//						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+//					pftDetail.setPayableAdvise(totBalAvailable);
+//					pftDetail.setPayableAdviseResv(totBalAvailable);
+//				}
+//			}
+//		}
 
 	}
 
@@ -780,5 +785,9 @@ public class AEAmounts implements Serializable {
 
 	public static void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		AEAmounts.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public static void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		AEAmounts.financeTypeDAO = financeTypeDAO;
 	}
 }
