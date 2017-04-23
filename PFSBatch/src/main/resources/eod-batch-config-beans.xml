@@ -81,7 +81,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- Finance Log Entry Details -->
-	<bean id="finLogEntryDetailDAO" class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl">
+	<bean id="finLogEntryDetailDAO" class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- ====================================================== -->

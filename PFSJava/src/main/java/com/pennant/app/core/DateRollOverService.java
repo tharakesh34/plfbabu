@@ -27,7 +27,7 @@ public class DateRollOverService extends ServiceHelper {
 
 	private static Logger		logger				= Logger.getLogger(DateRollOverService.class);
 
-	private static final String	sltDateRollover		= "SELECT FinReference, NextDepDate, DepreciationFrq,"
+	private static final String	sltDateRollover		= "SELECT FinReference, NextDepDate, DepreciationFrq, FinStartDate,"
 															+ "AllowGrcCpz, AllowGrcPftRvw, AllowRepayCpz, AllowRepayRvw, GrcPeriodEndDate,MaturityDate,"
 															+ "NextGrcCpzDate, NextGrcPftDate, NextGrcPftRvwDate, NextRepayCpzDate, NextRepayDate,"
 															+ "NextRepayPftDate,NextRepayRvwDate, RvwRateApplFor, SchCalOnRvw FROM FinanceMain WHERE FinIsActive = 1 and CustID = ?";
@@ -396,6 +396,7 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setAllowRepayCpz(resultSet.getBoolean("AllowRepayCpz"));
 				finMain.setAllowRepayRvw(resultSet.getBoolean("AllowRepayRvw"));
 
+				finMain.setFinStartDate(resultSet.getDate("FinStartDate"));
 				finMain.setGrcPeriodEndDate(resultSet.getDate("GrcPeriodEndDate"));
 				finMain.setMaturityDate(resultSet.getDate("MaturityDate"));
 
