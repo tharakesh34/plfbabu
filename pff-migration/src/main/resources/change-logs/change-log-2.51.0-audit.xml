@@ -318,4 +318,11 @@
 		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinGrcRvwRateApplFor" />
 	</changeSet>
 	
+	<changeSet author="Kesav" id="9">
+		<addColumn tableName="AdtFeeTypes">
+			<column name="ApplicableFor" type="int"/>
+			<column name="AccountingSetId" type="number(19,0)"/>			
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
