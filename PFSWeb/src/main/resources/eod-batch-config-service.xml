@@ -60,6 +60,7 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- Late Pay Interest -->

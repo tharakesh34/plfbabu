@@ -51,10 +51,12 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.util.EODProperties;
 
 public class LatePayMarkingService extends ServiceHelper {
@@ -65,15 +67,16 @@ public class LatePayMarkingService extends ServiceHelper {
 	public static final String	PDCALCULATION		= "SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
 															+ " FROM FinRpyQueue WHERE CustomerID=? AND FINRPYFOR = ?";
 
-	public static final String	DPDBUCKETING		= "SELECT FP.FinReference,FP.ODDAYS,FP.TDSCHDPFT,FP.TDSCHDPFTPAID,FP.TDSCHDPRI,FP.TDSCHDPRIPAID, "
+	public static final String	DPDBUCKETING		= "SELECT FP.FinReference,FP.CURODDAYS,FP.TDSCHDPFT,FP.TDSCHDPFTPAID,FP.TDSCHDPRI,FP.TDSCHDPRIPAID, "
 															+ " FP.ExcessAmt,FP.EmiInAdvance,FP.PayableAdvise,FM.FinStatus,FP.FinCategory "
 															+ " FROM FINPFTDETAILS FP INNER JOIN Financemain FM ON FP.FINREFERENCE = FM.FINREFERENCE WHERE FP.CURODDAYS > 0 and FP.CustID=?";
 
 	public static final String	CUSTOMERSTATUS		= "SELECT FM.FinReference,FM.FinStatus,FP.FinCategory FROM FINANCEMAIN FM INNER JOIN FINPFTDETAILS FP ON  FM.FINREFERENCE = FP.FINREFERENCE"
-															+ " and CustID = ?";
+															+ " and FM.CustID = ?";
 	private FinODDetailsDAO		finODDetailsDAO;
 	private FinStatusDetailDAO	finStatusDetailDAO;
 	private CustomerDAO			customerDAO;
+	private FinanceMainDAO		financeMainDAO;
 
 	/**
 	 * Default constructor
@@ -146,7 +149,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			while (resultSet.next()) {
 				finreference = resultSet.getString("FinReference");
-				int dueDays = resultSet.getInt("ODDAYS");
+				int dueDays = resultSet.getInt("CURODDAYS");
 				BigDecimal tdSchdPri = getDecimal(resultSet, "tdSchdPri");
 				BigDecimal tdSchdPriPaid = getDecimal(resultSet, "tdSchdPriPaid");
 				BigDecimal tdSchdPft = getDecimal(resultSet, "tdSchdPft");
@@ -162,8 +165,11 @@ public class LatePayMarkingService extends ServiceHelper {
 
 				BigDecimal duepercentgae = (numerator.divide(tdSchdPri.add(tdSchdPft), 0, RoundingMode.HALF_DOWN))
 						.multiply(new BigDecimal(100));
-
-				BigDecimal minDuePerc = (BigDecimal) SysParamUtil.getValue("MIN_DUE_PERCENTAGE_FOR_BUCKETS");
+				BigDecimal minDuePerc = BigDecimal.ZERO;
+				Object object = SysParamUtil.getValue("MIN_DUE_PERCENTAGE_FOR_BUCKETS");
+				if (object != null) {
+					minDuePerc = (BigDecimal) object;
+				}
 
 				String productCode = resultSet.getString("FinCategory");
 				long bucketID = 0;
@@ -197,6 +203,8 @@ public class LatePayMarkingService extends ServiceHelper {
 					statusDetail.setFinStatus(bucketCode);
 					statusDetail.setODDays(dueDays);
 					finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
+					financeMainDAO.updateStatus(finreference, bucketCode, FinanceConstants.FINSTSRSN_SYSTEM);
+
 				}
 
 			}
@@ -313,7 +321,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetails.setFinMaxODAmt(finODDetails.getFinCurODPri());
 		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPri());
 		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPft());
-		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), valueDate));
+		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), valueDate)+1);
 		finODDetails.setFinLMdfDate(valueDate);
 
 		finODDetailsDAO.save(finODDetails);
@@ -330,11 +338,13 @@ public class LatePayMarkingService extends ServiceHelper {
 	 */
 	private void updateODDetails(FinRepayQueue finRepayQueue, Date valueDate) {
 		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinODSchdDate(finRepayQueue.getRpyDate());
+		finODDetails.setFinReference(finRepayQueue.getFinReference());
 		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPftBal().add(finRepayQueue.getSchdPftBal()));
 		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
 		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
 		finODDetails.setFinODTillDate(valueDate);
-		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), valueDate));
+		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finRepayQueue.getRpyDate(), valueDate)+1);
 		finODDetails.setFinLMdfDate(valueDate);
 		finODDetailsDAO.updateBatch(finODDetails);
 
@@ -367,5 +377,9 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
 		this.finStatusDetailDAO = finStatusDetailDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 }
