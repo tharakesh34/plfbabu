@@ -2057,4 +2057,16 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="RCDMAINTAINSTS" />
 		</createIndex>
 	</changeSet>
+	<changeSet id="102" author="Vinay">
+		<sql>
+			DELETE from ReportList where Code = 'DPDBucketConfiguration';	
+			DELETE from ReportList where Code = 'NPABucketConfiguration';
+			Insert into ReportList Values('DPDBucketConfiguration', 'DPDBucketConfiguration','listheader_ProductCode.label,listheader_BucketID.label,listheader_DueDays.label,listheader_SuspendProfit.label,listheader_RecordStatus.label,listheader_RecordType.label','productCode,bucketID,dueDays,suspendProfit,recordStatus,recordType','String,String,int,boolean,String,String','', 'ReportList03', 
+			'DPDBucketConfiguration', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+
+	
+			Insert into ReportList Values('NPABucketConfiguration', 'NPABucketConfiguration', 'listheader_ProductCode.label,listheader_BucketID.label,listheader_DueDays.label,listheader_SuspendProfit.label,listheader_RecordStatus.label,listheader_RecordType.label','productCode,bucketID,dueDays,suspendProfit,recordStatus,recordType','String,String,int,boolean,String,String','', 'ReportList03', 
+			'NPABucketConfiguration', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
