@@ -1357,4 +1357,9 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		FROM    	BounceReasons  T1 
 </createView>
 </changeSet>
+<changeSet id="58" author="Siva">
+		<sql>
+		Update FinanceMain_Temp Set RvwRateApplFor = (Select FinRvwRateApplFor From RMTFinanceTypes T WHERE FinanceMain_Temp.FinType = T.FinType);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
