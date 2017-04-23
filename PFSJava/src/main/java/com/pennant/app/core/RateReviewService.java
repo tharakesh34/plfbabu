@@ -210,6 +210,7 @@ public class RateReviewService extends ServiceHelper {
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
+		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
 
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(
