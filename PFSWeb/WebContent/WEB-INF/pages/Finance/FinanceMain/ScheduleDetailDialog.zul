@@ -199,7 +199,7 @@
 										<label
 											id="label_FinanceMainDialog_EffectiveRateOfReturn"  visible="true"/>
 										<label
-											id="effectiveRateOfReturn" visible="false"
+											id="effectiveRateOfReturn" visible="true"
 											style="font-weight:bold;color:#FF6600;" />
 									</row>
 									<row id="row_Musharak"
