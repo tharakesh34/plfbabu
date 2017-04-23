@@ -104,12 +104,12 @@
 	    <menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"  rightName="menuItem_applicationmaster_FinanceStatusCodes"/>
 	    <menuItem id="menu_Item_DPDBucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketList.zul" rightName="menuItem_applicationmaster_DPDBucket"/>
 		<!-- <menuItem id="menu_Item_DPDBucketEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucket/DPDBucketEnquiryList.zul?enqiryModule=Y" iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_applicationmaster_DPDBucketEnquiry"/> -->
-		<menuItem id="menu_Item_NPABucket" zulNavigation="/WEB-INF/pages/applicationmaster/NPABucket/NPABucketList.zul" rightName="menuItem_applicationmaster_NPABucket"/>
+		<menuItem id="menu_Item_NPABucket" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucket/NPABucketList.zul" rightName="menuItem_applicationmaster_NPABucket"/>
 		<menuItem id="menu_Item_DPDBucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul" rightName="menuItem_applicationmaster_DPDBucketConfiguration"/>
 		<menuItem id="menu_Item_NPABucketConfiguration" zulNavigation="/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationList.zul"  rightName="menuItem_applicationmaster_NPABucketConfiguration"/>
-	    <menuItem id="menu_Item_BounceReason" zulNavigation="/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonList.zul" rightName="menuItem_applicationmaster_BounceReason"/>
-	    <menuItem id="menu_Item_CostCenter" zulNavigation="/WEB-INF/pages/applicationmaster/CostCenter/CostCenterList.zul" rightName="menuItem_applicationmaster_CostCenter"/>
-	    <menuItem id="menu_Item_ProfitCenter" zulNavigation="/WEB-INF/pages/applicationmaster/ProfitCenter/ProfitCenterList.zul" rightName="menuItem_applicationmaster_ProfitCenter"/>
+	    <menuItem id="menu_Item_BounceReason" zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul" rightName="menuItem_applicationmaster_BounceReason"/>
+	    <menuItem id="menu_Item_CostCenter" zulNavigation="/WEB-INF/pages/ApplicationMaster/CostCenter/CostCenterList.zul" rightName="menuItem_applicationmaster_CostCenter"/>
+	    <menuItem id="menu_Item_ProfitCenter" zulNavigation="/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterList.zul" rightName="menuItem_applicationmaster_ProfitCenter"/>
 	</menu>
 
 	<!-- Account Menu Tree -->

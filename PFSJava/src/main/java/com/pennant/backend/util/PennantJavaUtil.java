@@ -1857,26 +1857,26 @@ public class PennantJavaUtil {
 				"FileDownload", "FILE_DOWNLOAD_VIEW" }, null, new String[] { "NAME", "FileName" }, null, 700));
 		
 		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
-			"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketID", "BucketDesc" }, null, 700));
+			"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 700));
 		
 		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
-				new String[] {"BucketID","BucketDesc"} , null,300));
+				new String[] {"BucketCode","BucketDesc"} , null,300));
 		
 		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
 		"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
 				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
-				"Category", "ReturnID", "Active" }, null, 600));
+				"Category", "ReturnID", "Active" }, null, 400));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
 				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",
-				"ProfitCenterDesc", "Active" }, null, 600));
+				"ProfitCenterDesc", "Active" }, null, 400));
 
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
 				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc",
-				"Active" }, null, 600));
+				"Active" }, null, 400));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
