@@ -206,6 +206,11 @@ UPDATE FinPftDetails set CalPftOnPD=1  where PftOnPDMethod != 'N';
 	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
 </changeSet>
 
-
+<changeSet id="22" author="Satish">
+<dropForeignKeyConstraint baseTableName="FinanceMain" constraintName="FK_FINMAIN_BMTCUSTSTATUSCODES"/>
+</changeSet>
+<changeSet id="23" author="Satish">
+<dropForeignKeyConstraint baseTableName="Customers" constraintName="FK_CUSTS_BMTCUSTSTATUSCODES"/>
+</changeSet>
 
 </databaseChangeLog>
