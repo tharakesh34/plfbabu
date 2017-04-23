@@ -158,4 +158,6 @@ public interface CustomerDAO {
 	int getCustomerCountByCIF(String custCIF, String type);
 
 	boolean getCustomerByCoreBankId(String custCoreBank);
+
+	void updateCustStatus(String custStatus, Date statusChgdate, long custId);
 }

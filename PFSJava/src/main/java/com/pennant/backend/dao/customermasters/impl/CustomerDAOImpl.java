@@ -1755,5 +1755,23 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return recordCount > 0 ? true : false;
 	}
 	
+	@Override
+    public void updateCustStatus(String custStatus,Date statusChgdate,long custId) {
+		logger.debug("Entering");
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CustSts", custStatus);
+		source.addValue("CustStsChgDate", statusChgdate);
+		source.addValue("CustId", custId);
+		StringBuilder selectSql = new StringBuilder("Update Customers  " );
+		selectSql.append(" Set CustSts = :CustSts, CustStsChgDate= :CustStsChgDate WHERE CustId=:CustId ");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+    }
+	
+	
+	
+	
 	
 }	
