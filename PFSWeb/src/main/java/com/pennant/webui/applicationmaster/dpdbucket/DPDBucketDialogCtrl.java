@@ -292,6 +292,11 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		this.bucketCode.setValue(aDPDBucket.getBucketCode());
 		this.bucketDesc.setValue(aDPDBucket.getBucketDesc());
 		this.active.setChecked(aDPDBucket.isActive());
+		
+		if(aDPDBucket.isNew() || (aDPDBucket.getRecordType() != null ? aDPDBucket.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -391,11 +396,11 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 		if (!this.bucketCode.isReadonly()) {
 			this.bucketCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketCode.value"), PennantRegularExpressions.REGEX_NAME, false));
+					.getLabel("label_DPDBucketDialog_BucketCode.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.bucketDesc.isReadonly()) {
 			this.bucketDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketDesc.value"), PennantRegularExpressions.REGEX_NAME, false));
+					.getLabel("label_DPDBucketDialog_BucketDesc.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		logger.debug(Literal.LEAVING);

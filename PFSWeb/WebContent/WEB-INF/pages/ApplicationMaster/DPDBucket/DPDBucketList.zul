@@ -24,10 +24,10 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
 						<button id="button_DPDBucketList_NewDPDBucket" label="${c:l('label_New')}"
 							autodisable="button_DPDBucketList_DPDBucketSearch,print,button_DPDBucketList_NewDPDBucket,btnRefresh,help"
 							tooltiptext="${c:l('button_DPDBucketList_NewDPDBucket.tooltiptext')}" sclass="z-toolbarbutton" />
-					<toolbar align="end" style="border-style: none;">
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
 							autodisable="button_DPDBucketList_DPDBucketSearch,print,button_DPDBucketList_NewDPDBucket,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -54,7 +54,7 @@
 								<row>
 									<label id="label_DPDBucketList_BucketCode" value="${c:l('label_DPDBucketList_BucketCode.value')}" />
 									<listbox id="sortOperator_BucketCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="bucketCode" width="72px" maxlength="8" />
+									<uppercasebox id="bucketCode" width="72px" maxlength="8" />
 									<label id="label_DPDBucketList_BucketDesc" value="${c:l('label_DPDBucketList_BucketDesc.value')}" />
 									<listbox id="sortOperator_BucketDesc" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="bucketDesc" width="200px" maxlength="50" />
