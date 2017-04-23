@@ -197,7 +197,7 @@
 											id="schdl_contractPrice" tabindex="-1" readonly="true"
 											width="150px" style="border:none; background-color:white ;font-weight:bold;" />
 										<label
-											id="label_FinanceMainDialog_EffectiveRateOfReturn"  visible="false"/>
+											id="label_FinanceMainDialog_EffectiveRateOfReturn"  visible="true"/>
 										<label
 											id="effectiveRateOfReturn" visible="false"
 											style="font-weight:bold;color:#FF6600;" />

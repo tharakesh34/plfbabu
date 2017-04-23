@@ -70,7 +70,8 @@ private static final long serialVersionUID = 1L;
 	private String finReference;
 	private String finReferenceName;
 	private long feeTypeID;
-	private String feeTypeIDName;
+	private String feeTypeDesc;
+	private String feeTypeCode;
 	private int sequence;
 	private BigDecimal adviseAmount;
 	private BigDecimal paidAmount;
@@ -154,14 +155,7 @@ private static final long serialVersionUID = 1L;
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
-	public String getFeeTypeIDName() {
-		return this.feeTypeIDName;
-	}
-
-	public void setFeeTypeIDName (String feeTypeIDName) {
-		this.feeTypeIDName = feeTypeIDName;
-	}
-	
+ 
 	public int getSequence() {
 		return sequence;
 	}
@@ -227,6 +221,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setUserDetails( LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 }

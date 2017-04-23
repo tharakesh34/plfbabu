@@ -388,7 +388,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise>{
 	
 			fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType,"");
 		   this.finReference.setValue(aManualAdvise.getFinReference());
-		   this.feeTypeID.setValue(aManualAdvise.getFeeTypeIDName());
+		   this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode());
 			this.sequence.setValue(aManualAdvise.getSequence());
 	  		this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getAdviseAmount(),PennantConstants.defaultCCYDecPos));
 	  		this.paidAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getPaidAmount(),PennantConstants.defaultCCYDecPos));
@@ -400,7 +400,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise>{
 			   this.feeTypeID.setDescription("");
 		}else{
 			   this.finReference.setDescription(aManualAdvise.getFinReferenceName());
-			   this.feeTypeID.setDescription(aManualAdvise.getFeeTypeIDName());
+			   this.feeTypeID.setDescription(aManualAdvise.getFeeTypeCode());
 		}
 		
 		logger.debug(Literal.LEAVING);
