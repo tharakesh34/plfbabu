@@ -75,7 +75,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private final static Logger logger = Logger.getLogger(CustomerListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerListCtrl.class);
 
 	protected Window window_CustomerList;
 	protected Borderlayout borderLayout_CustomerList;
@@ -163,9 +163,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		registerField("lovDescCustTypeCodeName", listheader_CustTypeCode, SortOrder.NONE, custTypeCode,
 				sortOperator_custTypeCode, Operators.STRING);
 
-		// Render the page and display the data.
+		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
-		search();
 	}
 
 	/**
