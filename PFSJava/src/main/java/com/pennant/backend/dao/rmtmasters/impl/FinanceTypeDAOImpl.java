@@ -737,7 +737,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		financeType.setFinType(finype);
 		
 		StringBuilder selectSql = new StringBuilder("select FinCategory, ProductCategory");
-		selectSql.append(" From RMTFinanceTypes INNER JOIN PLF.BMTPRODUCT ON ProductCode = FinCategory");
+		selectSql.append(" From RMTFinanceTypes INNER JOIN BMTPRODUCT ON ProductCode = FinCategory");
 		selectSql.append(" Where FinType =:FinType");
 		
 		logger.debug("selectSql: " + selectSql.toString());
