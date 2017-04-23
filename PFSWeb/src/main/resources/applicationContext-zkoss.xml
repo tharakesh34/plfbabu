@@ -4557,6 +4557,16 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="holdEMIService" ref="holdEMIService" />
 	</bean>
+		
+	<!-- ManualAdvise -->
+	<bean id="manualAdviseListCtrl" class="com.pennant.webui.finance.manualadvise.ManualAdviseListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="manualAdviseService" ref="manualAdviseService" />
+	</bean>
+	<bean id="manualAdviseDialogCtrl" class="com.pennant.webui.finance.manualadvise.ManualAdviseDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="pagedListService" ref="pagedListService"/>
+		<property name="manualAdviseService" ref="manualAdviseService"/>
+	</bean>
 	
 	<!-- FinanceStatusCode -->
 	<bean id="financeStatusCodeListCtrl" class="com.pennant.webui.applicationmaster.financestatuscode.FinanceStatusCodeListCtrl"

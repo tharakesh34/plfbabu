@@ -181,6 +181,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> excessAdjustTo;
 	private static ArrayList<ValueLabel> receiptModes;
 	private static ArrayList<ValueLabel> allocationMethods;
+	private static ArrayList<ValueLabel> ManualAdviseTypes;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2555,7 +2556,15 @@ public class PennantStaticListUtil {
 		}
 		return allocationMethods;
 	}
-
+	
+	public static ArrayList<ValueLabel> getManualAdviseTypes(){
+		if(ManualAdviseTypes == null){
+			ManualAdviseTypes = new ArrayList<ValueLabel>(2);
+			ManualAdviseTypes.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
+			ManualAdviseTypes.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
+		}
+		return ManualAdviseTypes;
+	}
 	
 	public static ArrayList<ValueLabel> getReasonType(){
 	

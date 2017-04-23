@@ -382,6 +382,7 @@
 	   <!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
 	   <!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_SubSchedule"/> -->	   
 	   <!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
+	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/> 
  	</menu>
  
 	<!-- Finance Inquiry Details -->
@@ -427,6 +428,9 @@
 		<!-- <menuItem id="menu_Item_DDARepresentment" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul"  rightName="menuItem_Enquiry_WIFFinanceMain"/> -->
 		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>
 		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> -->
+		
+		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdvise/ManualAdviseEnquiryList.zul?enqiryModule=Y"  iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_finance_ManualAdviseEnquiry"/>
+		
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry"  rightName="menuCat_CustomerEnquiry">

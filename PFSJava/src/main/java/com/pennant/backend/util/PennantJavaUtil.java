@@ -211,6 +211,7 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
@@ -1862,6 +1863,9 @@ public class PennantJavaUtil {
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
 				new String[] {"BucketID","BucketDesc"} , null,300));
 		
+		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
+		"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
+		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
 				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
 				"Category", "ReturnID", "Active" }, null, 600));
@@ -1873,7 +1877,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
 				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc",
 				"Active" }, null, 600));
-
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
