@@ -4,14 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import jxl.Cell;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -19,6 +16,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.util.Dataset;
 import com.pennanttech.util.PrintFactory;
+
+import jxl.Cell;
 
 public class CrtReducingRateHighTest {
 	FinScheduleData	schedule;
@@ -36,7 +35,6 @@ public class CrtReducingRateHighTest {
 	@Test
 	public void testSchedule() throws IllegalAccessException, InstantiationException, InvocationTargetException,
 			NoSuchMethodException {
-		long t2 = DateUtility.getSysDate().getTime();
 
 		String name = Dataset.getString(data, 0);
 		PrintFactory.toConsole(name);

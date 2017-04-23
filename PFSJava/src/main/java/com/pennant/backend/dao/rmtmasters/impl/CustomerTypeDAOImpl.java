@@ -139,7 +139,6 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements C
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(CustomerType customerType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
@@ -215,7 +214,6 @@ public class CustomerTypeDAOImpl extends BasisCodeDAO<CustomerType> implements C
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerType customerType, TableType tableType) {
 		logger.debug(Literal.ENTERING);

@@ -334,6 +334,7 @@ public class DataExportCtrl extends GFCBaseCtrl<Configuration> {
 		if (dataObject instanceof String) {
 			this.branchDetails.setValue(dataObject.toString());
 		} else {
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";

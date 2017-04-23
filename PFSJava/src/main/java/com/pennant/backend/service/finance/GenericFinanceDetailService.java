@@ -2326,13 +2326,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
-	 * Method for Calling Posting Execution Process
-	 */
-	private void callPostings() {
-
-	}
-
-	/**
 	 * Method for Processing Suspense Preparation after Finance Maintenance
 	 * 
 	 * @param financeMain

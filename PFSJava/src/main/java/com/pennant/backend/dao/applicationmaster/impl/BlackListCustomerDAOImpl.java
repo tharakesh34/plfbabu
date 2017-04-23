@@ -257,7 +257,6 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug(Literal.LEAVING);
     }
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(BlackListCustomers finBlacklistCustomer, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -284,7 +283,6 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug(Literal.LEAVING);
 	}
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(BlackListCustomers finBlacklistCustomer, TableType tableType) {
 		logger.debug(Literal.ENTERING);

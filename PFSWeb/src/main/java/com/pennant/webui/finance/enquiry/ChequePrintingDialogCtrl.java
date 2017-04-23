@@ -262,9 +262,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						PennantAppUtil.formateAmount(repayAmt, format), getFinScheduleData().getFinanceMain().getFinCcy())
 						.toUpperCase());
 				if (!"#".equals(this.startDate.getSelectedItem().getValue().toString())) {
-					chequeDetails.setAppDate(DateUtility.formatUtilDate(DateUtility.getUtilDate(this.startDate
-							.getSelectedItem().getValue().toString(), PennantConstants.DBDateFormat),
-							PennantConstants.dateFormate));
+					chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(this.startDate
+							.getSelectedItem().getValue().toString(), PennantConstants.DBDateFormat)));
 				}
 				chequeDetailsList.add(chequeDetails);
 			} else {
@@ -301,9 +300,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (pDCPeriod == 0 || j % pDCPeriod == 0) {
 				System.out.println(j);
 				chequeDetails = prepareReportObject(getFinScheduleData());
-				chequeDetails.setAppDate(DateUtility.formatUtilDate(DateUtility.getUtilDate(this.startDate
-						.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat),
-						PennantConstants.dateFormate));
+				chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.getUtilDate(this.startDate
+						.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat)));
 				if (j == endIndex) {
 					repaymentAmount = getRepayDetails(repayDetailMap, j - pDCPeriod + 1, repayDetailMap.size());
 					if (endIndex != repayDetailMap.size()) {

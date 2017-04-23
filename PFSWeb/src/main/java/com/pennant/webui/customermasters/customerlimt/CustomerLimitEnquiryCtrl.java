@@ -64,7 +64,6 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -192,8 +191,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 		}else{
 			this.currency.setValue(customerLimit.getCurrency());
 		}
-		this.earliestExpiryDate.setValue(DateUtility.formatDate(DateUtility.addYears(customerLimit.getEarliestExpiryDate(),1900),
-				PennantConstants.dateFormate));
+		this.earliestExpiryDate.setValue(DateUtility.formatToLongDate(DateUtility.addYears(customerLimit.getEarliestExpiryDate(),1900)));
 		
 		doFilllistbox(customerLimit.getCustCIF());
 		logger.debug("Leaving");

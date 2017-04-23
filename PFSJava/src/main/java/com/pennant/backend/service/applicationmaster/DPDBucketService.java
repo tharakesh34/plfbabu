@@ -44,7 +44,6 @@ package com.pennant.backend.service.applicationmaster;
 
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.ErrorDetails;
 
 public interface DPDBucketService {
 

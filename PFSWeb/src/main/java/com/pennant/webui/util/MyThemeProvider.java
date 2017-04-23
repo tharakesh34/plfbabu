@@ -160,7 +160,6 @@ public class MyThemeProvider implements ThemeProvider, Serializable {
 
 		Cookie cookie = new Cookie(_skinCookieName, skin);
 		cookie.setMaxAge(60 * 60 * 24 * 30); // store 30 days
-		String cp = exe.getContextPath();
 		((HttpServletResponse) exe.getNativeRequest()).addCookie(cookie);
 
 	}

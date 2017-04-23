@@ -783,10 +783,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		//Customer Data Fetching
-		boolean promotionWorkflow = false;
 		CustomerDetails customerDetails;
 		if (isPromotionPick) {
-			promotionWorkflow = true;
 			customerDetails = this.financeEligibility.getFinanceDetail().getCustomerDetails();
 		} else {
 			customerDetails = fetchCustomerData();
@@ -1279,11 +1277,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (newCust.isChecked()) {
 			if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 				String eidNum = PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue());
-				String custCtg = PennantConstants.PFF_CUSTCTG_INDIV;
 
-				if (!isRetailCustomer) {
-					custCtg = PennantConstants.PFF_CUSTCTG_CORP;
-				}
 				String custCIF = this.customerDetailsService.getEIDNumberById(eidNum, "");
 
 				if (custCIF != null) {

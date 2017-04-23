@@ -2703,6 +2703,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws JaxenException 
 	 * @throws AccountNotFoundException
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException, JaxenException {
 		logger.debug("Entering");
@@ -6577,6 +6578,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method for Save/ Update Additional Field Details
 	 */
+	@SuppressWarnings("deprecation")
 	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering");
 
@@ -6604,6 +6606,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method for Delete Additional Field Details
 	 */
+	@SuppressWarnings("deprecation")
 	private void doDeleteAddlFieldDetails(FinanceDetail financeDetail, String tableType) {
 		logger.debug("Entering");
 

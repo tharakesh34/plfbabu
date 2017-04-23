@@ -139,7 +139,6 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(OtherBankFinanceType otherBankFinanceType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
@@ -214,7 +213,6 @@ public class OtherBankFinanceTypeDAOImpl extends BasisCodeDAO<OtherBankFinanceTy
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(OtherBankFinanceType otherBankFinanceType, TableType tableType) {
 		logger.debug(Literal.ENTERING);

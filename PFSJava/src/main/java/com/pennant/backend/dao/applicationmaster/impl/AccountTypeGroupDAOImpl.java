@@ -96,7 +96,6 @@ public class AccountTypeGroupDAOImpl extends BasisNextidDaoImpl<AccountTypeGroup
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(AccountTypeGroup accountTypeGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
@@ -177,7 +176,6 @@ public class AccountTypeGroupDAOImpl extends BasisNextidDaoImpl<AccountTypeGroup
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(AccountTypeGroup accountTypeGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);

@@ -3404,8 +3404,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return false;
 		}
 		
+		BigDecimal totalDue = BigDecimal.ZERO;
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
+		if(this.listBoxPastdues.getFellowIfAny("allocation_totalDue") != null){
+			Label due = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalDue");
+			totalDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
+		}
+		
 		if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
 			Label paid = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalPaid");
 			totalPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
@@ -3416,15 +3422,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			totalWaived = PennantApplicationUtil.unFormateAmount(new BigDecimal(waived.getValue().replaceAll(",", "")), formatter);
 		}
 		
+		// User entered Receipt amounts and paid on manual Allocation validation
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalWaived);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_InsufficientAmount"));
 			return false;
 		}
 		
+		// No excess amount validation on partial Settlement
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) && remBal.compareTo(BigDecimal.ZERO) <= 0){
 			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
+			return false;
+		}
+		
+		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts
+		BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived));
+		if(earlySettleBal.compareTo(BigDecimal.ZERO) < 0){
+			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
 			return false;
 		}
 

@@ -179,7 +179,6 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		boolean isRecordFound = false;
 		try {

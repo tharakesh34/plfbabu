@@ -787,7 +787,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
-		      Labels.getLabel("label_IstisnaBillingDialog_disbDate.value")+" : "+ DateUtility.format(aFinanceDisbursement.getDisbDate(), PennantConstants.dateFormate);
+		      Labels.getLabel("label_IstisnaBillingDialog_disbDate.value")+" : "+ DateUtility.formatToLongDate(aFinanceDisbursement.getDisbDate());
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 

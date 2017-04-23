@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

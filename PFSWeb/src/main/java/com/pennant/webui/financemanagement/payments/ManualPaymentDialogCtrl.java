@@ -1011,8 +1011,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					|| curBussDate.compareTo(this.earlySettlementDate.getValue()) < 0) {
 				throw new WrongValueException(this.earlySettlementDate, Labels.getLabel(
 						"label_EarlySettlementDate",
-						new String[] { DateUtility.formatDate(lastBussDate, PennantConstants.dateFormate),
-								DateUtility.formatDate(curBussDate, PennantConstants.dateFormate) }));
+						new String[] { DateUtility.formatToLongDate(lastBussDate),
+								DateUtility.formatToLongDate(curBussDate) }));
 			}
 
 			//Recalculation for Repayment Schedule Details
@@ -2927,8 +2927,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							.compareTo(this.earlySettlementDate.getValue()) < 0)) {
 				throw new WrongValueException(this.earlySettlementDate, Labels.getLabel(
 						"label_EarlySettlementDate",
-						new String[] { DateUtility.formatDate(lastBussDate, PennantConstants.dateFormate),
-								DateUtility.formatDate(curBussDate, PennantConstants.dateFormate) }));
+						new String[] { DateUtility.formatToLongDate(lastBussDate),
+								DateUtility.formatToLongDate(curBussDate) }));
 			}
 		}
 

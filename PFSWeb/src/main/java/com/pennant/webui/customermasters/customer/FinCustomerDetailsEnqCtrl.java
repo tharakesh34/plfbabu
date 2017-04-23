@@ -225,11 +225,11 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					this.finCustPrvYOE.setValue(employer[3]);
 				}
 				if (StringUtils.isNotBlank(custAgreementData.getCustDOB())) {
-					this.finCustFDOB.setValue(DateUtility.formatUtilDate(DateUtility.getDBDate(custAgreementData.getCustDOB()), PennantConstants.dateFormate));
+					this.finCustFDOB.setValue(DateUtility.formatToLongDate(DateUtility.getDBDate(custAgreementData.getCustDOB())));
 					this.finCustFAge.setValue(String.valueOf(DateUtility.getYearsBetween(DateUtility.getDBDate(custAgreementData.getCustDOB()), appldate)));
 				}
 				if (jointCustAgreementData != null && StringUtils.isNotBlank(jointCustAgreementData.getCustDOB())) {
-					this.finCustSDOB.setValue(DateUtility.formatUtilDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), PennantConstants.dateFormate));
+					this.finCustSDOB.setValue(DateUtility.formatToLongDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB())));
 					this.finCustSAge.setValue(String.valueOf(DateUtility.getYearsBetween(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), appldate)));
 				}
 				this.finCustSector.setValue("");//custAgreementData.getCustSector()

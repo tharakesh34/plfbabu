@@ -242,12 +242,6 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 	public void onCustSuspenseItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
-		boolean isEnquiry = true;
-
-		if ("CustSuspense".equals(this.module)) {
-			isEnquiry = false;
-		}
-
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxCustSuspense.getSelectedItem();
 

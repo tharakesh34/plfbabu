@@ -1090,12 +1090,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		this.managerChq_Currency.setValue(this.financeMain.getFinCcy());
 		this.managerChq_FinBranch.setValue(this.financeMain.getFinBranch() + " - "
 				+ this.financeMain.getLovDescFinBranchName());
-		this.managerChq_grcEndDate.setValue(DateUtility.formateDate(this.financeMain.getGrcPeriodEndDate(),
-				PennantConstants.dateFormate));
-		this.managerChq_startDate.setValue(DateUtility.formateDate(this.financeMain.getFinStartDate(),
-				PennantConstants.dateFormate));
-		this.managerChq_maturityDate.setValue(DateUtility.formateDate(this.financeMain.getMaturityDate(),
-				PennantConstants.dateFormate));
+		this.managerChq_grcEndDate.setValue(DateUtility.formatToLongDate(this.financeMain.getGrcPeriodEndDate()));
+		this.managerChq_startDate.setValue(DateUtility.formatToLongDate(this.financeMain.getFinStartDate()));
+		this.managerChq_maturityDate.setValue(DateUtility.formatToLongDate(this.financeMain.getMaturityDate()));
 		this.managerChq_FinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.managerChq_FinAmount.setValue(PennantAppUtil.formateAmount(this.financeMain.getFinAmount(),
 				format));
@@ -1182,8 +1179,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		this.acc_ManagerChq_RepaymantSchMethod.setValue(this.financeMain.getScheduleMethod());
 		this.acc_ManagerChq_ProfitDaysBasis.setValue(this.financeMain.getProfitDaysBasis());
 		this.acc_ManagerChq_FinReference.setValue(this.financeMain.getFinReference());
-		this.acc_ManagerChq_GrcEndDate.setValue(DateUtility.formateDate(this.financeMain.getGrcPeriodEndDate(),
-				PennantConstants.dateFormate));
+		this.acc_ManagerChq_GrcEndDate.setValue(DateUtility.formatToLongDate(this.financeMain.getGrcPeriodEndDate()));
 
 		logger.debug("Leaving");
 

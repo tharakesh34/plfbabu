@@ -3,10 +3,6 @@ package com.pennanttech.util;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-import org.springframework.test.context.transaction.TestTransaction;
-
-import jxl.Cell;
-
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -15,6 +11,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
+
+import jxl.Cell;
 
 public class BeanFactory {
 	//BASE RATE MIBOR IN RMTBaseRates MUST BE AVAILABLE	with 11% latest

@@ -1744,9 +1744,8 @@ public class QueryBuilder extends Groupbox {
 							listCell = new Listcell("-- NO VALUE --");
 							listCell.setParent(item);
 						} else {
-							listCell = new Listcell(DateUtility.formatUtilDate(
-									DateUtility.getUtilDate(data, PennantConstants.dateFormate),
-									PennantConstants.dateFormate));
+							listCell = new Listcell(DateUtility.formatToLongDate(
+									DateUtility.getUtilDate(data, PennantConstants.dateFormate)));
 							listCell.setParent(item);
 						}
 					} else if ("AC".equalsIgnoreCase(type)) {

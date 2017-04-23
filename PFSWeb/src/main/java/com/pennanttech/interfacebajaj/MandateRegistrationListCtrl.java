@@ -448,6 +448,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		if (dataObject instanceof String) {
 			this.branchDetails.setValue(dataObject.toString());
 		} else {
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";

@@ -54,7 +54,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
 
@@ -80,7 +79,7 @@ public class ManagerChequeListModelItemRenderer implements ListitemRenderer<Mana
 		lc.setParent(item);
 		lc = new Listcell(managerCheque.getBeneficiaryName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatUtilDate(managerCheque.getValueDate(), PennantConstants.dateFormate));
+		lc = new Listcell(DateUtility.formatToLongDate(managerCheque.getValueDate()));
 		lc.setParent(item);
 		lc = new Listcell(managerCheque.getDraftCcy() + "-" + CurrencyUtil.getCcyDesc(managerCheque.getDraftCcy()));
 		lc.setParent(item);

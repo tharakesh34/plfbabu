@@ -41,6 +41,7 @@ public class DisbursementService extends Thread {
 	}
 
 	public void process() {
+		logger.debug("Entering");
 		Map<String, StringBuilder> paymentTypes = new HashMap<>();
 		String partnerbankCode = null;
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -78,7 +79,7 @@ public class DisbursementService extends Thread {
 				process(paymentTypes, configName, partnerbankCode);
 			}
 		}
-
+		logger.debug("Leaving");
 	}
 
 	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode) {

@@ -43,21 +43,19 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import java.util.ArrayList;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.audit.AuditDetail;
 
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.NPABucket;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.NPABucketService;
-import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
-import com.pennant.backend.model.applicationmaster.NPABucket;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.app.util.ErrorUtil;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 

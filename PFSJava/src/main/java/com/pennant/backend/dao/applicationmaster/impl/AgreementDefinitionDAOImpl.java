@@ -182,7 +182,6 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(AgreementDefinition agreementDefinition, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
@@ -264,7 +263,6 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(AgreementDefinition agreementDefinition, TableType tableType) {
 		logger.debug(Literal.ENTERING);

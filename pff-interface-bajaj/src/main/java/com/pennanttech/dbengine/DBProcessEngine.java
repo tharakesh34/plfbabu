@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.google.common.util.concurrent.Service.State;
 import com.pennanttech.dataengine.DataAccess;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
