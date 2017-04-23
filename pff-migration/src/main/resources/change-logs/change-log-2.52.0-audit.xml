@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+
+		<changeSet author="Surekha" id="01">
+	<renameColumn columnDataType="bigint" newColumnName="ReturnCode"
+		oldColumnName="ReturnID" tableName="AdtBounceReasons" />
+</changeSet>
+
+	<changeSet author="Surekha" id="02">
+		<modifyDataType columnName="ReturnCode" newDataType="varchar(8)"
+			tableName="AdtBounceReasons" />
+	</changeSet>
+	<changeSet id="03" author="Surekha">
+		<addColumn tableName="AdtRMTAccountTypes">
+			<column name="ProfitCenter" type="bigint" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="CostCenter" type="bigint" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

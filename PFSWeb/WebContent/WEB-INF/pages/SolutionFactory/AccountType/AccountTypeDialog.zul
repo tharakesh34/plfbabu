@@ -162,6 +162,22 @@
 							</row>
 							<row visible="true">
 								<label
+									id="label_AccountTypeDialog_ProfitCenter"
+									value="${c:l('label_AccountTypeDialog_ProfitCenter.value')}" />
+								<hbox>
+									<extendedcombobox id="profitCenter" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_AccountTypeDialog_costCenter"
+									value="${c:l('label_AccountTypeDialog_CostCenter.value')}" />
+								<hbox>
+									<extendedcombobox id="costCenter" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
 									id="label_AccountTypeDialog_AcTypeIsActive"
 									value="${c:l('label_AccountTypeDialog_AcTypeIsActive.value')}" />
 								<hbox>

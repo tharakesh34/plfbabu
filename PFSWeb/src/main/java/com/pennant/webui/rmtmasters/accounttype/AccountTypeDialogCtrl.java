@@ -68,6 +68,8 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
+import com.pennant.backend.model.applicationmaster.CostCenter;
+import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -111,6 +113,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected Checkbox acTypeIsActive; // autoWired
 	protected Space space_acHeadCode; // autoWired
 	protected ExtendedCombobox	acTypeGrpId;
+	protected ExtendedCombobox	profitCenter;
+	protected ExtendedCombobox	costCenter;
 	
 	protected Row row_headcode;
 
@@ -233,6 +237,22 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setDescColumn("GroupDescription");
 		this.acTypeGrpId.setDisplayStyle(2);
 		this.acTypeGrpId.setValidateColumns(new String[] {"GroupCode" });
+		
+		this.profitCenter.setModuleName("ProfitCenter");
+		this.profitCenter.setMandatoryStyle(true);
+		this.profitCenter.setValueColumn("ProfitCenterCode");
+		this.profitCenter.setDescColumn("ProfitCenterDesc");
+		this.profitCenter.setDisplayStyle(2);
+		this.profitCenter.setValidateColumns(new String[] {"ProfitCenterCode" });
+
+		
+		this.costCenter.setModuleName("CostCenter");
+		this.costCenter.setMandatoryStyle(false);
+		this.costCenter.setValueColumn("CostCenterCode");
+		this.costCenter.setDescColumn("CostCenterDesc");
+		this.costCenter.setDisplayStyle(2);
+		this.costCenter.setValidateColumns(new String[] {"CostCenterCode" });
+
 
 		if ("Y".equals(CBI_Available)) {
 			this.acHeadCode.setValue("0000");
@@ -468,6 +488,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acTypeGrpId.setAttribute("ParentGroupId", aAccountType.getAcTypeGrpId());
 			this.acTypeGrpId.setValue(aAccountType.getGroupCode(),aAccountType.getGroupDescription());
 		}
+		if (aAccountType.getProfitCenter() != Long.MIN_VALUE && aAccountType.getProfitCenter() != 0) {
+			this.profitCenter.setAttribute("ProfitCenter", aAccountType.getProfitCenter());
+			this.profitCenter.setValue(aAccountType.getProfitCenterCode(),aAccountType.getProfitCenterDesc());
+		}
+		if (aAccountType.getCostCenter() != Long.MIN_VALUE && aAccountType.getCostCenter() != 0) {
+			this.costCenter.setAttribute("CostCenter", aAccountType.getCostCenter());
+			this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
+		}
 		
 		logger.debug("Leaving");
 	}
@@ -554,13 +582,33 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		
 		try {
 			this.acTypeGrpId.getValidatedValue();
-			Object obj = this.acTypeGrpId.getAttribute("AcTypeGrpId");
+			Long obj = (Long) this.acTypeGrpId.getAttribute("AcTypeGrpId");
 			if (obj != null) {
-				aAccountType.setAcTypeGrpId(Long.valueOf(String.valueOf(obj)));
+				aAccountType.setAcTypeGrpId(obj);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			this.profitCenter.getValidatedValue();
+			Long obj = (Long) this.profitCenter.getAttribute("ProfitCenter");
+			if (obj != null) {
+				aAccountType.setProfitCenter(obj);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			this.costCenter.getValidatedValue();
+			Long obj = (Long) this.costCenter.getAttribute("CostCenter");
+			if (obj != null) {
+				aAccountType.setCostCenter(obj);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 
 		
 		if (!"Y".equals(CBI_Available)) {
@@ -718,6 +766,16 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 					.getLabel("label_AccountTypeDialog_AcTypeGrpId.value"), null,
 					false));
 		}
+		if (!this.profitCenter.isReadonly()) {
+			this.profitCenter.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountTypeDialog_ProfitCenter.value"), null,
+					true));
+		}
+		if (!this.costCenter.isReadonly()) {
+			this.costCenter.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountTypeDialog_CostCenter.value"), null,
+					false));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -735,6 +793,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acHeadCode.setConstraint("");
 		this.assertOrLiability.setConstraint("");
 		this.acTypeGrpId.setConstraint("");
+		this.profitCenter.setConstraint("");
+		this.costCenter.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -763,6 +823,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acHeadCode.setErrorMessage("");
 		this.assertOrLiability.setErrorMessage("");
 		this.acTypeGrpId.setErrorMessage("");
+		this.profitCenter.setErrorMessage("");
+		this.costCenter.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -850,7 +912,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.assertOrLiability.setDisabled(isReadOnly("AccountTypeDialog_AssertOrLiability"));
 		this.onBalanceSheet.setDisabled(isReadOnly("AccountTypeDialog_OnBalanceSheet"));
 		this.allowOverDraw.setDisabled(isReadOnly("AccountTypeDialog_AllowOverDraw"));
-		this.acTypeGrpId.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));
+		this.acTypeGrpId.setReadonly(isReadOnly("AccountTypeDialog_acTypeGrpId"));
+		this.profitCenter.setReadonly(isReadOnly("AccountTypeDialog_profitCenter"));
+		this.costCenter.setReadonly(isReadOnly("AccountTypeDialog_costCenter"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -887,6 +951,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.onBalanceSheet.setDisabled(true);
 		this.allowOverDraw.setDisabled(true);
 		this.acTypeGrpId.setReadonly(true);
+		this.profitCenter.setReadonly(true);
+		this.costCenter.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -919,6 +985,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.onBalanceSheet.setChecked(false);
 		this.allowOverDraw.setChecked(false);
 		this.acTypeGrpId.setValue("");;
+		this.profitCenter.setValue("");;
+		this.costCenter.setValue("");;
 		logger.debug("Leaving");
 	}
 
@@ -1311,8 +1379,34 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			AccountTypeGroup details = (AccountTypeGroup) dataObject;
 			if (details != null) {
 				this.acTypeGrpId.setAttribute("AcTypeGrpId", details.getGroupId());
-				this.accountType.setGroupCode(details.getGroupCode());
-				this.accountType.setGroupDescription(details.getGroupDescription());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	public void onFulfill$profitCenter(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = profitCenter.getObject();
+		if (dataObject instanceof String) {
+			this.profitCenter.setValue(dataObject.toString());
+			this.profitCenter.setDescription("");
+		} else {
+			ProfitCenter details = (ProfitCenter) dataObject;
+			if (details != null) {
+				this.profitCenter.setAttribute("ProfitCenter", details.getProfitCenterID());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	public void onFulfill$costCenter(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = costCenter.getObject();
+		if (dataObject instanceof String) {
+			this.costCenter.setValue(dataObject.toString());
+			this.costCenter.setDescription("");
+		} else {
+			CostCenter details = (CostCenter) dataObject;
+			if (details != null) {
+				this.costCenter.setAttribute("CostCenter", details.getCostCenterID());
 			}
 		}
 		logger.debug("Leaving" + event.toString());

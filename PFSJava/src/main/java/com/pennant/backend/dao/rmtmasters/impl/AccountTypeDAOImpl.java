@@ -101,9 +101,9 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		StringBuilder selectSql = new StringBuilder("Select  AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
 		selectSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AssertOrLiability, OnBalanceSheet, AllowOverDraw , ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory" );
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory, ProfitCenter, CostCenter" );
 		if(type.contains("View")){
-			selectSql.append(",GroupCode,  GroupDescription");
+			selectSql.append(",GroupCode,  GroupDescription, costCenterDesc, profitCenterDesc,CostCenterCode,ProfitCenterCode");
 		}
 		selectSql.append(" From RMTAccountTypes" );
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -202,11 +202,11 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode," );
 		insertSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ProfitCenter, CostCenter)");
 		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose,  :AcTypeGrpId, :AcHeadCode, " );
 		insertSql.append(" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ProfitCenter, :CostCenter)");
 		
 		logger.debug("insertSql: "+ insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
@@ -244,7 +244,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, ProfitCenter = :ProfitCenter, CostCenter = :CostCenter" );
 		updateSql.append(" Where AcType =:AcType");
 
 		if (!type.endsWith("_Temp")) {

@@ -341,8 +341,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			FeeType details = (FeeType) dataObject;
 			if (details != null) {
 				this.feeID.setAttribute("FeeID", details.getFeeTypeID());
-				this.bounceReason.setFeeCode(details.getFeeTypeCode());
-				this.bounceReason.setFeeIDName(details.getFeeTypeDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -445,9 +443,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		//Fee ID
 		try {
 			this.feeID.getValidatedValue();
-			Object obj = this.feeID.getAttribute("FeeID");
+			Long obj = (Long) this.feeID.getAttribute("FeeID");
 			if (obj != null) {
-				aBounceReason.setFeeID(Long.valueOf(String.valueOf(obj)));
+				aBounceReason.setFeeID(obj);
 			}
 		}catch (WrongValueException we ) {
 			wve.add(we);

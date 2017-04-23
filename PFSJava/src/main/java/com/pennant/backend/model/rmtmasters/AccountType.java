@@ -76,6 +76,12 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String groupCode;
 	private String groupDescription;
 	private int acctTypeLevel;
+	private long profitCenter;
+	private long costCenter;
+	private String profitCenterDesc;
+	private String costCenterDesc;
+	private String costCenterCode;
+	private String profitCenterCode;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -241,6 +247,10 @@ public class AccountType extends AbstractWorkflowEntity {
 		excludeFields.add("groupCode");
 		excludeFields.add("groupDescription");
 		excludeFields.add("acctTypeLevel");
+		excludeFields.add("profitCenterDesc");
+		excludeFields.add("costCenterDesc");
+		excludeFields.add("costCenterCode");
+		excludeFields.add("profitCenterCode");
 		return excludeFields;
 	}
 
@@ -250,6 +260,54 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	public void setAcctTypeLevel(int acctTypeLevel) {
 		this.acctTypeLevel = acctTypeLevel;
+	}
+
+	public Long getProfitCenter() {
+		return profitCenter;
+	}
+
+	public void setProfitCenter(Long profitCenter) {
+		this.profitCenter = profitCenter;
+	}
+
+	public Long getCostCenter() {
+		return costCenter;
+	}
+
+	public void setCostCenter(Long costCenter) {
+		this.costCenter = costCenter;
+	}
+
+	public String getProfitCenterDesc() {
+		return profitCenterDesc;
+	}
+
+	public void setProfitCenterDesc(String profitCenterDesc) {
+		this.profitCenterDesc = profitCenterDesc;
+	}
+
+	public String getCostCenterDesc() {
+		return costCenterDesc;
+	}
+
+	public void setCostCenterDesc(String costCenterDesc) {
+		this.costCenterDesc = costCenterDesc;
+	}
+
+	public String getCostCenterCode() {
+		return costCenterCode;
+	}
+
+	public void setCostCenterCode(String costCenterCode) {
+		this.costCenterCode = costCenterCode;
+	}
+
+	public String getProfitCenterCode() {
+		return profitCenterCode;
+	}
+
+	public void setProfitCenterCode(String profitCenterCode) {
+		this.profitCenterCode = profitCenterCode;
 	}
 	
 }
