@@ -190,5 +190,22 @@ UPDATE FinPftDetails set CalPftOnPD=1  where PftOnPDMethod != 'N';
 </sql>
 </changeSet>
 
+<changeSet id="19" author="satish">
+	<renameColumn tableName="FinPftDetails" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+	<renameColumn tableName="FinPftDetails" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+	<renameColumn tableName="FinPftDetails" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+</changeSet>
+<changeSet id="20" author="satish">
+		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+</changeSet>
+<changeSet id="21" author="satish">
+	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+</changeSet>
+
+
 
 </databaseChangeLog>

@@ -649,27 +649,27 @@ public class AEAmounts implements Serializable {
 		pftDetail.setTotalTenor(0);
 
 		//Set Excess Amounts
-//		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
-//		if (finExcessAmounts.size() > 0) {
-//			for (int i = 0; i < finExcessAmounts.size(); i++) {
-//				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
-//						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
-//				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
-//
-//				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-//					pftDetail.setExcessAmt(totBalAvailable);
-//					pftDetail.setExcessAmtResv(reservedAmt);
-//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-//						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-//					pftDetail.setEmiInAdvance(totBalAvailable);
-//					pftDetail.setEmiInAdvanceResv(reservedAmt);
-//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-//						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
-//					pftDetail.setPayableAdvise(totBalAvailable);
-//					pftDetail.setPayableAdviseResv(totBalAvailable);
-//				}
-//			}
-//		}
+		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+		if (finExcessAmounts.size() > 0) {
+			for (int i = 0; i < finExcessAmounts.size(); i++) {
+				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
+						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
+				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+
+				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+					pftDetail.setExcessAmt(totBalAvailable);
+					pftDetail.setExcessAmtResv(reservedAmt);
+				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+					pftDetail.setEmiInAdvance(totBalAvailable);
+					pftDetail.setEmiInAdvanceResv(reservedAmt);
+				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+					pftDetail.setPayableAdvise(totBalAvailable);
+					pftDetail.setPayableAdviseResv(totBalAvailable);
+				}
+			}
+		}
 
 	}
 
