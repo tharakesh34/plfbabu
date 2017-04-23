@@ -52,6 +52,7 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
 
 /**
@@ -73,11 +74,13 @@ public class BounceReasonListModelItemRenderer implements ListitemRenderer<Bounc
 		Listcell lc;
 	  	lc = new Listcell(bounceReason.getBounceCode());
 		lc.setParent(item);
-		lc = new Listcell(bounceReason.getReasonTypeName());
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(bounceReason.getReasonType()),
+				PennantStaticListUtil.getReasonType()));
 	  	lc.setParent(item);
-		lc = new Listcell(bounceReason.getCategoryName());
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(bounceReason.getCategory()),
+				PennantStaticListUtil.getCategoryType()));
 	  	lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(bounceReason.getReturnID()));
+	  	lc = new Listcell(bounceReason.getReturnCode());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
