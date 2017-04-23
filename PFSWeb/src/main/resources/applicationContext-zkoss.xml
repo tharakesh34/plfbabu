@@ -4583,7 +4583,6 @@
 		<property name="nPABucketService" ref="nPABucketService" />
 	</bean>
 	<bean id="nPABucketDialogCtrl" class="com.pennant.webui.applicationmaster.npabucket.NPABucketDialogCtrl" parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService"/>
 		<property name="nPABucketService" ref="nPABucketService"/>
 	</bean>
 	<!-- NPABucketConfiguration -->

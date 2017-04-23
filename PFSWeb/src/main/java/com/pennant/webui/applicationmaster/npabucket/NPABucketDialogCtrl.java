@@ -309,6 +309,11 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 			this.bucketCode.setValue(aNPABucket.getBucketCode());
 			this.bucketDesc.setValue(aNPABucket.getBucketDesc());
 			this.active.setChecked(aNPABucket.isActive());
+			
+			if(aNPABucket.isNew() || (aNPABucket.getRecordType() != null ? aNPABucket.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+				this.active.setChecked(true);
+				this.active.setDisabled(true);
+			}
 		
 		
 		logger.debug(Literal.LEAVING);
@@ -407,10 +412,10 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.bucketCode.isReadonly()){
-			this.bucketCode.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketCode.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.bucketCode.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketCode.value"),PennantRegularExpressions.REGEX_NAME,true));
 		}
 		if (!this.bucketDesc.isReadonly()){
-			this.bucketDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketDesc.value"),PennantRegularExpressions.REGEX_NAME,false));
+			this.bucketDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
 		}
 	
 		logger.debug(Literal.LEAVING);

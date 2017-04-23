@@ -189,7 +189,7 @@ public class NPABucketDAOImpl extends BasisNextidDaoImpl<NPABucket> implements N
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where bucketID = :bucketID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -213,7 +213,7 @@ public class NPABucketDAOImpl extends BasisNextidDaoImpl<NPABucket> implements N
 		StringBuilder sql = new StringBuilder("delete from NPABUCKETS");
 		sql.append(tableType.getSuffix());
 		sql.append(" where bucketID = :bucketID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

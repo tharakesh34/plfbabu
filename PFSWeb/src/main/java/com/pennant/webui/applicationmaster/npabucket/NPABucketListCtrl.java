@@ -112,7 +112,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 	protected void doSetProperties() {
 		super.moduleCode = "NPABucket";
 		super.pageRightName = "NPABucketList";
-		super.tableName = "NPABUCKETS_AView";
+		super.tableName = "NPABUCKETS";
 		super.queueTableName = "NPABUCKETS_View";
 		super.enquiryTableName = "NPABUCKETS_View";
 	}
@@ -239,7 +239,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		arg.put("npabucketListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/NPABucket/NPABucketDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/NPABucket/NPABucketDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
