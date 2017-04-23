@@ -624,7 +624,7 @@ public class CalculationUtil implements Serializable {
 	 * @return the number of terms in one year as int value
 	 */
 
-	private static int getTermsPerYear(String paymentFrequency) {
+	public static int getTermsPerYear(String paymentFrequency) {
 
 		int frqequency = 0;
 		switch (FrequencyUtil.getFrequencyCode(paymentFrequency).charAt(0)) {

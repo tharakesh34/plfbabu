@@ -2707,20 +2707,56 @@ public class ScheduleCalculator {
 			} else if (schdDate.compareTo(finMain.getMaturityDate()) == 0) {
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
 			}
-
 		}
 
 		finMain.setTotalGrossGrcPft(finMain.getTotalGraceCpz().add(finMain.getTotalGracePft()));
 		finMain.setTotalGrossPft(finMain.getTotalProfit().add(finMain.getTotalCpz()));
 
-		BigDecimal anualizedPercRate = CalculationUtil.calulateAunalizedPercRate(finMain.getFinAmount(), finMain
-				.getDownPayment(), finMain.getRepayPftFrq(), finMain.getNumberOfTerms(), finMain.getTotalRepayAmt()
-				.subtract(finMain.getFinAmount().subtract(finMain.getDownPayment())));
-
-		finMain.setEffectiveRateOfReturn(anualizedPercRate);
-
+		// Effective Rate Of Return Calculations / XIRR && IRR
+		calculateXIRRAndIRR(finScheduleData, finMain);
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+
+	/**
+	 * 
+	 * @param finSchdData
+	 * @param finMain
+	 * @return
+	 */
+	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain) {
+		logger.debug("Entering");
+
+		BigDecimal calculated_IRR = BigDecimal.ZERO; 
+		BigDecimal calculated_XIRR = BigDecimal.ZERO;
+		if (finMain.getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
+
+			List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
+			List<Date> repayDateList = new ArrayList<Date>(1);
+
+			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
+
+				if (finScheduleDetail.isDisbOnSchDate() ) {
+					schAmountList.add(finScheduleDetail.getDisbAmount().multiply(new BigDecimal(-1)));
+					repayDateList.add(finScheduleDetail.getSchDate());
+				} 
+				
+				if(finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+					schAmountList.add(finScheduleDetail.getRepayAmount());
+					repayDateList.add(finScheduleDetail.getSchDate());
+				}
+ 			}
+
+			calculated_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+						
+			calculated_IRR = RateCalculation.calculateIRR(schAmountList);
+			int termsPerYear = CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
+			calculated_IRR = calculated_IRR.multiply(new BigDecimal(termsPerYear));
+		}
+
+		finMain.setAnualizedPercRate(calculated_XIRR);
+		finMain.setEffectiveRateOfReturn(calculated_IRR);
+		logger.debug("Leaving");
 	}
 
 	/*
