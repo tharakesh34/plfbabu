@@ -25,6 +25,10 @@ public class DataEngineDBProcess extends DataEngine {
 	public void processData(String configName, String paymentId) {
 		processData(getConfigurationByName(configName), paymentId);
 	}
+	
+	public void processData(String configName) {
+		processData(getConfigurationByName(configName));
+	}
 
 	
 	public void processData(Configuration config) {
