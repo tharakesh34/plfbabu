@@ -1378,6 +1378,11 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			'NPABucket', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="60.1" author="Siva">
+		 <sql>
+	Drop Table FinExcessAmount;
+ </sql>
+</changeSet>
 
 <changeSet id="60" author="Siva">
 		<createTable tableName="FinExcessAmount">
@@ -1827,9 +1832,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		WHERE     NOT EXISTS (SELECT 1 FROM ProfitCenters_TEMP WHERE ProfitCenterID = T1.ProfitCenterID)
 		</createView>
 </changeSet>
-<changeSet id="87" author="Surekha">
-	<dropTable tableName="SeqProfitCenters"/>
-</changeSet>
+
 <changeSet id="88" author="Surekha">
 	<createTable tableName="SeqProfitCenters">
 			<column name="SeqNo" type="bigint" />
@@ -1840,10 +1843,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			INSERT INTO SeqProfitCenters VALUES(0);
 		</sql>
 	</changeSet>
-	<changeSet id="90" author="Surekha">
-	<dropTable tableName="SeqCostCenters"/>
-</changeSet>
-<changeSet id="91" author="Surekha">
+	<changeSet id="91" author="Surekha">
 	<createTable tableName="SeqCostCenters">
 			<column name="SeqNo" type="bigint" />
 </createTable>
@@ -1853,10 +1853,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			INSERT INTO SeqCostCenters VALUES(0);
 		</sql>
 	</changeSet>
-	<changeSet id="93" author="Surekha">
-	<dropTable tableName="SeqBounceReasons"/>
-</changeSet>
-<changeSet id="94" author="Surekha">
+	<changeSet id="94" author="Surekha">
 	<createTable tableName="SeqBounceReasons">
 			<column name="SeqNo" type="bigint" />
 </createTable>
