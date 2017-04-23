@@ -1915,7 +1915,6 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'ProfitCenterDialog_ProfitCenterDesc','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'ProfitCenterDialog_Active','ProfitCenterDialog',0,1000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 			-- for View
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmasterEnquiry'),1,0,10000,'2017-04-22 06:46:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			
 			-- For _MAKER
@@ -2002,7 +2001,6 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'CostCenterDialog_CostCenterDesc','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'CostCenterDialog_Active','CostCenterDialog',0,1000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 			-- for View
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmasterEnquiry'),1,0,10000,'2017-04-22 06:46:38','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-04-22 06:46:38',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			
 			-- For _MAKER
