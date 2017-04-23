@@ -964,5 +964,21 @@ FROM    	Mandates  T1 INNER JOIN
 		left outer join RMTCOUNTRYVSPROVINCE STATE on STATE.CPPROVINCE = CITY.PCPROVINCE
 		WHERE DISB.STATUS='APPROVED'
 		</createView>
-	</changeSet>	
+	</changeSet>
+	<changeSet id="40" author="Sai">
+		<createIndex tableName="customers" indexName="ix_cust_name_dob_nat">
+			<column name="CustFName" />
+			<column name="CustLName" />
+			<column name="CustDOB" />
+			<column name="CustNationality" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="41" author="Sai">
+		<createIndex tableName="customers_temp" indexName="ix_tcust_name_dob_nat">
+			<column name="CustFName" />
+			<column name="CustLName" />
+			<column name="CustDOB" />
+			<column name="CustNationality" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
