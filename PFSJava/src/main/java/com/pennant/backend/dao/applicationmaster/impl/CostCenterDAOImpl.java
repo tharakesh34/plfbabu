@@ -159,6 +159,10 @@ public class CostCenterDAOImpl extends BasisNextidDaoImpl<CostCenter> implements
 		sql.append(" :costCenterID, :costCenterCode, :costCenterDesc, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
+		if (costCenter.getCostCenterID() <= 0) {
+			costCenter.setCostCenterID(getNextidviewDAO().getNextId("SeqCostCenters"));
+		}
+		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costCenter);

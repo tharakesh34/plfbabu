@@ -235,11 +235,11 @@ public class CostCenterListCtrl extends GFCBaseListCtrl<CostCenter> {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("costcenter", costcenter);
-		arg.put("costcenterListCtrl", this);
+		arg.put("costCenter", costcenter);
+		arg.put("costCenterListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.applicationmaster/CostCenter/CostCenterDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CostCenter/CostCenterDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);

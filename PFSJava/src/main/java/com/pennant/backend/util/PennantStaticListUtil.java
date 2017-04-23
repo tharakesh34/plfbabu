@@ -182,6 +182,10 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptModes;
 	private static ArrayList<ValueLabel> allocationMethods;
 	private static ArrayList<ValueLabel> ManualAdviseTypes;
+	private static ArrayList<ValueLabel> reasonTypeList;
+	private static ArrayList<ValueLabel> categoryTypeList;
+	private static ArrayList<ValueLabel> actionList;
+
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2568,17 +2572,33 @@ public class PennantStaticListUtil {
 	
 	public static ArrayList<ValueLabel> getReasonType(){
 	
-		return null;
+		if(reasonTypeList == null){
+			reasonTypeList = new ArrayList<ValueLabel>(2);
+			reasonTypeList.add(new ValueLabel("1",Labels.getLabel("label_CancelledCheq")));
+			reasonTypeList.add(new ValueLabel("2",Labels.getLabel("label_BouncedCheq")));
+			reasonTypeList.add(new ValueLabel("3",Labels.getLabel("label_Holdheq")));
+		}
+		return reasonTypeList;
 	}
 	
-	public static ArrayList<ValueLabel> getAssetType(){
+	public static ArrayList<ValueLabel> getCategoryType(){
 		
-		return null;
+		if(categoryTypeList == null){
+			categoryTypeList = new ArrayList<ValueLabel>(2);
+			categoryTypeList.add(new ValueLabel("Technical",Labels.getLabel("label_Technical")));
+			categoryTypeList.add(new ValueLabel("NonTechnical",Labels.getLabel("label_NonTechnical")));
+		}
+		return categoryTypeList;
 	}
 
 	public static ArrayList<ValueLabel> getAction(){
 		
-		return null;
+		if(actionList == null){
+			actionList = new ArrayList<ValueLabel>(2);
+			actionList.add(new ValueLabel("IGNORE",Labels.getLabel("label_IGNORE")));
+			actionList.add(new ValueLabel("REPRESENT",Labels.getLabel("label_REPRESENT")));
+		}
+		return actionList;
 	}
 
 }

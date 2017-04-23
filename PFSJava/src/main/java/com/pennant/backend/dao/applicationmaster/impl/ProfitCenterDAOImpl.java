@@ -159,6 +159,9 @@ public class ProfitCenterDAOImpl extends BasisNextidDaoImpl<ProfitCenter> implem
 		sql.append(" :profitCenterID, :profitCenterCode, :profitCenterDesc, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
+		if (profitCenter.getProfitCenterID() <= 0) {
+			profitCenter.setProfitCenterID(getNextidviewDAO().getNextId("SeqProfitCenters"));
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profitCenter);
