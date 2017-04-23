@@ -352,7 +352,7 @@
 	   <menuItem id="menu_Item_FinSuspHold" zulNavigation="/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldList.zul" rightName ="menuItem_FinanceManagement_FinSuspHold" />
 	   <menuItem id="menu_Item_HoldEMI" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_HoldEMI"/> 
 <!-- 	     <menuItem id="menu_Item_InventorySettlement" zulNavigation="/WEB-INF/pages/FinanceManagement/InventorySettlement/InventorySettlementList.zul" rightName="menuItem_FinanceManagement_CustSuspense"/> -->
-	   <menuItem id="menu_Item_LiabilityRequest" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" rightName="menuItem_FinanceManagement_LiabilityRequest"/> 
+	   <!-- <menuItem id="menu_Item_LiabilityRequest" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" rightName="menuItem_FinanceManagement_LiabilityRequest"/> --> 
        <menuItem id="menu_Item_SuspHead" zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul?rightName=menuItem_FinanceManagement_SuspHead"  rightName="menuItem_FinanceManagement_SuspHead"/>
 	   <menuItem id="menu_Item_NOCIssuance" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul" rightName="menuItem_FinanceManagement_NOCIssuance"/>
 	   <menuItem id="menu_Item_OverdueChargeRecovery" zulNavigation="/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul" rightName="menuItem_FinanceManagement_OverdueChargeRecovery" />
@@ -365,7 +365,7 @@
        <menuItem id="menu_Item_ReAgeHolidays" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReAgeHolidays"/>
 	   <menuItem id="menu_Item_Recalculate" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Recalculate"/>
 	   <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" />
-	   <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" rightName="menuItem_FinanceManagement_ReinstateFinance"/>
+	   <!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->
 	   <menuItem id="menu_Item_RmvTerms" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RmvTerms"/>
 	   <menuItem id="menu_Item_CancelRepay" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RepayCancel"/>
 	   <menuItem id="menu_Item_ReSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReSchedule"/>
