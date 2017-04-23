@@ -4986,7 +4986,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
-				auditDetail.setErrorDetail(90103);
+				auditDetail.setErrorDetail(90320);
 			}
 		}
 	}
