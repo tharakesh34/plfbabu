@@ -16,14 +16,14 @@
 					<toolbar align="center" sclass="toolbar-center">
 						<label id="lable_current_step" style="font-weight: bold; font-size:12px;color:#FF4500;" />
 					</toolbar>
-					<toolbar align="center" sclass="toolbar-center">
+					<toolbar align="center" sclass="toolbar-center" visible="false">
 						<hbox>
 							<label value="${c:l('label_BatchAdminCtrl_Lock.value')}" />
 							<space />
 							<checkbox id="lock" />
 						</hbox>
 					</toolbar>
-					<toolbar align="end" sclass="toolbar-end">
+					<toolbar align="end" sclass="toolbar-end" visible="false">
 						<button id="btnStaleJob" tooltiptext="${c:l('label_BatchAdminCtrl_Terminate.tooltiptext')}" label="${c:l('label_BatchAdminCtrl_Terminate.value')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
