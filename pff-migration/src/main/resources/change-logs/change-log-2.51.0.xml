@@ -2097,6 +2097,39 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="107" author="chaitanya.ch">
+		 <createView viewName="MANUALADVISE_VIEW" replaceIfExists="true"> 
+		 	   SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+             T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks,
+              T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode
+				FROM    	ManualAdvise_Temp  T1 
+        INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+				UNION ALL
+				
+				SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+                   T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks,
+                    T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode
+				FROM    	ManualAdvise  T1 
+        INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+				WHERE     NOT EXISTS (SELECT 1 FROM ManualAdvise_TEMP WHERE AdviseID = T1.AdviseID)
+		 
+		 </createView>	
+	</changeSet>
+	
+		<changeSet id="108" author="chaitanya.ch">
+		 <createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true"> 
+		 	  SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+  				T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks,
+  					T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode
+				FROM    	ManualAdvise  T1
+       			INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+   
+		 
+		 </createView>	
+	</changeSet>
 	
 	<changeSet id="109" author="durgaprasad G">
 	<createTable tableName="SeqPresentmentDetailRef">
