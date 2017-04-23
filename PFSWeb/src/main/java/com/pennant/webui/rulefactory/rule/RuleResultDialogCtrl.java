@@ -73,6 +73,7 @@ import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -361,7 +362,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 
 			for (int i = 0; i < codeVariables.size(); i++) {
 				JSONObject jsonObject = (JSONObject) codeVariables.get(i);
-				if (!"Result".equals(jsonObject.get("name"))) {
+				if (!"Result".equals(jsonObject.get("name")) && !(jsonObject.get("name").toString()).startsWith(RuleConstants.RULEFIELD_CCY)) {
 					fieldValue = (String) jsonObject.get("name");
 					if(fieldMap.containsKey(fieldValue)){
 						fieldList.add(new ValueLabel(fieldValue, fieldMap.get(fieldValue)));

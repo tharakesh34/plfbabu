@@ -21,6 +21,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -100,6 +101,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 			if (this.ruleResultDialogCtrl != null) {
 				amountRuleFormula = this.ruleResultDialogCtrl.formula.getValue().trim();
+				amountRuleFormula = "Result = "+amountRuleFormula;
 			} else if (this.finCreditRevSubCategoryDialogCtrl != null) {
 				amountRuleFormula = this.finCreditRevSubCategoryDialogCtrl.formula.getValue().trim();
 			} 
@@ -210,6 +212,18 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			this.result_label.setValue(Labels.getLabel("NOVALUE"));
 		}else{
 			this.result_label.setValue(ruleResult.toString());
+			
+			try{
+				if(ruleResult.toString().contains(".")){
+					BigDecimal fractionValue = new BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")+1));
+					if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
+						this.result_label.setValue(PennantApplicationUtil.amountFormate(
+								new BigDecimal(ruleResult.toString().substring(0, ruleResult.toString().indexOf("."))), PennantConstants.defaultCCYDecPos));
+					}
+				}
+			}catch(Exception e){
+				logger.info(e.getMessage());
+			}
 		}
 		// make result row visible and set value
 	}

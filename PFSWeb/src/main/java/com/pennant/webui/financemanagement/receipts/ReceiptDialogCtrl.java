@@ -1848,7 +1848,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
-		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
+		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		
 		String allocateMthd = header.getAllocationType();
 		if(StringUtils.isEmpty(allocateMthd)){
@@ -1857,13 +1857,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+		
+		// Separating Receipt Amounts based on user entry, if exists
+		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
+		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
+			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
+				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
+				}
+			}
+		}
 
 		// Receipt Mode Details , if FinReceiptDetails Exists
 		String receiptPaidMode = header.getReceiptMode();
 		checkByReceiptMode(receiptPaidMode, false);
 
 		// Render Excess Amount Details
-		doFillExcessAmounts();
+		doFillExcessAmounts(receiptAmountsMap);
+		receiptAmountsMap = null;
 
 		// Render Allocation Details & Manual Advises
 		if(header.getAllocations() != null && !header.getAllocations().isEmpty()){
@@ -1937,7 +1952,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Rendering Excess Amount Details
 	 */
-	private void doFillExcessAmounts(){
+	private void doFillExcessAmounts(Map<String, BigDecimal> receiptAmountsMap){
 		logger.debug("Entering");
 
 		// Excess Amounts
@@ -1978,6 +1993,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 
 			BigDecimal paidAmount = BigDecimal.ZERO;//TODO: Entered Excess Amounts from Receipt Details
+			if(StringUtils.equals(excessAmtType, RepayConstants.EXAMOUNTTYPE_EXCESS) && 
+					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EXCESS)){
+				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EXCESS);
+			}else if(StringUtils.equals(excessAmtType, RepayConstants.EXAMOUNTTYPE_EMIINADV) && 
+					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EMIINADV)){
+				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EMIINADV);
+			}
+			
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
 			CurrencyBox excessAmount = new CurrencyBox();
