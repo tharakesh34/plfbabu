@@ -132,7 +132,7 @@ public class EODProperties {
 		accountSetIdList = null;
 		listProviders = null;
 		bucketConfigurationList = null;
-		dPDBuckets = null;
+		dpdBucketList = null;
 	}
 
 	/**
