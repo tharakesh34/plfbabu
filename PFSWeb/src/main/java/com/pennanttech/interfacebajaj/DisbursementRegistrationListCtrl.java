@@ -209,9 +209,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 		
 		this.finType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.finType.setModuleName("FinanceWorkFlow");
+		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
-		this.finType.setDescColumn("LovDescFinTypeName");
+		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
 		this.finType.setMandatoryStyle(true);
 		
