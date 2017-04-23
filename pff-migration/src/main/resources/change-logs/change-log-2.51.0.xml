@@ -1362,4 +1362,20 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		Update FinanceMain_Temp Set RvwRateApplFor = (Select FinRvwRateApplFor From RMTFinanceTypes T WHERE FinanceMain_Temp.FinType = T.FinType);
 		</sql>
 	</changeSet>
+	<changeSet id="59" author="Vinay">
+		<sql>
+			DELETE from ReportList where Code = 'DPDBucket';
+			DELETE from ReportList where Code = 'NPABucket';
+
+			Insert into ReportList Values('DPDBucket', 'DPDBucket', 
+			'listheader_BucketCode.label,listheader_BucketDesc.label,listheader_Active.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'bucketCode,bucketDesc,active,recordStatus,recordType','String,String,boolean,String,String','', 'ReportList03', 
+			'DPDBucket', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+
+			Insert into ReportList Values('NPABucket', 'NPABucket', 
+			'listheader_BucketCode.label,listheader_BucketDesc.label,listheader_Active.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'bucketCode,bucketDesc,active,recordStatus,recordType','String,String,boolean,String,String','', 'ReportList03', 
+			'NPABucket', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
