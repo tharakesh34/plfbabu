@@ -1336,4 +1336,25 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		Update FinanceMain Set RvwRateApplFor = (Select FinRvwRateApplFor From RMTFinanceTypes T WHERE FinanceMain.FinType = T.FinType);
 		</sql>
 	</changeSet>
+		<changeSet id="56" author="Surekha">
+	<createView viewName="BounceReasons_View" replaceIfExists="true">
+		SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnID, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BounceReasons_Temp  T1 
+		UNION ALL
+		
+		SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnID, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BounceReasons  T1 
+		WHERE     NOT EXISTS (SELECT 1 FROM BounceReasons_TEMP WHERE BounceID = T1.BounceID)
+</createView>
+</changeSet>
+<changeSet id="57" author="Surekha">
+	<createView viewName="BounceReasons_AView" replaceIfExists="true">
+
+		SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnID, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BounceReasons  T1 
+</createView>
+</changeSet>
 </databaseChangeLog>
