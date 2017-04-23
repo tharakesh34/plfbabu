@@ -5985,6 +5985,62 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="126" author="Surekha">
+		<createTable tableName="NPABUCKETS">
+			<column name="BucketID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BucketCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketDesc" type="nvarchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet id="127" author="Surekha">
+		<createTable tableName="NPABUCKETS_Temp">
+			<column name="BucketID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BucketCode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="BucketDesc" type="nvarchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="bit">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
 	<changeSet id="118" author="Surekha">
 		<createView viewName="NPABUCKETSCONFIG_View" replaceIfExists="true">
 			SELECT		T1.ConfigID, T1.ProductCode, T1.BucketID, T1.DueDays, T1.SuspendProfit		
@@ -6166,62 +6222,7 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		</createView>
 	</changeSet>
 	
-	<changeSet id="126" author="Surekha">
-		<createTable tableName="NPABUCKETS">
-			<column name="BucketID" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="BucketCode" type="varchar(8)">
-				<constraints  nullable="false" />
-			</column>
-			<column name="BucketDesc" type="nvarchar(50)">
-				<constraints nullable="false" />
-			</column>
-			<column name="Active" type="bit">
-				<constraints nullable="false" />
-			</column>
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-		</changeSet>
-		<changeSet id="127" author="Surekha">
-		<createTable tableName="NPABUCKETS_Temp">
-			<column name="BucketID" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="BucketCode" type="varchar(8)">
-				<constraints  nullable="false" />
-			</column>
-			<column name="BucketDesc" type="nvarchar(50)">
-				<constraints nullable="false" />
-			</column>
-			<column name="Active" type="bit">
-				<constraints nullable="false" />
-			</column>
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-		</changeSet>
+	
 			<changeSet author="Prasad" id="128">
 	<sql>
 	Update workflowdetails Set workflowactive=0 where workflowtype='BFSD_ORIGINATION'and workflowactive=1; 
