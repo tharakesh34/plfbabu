@@ -2586,4 +2586,28 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
                             WHERE      (FINREFERENCE = T1.FINREFERENCE)))
 		</createView>
 	</changeSet>
+	
+	<changeSet id="123" author="Chaitanya.ch">
+	<addColumn tableName="RMTFinanceTypes" >
+		<column name="ProfitCenterID" type = "bigint"></column>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet id="124" author="Chaitanya.ch">
+		<sql>
+			Update RMTFinanceTypes set ProfitCenterID = 1; 
+		
+		</sql>
+	</changeSet>
+	
+	<changeSet id="125" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes" oldColumnName="ProfitCenter" newColumnName="ProfitCenterID"/>
+	</changeSet>
+	
+	<changeSet id="126" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
+	</changeSet>
+ 
+ 
+	
 </databaseChangeLog>
