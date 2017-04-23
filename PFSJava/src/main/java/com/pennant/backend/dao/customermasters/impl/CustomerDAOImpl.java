@@ -89,6 +89,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -726,61 +727,56 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return custRepayBank;
 
 	}
-	
+
 	@Override
 	public BigDecimal getCustRepayProcBank(long custID, String curFinReference) {
-		logger.debug("Entering");
-		List<FinanceExposure> FinanceExposureDetailsList = new ArrayList<FinanceExposure>();
+		logger.debug(Literal.ENTERING);
 
-		BigDecimal custCurProcRepayBank = BigDecimal.ZERO;
-		FinanceExposure detail = new FinanceExposure();
-		detail.setCustCif(String.valueOf(custID));
-		detail.setFinReference(curFinReference);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select CustId CustCif, TotalRepayAmt, MaturityDate, FinStartDate,");
+		sql.append(" FinCcy");
+		sql.append(" from FinanceMain_Temp where CustID = :CustID and RcdMaintainSts is null");
+		sql.append(" and FinReference <> :FinReference");
 
-		StringBuilder selectSql = new StringBuilder("Select CustId CustCif,TotalRepayAmt,MaturityDate,FinStartDate,FinCcy,");
-		selectSql.append("'"+SysParamUtil.getAppCurrency()+"'"+" toCcy");
-		selectSql.append(" FROM FinanceMain_Temp WHERE FinIsActive = 1 and CustID=:CustCif");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustID", custID);
+		paramSource.addValue("FinReference", curFinReference);
 
-		if (StringUtils.isNotEmpty(curFinReference)) {
-			selectSql.append(" AND FinReference <> :FinReference ");
-		}
+		RowMapper<FinanceExposure> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
-
+		List<FinanceExposure> financeExposures = new ArrayList<>();
 		try {
-			FinanceExposureDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			financeExposures = this.namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			FinanceExposureDetailsList = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		if (FinanceExposureDetailsList != null && !FinanceExposureDetailsList.isEmpty()) {
-			for (FinanceExposure finExposure : FinanceExposureDetailsList) {
-				int months = DateUtility.getMonthsBetween(finExposure.getFinStartDate(), finExposure.getMaturityDate());
-				if (months == 0) {
-					custCurProcRepayBank = custCurProcRepayBank.add(CalculationUtil.getConvertedAmount(
-							finExposure.getFinCCY(), finExposure.getToCcy(), finExposure.getTotalRepayAmt()));
-				} else {
-					custCurProcRepayBank = custCurProcRepayBank.add(CalculationUtil.getConvertedAmount(
-							finExposure.getFinCCY(), finExposure.getToCcy(),
-							finExposure.getTotalRepayAmt().divide(new BigDecimal(months), RoundingMode.HALF_UP)));
-				}
+		String toCcy = SysParamUtil.getAppCurrency();
+		BigDecimal totalRepayAmt = BigDecimal.ZERO;
+		BigDecimal repayAmt;
+		int months;
 
+		for (FinanceExposure finExposure : financeExposures) {
+			months = DateUtility.getMonthsBetween(finExposure.getFinStartDate(), finExposure.getMaturityDate(), true);
+			repayAmt = finExposure.getTotalRepayAmt();
+
+			if (months > 0) {
+				repayAmt = repayAmt.divide(new BigDecimal(months), RoundingMode.HALF_UP);
 			}
-			custCurProcRepayBank = PennantApplicationUtil.formateAmount(custCurProcRepayBank,
-					CurrencyUtil.getFormat(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY)));
+
+			totalRepayAmt = totalRepayAmt
+					.add(CalculationUtil.getConvertedAmount(finExposure.getFinCCY(), toCcy, repayAmt));
 		}
-		detail = null;
-		logger.debug("Leaving");
-		return custCurProcRepayBank;
+
+		totalRepayAmt = PennantApplicationUtil.formateAmount(totalRepayAmt,
+				CurrencyUtil.getFormat(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY)));
+
+		logger.debug(Literal.LEAVING);
+		return totalRepayAmt;
 	}
-	
-	
+
 	@Override
 	public FinanceExposure getCoAppRepayBankTotal(String custCIF) {
 		logger.debug("Entering");
