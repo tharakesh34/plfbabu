@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.financemanagement.impl;
 
+import java.util.Date;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -50,6 +52,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -99,7 +102,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		logger.trace(Literal.SQL + sql.toString());
 
 		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		presentmentDetail.setDetailID(detailID);
+		presentmentDetail.setPresentmentID(detailID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentDetail);
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
@@ -116,38 +119,6 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		return presentmentDetail;
 	}
 
-	@Override
-	public String save(PresentmentDetail presentmentDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PresentmentDetails");
-		sql.append(tableType.getSuffix());
-		sql.append("(detailID, presentmentID, finReference, schDate, schSeq, mandateID, ");
-		sql.append("schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, schPenaltyDue, ");
-		sql.append("advanceAmt, excessID, adviseAmt, excludeReason, presentmentAmt, status, ");
-		sql.append(" bounceID, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(" :detailID, :presentmentID, :finReference, :schDate, :schSeq, :mandateID, ");
-		sql.append(" :schAmtDue, :schPriDue, :schPftDue, :schFeeDue, :schInsDue, :schPenaltyDue, ");
-		sql.append(" :advanceAmt, :excessID, :adviseAmt, :excludeReason, :presentmentAmt, :status, ");
-		sql.append(" :bounceID, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentDetail);
-
-		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(presentmentDetail.getDetailID());
-	}
 
 	@Override
 	public void update(PresentmentDetail presentmentDetail, TableType tableType) {
@@ -221,4 +192,87 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
+	
+	
+	@Override
+	public PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		/* Select T1.FinReference, T1.SCHDATE, T4.MANDATEID,T4.MandateType, T2.FinType,  PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, FEESCHD, SCHDFEEPAID, INSSCHD  from FinScheduleDetails T1  
+		 Inner Join FinanceMain T2 on T1.FinReference = T2.FinReference 
+		 INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+		 INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID*/
+		sql = new StringBuilder();
+		sql.append(" SELECT  detailID, presentmentID, finReference, schDate, schSeq, mandateID, ");
+		sql.append(" schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, schPenaltyDue, ");
+		sql.append(" advanceAmt, excessID, adviseAmt, excludeReason, presentmentAmt, status, ");
+		sql.append(" bounceID,  presentmentID,finReference,mandateID,excessID,excludeReason,status,");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ");//FIXME table and filefs
+		sql.append(" Where FinReference = :FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq");
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("SchDate", schDate);
+		source.addValue("SchSeq", schSeq);
+
+		logger.trace(Literal.SQL + sql.toString());
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper .newInstance(PresentmentDetail.class);
+
+		try {
+			return namedParameterJdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	@Override
+	public String save(PresentmentDetail presentmentDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		if(presentmentDetail.getPresentmentID()==Long.MIN_VALUE){
+			presentmentDetail.setPresentmentID(getNextidviewDAO().getNextId("SeqPresentmentDetails"));	
+		}
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Insert into PresentmentDetails");
+		sql.append(tableType.getSuffix());
+		sql.append("(DetailID, PresentmentID, FinReference, SchDate, SchSeq, MandateID, ");
+		sql.append(" SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, ");
+		sql.append(" AdvanceAmt, ExcessID, AdviseAmt, ExcludeReason, PresentmentAmt, Status, ");
+		sql.append(" BounceID, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(");
+		sql.append(" :DetailID, :PresentmentID, :FinReference, :SchDate, :SchSeq, :MandateID, ");
+		sql.append(" :SchAmtDue, :SchPriDue, :SchPftDue, :SchFeeDue, :SchInsDue, :SchPenaltyDue, ");
+		sql.append(" :AdvanceAmt, :ExcessID, :AdviseAmt, :ExcludeReason, :PresentmentAmt, :Status, ");
+		sql.append(" :BounceID, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
+		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentDetail);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public long getPresentmentDetailRef(String tableName) {
+		return getNextidviewDAO().getNextId(tableName);
+	}
+	
 }

@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.financemanagement;
 
+import java.util.Date;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 
@@ -58,4 +60,10 @@ public interface PresentmentDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq);
+
+	void savePresentmentDetails(PresentmentDetail item);
+
+	long getPresentmentDetailRef(String string);
 }

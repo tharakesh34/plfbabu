@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentDetailDAO.java                                                   * 	  
+ * FileName    		:  PresentmentHeaderService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -40,24 +40,22 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.dao.financemanagement;
+package com.pennant.backend.service.financemanagement;
 
-import java.util.Date;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennanttech.pff.core.TableType;
+public interface PresentmentHeaderService {
 
-public interface PresentmentDetailDAO {
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	PresentmentDetail getPresentmentDetail(long detailID, String type);
+	PresentmentHeader getPresentmentHeader(long presentmentID);
 
-	void update(PresentmentDetail presentmentDetail, TableType tableType);
+	PresentmentHeader getApprovedPresentmentHeader(long presentmentID);
 
-	void delete(PresentmentDetail presentmentDetail, TableType tableType);
+	AuditHeader delete(AuditHeader auditHeader);
 
-	PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq);
+	AuditHeader doApprove(AuditHeader auditHeader);
 
-	String save(PresentmentDetail presentmentDetail, TableType tableType);
-
-	long getPresentmentDetailRef(String tableName);
+	AuditHeader doReject(AuditHeader auditHeader);
 }

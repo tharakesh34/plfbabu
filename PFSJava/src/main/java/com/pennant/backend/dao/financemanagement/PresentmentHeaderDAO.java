@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentDetailDAO.java                                                   * 	  
+ * FileName    		:  PresentmentHeaderDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -42,22 +42,17 @@
  */
 package com.pennant.backend.dao.financemanagement;
 
-import java.util.Date;
-
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennanttech.pff.core.TableType;
 
-public interface PresentmentDetailDAO {
+public interface PresentmentHeaderDAO {
 
-	PresentmentDetail getPresentmentDetail(long detailID, String type);
+	PresentmentHeader getPresentmentHeader(long presentmentID, String type);
 
-	void update(PresentmentDetail presentmentDetail, TableType tableType);
+	String save(PresentmentHeader presentmentHeader, TableType tableType);
 
-	void delete(PresentmentDetail presentmentDetail, TableType tableType);
+	void update(PresentmentHeader presentmentHeader, TableType tableType);
 
-	PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq);
+	void delete(PresentmentHeader presentmentHeader, TableType tableType);
 
-	String save(PresentmentDetail presentmentDetail, TableType tableType);
-
-	long getPresentmentDetailRef(String tableName);
 }

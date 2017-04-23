@@ -9620,5 +9620,51 @@
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
+   	<!-- PresentmentDetail -->
+	<bean id="presentmentDetailDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="presentmentDetailService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="presentmentDetailServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="presentmentDetailServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">
+       <property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   
+   	<!-- PresentmentHeader -->
+	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="presentmentHeaderService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="presentmentHeaderServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="presentmentHeaderServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentHeaderServiceImpl">
+       <property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
    
 </beans>

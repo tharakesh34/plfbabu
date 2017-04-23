@@ -69,16 +69,17 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private long detailID = Long.MIN_VALUE;
-	private long presentmentID;
+	private String detailRef;
+	private long presentmentID = Long.MIN_VALUE;
 	private String presentmentIDName;
 	private String finReference;
 	private String finReferenceName;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schDate;
+	private Date defSchdDate;
 	private long schSeq;
 	private long mandateID;
-	private String mandateIDName;
+	private String mandateType;
 	private BigDecimal schAmtDue;
 	private BigDecimal schPriDue;
 	private BigDecimal schPftDue;
@@ -96,6 +97,10 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String statusName;
 	private long bounceID;
 	private String bounceIDName;
+	private String customerCif;
+	private String loanType;
+	private String loanTypeName;
+
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -127,23 +132,19 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("excludeReasonName");
 		excludeFields.add("statusName");
 		excludeFields.add("bounceIDName");
+		excludeFields.add("customerCif");
+		excludeFields.add("loanType");
+		excludeFields.add("loanTypeName");
+		excludeFields.add("mandateType");
 		return excludeFields;
 	}
 
 	public long getId() {
-		return detailID;
+		return presentmentID;
 	}
 
 	public void setId(long id) {
-		this.detailID = id;
-	}
-
-	public long getDetailID() {
-		return detailID;
-	}
-
-	public void setDetailID(long detailID) {
-		this.detailID = detailID;
+		this.presentmentID = id;
 	}
 
 	public long getPresentmentID() {
@@ -202,12 +203,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.mandateID = mandateID;
 	}
 
-	public String getMandateIDName() {
-		return this.mandateIDName;
+	public String getMandateType() {
+		return mandateType;
 	}
 
-	public void setMandateIDName(String mandateIDName) {
-		this.mandateIDName = mandateIDName;
+	public void setMandateType(String mandateType) {
+		this.mandateType = mandateType;
 	}
 
 	public BigDecimal getSchAmtDue() {
@@ -376,6 +377,46 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public String getCustomerCif() {
+		return customerCif;
+	}
+
+	public void setCustomerCif(String customerCif) {
+		this.customerCif = customerCif;
+	}
+
+	public String getLoanType() {
+		return loanType;
+	}
+
+	public void setLoanType(String loanType) {
+		this.loanType = loanType;
+	}
+
+	public String getLoanTypeName() {
+		return loanTypeName;
+	}
+
+	public void setLoanTypeName(String loanTypeName) {
+		this.loanTypeName = loanTypeName;
+	}
+
+	public String getDetailRef() {
+		return detailRef;
+	}
+
+	public void setDetailRef(String detailRef) {
+		this.detailRef = detailRef;
+	}
+
+	public Date getDefSchdDate() {
+		return defSchdDate;
+	}
+
+	public void setDefSchdDate(Date defSchdDate) {
+		this.defSchdDate = defSchdDate;
 	}
 
 }

@@ -4638,4 +4638,22 @@
 	<bean id="bounceReasonDialogCtrl" class="com.pennant.webui.applicationmaster.bouncereason.BounceReasonDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="bounceReasonService" ref="bounceReasonService"/>
 	</bean>
+	
+		<!-- PresentmentDetail -->
+	<bean id="presentmentDetailListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+	</bean>
+	
+	<bean id="presentmentDetailExtractListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+	</bean>
+	
+		<!-- PresentmentHeader -->
+	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentheader.PresentmentHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+	</bean>
+
 </beans>

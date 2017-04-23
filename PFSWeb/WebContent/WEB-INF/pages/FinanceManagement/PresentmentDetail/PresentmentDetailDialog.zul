@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
+	<window id="window_PresentmentDetailDialog" border="normal"
+			apply="${presentmentDetailDialogCtrl}" width="100%" height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutPresentmentDetail">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" style="float:left; border-style: none;">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"/>
+						</toolbar>
+				<!-- SEARCH AREA -->
+						<toolbar align="center" style="toolbar-center">
+							<label value="${c:l('window_PresentmentDetailDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" style="float:right; border-style: none;">
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+			<groupbox id="gb_basicDetails" sclass="gb-dialog">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+					<columns>
+							<column width="15%" />
+							<column width="35%" />
+							<column width="15%" />
+							<column width="35%" />
+						</columns>
+					<rows>
+						<row id ="row0" >
+							<label id = "label_PresentmentID" value="${c:l('label_PresentmentDetailDialog_PresentmentID.value')}" />
+								<extendedComboBox id = "presentmentID"/>
+							<label id = "label_FinReference" value="${c:l('label_PresentmentDetailDialog_FinReference.value')}" />
+								<extendedComboBox id = "finReference"/>
+						</row>
+						<row id ="row1" >
+							<label id = "label_SchDate" value="${c:l('label_PresentmentDetailDialog_SchDate.value')}" />
+								<datebox id = "schDate" width="0px" />
+							<label id = "label_SchSeq" value="${c:l('label_PresentmentDetailDialog_SchSeq.value')}" />
+								<intbox id = "schSeq" width="171px"  maxlength="26" />
+						</row>
+						<row id ="row2" >
+							<label id = "label_MandateID" value="${c:l('label_PresentmentDetailDialog_MandateID.value')}" />
+								<extendedComboBox id = "mandateID"/>
+							<label id = "label_SchAmtDue" value="${c:l('label_PresentmentDetailDialog_SchAmtDue.value')}" />
+						  		<textbox id = "schAmtDue" maxlength="18" width="162px" />
+						</row>
+						<row id ="row3" >
+							<label id = "label_SchPriDue" value="${c:l('label_PresentmentDetailDialog_SchPriDue.value')}" />
+						  		<textbox id = "schPriDue" maxlength="18" width="162px" />
+							<label id = "label_SchPftDue" value="${c:l('label_PresentmentDetailDialog_SchPftDue.value')}" />
+						  		<textbox id = "schPftDue" maxlength="18" width="162px" />
+						</row>
+						<row id ="row4" >
+							<label id = "label_SchFeeDue" value="${c:l('label_PresentmentDetailDialog_SchFeeDue.value')}" />
+						  		<textbox id = "schFeeDue" maxlength="18" width="162px" />
+							<label id = "label_SchInsDue" value="${c:l('label_PresentmentDetailDialog_SchInsDue.value')}" />
+						  		<textbox id = "schInsDue" maxlength="18" width="162px" />
+						</row>
+						<row id ="row5" >
+							<label id = "label_SchPenaltyDue" value="${c:l('label_PresentmentDetailDialog_SchPenaltyDue.value')}" />
+						  		<textbox id = "schPenaltyDue" maxlength="18" width="162px" />
+							<label id = "label_AdvanceAmt" value="${c:l('label_PresentmentDetailDialog_AdvanceAmt.value')}" />
+						  		<textbox id = "advanceAmt" maxlength="18" width="162px" />
+						</row>
+						<row id ="row6" >
+							<label id = "label_ExcessID" value="${c:l('label_PresentmentDetailDialog_ExcessID.value')}" />
+								<extendedComboBox id = "excessID"/>
+							<label id = "label_AdviseAmt" value="${c:l('label_PresentmentDetailDialog_AdviseAmt.value')}" />
+						  		<textbox id = "adviseAmt" maxlength="18" width="162px" />
+						</row>
+						<row id ="row7" >
+							<label id = "label_ExcludeReason" value="${c:l('label_PresentmentDetailDialog_ExcludeReason.value')}" />
+								<combobox id = "excludeReason" width="90px" />
+							<label id = "label_PresentmentAmt" value="${c:l('label_PresentmentDetailDialog_PresentmentAmt.value')}" />
+						  		<textbox id = "presentmentAmt" maxlength="18" width="162px" />
+						</row>
+						<row id ="row8" >
+							<label id = "label_Status" value="${c:l('label_PresentmentDetailDialog_Status.value')}" />
+								<combobox id = "status" width="90px" />
+							<label id = "label_BounceID" value="${c:l('label_PresentmentDetailDialog_BounceID.value')}" />
+								<extendedComboBox id = "bounceID"/>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+		</center>
+		<south sclass="south-dialog">
+			<groupbox id="groupboxWf" width="99%">
+				<caption label="${c:l('Action')}" />
+				<hbox width="95%">
+					<radiogroup id="userAction" name="action" />
+					<label id="label_RecordStatus"  value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+					<label id="recordStatus" />
+				</hbox>
+			</groupbox>
+		</south>
+	</borderlayout>
+</window>
+</zk> 

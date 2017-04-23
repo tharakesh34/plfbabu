@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.financemanagement.impl;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -131,7 +133,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		if (presentmentDetail.isNew()) {
 			presentmentDetail.setId(Long.parseLong(getPresentmentDetailDAO().save(presentmentDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(presentmentDetail);
-			auditHeader.setAuditReference(String.valueOf(presentmentDetail.getDetailID()));
+			auditHeader.setAuditReference(String.valueOf(presentmentDetail.getPresentmentID()));
 		} else {
 			getPresentmentDetailDAO().update(presentmentDetail, tableType);
 		}
@@ -229,8 +231,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		getPresentmentDetailDAO().delete(presentmentDetail, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(presentmentDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					presentmentDetailDAO.getPresentmentDetail(presentmentDetail.getDetailID(), ""));
+			auditHeader.getAuditDetail().setBefImage(presentmentDetailDAO.getPresentmentDetail(presentmentDetail.getPresentmentID(), ""));
 		}
 
 		if (presentmentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -336,5 +337,21 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+ 
+	
+	@Override
+	public PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq) {
+		return	getPresentmentDetailDAO().getPresentmentDetails(finReference, schDate, schSeq);
+	}
 
+	@Override
+	public void savePresentmentDetails(PresentmentDetail presentmentDetail) {
+		getPresentmentDetailDAO().save(presentmentDetail, TableType.MAIN_TAB);
+	}
+
+	@Override
+	public long getPresentmentDetailRef(String tableName) {
+		return getPresentmentDetailDAO().getPresentmentDetailRef(tableName);
+	}
+	 
 }

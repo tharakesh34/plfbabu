@@ -225,6 +225,8 @@ import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -1877,6 +1879,14 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
 				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc",
 				"Active" }, null, 400));
+		/*PresentmentDetail*/
+		ModuleUtil.register("PresentmentDetail", new ModuleMapping("PresentmentDetail", PresentmentDetail.class, new String[] { "PresentmentDetails",
+		"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));
+
+		/*PresentmentHeader*/
+		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
+		"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
