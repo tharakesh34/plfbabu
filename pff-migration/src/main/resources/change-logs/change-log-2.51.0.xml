@@ -1787,5 +1787,83 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 
 		</sql>
 	</changeSet>
-	
+	<changeSet id="83" author="Surekha">
+		<createView viewName="CostCenters_AView" replaceIfExists="true">
+		SELECT		T1.CostCenterID, T1.CostCenterCode, T1.CostCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	CostCenters  T1 
+		</createView>
+	</changeSet>
+	<changeSet id="84" author="Surekha">
+		<createView viewName="CostCenters_View" replaceIfExists="true">
+		SELECT		T1.CostCenterID, T1.CostCenterCode, T1.CostCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	CostCenters_Temp  T1 
+		UNION ALL
+		
+		SELECT		T1.CostCenterID, T1.CostCenterCode, T1.CostCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	CostCenters  T1 
+		WHERE     NOT EXISTS (SELECT 1 FROM CostCenters_TEMP WHERE CostCenterID = T1.CostCenterID)
+	</createView>
+	</changeSet>
+	<changeSet id="85" author="Surekha">
+	<createView viewName="ProfitCenters_AView" replaceIfExists="true">
+		SELECT		T1.ProfitCenterID, T1.ProfitCenterCode, T1.ProfitCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	ProfitCenters  T1 
+		</createView>
+		</changeSet>
+<changeSet id="86" author="Surekha">
+		<createView viewName="ProfitCenters_View" replaceIfExists="true">
+		SELECT		T1.ProfitCenterID, T1.ProfitCenterCode, T1.ProfitCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	ProfitCenters_Temp  T1 
+		UNION ALL
+		
+		SELECT		T1.ProfitCenterID, T1.ProfitCenterCode, T1.ProfitCenterDesc, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	ProfitCenters  T1 
+		WHERE     NOT EXISTS (SELECT 1 FROM ProfitCenters_TEMP WHERE ProfitCenterID = T1.ProfitCenterID)
+		</createView>
+</changeSet>
+<changeSet id="87" author="Surekha">
+	<dropTable tableName="SeqProfitCenters"/>
+</changeSet>
+<changeSet id="88" author="Surekha">
+	<createTable tableName="SeqProfitCenters">
+			<column name="SeqNo" type="bigint" />
+</createTable>
+</changeSet>
+<changeSet id="89" author="Surekha">
+	<sql>
+			INSERT INTO SeqProfitCenters VALUES(0);
+		</sql>
+	</changeSet>
+	<changeSet id="90" author="Surekha">
+	<dropTable tableName="SeqCostCenters"/>
+</changeSet>
+<changeSet id="91" author="Surekha">
+	<createTable tableName="SeqCostCenters">
+			<column name="SeqNo" type="bigint" />
+</createTable>
+</changeSet>
+<changeSet id="92" author="Surekha">
+	<sql>
+			INSERT INTO SeqCostCenters VALUES(0);
+		</sql>
+	</changeSet>
+	<changeSet id="93" author="Surekha">
+	<dropTable tableName="SeqBounceReasons"/>
+</changeSet>
+<changeSet id="94" author="Surekha">
+	<createTable tableName="SeqBounceReasons">
+			<column name="SeqNo" type="bigint" />
+</createTable>
+</changeSet>
+<changeSet id="95" author="Surekha">
+	<sql>
+			INSERT INTO SeqBounceReasons VALUES(0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
