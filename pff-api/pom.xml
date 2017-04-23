@@ -319,6 +319,7 @@
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>WEB-INF/lib/stax-api-1.0.1.jar</packagingExcludes>
 					<archive>
 						<manifestEntries>
 							<Implementation-Version>${project.version}</Implementation-Version>
