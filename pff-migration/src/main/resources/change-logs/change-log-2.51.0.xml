@@ -2097,4 +2097,20 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		</sql>
 	</changeSet>
 	
+	
+	<changeSet id="109" author="durgaprasad G">
+	<createTable tableName="SeqPresentmentDetailRef">
+		<column name="id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+</changeSet>
+
+ 	<changeSet id="110" author="durgaprasad G">
+		<sql>
+			Insert into SeqPresentmentDetailRef values (0);
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
