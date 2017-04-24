@@ -1101,6 +1101,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			wve.add(we);
 		}
 		doRemoveValidation();
+		doClearMessage();
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -1413,6 +1414,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		// force validation, if on, than execute by component.getValue()
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFinAdvancePayments.getRecordType()) && isValidation()) {
+			doClearMessage();
 			doSetValidation();
 			// fill the FinAdvancePaymentsDetail object with the components data
 			doWriteComponentsToBean(aFinAdvancePayments);
