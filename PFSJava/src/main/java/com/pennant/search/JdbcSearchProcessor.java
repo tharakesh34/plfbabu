@@ -183,24 +183,6 @@ public class JdbcSearchProcessor implements Serializable {
 		}
 	}
 
-	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
-		StringBuilder result = new StringBuilder();
-
-		if (offset > 0) {
-			result.append("select * from ( select row_.*, rownum rownum_ from ( ");
-		} else {
-			result.append("select * from ( ");
-		}
-		result.append(sql);
-		if (offset > 0) {
-			result.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
-		} else {
-			result.append(" ) where rownum <= " + pageSize);
-		}
-
-		return result.toString();
-	}
-
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
 		return new StringBuffer(sql.length() + 20).append(sql)
 				.append(hasOffset ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
@@ -529,5 +511,28 @@ public class JdbcSearchProcessor implements Serializable {
 			query.addCustomOrdering(sort.getProperty(),
 					sort.isDesc() ? OrderObject.Dir.DESCENDING : OrderObject.Dir.ASCENDING);
 		}
+	}
+
+	/**
+	 * Gets the Oracle limit rows statement.
+	 * 
+	 * @param sql
+	 *            The statement to fetch an ordered result set.
+	 * @param offset
+	 *            The number of rows to offset.
+	 * @param pageSize
+	 *            The number of rows to fetch.
+	 * @return The Oracle limit rows statement.
+	 */
+	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
+		StringBuilder result = new StringBuilder(sql);
+
+		if (offset <= 0) {
+			result.append(" fetch first ").append(pageSize).append(" rows only");
+		} else {
+			result.append(" offset ").append(offset).append(" rows fetch next ").append(pageSize).append(" rows only");
+		}
+
+		return result.toString();
 	}
 }
