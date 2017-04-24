@@ -173,33 +173,19 @@ public class JdbcSearchProcessor implements Serializable {
 		case ORACLE:
 			return getOracleLimitRowsSql(query.toString(), offset, pageSize);
 		case SQL_SERVER:
-			return getMSSQLLimitString(query.toString(), offset > 0, offset, pageSize);
+			return getMSSQLLimitString(query.toString(), offset, pageSize);
 		case DB2:
-			return getDB2LimitString(query.toString(), offset > 0, offset, pageSize);
+			return getDB2LimitString(query.toString(), offset, pageSize);
 		case MYSQL:
-			return getMYSQLLimitString(query.toString(), offset > 0, offset, pageSize);
+			return getMYSQLLimitString(query.toString(), offset, pageSize);
 		default:
 			return query.toString();
 		}
 	}
 
-	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
+	private String getMYSQLLimitString(String sql, int startRow, int endRow) {
 		return new StringBuffer(sql.length() + 20).append(sql)
-				.append(hasOffset ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
-	}
-
-	public static String getMSSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-		if (startRow > 1 || endRow > 1) {
-			return getMSSQLLimitString(sql, startRow, endRow);
-		}
-		return sql;
-	}
-
-	public static String getDB2LimitString(String sql, boolean hasOffset, int startRow, int endRow) {
-		if (startRow > 1 || endRow > 1) {
-			return getDB2LimitString(sql, startRow, endRow);
-		}
-		return sql;
+				.append(startRow > 0 ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
 	}
 
 	/**
@@ -225,7 +211,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 * 
 	 * @return A new SQL statement with the LIMIT clause applied.
 	 */
-	public static String getMSSQLLimitString(String querySqlString, int startRow, int endRow) {
+	private String getMSSQLLimitString(String querySqlString, int startRow, int endRow) {
 		StringBuilder sb = new StringBuilder(querySqlString.trim().toLowerCase());
 
 		int orderByIndex = sb.indexOf("order by");
@@ -262,7 +248,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 * @param sql
 	 *            an sql query
 	 */
-	protected static void replaceDistinctWithGroupBy(StringBuilder sql) {
+	private void replaceDistinctWithGroupBy(StringBuilder sql) {
 		int distinctIndex = sql.indexOf(DISTINCT);
 		if (distinctIndex > 0) {
 			sql.delete(distinctIndex, distinctIndex + DISTINCT.length() + 1);
@@ -278,7 +264,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 *            sql query
 	 * @return the fields of the select statement without their alias
 	 */
-	protected static CharSequence getSelectFieldsWithoutAliases(StringBuilder sql) {
+	private CharSequence getSelectFieldsWithoutAliases(StringBuilder sql) {
 		String select = sql.substring(sql.indexOf(SELECT) + SELECT.length(), sql.indexOf(FROM));
 
 		// Strip the as clauses
@@ -292,7 +278,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 *            string to replace the as statements
 	 * @return a string without the as statements
 	 */
-	protected static String stripAliases(String str) {
+	private String stripAliases(String str) {
 		return str.replaceAll("\\sas[^,]+(,?)", "$1");
 	}
 
@@ -304,7 +290,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 * @param orderby
 	 *            the order by clause of the query
 	 */
-	protected static void insertRowNumberFunction(StringBuilder sql, CharSequence orderby) {
+	private void insertRowNumberFunction(StringBuilder sql, CharSequence orderby) {
 		// Find the end of the select statement
 		int selectEndIndex = sql.indexOf(SELECT) + SELECT.length();
 
@@ -312,8 +298,7 @@ public class JdbcSearchProcessor implements Serializable {
 		sql.insert(selectEndIndex, " ROW_NUMBER() OVER (" + orderby + ") row_nr,");
 	}
 
-	public static String getDB2LimitString(String sql, int startRow, int endRow) {
-
+	private String getDB2LimitString(String sql, int startRow, int endRow) {
 		int startOfSelect = sql.toLowerCase().indexOf("select");
 		StringBuffer pagingSelect = new StringBuffer(sql.length() + 100).append(sql.substring(0, startOfSelect)) // add the comment
 				.append("select * from ( select ") // nest the main query in an
@@ -342,7 +327,6 @@ public class JdbcSearchProcessor implements Serializable {
 		pagingSelect.append(" between " + (startRow + 1) + " and " + endRow);
 
 		return pagingSelect.toString();
-
 	}
 
 	private static String getRowNumber(String sql) {
