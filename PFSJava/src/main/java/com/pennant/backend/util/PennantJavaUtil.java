@@ -77,6 +77,7 @@ import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
 import com.pennant.backend.model.amtmasters.VehicleModel;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -1885,6 +1886,9 @@ public class PennantJavaUtil {
 		/*PresentmentHeader*/
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
 		"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
+		
+		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
+		"AccountMapping_AView" }, masterWF, new String[] {},null, 600));
 
 	}
 

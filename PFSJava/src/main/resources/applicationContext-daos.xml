@@ -9673,4 +9673,26 @@
        <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
+   	<!-- AccountMapping -->
+	<bean id="accountMappingDAO" class="com.pennant.backend.dao.applicationmaster.impl.AccountMappingDAOImpl" parent="basisCodeDAO">
+			<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="accountMappingService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="accountMappingServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="accountMappingServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.AccountMappingServiceImpl">
+       <property name="accountMappingDAO" ref="accountMappingDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 </beans>
