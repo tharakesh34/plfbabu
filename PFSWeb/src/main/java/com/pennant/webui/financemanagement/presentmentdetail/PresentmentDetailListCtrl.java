@@ -51,7 +51,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -158,9 +161,9 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		setItemRender(new PresentmentDetailListModelItemRenderer());
 
 		registerButton(button_PresentmentDetailList_PresentmentDetailSearch);
+		registerButton(button_PresentmentDetailList_CreateBatch);
 
 		doRenderPage();
-		search();// FIXME
 		doSetFieldProperties();
 
 		logger.debug(Literal.LEAVING);
@@ -203,12 +206,22 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_PresentmentDetailSearch(Event event) {
+		doSetValidations();
 		search();
+	}
+
+	private void doSetValidations() {
+		Clients.clearWrongValue(this.batchReference);
+		if (Labels.getLabel("Combo.Select").equals(this.batchReference.getSelectedItem().getLabel())) {
+			throw new WrongValueException(this.batchReference, " Batch Reference is mandatory.");
+		}
 	}
 
 	public void onClick$button_PresentmentDetailList_CreateBatch(Event event) {
 		logger.debug(Literal.ENTERING);
 
+		doSetValidations();
+		
 		// presentmentDetailService.getPresentmentDetails(this.batchReference.getValue());
 
 		logger.debug(Literal.LEAVING);
@@ -242,6 +255,25 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
+	}
+
+	private static ArrayList<ValueLabel> getPresentmentReference() {
+		ArrayList<ValueLabel> list = new ArrayList<ValueLabel>();
+		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<ValueLabel> so = new JdbcSearchObject<ValueLabel>(ValueLabel.class);
+
+		so.addTabelName("PRESENTMENTDETAILHEADER");
+		so.addField(" ExtractId Value");
+		so.addField(" ExtractReference AS Label");
+		List<ValueLabel> ids = service.getBySearchObject(so);
+
+		ValueLabel label = null;
+		for (int i = 0; i < ids.size(); i++) {
+			label = new ValueLabel(ids.get(i).getLabel(), ids.get(i).getValue());
+			list.add(label);
+		}
+		return list;
 	}
 
 	/**
@@ -279,25 +311,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 			lc.setParent(item);
 
 		}
-	}
-
-	private static ArrayList<ValueLabel> getPresentmentReference() {
-		ArrayList<ValueLabel> list = new ArrayList<ValueLabel>();
-		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		JdbcSearchObject<ValueLabel> so = new JdbcSearchObject<ValueLabel>(ValueLabel.class);
-
-		so.addTabelName("PRESENTMENTDETAILHEADER");
-		so.addField(" ExtractId Value");
-		so.addField(" ExtractReference AS Label");
-		List<ValueLabel> ids = service.getBySearchObject(so);
-
-		ValueLabel label = null;
-		for (int i = 0; i < ids.size(); i++) {
-			label = new ValueLabel(ids.get(i).getLabel(), ids.get(i).getValue());
-			list.add(label);
-		}
-		return list;
 	}
 
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {

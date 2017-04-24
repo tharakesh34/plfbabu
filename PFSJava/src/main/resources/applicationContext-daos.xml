@@ -9643,6 +9643,7 @@
 
  	<bean name="presentmentDetailServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">
        <property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+       <property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    

@@ -28,10 +28,10 @@
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
+					<toolbar align="end" style="border-style: none;">
 						<button id="button_PresentmentDetailList_NewPresentmentDetail" label="${c:l('label_New')}"
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help"
-							tooltiptext="${c:l('button_PresentmentDetailList_NewPresentmentDetail.tooltiptext')}" sclass="z-toolbarbutton" visible=" "/	>
-					<toolbar align="end" style="border-style: none;">
+							tooltiptext="${c:l('button_PresentmentDetailList_NewPresentmentDetail.tooltiptext')}" sclass="z-toolbarbutton" visible="false"/>
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />

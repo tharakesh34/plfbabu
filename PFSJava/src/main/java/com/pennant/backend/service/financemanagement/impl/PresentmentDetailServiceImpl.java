@@ -44,7 +44,7 @@ package com.pennant.backend.service.financemanagement.impl;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.util.List;
+import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -82,6 +82,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -110,6 +111,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	 */
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	/**
@@ -353,26 +358,61 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	@Override
 	public String processPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception {
 		try {
-			ResultSet resultSet = getPresentmentDetailDAO().getPresentmentDetails(detailHeader);
+			ResultSet rs = getPresentmentDetailDAO().getPresentmentDetails(detailHeader);
 
-			if (resultSet != null) {
-				resultSet.last();
-				resultSet.beforeFirst();
-				if (resultSet.getRow() <= 0) {
+			if (rs != null) {
+				rs.last();
+				rs.beforeFirst();
+				if (rs.getRow() <= 0) {
 					return " No records are available to extract, please change the search criteria.";
 				}
 			}
+			
 			long reference = getPresentmentDetailDAO().getPresentmentDetailRef("SeqPresentmentDetailRef");
 			String strReference = StringUtils.leftPad(String.valueOf(reference), 10, "0");
 			strReference = "PRE".concat(strReference);
 			detailHeader.setExtractId(reference);
 			detailHeader.setExtractReference(strReference);
 			getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
-
-			while (resultSet.next()) {
+			
+ 			while (rs.next()) {
 				PresentmentDetail pDetail = new PresentmentDetail();
-				pDetail.setDetailID(reference);
-                doCalculations(pDetail);
+				pDetail.setFinReference(rs.getString("FINREFERENCE"));
+				
+				pDetail.setExtractID(reference);
+				
+				pDetail.setSchDate(rs.getDate("SCHDATE"));
+				pDetail.setMandateID(rs.getLong("MANDATEID"));
+
+				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD")).add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
+						.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID"));	
+				
+				pDetail.setSchAmtDue(schAmtDue);
+				pDetail.setSchPriDue(rs.getBigDecimal("PRINCIPALSCHD").subtract(rs.getBigDecimal("SCHDPRIPAID")));
+				pDetail.setSchPftDue(rs.getBigDecimal("PROFITSCHD").subtract(rs.getBigDecimal("SCHDPFTPAID")));
+				pDetail.setSchFeeDue(rs.getBigDecimal("FEESCHD").subtract(rs.getBigDecimal("SCHDFEEPAID")));
+				pDetail.setSchInsDue(new BigDecimal(0));
+				pDetail.setSchPenaltyDue(new BigDecimal(0));
+				
+				pDetail.setBounceID(1L);
+				pDetail.setStatus(RepayConstants.PEXC_EXTRACT);
+				
+				pDetail.setVersion(0);
+				pDetail.setLastMntBy(detailHeader.getLastMntBy());
+				pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				pDetail.setRecordStatus("");
+				pDetail.setRoleCode("");
+				pDetail.setNextRoleCode("");
+				pDetail.setTaskId("");
+				pDetail.setNextTaskId("");
+				pDetail.setRecordType("");
+				pDetail.setWorkflowId(0);
+				
+				FinExcessAmount finExcessAmount = doCalculations(pDetail, detailHeader);
+				if (finExcessAmount != null) {
+					finExcessAmountDAO.updateReserved(new FinExcessAmount());
+				}
+				getPresentmentDetailDAO().save(pDetail, TableType.MAIN_TAB);
 			}
 
 		} catch (Exception e) {
@@ -381,64 +421,65 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		return null;
 	}
 
-	private void doCalculations(String finReference, List<PresentmentDetail> presentmentDetails, PresentmentDetailHeader detailHeader) {
-			logger.debug(Literal.ENTERING);
-			BigDecimal emiInAdvanceAmt; 
-			FinExcessAmount excessAmount = finExcessAmountDAO.
-					getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
-			
-			if(excessAmount != null){
-				emiInAdvanceAmt = excessAmount.getBalanceAmt();
-			} else{
-				emiInAdvanceAmt = BigDecimal.ZERO;
-			}
-			BigDecimal advanceAmount = BigDecimal.ZERO;
-			
-			for (PresentmentDetail presentmentDetail : presentmentDetails) {
-				
-				//EMI HOLD 
-				if(DateUtility.compare(presentmentDetail.getDefSchdDate(), detailHeader.getToDate()) > 0){
-					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_EMIHOLD);
-					continue;
-				}
-				
-				//Mandate Hold 
-				if(MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
-					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
-					continue;
-				}
-				
-				//Mandate Not Approved 
-				if(!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && 
-						MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
-					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
-				}
+	private FinExcessAmount doCalculations(PresentmentDetail presentmentDetail, PresentmentDetailHeader detailHeader) {
+		logger.debug(Literal.ENTERING);
 
-				//Mandate Expired 
-				if(!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && 
-						MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
-					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
-				}
-				
-				
-				//EMI IN ADVANCE 
-				if(emiInAdvanceAmt.compareTo(presentmentDetail.getPresentmentAmt()) > 0){
-					advanceAmount = presentmentDetail.getPresentmentAmt();
-					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_EMIINADVANCE);
-				}else{
-					advanceAmount = emiInAdvanceAmt;
-				}
-				presentmentDetail.setAdvanceAmt(advanceAmount);
-				presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advanceAmount));
-				
-						
-				
-				
-			}
-			
-			
-			
-			logger.debug(Literal.LEAVING);
-		}		
+		BigDecimal emiInAdvanceAmt;
+		String finReference = presentmentDetail.getFinReference();
+
+		// EMI HOLD
+		if (DateUtility.compare(presentmentDetail.getDefSchdDate(), detailHeader.getToDate()) > 0) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIHOLD);
+			return null;
+		}
+
+		// Mandate Hold
+		if (MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
+			return null;
+		}
+
+		// Mandate Not Approved
+		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && !MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+			return null;
+		}
+
+		if (MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
+						|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus())) || (MandateConstants.STATUS_NEW.equals(presentmentDetail.getMandateStatus())))) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+			return null;
+		}
+
+		// Mandate Expired
+		if (DateUtility.compare(presentmentDetail.getDefSchdDate(), presentmentDetail.getMandateExpiry()) > 0) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
+			return null;
+		}
+
+		// EMI IN ADVANCE
+		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		if (excessAmount != null) {
+			emiInAdvanceAmt = excessAmount.getBalanceAmt();
+		} else {
+			emiInAdvanceAmt = BigDecimal.ZERO;
+		}
+
+		BigDecimal advanceAmount = BigDecimal.ZERO;
+		if (emiInAdvanceAmt.compareTo(presentmentDetail.getPresentmentAmt()) >= 0) {
+			advanceAmount = presentmentDetail.getPresentmentAmt();
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
+		} else {
+			advanceAmount = emiInAdvanceAmt;
+		}
+		presentmentDetail.setAdvanceAmt(advanceAmount);
+		presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advanceAmount));
+
+		excessAmount.setUtilisedAmt(excessAmount.getUtilisedAmt().add(advanceAmount));
+		excessAmount.setReservedAmt(excessAmount.getReservedAmt().subtract(advanceAmount));
+
+		logger.debug(Literal.LEAVING);
+		return excessAmount;
+	}
 	 
 }

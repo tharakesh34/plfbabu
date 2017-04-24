@@ -113,10 +113,20 @@ public class RepayConstants {
 	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
 	public static final String	PAYTYPE_PAYABLE			= "PAYABLE";
 	
-	//Presentment Exclude Reasons 
-	public static final int	PRESENTMENT_EXC_EMIINADVANCE = 1;
-	public static final int	PRESENTMENT_EXC_EMIHOLD = 2;
-	public static final int	PRESENTMENT_EXC_MANDATEHOLD = 3;
+	// Presentment Exclude Reasons
+	public static final int PEXC_EMIINADVANCE = 1;
+	public static final int PEXC_EMIHOLD = 2;
+	public static final int PEXC_MANDATE_HOLD = 3;
+	public static final int PEXC_MANDATE_NOTAPPROV = 4;
+	public static final int PEXC_MANDATE_EXPIRY = 5;
+
+	// Presentment Exclude Reasons
+	public static final int PEXC_EXTRACT = 1;
+	public static final int PEXC_BATCH_CREATED = 2;
+	public static final int PEXC_AWAITING_CONF = 3;
+	public static final int PEXC_SEND_PRESENTMENT = 4;
+	public static final int PEXC_CLEARED = 5;
+	public static final int PEXC_BOUNCED = 6;
 	
 
 }

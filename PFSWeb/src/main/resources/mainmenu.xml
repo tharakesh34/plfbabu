@@ -617,9 +617,9 @@
 	 	
 <!--//APPEND AFTER THIS//-->
 
-<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
-<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
-<menuItem id="menu_Item_PresentmentHeader" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
+<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul"  rightName=""/> <!-- menuItem_financemanagement_PresentmentHeader -->
+<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul"  rightName=""/>
+<menuItem id="menu_Item_PresentmentHeader" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul"  rightName=""/>
 
 
 </ns2:XMLRootMenu>

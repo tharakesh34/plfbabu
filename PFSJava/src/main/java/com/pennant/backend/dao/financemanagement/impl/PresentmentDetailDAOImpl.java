@@ -208,20 +208,20 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	public String save(PresentmentDetail presentmentDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		if (presentmentDetail.getPresentmentID() == Long.MIN_VALUE) {
-			presentmentDetail.setPresentmentID(getNextidviewDAO().getNextId("SeqPresentmentDetails"));
+		if (presentmentDetail.getExtractID() == Long.MIN_VALUE) {
+			presentmentDetail.setExtractID(getNextidviewDAO().getNextId("SeqPresentmentDetails"));
 		}
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert into PresentmentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("(DetailID, PresentmentID, FinReference, SchDate, SchSeq, MandateID, ");
+		sql.append(" (DetailID, ExtractID , PresentmentID, FinReference, SchDate, SchSeq, MandateID, ");
 		sql.append(" SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, ");
 		sql.append(" AdvanceAmt, ExcessID, AdviseAmt, ExcludeReason, PresentmentAmt, Status, ");
 		sql.append(" BounceID, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :DetailID, :PresentmentID, :FinReference, :SchDate, :SchSeq, :MandateID, ");
+		sql.append(" :DetailID, :ExtractID, :PresentmentID, :FinReference, :SchDate, :SchSeq, :MandateID, ");
 		sql.append(" :SchAmtDue, :SchPriDue, :SchPftDue, :SchFeeDue, :SchInsDue, :SchPenaltyDue, ");
 		sql.append(" :AdvanceAmt, :ExcessID, :AdviseAmt, :ExcludeReason, :PresentmentAmt, :Status, ");
 		sql.append(" :BounceID, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
@@ -269,45 +269,37 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
-		/*
-		 * Select T1.FinReference, T1.SCHDATE, T4.MANDATEID,T4.MandateType, T2.FinType, PROFITSCHD, PRINCIPALSCHD,
-		 * SCHDPRIPAID, SCHDPFTPAID, FEESCHD, SCHDFEEPAID, INSSCHD from FinScheduleDetails T1 Inner Join FinanceMain T2
-		 * on T1.FinReference = T2.FinReference INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE INNER JOIN
-		 * MANDATES T4 ON T4.MANDATEID = T2.MANDATEID
-		 */
 		try {
-
 			sql = new StringBuilder();
-			sql.append(" SELECT  detailID, presentmentID, finReference, schDate, schSeq, mandateID, ");
-			sql.append(" schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, schPenaltyDue, ");
-			sql.append(" advanceAmt, excessID, adviseAmt, excludeReason, presentmentAmt, status, ");
-			sql.append(" bounceID,  presentmentID,finReference,mandateID,excessID,excludeReason,status,");
-			sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-			sql.append(" From ");
-
-			sql.append(" Where ((SchDate >= ? AND SchDate <= ?) ");
-			sql.append(" OR (DefschdDate >= ? AND DefschdDate <= ?)) ");
+			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, ");
+			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T2.MANDATEID, T4.MANDATETYPE  FROM FINSCHEDULEDETAILS T1 ");
+			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE  ");
+			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE ");
+			sql.append(" INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID ");
+			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?) ");
+			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
-				sql.append(" AND (LoanType = ?)");
+				sql.append(" AND (FINTYPE = ?)");
 			}
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
-				sql.append(" AND (MandateType = ?) ");
+				sql.append(" AND (MANDATETYPE = ?) ");
 			}
 			logger.trace(Literal.SQL + sql.toString());
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stmt.setDate(1, new java.sql.Date(detailHeader.getFromDate().getTime()));
-			stmt.setDate(2, new java.sql.Date(detailHeader.getToDate().getTime()));
-			stmt.setDate(3, new java.sql.Date(detailHeader.getFromDate().getTime()));
-			stmt.setDate(4, new java.sql.Date(detailHeader.getToDate().getTime()));
+			stmt.setString(1, "1");
+			stmt.setDate(2, new java.sql.Date(detailHeader.getFromDate().getTime()));
+			stmt.setDate(3, new java.sql.Date(detailHeader.getToDate().getTime()));
+			stmt.setDate(4, new java.sql.Date(detailHeader.getFromDate().getTime()));
+			stmt.setDate(5, new java.sql.Date(detailHeader.getToDate().getTime()));
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
-				stmt.setString(5, detailHeader.getLoanType());
+				stmt.setString(6, detailHeader.getLoanType());
 			}
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
-				stmt.setString(6, detailHeader.getMandateType());
+				stmt.setString(7, detailHeader.getMandateType());
 			}
 			rs = stmt.executeQuery();
 		} catch (Exception e) {
@@ -321,7 +313,6 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
-
 		return rs;
 	}
 	
