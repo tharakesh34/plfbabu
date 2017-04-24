@@ -831,7 +831,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 								getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0){
 
 							// Calculated Profit Display
-							if(!getFinanceScheduleDetail().isDisbOnSchDate() && count == 1){
+							if(!getFinanceScheduleDetail().isDisbOnSchDate() && (count == 1 || StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory()) 
+									&&  count == 2 )){
 
 								String label = Labels.getLabel("label_listcell_profitCalc.label");
 								if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
@@ -877,7 +878,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 						// Calculated Profit Display
 						if(!getFinanceScheduleDetail().isDisbOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() &&
-								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && count == 1){
+								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && (count == 1 || StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory()) 
+										&&  count == 2 )){
 
 							String label = Labels.getLabel("label_listcell_profitCalc.label");
 							if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
@@ -1806,8 +1808,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 								getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0){
 
 							// Calculated Profit Display
-							if(!getFinanceScheduleDetail().isDisbOnSchDate() && count == 1){
-
+							if(!getFinanceScheduleDetail().isDisbOnSchDate() && (count == 1 || StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory()) 
+									&&  count == 2 )){
 								String label = Labels.getLabel("label_listcell_profitCalc.label");
 								if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
 									label = Labels.getLabel("label_listcell_BPIAmount.label");
@@ -1853,7 +1855,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 						// Calculated Profit Display
 						if(!getFinanceScheduleDetail().isDisbOnSchDate() && !getFinanceScheduleDetail().isRepayOnSchDate() && 
-								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && count == 1){
+								getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && (count == 1 ||
+								StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory()) &&  count == 2 )){
 
 							String label = Labels.getLabel("label_listcell_profitCalc.label");
 							if(StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
