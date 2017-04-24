@@ -47,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BankDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>BankDetail model</b> class.<br>
@@ -88,7 +91,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 	 */
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setId(id);
@@ -109,138 +112,135 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 			logger.error("Exception: ", e);
 			bankDetail = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return bankDetail;
 	}
 
+	@Override
+	public boolean isDuplicateKey(String bankCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "BankCode = :bankCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTBankDetail", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTBankDetail_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTBankDetail_Temp", "BMTBankDetail" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("bankCode", bankCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(BankDetail bankDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" (BankCode, BankName, Active,  AccNoLength,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(:BankCode, :BankName, :Active, :AccNoLength,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return bankDetail.getId();
+	}
+	
+	@Override
+	public void update(BankDetail bankDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" set BankName = :BankName, Active = :Active, AccNoLength = :AccNoLength,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where BankCode =:BankCode ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void delete(BankDetail bankDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from BMTBankDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where BankCode =:BankCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+	    logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bankDetail);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * @param dataSource
 	 *            the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the BMTBankDetail or
-	 * BMTBankDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Bank Detail by
-	 * key BankCode
-	 * 
-	 * @param BankDetail (bankDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(BankDetail bankDetail, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-
-		deleteSql.append("Delete From BMTBankDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where BankCode =:BankCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", bankDetail.getBankCode(), bankDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", bankDetail.getBankCode(), bankDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTBankDetail or
-	 * BMTBankDetail_Temp.
-	 * 
-	 * save Bank Details
-	 * 
-	 * @param BankDetail (bankDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(BankDetail bankDetail,String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append("Insert Into BMTBankDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BankCode, BankName, Active,  AccNoLength," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:BankCode, :BankName, :Active, :AccNoLength," );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		return bankDetail.getId();
-	}
-
-	/**
-	 * This method updates the Record BMTBankDetail or
-	 * BMTBankDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update bank Details by
-	 * key BankCode and Version
-	 * 
-	 * @param BankDetail (bankDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(BankDetail bankDetail,String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-
-		updateSql.append("Update BMTBankDetail");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BankName = :BankName, Active = :Active, AccNoLength = :AccNoLength," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where BankCode =:BankCode ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", bankDetail.getBankCode(), bankDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
 	}
 	
 	@Override
@@ -265,19 +265,5 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 			logger.debug(dae);
 			return 0;
 		}
-	}
-	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String finAppType,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = finAppType;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BankCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 }

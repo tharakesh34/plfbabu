@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -140,5 +142,8 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 
 	public void setAccNoLength(int accNoLength) {
 		this.accNoLength = accNoLength;
+	}
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }
