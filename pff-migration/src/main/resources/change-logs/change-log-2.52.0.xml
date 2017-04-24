@@ -1392,4 +1392,87 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		<modifyDataType tableName="ManualAdvise_Temp" columnName="Finreference"
 			newDataType="varchar(20)" />
 	</changeSet>
+	<changeSet id="108" author="Prasad">
+		<createView replaceIfExists="true" viewName="RPT_SOA_LOAN_VIEW">
+  		Select FM.FinReference,FM.finamount/100 LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FM.RepayProfitRate ROI,
+		   FP.noinst Tenure,(TotalPriPaid + TotalPftPaid)/100 EMIReceived,
+		   0.00 PreferredCardLimit,(PRVRPYSCHPRI + PRVRPYSCHPFT)/100 PrevInstAmt,
+		   FM.RepayRateBasis intRateType,FD.disbdate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,FP.FinIsActive Status,(totalPriBal+TotalPftBal)/100 FutureInstAmt,
+		   NOInst-NOPaidInst FutureInstNo,totalPriBal/100 FuturePriComponent,TotalPftBal/100 Future_inst_comp,
+		   FR.PenaltyPaid Charge_coll_cust,
+		   Actualamount/100 Upfront_int_cust,	0 Int_paid_Dealer_upfront,BPIAMOUNT Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,FM.MaturityDate Closure_Date
+	From FinanceMain FM inner join
+		 FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+		 (Select FinReference,MAX(DisbDate)disbdate from FinDisbursementDetails
+		  group by FinReference) FD on FP.FinReference = FD.FinReference left join
+		  ( Select FinReference,SUM(PenaltyPaid) PenaltyPaid from FinODCRecovery
+		 group by FinReference) FR on FR.FinReference = FP.FinReference left join
+	   ( Select finreference,sum(Actualamount)Actualamount from finfeedetail 
+	   where finevent in ('ADDDBSP','ADDDBSF') group by finreference )FF on FF.FinReference = FP.FinReference
+		</createView>
+	</changeSet>
+	<changeSet id="109" author="Prasad">
+		<createView replaceIfExists="true" viewName="RPT_SOA_CUSTOMER_VIEW">
+  		Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t4.branchdesc FinBranch,productdesc FinType,'' Interest_Type,T1.ApplicationNo Linked_Agreement_No,
+		'' Closed_Linked_Agree_No,T.CustFName,T.CustMName,
+		CustLName,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+		PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+		Select CustFName,CustMName,CustLName,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,PhoneCountryCode,
+		PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+		from Customers T1 Left join
+		CustomerAddresses T2 ON t1.CustID =T2.CustID and t2.custAddrPriority=5 Left join
+		CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  and PHONETYPEPRIORITY=5 Left join
+		CustomerEMails T4 on T4.CustID =T1.CustID and CustEmailPriority=5 Left join
+		(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+		where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+		(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+		where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+		FinanceMain T1 on T.CustID=T1.CustID inner join
+		RMTFinanceTypes T2 on T1.FinType =T2.FinType inner join
+	  BMTProduct T3 on T3.ProductCode =T2.FinCategory inner join
+	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
+		</createView>
+	</changeSet>
+	<changeSet id="110" author="Prasad">
+		<createView replaceIfExists="true" viewName="RPT_SOA_FINSMRY_VIEW">
+  		Select FinReference,'Instalment Amount' comp,(TdSchdPft+TdSchdPri) due,
+			(TdSchdPriPaid+TdSchdPftPaid) Receipt from FinPftDetails union all
+	Select FinReference,'Principal Component' comp,	TdSchdPri due,
+	TdSchdPriPaid Receipt from FinPftDetails  union all
+	Select FinReference,'Interest Component' comp,TdSchdPft due,
+	TdSchdPftPaid Receipt from FinPftDetails  union all
+	Select FinReference,'Late Payment Penalty' comp,PenaltyDue due,
+	PenaltyPaid Receipt from FinPftDetails union all
+	Select FinReference,'Bounce Charges' comp,0 due,
+	0 Receipt from FinPftDetails union all
+  Select Finreference,'Other Receivables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise where advisetype=1 
+  group by Finreference union all
+   Select Finreference,'Unadjusted Amount' comp,SUM(Amount)due,sum(utilisedamt) from finexcessamount
+   group by Finreference union all
+    Select Finreference,'Other Payables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise where advisetype=2
+  group by Finreference 
+		</createView>
+	</changeSet>
+	<changeSet id="111" author="Prasad">
+		<createView replaceIfExists="true" viewName="RPT_SOA_TXNDETAILS_VIEW">
+  		 Select p.LinkedTranId,p.PostDate,p.TransOrder,p.finReference,p.TranDesc,p.PostAmount DEBITS,0 CREDITS 
+		  from Postings p inner join 
+		       accounts A on a.accountid = P.account  inner join 
+		       rmtAccounttypes AT on AT.actype = A.actype
+		  where AT.custsysac=0 and DrOrCr='D' and p.PostAmount!=0  union
+		  Select p.LinkedTranId,p.PostDate,p.TransOrder,p.finReference,p.TranDesc,0 DEBITS,p.PostAmount CREDITS 
+		  from Postings p inner join 
+		       accounts A on a.accountid = P.account inner join 
+		       rmtAccounttypes AT on AT.actype = A.actype
+		  where AT.custsysac=0 and DrOrCr='C' and p.PostAmount!=0
+		</createView>
+	</changeSet>
 </databaseChangeLog>
