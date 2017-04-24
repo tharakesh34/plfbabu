@@ -91,7 +91,7 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 	 */
 	@Override
 	public EMailType getEMailTypeById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		EMailType eMailType = new EMailType();
 		eMailType.setId(id);
@@ -113,7 +113,8 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 			logger.error("Exception: ", e);
 			eMailType = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return eMailType;
 	}
 
@@ -225,10 +226,10 @@ public class EMailTypeDAOImpl extends BasisCodeDAO<EMailType> implements EMailTy
 
 		try {
 			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
-
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
