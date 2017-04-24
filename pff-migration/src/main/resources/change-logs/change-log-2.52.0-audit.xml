@@ -471,4 +471,16 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 <changeSet id="10" author="Irfan">
 	<renameColumn tableName="AdtFeeTypes" oldColumnName="AccountingSetId" newColumnName="AccountSetId"/>
 </changeSet>
+
+<changeSet id="11" author="chaitanya.ch">
+	<addColumn tableName="AdtRMTFinanceTypes" >
+		<column name="ProfitCenterID" type = "bigint"></column>
+	</addColumn>
+</changeSet>
+
+
+
+
+
+
 </databaseChangeLog>
