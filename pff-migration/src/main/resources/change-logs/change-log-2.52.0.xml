@@ -899,6 +899,16 @@
 			WHERE     NOT EXISTS (SELECT 1 FROM FinTypePartnerBanks_TEMP WHERE ID = T1.ID)
 	</createView>
 	</changeSet>
+	<changeSet author="Irfan" id="90">
+	<dropTable tableName="PartnerBranchModes"/>
+	<createTable tableName="PartnerBranchModes">
+		<column name="PartnerBankId" type="bigint">
+		<constraints nullable="false"/>
+		</column>
+		<column name="BranchCode" type="varchar(8)"/>
+		<column name="PaymentMode" type="varchar(8)"/>
+	</createTable>
+</changeSet>
 		
 		
 </databaseChangeLog>
