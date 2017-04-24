@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -273,6 +274,27 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	@Override
 	public long getPresentmentDetailRef(String tableName) {
 		return getNextidviewDAO().getNextId(tableName);
+	}
+
+	@Override
+	public void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Insert into PresentmentDetailHeader");
+		sql.append("(ExtractId, ExtractReference, FromDate, ToDate, MandateType, LoanType, LastMntBy, LastMntOn) ");
+		sql.append(" Values(");
+		sql.append(" :ExtractId, :ExtractReference, :FromDate, :ToDate, :MandateType, :LoanType, :LastMntBy, :LastMntOn)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detailHeader);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 	
 }

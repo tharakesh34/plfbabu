@@ -69,7 +69,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private String detailRef;
+	private long detailID;
 	private long presentmentID = Long.MIN_VALUE;
 	private String presentmentIDName;
 	private String finReference;
@@ -403,13 +403,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.loanTypeName = loanTypeName;
 	}
 
-	public String getDetailRef() {
-		return detailRef;
-	}
-
-	public void setDetailRef(String detailRef) {
-		this.detailRef = detailRef;
-	}
 
 	public Date getDefSchdDate() {
 		return defSchdDate;
@@ -417,6 +410,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setDefSchdDate(Date defSchdDate) {
 		this.defSchdDate = defSchdDate;
+	}
+
+	public long getDetailID() {
+		return detailID;
+	}
+
+	public void setDetailID(long detailID) {
+		this.detailID = detailID;
 	}
 
 }

@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.financemanagement;
 
 import java.util.Date;
@@ -59,12 +59,12 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>PresentmentHeader table</b>.<br>
- *
+ * 
  */
-@XmlType(propOrder = {"presentmentID","mandateType","partnerBankID","presentmentDate","status"})
+@XmlType(propOrder = { "presentmentID", "mandateType", "partnerBankID", "presentmentDate", "status" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PresentmentHeader extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long presentmentID = Long.MIN_VALUE;
 	private String mandateType;
@@ -76,14 +76,14 @@ private static final long serialVersionUID = 1L;
 	private int status;
 	private String statusName;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private PresentmentHeader befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -96,78 +96,87 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("mandateTypeName");
-			excludeFields.add("partnerBankIDName");
-			excludeFields.add("statusName");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("mandateTypeName");
+		excludeFields.add("partnerBankIDName");
+		excludeFields.add("statusName");
+		return excludeFields;
 	}
 
 	public long getId() {
 		return presentmentID;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.presentmentID = id;
 	}
+
 	public long getPresentmentID() {
 		return presentmentID;
 	}
+
 	public void setPresentmentID(long presentmentID) {
 		this.presentmentID = presentmentID;
 	}
-	
+
 	public String getMandateType() {
 		return mandateType;
 	}
+
 	public void setMandateType(String mandateType) {
 		this.mandateType = mandateType;
 	}
+
 	public String getMandateTypeName() {
 		return this.mandateTypeName;
 	}
 
-	public void setMandateTypeName (String mandateTypeName) {
+	public void setMandateTypeName(String mandateTypeName) {
 		this.mandateTypeName = mandateTypeName;
 	}
-	
+
 	public long getPartnerBankID() {
 		return partnerBankID;
 	}
+
 	public void setPartnerBankID(long partnerBankID) {
 		this.partnerBankID = partnerBankID;
 	}
+
 	public String getPartnerBankIDName() {
 		return this.partnerBankIDName;
 	}
 
-	public void setPartnerBankIDName (String partnerBankIDName) {
+	public void setPartnerBankIDName(String partnerBankIDName) {
 		this.partnerBankIDName = partnerBankIDName;
 	}
-	
+
 	public Date getPresentmentDate() {
 		return presentmentDate;
 	}
+
 	public void setPresentmentDate(Date presentmentDate) {
 		this.presentmentDate = presentmentDate;
 	}
-	
+
 	public int getStatus() {
 		return status;
 	}
+
 	public void setStatus(int status) {
 		this.status = status;
 	}
+
 	public String getStatusName() {
 		return this.statusName;
 	}
 
-	public void setStatusName (String statusName) {
+	public void setStatusName(String statusName) {
 		this.statusName = statusName;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -175,7 +184,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -184,19 +193,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public PresentmentHeader getBefImage(){
+	public PresentmentHeader getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(PresentmentHeader beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(PresentmentHeader beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 

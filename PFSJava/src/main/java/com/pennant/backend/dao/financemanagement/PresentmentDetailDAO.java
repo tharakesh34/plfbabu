@@ -45,6 +45,7 @@ package com.pennant.backend.dao.financemanagement;
 import java.util.Date;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface PresentmentDetailDAO {
@@ -60,4 +61,6 @@ public interface PresentmentDetailDAO {
 	String save(PresentmentDetail presentmentDetail, TableType tableType);
 
 	long getPresentmentDetailRef(String tableName);
+
+	void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader);
 }

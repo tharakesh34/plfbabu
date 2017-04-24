@@ -52,6 +52,7 @@ import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -352,6 +353,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	@Override
 	public long getPresentmentDetailRef(String tableName) {
 		return getPresentmentDetailDAO().getPresentmentDetailRef(tableName);
+	}
+
+	@Override
+	public void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader) {
+		 getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
 	}
 	 
 }

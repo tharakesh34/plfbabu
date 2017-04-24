@@ -46,6 +46,7 @@ import java.util.Date;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 
 public interface PresentmentDetailService {
 
@@ -66,4 +67,6 @@ public interface PresentmentDetailService {
 	void savePresentmentDetails(PresentmentDetail item);
 
 	long getPresentmentDetailRef(String string);
+
+	void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader);
 }

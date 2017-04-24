@@ -43,7 +43,7 @@
 
 package com.pennant.webui.financemanagement.presentmentdetail;
 
-import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,18 +56,14 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listheader;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
@@ -95,15 +91,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Paging pagingPresentmentExtractDetailList;
 	protected Listbox listBoxPresentmentExtractDetail;
 
-	// List headers
-	protected Listheader listheader_PresentmentDetail_Customer;
-	protected Listheader listheader_PresentmentDetail_LoanReference;
-	protected Listheader listheader_PresentmentDetail_LoanTypeOrProduct;
-	protected Listheader listheader_PresentmentDetail_EmiDate;
-	protected Listheader listheader_PresentmentDetail_Amount;
-	protected Listheader listheader_PresentmentDetail_MandateType;
-
-	protected Button button_PresentmentDetailList_PresentmentDetailSearch;
 	protected Button button_PresentmentDetailList_Extract;
 
 	protected Combobox mandateType;
@@ -113,10 +100,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 	protected Listbox sortOperator_MandateType;
 	protected Listbox sortOperator_Product;
-	protected Listbox sortOperator_Fromdate;
-	protected Listbox sortOperator_ToDate;
 
 	private transient PresentmentDetailService presentmentDetailService;
+	
 
 	/**
 	 * default constructor.<br>
@@ -142,21 +128,15 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList,
-				listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
-		setItemRender(new PresentmentDetailListModelItemRenderer());
-
-		registerButton(button_PresentmentDetailList_PresentmentDetailSearch);
-
+		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList, listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
+		
 		registerField("SCHDATE");
 		registerField("DEFSCHDDATE");
 		registerField("FinReference");
-		registerField("MandateType", listheader_PresentmentDetail_MandateType, SortOrder.NONE, mandateType,
-				sortOperator_MandateType, Operators.STRING);
-		registerField("LoanType", listheader_PresentmentDetail_LoanTypeOrProduct, SortOrder.NONE, loanType,
-				sortOperator_Product, Operators.STRING);
+		registerField("SchSeq");
+		registerField("MandateType", mandateType, SortOrder.NONE, sortOperator_MandateType, Operators.STRING);
+		registerField("LoanType",loanType, SortOrder.NONE, sortOperator_Product, Operators.STRING);
 
-		doRenderPage();
 		doSetFieldProperties();
 
 		logger.debug(Literal.LEAVING);
@@ -185,7 +165,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_PresentmentDetailList_PresentmentDetailSearch(Event event) {
+	public void onClick$button_PresentmentDetailList_Extract(Event event) {
 		doSetValidations();
 		search();
 	}
@@ -194,7 +174,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void search() {
 		logger.debug("Entering");
 
-		// Set the first page as the active page.
+		 List<PresentmentDetail> presentmentDetailList = null;
+		 
 		if (paging != null) {
 			this.paging.setActivePage(0);
 		}
@@ -212,25 +193,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 
 		doAddFilters();
-
-	/*	Filter[] filterSchDate = new Filter[2];
-		filterSchDate[0].greaterOrEqual("SCHDATE", this.fromdate.getValue());
-		filterSchDate[1].lessOrEqual("SCHDATE", this.toDate.getValue());
-		
-		
-		Filter[] filterDefSchdDate = new Filter[2];
-		filterDefSchdDate[0].greaterOrEqual("DEFSCHDDATE", this.fromdate.getValue());
-		filterDefSchdDate[1].lessOrEqual("DEFSCHDDATE", this.toDate.getValue());
-		
-
-		Filter[] filter = new Filter[2];
-		filter[0].and(filterSchDate);
-		filter[1].and(filterDefSchdDate);
-		
-		Filter filter2 = new Filter();
-		filter2.or(filter);
-		
-		searchObject.addFilter(filter2);*/
 		
 		String fromDate = PennantAppUtil.formateDate(this.fromdate.getValue(), PennantConstants.DBDateFormat);
 		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
@@ -241,11 +203,16 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		this.searchObject.addWhereClause(whereClause.toString());
 
-		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
-
-		getPagedListWrapper().setPagedListService(pagedListService);
-		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
-
+		
+		presentmentDetailList  = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+		
+		if (presentmentDetailList == null || presentmentDetailList.isEmpty()) {
+			MessageUtil.showError(" No records are available to extract, please change the search criteria.");
+			return;
+		}
+		
+		extractDetails(presentmentDetailList);
+		
 		logger.debug("Leaving");
 	}
 
@@ -287,6 +254,37 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 	}
 
+	private void extractDetails(List<PresentmentDetail> presentmentDetailList) {
+
+		long reference = presentmentDetailService.getPresentmentDetailRef("SeqPresentmentDetailRef");
+		String strReference = StringUtils.leftPad(String.valueOf(reference), 10, "0");
+		strReference = "PRE".concat(strReference);
+
+		PresentmentDetailHeader detailHeader = new PresentmentDetailHeader();
+		detailHeader.setExtractId(reference);
+		detailHeader.setExtractReference(strReference);
+		detailHeader.setFromDate(this.fromdate.getValue());
+		detailHeader.setToDate(this.toDate.getValue());
+		detailHeader.setMandateType(this.mandateType.getValue());
+		detailHeader.setMandateType(this.loanType.getValue());
+		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		presentmentDetailService.savePresentmentHeaderDetails(detailHeader);
+
+		for (PresentmentDetail item : presentmentDetailList) {
+			item = presentmentDetailService.getPresentmentDetails(item.getFinReference(), item.getSchDate(), item.getSchSeq());
+			item = doCalculations(item);
+			// item.setDetailRef(detailRefStr);
+			presentmentDetailService.savePresentmentDetails(item);
+		}
+	}
+
+	private PresentmentDetail doCalculations(PresentmentDetail item) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
@@ -295,7 +293,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
-		search();
 	}
 
 	/**
@@ -318,86 +315,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doShowHelp(event);
 	}
 
-	public void onClick$button_PresentmentDetailList_Extract(Event event) {
-
-		if (this.listBoxPresentmentExtractDetail.getItems().size() == 0) {
-			MessageUtil.showError(" No records are available to extract, please click the search button then preoceed.");
-			return;
-		}
-		List<PresentmentDetail> list = getPresentmentDetails();
-
-		long detailRefLong = presentmentDetailService.getPresentmentDetailRef("SeqPresentmentDetailRef");
-
-		String detailRefStr = StringUtils.leftPad(String.valueOf(detailRefLong), 10, "0");
-		detailRefStr = "PRE".concat(detailRefStr);
-
-		for (PresentmentDetail item : list) {
-
-			item = presentmentDetailService.getPresentmentDetails(item.getFinReference(), item.getSchDate(), item.getSchSeq());
-			item = doCalculations(item);
-			item.setDetailRef(detailRefStr);
-			presentmentDetailService.savePresentmentDetails(item);
-		}
-	}
-
-	private PresentmentDetail doCalculations(PresentmentDetail item) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * Getting the Presentment Details List using JdbcSearchObject with search criteria..
-	 */
-	private List<PresentmentDetail> getPresentmentDetails() {
-
-		JdbcSearchObject<PresentmentDetail> searchObject = new JdbcSearchObject<>();
-		searchObject.addField("FinReference");
-		searchObject.addField("SCHDATE");
-		searchObject.addField("SchSeq");
-		searchObject.addTabelName(this.tableName);
-
-		for (SearchFilterControl searchControl : searchControls) {
-			Filter filter = searchControl.getFilter();
-			if (filter != null) {
-				searchObject.addFilter(filter);
-			}
-		}
-		return getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-	}
-
-	/**
-	 * Item renderer for list items in the list box.
-	 * 
-	 */
-	public class PresentmentDetailListModelItemRenderer implements ListitemRenderer<PresentmentDetail>, Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void render(Listitem item, PresentmentDetail presentmentDetail, int count) throws Exception {
-
-			Listcell lc;
-
-			lc = new Listcell(presentmentDetail.getCustomerCif());
-			lc.setParent(item);
-
-			lc = new Listcell(presentmentDetail.getFinReference());
-			lc.setParent(item);
-
-			lc = new Listcell(presentmentDetail.getLoanType());
-			lc.setParent(item);
-
-			lc = new Listcell(PennantAppUtil.formateDate(presentmentDetail.getSchDate(), PennantConstants.dateFormat));
-			lc.setParent(item);
-
-			lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getAdvanceAmt(), 2));
-			lc.setParent(item);
-
-			lc = new Listcell(presentmentDetail.getMandateType());
-			lc.setParent(item);
-		}
-	}
-
+	
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
 	}
