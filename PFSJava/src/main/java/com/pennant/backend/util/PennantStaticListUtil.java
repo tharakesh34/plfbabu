@@ -185,6 +185,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> reasonTypeList;
 	private static ArrayList<ValueLabel> categoryTypeList;
 	private static ArrayList<ValueLabel> actionList;
+	private static ArrayList<ValueLabel> presentmentExclusionList;
 
 	
 
@@ -2599,6 +2600,16 @@ public class PennantStaticListUtil {
 			actionList.add(new ValueLabel("2",Labels.getLabel("label_REPRESENT")));
 		}
 		return actionList;
+	}
+	
+	public static ArrayList<ValueLabel> getPresentmentExclusionList(){
+		
+		if(presentmentExclusionList == null){
+			presentmentExclusionList = new ArrayList<ValueLabel>(2);
+			presentmentExclusionList.add(new ValueLabel("1",Labels.getLabel("label_IGNORE")));
+			presentmentExclusionList.add(new ValueLabel("2",Labels.getLabel("label_REPRESENT")));
+		}
+		return presentmentExclusionList;
 	}
 
 }

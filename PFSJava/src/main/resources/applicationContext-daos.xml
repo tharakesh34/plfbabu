@@ -9667,7 +9667,8 @@
 
  	<bean name="presentmentHeaderServiceTarget" class="com.pennant.backend.service.financemanagement.impl.PresentmentHeaderServiceImpl">
        <property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+       <property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+       <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
 </beans>

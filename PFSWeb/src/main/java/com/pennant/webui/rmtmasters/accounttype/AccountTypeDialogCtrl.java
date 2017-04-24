@@ -490,10 +490,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.profitCenter.setObject(new ProfitCenter(aAccountType.getProfitCenterID()));
 			this.profitCenter.setValue(aAccountType.getProfitCenterCode(),aAccountType.getProfitCenterDesc());
 			
-			if(aAccountType.getCostCenterID() != null){
-			this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
-			this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
-			}
+			if(aAccountType.getCostCenterID() != null ){
+				this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
+				this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
+			}	
 		
 		logger.debug("Leaving");
 	}

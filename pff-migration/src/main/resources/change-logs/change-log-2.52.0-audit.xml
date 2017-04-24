@@ -65,6 +65,85 @@
 		</addColumn>
 	</changeSet> 
 	
+	<changeSet id="06" author="Chaitanya">
+		<createTable tableName="AdtFinTypePartnerBanks">
+			<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ID" type="bigint">
+			</column>
+			<column name="FinType" type="varchar(8)">
+			</column>
+			<column name="Purpose" type="char(1)">
+			</column>
+			<column name="PaymentMode" type="varchar(8)">
+			</column>
+			<column name="PartnerBankID" type="bigint">
+			</column>
+			<column name="Version" type="int">
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="07" author="Chaitanya">
+		<dropTable tableName="AdtAccountMapping"/>
+	</changeSet>
+	
+	<changeSet id="08" author="Chaitanya">
+		<createTable tableName="AdtAccountMapping">
+		<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Account" type="varchar(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HostAccount" type="varchar(50)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+ 	</changeSet>
+	
+	
+	
 		<changeSet id="09" author="pruthvi">
 		<createView viewName="ADTFINANCETYPES_VIEW" replaceIfExists="true">
 	Select     Th.Auditid, Th.Auditdate Auditdatetime, to_char(TH.AuditDate, 'DD-MON-YYYY') AuditDate, to_char( TH.AuditDate, 'HH24:MI:SS') AuditTime,

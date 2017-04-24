@@ -91,12 +91,12 @@
 									</hbox>
 								</row>
 								<row id="row1">
-									<label id="label_ApplicableFor"
-										value="${c:l('label_FeeTypeDialog_ApplicableFor.value')}" />
-									<hbox id="hlayout_ApplicableFor">
-										<space id="space_ApplicableFor"
+									<label id="label_Purpose"
+										value="${c:l('label_FeeTypeDialog_Purpose.value')}" />
+									<hbox id="hlayout_Purpose">
+										<space id="space_Purpose"
 											spacing="2px" sclass="mandatory"/>
-										<combobox id="applicableFor"
+										<combobox id="Purpose"
 											maxlength="8" width="72px" />
 									</hbox>
 									<label id="label_AccountingSetID"

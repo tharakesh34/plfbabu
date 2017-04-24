@@ -113,5 +113,10 @@ public class RepayConstants {
 	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
 	public static final String	PAYTYPE_PAYABLE			= "PAYABLE";
 	
+	//Presentment Exclude Reasons 
+	public static final int	PRESENTMENT_EXC_EMIINADVANCE = 1;
+	public static final int	PRESENTMENT_EXC_EMIHOLD = 2;
+	public static final int	PRESENTMENT_EXC_MANDATEHOLD = 3;
+	
 
 }

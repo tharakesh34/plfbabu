@@ -49,6 +49,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -105,6 +107,33 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		return excessList;
 	}
 
+	@Override
+	public FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType) {
+		logger.debug("Entering");
+ 		FinExcessAmount finExcessAmount = new FinExcessAmount();
+		finExcessAmount.setFinReference(finReference);
+		finExcessAmount.setAmountType(amountType);
+		
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		selectSql.append(" Where FinReference =:FinReference and AmountType = :amountType");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
+		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+
+		try {
+			finExcessAmount = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			finExcessAmount = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finExcessAmount;
+	}
+	
+	
 	@SuppressWarnings("serial")
 	@Override
 	public void updateUtilise(long excessID, BigDecimal amount) {

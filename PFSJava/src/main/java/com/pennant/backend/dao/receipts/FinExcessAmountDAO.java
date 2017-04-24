@@ -11,5 +11,5 @@ public interface FinExcessAmountDAO {
 	List<FinExcessAmount> getExcessAmountsByRef(String finReference);
 	void updateUtilise(long payAgainstID, BigDecimal amount);
 	void saveExcessMovement(FinExcessMovement movement);
-
+	FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType);
 }
