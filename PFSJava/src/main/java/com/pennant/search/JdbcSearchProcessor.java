@@ -164,9 +164,14 @@ public class JdbcSearchProcessor implements Serializable {
 		int offset = search.getFirstResult();
 		int pageSize = search.getMaxResults();
 
+		// If limits rows not required, no additional processing required.
+		if (offset <= 0 && pageSize <= 0) {
+			return query.toString();
+		}
+
 		switch (App.DATABASE) {
 		case ORACLE:
-			return getOracleLimitRowsSql(query.toString(), offset > 0, offset, pageSize);
+			return getOracleLimitRowsSql(query.toString(), offset, pageSize);
 		case SQL_SERVER:
 			return getMSSQLLimitString(query.toString(), offset > 0, offset, pageSize);
 		case DB2:
@@ -174,39 +179,26 @@ public class JdbcSearchProcessor implements Serializable {
 		case MYSQL:
 			return getMYSQLLimitString(query.toString(), offset > 0, offset, pageSize);
 		default:
-			return null;
+			return query.toString();
 		}
 	}
 
-	private String getOracleLimitRowsSql(String sql, boolean hasOffset, int offset, int pageSize) {
-		// Condition added to by pass the usage of valid item in extended combo box
-		if (offset > 1 || pageSize > 1) {
-			sql = sql.trim();
-			boolean isForUpdate = false;
-			if (sql.toLowerCase().endsWith(" for update")) {
-				sql = sql.substring(0, sql.length() - 11);
-				isForUpdate = true;
-			}
-			StringBuilder pagingSelect = new StringBuilder();
-			if (hasOffset) {
-				pagingSelect.append("select * from ( select row_.*, rownum rownum_ from ( ");
-			} else {
-				pagingSelect.append("select * from ( ");
-			}
-			pagingSelect.append(sql);
-			if (hasOffset) {
-				pagingSelect.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
-			} else {
-				pagingSelect.append(" ) where rownum <= " + pageSize);
-			}
-			if (isForUpdate) {
-				pagingSelect.append(" for update");
-			}
+	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
+		StringBuilder limitRowsSql = new StringBuilder();
 
-			return pagingSelect.toString();
+		if (offset > 0) {
+			limitRowsSql.append("select * from ( select row_.*, rownum rownum_ from ( ");
+		} else {
+			limitRowsSql.append("select * from ( ");
+		}
+		limitRowsSql.append(sql);
+		if (offset > 0) {
+			limitRowsSql.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
+		} else {
+			limitRowsSql.append(" ) where rownum <= " + pageSize);
 		}
 
-		return sql;
+		return limitRowsSql.toString();
 	}
 
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
