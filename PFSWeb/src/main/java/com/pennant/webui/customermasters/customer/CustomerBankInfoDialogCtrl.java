@@ -73,6 +73,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -435,7 +436,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		
 		try {
-			aCustomerBankInfo.setAccountNumber(this.accountNumber.getValue());
+			aCustomerBankInfo.setAccountNumber(PennantApplicationUtil.unFormatAccountNumber(this.accountNumber.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -492,9 +493,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = details.getAccNoLength();
 				}
-				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = details.getAccNoLength();
-				}
+				
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -580,7 +579,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.accountNumber
 					.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
 							true, accNoLength));
 			
 		}
@@ -815,6 +814,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
+		doClearMessage();
 		doSetValidation();
 		// fill the CustomerBankInfo object with the components data
 		doWriteComponentsToBean(aCustomerBankInfo);
