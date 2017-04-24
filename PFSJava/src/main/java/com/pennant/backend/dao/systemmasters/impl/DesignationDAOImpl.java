@@ -69,10 +69,10 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Designation model</b> class.<br>
  */
 public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements DesignationDAO {
-	private static Logger logger = Logger.getLogger(DesignationDAOImpl.class);
+	private static Logger				logger	= Logger.getLogger(DesignationDAOImpl.class);
 
 	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
 	public DesignationDAOImpl() {
 		super();
@@ -93,19 +93,21 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		Designation designation = new Designation();
 		designation.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("SELECT DesgCode, DesgDesc, DesgIsActive," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append("SELECT DesgCode, DesgDesc, DesgIsActive,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTDesignations");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DesgCode =:DesgCode") ;
+		selectSql.append(" Where DesgCode =:DesgCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
 		RowMapper<Designation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Designation.class);
 
 		try {
-			designation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			designation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			designation = null;
@@ -114,96 +116,6 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		return designation;
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	@Override
-	public void delete(Designation designation, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder deleteSql = new StringBuilder();
-		
-		deleteSql.append("Delete From BMTDesignations");
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" Where DesgCode =:DesgCode");
-		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		
-		logger.trace(Literal.SQL + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-
-		int recordCount = 0;
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public String save(Designation designation, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder insertSql = new StringBuilder();
-		
-		insertSql.append("Insert Into BMTDesignations");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (DesgCode, DesgDesc, DesgIsActive," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:DesgCode, :DesgDesc, :DesgIsActive, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId)");
-
-		logger.trace(Literal.SQL + insertSql.toString());
-		try {
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return designation.getId();
-	}
-
-	@Override
-	public void update(Designation designation, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder updateSql = new StringBuilder();
-		
-		updateSql.append("Update BMTDesignations");
-		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set DesgDesc = :DesgDesc, DesgIsActive = :DesgIsActive," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where DesgCode =:DesgCode ");
-		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		logger.debug(Literal.SQL + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-
-		int recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
-
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-	
 	@Override
 	public boolean isDuplicateKey(String designationCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -238,5 +150,97 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public String save(Designation designation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder insertSql = new StringBuilder();
+
+		insertSql.append("Insert Into BMTDesignations");
+		insertSql.append(tableType.getSuffix());
+		insertSql.append(" (DesgCode, DesgDesc, DesgIsActive,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		insertSql.append(" RecordType, WorkflowId)");
+		insertSql.append(" Values(:DesgCode, :DesgDesc, :DesgIsActive, ");
+		insertSql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		insertSql.append(" :RecordType, :WorkflowId)");
+
+		logger.trace(Literal.SQL + insertSql.toString());
+		try {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return designation.getId();
+	}
+
+	@Override
+	public void update(Designation designation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder updateSql = new StringBuilder();
+
+		updateSql.append("Update BMTDesignations");
+		updateSql.append(tableType.getSuffix());
+		updateSql.append(" Set DesgDesc = :DesgDesc, DesgIsActive = :DesgIsActive,");
+		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		updateSql.append(
+				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(" Where DesgCode =:DesgCode ");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.debug(Literal.SQL + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
+
+		int recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void delete(Designation designation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder deleteSql = new StringBuilder();
+
+		deleteSql.append("Delete From BMTDesignations");
+		deleteSql.append(tableType.getSuffix());
+		deleteSql.append(" Where DesgCode =:DesgCode");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.trace(Literal.SQL + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
+
+		int recordCount = 0;
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * @param dataSource
+	 *            the dataSource to set
+	 */
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 }
