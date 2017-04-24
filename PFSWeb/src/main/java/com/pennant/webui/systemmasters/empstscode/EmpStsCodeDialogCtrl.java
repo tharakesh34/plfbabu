@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -73,12 +72,11 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/EmpStsCode/empStsCodeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/EmpStsCode/empStsCodeDialog.zul file.
  */
 public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	private static final long serialVersionUID = -8079491234061977678L;
-	private final static Logger logger = Logger.getLogger(EmpStsCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EmpStsCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

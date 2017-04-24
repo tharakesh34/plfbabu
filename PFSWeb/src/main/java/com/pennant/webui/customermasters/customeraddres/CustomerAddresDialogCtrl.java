@@ -86,7 +86,6 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
-import com.pennant.webui.customermasters.customer.CustomerListCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -139,7 +138,6 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	// ServiceDAOs / Domain Classes
 	private transient CustomerAddresService customerAddresService;
-	protected transient CustomerListCtrl customerListCtrl;
 	protected JdbcSearchObject<Customer> searchObj;
 	private transient CustomerSelectCtrl customerSelectCtrl;
 	

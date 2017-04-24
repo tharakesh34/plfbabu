@@ -51,17 +51,12 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.applicationmaster.NPABucket;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
-
 
 /**
  * Item renderer for listitems in the listbox.
- * 
  */
 public class NPABucketListModelItemRenderer implements ListitemRenderer<NPABucket>, Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	public NPABucketListModelItemRenderer() {
