@@ -177,6 +177,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		
 			this.profitCenterCode.setMaxlength(15);
 			this.profitCenterDesc.setMaxlength(50);
+			this.active.setValue("true");
 		
 		setStatusDetails();
 		
@@ -425,7 +426,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			this.profitCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.profitCenterDesc.isReadonly()){
-			this.profitCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,false));
+			this.profitCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
 		}
 	
 		logger.debug(Literal.LEAVING);

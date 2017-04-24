@@ -591,7 +591,7 @@ public class PennantJavaUtil {
 						"CustStsDescription" }, new String[][] { { "CustStsIsActive", "0", "1" } }, 300));
 		
 		ModuleUtil.register("FeeType", new ModuleMapping("FeeType", FeeType.class, new String[] {
-			"FeeTypes", "FeeTypes_AView" }, masterWF, new String[] {"FeeTypeCode","FeeTypeDesc" }, null, 600));
+			"FeeTypes", "FeeTypes_AView" }, masterWF, new String[] {"FeeTypeCode","FeeTypeDesc" },new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("FinanceApplicationCode", new ModuleMapping("FinanceApplicationCode",
 				FinanceApplicationCode.class, new String[] { "BMTFinAppCodes", "BMTFinAppCodes_AView" }, masterWF,

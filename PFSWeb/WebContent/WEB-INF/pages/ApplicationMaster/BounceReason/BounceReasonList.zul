@@ -31,17 +31,19 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
-					<button id="button_BounceReasonList_NewBounceReason"
-						label="${c:l('label_New')}"
-						autodisable="button_BounceReasonList_BounceReasonSearch,print,button_BounceReasonList_NewBounceReason,btnRefresh,help"
-						tooltiptext="${c:l('button_BounceReasonList_NewBounceReason.tooltiptext')}"
-						sclass="z-toolbarbutton" />
+						<button
+							id="button_BounceReasonList_NewBounceReason"
+							label="${c:l('label_New')}"
+							autodisable="button_BounceReasonList_BounceReasonSearch,print,button_BounceReasonList_NewBounceReason,btnRefresh,help"
+							tooltiptext="${c:l('button_BounceReasonList_NewBounceReason.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_BounceReasonList_BounceReasonSearch,print,button_BounceReasonList_NewBounceReason,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="help" label="${c:l('label_Help')}" visible="false"
+						<button id="help" label="${c:l('label_Help')}"
+							visible="false"
 							autodisable="button_BounceReasonList_BounceReasonSearch,print,button_BounceReasonList_NewBounceReason,btnRefresh,help"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							sclass="z-toolbarbutton" />
@@ -71,7 +73,7 @@
 										id="sortOperator_BounceCode" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<uppercasebox id="bounceCode"
-										width="100px" maxlength="8" />
+										width="130px" maxlength="8" />
 									<label
 										id="label_BounceReasonList_ReasonType"
 										value="${c:l('label_BounceReasonList_ReasonType.value')}" />
@@ -79,7 +81,7 @@
 										id="sortOperator_ReasonType" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<combobox id="reasonType"
-										width="100px" />
+										width="130px" />
 								</row>
 								<row>
 									<label
@@ -89,15 +91,15 @@
 										width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<combobox id="category"
-										width="100px" />
+										width="130px" />
 									<label
 										id="label_BounceReasonList_ReturnCode"
 										value="${c:l('label_BounceReasonList_ReturnCode.value')}" />
-									<listbox id="sortOperator_ReturnCode"
-										width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="returnID" width="100px"
-										maxlength="5" />
+									<listbox
+										id="sortOperator_ReturnCode" width="43px" mold="select"
+										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="returnCode"
+										width="130px" maxlength="5" />
 								</row>
 								<row>
 									<label
@@ -146,8 +148,8 @@
 								<listheader id="listheader_Category"
 									label="${c:l('listheader_Category.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_ReturnID"
-									label="${c:l('listheader_ReturnID.label')}" sort="auto"
+								<listheader id="listheader_ReturnCode"
+									label="${c:l('listheader_ReturnCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_Active"
 									label="${c:l('listheader_Active.label')}" sort="auto"

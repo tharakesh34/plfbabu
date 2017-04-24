@@ -177,6 +177,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 		
 			this.costCenterCode.setMaxlength(15);
 			this.costCenterDesc.setMaxlength(50);
+			this.active.setValue("true");
 		
 		setStatusDetails();
 		
@@ -425,7 +426,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			this.costCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.costCenterDesc.isReadonly()){
-			this.costCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,false));
+			this.costCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
 		}
 	
 		logger.debug(Literal.LEAVING);

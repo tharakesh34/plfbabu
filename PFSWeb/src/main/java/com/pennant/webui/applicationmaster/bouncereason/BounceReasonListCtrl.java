@@ -62,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.service.applicationmaster.BounceReasonService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.applicationmaster.bouncereason.model.BounceReasonListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -140,7 +141,10 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		// Register buttons and fields.
 		registerButton(button_BounceReasonList_BounceReasonSearch);
 		registerButton(button_BounceReasonList_NewBounceReason, "button_BounceReasonList_NewBounceReason", true);
-
+		
+		fillComboBox(this.reasonType,"", PennantStaticListUtil.getReasonType(),"");
+		fillComboBox(this.category,"", PennantStaticListUtil.getCategoryType(),"");
+		
 		registerField("bounceID");
 		registerField("bounceCode", listheader_BounceCode, SortOrder.NONE, bounceCode, sortOperator_BounceCode, Operators.STRING);
 		registerField("reasonType", listheader_ReasonType, SortOrder.NONE, reasonType, sortOperator_ReasonType, Operators.STRING);

@@ -67,7 +67,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.DPDBucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -184,9 +183,6 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		this.bucketID.setValueColumn("BucketCode");
 		this.bucketID.setDescColumn("BucketDesc");
 		this.bucketID.setValidateColumns(new String[] { "BucketCode" });
-		Filter[] filters1 = new Filter[1] ;
-		filters1[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		this.bucketID.setFilters(filters1);
 		
 		this.dueDays.setMaxlength(5);
 
@@ -316,10 +312,10 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		}
 		this.dueDays.setValue(aDPDBucketConfiguration.getDueDays());
 		this.suspendProfit.setChecked(aDPDBucketConfiguration.isSuspendProfit());
-		if (aDPDBucketConfiguration.getBucketID() != Long.MIN_VALUE && aDPDBucketConfiguration.getBucketID() != 0) {
-			this.bucketID.setAttribute("BucketID", aDPDBucketConfiguration.getBucketID());
-			this.bucketID.setValue(aDPDBucketConfiguration.getBucketCode(), aDPDBucketConfiguration.getBucketIDName());
-		}
+		
+		this.bucketID.setObject(new DPDBucket(aDPDBucketConfiguration.getBucketID()));
+		this.bucketID.setValue(aDPDBucketConfiguration.getBucketCode(),aDPDBucketConfiguration.getBucketIDName());
+		
 		if (aDPDBucketConfiguration.isNewRecord()) {
 			this.productCode.setDescription("");
 		} else {
@@ -351,10 +347,10 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		//Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
-			Long obj = (Long) this.bucketID.getAttribute("BucketID");
-			if (obj != null) {
-				aDPDBucketConfiguration.setBucketID(obj);
-			}
+			DPDBucket dPDBucket = (DPDBucket) this.bucketID.getObject();
+			aDPDBucketConfiguration.setBucketID(dPDBucket.getBucketID());
+			aDPDBucketConfiguration.setBucketCode(dPDBucket.getBucketCode());
+			aDPDBucketConfiguration.setBucketIDName(dPDBucket.getBucketDesc());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -501,7 +497,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	}
 	
 	
-	public void onFulfill$bucketID(Event event) {
+	/*public void onFulfill$bucketID(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = bucketID.getObject();
 		if (dataObject instanceof String) {
@@ -514,7 +510,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}
+	}*/
 	
 	/**
 	 * Deletes a DPDBucketConfiguration object from database.<br>

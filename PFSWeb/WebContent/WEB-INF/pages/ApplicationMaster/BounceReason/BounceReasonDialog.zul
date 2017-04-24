@@ -84,7 +84,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<uppercasebox id="bounceCode"
-										maxlength="8" width="72px" />
+										maxlength="8" width="130px" />
 								</hbox>
 								<label id="label_ReasonType"
 									value="${c:l('label_BounceReasonDialog_ReasonType.value')}" />
@@ -92,7 +92,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="reasonType"
-										width="90px" />
+										width="130px" />
 								</hbox>
 							</row>
 							<row id="row1">
@@ -102,7 +102,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="category"
-										width="90px" />
+										width="130px" />
 								</hbox>
 								<label id="label_Reason"
 									value="${c:l('label_BounceReasonDialog_Reason.value')}" />
@@ -110,7 +110,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="reason" maxlength="50"
-										width="450px" />
+										width="130px" />
 								</hbox>
 							</row>
 							<row id="row2">
@@ -119,14 +119,14 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<combobox id="action" width="90px" />
+									<combobox id="action" width="130px" />
 								</hbox>
 								<label id="label_FeeID"
 									value="${c:l('label_BounceReasonDialog_FeeID.value')}" />
 								<extendedcombobox id="feeID" />
 							</row>
 							<row id="row3">
-								<label id="label_ReturnID"
+								<label id="label_ReturnCode"
 									value="${c:l('label_BounceReasonDialog_ReturnCode.value')}" />
 								<hbox>
 									<space spacing="2px"
@@ -135,7 +135,7 @@
 								</hbox>
 								<label id="label_Active"
 									value="${c:l('label_BounceReasonDialog_Active.value')}" />
-								<checkbox id="active" checked="false" />
+								<checkbox id="active" checked="true" />
 							</row>
 						</rows>
 					</grid>

@@ -71,7 +71,6 @@ import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -198,9 +197,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.feeID.setValueColumn("FeeTypeCode");
 			this.feeID.setDescColumn("FeeTypeDesc");
 			this.feeID.setValidateColumns(new String[] {"FeeTypeCode"});
-			Filter[] filters = new Filter[1] ;
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			this.feeID.setFilters(filters);
+			
+			this.active.setValue("true");
 			
 		
 		setStatusDetails();
@@ -331,7 +329,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public void onFulfill$feeID(Event event) {
+	/*public void onFulfill$feeID(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = feeID.getObject();
 		if (dataObject instanceof String) {
@@ -345,7 +343,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
+*/
    	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -361,10 +359,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.reason.setValue(aBounceReason.getReason());
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
 			
-			if (aBounceReason.getFeeID() != Long.MIN_VALUE && aBounceReason.getFeeID() != 0) {
-				this.feeID.setAttribute("FeeID", aBounceReason.getFeeID());
-				this.feeID.setValue(aBounceReason.getFeeCode(), aBounceReason.getFeeIDName());
-			}
+			this.feeID.setObject(new FeeType(aBounceReason.getFeeID()));
+			this.feeID.setValue(aBounceReason.getFeeTypeCode(),aBounceReason.getFeeIDName());
+			
 			this.returnCode.setValue(aBounceReason.getReturnCode());
 			this.active.setChecked(aBounceReason.isActive());
 		
@@ -443,10 +440,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		//Fee ID
 		try {
 			this.feeID.getValidatedValue();
-			Long obj = (Long) this.feeID.getAttribute("FeeID");
-			if (obj != null) {
-				aBounceReason.setFeeID(obj);
-			}
+			FeeType feeType = (FeeType) this.feeID.getObject();
+			aBounceReason.setFeeID(feeType.getFeeTypeID());
+			aBounceReason.setFeeTypeCode(feeType.getFeeTypeCode());
+			aBounceReason.setFeeIDName(feeType.getFeeTypeDesc());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}

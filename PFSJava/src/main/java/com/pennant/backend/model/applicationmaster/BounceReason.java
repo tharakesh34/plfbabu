@@ -72,7 +72,7 @@ private static final long serialVersionUID = 1L;
 	private int action;
 	private long feeID=0;
 	private String feeIDName;
-	private String feeCode;
+	private String feeTypeCode;
 	private String returnCode;
 	private boolean active;
 	@XmlTransient
@@ -100,7 +100,7 @@ private static final long serialVersionUID = 1L;
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("feeIDName");
-			excludeFields.add("feeCode");
+			excludeFields.add("feeTypeCode");
 	return excludeFields;
 	}
 
@@ -216,11 +216,13 @@ private static final long serialVersionUID = 1L;
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public String getFeeCode() {
-		return feeCode;
+	public String getFeeTypeCode() {
+		return feeTypeCode;
 	}
 
-	public void setFeeCode(String feeCode) {
-		this.feeCode = feeCode;
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
+
+	
 }

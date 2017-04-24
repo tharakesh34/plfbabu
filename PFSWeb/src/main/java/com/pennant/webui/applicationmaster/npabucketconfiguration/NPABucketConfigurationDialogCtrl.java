@@ -67,7 +67,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.NPABucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -87,6 +86,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * 
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window									window_NPABucketConfigurationDialog;
@@ -185,9 +185,6 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		this.bucketID.setValueColumn("BucketCode");
 		this.bucketID.setDescColumn("BucketDesc");
 		this.bucketID.setValidateColumns(new String[] { "BucketCode" });
-		Filter[] filters1 = new Filter[1] ;
-		filters1[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		this.bucketID.setFilters(filters1);
 
 		this.dueDays.setMaxlength(5);
 
@@ -315,10 +312,8 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		this.dueDays.setValue(aNPABucketConfiguration.getDueDays());
 		this.suspendProfit.setChecked(aNPABucketConfiguration.isSuspendProfit());
 		
-		if (aNPABucketConfiguration.getBucketID() != Long.MIN_VALUE && aNPABucketConfiguration.getBucketID() != 0) {
-			this.bucketID.setAttribute("BucketID", aNPABucketConfiguration.getBucketID());
-			this.bucketID.setValue(aNPABucketConfiguration.getBucketCode(), aNPABucketConfiguration.getBucketIDName());
-		}
+		this.bucketID.setObject(new NPABucket(aNPABucketConfiguration.getBucketID()));
+		this.bucketID.setValue(aNPABucketConfiguration.getBucketCode(),aNPABucketConfiguration.getBucketIDName());
 		
 		if (aNPABucketConfiguration.isNewRecord()) {
 			this.productCode.setDescription("");
@@ -351,10 +346,11 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		//Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
-			Long obj = (Long) this.bucketID.getAttribute("BucketID");
-			if (obj != null) {
-				aNPABucketConfiguration.setBucketID(obj);
-			}
+			NPABucket nPABucket = (NPABucket) this.bucketID.getObject();
+			aNPABucketConfiguration.setBucketID(nPABucket.getBucketID());
+			aNPABucketConfiguration.setBucketCode(nPABucket.getBucketCode());
+			aNPABucketConfiguration.setBucketIDName(nPABucket.getBucketDesc());
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -501,7 +497,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	}
 	
 	
-	public void onFulfill$bucketID(Event event) {
+	/*public void onFulfill$bucketID(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = bucketID.getObject();
 		if (dataObject instanceof String) {
@@ -514,7 +510,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}
+	}*/
 	
 	/**
 	 * Deletes a NPABucketConfiguration object from database.<br>

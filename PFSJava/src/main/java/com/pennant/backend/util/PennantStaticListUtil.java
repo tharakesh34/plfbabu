@@ -2585,8 +2585,8 @@ public class PennantStaticListUtil {
 		
 		if(categoryTypeList == null){
 			categoryTypeList = new ArrayList<ValueLabel>(2);
-			categoryTypeList.add(new ValueLabel("Technical",Labels.getLabel("label_Technical")));
-			categoryTypeList.add(new ValueLabel("NonTechnical",Labels.getLabel("label_NonTechnical")));
+			categoryTypeList.add(new ValueLabel("1",Labels.getLabel("label_Technical")));
+			categoryTypeList.add(new ValueLabel("2",Labels.getLabel("label_NonTechnical")));
 		}
 		return categoryTypeList;
 	}
@@ -2595,8 +2595,8 @@ public class PennantStaticListUtil {
 		
 		if(actionList == null){
 			actionList = new ArrayList<ValueLabel>(2);
-			actionList.add(new ValueLabel("IGNORE",Labels.getLabel("label_IGNORE")));
-			actionList.add(new ValueLabel("REPRESENT",Labels.getLabel("label_REPRESENT")));
+			actionList.add(new ValueLabel("1",Labels.getLabel("label_IGNORE")));
+			actionList.add(new ValueLabel("2",Labels.getLabel("label_REPRESENT")));
 		}
 		return actionList;
 	}

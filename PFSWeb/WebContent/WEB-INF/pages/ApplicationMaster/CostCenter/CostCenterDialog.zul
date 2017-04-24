@@ -87,7 +87,7 @@
 								<label id="label_CostCenterDesc"
 									value="${c:l('label_CostCenterDialog_CostCenterDesc.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory"/>
 									<textbox id="costCenterDesc"
 										maxlength="50" width="150px" />
 								</hbox>
@@ -98,7 +98,7 @@
 								<hbox>
 									<space spacing="2px" />
 									<checkbox id="active"
-										checked="false" />
+										checked="true" />
 								</hbox>
 							</row>
 						</rows>
