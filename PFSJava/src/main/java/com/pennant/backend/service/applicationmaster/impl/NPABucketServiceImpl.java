@@ -42,10 +42,12 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -68,6 +70,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private NPABucketDAO nPABucketDAO;
+	private NPABucketConfigurationDAO	nPABucketConfigurationDAO;
 
 
 	// ******************************************************//
@@ -361,11 +364,30 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			
+		if (StringUtils.trimToEmpty(nPABucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+			int count = nPABucketConfigurationDAO.getNPABucketConfigurationById(nPABucket.getBucketID(), "");//FIXME for FinanceMain
+			if (count != 0) {
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + nPABucket.getBucketCode();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public NPABucketConfigurationDAO getnPABucketConfigurationDAO() {
+			return nPABucketConfigurationDAO;
+		}
+
+		public void setnPABucketConfigurationDAO(NPABucketConfigurationDAO nPABucketConfigurationDAO) {
+			this.nPABucketConfigurationDAO = nPABucketConfigurationDAO;
 		}
 
 }

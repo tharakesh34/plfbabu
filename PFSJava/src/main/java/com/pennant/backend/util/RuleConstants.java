@@ -21,6 +21,7 @@ public class RuleConstants {
 	public static final String MODULE_IRLFILTER = "IRFILTER";
 	public static final String MODULE_LTVRULE = "LTVRULE";
 	public static final String MODULE_INSRULE = "INSRULE";
+	public static final String MODULE_BOUNCE = "BOUNCE";
 
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";

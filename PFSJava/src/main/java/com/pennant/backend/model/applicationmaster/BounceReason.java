@@ -71,8 +71,8 @@ private static final long serialVersionUID = 1L;
 	private String reason;
 	private int action;
 	private long feeID=0;
-	private String feeIDName;
-	private String feeTypeCode;
+	private String ruleCode;
+	private String ruleCodeDesc;
 	private String returnCode;
 	private boolean active;
 	@XmlTransient
@@ -99,8 +99,8 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("feeIDName");
-			excludeFields.add("feeTypeCode");
+			excludeFields.add("ruleCode");
+			excludeFields.add("ruleCodeDesc");
 	return excludeFields;
 	}
 
@@ -157,14 +157,6 @@ private static final long serialVersionUID = 1L;
 	public void setFeeID(long feeID) {
 		this.feeID = feeID;
 	}
-	public String getFeeIDName() {
-		return this.feeIDName;
-	}
-
-	public void setFeeIDName (String feeIDName) {
-		this.feeIDName = feeIDName;
-	}
-	
 	public boolean isActive() {
 		return active;
 	}
@@ -216,12 +208,21 @@ private static final long serialVersionUID = 1L;
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public String getFeeTypeCode() {
-		return feeTypeCode;
+
+	public String getRuleCode() {
+		return ruleCode;
 	}
 
-	public void setFeeTypeCode(String feeTypeCode) {
-		this.feeTypeCode = feeTypeCode;
+	public void setRuleCode(String ruleCode) {
+		this.ruleCode = ruleCode;
+	}
+
+	public String getRuleCodeDesc() {
+		return ruleCodeDesc;
+	}
+
+	public void setRuleCodeDesc(String ruleCodeDesc) {
+		this.ruleCodeDesc = ruleCodeDesc;
 	}
 
 	

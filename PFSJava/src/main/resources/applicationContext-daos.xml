@@ -9501,6 +9501,7 @@
 
  	<bean name="dPDBucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.DPDBucketServiceImpl">
        <property name="dPDBucketDAO" ref="dPDBucketDAO" />
+        <property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 	
@@ -9524,6 +9525,7 @@
 
  	<bean name="nPABucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.NPABucketServiceImpl">
        <property name="nPABucketDAO" ref="nPABucketDAO" />
+       <property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
@@ -9593,6 +9595,7 @@
 
  	<bean name="profitCenterServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ProfitCenterServiceImpl">
        <property name="profitCenterDAO" ref="profitCenterDAO" />
+       <property name="accountTypeDAO" ref="accountTypeDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
@@ -9616,6 +9619,7 @@
 
  	<bean name="costCenterServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.CostCenterServiceImpl">
        <property name="costCenterDAO" ref="costCenterDAO" />
+       <property name="accountTypeDAO" ref="accountTypeDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 

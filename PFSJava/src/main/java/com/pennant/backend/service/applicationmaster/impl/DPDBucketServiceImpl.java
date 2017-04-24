@@ -42,10 +42,12 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -68,6 +70,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private DPDBucketDAO dPDBucketDAO;
+	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
 
 
 	// ******************************************************//
@@ -361,11 +364,30 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			
+		if (StringUtils.trimToEmpty(dPDBucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+			int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");//FIXME for FinanceMain
+			if (count != 0) {
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + dPDBucket.getBucketCode();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public DPDBucketConfigurationDAO getdPDBucketConfigurationDAO() {
+			return dPDBucketConfigurationDAO;
+		}
+
+		public void setdPDBucketConfigurationDAO(DPDBucketConfigurationDAO dPDBucketConfigurationDAO) {
+			this.dPDBucketConfigurationDAO = dPDBucketConfigurationDAO;
 		}
 
 }

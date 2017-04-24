@@ -42,16 +42,17 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.BeanUtils;
+
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.audit.AuditDetail;
-
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.ProfitCenterService;
 import com.pennant.backend.dao.applicationmaster.ProfitCenterDAO;
+import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
@@ -69,6 +70,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProfitCenterDAO profitCenterDAO;
+	private AccountTypeDAO accountTypeDAO;
 
 
 	// ******************************************************//
@@ -362,11 +364,30 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			
+			if (StringUtils.trimToEmpty(profitCenter.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+				int count = accountTypeDAO.getgetAccountTypeByProfit(profitCenter.getProfitCenterID(), "");//FIXME for FinanceMain
+				if (count != 0) {
+					String[] parameters = new String[2];
 
+					parameters[0] = PennantJavaUtil.getLabel("label_ProfitCenterCode") + ": " + profitCenter.getProfitCenterCode();
+
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				}
+			}
+			
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public AccountTypeDAO getAccountTypeDAO() {
+			return accountTypeDAO;
+		}
+
+		public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
+			this.accountTypeDAO = accountTypeDAO;
 		}
 
 }

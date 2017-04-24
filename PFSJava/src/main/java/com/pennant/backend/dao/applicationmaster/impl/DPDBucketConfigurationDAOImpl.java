@@ -242,8 +242,7 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	@Override
 	public List<DPDBucketConfiguration> getDPDBucketConfigurations() {
 		logger.debug(Literal.ENTERING);
@@ -256,12 +255,11 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(DPDBucketConfiguration.class);
-		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);;
+		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+		;
 		logger.debug(Literal.LEAVING);
 		return list;
 	}
-
-	
 
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
@@ -278,7 +276,22 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		DPDBucketConfiguration dPDBucketConfiguration = new DPDBucketConfiguration();
 		dPDBucketConfiguration.setProductCode(producCode);
 		dPDBucketConfiguration.setDueDays(dueDys);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From DPDBUCKETSCONFIG");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BucketID =:BucketID");
 
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dPDBucketConfiguration);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public int getDPDBucketConfigurationDAOById(long bucketID, String type) {
+		DPDBucketConfiguration dPDBucketConfiguration = new DPDBucketConfiguration();
+		dPDBucketConfiguration.setBucketID(bucketID);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From DPDBUCKETSCONFIG");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -290,6 +303,5 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-
 
 }

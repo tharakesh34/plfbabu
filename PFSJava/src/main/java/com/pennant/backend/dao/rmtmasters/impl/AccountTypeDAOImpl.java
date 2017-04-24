@@ -302,5 +302,39 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
 				errorId, parms[0],parms[1]), userLanguage);
 	}
+
+	@Override
+	public int getgetAccountTypeByProfit(long profitCenterID, String type) {
+		AccountType accountType = new AccountType();
+		accountType.setProfitCenterID(profitCenterID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTAccountTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ProfitCenterID =:ProfitCenterID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 	
+	@Override
+	public int getgetAccountTypeByCost(long costCenterID, String type) {
+		AccountType accountType = new AccountType();
+		accountType.setCostCenterID(costCenterID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTAccountTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CostCenterID =:CostCenterID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }
+	

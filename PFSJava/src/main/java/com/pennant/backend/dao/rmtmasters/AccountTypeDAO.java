@@ -58,4 +58,6 @@ public interface AccountTypeDAO {
 	 void delete(AccountType accountType,String type);
 	 String save(AccountType accountType,String type);
 	 List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+	int getgetAccountTypeByProfit(long profitCenterID, String type);
+	int getgetAccountTypeByCost(long costCenterID, String type);
 }

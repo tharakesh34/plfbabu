@@ -85,7 +85,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
 		sql.append(" feeID, returnCode, active, ");
 		if (type.contains("View")) {
-			sql.append(" feeIDName, feeTypeCode,");
+			sql.append(" ruleCode, ruleCodeDesc,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BounceReasons");

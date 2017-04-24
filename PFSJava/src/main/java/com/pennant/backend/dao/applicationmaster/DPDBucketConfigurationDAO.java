@@ -79,4 +79,6 @@ public interface DPDBucketConfigurationDAO extends BasicCrudDao<DPDBucketConfigu
 	List<DPDBucketConfiguration> getDPDBucketConfigurations();
 	
 	public int getByProductCode(String producCode,int dueDys, String type);
+	
+	int getDPDBucketConfigurationDAOById(long bucketID, String type);
 }

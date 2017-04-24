@@ -177,7 +177,6 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		
 			this.profitCenterCode.setMaxlength(15);
 			this.profitCenterDesc.setMaxlength(50);
-			this.active.setValue("true");
 		
 		setStatusDetails();
 		
@@ -325,7 +324,12 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 			this.profitCenterCode.setValue(aProfitCenter.getProfitCenterCode());
 			this.profitCenterDesc.setValue(aProfitCenter.getProfitCenterDesc());
 			this.active.setChecked(aProfitCenter.isActive());
-		
+			if(aProfitCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aProfitCenter
+					.getRecordType())){
+				this.active.setChecked(true);
+				this.active.setDisabled(true);
+			}
+			this.recordStatus.setValue(aProfitCenter.getRecordStatus());
 		
 		logger.debug(Literal.LEAVING);
 	}

@@ -293,11 +293,13 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		this.bucketDesc.setValue(aDPDBucket.getBucketDesc());
 		this.active.setChecked(aDPDBucket.isActive());
 		
-		if(aDPDBucket.isNew() || (aDPDBucket.getRecordType() != null ? aDPDBucket.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if(aDPDBucket.isNew()  || PennantConstants.RECORD_TYPE_NEW.equals(aDPDBucket
+				.getRecordType())){
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-
+		
+		this.recordStatus.setValue(aDPDBucket.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -467,7 +469,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDPDBucket.getBucketID();
+				+ aDPDBucket.getBucketCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 

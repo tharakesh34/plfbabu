@@ -267,5 +267,23 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	@Override
+	public int getNPABucketConfigurationById(long bucketID, String type) {
+		NPABucketConfiguration nPABucketConfiguration = new NPABucketConfiguration();
+		nPABucketConfiguration.setBucketID(bucketID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From NPABUCKETSCONFIG");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BucketID =:BucketID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nPABucketConfiguration);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
 
 }

@@ -177,7 +177,6 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 		
 			this.costCenterCode.setMaxlength(15);
 			this.costCenterDesc.setMaxlength(50);
-			this.active.setValue("true");
 		
 		setStatusDetails();
 		
@@ -325,7 +324,12 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			this.costCenterCode.setValue(aCostCenter.getCostCenterCode());
 			this.costCenterDesc.setValue(aCostCenter.getCostCenterDesc());
 			this.active.setChecked(aCostCenter.isActive());
-		
+			if(aCostCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aCostCenter
+					.getRecordType())){
+				this.active.setChecked(true);
+				this.active.setDisabled(true);
+			}
+			this.recordStatus.setValue(aCostCenter.getRecordStatus());
 		
 		logger.debug(Literal.LEAVING);
 	}

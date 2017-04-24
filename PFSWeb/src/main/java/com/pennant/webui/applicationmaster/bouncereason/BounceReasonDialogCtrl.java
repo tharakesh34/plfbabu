@@ -67,10 +67,12 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -192,11 +194,16 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		
 			this.bounceCode.setMaxlength(8);
 			this.reason.setMaxlength(50);
-			this.feeID.setModuleName("FeeType");
+			this.feeID.setModuleName("Rule");
 			this.feeID.setMandatoryStyle(true);
-			this.feeID.setValueColumn("FeeTypeCode");
-			this.feeID.setDescColumn("FeeTypeDesc");
-			this.feeID.setValidateColumns(new String[] {"FeeTypeCode"});
+			this.feeID.setValueColumn("RuleCode");
+			this.feeID.setDescColumn("RuleCodeDesc");
+			this.feeID.setValidateColumns(new String[] {"RuleCode"});
+			Filter[] filters = new Filter[1] ;
+			filters[0]=new Filter("RuleModule", "BOUNCE", Filter.OP_EQUAL);
+			this.feeID.setFilters(filters);
+			
+			this.returnCode.setMaxlength(8);
 			
 		setStatusDetails();
 		
@@ -342,7 +349,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
 			
 			this.feeID.setObject(new FeeType(aBounceReason.getFeeID()));
-			this.feeID.setValue(aBounceReason.getFeeTypeCode(),aBounceReason.getFeeIDName());
+			this.feeID.setValue(aBounceReason.getRuleCode(),aBounceReason.getRuleCodeDesc());
 			
 			this.returnCode.setValue(aBounceReason.getReturnCode());
 			this.active.setChecked(aBounceReason.isActive());
@@ -351,7 +358,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 				this.active.setChecked(true);
 				this.active.setDisabled(true);
 			}
-		
+			this.recordStatus.setValue(aBounceReason.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -427,10 +434,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		//Fee ID
 		try {
 			this.feeID.getValidatedValue();
-			FeeType feeType = (FeeType) this.feeID.getObject();
-			aBounceReason.setFeeID(feeType.getFeeTypeID());
-			aBounceReason.setFeeTypeCode(feeType.getFeeTypeCode());
-			aBounceReason.setFeeIDName(feeType.getFeeTypeDesc());
+			Rule rule = (Rule) this.feeID.getObject();
+			aBounceReason.setFeeID(rule.getRuleId());
+			aBounceReason.setRuleCode(rule.getRuleCode());
+			aBounceReason.setRuleCodeDesc(rule.getRuleCodeDesc());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}

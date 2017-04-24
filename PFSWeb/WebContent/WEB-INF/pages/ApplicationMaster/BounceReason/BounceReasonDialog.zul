@@ -89,8 +89,7 @@
 								<label id="label_ReasonType"
 									value="${c:l('label_BounceReasonDialog_ReasonType.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<combobox id="reasonType"
 										width="130px" />
 								</hbox>

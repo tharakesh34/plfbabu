@@ -310,11 +310,12 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 			this.bucketDesc.setValue(aNPABucket.getBucketDesc());
 			this.active.setChecked(aNPABucket.isActive());
 			
-			if(aNPABucket.isNew() || (aNPABucket.getRecordType() != null ? aNPABucket.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			if(aNPABucket.isNew()  || PennantConstants.RECORD_TYPE_NEW.equals(aNPABucket
+					.getRecordType())){
 				this.active.setChecked(true);
 				this.active.setDisabled(true);
 			}
-		
+			this.recordStatus.setValue(aNPABucket.getRecordStatus());
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -401,7 +402,6 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 
 		doWriteBeanToComponents(nPABucket);
 		
-		this.btnDelete.setVisible(false);
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
@@ -486,7 +486,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aNPABucket.getBucketID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aNPABucket.getBucketCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
