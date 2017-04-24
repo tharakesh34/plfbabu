@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -186,10 +187,9 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
-import com.pennanttech.bajaj.services.DisbursementService;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.services.disbursement.DisbursementService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -243,6 +243,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private PromotionDAO promotionDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
+	
+	
+	@Autowired
+	private DisbursementService disbursementService;
 	
 	public FinanceDetailServiceImpl() {
 		super();
@@ -3583,7 +3587,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		if(!isWIF){
 			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
-			processDisbursmentRequets(financeDetail);
+			processDisbursementRequets(financeDetail);
 		}
 		
 		
@@ -3593,20 +3597,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	}
 	
-	private void processDisbursmentRequets(FinanceDetail financeDetail) {
-		DisbursementService disbursementService = null;
+	private void processDisbursementRequets(FinanceDetail financeDetail) {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-
-		disbursementService = new DisbursementService(finMain.getFinType(), list, App.DATABASE.name(), finMain.getLastMntBy());
-		Thread thread = new Thread(disbursementService);
 		try {
-			DisbursementService.sleep(5000);
-		} catch (InterruptedException e) {
+			disbursementService.processDisbursements(finMain.getFinType(), list, finMain.getLastMntBy());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
 		}
-
-		thread.start();
-
 	}
 
 	/**

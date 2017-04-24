@@ -10,37 +10,42 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.disbursement.DisbursementService;
 
-public class DisbursementService extends Thread {
-	private static final Logger logger = Logger.getLogger(DisbursementService.class);
+public class DisbursementServiceImpl implements DisbursementService {
+	private static final Logger			logger	= Logger.getLogger(DisbursementServiceImpl.class);
 
-	private String finType;
-	private List<FinAdvancePayments> disbusments;
-	private String database;
-	private long userId;
+	private String						finType;
+	private List<FinAdvancePayments>	disbusments;
+	private long						userId;
 
-	private DataSource dataSource;
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	private DataSource					dataSource;
+	private NamedParameterJdbcTemplate	jdbcTemplate;
 
-	public DisbursementService(String finType, List<FinAdvancePayments> disbusments, String database, long userId) {
-		this.finType = finType;
-		this.disbusments = disbusments;
-		this.database = database;
-		this.userId = userId;
-		setDataSourece();
+	@SuppressWarnings("unchecked")
+	@Override
+	public void processDisbursements(Object... params) throws Exception {
+		this.finType = (String) params[0];
+		this.disbusments = (List<FinAdvancePayments>) params[1];
+		this.userId = (long) params[2];
+
+		DisbursementProcess process = new DisbursementProcess();
+		Thread thread = new Thread(process);
+		try {
+			DisbursementProcess.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+
+		thread.start();
+
 	}
 
-	private void setDataSourece() {
-		this.dataSource = (DataSource) SpringUtil.getBean("pfsDatasource");
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	public void process() {
+	private void processDisbursements() {
 		logger.debug("Entering");
 		Map<String, StringBuilder> paymentTypes = new HashMap<>();
 		String partnerbankCode = null;
@@ -101,8 +106,9 @@ public class DisbursementService extends Thread {
 		}
 	}
 
-	private synchronized void processOthreDisbursements(String configName, StringBuilder paymentIds, String paymentType, String partnerbankCode) {
-		DataEngineExport export = new DataEngineExport(dataSource, userId, database);
+	private synchronized void processOthreDisbursements(String configName, StringBuilder paymentIds,
+			String paymentType, String partnerbankCode) {
+		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("PAYMENTID", paymentIds.toString());
@@ -123,7 +129,7 @@ public class DisbursementService extends Thread {
 	}
 
 	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds) {
-		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, database);
+		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name());
 		try {
 			proce.processData(configName, paymentIds.toString());
 		} catch (Exception e) {
@@ -158,9 +164,22 @@ public class DisbursementService extends Thread {
 		return null;
 	}
 
-	@Override
-	public void run() {
-		process();
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	public class DisbursementProcess extends Thread {
+		private final Logger	logger	= Logger.getLogger(DisbursementProcess.class);
+
+		@Override
+		public void run() {
+			try {
+				processDisbursements();
+			} catch (Exception e) {
+				logger.error("Exception: ", e);
+			}
+		}
 	}
 
 }

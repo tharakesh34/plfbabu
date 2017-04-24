@@ -51,6 +51,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
@@ -87,12 +88,11 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.bajaj.services.DisbursementService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.disbursement.DisbursementService;
 /**
  * ************************************************************<br>
  * This is the controller class for the
@@ -141,6 +141,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Button					btnDownload;
 	
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
+	
+	@Autowired
+	private DisbursementService disbursementService;
 
 	/**
 	 * default constructor.<br>
@@ -467,12 +470,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DisbursementService disbursementService = null;
-
-			disbursementService = new DisbursementService(this.finType.getValue(), disbushmentList, App.DATABASE.name(),  getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			Thread thread = new Thread(disbursementService);
-			thread.start();
-		
+			disbursementService.processDisbursements(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			Map<String,Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
 			
