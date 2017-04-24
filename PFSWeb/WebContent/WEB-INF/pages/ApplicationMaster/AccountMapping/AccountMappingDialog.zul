@@ -36,24 +36,55 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="false">
-			<groupbox id="gb_basicDetails" sclass="gb-dialog">
-				<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-					<columns>
-							<column width="15%" />
-							<column width="35%" />
-							<column width="15%" />
-							<column width="35%" />
-						</columns>
-					<rows>
-						<row id ="row0" >
-							<label id = "label_Account" value="${c:l('label_AccountMappingDialog_Account.value')}" />
-						  		<textbox id = "account" maxlength="50" width="450px" />
-							<label id = "label_HostAccount" value="${c:l('label_AccountMappingDialog_HostAccount.value')}" />
-						  		<textbox id = "hostAccount" maxlength="20" width="180px" />
-						</row>
-					</rows>
-				</grid>
-			</groupbox>
+			<div>
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+						<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+						<rows>
+							<row id ="row0" >
+								<label id = "label_FinType" value="${c:l('label_AccountMappingDialog_FinType.value')}" />
+									<hbox>
+							  			<textbox id = "finType" maxlength="50" width="450px" />
+							  			<label id = "finTypeDesc" value = "Finance Type Description"></label>
+							  		</hbox>
+								<label id = "label_Product" value="${c:l('label_AccountMappingDialog_Product.value')}" />
+									<hbox>
+							  			<textbox id = "product" maxlength="50" width="450px" />
+							  			<label id = "productDesc" value = "Product Description"></label>
+							  		</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<groupbox>
+					<listbox id="listBoxAccountMap"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" sizedByContent="true"
+						span="true">
+						<listhead sizable="true">
+							<listheader id="listheader_AccountType"
+								label="${c:l('listheader_AccountMappingDialog_AccountType.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_AccountSubheadRule"
+								label="${c:l('listheader_AccountMappingDialog_AccountSubHead.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Account"
+								label="${c:l('listheader_AccountMappingDialog_Account.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_HostAccount"
+								label="${c:l('listheader_AccountMappingDialog_HostAccount.label')}" sort="auto"
+								hflex="min" />
+						</listhead>
+					</listbox>
+				
+				</groupbox>
+			</div>
 		</center>
 		<south sclass="south-dialog">
 			<groupbox id="groupboxWf" width="99%">

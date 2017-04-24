@@ -77,7 +77,6 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Decimalbox;
-
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Longbox;
@@ -107,6 +106,7 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -353,6 +353,22 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	
+	private void setAccountMapping(){
+		
+		List<TransactionEntry> transactionEntry = 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
 	
 
 

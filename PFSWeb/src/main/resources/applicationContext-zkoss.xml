@@ -4662,5 +4662,15 @@
 	</bean>
 	<bean id="finTypePartnerBankDialogCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankDialogCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<!-- AccountMapping -->
+	<bean id="accountMappingListCtrl" class="com.pennant.webui.applicationmaster.accountmapping.AccountMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="accountMappingService" ref="accountMappingService" />
+	</bean>
+	<bean id="accountMappingDialogCtrl" class="com.pennant.webui.applicationmaster.accountmapping.AccountMappingDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="accountMappingService" ref="accountMappingService"/>
+	</bean>
+	
 
 </beans>
