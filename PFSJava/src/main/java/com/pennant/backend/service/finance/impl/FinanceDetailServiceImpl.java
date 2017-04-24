@@ -4969,7 +4969,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 
-		if (mandate != null) {
+		if (mandate != null && mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal exposure = BigDecimal.ZERO;
 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
