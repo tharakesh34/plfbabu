@@ -42,18 +42,29 @@
  */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Salutation;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declarations for the <b>Salutation model</b> class.<br>
  * 
  */
-public interface SalutationDAO {
+public interface SalutationDAO extends BasicCrudDao<Salutation> {
 
 	Salutation getSalutationById(String id,String type);
-	void update(Salutation salutation,String type);
-	void delete(Salutation salutation,String type);
-	String save(Salutation salutation,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param salutationCode
+	 *            salutationCode of the salutation.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String salutationCode, TableType tableType);
 	String getSystemDefaultCount(String salutationCode);
 	void updateSytemDefaultByGender(String genderCode,boolean systemDefault);
+	
 }

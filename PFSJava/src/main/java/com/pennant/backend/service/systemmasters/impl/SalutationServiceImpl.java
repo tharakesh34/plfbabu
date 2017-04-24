@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -60,13 +58,14 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.SalutationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Salutation</b>.<br>
  * 
  */
 public class SalutationServiceImpl extends GenericService<Salutation> implements SalutationService {
-
 	private static Logger logger = Logger.getLogger(SalutationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -114,15 +113,16 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		Salutation salutation = (Salutation) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		if (salutation.isWorkflow()) {
-			tableType = "_Temp";
+			tableType =  TableType.TEMP_TAB;
 		}
 
 		if (salutation.isNew()) {
@@ -153,13 +153,13 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Salutation salutation = (Salutation) auditHeader.getAuditDetail().getModelData();
-		getSalutationDAO().delete(salutation, "");
+		getSalutationDAO().delete(salutation, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -215,17 +215,24 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Salutation salutation = new Salutation();
 		BeanUtils.copyProperties((Salutation) auditHeader.getAuditDetail().getModelData(), salutation);
+		
+		getSalutationDAO().delete(salutation, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(salutationDAO.getSalutationById(salutation.getSalutationCode(), ""));
+		}
+		
 		if (salutation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getSalutationDAO().delete(salutation, "");
+			getSalutationDAO().delete(salutation, TableType.MAIN_TAB);
 
 		} else {
 			salutation.setRoleCode("");
@@ -237,15 +244,14 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 			if (salutation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				salutation.setRecordType("");
-				getSalutationDAO().save(salutation, "");
+				getSalutationDAO().save(salutation, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				salutation.setRecordType("");
-				getSalutationDAO().update(salutation, "");
+				getSalutationDAO().update(salutation, TableType.MAIN_TAB);
 			}
 		}
 
-		getSalutationDAO().delete(salutation, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -272,14 +278,14 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Salutation salutation = (Salutation) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getSalutationDAO().delete(salutation, "_Temp");
+		getSalutationDAO().delete(salutation, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		return auditHeader;
 	}
@@ -294,10 +300,9 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -306,106 +311,43 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
 
+		// Get the model object.
 		Salutation salutation = (Salutation) auditDetail.getModelData();
-		Salutation tempSalutation = null;
+		String code = salutation.getSalutationCode();
 
-		if (salutation.isWorkflow()) {
-			tempSalutation = getSalutationDAO().getSalutationById(salutation.getId(), "_Temp");
-		}
+		// Check the unique keys.
+		if (salutation.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())
+				&& salutationDAO
+						.isDuplicateKey(code, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;
 
-		Salutation befSalutation = getSalutationDAO().getSalutationById(salutation.getId(), "");
-		Salutation oldSalutation = salutation.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = salutation.getSalutationCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ":"
-		+ valueParm[0];
-
-		if (salutation.isNew()) { // for New record or new record into work flow
-
-			if (!salutation.isWorkflow()) {// With out Work flow only new records
-				if (befSalutation != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-
-				if (salutation.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSalutation != null || tempSalutation != null) { //if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-
-				} else { // if records not exists in the Main flow table
-					if (befSalutation == null || tempSalutation != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!salutation.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befSalutation == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldSalutation != null
-							&& !oldSalutation.getLastMntOn().equals(befSalutation.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-
-			} else {
-				if (tempSalutation == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-				if (tempSalutation != null
-						&& oldSalutation != null
-						&& !oldSalutation.getLastMntOn().equals(tempSalutation.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		if (salutation.isSystemDefault()) {
 			String dftSalutationCode = getSalutationDAO().getSystemDefaultCount(salutation.getSalutationCode());
 			if (StringUtils.isNotEmpty(dftSalutationCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
-						new String[]{dftSalutationCode,PennantJavaUtil.getLabel("Salutation")}, null));
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501", new String[] {
+						dftSalutationCode, PennantJavaUtil.getLabel("Salutation") }, null));
 			}
-        }
-		
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !salutation.isWorkflow()) {
-			auditDetail.setBefImage(befSalutation);
 		}
-		logger.debug("Leaving");
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 }

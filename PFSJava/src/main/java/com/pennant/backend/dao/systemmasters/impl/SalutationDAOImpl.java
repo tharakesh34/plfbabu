@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -48,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Salutation;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>Salutation model</b> class.<br>
@@ -89,7 +91,8 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 	 */
 	@Override
 	public Salutation getSalutationById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		Salutation salutation = new Salutation();
 		salutation.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -110,9 +113,132 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 			logger.error("Exception: ", e);
 			salutation = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return salutation;
 	}
+	
+	@Override
+	public boolean isDuplicateKey(String salutationCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "SalutationCode = :salutationCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTSalutations", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTSalutations_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTSalutations_Temp", "BMTSalutations" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("salutationCode", salutationCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(Salutation salutation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTSalutations");
+		sql.append(tableType.getSuffix());
+		sql.append(" (SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return salutation.getId();
+	}
+	
+	@Override
+	public void update(Salutation salutation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTSalutations");
+		sql.append(tableType.getSuffix());
+		sql.append(" set SaluationDesc = :SaluationDesc,");
+		sql.append(" SalutationIsActive = :SalutationIsActive, SalutationGenderCode = :SalutationGenderCode,SystemDefault=:SystemDefault,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
+		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		sql.append(" where SalutationCode =:SalutationCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void delete(Salutation salutation, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from BMTSalutations");
+		sql.append(tableType.getSuffix());
+		sql.append(" where SalutationCode =:SalutationCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+	    logger.trace(Literal.SQL + sql.toString());		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(salutation);
+		int recordCount = 0;
+
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 
 	/**
 	 * @param dataSource
@@ -122,141 +248,10 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	/**
-	 * This method Deletes the Record from the BMTSalutations or
-	 * BMTSalutations_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Salutations by key
-	 * SalutationCode
-	 * 
-	 * @param Salutations
-	 *            (salutation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(Salutation salutation, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-		
-		deleteSql.append(" Delete From BMTSalutations");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where SalutationCode =:SalutationCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",salutation.getSalutationCode(), salutation.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",salutation.getSalutationCode(), salutation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into BMTSalutations or
-	 * BMTSalutations_Temp.
-	 * 
-	 * save Salutations
-	 * 
-	 * @param Salutations
-	 *            (salutation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(Salutation salutation, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-		
-		insertSql.append("Insert Into BMTSalutations");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (SalutationCode, SaluationDesc, SalutationIsActive,SalutationGenderCode,SystemDefault,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:SalutationCode, :SaluationDesc, :SalutationIsActive, :SalutationGenderCode,:SystemDefault,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return salutation.getId();
-	}
-
-	/**
-	 * This method updates the Record BMTSalutations or BMTSalutations_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Salutations by key SalutationCode and Version
-	 * 
-	 * @param Salutations
-	 *            (salutation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(Salutation salutation, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-		
-		updateSql.append("Update BMTSalutations");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SaluationDesc = :SaluationDesc,");
-		updateSql.append(" SalutationIsActive = :SalutationIsActive, SalutationGenderCode = :SalutationGenderCode,SystemDefault=:SystemDefault,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where SalutationCode =:SalutationCode");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version = :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003",salutation.getSalutationCode(), salutation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-	
-	/**
-	 * Fetch the count of system default values by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return Gender
-	 */
 	@Override
 	public String getSystemDefaultCount(String salutationCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		Salutation salutation = new Salutation();
 		salutation.setSalutationCode(salutationCode);
 		salutation.setSystemDefault(true);
@@ -275,15 +270,15 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
         	logger.warn("Exception: ", e);
         	dftSalutationCode = "";
         }
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return dftSalutationCode;
-
 	}
-	
 
 	@Override
     public void updateSytemDefaultByGender(String genderCode, boolean systemDefault) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		StringBuilder updateSql = new StringBuilder();		
 		updateSql.append("Update BMTSalutations  set SystemDefault=:SystemDefault ");
 		updateSql.append(" Where SalutationGenderCode = :SalutationGenderCode");
@@ -296,23 +291,7 @@ public class SalutationDAOImpl extends BasisCodeDAO<Salutation> implements Salut
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-		logger.debug("Leaving");
-	    
+		
+		logger.debug(Literal.LEAVING);
     }
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String salutationCode, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = salutationCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_SalutationCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-
 }
