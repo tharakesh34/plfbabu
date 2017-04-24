@@ -368,7 +368,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
-		searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		//searchObject.addFilter(Filter.isNotNull("OrgReference"));
 		searchObject.addField("mandateID");
 		searchObject.addTabelName(this.tableName);
 
@@ -447,7 +447,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		// OrgReference
-		searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		//searchObject.addFilter(Filter.isNotNull("OrgReference"));
 
 		StringBuilder whereClause = new StringBuilder();
 		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ").append("'").append(toDate).append("'").append(")");
