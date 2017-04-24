@@ -914,7 +914,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
 			this.searchObj.addFilterOr(filters);
 		}
-
+		
+		this.searchObj.addFilter(new Filter("RcdMaintainSts", "", Filter.OP_EQUAL));
+		
 		StringBuilder whereClause = new StringBuilder();
 		
 			for (String role : usrfinRolesList) {
