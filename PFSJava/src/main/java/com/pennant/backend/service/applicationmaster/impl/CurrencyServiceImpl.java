@@ -58,6 +58,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Currency</b>.<br>
@@ -107,16 +109,17 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 						
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		
 		Currency currency = (Currency) auditHeader.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (currency.isWorkflow()) {
-			tableType="_Temp";
+			tableType= TableType.TEMP_TAB;
 		}
 
 		if (currency.isNew()) {
@@ -129,7 +132,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
-		if (StringUtils.isEmpty(tableType)) {
+		if (StringUtils.isEmpty("")) {
 			CurrencyUtil.register(currency, PennantConstants.TRAN_UPD);
 		}
 		
@@ -154,14 +157,14 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		Currency currency = (Currency) auditHeader.getAuditDetail().getModelData();
-		getCurrencyDAO().delete(currency,"");
+		getCurrencyDAO().delete(currency, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -218,7 +221,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		logger.debug("Entering ");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -226,11 +229,16 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 
 		Currency currency = new Currency();
 		BeanUtils.copyProperties((Currency) auditHeader.getAuditDetail().getModelData(), currency);
-
+		getCurrencyDAO().delete(currency, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(currency.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(currencyDAO.getCurrencyById(currency.getCcyCode(), ""));
+		}
+		
 		if (currency.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getCurrencyDAO().delete(currency, "");
+			getCurrencyDAO().delete(currency, TableType.MAIN_TAB);
 
 		} else {
 			currency.setRoleCode("");
@@ -242,15 +250,14 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			if (currency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				currency.setRecordType("");
-				getCurrencyDAO().save(currency, "");
+				getCurrencyDAO().save(currency, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				currency.setRecordType("");
-				getCurrencyDAO().update(currency, "");
+				getCurrencyDAO().update(currency, TableType.MAIN_TAB);
 			}
 		}
 
-		getCurrencyDAO().delete(currency, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -281,7 +288,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	public AuditHeader  doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -289,7 +296,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 
 		Currency currency= (Currency) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCurrencyDAO().delete(currency,"_Temp");
+		getCurrencyDAO().delete(currency, TableType.TEMP_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -306,11 +313,10 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -326,88 +332,27 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering ");
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
 		Currency currency = (Currency) auditDetail.getModelData();
-		Currency tempCurrency = null;
-		if (currency.isWorkflow()) {
-			tempCurrency = getCurrencyDAO().getCurrencyById(currency.getId(),
-					"_Temp");
+
+		// Check the unique keys.
+		if (currency.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(currency.getRecordType())
+				&& currencyDAO
+						.isDuplicateKey(currency.getCcyCode(), currency.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[3];
+			parameters[0] = PennantJavaUtil.getLabel("label_CcyCode") + ": " + currency.getCcyCode();
+			parameters[1] = PennantJavaUtil.getLabel("label_CcyNumber") + ": " + currency.getCcyNumber();
+			parameters[2] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ": " + currency.getCcySwiftCode();
+			
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		Currency befCurrency = getCurrencyDAO().getCurrencyById(
-				currency.getId(), "");
-
-		Currency oldCurrency = currency.getBefImage();
-
-		String[] valueParm = new String[3];
-		String[] errParm= new String[3];
-
-		valueParm[0] = currency.getCcyCode();
-		valueParm[1] = currency.getCcyNumber();
-		valueParm[2] = currency.getCcySwiftCode();
-
-		errParm[0] = PennantJavaUtil.getLabel("label_CcyCode") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CcyNumber") + ":"+valueParm[1];
-		errParm[2] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ":"+valueParm[2];
-
-		if (currency.isNew()) { // for New record or new record into work flow
-
-			if (!currency.isWorkflow()) {// With out Work flow only new records
-				if (befCurrency != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
-				}
-			} else { // with work flow
-				if (currency.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCurrency != null || tempCurrency != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befCurrency == null || tempCurrency != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!currency.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befCurrency == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldCurrency != null
-							&& !oldCurrency.getLastMntOn().equals(
-									befCurrency.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempCurrency == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempCurrency != null && oldCurrency != null
-						&& !oldCurrency.getLastMntOn().equals(
-								tempCurrency.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-			}
-		}
+		
 		boolean isEnableWorkFlow ;
 		if (!currency.isWorkflow()) {
 			isEnableWorkFlow = currency.isNew() ;
@@ -416,22 +361,20 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		}
 		if(isEnableWorkFlow){
 			String[] parm= new String[1];
+			
 			if(getCurrencyDAO().getUniqueCurrencyByID(currency,true,false)){
-				parm[0] = PennantJavaUtil.getLabel("label_CcyNumber") + ":"+valueParm[1];
+				parm[0] = PennantJavaUtil.getLabel("label_CcyNumber") + ":"+ currency.getCcyNumber();
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",parm,null));
 			}else if(getCurrencyDAO().getUniqueCurrencyByID(currency,false,true)){
-				parm[0] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ":"+valueParm[2];
+				parm[0] = PennantJavaUtil.getLabel("label_CcySwiftCode") + ":"+ currency.getCcySwiftCode();
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41014",parm,null));
 			}
 			
 		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !currency.isWorkflow()) {
-			auditDetail.setBefImage(befCurrency);
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
 }

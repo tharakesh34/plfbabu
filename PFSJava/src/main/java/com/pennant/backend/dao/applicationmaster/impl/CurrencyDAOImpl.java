@@ -51,20 +51,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>Currency model</b> class.<br>
@@ -192,6 +195,145 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		return ccyCode;
 	}
 
+	@Override
+	public boolean isDuplicateKey(String ccyCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "CcyCode = :ccyCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTCurrencies", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTCurrencies_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCurrencies_Temp", "RMTCurrencies" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ccyCode", ccyCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(Currency currency, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into RMTCurrencies" );
+		sql.append(tableType.getSuffix());
+		sql.append(" (CcyCode, CcyNumber, CcyDesc, CcySwiftCode, CcyEditField," );
+		sql.append(" CcyMinorCcyUnits, CcyDrRateBasisCode, CcyCrRateBasisCode," );
+		sql.append(" CcyIsIntRounding, CcySpotRate, CcyIsReceprocal, CcyUserRateBuy," );
+		sql.append(" CcyUserRateSell, CcyIsMember, CcyIsGroup, CcyIsAlwForLoans, CcyIsAlwForDepo," );
+		sql.append(" CcyIsAlwForAc, CcyIsActive, CcyMinorCcyDesc, CcySymbol," );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(:CcyCode, :CcyNumber, :CcyDesc, :CcySwiftCode, :CcyEditField," );
+		sql.append(" :CcyMinorCcyUnits, :CcyDrRateBasisCode, :CcyCrRateBasisCode," );
+		sql.append(" :CcyIsIntRounding, :CcySpotRate, :CcyIsReceprocal, :CcyUserRateBuy," );
+		sql.append(" :CcyUserRateSell, :CcyIsMember, :CcyIsGroup, :CcyIsAlwForLoans," );
+		sql.append(" :CcyIsAlwForDepo, :CcyIsAlwForAc, :CcyIsActive, :CcyMinorCcyDesc, :CcySymbol,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(currency);
+		
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return currency.getId();
+	}
+	
+	@Override
+	public void update(Currency currency, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update RMTCurrencies");
+		sql.append(tableType.getSuffix());
+		sql.append(" set CcyNumber = :CcyNumber, CcyDesc = :CcyDesc,");
+		sql.append(" CcySwiftCode = :CcySwiftCode, CcyEditField = :CcyEditField,");
+		sql.append(" CcyMinorCcyUnits =:CcyMinorCcyUnits,CcyDrRateBasisCode = :CcyDrRateBasisCode,");
+		sql.append(" CcyCrRateBasisCode = :CcyCrRateBasisCode,CcyIsIntRounding = :CcyIsIntRounding,");
+		sql.append(" CcySpotRate = :CcySpotRate, CcyIsReceprocal = :CcyIsReceprocal,");
+		sql.append(" CcyUserRateBuy = :CcyUserRateBuy, CcyUserRateSell = :CcyUserRateSell,");
+		sql.append(" CcyIsMember = :CcyIsMember, CcyIsGroup = :CcyIsGroup,");
+		sql.append(" CcyIsAlwForLoans = :CcyIsAlwForLoans, CcyIsAlwForDepo = :CcyIsAlwForDepo,");
+		sql.append(" CcyIsAlwForAc = :CcyIsAlwForAc, CcyIsActive = :CcyIsActive,");
+		sql.append(" CcyMinorCcyDesc = :CcyMinorCcyDesc, CcySymbol = :CcySymbol ,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where CcyCode =:CcyCode ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void delete(Currency currency, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" delete from RMTCurrencies");
+		sql.append(tableType.getSuffix());
+		sql.append(" where CcyCode =:CcyCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+	    logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(currency);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	
 	/**
 	 * @param dataSource the dataSource to set
 	 */
@@ -199,146 +341,7 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	/**
-	 * This method Deletes the Record from the RMTCurrencies or RMTCurrencies_Temp.
-	 * if Record not deleted then throws DataAccessException with  error  41003.
-	 * delete Currency by key CcyCode
-	 * 
-	 * @param Currency (currency)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(Currency currency, String type) {
-		logger.debug("Entering ");
-		int recordCount = 0;
-		
-		StringBuilder deleteSql = new StringBuilder(" Delete From RMTCurrencies");
-		deleteSql.append(StringUtils.trimToEmpty(type) );
-		deleteSql.append(" Where CcyCode =:CcyCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003", currency.getCcyCode(),
-						currency.getCcyNumber(),currency.getCcySwiftCode(),
-						currency.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", currency.getCcyCode(),
-					currency.getCcyNumber(),currency.getCcySwiftCode(),
-					currency.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * This method insert new Records into RMTCurrencies or RMTCurrencies_Temp.
-	 *
-	 * save Currency 
-	 * 
-	 * @param Currency (currency)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return String
-	 * 
-	 */
-	@Override
-	public String save(Currency currency,String type) {
-		logger.debug("Entering ");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTCurrencies" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (CcyCode, CcyNumber, CcyDesc, CcySwiftCode, CcyEditField," );
-		insertSql.append(" CcyMinorCcyUnits, CcyDrRateBasisCode, CcyCrRateBasisCode," );
-		insertSql.append(" CcyIsIntRounding, CcySpotRate, CcyIsReceprocal, CcyUserRateBuy," );
-		insertSql.append(" CcyUserRateSell, CcyIsMember, CcyIsGroup, CcyIsAlwForLoans, CcyIsAlwForDepo," );
-		insertSql.append(" CcyIsAlwForAc, CcyIsActive, CcyMinorCcyDesc, CcySymbol," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CcyCode, :CcyNumber, :CcyDesc, :CcySwiftCode, :CcyEditField," );
-		insertSql.append(" :CcyMinorCcyUnits, :CcyDrRateBasisCode, :CcyCrRateBasisCode," );
-		insertSql.append(" :CcyIsIntRounding, :CcySpotRate, :CcyIsReceprocal, :CcyUserRateBuy," );
-		insertSql.append(" :CcyUserRateSell, :CcyIsMember, :CcyIsGroup, :CcyIsAlwForLoans," );
-		insertSql.append(" :CcyIsAlwForDepo, :CcyIsAlwForAc, :CcyIsActive, :CcyMinorCcyDesc, :CcySymbol,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving ");
-		return currency.getId();
-	}
-
-	/**
-	 * This method updates the Record RMTCurrencies or RMTCurrencies_Temp.
-	 * if Record not updated then throws DataAccessException with  error  41004.
-	 * update Currency by key CcyCode and Version
-	 * 
-	 * @param Currency (currency)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(Currency currency, String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-		
-		StringBuilder updateSql = new StringBuilder("Update RMTCurrencies" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CcyNumber = :CcyNumber, CcyDesc = :CcyDesc,");
-		updateSql.append(" CcySwiftCode = :CcySwiftCode, CcyEditField = :CcyEditField," );
-		updateSql.append(" CcyMinorCcyUnits =:CcyMinorCcyUnits,CcyDrRateBasisCode = :CcyDrRateBasisCode,");
-		updateSql.append(" CcyCrRateBasisCode = :CcyCrRateBasisCode,CcyIsIntRounding = :CcyIsIntRounding,");
-		updateSql.append(" CcySpotRate = :CcySpotRate, CcyIsReceprocal = :CcyIsReceprocal,");
-		updateSql.append(" CcyUserRateBuy = :CcyUserRateBuy, CcyUserRateSell = :CcyUserRateSell," );
-		updateSql.append(" CcyIsMember = :CcyIsMember, CcyIsGroup = :CcyIsGroup," );
-		updateSql.append(" CcyIsAlwForLoans = :CcyIsAlwForLoans, CcyIsAlwForDepo = :CcyIsAlwForDepo," );
-		updateSql.append(" CcyIsAlwForAc = :CcyIsAlwForAc, CcyIsActive = :CcyIsActive," );
-		updateSql.append(" CcyMinorCcyDesc = :CcyMinorCcyDesc, CcySymbol = :CcySymbol ," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where CcyCode =:CcyCode ");
-
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails=  getError("41004", currency.getCcyCode(),
-					currency.getCcyNumber(),currency.getCcySwiftCode(),
-					currency.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving ");
-	}
-
+	
 	/**
 	 * Method for Checking Currency having Unique CcyCode,CcyNumber and SwiftCode or Not
 	 */
@@ -396,23 +399,6 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		return currencies;
 	}
 
-
-	
-	private ErrorDetails  getError(String errorId, String ccyCode,String ccyNumber,
-			String ccySwiftCode, String userLanguage){
-		String[][] parms= new String[2][3]; 
-
-		parms[1][0] = ccyCode;
-		parms[1][1] = ccyNumber;
-		parms[1][2] = ccySwiftCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CcyCode")+ ":" + parms[1][0] 
-		                 +" "+ PennantJavaUtil.getLabel("label_CcyNumber")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_CcySwiftCode")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	@Override
     public List<Currency> getCurrencyList(List<String> asList) {
 		logger.debug("Entering ");
@@ -431,5 +417,4 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		logger.debug("Leaving ");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);	
     }
-
 }

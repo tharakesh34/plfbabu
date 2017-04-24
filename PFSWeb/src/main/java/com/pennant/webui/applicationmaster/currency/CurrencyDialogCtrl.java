@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -753,16 +752,14 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 			}
 
 			try {
-				if(doProcess(aCurrency,tranType)){
+				if (doProcess(aCurrency, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
-			
 		}
 		logger.debug("Leaving ");
 	}
@@ -939,16 +936,15 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		
 		// save it to database
 		try {
-			
-			if(doProcess(aCurrency,tranType)){
+
+			if (doProcess(aCurrency, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CurrencyDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}
