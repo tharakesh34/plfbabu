@@ -44,7 +44,6 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -61,6 +60,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>BaseRate</b>.<br>
@@ -113,16 +114,17 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 				
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		
 		BaseRate baseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		
 		if (baseRate.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (baseRate.isNew()) {
@@ -156,14 +158,14 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		BaseRate baseRate = (BaseRate) auditHeader.getAuditDetail().getModelData();
-		getBaseRateDAO().delete(baseRate,"");
+		getBaseRateDAO().delete(baseRate, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -232,7 +234,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -240,11 +242,17 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 
 		BaseRate baseRate = new BaseRate();
 		BeanUtils.copyProperties((BaseRate) auditHeader.getAuditDetail().getModelData(), baseRate);
+		
+		getBaseRateDAO().delete(baseRate, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(baseRateDAO.getBaseRateById(baseRate.getBRType(), baseRate.getCurrency(), baseRate.getBREffDate(), ""));
+		}
 
 		if (baseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getBaseRateDAO().delete(baseRate, "");
+			getBaseRateDAO().delete(baseRate, TableType.MAIN_TAB);
 
 		} else {
 			baseRate.setRoleCode("");
@@ -256,18 +264,18 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			if (baseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				baseRate.setRecordType("");
-				getBaseRateDAO().save(baseRate, "");
+				getBaseRateDAO().save(baseRate, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				baseRate.setRecordType("");
-				getBaseRateDAO().update(baseRate, "");
+				getBaseRateDAO().update(baseRate, TableType.MAIN_TAB);
 			}
 		}
 		if (baseRate.isDelExistingRates()) {
 			getBaseRateDAO().deleteByEffDate(baseRate, "_Temp");
 			getBaseRateDAO().deleteByEffDate(baseRate, "");
 		}
-		getBaseRateDAO().delete(baseRate, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -295,7 +303,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	public AuditHeader  doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -303,7 +311,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 
 		BaseRate baseRate= (BaseRate) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getBaseRateDAO().delete(baseRate,"_Temp");
+		getBaseRateDAO().delete(baseRate, TableType.TEMP_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -320,11 +328,10 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -340,94 +347,28 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,
-			String method) {
-		logger.debug("Entering");
-		
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
 		BaseRate baseRate = (BaseRate) auditDetail.getModelData();
-		BaseRate tempBaseRate = null;
-		if (baseRate.isWorkflow()) {
-			tempBaseRate = getBaseRateDAO().getBaseRateById(
-					baseRate.getBRType(), baseRate.getCurrency(),baseRate.getBREffDate(), "_Temp");
+	
+		// Check the unique keys.
+		if (baseRate.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())
+				&& baseRateDAO.isDuplicateKey(baseRate.getBRType(),baseRate.getBREffDate(),baseRate.getCurrency(), baseRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_BRType") + ": " + baseRate.getBRType();
+			parameters[1] = PennantJavaUtil.getLabel("label_BREffDate") + ": " + baseRate.getBREffDate();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		BaseRate befBaseRate = getBaseRateDAO().getBaseRateById(
-				baseRate.getBRType(), baseRate.getCurrency(),baseRate.getBREffDate(), "");
-
-		BaseRate oldBaseRate = baseRate.getBefImage();
-
-
-		String[] valueParm = new String[2];
-		String[] errParm= new String[2];
-
-		valueParm[0] = baseRate.getBRType();
-		valueParm[1] = DateUtility.formatDate(baseRate.getBREffDate(),PennantConstants.DBDateFormat);
-
-		errParm[0] = PennantJavaUtil.getLabel("label_BRType") + ":"+ valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_BREffDate") + ":"+valueParm[1];
-
-		if (baseRate.isNew()) { // for New record or new record into work flow
-
-			if (!baseRate.isWorkflow()) {// With out Work flow only new records
-				if (befBaseRate != null) { // Record Already Exists in the table
-											// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-				}
-			} else { // with work flow
-				if (baseRate.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befBaseRate != null || tempBaseRate != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befBaseRate == null || tempBaseRate != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-					}
-				}
- 			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!baseRate.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befBaseRate == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldBaseRate != null
-							&& !oldBaseRate.getLastMntOn().equals(
-									befBaseRate.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempBaseRate == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempBaseRate != null && oldBaseRate != null
-						&& !oldBaseRate.getLastMntOn().equals(
-								tempBaseRate.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-			}
-		}
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !baseRate.isWorkflow()) {
-			auditDetail.setBefImage(befBaseRate);
-		}
-		logger.debug("Leaving");
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
 }

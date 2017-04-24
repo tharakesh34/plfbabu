@@ -43,6 +43,7 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -177,4 +178,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public void setLastMdfDate(Date lastMdfDate) {
     	this.lastMdfDate = lastMdfDate;
     }
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

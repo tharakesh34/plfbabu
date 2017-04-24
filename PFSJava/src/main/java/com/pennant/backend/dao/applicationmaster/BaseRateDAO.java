@@ -44,17 +44,31 @@ package com.pennant.backend.dao.applicationmaster;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.BaseRate;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>BaseRate model</b> class.<br>
  */
-public interface BaseRateDAO {
+public interface BaseRateDAO extends BasicCrudDao<BaseRate> {
 
 	BaseRate getBaseRateById(String bRType, String currency, Date bREffDate, String type);
-	void update(BaseRate baseRate, String type);
-	void delete(BaseRate baseRate, String type);
-	void save(BaseRate baseRate, String type);
+	
+	/**
+	 *  Checks whether another record exists with the key attributes in the specified table type.
+	 *  
+	 * @param bRType
+	 *            bRType of the baseRate
+	 * @param bREffDate
+	 *            bREffDate of the baseRate
+	 * @param currency
+	 *            currency of the baseRate
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String bRType,Date bREffDate, String currency, TableType tableType);
 	BaseRate getBaseRateByType(final String bRType, String currency, Date bREffDate);
 	boolean getBaseRateListById(String bRType, String currency, Date bREffDate, String type);
 	List<BaseRate> getBSRListByMdfDate(Date bREffDate, String type);

@@ -50,6 +50,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -66,6 +67,11 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>BaseRate model</b> class.<br>
@@ -92,7 +98,8 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 	 */
 	@Override
 	public BaseRate getBaseRateById(final String bRType, String currency, Date bREffDate, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		BaseRate baseRate = new BaseRate();
 		baseRate.setBRType(bRType);
 		baseRate.setCurrency(currency);
@@ -118,10 +125,134 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 			logger.error("Exception: ", e);
 			baseRate = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return baseRate;
 	}
+	
+	@Override
+	public boolean isDuplicateKey(String bRType, Date bREffDate, String currency, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "BRType =:bRType and BREffDate=:bREffDate and Currency=:currency";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTBaseRates", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTBaseRates_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTBaseRates_Temp", "RMTBaseRates" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("bRType", bRType);
+		paramSource.addValue("bREffDate", bREffDate);
+		paramSource.addValue("currency", currency);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(BaseRate baseRate, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into RMTBaseRates");
+		sql.append(tableType.getSuffix());
+		sql.append(" (BRType, Currency, BREffDate, BRRate, DelExistingRates,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		sql.append(" NextTaskId, RecordType, WorkflowId, LastMdfDate )");
+		sql.append(" Values(:BRType, :Currency, :BREffDate, :BRRate, :DelExistingRates,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :LastMdfDate)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return baseRate.getId();
+	}
+
+	@Override
+	public void update(BaseRate baseRate, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update RMTBaseRates");
+		sql.append(tableType.getSuffix());
+		sql.append(" set BRRate = :BRRate,  DelExistingRates = :DelExistingRates,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LastMdfDate=:LastMdfDate ");
+		sql.append(" where BRType =:BRType AND BREffDate = :BREffDate AND Currency = :Currency");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void delete(BaseRate baseRate, TableType tableType ) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" delete from RMTBaseRates");
+		sql.append(tableType.getSuffix());
+		sql.append(" where BRType =:BRType and BREffDate = :BREffDate and Currency = :Currency");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+	    logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * @param dataSource
 	 *            the dataSource to set
@@ -129,130 +260,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
-	/**
-	 * This method Deletes the Record from the RMTBaseRates or
-	 * RMTBaseRates_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete BaseRates by key BRType
-	 * 
-	 * @param BaseRates
-	 *            (baseRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(BaseRate baseRate, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql = new StringBuilder(" Delete From RMTBaseRates");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where BRType =:BRType and BREffDate = :BREffDate and Currency = :Currency");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", baseRate.getBRType(),
-						baseRate.getBREffDate(), baseRate.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", baseRate.getBRType(),
-					baseRate.getBREffDate(), baseRate.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into RMTBaseRates or RMTBaseRates_Temp.
-	 * 
-	 * save BaseRates
-	 * 
-	 * @param BaseRates
-	 *            (baseRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void save(BaseRate baseRate, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-
-		insertSql.append("Insert Into RMTBaseRates");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (BRType, Currency, BREffDate, BRRate, DelExistingRates,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		insertSql.append(" NextTaskId, RecordType, WorkflowId, LastMdfDate )");
-		insertSql.append(" Values(:BRType, :Currency, :BREffDate, :BRRate, :DelExistingRates,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :LastMdfDate)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method updates the Record RMTBaseRates or RMTBaseRates_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update BaseRates by key BRType and Version
-	 * 
-	 * @param BaseRates
-	 *            (baseRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	@Override
-	public void update(BaseRate baseRate, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update RMTBaseRates");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set BRRate = :BRRate,  DelExistingRates = :DelExistingRates,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LastMdfDate=:LastMdfDate ");
-		updateSql.append(" Where BRType =:BRType AND BREffDate = :BREffDate AND Currency = :Currency");
-
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", baseRate.getBRType(), 
-					baseRate.getBREffDate(), baseRate.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving Update Method");
-	}
-
+	
 	/**
 	 * Common method for BaseRates to get the baseRate and
 	 * get the List of objects less than passed Effective BaseRate Date
@@ -350,7 +358,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 			return false;
 		}
 		return true;
-	}
+	}	
 
 	@Override
 	public List<BaseRate> getBSRListByMdfDate(Date effDate, String type) {
