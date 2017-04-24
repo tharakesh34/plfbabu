@@ -631,4 +631,9 @@
 			referencedTableName="DPDBUCKETS" referencedColumnNames="bucketID"
 			baseTableName="DPDBUCKETSCONFIG" baseColumnNames="bucketID" />
 	</changeSet>
+	
+		<changeSet id="51" author="Amit">
+		<addPrimaryKey columnNames="INDUSTRYCODE" constraintName="PK_BMTINDUSTRIES_INDUSTRYCODE"
+			tableName="BMTINDUSTRIES" />
+	</changeSet>
 </databaseChangeLog>
