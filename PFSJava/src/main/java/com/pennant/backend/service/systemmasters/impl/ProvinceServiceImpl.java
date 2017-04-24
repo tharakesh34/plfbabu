@@ -58,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Province</b>.<br>
@@ -111,18 +112,18 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		String tableType = "";
+		TableType tableType = TableType.MAIN_TAB;
 		Province province = (Province) auditHeader.getAuditDetail()
 				.getModelData();
 
 		if (province.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (province.isNew()) {
@@ -156,7 +157,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -164,7 +165,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		Province province = (Province) auditHeader.getAuditDetail()
 				.getModelData();
-		getProvinceDAO().delete(province, "");
+		getProvinceDAO().delete(province, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -223,7 +224,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -232,12 +233,18 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		Province province = new Province();
 		BeanUtils.copyProperties((Province) auditHeader.getAuditDetail()
 				.getModelData(), province);
+		
+		getProvinceDAO().delete(province, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					provinceDAO.getProvinceById(
+							province.getCPCountry(), province.getCPProvince(), ""));
+		}
+		
 
 		if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-
-			getProvinceDAO().delete(province, "");
-
+			getProvinceDAO().delete(province, TableType.MAIN_TAB);
 		} else {
 			province.setRoleCode("");
 			province.setNextRoleCode("");
@@ -249,15 +256,15 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				province.setRecordType("");
-				getProvinceDAO().save(province, "");
+				getProvinceDAO().save(province, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				province.setRecordType("");
-				getProvinceDAO().update(province, "");
+				getProvinceDAO().update(province, TableType.MAIN_TAB);
 			}
 		}
 
-		getProvinceDAO().delete(province, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -285,7 +292,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -294,7 +301,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		Province province = (Province) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getProvinceDAO().delete(province, "_Temp");
+		getProvinceDAO().delete(province, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -311,11 +318,10 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -334,7 +340,38 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		Province province = (Province) auditDetail.getModelData();
+		// Check the unique keys.
+		if (province.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())
+				&& provinceDAO.isDuplicateKey(province.getCPCountry(), province.getCPProvince(),
+						province.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_CPCountry") + ":"+ province.getCPCountry();
+			parameters[1] = PennantJavaUtil.getLabel("label_CPProvince") + ":"+ province.getCPProvince();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+	
+		if (province.isSystemDefault()) {
+			String dftCPProvince = getProvinceDAO().getSystemDefaultCount(province.getCPProvince());
+			if (StringUtils.isNotEmpty(dftCPProvince)) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+				        new String[]{dftCPProvince,PennantJavaUtil.getLabel("Province")}, null));
+			}
+        }
+		
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+	/*private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
 		Province province = (Province) auditDetail.getModelData();
@@ -430,6 +467,6 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}
+	}*/
 
 }

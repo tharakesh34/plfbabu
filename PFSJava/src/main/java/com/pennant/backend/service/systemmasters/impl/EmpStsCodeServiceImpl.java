@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.EmpStsCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>EmpStsCode</b>.<br>
@@ -116,17 +114,17 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		TableType tableType = TableType.MAIN_TAB;
 		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail()
 				.getModelData();
 
 		if (empStsCode.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (empStsCode.isNew()) {
@@ -159,14 +157,14 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		EmpStsCode empStsCode = (EmpStsCode) auditHeader.getAuditDetail()
 				.getModelData();
-		getEmpStsCodeDAO().delete(empStsCode, "");
+		getEmpStsCodeDAO().delete(empStsCode,TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -224,7 +222,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -233,10 +231,16 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		BeanUtils.copyProperties((EmpStsCode) auditHeader.getAuditDetail()
 				.getModelData(), empStsCode);
 
+		getEmpStsCodeDAO().delete(empStsCode, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(empStsCodeDAO.getEmpStsCodeById(empStsCode.getEmpStsCode(), ""));
+		}
+		
 		if (empStsCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getEmpStsCodeDAO().delete(empStsCode, "");
+			getEmpStsCodeDAO().delete(empStsCode, TableType.MAIN_TAB);
 		} else {
 			empStsCode.setRoleCode("");
 			empStsCode.setNextRoleCode("");
@@ -248,14 +252,14 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				empStsCode.setRecordType("");
-				getEmpStsCodeDAO().save(empStsCode, "");
+				getEmpStsCodeDAO().save(empStsCode, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				empStsCode.setRecordType("");
-				getEmpStsCodeDAO().update(empStsCode, "");
+				getEmpStsCodeDAO().update(empStsCode, TableType.MAIN_TAB);
 			}
 		}
-		getEmpStsCodeDAO().delete(empStsCode, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -283,7 +287,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -292,7 +296,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getEmpStsCodeDAO().delete(empStsCode, "_Temp");
+		getEmpStsCodeDAO().delete(empStsCode, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -309,11 +313,10 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -332,7 +335,31 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		EmpStsCode empStsCode = (EmpStsCode) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (empStsCode.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())
+				&& empStsCodeDAO.isDuplicateKey(empStsCode.getEmpStsCode(),
+						empStsCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_EmpStsCode") + ":"+ empStsCode.getEmpStsCode();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+	/*private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
@@ -444,6 +471,6 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}
+	}*/
 
 }

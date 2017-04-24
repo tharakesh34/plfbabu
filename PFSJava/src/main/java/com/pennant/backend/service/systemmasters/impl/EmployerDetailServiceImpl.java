@@ -54,11 +54,13 @@ import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>EmployerDetail</b>.<br>
@@ -142,15 +144,15 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		TableType tableType = TableType.MAIN_TAB;
 		EmployerDetail employerDetail = (EmployerDetail) auditHeader.getAuditDetail().getModelData();
 		
 		if (employerDetail.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (employerDetail.isNew()) {
-			employerDetail.setId(getEmployerDetailDAO().save(employerDetail,tableType));
+			employerDetail.setId(Long.parseLong(getEmployerDetailDAO().save(employerDetail,tableType)));
 			auditHeader.getAuditDetail().setModelData(employerDetail);
 			auditHeader.setAuditReference(String.valueOf(employerDetail.getEmployerId()));
 		}else{
@@ -183,7 +185,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		}
 		
 		EmployerDetail employerDetail = (EmployerDetail) auditHeader.getAuditDetail().getModelData();
-		getEmployerDetailDAO().delete(employerDetail,"");
+		getEmployerDetailDAO().delete(employerDetail, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -242,7 +244,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		if (employerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getEmployerDetailDAO().delete(employerDetail, "");
+			getEmployerDetailDAO().delete(employerDetail, TableType.TEMP_TAB);
 
 		} else {
 			employerDetail.setRoleCode("");
@@ -254,15 +256,15 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 			if (employerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				employerDetail.setRecordType("");
-				getEmployerDetailDAO().save(employerDetail, "");
+				getEmployerDetailDAO().save(employerDetail, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				employerDetail.setRecordType("");
-				getEmployerDetailDAO().update(employerDetail, "");
+				getEmployerDetailDAO().update(employerDetail, TableType.MAIN_TAB);
 			}
 		}
 
-		getEmployerDetailDAO().delete(employerDetail, "_Temp");
+		getEmployerDetailDAO().delete(employerDetail, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -296,7 +298,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 			EmployerDetail employerDetail = (EmployerDetail) auditHeader.getAuditDetail().getModelData();
 			
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getEmployerDetailDAO().delete(employerDetail,"_Temp");
+			getEmployerDetailDAO().delete(employerDetail, TableType.TEMP_TAB);
 			
 			getAuditHeaderDAO().addAudit(auditHeader);
 			logger.debug("Leaving");
@@ -338,6 +340,34 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		 * @param boolean onlineRequest
 		 * @return auditHeader
 		 */
+		
+		
+		/*private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+			logger.debug("Entering");
+
+			// Get the model object.
+			EmployerDetail employerDetail = (EmployerDetail) auditDetail.getModelData();
+
+			// Check the unique keys.
+		if (employerDetail.isNew()
+				&& employerDetailDAO.isDuplicateKey(employerDetail.getId(), employerDetail.getEmpIndustry(),
+						employerDetail.getEmpName(), employerDetail.isWorkflow() ? TableType.BOTH_TAB
+								: TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_AcademicLevel") + ": " + employerDetail.getAcademicLevel();
+				parameters[1] = PennantJavaUtil.getLabel("label_AcademicDecipline") + ": "
+						+ employerDetail.getAcademicDecipline();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
+
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+			logger.debug("Leaving");
+			return auditDetail;
+		}	*/
+		
 		
 		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
 			logger.debug("Entering");

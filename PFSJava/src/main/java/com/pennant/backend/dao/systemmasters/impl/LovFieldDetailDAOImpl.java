@@ -48,20 +48,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>LovFieldDetail model</b> class.<br>
@@ -141,31 +144,29 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(LovFieldDetail lovFieldDetail,String type) {
-		logger.debug("Entering");
+	public void delete(LovFieldDetail lovFieldDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From RMTLovFieldDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where FieldCodeId =:FieldCodeId");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		          
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",
-						lovFieldDetail.getId(), lovFieldDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails=  getError("41006",lovFieldDetail.getId(),
-					lovFieldDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -184,8 +185,8 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 * 
 	 */
 	@Override
-	public long save(LovFieldDetail lovFieldDetail,String type) {
-		logger.debug("Entering");
+	public String save(LovFieldDetail lovFieldDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		if (lovFieldDetail.getId()==Long.MIN_VALUE){
 			lovFieldDetail.setId(getNextidviewDAO().getNextId("SeqRMTLovFieldDetail"));
@@ -193,7 +194,7 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		}
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTLovFieldDetail" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (FieldCodeId, FieldCode, FieldCodeValue,valueDesc, isActive,SystemDefault,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
@@ -201,12 +202,15 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		
-		logger.debug("Leaving");
-		return lovFieldDetail.getId();
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return String.valueOf(lovFieldDetail.getId());
 	}
 	
 	/**
@@ -223,11 +227,12 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(LovFieldDetail lovFieldDetail,String type) {
+	public void update(LovFieldDetail lovFieldDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
 		int recordCount = 0;
-		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update RMTLovFieldDetail");
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set FieldCode = :FieldCode," );
 		updateSql.append(" FieldCodeValue =:FieldCodeValue, valueDesc =:valueDesc,isActive =:isActive , SystemDefault=:SystemDefault," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
@@ -235,22 +240,17 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where FieldCodeId =:FieldCodeId ");
-
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldDetail);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",lovFieldDetail.getId(),
-					lovFieldDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	
@@ -290,14 +290,41 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 		return sysDftCount;
 
 	}
-	
-	private ErrorDetails  getError(String errorId,long fieldCodeId, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		
-		parms[1][0] = String.valueOf(fieldCodeId);
-		parms[0][0] = PennantJavaUtil.getLabel("label_FieldCodeId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
+
+	@Override
+	public boolean isDuplicateKey(String fieldCode, String fieldDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "FieldCode =:fieldCode AND FieldCodeValue =:fieldDetail";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTLovFieldDetail", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTLovFieldDetail_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTLovFieldDetail_Temp", "RMTLovFieldDetail" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("fieldCode", fieldCode);
+		paramSource.addValue("fieldDetail", fieldDetail);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 	
 }

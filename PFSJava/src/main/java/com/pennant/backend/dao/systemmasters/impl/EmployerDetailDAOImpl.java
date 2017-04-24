@@ -49,6 +49,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -63,6 +64,11 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>EmployerDetail model</b> class.<br>
@@ -140,28 +146,29 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(EmployerDetail employerDetail,String type) {
-		logger.debug("Entering");
+	public void delete(EmployerDetail employerDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From EmployerDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where EmployerId =:EmployerId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",employerDetail.getEmpName() ,employerDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",employerDetail.getEmpName() ,employerDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -179,26 +186,30 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	 */
 	
 	@Override
-	public long save(EmployerDetail employerDetail,String type) {
-		logger.debug("Entering");
+	public String save(EmployerDetail employerDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		if (employerDetail.getId()==Long.MIN_VALUE){
 			employerDetail.setId(getNextidviewDAO().getNextId("SeqEmployerDetail"));
 			logger.debug("get NextID:"+employerDetail.getId());
 		}
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into EmployerDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:EmployerId, :EmpIndustry, :EmpName, :EstablishDate, :EmpAddrHNbr, :EmpFlatNbr, :EmpAddrStreet, :EmpAddrLine1, :EmpAddrLine2, :EmpPOBox, :EmpCountry, :EmpProvince, :EmpCity, :EmpPhone, :EmpFax, :EmpTelexNo, :EmpEmailId, :EmpWebSite, :ContactPersonName, :ContactPersonNo, :EmpAlocationType, :BankRefNo");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return employerDetail.getId();
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return String.valueOf(employerDetail.getId());
 	}
 	
 	/**
@@ -216,30 +227,28 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	
 	@SuppressWarnings("serial")
 	@Override
-	public void update(EmployerDetail employerDetail,String type) {
+	public void update(EmployerDetail employerDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder	updateSql =new StringBuilder("Update EmployerDetail");
-		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		StringBuilder updateSql = new StringBuilder("Update EmployerDetail");
+		updateSql.append(tableType.getSuffix());
+		updateSql
+				.append(" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo");
+		updateSql
+				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where EmployerId =:EmployerId");
-		
-		if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
-		}
-		
-		logger.debug("updateSql: " + updateSql.toString());
-		
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.trace(Literal.SQL + updateSql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",employerDetail.getEmpName() ,employerDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	private ErrorDetails  getError(String errorId, String employerName, String userLanguage){
@@ -247,6 +256,12 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		parms[1][0] = employerName;
 		parms[0][0] = PennantJavaUtil.getLabel("label_EmployerId")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+
+	@Override
+	public boolean isDuplicateKey(long employerId, TableType tableType) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	

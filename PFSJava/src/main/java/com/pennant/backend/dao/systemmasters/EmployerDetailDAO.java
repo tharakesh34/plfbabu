@@ -42,12 +42,20 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
+import com.pennanttech.pff.core.TableType;
 
-public interface EmployerDetailDAO {
+public interface EmployerDetailDAO extends BasicCrudDao<EmployerDetail> {
 
 	EmployerDetail getEmployerDetailById(long id,String type);
-	void update(EmployerDetail employerDetail,String type);
-	void delete(EmployerDetail employerDetail,String type);
-	long save(EmployerDetail employerDetail,String type);
+	/**
+	 * 
+	 * @param employerId
+	 *            of EmployerDetail
+	 * @param tableType
+	 *            of EmployerDetail
+	 * @return
+	 */
+	boolean isDuplicateKey(long employerId, TableType tableType);
 }

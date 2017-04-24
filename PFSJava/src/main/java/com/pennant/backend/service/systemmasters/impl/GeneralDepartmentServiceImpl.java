@@ -43,7 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>GeneralDepartment</b>.<br>
@@ -113,18 +113,18 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		String tableType = "";
+		TableType tableType = TableType.MAIN_TAB;
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
 				.getAuditDetail().getModelData();
 
 		if (generalDepartment.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 		if (generalDepartment.isNew()) {
 			generalDepartment.setGenDepartment(getGeneralDepartmentDAO().save(
@@ -158,7 +158,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -166,7 +166,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
 				.getAuditDetail().getModelData();
-		getGeneralDepartmentDAO().delete(generalDepartment, "");
+		getGeneralDepartmentDAO().delete(generalDepartment, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -228,7 +228,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -237,12 +237,18 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		GeneralDepartment generalDepartment = new GeneralDepartment();
 		BeanUtils.copyProperties((GeneralDepartment) auditHeader
 				.getAuditDetail().getModelData(), generalDepartment);
+		
+		getGeneralDepartmentDAO().delete(generalDepartment, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(generalDepartmentDAO.getGeneralDepartmentById(generalDepartment.getGenDepartment(), ""));
+		}
 
 		if (generalDepartment.getRecordType().equals(
 				PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getGeneralDepartmentDAO().delete(generalDepartment, "");
+			getGeneralDepartmentDAO().delete(generalDepartment, TableType.MAIN_TAB);
 
 		} else {
 			generalDepartment.setRoleCode("");
@@ -255,15 +261,15 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				generalDepartment.setRecordType("");
-				getGeneralDepartmentDAO().save(generalDepartment, "");
+				getGeneralDepartmentDAO().save(generalDepartment, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				generalDepartment.setRecordType("");
-				getGeneralDepartmentDAO().update(generalDepartment, "");
+				getGeneralDepartmentDAO().update(generalDepartment, TableType.MAIN_TAB);
 			}
 		}
 
-		getGeneralDepartmentDAO().delete(generalDepartment, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -291,7 +297,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -300,7 +306,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditHeader
 				.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getGeneralDepartmentDAO().delete(generalDepartment, "_Temp");
+		getGeneralDepartmentDAO().delete(generalDepartment, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -317,11 +323,10 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -337,10 +342,33 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail
+				.getModelData();
+		// Check the unique keys.
+		if (generalDepartment.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
+				&& generalDepartmentDAO.isDuplicateKey(generalDepartment.getGenDepartment(),
+						generalDepartment.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			
+
+			parameters[0] = PennantJavaUtil.getLabel("label_GenDepartment") + ":"+ generalDepartment.getGenDepartment();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+/*	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail
@@ -432,6 +460,6 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}
+	}*/
 
 }

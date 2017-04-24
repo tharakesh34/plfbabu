@@ -42,17 +42,27 @@
  */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Province model</b> class.<br>
  * 
  */
-public interface ProvinceDAO {
+public interface ProvinceDAO extends BasicCrudDao<Province>  {
 
 	Province getProvinceById(String cPCountry, String cPProvince,String type);
-	void update(Province province,String type);
-	void delete(Province province,String type);
-	void save(Province province,String type);
 	String getSystemDefaultCount(String cpprovince);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param phoneTypeCode
+	 *            of PhoneType
+	 * @param tableType
+	 *            of PhoneType
+	 * @return
+	 */
+	boolean isDuplicateKey(String cPCountry, String cPProvince, TableType tableType);
 }

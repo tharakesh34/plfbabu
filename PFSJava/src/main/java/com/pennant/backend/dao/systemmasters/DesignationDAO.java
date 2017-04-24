@@ -42,16 +42,25 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Designation;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Designation model</b> class.<br>
  * 
  */
-public interface DesignationDAO {
+public interface DesignationDAO extends BasicCrudDao<Designation> {
 
 	Designation getDesignationById(String id,String type);
-	void update(Designation designation,String type);
-	void delete(Designation designation,String type);
-	String save(Designation designation,String type);
+	
+	/**
+	 * 
+	 * @param designationCode
+	 *             of Designation
+	 * @param tableType
+	 *            of Designation
+	 * @return
+	 */
+	boolean isDuplicateKey(String designationCode, TableType tableType);
 }

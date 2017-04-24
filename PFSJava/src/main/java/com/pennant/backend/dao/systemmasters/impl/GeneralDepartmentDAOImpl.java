@@ -48,20 +48,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.GeneralDepartmentDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>GeneralDepartment model</b> class.<br>
@@ -136,32 +139,29 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(GeneralDepartment generalDepartment,String type) {
-		logger.debug("Entering");
+	public void delete(GeneralDepartment generalDepartment, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		
 		StringBuilder deleteSql = new StringBuilder(" Delete From RMTGenDepartments" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where GenDepartment =:GenDepartment");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
 
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-			
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",generalDepartment.getGenDepartment(),
-						generalDepartment.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails=getError("41006",generalDepartment.getGenDepartment(),
-					generalDepartment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -177,11 +177,10 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	 * 
 	 */
 	@Override
-	public String save(GeneralDepartment generalDepartment,String type) {
-		logger.debug("Entering");
-		
+	public String save(GeneralDepartment generalDepartment, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (GenDepartment, GenDeptDesc,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
@@ -189,11 +188,15 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		
-		logger.debug("Leaving");
+		try{
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
 		return generalDepartment.getId();
 	}
 	
@@ -211,43 +214,64 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(GeneralDepartment generalDepartment,String type) {
+	public void update(GeneralDepartment generalDepartment, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
-		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments");
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set GenDeptDesc = :GenDeptDesc," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where GenDepartment =:GenDepartment");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
-		
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDepartment);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",generalDepartment.getGenDepartment(),
-					generalDepartment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
-	
-	private ErrorDetails  getError(String errorId,String genDepartment, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		
-		parms[1][0] = genDepartment;
-		parms[0][0] = PennantJavaUtil.getLabel("label_GenDepartment")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
+
+	@Override
+	public boolean isDuplicateKey(String genDepartmentCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "GenDepartment = :genDepartmentId";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTGenDepartments", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTGenDepartments_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTGenDepartments_Temp", "RMTGenDepartments" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("genDepartmentId", genDepartmentCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 	
 }

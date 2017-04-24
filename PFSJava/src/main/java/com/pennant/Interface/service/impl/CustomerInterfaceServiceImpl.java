@@ -57,6 +57,7 @@ import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
+import com.pennanttech.pff.core.TableType;
 
 public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl implements CustomerInterfaceService{
 	
@@ -886,7 +887,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 				tempDesignation.setDesgCode(custEmployeeDetail.getEmpDesg());
 				tempDesignation.setDesgDesc(custEmployeeDetail.getEmpDesg());
 				tempDesignation.setDesgIsActive(true);
-		        getDesignationDAO().save(tempDesignation, "");
+		        getDesignationDAO().save(tempDesignation, TableType.MAIN_TAB);
 	        }
         }
 	}

@@ -502,14 +502,12 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 					closeDialog();
 				}
 
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			}catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving ");
 	}
-
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -625,15 +623,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 				// Close the Existing Dialog
 				closeDialog();
 			}
-		}
-		
-		catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
-		}
-		catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

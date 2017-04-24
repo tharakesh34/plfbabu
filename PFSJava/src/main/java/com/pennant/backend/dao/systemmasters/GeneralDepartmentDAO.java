@@ -42,16 +42,26 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>GeneralDepartment model</b> class.<br>
  * 
  */
-public interface GeneralDepartmentDAO {
+public interface GeneralDepartmentDAO extends BasicCrudDao<GeneralDepartment> {
 
 	GeneralDepartment getGeneralDepartmentById(String id,String type);
-	void update(GeneralDepartment generalDepartment,String type);
-	void delete(GeneralDepartment generalDepartment,String type);
-	String save(GeneralDepartment generalDepartment,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param genDepartmentCode
+	 *              of GeneralDepartment
+	 * @param tableType
+	 *             of GeneralDepartment
+	 * @return
+	 */
+	boolean isDuplicateKey(String genDepartmentCode, TableType tableType);
 }

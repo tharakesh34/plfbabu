@@ -39,19 +39,29 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Department;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Department model</b> class.<br>
  * 
  */
-public interface DepartmentDAO {
+public interface DepartmentDAO extends BasicCrudDao<Department> {
 
-	Department getDepartmentById(String id,String type);
-	void update(Department department,String type);
-	void delete(Department department,String type);
-	String save(Department department,String type);
+	Department getDepartmentById(String id, String type);
+
+	/**
+	 * 
+	 * @param departmentCode
+	 *            of department
+	 * @param tableType
+	 *            of department
+	 * @return
+	 */
+	boolean isDuplicateKey(String departmentCode, TableType tableType);
 }

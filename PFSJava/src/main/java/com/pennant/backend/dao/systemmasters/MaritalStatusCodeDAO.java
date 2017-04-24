@@ -42,17 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>MaritalStatusCode model</b> class.<br>
  * 
  */
-public interface MaritalStatusCodeDAO {
+public interface MaritalStatusCodeDAO extends BasicCrudDao<MaritalStatusCode> {
 
 	MaritalStatusCode getMaritalStatusCodeById(String id,String type);
-	void update(MaritalStatusCode maritalStatusCode,String type);
-	void delete(MaritalStatusCode maritalStatusCode,String type);
-	String save(MaritalStatusCode maritalStatusCode,String type);
 	String getSystemDefaultCount(String maritalStsCode);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param maritalStsCode
+	 *            of MaritalStatusCode
+	 * @param tableType
+	 *            of MaritalStatusCode
+	 * @return
+	 */
+	boolean isDuplicateKey(String maritalStsCode, TableType tableType);
 }

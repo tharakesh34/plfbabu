@@ -43,6 +43,8 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -144,4 +146,8 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	public void setSystemDefault(boolean systemDefault) {
 	    this.systemDefault = systemDefault;
     }
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

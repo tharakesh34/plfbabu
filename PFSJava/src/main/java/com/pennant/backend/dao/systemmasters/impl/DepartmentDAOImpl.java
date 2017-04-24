@@ -48,20 +48,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DepartmentDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Department;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>Department model</b> class.<br>
@@ -136,34 +139,31 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(Department department, String type) {
-		logger.debug("Entering");
+	public void delete(Department department, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 
 		deleteSql.append("Delete From BMTDepartments");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where DeptCode =:DeptCode");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
 
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", department.getDeptCode(), department.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", department.getDeptCode(), department.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -181,12 +181,12 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * 
 	 */
 	@Override
-	public String save(Department department, String type) {
-		logger.debug("Entering");
+	public String save(Department department, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into BMTDepartments");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (DeptCode, DeptDesc, DeptIsActive," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
@@ -194,11 +194,15 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return department.getId();
 	}
 
@@ -217,34 +221,29 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(Department department, String type) {
-		logger.debug("Entering");
+	public void update(Department department, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-
 		updateSql.append("Update BMTDepartments");
-		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set DeptDesc = :DeptDesc, DeptIsActive = :DeptIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where DeptCode =:DeptCode ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
-		}
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
 
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", department.getDeptCode(), department.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -254,10 +253,47 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails  getError(String errorId, String deptCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
+	/*private ErrorDetails getError(String errorId, String deptCode, String userLanguage) {
+		String[][] parms = new String[2][2];
 		parms[1][0] = deptCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DeptCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+		parms[0][0] = PennantJavaUtil.getLabel("label_DeptCode") + ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
+				userLanguage);
+	}
+*/
+	@Override
+	public boolean isDuplicateKey(String departmentCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "DeptCode = :departmentCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTDepartments", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTDepartments_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTDepartments_Temp", "BMTDepartments" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("departmentCode", departmentCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 }

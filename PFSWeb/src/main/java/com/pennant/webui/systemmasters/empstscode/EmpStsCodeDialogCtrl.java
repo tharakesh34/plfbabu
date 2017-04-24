@@ -501,12 +501,11 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 					closeDialog();
 				}
 
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug("Leaving ");
 	}
 
 	/**
@@ -629,8 +628,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

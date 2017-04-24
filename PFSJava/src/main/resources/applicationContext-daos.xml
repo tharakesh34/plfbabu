@@ -9508,8 +9508,26 @@
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-		<!-- ManualAdvise -->
+	<bean id="nPABucketService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="nPABucketServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="nPABucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.NPABucketServiceImpl">
+       <property name="nPABucketDAO" ref="nPABucketDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   <!-- ManualAdvise -->
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -9529,25 +9547,6 @@
 
  	<bean name="manualAdviseServiceTarget" class="com.pennant.backend.service.finance.impl.ManualAdviseServiceImpl">
        <property name="manualAdviseDAO" ref="manualAdviseDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
-   </bean>
-	
-	<bean id="nPABucketService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
-	   <property name="target"><ref bean="nPABucketServiceTarget"/></property>
-       <property name="transactionAttributes">
-           <props>
-               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
-			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
-			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-           </props>
-       </property>
-   </bean>
-
- 	<bean name="nPABucketServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.NPABucketServiceImpl">
-       <property name="nPABucketDAO" ref="nPABucketDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    
@@ -9619,8 +9618,8 @@
        <property name="costCenterDAO" ref="costCenterDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
-   
-   	<!-- PresentmentDetail -->
+
+<!-- PresentmentDetail -->
 	<bean id="presentmentDetailDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentDetailDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>

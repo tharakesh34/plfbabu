@@ -47,20 +47,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.MaritalStatusCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.MaritalStatusCode;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>MaritalStatusCode model</b> class.<br>
@@ -87,7 +90,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 */
 	@Override
 	public MaritalStatusCode getMaritalStatusCodeById(final String id,String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MaritalStatusCode maritalStatusCode = new MaritalStatusCode();
 		maritalStatusCode.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -108,7 +111,7 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 			logger.error("Exception: ", e);
 			maritalStatusCode = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return maritalStatusCode;
 	}
 
@@ -135,35 +138,30 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(MaritalStatusCode maritalStatusCode, String type) {
-		logger.debug("Entering");
+	public void delete(MaritalStatusCode maritalStatusCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 		
 		deleteSql.append("Delete From BMTMaritalStatusCodes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where MaritalStsCode =:MaritalStsCode");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",maritalStatusCode.getMaritalStsCode(), 
-					maritalStatusCode.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",maritalStatusCode.getMaritalStsCode(), 
-					maritalStatusCode.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -181,12 +179,12 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 * 
 	 */
 	@Override
-	public String save(MaritalStatusCode maritalStatusCode, String type) {
-		logger.debug("Entering");
+	public String save(MaritalStatusCode maritalStatusCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder();
 		
 		insertSql.append("Insert Into BMTMaritalStatusCodes");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (MaritalStsCode, MaritalStsDesc, MaritalStsIsActive,SystemDefault,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId)");
@@ -194,11 +192,14 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: "+ insertSql.toString());		
+		logger.trace(Literal.SQL + insertSql.toString());		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
 		return maritalStatusCode.getId();
 	}
 
@@ -218,34 +219,28 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(MaritalStatusCode maritalStatusCode, String type) {
-		logger.debug("Entering");
+	public void update(MaritalStatusCode maritalStatusCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 		
 		updateSql.append("Update BMTMaritalStatusCodes");
-		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set  MaritalStsDesc = :MaritalStsDesc, MaritalStsIsActive = :MaritalStsIsActive, SystemDefault=:SystemDefault,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where MaritalStsCode =:MaritalStsCode");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(maritalStatusCode);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails = getError("41003",maritalStatusCode.getMaritalStsCode(), 
-					maritalStatusCode.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -283,17 +278,40 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 
 	}
 
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String maritalStatusCode, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = maritalStatusCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_MaritalStsCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	@Override
+	public boolean isDuplicateKey(String maritalStsCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "MaritalStsCode =:maritalStsCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTMaritalStatusCodes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTMaritalStatusCodes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTMaritalStatusCodes_Temp", "BMTMaritalStatusCodes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("maritalStsCode", maritalStsCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
+
+	
 }

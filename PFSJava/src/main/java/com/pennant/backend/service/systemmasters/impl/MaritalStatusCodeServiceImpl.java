@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -60,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.MaritalStatusCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>MaritalStatusCode</b>.<br>
@@ -117,17 +116,17 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		TableType tableType = TableType.MAIN_TAB;
 		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader
 		.getAuditDetail().getModelData();
 
 		if (maritalStatusCode.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (maritalStatusCode.isNew()) {
@@ -160,7 +159,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -168,7 +167,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditHeader
 		.getAuditDetail().getModelData();
 
-		getMaritalStatusCodeDAO().delete(maritalStatusCode, "");
+		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -231,7 +230,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -239,11 +238,18 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		}
 		MaritalStatusCode maritalStatusCode = new MaritalStatusCode();
 		BeanUtils.copyProperties((MaritalStatusCode) auditHeader.getAuditDetail().getModelData(), maritalStatusCode);
-
+		
+		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					maritalStatusCodeDAO.getMaritalStatusCodeById(maritalStatusCode.getId(),""));
+		}
+		
 		if (maritalStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getMaritalStatusCodeDAO().delete(maritalStatusCode, "");
+			getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.MAIN_TAB);
 
 		} else {
 			maritalStatusCode.setRoleCode("");
@@ -255,15 +261,14 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			if (maritalStatusCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				maritalStatusCode.setRecordType("");
-				getMaritalStatusCodeDAO().save(maritalStatusCode, "");
+				getMaritalStatusCodeDAO().save(maritalStatusCode, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				maritalStatusCode.setRecordType("");
-				getMaritalStatusCodeDAO().update(maritalStatusCode, "");
+				getMaritalStatusCodeDAO().update(maritalStatusCode, TableType.MAIN_TAB);
 			}
 		}
 
-		getMaritalStatusCodeDAO().delete(maritalStatusCode, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -294,7 +299,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -303,7 +308,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getMaritalStatusCodeDAO().delete(maritalStatusCode, "_Temp");
+		getMaritalStatusCodeDAO().delete(maritalStatusCode, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -320,10 +325,9 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -342,7 +346,39 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditDetail.getModelData();
+		// Check the unique keys.
+		if (maritalStatusCode.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
+				&& maritalStatusCodeDAO.isDuplicateKey(maritalStatusCode.getMaritalStsCode(),
+						maritalStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_MaritalStsCode") + ":"+ maritalStatusCode.getMaritalStsCode();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001", parameters, null));
+		}
+		
+		if (maritalStatusCode.isSystemDefault()) {
+			String dftMaritalStsCode = getMaritalStatusCodeDAO().getSystemDefaultCount(maritalStatusCode.getMaritalStsCode());
+			if (StringUtils.isNotEmpty(dftMaritalStsCode)) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+						new String[]{dftMaritalStsCode,PennantJavaUtil.getLabel("MaritalStatusCode")}, null));
+			}
+        }
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+	
+	/*private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
@@ -436,6 +472,6 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}
+	}*/
 
 }

@@ -42,16 +42,26 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.PhoneType;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>PhoneType model</b> class.<br>
  * 
  */
-public interface PhoneTypeDAO {
+public interface PhoneTypeDAO extends BasicCrudDao<PhoneType>  {
 
 	PhoneType getPhoneTypeById(String id,String type);
-	void update(PhoneType phoneType,String type);
-	void delete(PhoneType phoneType,String type);
-	String save(PhoneType phoneType,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param phoneTypeCode
+	 *            of PhoneType
+	 * @param tableType
+	 *            of PhoneType
+	 * @return
+	 */
+	boolean isDuplicateKey(String phoneTypeCode, TableType tableType);
 }

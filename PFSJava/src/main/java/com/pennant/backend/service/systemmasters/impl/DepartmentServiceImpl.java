@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Department</b>.<br>
@@ -116,17 +114,16 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
 		Department department = (Department) auditHeader.getAuditDetail()
 				.getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
 		if (department.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (department.isNew()) {
@@ -158,14 +155,14 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Department department = (Department) auditHeader.getAuditDetail()
 				.getModelData();
-		getDepartmentDAO().delete(department, "");
+		getDepartmentDAO().delete(department, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -224,19 +221,26 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 
 		String tranType = "";
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Department department = new Department();
+		
 		BeanUtils.copyProperties((Department) auditHeader.getAuditDetail()
 				.getModelData(), department);
+		
+		getDepartmentDAO().delete(department, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(departmentDAO.getDepartmentById(department.getDeptCode(), ""));
+		}
 
 		if (department.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getDepartmentDAO().delete(department, "");
+			getDepartmentDAO().delete(department, TableType.MAIN_TAB);
 
 		} else {
 			department.setRoleCode("");
@@ -249,15 +253,14 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				department.setRecordType("");
-				getDepartmentDAO().save(department, "");
+				getDepartmentDAO().save(department, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				department.setRecordType("");
-				getDepartmentDAO().update(department, "");
+				getDepartmentDAO().update(department, TableType.MAIN_TAB);
 			}
 		}
-
-		getDepartmentDAO().delete(department, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -285,7 +288,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -294,7 +297,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getDepartmentDAO().delete(department, "_Temp");
+		getDepartmentDAO().delete(department, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -311,11 +314,10 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -334,7 +336,29 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		Department department = (Department) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (department.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())
+				&& departmentDAO.isDuplicateKey(department.getDeptCode(),
+						department.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0]=PennantJavaUtil.getLabel("label_DeptCode")+":"+department.getDeptCode();
+			
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+/*	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
 			String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
@@ -449,6 +473,6 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 		}
 		logger.debug("Leaving");
 		return auditDetail;
-	}
+	}*/
 
 }

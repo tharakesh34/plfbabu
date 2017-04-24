@@ -39,20 +39,34 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>LovFieldDetail model</b> class.<br>
  * 
  */
-public interface LovFieldDetailDAO {
+public interface LovFieldDetailDAO extends BasicCrudDao<LovFieldDetail> {
 
-	LovFieldDetail getLovFieldDetailById(String fieldCode,String fieldCodeValue,String type);
-	void update(LovFieldDetail lovFieldDetail,String type);
-	void delete(LovFieldDetail lovFieldDetail,String type);
-	long save(LovFieldDetail lovFieldDetail,String type);
+	LovFieldDetail getLovFieldDetailById(String fieldCode, String fieldCodeValue, String type);
+
 	int getSystemDefaultCount(String fieldCode, String fieldCodeValue);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param fieldCode
+	 *            of LovFieldDetails
+	 * @param fieldDetail
+	 *            of LovFieldDetails
+	 * @param tableType
+	 *            of LovFieldDetails
+	 * @return
+	 */
+	boolean isDuplicateKey(String fieldCode, String fieldDetail, TableType tableType);
 }

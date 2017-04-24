@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.DesignationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Designation</b>.<br>
@@ -113,20 +111,18 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
 		Designation designation = (Designation) auditHeader.getAuditDetail()
 				.getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
 		if (designation.isWorkflow()) {
-			tableType = "_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (designation.isNew()) {
@@ -159,7 +155,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -167,7 +163,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 		Designation designation = (Designation) auditHeader.getAuditDetail()
 				.getModelData();
 
-		getDesignationDAO().delete(designation, "");
+		getDesignationDAO().delete(designation, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -226,7 +222,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -235,12 +231,18 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 		Designation designation = new Designation();
 		BeanUtils.copyProperties((Designation) auditHeader.getAuditDetail()
 				.getModelData(), designation);
+		
+		getDesignationDAO().delete(designation, TableType.TEMP_TAB);
 
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(designation.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(designationDAO.getDesignationById(
+					designation.getId(), ""));
+		}
 		if (designation.getRecordType()
 				.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getDesignationDAO().delete(designation, "");
+			getDesignationDAO().delete(designation, TableType.MAIN_TAB);
 
 		} else {
 			designation.setRoleCode("");
@@ -253,15 +255,14 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 					PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				designation.setRecordType("");
-				getDesignationDAO().save(designation, "");
+				getDesignationDAO().save(designation, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				designation.setRecordType("");
-				getDesignationDAO().update(designation, "");
+				getDesignationDAO().update(designation, TableType.MAIN_TAB);
 			}
 		}
 
-		getDesignationDAO().delete(designation, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -291,7 +292,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -300,7 +301,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getDesignationDAO().delete(designation, "_Temp");
+		getDesignationDAO().delete(designation, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -317,11 +318,10 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -340,120 +340,27 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		Designation designation = (Designation) auditDetail.getModelData();
-		Designation tempDesignation = null;
 
-		if (designation.isWorkflow()) {
-			tempDesignation = getDesignationDAO().getDesignationById(
-					designation.getId(), "_Temp");
+		// Check the unique keys.
+		if (designation.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(designation.getRecordType())
+				&& designationDAO.isDuplicateKey(designation.getDesgCode(),
+						designation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0]=PennantJavaUtil.getLabel("label_DesgCode")+":"+designation.getDesgCode();
+			
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		Designation befDesignation = getDesignationDAO().getDesignationById(
-				designation.getId(), "");
-		Designation oldDesignation = designation.getBefImage();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = designation.getDesgCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_DesgCode") + ":"
-				+ valueParm[0];
-
-		if (designation.isNew()) { // for New record or new record into work
-									// flow
-
-			if (!designation.isWorkflow()) {// With out Work flow only new
-											// records
-				if (befDesignation != null) { // Record Already Exists in the
-					// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (designation.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befDesignation != null || tempDesignation != null) { // if
-															// records already exists
-															// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befDesignation == null || tempDesignation != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!designation.isWorkflow()) { // With out Work flow for update
-				// and delete
-
-				if (befDesignation == null) { // if records not exists in the
-					// main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-					if (oldDesignation != null
-							&& !oldDesignation.getLastMntOn().equals(
-									befDesignation.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempDesignation == null) { // if records not exists in the
-					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempDesignation != null
-						&& oldDesignation != null
-						&& !oldDesignation.getLastMntOn().equals(
-								tempDesignation.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !designation.isWorkflow()) {
-			auditDetail.setBefImage(befDesignation);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	
 }

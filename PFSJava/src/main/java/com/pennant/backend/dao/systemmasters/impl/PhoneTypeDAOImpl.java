@@ -48,20 +48,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.PhoneType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>PhoneType model</b> class.<br>
@@ -89,7 +92,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 */
 	@Override
 	public PhoneType getPhoneTypeById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		PhoneType phoneType = new PhoneType();
 		phoneType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -111,7 +114,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 			logger.error("Exception: ", e);
 			phoneType = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return phoneType;
 	}
 
@@ -137,34 +140,30 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(PhoneType phoneType, String type) {
-		logger.debug("Entering");
+	public void delete(PhoneType phoneType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder deleteSql = new StringBuilder();
 		
 		deleteSql.append(" Delete From BMTPhoneTypes");
-		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where PhoneTypeCode =:PhoneTypeCode");
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		logger.debug("deleteSql: "+ deleteSql.toString());
+		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",phoneType.getPhoneTypeCode(), phoneType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",phoneType.getPhoneTypeCode(), phoneType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -181,12 +180,12 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 * 
 	 */
 	@Override
-	public String save(PhoneType phoneType, String type) {
-		logger.debug("Entering");
+	public String save(PhoneType phoneType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder();
 
 		insertSql.append("Insert Into BMTPhoneTypes");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (PhoneTypeCode, PhoneTypeDesc, PhoneTypePriority, PhoneTypeIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
@@ -194,11 +193,14 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
+		try{
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
 		return phoneType.getId();
 	}
 
@@ -217,49 +219,63 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(PhoneType phoneType, String type) {
-		logger.debug("Entering");
+	public void update(PhoneType phoneType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
 
 		updateSql.append("Update BMTPhoneTypes");
-		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set PhoneTypeDesc = :PhoneTypeDesc,");
 		updateSql.append(" PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PhoneTypeCode =:PhoneTypeCode");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
-		}
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.trace(Literal.SQL +  updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails = getError("41003",phoneType.getPhoneTypeCode(), phoneType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String phoneTypeCode, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = phoneTypeCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_PhoneType_Code")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
+	@Override
+	public boolean isDuplicateKey(String phoneTypeCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "PhoneTypeCode =:PhoneTypeCode";
 
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTPhoneTypes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTPhoneTypes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTPhoneTypes_Temp", "BMTPhoneTypes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("PhoneTypeCode", phoneTypeCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }
