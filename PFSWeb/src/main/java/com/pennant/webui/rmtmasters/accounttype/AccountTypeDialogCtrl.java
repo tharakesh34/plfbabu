@@ -484,18 +484,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
 		}
-		if (aAccountType.getAcTypeGrpId() != Long.MIN_VALUE && aAccountType.getAcTypeGrpId() != 0) {
-			this.acTypeGrpId.setAttribute("ParentGroupId", aAccountType.getAcTypeGrpId());
+			this.acTypeGrpId.setObject(new AccountTypeGroup(aAccountType.getAcTypeGrpId()));
 			this.acTypeGrpId.setValue(aAccountType.getGroupCode(),aAccountType.getGroupDescription());
-		}
-		if (aAccountType.getProfitCenter() != Long.MIN_VALUE && aAccountType.getProfitCenter() != 0) {
-			this.profitCenter.setAttribute("ProfitCenter", aAccountType.getProfitCenter());
+		
+			this.profitCenter.setObject(new ProfitCenter(aAccountType.getProfitCenterID()));
 			this.profitCenter.setValue(aAccountType.getProfitCenterCode(),aAccountType.getProfitCenterDesc());
-		}
-		if (aAccountType.getCostCenter() != Long.MIN_VALUE && aAccountType.getCostCenter() != 0) {
-			this.costCenter.setAttribute("CostCenter", aAccountType.getCostCenter());
+			
+			this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
 			this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
-		}
 		
 		logger.debug("Leaving");
 	}
@@ -582,33 +578,33 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		
 		try {
 			this.acTypeGrpId.getValidatedValue();
-			Long obj = (Long) this.acTypeGrpId.getAttribute("AcTypeGrpId");
-			if (obj != null) {
-				aAccountType.setAcTypeGrpId(obj);
-			}
+			AccountTypeGroup accountTypeGroup = (AccountTypeGroup) this.acTypeGrpId.getObject();
+			aAccountType.setAcTypeGrpId(accountTypeGroup.getGroupId());
+			aAccountType.setGroupCode(accountTypeGroup.getGroupCode());
+			aAccountType.setGroupDescription(accountTypeGroup.getGroupDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			this.profitCenter.getValidatedValue();
-			Long obj = (Long) this.profitCenter.getAttribute("ProfitCenter");
-			if (obj != null) {
-				aAccountType.setProfitCenter(obj);
-			}
+			ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
+			aAccountType.setProfitCenterID(profitCenter.getProfitCenterID());
+			aAccountType.setProfitCenterCode(profitCenter.getProfitCenterCode());
+			aAccountType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		try {
 			this.costCenter.getValidatedValue();
-			Long obj = (Long) this.costCenter.getAttribute("CostCenter");
-			if (obj != null) {
-				aAccountType.setCostCenter(obj);
-			}
+			CostCenter costCenter = (CostCenter) this.costCenter.getObject();
+			aAccountType.setCostCenterID(costCenter.getCostCenterID());
+			aAccountType.setCostCenterCode(costCenter.getCostCenterCode());
+			aAccountType.setCostCenterDesc(costCenter.getCostCenterDesc());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
 
 		
 		if (!"Y".equals(CBI_Available)) {
@@ -1369,7 +1365,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Leaving ");
 	}
 	
-	public void onFulfill$acTypeGrpId(Event event) {
+/*	public void onFulfill$acTypeGrpId(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = acTypeGrpId.getObject();
 		if (dataObject instanceof String) {
@@ -1382,8 +1378,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}
-	public void onFulfill$profitCenter(Event event) {
+	}*/
+/*	public void onFulfill$profitCenter(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = profitCenter.getObject();
 		if (dataObject instanceof String) {
@@ -1410,7 +1406,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			}
 		}
 		logger.debug("Leaving" + event.toString());
-	}
+	}*/
 
 
 	// ******************************************************//

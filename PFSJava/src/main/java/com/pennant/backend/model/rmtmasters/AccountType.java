@@ -76,8 +76,8 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String groupCode;
 	private String groupDescription;
 	private int acctTypeLevel;
-	private long profitCenter;
-	private long costCenter;
+	private long profitCenterID;
+	private long costCenterID;
 	private String profitCenterDesc;
 	private String costCenterDesc;
 	private String costCenterCode;
@@ -262,22 +262,6 @@ public class AccountType extends AbstractWorkflowEntity {
 		this.acctTypeLevel = acctTypeLevel;
 	}
 
-	public Long getProfitCenter() {
-		return profitCenter;
-	}
-
-	public void setProfitCenter(Long profitCenter) {
-		this.profitCenter = profitCenter;
-	}
-
-	public Long getCostCenter() {
-		return costCenter;
-	}
-
-	public void setCostCenter(Long costCenter) {
-		this.costCenter = costCenter;
-	}
-
 	public String getProfitCenterDesc() {
 		return profitCenterDesc;
 	}
@@ -308,6 +292,22 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	public void setProfitCenterCode(String profitCenterCode) {
 		this.profitCenterCode = profitCenterCode;
+	}
+
+	public long getProfitCenterID() {
+		return profitCenterID;
+	}
+
+	public void setProfitCenterID(long profitCenterID) {
+		this.profitCenterID = profitCenterID;
+	}
+
+	public long getCostCenterID() {
+		return costCenterID;
+	}
+
+	public void setCostCenterID(long costCenterID) {
+		this.costCenterID = costCenterID;
 	}
 	
 }
