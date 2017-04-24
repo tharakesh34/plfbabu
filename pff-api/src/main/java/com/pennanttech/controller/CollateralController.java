@@ -1,5 +1,7 @@
 package com.pennanttech.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import org.springframework.jdbc.BadSqlGrammarException;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ReferenceUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
@@ -38,24 +41,26 @@ import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CollateralController {
-	Logger logger = Logger.getLogger(CollateralController.class);
+	Logger								logger				= Logger.getLogger(CollateralController.class);
 
-	private CollateralStructureService collateralStructureService;
-	private CollateralSetupService collateralSetupService;
-	private CustomerDetailsService customerDetailsService;
-	private CollateralThirdPartyDAO collateralThirdPartyDAO;
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	private DocumentDetailsDAO documentDetailsDAO;
-	private CoOwnerDetailDAO coOwnerDetailDAO; 
+	private CollateralStructureService	collateralStructureService;
+	private CollateralSetupService		collateralSetupService;
+	private CustomerDetailsService		customerDetailsService;
+	private CollateralThirdPartyDAO		collateralThirdPartyDAO;
+	private ExtendedFieldRenderDAO		extendedFieldRenderDAO;
+	private DocumentDetailsDAO			documentDetailsDAO;
+	private CoOwnerDetailDAO			coOwnerDetailDAO;
+	private RuleExecutionUtil			ruleExecutionUtil;
 
-	private final String PROCESS_TYPE_SAVE = "Save";
-	private final String PROCESS_TYPE_UPDATE = "Update";
-	private final String PROCESS_TYPE_DELETE = "Delete";
+	private final String				PROCESS_TYPE_SAVE	= "Save";
+	private final String				PROCESS_TYPE_UPDATE	= "Update";
+	private final String				PROCESS_TYPE_DELETE	= "Delete";
 
 	/**
 	 * Method for get Collateral structure based on requested collateral type
@@ -378,11 +383,10 @@ public class CollateralController {
 			}
 		}
 		
-		if(collateralStructure != null) {
-			collateralSetup.setCollateralStructure(collateralStructure);
-		}
-		
 		// process Extended field details
+		int totalUnits = 0;
+		BigDecimal totalValue = BigDecimal.ZERO;
+		
 		List<ExtendedField> extendedFields = collateralSetup.getExtendedDetails();
 		if(extendedFields != null) {
 			List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
@@ -398,10 +402,30 @@ public class CollateralController {
 					exdFieldRender.setSeqNo(++seqNo);
 					exdFieldRender.setNewRecord(true);
 					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					
+
 					Map<String, Object>	mapValues = new HashMap<String, Object>();
+					boolean noUnitCmplted = false;
+					int noOfUnits = 0;
+					boolean unitPriceCmplted = false;
+					BigDecimal curValue = BigDecimal.ZERO;
 					for(ExtendedFieldData extFieldData: extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+
+						// Setting Number of units
+						if(!noUnitCmplted && mapValues.containsKey("NOOFUNITS")){
+							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
+							totalUnits = totalUnits + noOfUnits;
+							noUnitCmplted = true;
+						}
+
+						// Setting Total Value
+						if(!unitPriceCmplted && mapValues.containsKey("UNITPRICE")){
+							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
+							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+							unitPriceCmplted= true;
+						}
+
+						//Total Number of Units
 					}
 					exdFieldRender.setMapValues(mapValues);
 					extendedFieldRenderList.add(exdFieldRender);
@@ -437,10 +461,49 @@ public class CollateralController {
 					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				}
 			}
-			
+			collateralSetup.setCollateralValue(totalValue);
 			collateralSetup.setExtendedFieldRenderList(extendedFieldRenderList);
 		}
 
+		if (collateralStructure != null) {
+
+			// calculate BankLTV
+			if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.FIXED_LTV)) {
+				collateralSetup.setBankLTV(collateralStructure.getLtvPercentage());
+			} else if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.VARIABLE_LTV)) {
+				Object ruleResult = null;
+				HashMap<String, Object> declaredMap = collateralSetup.getCustomerDetails().getCustomer()
+						.getDeclaredFieldValues();
+				declaredMap.put("collateralType", collateralSetup.getCollateralType());
+				declaredMap.put("collateralCcy", collateralSetup.getCollateralCcy());
+				try {
+					ruleResult = ruleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
+							collateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+					ruleResult = "0";
+				}
+				collateralSetup.setBankLTV(ruleResult == null ? BigDecimal.ZERO : new BigDecimal(ruleResult.toString()));
+			}
+
+			// calculate Bank Valuation
+			BigDecimal ltvValue = collateralSetup.getBankLTV();
+			if (collateralSetup.getSpecialLTV() != null
+					&& collateralSetup.getSpecialLTV().compareTo(BigDecimal.ZERO) > 0) {
+				ltvValue = collateralSetup.getSpecialLTV();
+			}
+
+			BigDecimal colValue = collateralSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100), 0, 
+					RoundingMode.HALF_DOWN);
+			if (collateralSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) > 0
+					&& colValue.compareTo(collateralSetup.getMaxCollateralValue()) > 0) {
+				colValue = collateralSetup.getMaxCollateralValue();
+			}
+			collateralSetup.setBankValuation(colValue);
+
+			collateralSetup.setCollateralStructure(collateralStructure);
+		}
+		
 		// process document details
 		List<DocumentDetails> documentDetails = collateralSetup.getDocuments();
 		if(documentDetails != null) {
@@ -515,4 +578,7 @@ public class CollateralController {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
 }

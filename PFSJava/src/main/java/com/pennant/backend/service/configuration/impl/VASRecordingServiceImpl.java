@@ -1878,6 +1878,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							.getExtendedFieldDataList().size()) {
 						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
 							String[] valueParm = new String[1];
+							valueParm[0] = "vas setup";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
@@ -1908,6 +1909,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							}
 							if (!isFeild) {
 								String[] valueParm = new String[1];
+								valueParm[0] = "vas setup";
 								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;

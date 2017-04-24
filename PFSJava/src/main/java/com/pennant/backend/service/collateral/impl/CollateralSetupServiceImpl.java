@@ -88,6 +88,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
@@ -2395,10 +2396,62 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						coOwnerDetail.getAddrCity(), "");
 				if (city == null) {
 					String[] valueParm = new String[2];
-					valueParm[0] = coOwnerDetail.getAddrCountry();
-					valueParm[1] = coOwnerDetail.getAddrProvince();
+					valueParm[0] = coOwnerDetail.getAddrProvince();
+					valueParm[1] = coOwnerDetail.getAddrCountry();
 					auditDetail
 							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN"));
+				}
+			}
+			
+			// validate Extended details
+			int extendedDetailsCount = 0;
+			if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
+				for (ExtendedFieldDetail detail : collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails()) {
+					if (detail.isFieldMandatory()) {
+						extendedDetailsCount++;
+					}
+				}
+			}
+			if (collateralSetup.getExtendedDetails() != null || !collateralSetup.getExtendedDetails().isEmpty()) {
+				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
+					if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
+							.getExtendedFieldDataList().size()) {
+						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "collateral structure";
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN"));
+							return auditDetail;
+						}
+					}
+					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
+						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldName";
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+							return auditDetail;
+						}
+						if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "fieldValue";
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+							return auditDetail;
+						}
+						boolean isFeild = false;
+						if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
+							for (ExtendedFieldDetail detail : collateralStructure.getExtendedFieldHeader()
+									.getExtendedFieldDetails()) {
+								if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
+									isFeild = true;
+								}
+							}
+							if (!isFeild) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "collateral structure";
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN"));
+								return auditDetail;
+							}
+						}
+					}
 				}
 			}
 			
