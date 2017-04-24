@@ -467,4 +467,8 @@ FROM          AuditHeader TH   INNER JOIN
 WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 </createView>
 </changeSet>
+
+<changeSet id="10" author="Irfan">
+	<renameColumn tableName="AdtFeeTypes" oldColumnName="AccountingSetId" newColumnName="AccountSetId"/>
+</changeSet>
 </databaseChangeLog>
