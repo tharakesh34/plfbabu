@@ -253,6 +253,7 @@ import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -265,6 +266,7 @@ import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -537,6 +539,13 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PartnerBank", new ModuleMapping("PartnerBank", PartnerBank.class, new String[] {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankCode", "PartnerBankName" },
 				null, 300));
+		
+		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
+			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {  "PartnerBankId", "PartnerBankCode", "PartnerBankName"  },
+			null, 300));
+		
+		ModuleUtil.register("FinTypePartnerBank", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class, new String[] { "FinTypePartnerBanks",
+						"FinTypePartnerBanks_AView" }, masterWF, new String[] {"FinType","Purpose","PaymentMode","PartnerBankID"}, null, 300));
 
 		ModuleUtil.register("BankDetail", new ModuleMapping("BankDetail", BankDetail.class, new String[] {
 				"BMTBankDetail", "BMTBankDetail_AView" }, masterWF, new String[] { "BankCode", "BankName" },

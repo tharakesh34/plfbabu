@@ -183,7 +183,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_FinanceTypeDialog_RecordStatus"
+						<label id="label_RecordStatus"
 							value="${c:l('label_South_RecordStatus.value')}"
 							sclass="label-status" />
 						<label id="recordStatus" />

@@ -1,5 +1,5 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -16,20 +16,20 @@ Copyright 2011 - Pennant Technologies
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinTypeInsuranceListCtrl.java                                        * 	  
+ * FileName    		:  FinTypePartnerBankListCtrl.java                                      * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  21-03-2017    														*
+ * Creation Date    :  24-04-2017    														*
  *                                                                  						*
- * Modified Date    :  21-03-2017    														*
+ * Modified Date    :  24-04-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 21-03-2017       Pennant	                 0.1                                            * 
+ * 24-04-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,13 +39,15 @@ Copyright 2011 - Pennant Technologies
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
+
 package com.pennant.webui.rmtmasters.financetype;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,7 +57,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -63,66 +64,71 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.Literal;
 
-public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
-	
-	private static final long serialVersionUID = 4521079241535245640L;
+/**
+ * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/FinTypePartnerBank/FinTypePartnerBankList.zul file.
+ * 
+ */
+public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> {
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FinTypePartnerBankListCtrl.class);
 
-	private final static Logger logger = Logger.getLogger(FinTypeInsuranceListCtrl.class);
-
-	protected Window window_FinTypeInsuranceList;
+	protected Window window_FinTypePartnerBankList;
 	
 	private Component parent = null;
-	//private Tab parentTab = null;
+	protected Button button_FinTypePartnerBankList_NewFinTypePartnerBank;
 	
-	protected Button						btnNew_insuranceType;
-	private List<FinTypeInsurances>			finTypeInsuranceList	= new ArrayList<FinTypeInsurances>();
-	private Listbox							listBoxInsuranceDetails;
+	private List<FinTypePartnerBank>			finTypePartnerBankList	= new ArrayList<FinTypePartnerBank>();
+	protected Listbox listBoxFinTypePartnerBank;
 	
 	private String roleCode = "";
 	private String finCcy = "";
 	private String finType = "";
 	private String finTypeDesc = "";
 	protected boolean isOverdraft = false;
-	protected int moduleId;
 	private boolean isCompReadonly = false;
 	
 	
 	private Object mainController;
 	
+	// Search Fields
+	
 	/**
 	 * default constructor.<br>
 	 */
-	public FinTypeInsuranceListCtrl() {
+	public FinTypePartnerBankListCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "FinTypeInsuranceList";
+		super.pageRightName = "FinTypePartnerBankList";
 	}
-	
+
+	/**
+	 * The framework calls this event handler when an application requests that the window to be created.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinTypeInsuranceList(Event event) throws Exception {
+	public void onCreate$window_FinTypePartnerBankList(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
-		setPageComponents(window_FinTypeInsuranceList);
+		setPageComponents(window_FinTypePartnerBankList);
 
 		try {
 			if (event.getTarget().getParent() != null) {
 				parent = event.getTarget().getParent();
 			}
-
-			// if (arguments.containsKey("parentTab")) {
-			// parentTab = (Tab) arguments.get("parentTab");
-			// }
 
 			if (arguments.containsKey("roleCode")) {
 				roleCode = (String) arguments.get("roleCode");
@@ -131,10 +137,6 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 
 			if (arguments.containsKey("finType")) {
 				finType = (String) arguments.get("finType");
-			}
-
-			if (arguments.containsKey("moduleId")) {
-				moduleId = (int) arguments.get("moduleId");
 			}
 
 			if (arguments.containsKey("finTypeDesc")) {
@@ -153,54 +155,44 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 				this.isCompReadonly = (boolean) arguments.get("isCompReadonly");
 			}
 
-			if (arguments.containsKey("finTypeInsuranceList")) {
-				this.finTypeInsuranceList = (List<FinTypeInsurances>) arguments.get("finTypeInsuranceList");
+			if (arguments.containsKey("finTypePartnerBankList")) {
+				this.finTypePartnerBankList = (List<FinTypePartnerBank>) arguments.get("finTypePartnerBankList");
 			}
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft =  (Boolean)arguments.get("isOverdraft");
 			}
-			doEdit();
 			doCheckRights();
-			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showErrorMessage(e);
 			logger.error("Exception: ", e);
-			window_FinTypeInsuranceList.onClose();
+			window_FinTypePartnerBankList.onClose();
 		}
 
 		logger.debug("Leaving");
 	}
 	
-	private void doEdit() {
-		
-	}
-
-	private void doSetFieldProperties() {
-		
-	}
-
 	private void doCheckRights() {
 		logger.debug("Entering");
 		
 		//getUserWorkspace().allocateAuthorities(super.pageRightName, roleCode);
-		this.btnNew_insuranceType.setVisible(!isCompReadonly);
+		this.button_FinTypePartnerBankList_NewFinTypePartnerBank.setVisible(!isCompReadonly);
 		
 		logger.debug("leaving");
 	}
-
+	
 	private void doShowDialog() throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		
-		doFillFinInsuranceTypes(this.finTypeInsuranceList);
+		doFillFinTypePartnerBanks(this.finTypePartnerBankList);
 		
 		if (parent != null) {
-			this.window_FinTypeInsuranceList.setHeight(borderLayoutHeight-75+"px");
-			parent.appendChild(this.window_FinTypeInsuranceList);
+			this.window_FinTypePartnerBankList.setHeight(borderLayoutHeight-75+"px");
+			parent.appendChild(this.window_FinTypePartnerBankList);
 		}
 		
 		try {
-			getMainController().getClass().getMethod("setFinTypeInsuranceListCtrl", this.getClass()).invoke(mainController, this);
+			getMainController().getClass().getMethod("setFinTypePartnerBankListCtrl", this.getClass()).invoke(mainController, this);
 		} catch (InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
@@ -208,13 +200,13 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 		logger.debug("leaving");
 	}
 	
-	public void doFillFinInsuranceTypes(List<FinTypeInsurances> finTypeInsuranceList) {
+	public void doFillFinTypePartnerBanks(List<FinTypePartnerBank> finTypePartnerBankList) {
 		logger.debug("Entering");
 		
 		try {
-			if (finTypeInsuranceList != null) {
-				setFinTypeInsuranceList(finTypeInsuranceList);
-				fillFinTypeInsuranecs(finTypeInsuranceList);
+			if (finTypePartnerBankList != null) {
+				setFinTypePartnerBankList(finTypePartnerBankList);
+				fillFinTypePartnerBank(finTypePartnerBankList);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -223,115 +215,125 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 		logger.debug("Leaving");
 	}
 	
-	private void fillFinTypeInsuranecs(List<FinTypeInsurances> finTypeInsuranceList) {
-		this.listBoxInsuranceDetails.getItems().clear();
+	private void fillFinTypePartnerBank(List<FinTypePartnerBank> finTypePartnerBankList) {
+		this.listBoxFinTypePartnerBank.getItems().clear();
 		
-		List<ValueLabel>  insurancePaymentTypeList = PennantStaticListUtil.getInsurancePaymentType();
-		List<ValueLabel>  insuranceCalTypeList = PennantStaticListUtil.getInsuranceCalType();
+		List<ValueLabel>  purposeList = PennantStaticListUtil.getPurposeList();
+		List<ValueLabel>  paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
 		
-		for (FinTypeInsurances finTypeInsurance : finTypeInsuranceList) {
+		for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
 			Listitem item = new Listitem();
 			Listcell lc;
-
-			/*lc = new Listcell(finTypeInsurance.getPolicyType() + "-" + finTypeInsurance.getPolicyDesc());
-			lc.setParent(item);*/
-
-			lc = new Listcell(finTypeInsurance.getInsuranceType());
+		  
+			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPurpose(), purposeList));
 			lc.setParent(item);
 			
-			lc = new Listcell(finTypeInsurance.getInsuranceTypeDesc());
+		  	
+			lc = new Listcell(PennantAppUtil.getlabelDesc(finTypePartnerBank.getPaymentMode(), paymentModesList));
+		  	lc.setParent(item);
+		   
+		  	lc = new Listcell(String.valueOf(finTypePartnerBank.getPartnerBankName()));
+			lc.setParent(item);
+		  	
+			lc = new Listcell(finTypePartnerBank.getRecordStatus());
 			lc.setParent(item);
 			
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getDftPayType()), insurancePaymentTypeList));
+			lc = new Listcell(finTypePartnerBank.getRecordType());
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(String.valueOf(finTypeInsurance.getCalType()), insuranceCalTypeList));
-			lc.setParent(item);
-
-			lc = new Listcell();
-			Checkbox checkbox = new Checkbox();
-			checkbox.setChecked(finTypeInsurance.isMandatory());
-			checkbox.setDisabled(true);
-			checkbox.setParent(lc);
-			lc.setParent(item);
-
-			lc = new Listcell(finTypeInsurance.getRecordStatus());
-			lc.setParent(item);
-
-			lc = new Listcell(finTypeInsurance.getRecordType());
-			lc.setParent(item);
-
-			item.setAttribute("data", finTypeInsurance);
+			item.setAttribute("data", finTypePartnerBank);
 			
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeInsuranceItemDoubleClicked");
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypePartnerBankItemDoubleClicked");
 			
-			this.listBoxInsuranceDetails.appendChild(item);
+			
+			this.listBoxFinTypePartnerBank.appendChild(item);
 		}
 	}
 
-	public void onClick$btnNew_insuranceType(Event event) throws InterruptedException {
-		logger.debug("Entering");
+	/**
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$button_FinTypePartnerBankList_NewFinTypePartnerBank(Event event) {
+		logger.debug(Literal.ENTERING);
 		
-		FinTypeInsurances finTypeInsurances = new FinTypeInsurances();
-		finTypeInsurances.setNewRecord(true);
-		finTypeInsurances.setFinType(this.finType);
-		finTypeInsurances.setFinTypeDesc(this.finTypeDesc);
-		finTypeInsurances.setWorkflowId(getWorkFlowId());
-		finTypeInsurances.setModuleId(moduleId);
+		FinTypePartnerBank fintypepartnerbank = new FinTypePartnerBank();
+		fintypepartnerbank.setNewRecord(true);
+		fintypepartnerbank.setFinType(this.finType);
+		fintypepartnerbank.setFinTypeDesc(this.finTypeDesc);
+		fintypepartnerbank.setWorkflowId(getWorkFlowId());
+		
+		// Display the dialog page.
+		doShowDialogPage(fintypepartnerbank);
 
-		doshowInsuranceDialog(finTypeInsurances);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFinTypeInsuranceItemDoubleClicked(ForwardEvent event) throws InterruptedException {
+
+	/**
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onFinTypePartnerBankItemDoubleClicked(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		
 		Listitem item = (Listitem) event.getOrigin().getTarget();
-		FinTypeInsurances finTypeInsurances = (FinTypeInsurances) item.getAttribute("data");
+		FinTypePartnerBank finTypePartnerBank = (FinTypePartnerBank) item.getAttribute("data");
 		
-		if (!StringUtils.equals(finTypeInsurances.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-			finTypeInsurances.setNewRecord(false);
-			finTypeInsurances.setFinTypeDesc(this.finTypeDesc);			
-			doshowInsuranceDialog(finTypeInsurances);
+		if (!StringUtils.equals(finTypePartnerBank.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			finTypePartnerBank.setNewRecord(false);
+			finTypePartnerBank.setFinTypeDesc(this.finTypeDesc);			
+			doShowDialogPage(finTypePartnerBank);
 		}
 		
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void doshowInsuranceDialog(FinTypeInsurances finTypeInsurances) throws InterruptedException {
-		logger.debug("Entering");
-		
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("finTypeInsurances", finTypeInsurances);
-		map.put("finTypeInsuranceListCtrl", this);
+
+	/**
+	 * Displays the dialog page with the required parameters as map.
+	 * 
+	 * @param fintypepartnerbank
+	 *            The entity that need to be passed to the dialog.
+	 */
+	private void doShowDialogPage(FinTypePartnerBank fintypepartnerbank) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("fintypepartnerbank", fintypepartnerbank);
+		map.put("fintypepartnerbankListCtrl", this);
 		map.put("role", roleCode);
 		map.put("amountFormatter", CurrencyUtil.getFormat(this.finCcy));
 		
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankDialog.zul", null, map);
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
-		
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public List<FinTypeInsurances> getFinTypeInsuranceList() {
-		return finTypeInsuranceList;
-	}
-
-	public void setFinTypeInsuranceList(List<FinTypeInsurances> finTypeInsuranceList) {
-		this.finTypeInsuranceList = finTypeInsuranceList;
-	}
-	
 	public Object getMainController() {
 		return mainController;
 	}
 
 	public void setMainController(Object mainController) {
 		this.mainController = mainController;
+	}
+
+	public List<FinTypePartnerBank> getFinTypePartnerBankList() {
+		return finTypePartnerBankList;
+	}
+
+	public void setFinTypePartnerBankList(
+			List<FinTypePartnerBank> finTypePartnerBankList) {
+		this.finTypePartnerBankList = finTypePartnerBankList;
 	}
 }

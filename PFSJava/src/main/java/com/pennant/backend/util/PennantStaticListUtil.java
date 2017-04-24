@@ -185,6 +185,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> reasonTypeList;
 	private static ArrayList<ValueLabel> categoryTypeList;
 	private static ArrayList<ValueLabel> actionList;
+	private static ArrayList<ValueLabel> purposeList;
 	private static ArrayList<ValueLabel> presentmentExclusionList;
 
 	
@@ -2612,5 +2613,15 @@ public class PennantStaticListUtil {
 		return presentmentExclusionList;
 	}
 
+	public static ArrayList<ValueLabel> getPurposeList() {
+		if (purposeList == null) {
+			purposeList = new ArrayList<ValueLabel>(2);
+			purposeList.add(new ValueLabel(AccountConstants.PARTNERSBANK_DISB, Labels.getLabel("label_PartnersBank_Disb")));
+			purposeList.add(new ValueLabel(AccountConstants.PARTNERSBANK_PAYMENT, Labels.getLabel("label_PartnersBank_Payment")));
+			purposeList.add(new ValueLabel(AccountConstants.PARTNERSBANK_RECEIPTS, Labels.getLabel("label_PartnersBank_Receipts")));
+		}
+		return purposeList;
+	}
+	
 }
 

@@ -72,6 +72,7 @@ import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.GenericService;
@@ -79,6 +80,7 @@ import com.pennant.backend.service.collateral.impl.FinTypeVasDetailValidation;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -106,7 +108,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private FinTypeFeesService finTypeFeesService;
 	private FinTypeInsurancesService finTypeInsurancesService;
 	private FinTypeAccountingService finTypeAccountingService;
-	
+	private FinTypePartnerBankService finTypePartnerBankService;
 
 	public FinanceTypeServiceImpl() {
 		super();
@@ -211,6 +213,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(details);
 		}
 
+		// FinTypePartnerBank
+		if (financeType.getFinTypePartnerBankList() != null && financeType.getFinTypePartnerBankList().size() > 0) {
+			List<AuditDetail> partnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
+			partnerBankDetails = this.finTypePartnerBankService.processFinTypePartnerBankDetails(partnerBankDetails, tableType);
+			auditDetails.addAll(partnerBankDetails);
+		}
+		
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
@@ -280,6 +289,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			financeType.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypePartnerBankList(getFinTypePartnerBankService().getFinTypePartnerBanksList(finType, "_View"));
 		}
 		
 		logger.debug("Leaving");
@@ -318,6 +328,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			financeType.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypePartnerBankList(getFinTypePartnerBankService().getFinTypePartnerBanksList(finType, "_AView"));
 		}
 		
 		logger.debug("Leaving");
@@ -451,6 +462,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
 							"");
 					auditDetails.addAll(insuranceDetails);
+				}
+			}
+			// FinTypePartnerBank
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				List<AuditDetail> finTypePartnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
+				
+				if (finTypePartnerBankDetails != null && !finTypePartnerBankDetails.isEmpty()) {
+					finTypePartnerBankDetails = this.finTypePartnerBankService.processFinTypePartnerBankDetails(finTypePartnerBankDetails,
+							"");
+					auditDetails.addAll(finTypePartnerBankDetails);
 				}
 			}
 			// Accounting
@@ -767,6 +788,25 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(auditDetailMap.get("FinTypeAccounting"));
 		}
 		
+		// FinTypePartnerBank
+		if (financeType.getFinTypePartnerBankList() != null && financeType.getFinTypePartnerBankList().size() > 0) {
+			for (FinTypePartnerBank finTypePartnerBank : financeType.getFinTypePartnerBankList()) {
+				finTypePartnerBank.setFinType(financeType.getFinType());
+				finTypePartnerBank.setWorkflowId(financeType.getWorkflowId());
+				finTypePartnerBank.setRecordStatus(financeType.getRecordStatus());
+				finTypePartnerBank.setUserDetails(financeType.getUserDetails());
+				finTypePartnerBank.setLastMntOn(financeType.getLastMntOn());
+				finTypePartnerBank.setRoleCode(financeType.getRoleCode());
+				finTypePartnerBank.setNextRoleCode(financeType.getNextRoleCode());
+				finTypePartnerBank.setTaskId(financeType.getTaskId());
+				finTypePartnerBank.setNextTaskId(financeType.getNextTaskId());
+			}
+			
+			auditDetailMap.put("FinTypePartnerBank", finTypePartnerBankService.setFinTypePartnerBankDetailsAuditData(
+					financeType.getFinTypePartnerBankList(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinTypePartnerBank"));
+		}
+		
 		//Finance Type VAS Details
 		if (financeType.getFinTypeVASProductsList()!= null && financeType.getFinTypeVASProductsList().size() > 0) {
 			auditDetailMap.put("FinTypeVASProducts", setFinTypeVasProcuctAuditData(financeType, auditTranType, method));
@@ -869,6 +909,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), tableType,
 					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
+		// FinTypePartnerBank
+		if (financeType.getFinTypePartnerBankList() != null && !financeType.getFinTypePartnerBankList().isEmpty()) {
+			auditDetails.addAll(this.finTypePartnerBankService.delete(financeType.getFinTypePartnerBankList(), tableType,
+					auditTranType, financeType.getFinType()));
+		}
 		
 		logger.debug("Leaving");
 		
@@ -926,6 +971,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			}
 		}
 
+		if (financeType.getAuditDetailMap().get("FinTypePartnerBank") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetails> details = this.finTypePartnerBankService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+		
 		logger.debug("Leaving");
 		
 		return errorDetails;
@@ -1579,5 +1635,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 	public void setFinTypeAccountingService(FinTypeAccountingService finTypeAccountingService) {
 		this.finTypeAccountingService = finTypeAccountingService;
+	}
+
+	public FinTypePartnerBankService getFinTypePartnerBankService() {
+		return finTypePartnerBankService;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
 }

@@ -101,6 +101,11 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		super();
 	}
 
+	public PartnerBank(long partnerBankId) {
+		super();
+		this.setPartnerBankId(partnerBankId);
+	}
+	
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();

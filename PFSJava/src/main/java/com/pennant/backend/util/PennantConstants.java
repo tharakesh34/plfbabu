@@ -46,7 +46,7 @@ public class PennantConstants {
 		SeqCustomerEmpDetails, SeqCustomerDirectorDetail, SeqFinReference, SeqFinGuarantorsDetails, SeqFinInstruction, 
 		SeqFinInsurance, SeqFinJointAccountDetails, SeqMandates, SeqLimitTransactionDetails, SeqLimitReferenceMapping, 
 		SeqCollateral, SeqPostings, SeqFinanceScoreHeader, SeqDocumentDetails, SeqSecLoginLog,SeqAdvpayment,
-		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail
+		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, SeqFinTypePartnerBanks
 	}
 
 	public static boolean CITY_FREETEXT = false;

@@ -231,6 +231,10 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String promotionCode;
 	private String promotionDesc;
 	
+	private long profitCenterID;
+	private String profitcenterCode;
+	private String profitCenterDesc;
+	
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -263,6 +267,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private List<FinTypeAccounting> finTypeAccountingList=new ArrayList<FinTypeAccounting>();
 	private Map<String,Long> finTypeAccountingMap = new HashMap<String,Long>();
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
+	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -297,6 +302,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("addrLine1");
 		excludeFields.add("promotionCode");
 		excludeFields.add("promotionDesc");
+		excludeFields.add("profitcenterCode");
+		excludeFields.add("profitCenterDesc");
 		return excludeFields;
 	}
 
@@ -1856,4 +1863,35 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.promotionDesc = promotionDesc;
 	}
 
+	public List<FinTypePartnerBank> getFinTypePartnerBankList() {
+		return finTypePartnerBankList;
+	}
+
+	public void setFinTypePartnerBankList(List<FinTypePartnerBank> finTypePartnerBankList) {
+		this.finTypePartnerBankList = finTypePartnerBankList;
+	}
+
+	public String getProfitcenterCode() {
+		return profitcenterCode;
+	}
+
+	public void setProfitcenterCode(String profitcenterCode) {
+		this.profitcenterCode = profitcenterCode;
+	}
+
+	public String getProfitCenterDesc() {
+		return profitCenterDesc;
+	}
+
+	public void setProfitCenterDesc(String profitCenterDesc) {
+		this.profitCenterDesc = profitCenterDesc;
+	}
+
+	public long getProfitCenterID() {
+		return profitCenterID;
+	}
+
+	public void setProfitCenterID(long profitCenterID) {
+		this.profitCenterID = profitCenterID;
+	}
 }

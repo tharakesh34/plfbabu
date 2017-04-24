@@ -4655,5 +4655,12 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
+	
+	<!-- FinType Partner Bank -->
+	<bean id="finTypePartnerBankListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+	<bean id="finTypePartnerBankDialogCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankDialogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
 
 </beans>

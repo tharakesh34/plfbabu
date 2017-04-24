@@ -3762,6 +3762,7 @@
 		<property name="finTypeFeesService" ref="finTypeFeesService" />
 		<property name="finTypeInsurancesService" ref="finTypeInsurancesService" />
 		<property name="finTypeAccountingService" ref="finTypeAccountingService" />
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 	</bean>
 
 	<bean id="finTypeAccountDAO"
@@ -3785,6 +3786,12 @@
 	<bean id="finTypeAccountingDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl"
 		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="finTypePartnerBankDAO"
+		class="com.pennant.backend.dao.rmtmasters.impl.FinTypePartnerBankDAOImpl"
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
@@ -9313,6 +9320,31 @@
 	<bean name="finTypeAccountingServiceTarget"
 		class="com.pennant.backend.service.rmtmasters.impl.FinTypeAccountingServiceImpl">
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean id="finTypePartnerBankService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finTypePartnerBankServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="finTypePartnerBankServiceTarget"
+		class="com.pennant.backend.service.rmtmasters.impl.FinTypePartnerBankServiceImpl">
+		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
