@@ -231,9 +231,9 @@ public class BatchMonitor {
 				statement = connection.createStatement();
 				StringBuilder query = new StringBuilder();	
 
-				query.append(" SELECT AVG(DATEDIFF (millisecond, START_TIME, END_TIME)) as avg FROM");
+				query.append(" SELECT AVG(DATEDIFF (millisecond, START_TIME, END_TIME)) avg FROM");
 				query.append(" (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
-				query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) AS T");
+				query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
 
 				resultSet = statement.executeQuery(query.toString());
 				if (resultSet.next()) {
