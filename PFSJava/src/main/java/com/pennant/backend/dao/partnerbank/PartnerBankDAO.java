@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 
 public interface PartnerBankDAO {
 	PartnerBank getPartnerBankById(long id, String type);
@@ -58,5 +59,8 @@ public interface PartnerBankDAO {
 	void deletePartner(PartnerBank partnerBankModes);
 	List<PartnerBankModes> getPartnerBankModesId(long partnerBankId) ;
 	int geBankCodeCount(String partnerBankCodeValue, String type);
+	List<PartnerBranchModes> getPartnerBranchModesId(long id);
+	void deletePartnerBranch(PartnerBank partnerBank);
+	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
 	
 }

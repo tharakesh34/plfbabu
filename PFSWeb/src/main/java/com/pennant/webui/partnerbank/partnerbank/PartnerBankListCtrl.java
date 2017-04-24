@@ -61,6 +61,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.webui.partnerbank.partnerbank.model.PartnerBankListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -212,8 +213,12 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		//get the disb modes list.
 		
 		List<PartnerBankModes> modesList=this.partnerBankService.getPartnerBankModesId(id);
+		List<PartnerBranchModes> branchList=this.partnerBankService.getPartnerBranchModesId(id);
 		if(modesList!=null && !modesList.isEmpty()){
 			partnerBank.setPartnerBankModesList(modesList);
+		}
+		if(branchList!=null && !branchList.isEmpty()){
+			partnerBank.setPartnerBranchModesList(branchList);
 		}
 		if (partnerBank == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

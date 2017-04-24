@@ -53,6 +53,8 @@ public interface FinAdvancePaymentsDAO {
 	FinAdvancePayments getNewFinAdvancePayments();
 
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
+	
+	int getAdvancePaymentsCountByPartnerBank(long partnerBankID, String type);
 
 	void update(FinAdvancePayments finAdvancePaymentsDAO, String type);
 

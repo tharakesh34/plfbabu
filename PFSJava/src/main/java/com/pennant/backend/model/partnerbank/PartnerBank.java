@@ -86,14 +86,12 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private String				lovValue;
 	private PartnerBank			befImage;
 	private LoggedInUser		userDetails;
-	private String				modeDisbursment;
-	private String				modePayments;
-	private String				modeReceipts;
 	private String				hostGLCode;
 	private String				profitCentre;
 	private String				crossCentre;
 	
 	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
+	private List<PartnerBranchModes>partnerBranchModesList = new ArrayList<PartnerBranchModes>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -109,12 +107,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		excludeFields.add("bankCodeName");
 		excludeFields.add("bankBranchCodeName");
 		excludeFields.add("acTypeName");
-		excludeFields.add("modeDisbursment");
-		excludeFields.add("modePayments");
-		excludeFields.add("modeReceipts");
-		excludeFields.add("disburment");
-		excludeFields.add("payments");
-		excludeFields.add("receipts");
 		return excludeFields;
 	}
 
@@ -302,30 +294,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.partnerBankId = partnerBankId;
 	}
 
-	public String getModeDisbursment() {
-		return modeDisbursment;
-	}
-
-	public void setModeDisbursment(String modeDisbursment) {
-		this.modeDisbursment = modeDisbursment;
-	}
-
-	public String getModePayments() {
-		return modePayments;
-	}
-
-	public void setModePayments(String modePayments) {
-		this.modePayments = modePayments;
-	}
-
-	public String getModeReceipts() {
-		return modeReceipts;
-	}
-
-	public void setModeReceipts(String modeReceipts) {
-		this.modeReceipts = modeReceipts;
-	}
-
 	public List<PartnerBankModes> getPartnerBankModesList() {
 		return partnerBankModesList;
 	}
@@ -380,6 +348,14 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 
 	public void setCrossCentre(String crossCentre) {
 		this.crossCentre = crossCentre;
+	}
+
+	public List<PartnerBranchModes> getPartnerBranchModesList() {
+		return partnerBranchModesList;
+	}
+
+	public void setPartnerBranchModesList(List<PartnerBranchModes> partnerBranchModesList) {
+		this.partnerBranchModesList = partnerBranchModesList;
 	}
 
 }

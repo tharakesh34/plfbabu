@@ -52,12 +52,14 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.PennantConstants;
@@ -74,6 +76,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	private PartnerBankDAO		partnerBankDAO;
 
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -137,13 +140,28 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			getPartnerBankDAO().save(partnerBank, tableType);
 			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
 				getPartnerBankDAO().deletePartner(partnerBank);
-				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(),partnerBank.getPartnerBankId());
+				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(), partnerBank.getPartnerBankId());
+
 			}
+			if (partnerBank.getPartnerBranchModesList() != null && partnerBank.getPartnerBranchModesList().size() > 0) {
+				getPartnerBankDAO().deletePartnerBranch(partnerBank);
+				getPartnerBankDAO().saveBranchList(partnerBank.getPartnerBranchModesList(),
+						partnerBank.getPartnerBankId());
+			}
+
 		} else {
 			getPartnerBankDAO().update(partnerBank, tableType);
-			getPartnerBankDAO().deletePartner(partnerBank);
-			getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(),partnerBank.getPartnerBankId());
+			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
+				getPartnerBankDAO().deletePartner(partnerBank);
+				getPartnerBankDAO().saveList(partnerBank.getPartnerBankModesList(), partnerBank.getPartnerBankId());
+			}
+			if (partnerBank.getPartnerBranchModesList() != null && partnerBank.getPartnerBranchModesList().size() > 0) {
+				getPartnerBankDAO().deletePartnerBranch(partnerBank);
+				getPartnerBankDAO().saveBranchList(partnerBank.getPartnerBranchModesList(),
+						partnerBank.getPartnerBankId());
+			}
 		}
+		
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -174,7 +192,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
 		getPartnerBankDAO().delete(partnerBank, "");
 		getPartnerBankDAO().deletePartner(partnerBank);
-
+		getPartnerBankDAO().deletePartnerBranch(partnerBank);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -418,7 +436,16 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
 		}
 		
-		
+		if (StringUtils.trimToEmpty(partnerBank.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+			int count = finAdvancePaymentsDAO.getAdvancePaymentsCountByPartnerBank(partnerBank.getPartnerBankId(), "_View");//FIXME for FinanceMain
+			if (count != 0) {
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ": " + partnerBank.getPartnerBankCode();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 		
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -443,6 +470,19 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		logger.debug("Leaving");
 
 		return codeExist;
+	}
+
+	@Override
+	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
+		return getPartnerBankDAO().getPartnerBranchModesId(id);
+	}
+
+	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
+		return finAdvancePaymentsDAO;
+	}
+
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
 
 

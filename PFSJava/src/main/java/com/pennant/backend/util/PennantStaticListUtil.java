@@ -1687,7 +1687,7 @@ public class PennantStaticListUtil {
 	}
 
 	public static ArrayList<ValueLabel> getPaymentTypes(boolean addSwitchTransfer){
-		ArrayList<ValueLabel>  paymentTypes = new ArrayList<ValueLabel>(5);
+		ArrayList<ValueLabel>  paymentTypes = new ArrayList<ValueLabel>(6);
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IMPS,Labels.getLabel("label_PaymentType_IMPS")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NEFT,Labels.getLabel("label_PaymentType_NEFT")));
 		paymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS,Labels.getLabel("label_PaymentType_RTGS")));

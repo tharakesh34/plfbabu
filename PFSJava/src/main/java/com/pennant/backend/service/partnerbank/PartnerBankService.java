@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 
 public interface PartnerBankService {
 
@@ -66,4 +67,6 @@ public interface PartnerBankService {
 	List<PartnerBankModes> getPartnerBankModesId(long id);
 
 	boolean getPartnerCodeExist(String partnerBankCodeValue, String partnerBankCode);
+
+	List<PartnerBranchModes> getPartnerBranchModesId(long id);
 }

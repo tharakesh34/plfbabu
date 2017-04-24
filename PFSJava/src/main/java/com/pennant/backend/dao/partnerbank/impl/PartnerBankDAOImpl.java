@@ -67,6 +67,7 @@ import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -321,6 +322,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 
 		logger.debug("Leaving");		
 	}
+	
 	/**
 	 * Method for Deletion PartnerBankModes Details  
 	 * @param partnerBankList
@@ -391,6 +393,68 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		logger.debug("Leaving");
 
 		return count;
+	}
+	
+	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT PartnerBankId, BranchCode, PaymentMode from PartnerBranchModes");
+		selectSql.append(" Where PartnerBankId =:PartnerBankId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<PartnerBranchModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PartnerBranchModes.class);
+		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
+		try {
+			PartnerBranchModeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
+		logger.debug("Leaving");
+		return PartnerBranchModeList;}
+
+	/**
+	 * Method for Deletion PartnerBranchModes Details  
+	 */
+	public void deletePartnerBranch(PartnerBank partnerBank) {
+		logger.debug("Entering");
+		PartnerBranchModes partnerBranchModes = new PartnerBranchModes();
+		partnerBranchModes.setPartnerBankId(partnerBank.getPartnerBankId());
+		StringBuilder deleteSql = new StringBuilder("Delete From PartnerBranchModes");
+		deleteSql.append(" Where PartnerBankId =:PartnerBankId");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBranchModes);
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Method for Saving List Of PartnerBranchModes Details
+	 */
+	public void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId) {
+		for (PartnerBranchModes partnerBranchModes : partnerBranchModesList) {
+			partnerBranchModes.setPartnerBankId(partnerBankId);
+		}
+		StringBuilder insertSql = new StringBuilder("Insert Into PartnerBranchModes");
+		insertSql.append(" ( PartnerBankId, BranchCode, PaymentMode)");
+		insertSql.append(" Values(:PartnerBankId, :BranchCode, :PaymentMode)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(partnerBranchModesList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
 	}
 
 	

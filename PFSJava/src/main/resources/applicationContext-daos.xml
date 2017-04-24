@@ -9232,6 +9232,8 @@
 		class="com.pennant.backend.service.partnerbank.impl.PartnerBankServiceImpl">
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO"/>
+		
 	</bean>
 	<!--============ Reference ID Generation Configuration ============== -->
 

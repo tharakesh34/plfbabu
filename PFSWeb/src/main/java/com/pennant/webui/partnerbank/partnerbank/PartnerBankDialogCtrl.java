@@ -56,11 +56,13 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -74,9 +76,11 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
@@ -85,6 +89,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 
 /**
@@ -99,6 +104,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	protected Window						window_PartnerBankDialog;
 
+	protected Borderlayout					borderlayoutPartnerBank;
 	protected Textbox						partnerBankCode;
 	protected Textbox						partnerBankName;
 	protected ExtendedCombobox				bankCode;
@@ -131,7 +137,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox						sapGLCode;
 	protected Textbox						profitCenter;
 	protected Textbox 						crossCentre;
-	
+	protected Row							AlwBranchCode;
+	protected Textbox						alwBankBranchCode;
+	protected Button						btnSearchBranchCode;
+	protected Space							space_AlwBankBranchCode;
 	
 	private PartnerBank						partnerBank;															
 	private transient PartnerBankListCtrl	partnerBankListCtrl;													
@@ -247,7 +256,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.acType.setDescColumn("AcTypeDesc");
 		this.acType.setDisplayStyle(2);
 		this.acType.setValidateColumns(new String[] { "AcType" });
-
+		
 		setStatusDetails();
 
 		logger.debug("Leaving");
@@ -379,8 +388,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (this.alwDisburment.isChecked()) {
 			this.btnSearchModeDisbursment.setDisabled(isReadOnly("button_PartnerBankDialog_ModeDisbursment"));
 			this.modeDisbursment.setReadonly(true);
-			this.modeDisbursment.setValue(StringUtils.trimToEmpty(aPartnerBank.getModeDisbursment()));
-			this.space_modeDisbursments.setSclass("mandatory");
+			this.space_modeDisbursments.setSclass(PennantConstants.mandateSclass);
 		} else {
 			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
@@ -391,8 +399,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.alwPayments.setChecked(aPartnerBank.isAlwPayment());
 		if (this.alwPayments.isChecked()) {
 			this.modePayments.setReadonly(true);
-			this.modePayments.setValue(StringUtils.trimToEmpty(aPartnerBank.getModePayments()));
-			this.space_modePayments.setSclass("mandatory");
+			this.space_modePayments.setSclass(PennantConstants.mandateSclass);
 			this.btnSearchModePayments.setDisabled(isReadOnly("button_PartnerBankDialog_ModePayments"));
 		} else {
 			this.modePayments.setReadonly(true);
@@ -404,14 +411,15 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.alwReceipts.setChecked(aPartnerBank.isAlwReceipt());
 		if (this.alwReceipts.isChecked()) {
 			this.modeReceipts.setReadonly(true);
-			this.modeReceipts.setValue(StringUtils.trimToEmpty(aPartnerBank.getModeReceipts()));
-			this.space_modeReceipts.setSclass("mandatory");
+			this.space_modeReceipts.setSclass(PennantConstants.mandateSclass);
 			this.btnSearchModeReceipts.setDisabled(isReadOnly("button_PartnerBankDialog_ModeReceipts"));
+			this.btnSearchBranchCode.setDisabled(isReadOnly("button_PartnerBankDialog_BranchCode"));
 		} else {
 			this.modeReceipts.setReadonly(true);
 			this.modeReceipts.setValue("");
 			this.space_modeReceipts.setSclass("");
 			this.btnSearchModeReceipts.setDisabled(true);
+			this.btnSearchBranchCode.setDisabled(true);
 		}
 		
 		if (aPartnerBank.isNewRecord()) {
@@ -440,7 +448,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	public void doWriteComponentsToBean(PartnerBank aPartnerBank) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		List<PartnerBankModes> partneBankModesList = new ArrayList<PartnerBankModes>() ;
+		List<PartnerBankModes> 		  partneBankModesList = new ArrayList<PartnerBankModes>() ;
+		List<PartnerBranchModes>      partnerBranchModesList= new ArrayList<PartnerBranchModes>();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//Partner Bank Code
@@ -577,7 +586,13 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			preparePaymentModes(this.modePayments.getValue(),AccountConstants.PARTNERSBANK_PAYMENT,partneBankModesList);
 		}
 		aPartnerBank.setPartnerBankModesList(partneBankModesList);
-
+		
+		if(this.alwBankBranchCode.getValue()!=null){
+			prepareCashModes(this.alwBankBranchCode.getValue(),DisbursementConstants.PAYMENT_TYPE_CASH,partnerBranchModesList);
+		}
+		
+		aPartnerBank.setPartnerBranchModesList(partnerBranchModesList);
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -590,6 +605,21 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private List<PartnerBranchModes> prepareCashModes(String cashmode, String paymentTypeCash, List<PartnerBranchModes> partneBankModesList) {
+	
+		String[] cashMode = cashmode.split(",");
+		PartnerBranchModes	paymentMode ;
+
+		for (int i = 0; i < cashMode.length; i++) {
+				paymentMode = new PartnerBranchModes();
+				paymentMode.setBranchCode(cashMode[i]);
+				paymentMode.setPaymentMode(paymentTypeCash);
+				partneBankModesList.add(paymentMode);
+    		}
+
+		return partneBankModesList;
 	}
 
 	/**
@@ -627,14 +657,30 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(partnerBank);
-		if(aPartnerBank.getPartnerBankModesList()!=null && !aPartnerBank.getPartnerBankModesList().isEmpty())
+		if(aPartnerBank.getPartnerBankModesList()!=null && !aPartnerBank.getPartnerBankModesList().isEmpty()){
 				setAccTypeModeDescription(aPartnerBank.getPartnerBankModesList());
+		}
+		if (aPartnerBank.getPartnerBranchModesList() != null && !aPartnerBank.getPartnerBranchModesList().isEmpty()) {
+			setAccCashModeDescription(aPartnerBank.getPartnerBranchModesList());
+			
+		}
+		for (PartnerBranchModes partnerBranchModesList : aPartnerBank.getPartnerBranchModesList()) {
+			if(partnerBranchModesList.getBranchCode()!=null){
+				this.btnSearchBranchCode.setDisabled(isReadOnly("button_PartnerBankDialog_BranchCode"));
+				this.AlwBranchCode.setVisible(true);
+				this.space_AlwBankBranchCode.setSclass(PennantConstants.mandateSclass);
+			}else{
+				this.AlwBranchCode.setVisible(false);
+				this.btnSearchBranchCode.setDisabled(true);
+				this.space_AlwBankBranchCode.setSclass("");
+			}
+		}
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
 
 	}
-
+	
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -723,7 +769,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 		
 		//Profit Centre
-		if (!this.profitCenter.isReadonly()) {
+		if (!this.profitCenter.isDisabled()) {
 			this.profitCenter.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_ProfitCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					false));
@@ -734,6 +780,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.crossCentre.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_CrossCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					false));
+		}
+		
+		if (!this.btnSearchBranchCode.isDisabled()) {
+			this.alwBankBranchCode.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null,
+					true));
 		}
 		
 		
@@ -761,6 +813,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.sapGLCode.setConstraint("");
 		this.profitCenter.setConstraint("");
 		this.crossCentre.setConstraint("");
+		this.alwBankBranchCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -800,6 +853,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.sapGLCode.setErrorMessage("");
 		this.profitCenter.setErrorMessage("");
 		this.crossCentre.setErrorMessage("");
+		this.alwBankBranchCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -964,6 +1018,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.btnSearchModeDisbursment.setDisabled(isReadOnly("button_PartnerBankDialog_ModeDisbursment"));
 		this.btnSearchModePayments.setDisabled(isReadOnly("button_PartnerBankDialog_ModePayments"));
 		this.btnSearchModeReceipts.setDisabled(isReadOnly("button_PartnerBankDialog_ModeReceipts"));
+		this.btnSearchBranchCode.setDisabled(isReadOnly("button_PartnerBankDialog_BranchCode"));
 		this.sapGLCode.setReadonly(isReadOnly("PartnerBankDialog_HostGLCode"));
 		this.profitCenter.setReadonly(isReadOnly("PartnerBankDialog_ProfitCenter"));
 		this.crossCentre.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
@@ -1381,6 +1436,26 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	}
 	
+	
+	private void setAccCashModeDescription(List<PartnerBranchModes> partnerBranchModesList) {
+		logger.debug("Entering");
+
+		String disbMode = "";
+
+		for (PartnerBranchModes partnerBranchModes : partnerBranchModesList) {
+				if (partnerBranchModes.getBranchCode()!= null) {
+
+					disbMode = disbMode + partnerBranchModes.getBranchCode().concat(",");
+				}
+
+			}
+			
+			this.alwBankBranchCode.setValue(getFormattedPayMode(disbMode));
+
+		logger.debug("Leaving");
+
+	}
+	
 	public String getFormattedPayMode(String paymode) {
 		if (paymode!=null && paymode.length()>0 && paymode.charAt(paymode.length() - 1) == ',') {
 			paymode = paymode.substring(0, paymode.length() - 1);
@@ -1421,9 +1496,41 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 				"AccountTypeRecptModes", txtbx.getValue());
 		if (selectedValues != null) {
 			txtbx.setValue(selectedValues);
+			if (txtbx.getValue().contains(DisbursementConstants.PAYMENT_TYPE_CASH)) {
+				this.AlwBranchCode.setVisible(true);
+				this.space_AlwBankBranchCode.setSclass(PennantConstants.mandateSclass);
+				this.alwBankBranchCode.setValue("");
+				this.alwBankBranchCode.setReadonly(false);
+				this.btnSearchBranchCode.setDisabled(isReadOnly("button_PartnerBankDialog_BranchCode"));
+			} else {
+				this.AlwBranchCode.setVisible(false);
+				this.space_AlwBankBranchCode.setSclass("");
+				this.alwBankBranchCode.setValue("");
+				this.alwBankBranchCode.setReadonly(true);
+				this.btnSearchBranchCode.setDisabled(true);
+				
+			}
+
 		}
 		logger.debug("Leaving  " + event.toString());
 	}
+	
+	
+	
+	public void onClick$btnSearchBranchCode(Event event) {
+		logger.debug("Entering  " + event.toString());
+		this.alwBankBranchCode.setErrorMessage("");
+		Textbox txtbx = (Textbox) btnSearchBranchCode.getPreviousSibling();
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_PartnerBankDialog,"Branch",txtbx.getValue(), null);
+		
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			txtbx.setValue(details);
+		}
+		
+		logger.debug("Leaving  " + event.toString());
+	}
+	
 	
 	public void onCheck$alwDisburment(Event event) {
 		logger.debug("Entering");
@@ -1449,12 +1556,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.btnSearchModeDisbursment.setDisabled(false);
 			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
-			this.space_modeDisbursments.setSclass("mandatory");
+			this.space_modeDisbursments.setSclass(PennantConstants.mandateSclass);
+			
 		} else {
 			this.btnSearchModeDisbursment.setDisabled(true);
 			this.modeDisbursment.setReadonly(true);
 			this.space_modeDisbursments.setSclass("");
 			this.modeDisbursment.setValue("");
+			
 		}
 		logger.debug("Leaving");
 	}
@@ -1465,7 +1574,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.modePayments.setReadonly(true);
 			this.btnSearchModePayments.setDisabled(false);
 			this.modePayments.setValue("");
-			this.space_modePayments.setSclass("mandatory");
+			this.space_modePayments.setSclass(PennantConstants.mandateSclass);
+			
 		} else {
 			this.modePayments.setReadonly(true);
 			this.btnSearchModePayments.setDisabled(true);
@@ -1481,13 +1591,17 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.modeReceipts.setReadonly(true);
 			this.btnSearchModeReceipts.setDisabled(false);
 			this.modeReceipts.setValue("");
-			this.space_modeReceipts.setSclass("mandatory");
-			
+			this.space_modeReceipts.setSclass(PennantConstants.mandateSclass);
+			this.alwBankBranchCode.setValue("");
+			this.AlwBranchCode.setVisible(false);
 		} else {
 			this.modeReceipts.setReadonly(true);
 			this.btnSearchModeReceipts.setDisabled(true);
 			this.space_modeReceipts.setSclass("");
 			this.modeReceipts.setValue("");
+			this.alwBankBranchCode.setValue("");
+			this.AlwBranchCode.setVisible(false);
+
 		}
 		logger.debug("Leaving");
 	}
