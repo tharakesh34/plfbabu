@@ -632,6 +632,70 @@
 			baseTableName="DPDBUCKETSCONFIG" baseColumnNames="bucketID" />
 	</changeSet>
 	
+	<changeSet id="48" author="Chaitanya">
+		<createTable tableName="FinTypePartnerBanks">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Purpose" type="char(1)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PaymentMode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PartnerBankID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="49" author="Chaitanya">
+		<createTable tableName="FinTypePartnerBanks_Temp">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Purpose" type="char(1)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PaymentMode" type="varchar(8)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="PartnerBankID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+		
 		<changeSet id="51" author="Amit">
 		<addPrimaryKey columnNames="INDUSTRYCODE" constraintName="PK_BMTINDUSTRIES_INDUSTRYCODE"
 			tableName="BMTINDUSTRIES" />
