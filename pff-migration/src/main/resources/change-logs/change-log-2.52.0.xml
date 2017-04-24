@@ -588,4 +588,13 @@
 			</column>
 		</addColumn>
 	</changeSet> 
+	
+	 <changeSet id="42" author="Durgaprasad G">
+		<createView viewName="MANDATE_FILE_DOWNLOAD_VIEW" replaceIfExists="true">
+		SELECT DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME,  DS.STATUS FROM DATA_ENGINE_PROCESS_LOG L
+		INNER JOIN DATA_ENGINE_STATUS DS ON DS.ID = L.FILEID
+		INNER JOIN DATA_ENGINE_CONFIG DC ON DC.NAME = DS.NAME WHere DC.NAME = 'MANDATES_EXPORT'
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
