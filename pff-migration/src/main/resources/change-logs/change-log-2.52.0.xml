@@ -1352,7 +1352,17 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 						INNER JOIN PartnerBanks T2  ON T1.PartnerBankID =  T2.PartnerBankID
 		</createView>
 	</changeSet>
-	<changeSet id="104" author="Surekha">
+
+		<changeSet id="104" author="prasad">
+		<sql>
+		delete from manualadvise;
+		</sql>
+	</changeSet>
+	<changeSet id="105" author="prasad">
+		<modifyDataType tableName="manualadvise" columnName="Finreference"
+			newDataType="varchar(20)" />
+	</changeSet>
+	<changeSet id="106" author="Surekha">
 		<createView replaceIfExists="true" viewName="INT_DISBURSEMENT_EXPORT_VIEW">
   		SELECT DISB.PAYMENTTYPE, FM.CUSTID, DISB.BENEFICIARYACCNO, DISB.AMTTOBERELEASED/100 AS AMTTOBERELEASED, DISB.BENEFICIARYNAME, DISB.LIABILITYHOLDNAME, DISB.PAYABLELOC, '' BENEFICIARYCITY, DISB.PRINTINGLOC,
 		'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
@@ -1372,5 +1382,14 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		left outer join RMTCOUNTRYVSPROVINCE STATE on STATE.CPPROVINCE = CITY.PCPROVINCE
 		WHERE DISB.STATUS='APPROVED'
 		</createView>
+	</changeSet>
+	<changeSet id="107.1" author="prasad">
+		<sql>
+		delete from manualadvise;
+		</sql>
+	</changeSet>
+		<changeSet id="107" author="prasad">
+		<modifyDataType tableName="ManualAdvise_Temp" columnName="Finreference"
+			newDataType="varchar(20)" />
 	</changeSet>
 </databaseChangeLog>
