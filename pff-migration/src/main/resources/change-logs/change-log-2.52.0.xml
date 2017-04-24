@@ -520,5 +520,10 @@
 			newDataType="int" />
 	</changeSet>
 	
-	
+	<changeSet id="36" author="Surekha">
+		<sql>
+			update RMTAccountTypes set CostCenterID=0;
+			update RMTAccountTypes_temp set CostCenterID=0;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
