@@ -1343,5 +1343,14 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 </changeSet>
+	
+	<changeSet id="103" author="Kesav">
+		<createView viewName="PartnerBankModes_AView" replaceIfExists="true">
+			SELECT		T1.PartnerBankId, T1.Purpose, T1.PaymentMode,
+						T2.PARTNERBANKCODE, T2.PARTNERBANKNAME
+			FROM    	PARTNERBANKMODES  T1 
+						INNER JOIN PartnerBanks T2  ON T1.PartnerBankID =  T2.PartnerBankID
+		</createView>
+	</changeSet>
 		
 </databaseChangeLog>
