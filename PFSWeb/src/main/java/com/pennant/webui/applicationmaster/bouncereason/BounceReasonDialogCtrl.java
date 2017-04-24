@@ -198,9 +198,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.feeID.setDescColumn("FeeTypeDesc");
 			this.feeID.setValidateColumns(new String[] {"FeeTypeCode"});
 			
-			this.active.setValue("true");
-			
-		
 		setStatusDetails();
 		
 		logger.debug(Literal.LEAVING);
@@ -328,22 +325,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	/*public void onFulfill$feeID(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = feeID.getObject();
-		if (dataObject instanceof String) {
-			this.feeID.setValue(dataObject.toString());
-			this.feeID.setDescription("");
-		} else {
-			FeeType details = (FeeType) dataObject;
-			if (details != null) {
-				this.feeID.setAttribute("FeeID", details.getFeeTypeID());
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-*/
+
    	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -364,6 +346,11 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			
 			this.returnCode.setValue(aBounceReason.getReturnCode());
 			this.active.setChecked(aBounceReason.isActive());
+			
+			if (aBounceReason.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aBounceReason.getRecordType())) {
+				this.active.setChecked(true);
+				this.active.setDisabled(true);
+			}
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -524,11 +511,11 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		if (!this.bounceCode.isReadonly()){
 			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
-		if (!this.reasonType.isReadonly()){
-			this.reasonType.setConstraint(new StaticListValidator(listReasonType,Labels.getLabel("label_BounceReasonDialog_ReasonType.value")));
-		}
-		if (!this.category.isReadonly()){
+		if (!this.category.isDisabled()){
 			this.category.setConstraint(new StaticListValidator(listCategory,Labels.getLabel("label_BounceReasonDialog_Category.value")));
+		}
+		if (!this.action.isDisabled()){
+			this.action.setConstraint(new StaticListValidator(listAction,Labels.getLabel("label_BounceReasonDialog_Action.value")));
 		}
 		if (!this.reason.isReadonly()){
 			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
@@ -616,7 +603,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBounceReason.getBounceID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBounceReason.getBounceCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
