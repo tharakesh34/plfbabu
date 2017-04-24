@@ -91,12 +91,12 @@
 								<row>
 									<label
 										id="label_DocumentTypeSearch_DocIsMandatory"
-										value="${c:l('label_DocumentTypeSearch_DocIsMandatory.value')}" />
+										value="${c:l('label_DocumentTypeSearch_DocIsMandatory.value')}" visible="false"/>
 									<listbox
 										id="sortOperator_docIsMandatory" width="43px" mold="select"
-										rows="1" />
+										rows="1" visible="false"/>
 									<checkbox id="docIsMandatory"
-										checked="false" />
+										checked="false" visible="false"/>
 									<label
 										id="label_DocumentTypeSearch_DocTypeIsActive"
 										value="${c:l('label_DocumentTypeSearch_DocTypeIsActive.value')}" />
@@ -141,7 +141,7 @@
 								<listheader
 									id="listheader_DocIsMandatory"
 									label="${c:l('listheader_DocIsMandatory.label')}" sort="auto"
-									hflex="min" />
+									hflex="min" visible="false"/>
 								<listheader
 									id="listheader_DocTypeIsActive"
 									label="${c:l('listheader_DocTypeIsActive.label')}" sort="auto"

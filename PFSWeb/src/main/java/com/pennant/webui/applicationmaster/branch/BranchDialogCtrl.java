@@ -285,7 +285,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchCity.setValidateColumns(new String[] {"PCCity"});
 		
 		this.branchSwiftCountry.setMaxlength(2);
-		this.branchSwiftCountry.setMandatoryStyle(true);
+		this.branchSwiftCountry.setMandatoryStyle(false);
 		this.branchSwiftCountry.setModuleName("Country");
 		this.branchSwiftCountry.setValueColumn("CountryCode");
 		this.branchSwiftCountry.setDescColumn("CountryDesc");
@@ -769,10 +769,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.branchTel.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_BranchDialog_BranchTel.value"),true,3));
 		}
 		if (!this.branchSwiftBankCode.isReadonly()){
-			this.branchSwiftBankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBankCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, true));
+			this.branchSwiftBankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBankCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, false));
 		}	
 		if (!this.branchSwiftLocCode.isReadonly()){
-			this.branchSwiftLocCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftLocCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL2, true));
+			this.branchSwiftLocCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftLocCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL2, false));
 		}	
 		if (!this.branchSwiftBrnCde.isReadonly()){
 			this.branchSwiftBrnCde.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBrnCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL3, true));
@@ -799,7 +799,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		}
 		if (!this.branchSwiftCountry.isReadonly()) {
-			this.branchSwiftCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"), null, true,true));
+			this.branchSwiftCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftCountry.value"), null, false,true));
 		}
 		if (this.row_NewBranch.isVisible() && !this.newBranchCode.isReadonly()) {
 			this.newBranchCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_NewBranchCode.value"), null, true,true));

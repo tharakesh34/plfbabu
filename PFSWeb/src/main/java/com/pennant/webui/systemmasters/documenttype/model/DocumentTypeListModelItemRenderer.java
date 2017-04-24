@@ -75,10 +75,10 @@ public class DocumentTypeListModelItemRenderer implements ListitemRenderer<Docum
 		lc = new Listcell(documentType.getDocTypeDesc());
 		lc.setParent(item);
 		lc = new Listcell();
-		final Checkbox cbDocIsMandatory = new Checkbox();
+		/*final Checkbox cbDocIsMandatory = new Checkbox();
 		cbDocIsMandatory.setDisabled(true);
 		cbDocIsMandatory.setChecked(documentType.isDocIsMandatory());
-		lc.appendChild(cbDocIsMandatory);
+		lc.appendChild(cbDocIsMandatory);*/
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbDocTypeIsActive = new Checkbox();

@@ -219,8 +219,7 @@
 									id="label_BranchDialog_BranchSwiftBankCde"
 									value="${c:l('label_BranchDialog_BranchSwiftBankCde.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<uppercasebox
 										id="branchSwiftBankCode" maxlength="4" width="180px" />
 								</hbox>
@@ -236,8 +235,7 @@
 									id="label_BranchDialog_BranchSwiftLocCode"
 									value="${c:l('label_BranchDialog_BranchSwiftLocCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px" />
 									<uppercasebox
 										id="branchSwiftLocCode" maxlength="2" width="180px" />
 								</hbox>
