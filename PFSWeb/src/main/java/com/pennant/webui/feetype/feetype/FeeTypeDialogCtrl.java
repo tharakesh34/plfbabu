@@ -64,6 +64,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -95,18 +96,30 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window					window_FeeTypeDialog;
+
 	protected Row						row0;
 	protected Label						label_FeeTypeCode;
 	protected Hlayout					hlayout_FeeTypeCode;
 	protected Space						space_FeeTypeCode;
-
 	protected Uppercasebox				feeTypeCode;
+
 	protected Label						label_FeeTypeDesc;
 	protected Hlayout					hlayout_FeeTypeDesc;
 	protected Space						space_FeeTypeDesc;
-
 	protected Textbox					feeTypeDesc;
+
 	protected Row						row1;
+	protected Label						label_ApplicableFor;
+	protected Hlayout					hlayout_ApplicableFor;
+	protected Space						space_ApplicableFor;
+	protected Uppercasebox				applicableFor;
+
+	protected Label						label_AccountingSetID;
+	protected Hlayout					hlayout_AccountingSetID;
+	protected Space						space_AccountingSetID;
+	protected ExtendedCombobox			accountingSetID;
+	
+	protected Row						row2;
 	protected Label						label_Active;
 	protected Hlayout					hlayout_Active;
 	protected Space						space_Active;
@@ -342,6 +355,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		readOnlyComponent(true, this.feeTypeCode);
 		readOnlyComponent(true, this.feeTypeDesc);
+		readOnlyComponent(true, this.applicableFor);
+		readOnlyComponent(true, this.accountingSetID);
 		readOnlyComponent(true, this.active);
 
 		if (isWorkFlowEnabled()) {
@@ -388,6 +403,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
 		this.feeTypeDesc.setMaxlength(35);
+		
+		this.accountingSetID.setModuleName("AccountingSet");
+		this.accountingSetID.setValueColumn("AccountSetCode");
+		this.accountingSetID.setDescColumn("AccountSetCodeName");
+		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode" });
+		this.accountingSetID.setMandatoryStyle(true);
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);

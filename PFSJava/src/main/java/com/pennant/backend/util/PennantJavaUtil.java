@@ -1870,15 +1870,14 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
 				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
-				"Category", "ReturnID", "Active" }, null, 400));
+				"Category", "ReturnID" }, new String[][] { { "Active", "0", "1" } }, 400));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
 				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",
-				"ProfitCenterDesc", "Active" }, null, 400));
+				"ProfitCenterDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
 
 		ModuleUtil.register("CostCenter", new ModuleMapping("CostCenter", CostCenter.class, new String[] {
-				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc",
-				"Active" }, null, 400));
+				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
 		/*PresentmentDetail*/
 		ModuleUtil.register("PresentmentDetail", new ModuleMapping("PresentmentDetail", PresentmentDetail.class, new String[] { "PresentmentDetails",
 		"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));

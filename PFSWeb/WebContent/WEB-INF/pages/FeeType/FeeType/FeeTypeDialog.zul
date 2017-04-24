@@ -91,6 +91,24 @@
 									</hbox>
 								</row>
 								<row id="row1">
+									<label id="label_ApplicableFor"
+										value="${c:l('label_FeeTypeDialog_ApplicableFor.value')}" />
+									<hbox id="hlayout_ApplicableFor">
+										<space id="space_ApplicableFor"
+											spacing="2px" sclass="mandatory"/>
+										<combobox id="applicableFor"
+											maxlength="8" width="72px" />
+									</hbox>
+									<label id="label_AccountingSetID"
+										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
+									<hbox id="hlayout_AccountingSetID">
+										<space id="space_AccountingSetID"
+											spacing="2px" sclass="mandatory"/>
+										<extendedcombobox id="accountingSetID"
+											 width="200px" />
+									</hbox>
+								</row>
+								<row id="row2">
 									<label id="label_Active"
 										value="${c:l('label_FeeTypeDialog_Active.value')}" />
 									<hbox id="hlayout_Active">

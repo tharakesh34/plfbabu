@@ -78,18 +78,18 @@
 						</columns>
 						<rows>
 							<row id="row0">
-								<label id="label_AdviseType"
-									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<combobox id="adviseType"
-										width="90px" />
-								</hbox>
 								<label id="label_FinReference"
 									value="${c:l('label_ManualAdviseDialog_FinReference.value')}" />
 								<hbox>
 									<extendedcombobox id="finReference" />
+								</hbox>
+								<label id="label_AdviseType"
+									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="false"/>
+								<hbox visible="false">
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="adviseType"
+										width="90px" />
 								</hbox>
 							</row>
 							<row id="row1">
@@ -98,24 +98,24 @@
 								<hbox>
 									<extendedcombobox id="feeTypeID" />
 								</hbox>
-								<hbox id="hbox_Sequence">
-									<label id="label_Sequence"
-										value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
-									<intbox id="sequence" width="90px"
-										maxlength="14" />
-								</hbox>
-							</row>
-							<row id="row2">
 								<label id="label_AdviseAmount"
 									value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
 								<hbox>
 									<currencyBox id="adviseAmount"
 										width="162px" />
 								</hbox>
+							</row>
+							<row id="row2">
 								<hbox id="hbox_PaidAmount">
 									<label id="label_PaidAmount"
 										value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
 									<currencyBox id="paidAmount"
+										width="162px" />
+								</hbox>
+								<hbox id="hbox_WaivedAmount">
+									<label id="label_WaivedAmount"
+										value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
+									<currencyBox id="waivedAmount"
 										width="162px" />
 								</hbox>
 							</row>
@@ -128,11 +128,11 @@
 									<textbox id="remarks"
 										maxlength="100" width="320px" />
 								</hbox>
-								<hbox id="hbox_WaivedAmount">
-									<label id="label_WaivedAmount"
-										value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
-									<currencyBox id="waivedAmount"
-										width="162px" />
+								<hbox id="hbox_Sequence">
+									<label id="label_Sequence"
+										value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
+									<intbox id="sequence" width="90px"
+										maxlength="14" />
 								</hbox>
 
 							</row>

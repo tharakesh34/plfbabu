@@ -720,7 +720,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((ExtendedCombobox) component).setReadonly(true);
 			} else if (component instanceof CurrencyBox) {
 				((CurrencyBox) component).setReadonly(true);
-				((CurrencyBox) component).setMandatory(false);
+				//((CurrencyBox) component).setMandatory(false);
 			} else if (component instanceof QueryBuilder) {
 				((QueryBuilder) component).setEditable(false);
 			} else if (component instanceof AccountSelectionBox) {

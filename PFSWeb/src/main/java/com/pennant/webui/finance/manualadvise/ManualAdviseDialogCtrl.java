@@ -560,16 +560,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
 					Labels.getLabel("label_ManualAdviseDialog_AdviseType.value")));
 		}
-		if (!this.finReference.isReadonly()) {
-			this.finReference
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
-		}
-		if (!this.feeTypeID.isReadonly()) {
-			this.feeTypeID
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
-		}
+ 
 		if (!this.adviseAmount.isReadonly()) {
 			this.adviseAmount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_ManualAdviseDialog_AdviseAmount.value"),
