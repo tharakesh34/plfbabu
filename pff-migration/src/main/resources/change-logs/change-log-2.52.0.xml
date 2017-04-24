@@ -526,4 +526,51 @@
 			update RMTAccountTypes_temp set CostCenterID=0;
 		</sql>
 	</changeSet>
+	<changeSet id="37" author="Chaitanya">
+		<dropTable tableName="GLCODEMAPPING"/>
+	</changeSet>
+	<changeSet id="38" author="Chaitanya">
+		<createTable tableName="AccountMapping">
+			<column name="Account" type="varchar(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HostAccount" type="varchar(50)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+ 	</changeSet>
+	<changeSet id="39" author="Chaitanya">
+		<createTable tableName="AccountMapping_Temp">
+			<column name="Account" type="varchar(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HostAccount" type="varchar(50)">
+				<constraints  nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+ 	</changeSet>
 </databaseChangeLog>
