@@ -41,15 +41,27 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>BaseRateCode model</b> class.<br>
  */
-public interface BaseRateCodeDAO {
+public interface BaseRateCodeDAO extends BasicCrudDao<BaseRateCode> {
 
 	BaseRateCode getBaseRateCodeById(String id, String type);
-	void update(BaseRateCode baseRateCode, String type);
-	void delete(BaseRateCode baseRateCode, String type);
-	String save(BaseRateCode baseRateCode, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param bRType
+	 *            bRType of the baseRateCode.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String bRType, TableType tableType);
+	
+	
 }
