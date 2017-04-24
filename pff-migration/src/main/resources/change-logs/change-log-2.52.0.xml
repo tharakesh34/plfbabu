@@ -419,5 +419,81 @@
 	
 	<modifyDataType tableName="PartnerBankModes" columnName="PaymentMode" newDataType="varchar(8)"/>
 	</changeSet>
+	<changeSet id="26" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
+			<column name="ID" type="decimal(10,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)"/>
+			<column name="UMSKZ" type="varchar(20)"/>
+			<column name="WRBTR" type="decimal(20,2)"/>
+			<column name="GSBER" type="varchar(10)"/>
+			<column name="BUPLA" type="varchar(10)"/>
+			<column name="KOSTL" type="varchar(20)"/>
+			<column name="PRCTR" type="varchar(20)"/>
+			<column name="ZUONR" type="varchar(50)"/>
+			<column name="SGTXT" type="varchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="27" author="ManojKumar P">
+		<addPrimaryKey columnNames="ID" constraintName="PK_STDR_T_ID"
+			tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP" />
+	</changeSet>
+	
+	<changeSet id="28" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP1">
+			<column name="ID" type="decimal(10,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)"/>
+			<column name="UMSKZ" type="varchar(20)"/>
+			<column name="WRBTR" type="decimal(20,2)"/>
+			<column name="GSBER" type="varchar(10)"/>
+			<column name="BUPLA" type="varchar(10)"/>
+			<column name="KOSTL" type="varchar(20)"/>
+			<column name="PRCTR" type="varchar(20)"/>
+			<column name="ZUONR" type="varchar(50)"/>
+			<column name="SGTXT" type="varchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="29" author="ManojKumar P">
+		<addPrimaryKey columnNames="ID" constraintName="PK_STDR_T1_ID"
+			tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP1" />
+	</changeSet>
+	
+	<changeSet id="30" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAN_SUMMARY_REPORT">
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BLDAT" type="datetime"/>
+			<column name="BLART" type="varchar(10)"/>
+			<column name="BUKRS" type="varchar(10)"/>
+			<column name="BUDAT" type="datetime"/>
+			<column name="MONAT" type="decimal(5,0)"/>
+			<column name="CURRCY" type="varchar(20)"/>
+			<column name="XBLNR" type="varchar(50)"/>
+			<column name="BKTXT" type="varchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="31" author="ManojKumar P">
+		<addPrimaryKey columnNames="LINK" constraintName="PK_STSR_LINK"
+			tableName="SAPGL_TRAN_SUMMARY_REPORT" />
+	</changeSet>
 	
 </databaseChangeLog>
