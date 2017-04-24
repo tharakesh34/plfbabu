@@ -358,6 +358,18 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(), dPDBucketConfiguration.getDueDays(), "");
+
+		if (count != 0) {
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": " + dPDBucketConfiguration.getProductCode();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015", parameters, null), usrLanguage));
+
+			String[] parametersDueDays = new String[2];
+			parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + ": " + dPDBucketConfiguration.getDueDays();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015", parametersDueDays, null), usrLanguage));
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

@@ -86,7 +86,6 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 	protected Listheader listheader_ProductCode;
 	protected Listheader listheader_BucketID;
 	protected Listheader listheader_DueDays;
-	protected Listheader listheader_SuspendProfit;
 
 	// checkRights
 	protected Button button_NPABucketConfigurationList_NewNPABucketConfiguration;
@@ -142,8 +141,6 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
 		registerField("bucketID", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
-		registerField("suspendProfit", listheader_SuspendProfit, SortOrder.NONE, suspendProfit, sortOperator_SuspendProfit,
-				Operators.BOOLEAN);
 		// Render the page and display the data.
 		doRenderPage();
 		search();

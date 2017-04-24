@@ -321,6 +321,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		} else {
 			this.productCode.setDescription(aDPDBucketConfiguration.getProductCodeName());
 		}
+		this.recordStatus.setValue(aDPDBucketConfiguration.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -270,6 +271,24 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	@Override
+	public int getByProductCode(String producCode,int dueDys, String type) {
+		DPDBucketConfiguration dPDBucketConfiguration = new DPDBucketConfiguration();
+		dPDBucketConfiguration.setProductCode(producCode);
+		dPDBucketConfiguration.setDueDays(dueDys);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From DPDBUCKETSCONFIG");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dPDBucketConfiguration);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 

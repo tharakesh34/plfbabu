@@ -78,12 +78,6 @@ public class NPABucketConfigurationListModelItemRenderer implements ListitemRend
 		lc.setParent(item);
 	  	lc = new Listcell(PennantApplicationUtil.formateInt(nPABucketConfiguration.getDueDays()));
 	  	lc.setParent(item);
-		lc = new Listcell();
-		final Checkbox cbSuspendProfit = new Checkbox();
-		cbSuspendProfit.setDisabled(true);
-		cbSuspendProfit.setChecked(nPABucketConfiguration.isSuspendProfit());
-		lc.appendChild(cbSuspendProfit);
-		lc.setParent(item);
 	  	lc = new Listcell(nPABucketConfiguration.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(nPABucketConfiguration.getRecordType()));

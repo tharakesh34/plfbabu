@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -247,6 +248,24 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	@Override
+	public int getByProductCode(String producCode,int dueDys, String type) {
+		NPABucketConfiguration nPABucketConfiguration = new NPABucketConfiguration();
+		nPABucketConfiguration.setProductCode(producCode);
+		nPABucketConfiguration.setDueDays(dueDys);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From NPABUCKETSCONFIG");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nPABucketConfiguration);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 }

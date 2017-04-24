@@ -93,6 +93,8 @@
 									<intbox id="dueDays" width="90px"
 										maxlength="4" />
 								</hbox>
+							</row>
+							<row id="row2">
 								<label id="label_SuspendProfit"
 									value="${c:l('label_NPABucketConfigurationDialog_SuspendProfit.value')}" />
 								<hbox>

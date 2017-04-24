@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -94,6 +95,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	protected ExtendedCombobox							bucketID;
 	protected Intbox									dueDays;
 	protected Checkbox									suspendProfit;
+	protected Row										row2;
 	private NPABucketConfiguration						nPABucketConfiguration;														// overhanded per param
 
 	private transient NPABucketConfigurationListCtrl	nPABucketConfigurationListCtrl;												// overhanded per param
@@ -187,7 +189,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		this.bucketID.setValidateColumns(new String[] { "BucketCode" });
 
 		this.dueDays.setMaxlength(5);
-
+		this.row2.setVisible(false);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -320,6 +322,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		} else {
 			this.productCode.setDescription(aNPABucketConfiguration.getProductCodeName());
 		}
+		this.recordStatus.setValue(aNPABucketConfiguration.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}
