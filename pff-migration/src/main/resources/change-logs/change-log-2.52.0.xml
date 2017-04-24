@@ -1476,9 +1476,9 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		</createView>
 	</changeSet>
 	
-	<changeSet id="112" author="durgaprasad G">
+<!-- 	<changeSet id="112" author="durgaprasad G">
 		<dropTable tableName="SeqPresentmentDetailRef" />
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="113" author="durgaprasad G">
 		<createTable tableName="SeqPresentmentDetailRef">
@@ -1637,6 +1637,11 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 	
 	</createView>
 
+</changeSet>
+<changeSet id="125" author="chaitanya.ch">
+	<addColumn tableName="RMTFinanceTypes_Temp" >
+		<column name="ProfitCenterID" type = "bigint"></column>
+	</addColumn>
 </changeSet>
 	
 </databaseChangeLog>
