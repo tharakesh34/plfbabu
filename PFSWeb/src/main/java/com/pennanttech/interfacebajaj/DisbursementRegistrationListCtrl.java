@@ -473,8 +473,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			Thread thread = new Thread(disbursementService);
 			thread.start();
 		
+			Map<String,Object> args = new HashMap<String, Object>();
+			args.put("module", "DISBURSEMENT");
+			
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", args);
 			
 		} finally {
 			this.disbursementMap.clear();
@@ -509,7 +512,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		tabpanel.setHeight("100%");
 		tabpanel.setStyle("padding: 0px;");
 		tabpanel.setParent(tabpanels);
-		
+			
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
 	}

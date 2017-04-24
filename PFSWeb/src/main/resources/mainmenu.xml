@@ -155,11 +155,11 @@
 	<!-- Interface bajaj Upload and downloads -->
 	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
 		<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul" rightName="menuItem_MandateRegistration"/>
-		<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul" rightName="menuItem_MandateFileDownlaods"/>
+		<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES" rightName="menuItem_MandateFileDownlaods"/>
  	</menu>
 	<menu id="menu_Category_Disbursement"  rightName="menuCat_Disbursement" >
 		<menuItem id="menu_Item_DisbursementRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul" rightName="menuItem_DisbursementRegistration"/>
-		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul" rightName="menuItem_DisbursementFileDownlaods"/>
+		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=DISBURSEMENT" rightName="menuItem_DisbursementFileDownlaods"/>
  	</menu>
  	
 	<!-- Rules   Factory -->
@@ -617,9 +617,9 @@
 	 	
 <!--//APPEND AFTER THIS//-->
 
-<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul"  rightName=""/>
-<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul"  rightName=""/>
-<menuItem id="menu_Item_PresentmentHeader" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul"  rightName=""/>
+<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
+<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
+<menuItem id="menu_Item_PresentmentHeader" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
 
 
 </ns2:XMLRootMenu>

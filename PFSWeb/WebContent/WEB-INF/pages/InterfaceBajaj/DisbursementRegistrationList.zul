@@ -48,7 +48,7 @@
 									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
 									<datebox id="fromDate" width="171px" />
 									
-									<label value="${c:l('label_MandateList_ToDate.value')}" />
+									<label value="${c:l('label_Disbursement_ToDate.value	')}" />
 									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1" />
 									<datebox id="toDate" width="171px" />
 								</row>

@@ -57,6 +57,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
@@ -83,8 +84,12 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 
+	protected Listheader listheader_FirstHeader;
+	
 	private Button downlaod;
 
+	
+	String module = null;
 	/**
 	 * default constructor.<br>
 	 */
@@ -96,8 +101,14 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	protected void doSetProperties() {
 		super.moduleCode = "FileDownload";
 		super.pageRightName = "FileDownload";
-		super.tableName = "FILE_DOWNLOAD_VIEW";
-		super.queueTableName = "FILE_DOWNLOAD_VIEW";
+		this.module = getArgument("module");
+		if ("MANDATES".equals(module)) {
+			super.tableName = "MANDATE_FILE_DOWNLOAD_VIEW";
+			super.queueTableName = "MANDATE_FILE_DOWNLOAD_VIEW";
+		} else if ("DISBURSEMENT".equals(module)) {
+			super.tableName = "FILE_DOWNLOAD_VIEW";
+			super.queueTableName = "FILE_DOWNLOAD_VIEW";
+		}
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -111,11 +122,16 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		setPageComponents(window_FleDownloadList, borderLayout_FileDownloadList, listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 		
+		if ("DISBURSEMENT".equals(module)) {
+			super.tableName = "FILE_DOWNLOAD_VIEW";
+			super.queueTableName = "FILE_DOWNLOAD_VIEW";
+			registerField("PartnerBankName");
+			registerField("AlwFileDownload");
+		}
+		
 		registerField("Name");
 		registerField("FileName");
 		registerField("FileLocation");
-		registerField("PartnerBankName");
-		registerField("AlwFileDownload");
 		registerField("Status");
 		
 		doRenderPage();
@@ -180,10 +196,16 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 
 			Listcell lc;
-
-			lc = new Listcell(fileDownlaod.getPartnerBankName());
-			lc.setParent(item);
-
+			
+			if ("MANDATES".equals(module)) {
+				lc = new Listcell(fileDownlaod.getName());
+				lc.setParent(item);
+				listheader_FirstHeader.setLabel("Name");
+			} else if ("DISBURSEMENT".equals(module)) {
+				lc = new Listcell(fileDownlaod.getPartnerBankName());
+				lc.setParent(item);
+			}
+		 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
@@ -200,18 +222,30 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			downlaod.setLabel("Download");
 			downlaod.setAttribute("object", fileDownlaod);
 			
-			if (0 == fileDownlaod.getAlwFileDownload() || !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
-				downlaod.setDisabled(true);
-			}
-
-			if (0 == fileDownlaod.getAlwFileDownload()) {
-				downlaod.setTooltiptext("Not allowed to downlaod.");
-			} 
 			
-			if(StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")){
-				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("IMPS Disbursement.");
+			if ("MANDATES".equals(module)) {
+				if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+					downlaod.setDisabled(true);
+				}
+				downlaod.setTooltiptext("Mandates download.");
+				
+
+			} else if ("DISBURSEMENT".equals(module)) {
+
+				if (0 == fileDownlaod.getAlwFileDownload() || !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+					downlaod.setDisabled(true);
+				}
+
+				if (0 == fileDownlaod.getAlwFileDownload()) {
+					downlaod.setTooltiptext("Not allowed to downlaod.");
+				}
+
+				if (StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")) {
+					downlaod.setDisabled(true);
+					downlaod.setTooltiptext("IMPS Disbursement.");
+				}
 			}
+			
 			
 			lc.setParent(item);
 			

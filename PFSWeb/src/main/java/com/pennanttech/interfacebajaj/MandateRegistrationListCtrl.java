@@ -91,6 +91,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -105,76 +106,75 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
  * ************************************************************<br>
  * 
  */
 public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
-	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(MandateRegistrationListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private final static Logger logger = Logger.getLogger(MandateRegistrationListCtrl.class);
 
-	protected Window					window_MandateRegistrationList;
-	protected Borderlayout				borderLayout_MandateList;
-	protected Paging					pagingMandateList;
-	protected Listbox					listBoxMandateRegistration;
+	protected Window window_MandateRegistrationList;
+	protected Borderlayout borderLayout_MandateList;
+	protected Paging pagingMandateList;
+	protected Listbox listBoxMandateRegistration;
 
-	protected Listheader				listheader_CustCIF;
-	protected Listheader				listheader_MandateType;
-	protected Listheader				listheader_BankName;
-	protected Listheader				listheader_AccNumber;
-	protected Listheader				listheader_AccType;
-	protected Listheader				listheader_Amount;
-	protected Listheader				listheader_ExpiryDate;
-	protected Listheader				listheader_Status;
-	protected Listheader				listheader_InputDate;
+	protected Listheader listheader_CustCIF;
+	protected Listheader listheader_MandateType;
+	protected Listheader listheader_BankName;
+	protected Listheader listheader_AccNumber;
+	protected Listheader listheader_AccType;
+	protected Listheader listheader_Amount;
+	protected Listheader listheader_ExpiryDate;
+	protected Listheader listheader_Status;
+	protected Listheader listheader_InputDate;
 
-	protected Listheader 				listHeader_CheckBox_Name;
-	protected Listcell 					listCell_Checkbox;
-	protected Listitem 					listItem_Checkbox;
-	protected Checkbox 					listHeader_CheckBox_Comp;
-	
-	protected Checkbox 					list_CheckBox;
-	
-	protected Button					button_MandateList_NewMandate;
-	protected Button					button_MandateList_MandateSearch;
-	protected Button					btnDownload;
+	protected Listheader listHeader_CheckBox_Name;
+	protected Listcell listCell_Checkbox;
+	protected Listitem listItem_Checkbox;
+	protected Checkbox listHeader_CheckBox_Comp;
 
-	protected Longbox					mandateID;
-	protected Combobox					mandateType;
-	protected Textbox					custCIF;
-	protected Textbox					bankName;
-	protected Combobox					status;
-	protected Textbox					accNumber;
-	protected Combobox					accType;
-	protected Datebox					expiryDate;
-	
-	protected Datebox 					fromDate;
-	protected Datebox 					toDate;
-	protected Uppercasebox 				branchDetails;
-	protected Button 					btnbranchDetails;
+	protected Checkbox list_CheckBox;
 
-	protected Listbox					sortOperator_MandateID;
-	protected Listbox					sortOperator_CustCIF;
-	protected Listbox					sortOperator_MandateType;
-	protected Listbox					sortOperator_BankName;
-	protected Listbox					sortOperator_AccNumber;
-	protected Listbox					sortOperator_AccType;
-	protected Listbox					sortOperator_ExpiryDate;
-	protected Listbox					sortOperator_Status;
-	protected Listbox					sortOperator_btnbranchDetails;
-	protected Listbox					sortOperator_FromDate;
-	protected Listbox					sortOperator_ToDate;
+	protected Button button_MandateList_NewMandate;
+	protected Button button_MandateList_MandateSearch;
+	protected Button btnDownload;
 
-	private transient MandateService	mandateService;
-	private DataSource 					dataSource;
+	protected Longbox mandateID;
+	protected Combobox mandateType;
+	protected Textbox custCIF;
+	protected Textbox bankName;
+	protected Combobox status;
+	protected Textbox accNumber;
+	protected Combobox accType;
+	protected Datebox expiryDate;
+
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected Uppercasebox branchDetails;
+	protected Button btnbranchDetails;
+
+	protected Listbox sortOperator_MandateID;
+	protected Listbox sortOperator_CustCIF;
+	protected Listbox sortOperator_MandateType;
+	protected Listbox sortOperator_BankName;
+	protected Listbox sortOperator_AccNumber;
+	protected Listbox sortOperator_AccType;
+	protected Listbox sortOperator_ExpiryDate;
+	protected Listbox sortOperator_Status;
+	protected Listbox sortOperator_btnbranchDetails;
+
+	private transient MandateService mandateService;
+	private DataSource dataSource;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
+	 
 
 	/**
 	 * default constructor.<br>
@@ -191,19 +191,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		super.queueTableName = "Mandates_AView";
 	}
 
-	@Override
-	protected void doAddFilters() {
-
-		super.doAddFilters();
-		searchObject.addFilterEqual("active", 1);
-		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
-		//OrgReference
-		searchObject.addFilter(Filter.isNotNull("OrgReference"));
-	}
-
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -212,34 +201,40 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		// Set the page level components.
 		setPageComponents(window_MandateRegistrationList, borderLayout_MandateList, listBoxMandateRegistration, pagingMandateList);
 		setItemRender(new MandateListModelItemRenderer());
-		
+	
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(), Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(),
+				Collections.singletonList(MandateConstants.STATUS_FIN));
 
-		registerField("ToDate", toDate, SortOrder.ASC, sortOperator_ToDate, Operators.DATE);
-		registerField("FromDate", fromDate, SortOrder.ASC, sortOperator_FromDate, Operators.DATE_RANGE);
+		registerField("FromDate");
+		registerField("ToDate");
+
 		registerField("BranchCode", branchDetails, SortOrder.ASC, sortOperator_btnbranchDetails, Operators.MULTISELECT);
 		registerField("mandateID", mandateID, SortOrder.ASC, sortOperator_MandateID, Operators.NUMERIC);
-		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
+		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType,
+				Operators.STRING);
 		registerField("custCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_CustCIF, Operators.STRING);
-		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber, Operators.STRING);
+		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber,
+				Operators.STRING);
 		registerField("accType", listheader_AccType, SortOrder.NONE, accType, sortOperator_AccType, Operators.STRING);
-		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate, Operators.DATE);
-		registerField("bankName", listheader_BankName, SortOrder.NONE, bankName, sortOperator_BankName, Operators.STRING);
+		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate,
+				Operators.DATE);
+		registerField("bankName", listheader_BankName, SortOrder.NONE, bankName, sortOperator_BankName,
+				Operators.STRING);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("maxLimit", listheader_Amount);
 		// Render the page and display the data.
 		doRenderPage();
 		this.mandateIdMap.clear();
 		doSetFieldProperties();
-		
-		if(listBoxMandateRegistration.getItems().size() > 0){
+
+		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
@@ -249,7 +244,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.fromDate.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.toDate.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.LONG_DATE.getPattern());
-		
+
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
 		listHeader_CheckBox_Comp = new Checkbox();
@@ -264,8 +259,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	}
 
 	/**
-	 * Filling the MandateIdMap details and  based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
@@ -275,10 +269,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
 			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
 		}
-		
+
 		if (listHeader_CheckBox_Comp.isChecked()) {
 			List<Long> mandateIdList = getMandateList();
-			if(mandateIdList != null){
+			if (mandateIdList != null) {
 				for (Long mandateId : mandateIdList) {
 					mandateIdMap.put(mandateId, null);
 				}
@@ -286,19 +280,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} else {
 			mandateIdMap.clear();
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
-		if(checkBox.isChecked()){
+		if (checkBox.isChecked()) {
 			mandateIdMap.put(Long.valueOf(checkBox.getValue().toString()), checkBox.getValue().toString());
 		} else {
 			mandateIdMap.remove(Long.valueOf(checkBox.getValue().toString()));
@@ -309,22 +302,21 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} else {
 			listHeader_CheckBox_Comp.setChecked(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
+
 	/**
 	 * Item renderer for listItems in the listBox.
 	 */
 	private class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, Serializable {
 		private static final long serialVersionUID = 1L;
-	
+
 		@Override
 		public void render(Listitem item, Mandate mandate, int count) throws Exception {
-			
+
 			Listcell lc;
-			
+
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
 			list_CheckBox.setValue(mandate.getId());
@@ -347,11 +339,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),CurrencyUtil.getFormat(mandate.getMandateCcy())));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+					CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil.getStatusTypeList()));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(),
+					PennantStaticListUtil.getStatusTypeList()));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);
@@ -359,13 +353,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(mandate.getRecordType()));
 			lc.setParent(item);
-			
+
 			item.setAttribute("id", mandate.getId());
-	
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
 	}
-	 
+
 	/**
 	 * Getting the mandate list using JdbcSearchObject with search criteria..
 	 */
@@ -383,7 +377,15 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			if (filter != null) {
 				searchObject.addFilter(filter);
 			}
-		}	
+		}
+
+		String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ").append("'").append(toDate).append("'").append(")");
+		searchObject.addWhereClause(whereClause.toString());
+		
 		
 		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
 		List<Long> mandateLst = new ArrayList<Long>();
@@ -396,10 +398,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		return mandateLst;
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -407,17 +408,80 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public void onClick$button_MandateList_MandateSearch(Event event) {
 		this.mandateIdMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
-		
+
 		doSetValidations();
 		search();
-		
+
 		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
-	
+
+	@Override
+	public void search() {
+		logger.debug("Entering");
+
+		if (paging != null) {
+			this.paging.setActivePage(0);
+		}
+
+		if (enqiryModule) {
+			if (fromApproved != null && fromWorkFlow != null) {
+				if (fromApproved.isChecked()) {
+					this.searchObject.addTabelName(tableName);
+				} else if (fromWorkFlow.isChecked()) {
+					this.searchObject.addTabelName(enquiryTableName);
+				} else {
+					this.searchObject.addTabelName(tableName);
+				}
+			}
+		}
+
+		doAddFilters();
+
+		String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+
+		searchObject.addFilterEqual("active", 1);
+		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
+		// OrgReference
+		searchObject.addFilter(Filter.isNotNull("OrgReference"));
+
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ").append("'").append(toDate).append("'").append(")");
+		this.searchObject.addWhereClause(whereClause.toString());
+
+		this.listbox.setItemRenderer(new MandateListModelItemRenderer());
+
+		getPagedListWrapper().setPagedListService(pagedListService);
+		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
+
+		logger.debug("Leaving");
+	}
+
+	@Override
+	protected void doAddFilters() {
+		logger.debug("Entering");
+
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+			if (filter != null) {
+				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty()) && Filter.OP_NOT_EQUAL == filter.getOperator()) {
+					Filter[] filters = new Filter[2];
+					filters[0] = Filter.isNull(filter.getProperty());
+					filters[1] = filter;
+
+					this.searchObject.addFilterOr(filters);
+				} else {
+					this.searchObject.addFilter(filter);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
+
 	private void doSetValidations() {
 
 		Clients.clearWrongValue(this.fromDate);
@@ -441,10 +505,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	}
 
-	
 	public void onClick$btnbranchDetails(Event event) {
 		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_MandateRegistrationList, "DataEngine", this.branchDetails.getValue(), null);
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_MandateRegistrationList, "DataEngine",
+				this.branchDetails.getValue(), null);
 		if (dataObject instanceof String) {
 			this.branchDetails.setValue(dataObject.toString());
 		} else {
@@ -468,9 +532,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -481,17 +545,17 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		this.listBoxMandateRegistration.getItems().clear();
 
-		if(listBoxMandateRegistration.getItems().size() > 0){
+		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
-		
+
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -572,22 +636,25 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} else {
 			mandateIdList = new ArrayList<Long>(mandateIdMap.keySet());
 		}
-		
+
 		if (mandateIdList.isEmpty()) {
 			MessageUtil.showErrorMessage(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
-		
+
 		// Show a confirm box
-		String msg = " " + this.pagingMandateList.getTotalSize() + "/" + this.mandateIdMap.size() + " Selected.\n Do you want to continue? ";
+		String msg = " " + this.pagingMandateList.getTotalSize() + "/" + this.mandateIdMap.size()
+				+ " Selected.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
+				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
 			return;
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DataEngineExport dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser().getLoginUsrID(), App.DATABASE.name());
+			DataEngineExport dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser()
+					.getLoginUsrID(), App.DATABASE.name());
 
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("MANDATEID", mandateIdList);
@@ -597,13 +664,17 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			if (StringUtils.trimToNull(this.branchDetails.getValue()) != null) {
 				filterMap.put("BRANCHCODE", Arrays.asList(this.branchDetails.getValue().split(",")));
 			}
-			
+
 			dataEngine.setFilterMap(filterMap);
 			dataEngine.exportData("MANDATES_EXPORT");
+
+			
+			Map<String,Object> args = new HashMap<String, Object>();
+			args.put("module", "MANDATES");
 			
 			MessageUtil.showMessage("File Download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", null);
-			
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", args);
+
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 		} finally {
@@ -618,12 +689,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected void createNewPage(String uri, String tabName, Map<String, Object> args) {
 		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 		final Center center = bl.getCenter();
-		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");	
-		
+		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
+				.getFellow("tabsIndexCenter");
+
 		Tab tab = null;
-		if(tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_"))  != null) {
-			tab = (Tab)tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));		
-			if(tab != null) {
+		if (tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_")) != null) {
+			tab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
+			if (tab != null) {
 				tab.close();
 			}
 		}
@@ -639,15 +711,15 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		tabpanel.setHeight("100%");
 		tabpanel.setStyle("padding: 0px;");
 		tabpanel.setParent(tabpanels);
-		
+
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
 	}
-	
+
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
 	}
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

@@ -66,7 +66,7 @@
 									<datebox id="expiryDate" width="171px" />
 								</row>
 								
-								<row>
+								<row visible="false">
 									<label id="label_MandateList_Status" value="${c:l('label_MandateList_Status.value')}" />
 									<listbox id="sortOperator_Status" width="43px" mold="select" rows="1" />
 									<combobox id="status" width="171px" />
@@ -82,9 +82,10 @@
 									<listbox id="sortOperator_StartDate" width="43px" mold="select" rows="1" />
 									<datebox id="startDate" width="171px" />
 								</row>
+								
 							</rows>
 						</grid>
-
+						
 						<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
 							<columns>
 								<column width="150px" />
@@ -92,28 +93,43 @@
 							</columns>
 							<rows>
 								<row>
-								<label value="${c:l('label_Branches.value')}" />
+									<label value="${c:l('label_Branches.value')}" />
 									<hbox>
-									    <space spacing="12px"></space>
+										<space spacing="12px"></space>
 										<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
 										<space spacing="8px"></space>
 										<uppercasebox id="branchDetails" width="320px" />
 										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
+							</rows>
+						</grid>
+
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="10%" />
+								<column width="25%" />
+								<column width="15%" />
+								<column width="10%" />
+								<column width="25%" />
+							</columns>
+							<rows>
+							
 								<row>
-								<label  value="${c:l('label_MandateList_InputDate.value')}" />
-								
-								<hlayout spacing="2px">
-								 <space spacing="12px"></space>
-									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
-									<space spacing="2px" sclass="mandatory" />
-									<datebox id="fromDate" width="130px" />
-									<space spacing="10px" />
-									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1" />
-									<space spacing="2px" sclass="mandatory" />
-									<datebox id="toDate" width="130px" />
-								</hlayout>
+									<label value="${c:l('label_MandateList_InputDate.value')}" />
+									<label value="${c:l('label_MandateList_FromDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+									<datebox id="fromDate" width="171px" />
+									</hbox>
+
+									<label value="${c:l('label_MandateList_ToDate.value')}" />
+									<label value="" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+									<datebox id="toDate" width="171px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
