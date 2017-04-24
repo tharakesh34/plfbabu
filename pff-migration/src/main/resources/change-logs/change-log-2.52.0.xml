@@ -774,4 +774,9 @@
 			referencedTableName="SAPGL_TRAIL_BALANCE_HEADER" referencedColumnNames="ID"
 			baseTableName="SAPGL_TRAIL_BALANCE_REPORT" baseColumnNames="HEADERID" />
 	</changeSet>
+	
+		<changeSet id="60" author="Amit">
+		<addPrimaryKey columnNames="INDUSTRYCODE" constraintName="PK_INDUSTRYCODE_TEMP"
+			tableName="BMTINDUSTRIES_TEMP" />
+	</changeSet>
 </databaseChangeLog>
