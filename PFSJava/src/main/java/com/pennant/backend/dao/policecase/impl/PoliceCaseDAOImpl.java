@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,14 +17,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements PoliceCaseDAO {
 	private static Logger logger = Logger.getLogger(PoliceCaseDAOImpl.class);
@@ -188,102 +190,128 @@ public class PoliceCaseDAOImpl extends BasisCodeDAO<PoliceCaseDetail> implements
 		logger.debug("Leaving");
 		return policeCaseDetail;
 	}
-	@SuppressWarnings("serial")
+	
 	@Override
-	public void update(PoliceCaseDetail policeCaseDetail, String type) {
-		logger.debug("Entering");
-		
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-		
-		updateSql.append("Update PoliceCaseCustomers");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		
-		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
-		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, CustProduct=:CustProduct, " );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" WHERE CustCIF=:CustCIF ");
-		
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+	public boolean isDuplicateKey(String custCIF, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "CustCIF = :custCIF";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("PoliceCaseCustomers", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("PoliceCaseCustomers_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "PoliceCaseCustomers_Temp", "PoliceCaseCustomers" }, whereClause);
+			break;
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCaseDetail);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("custCIF", custCIF);
 
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
-			ErrorDetails errorDetails = getError("41003",policeCaseDetail.getCustCIF(), policeCaseDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
 		}
-		logger.debug("Leaving");
-	}
-	@SuppressWarnings("serial")
-	@Override
-	public void delete(PoliceCaseDetail policeCaseDetail, String type) {
-		logger.debug("Entering");
-		
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
 
-		deleteSql.append("Delete From PoliceCaseCustomers");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CustCIF =:CustCIF");
-
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCaseDetail);
-
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",policeCaseDetail.getCustCIF(), 
-						policeCaseDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",policeCaseDetail.getCustCIF(), 
-					policeCaseDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-
-	}
-	@Override
-	public String save(PoliceCaseDetail policeCaseDetail, String type) {
-		logger.debug("Entering");
-		
-		StringBuilder insertSql = new StringBuilder("Insert Into PoliceCaseCustomers");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		
-		insertSql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, CustProduct,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustCIF , :CustFName , :CustLName , :CustDOB ,  :CustCRCPR , :CustPassportNo ,:MobileNumber , :CustNationality ,:CustProduct, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCaseDetail);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return policeCaseDetail.getId();
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 	
-	private ErrorDetails  getError(String errorId, String custCIF, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = String.valueOf(custCIF);
-		parms[0][0] = PennantJavaUtil.getLabel("label_custCIF")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	@Override
+	public String save(PoliceCaseDetail policeCaseDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into PoliceCaseCustomers");
+		sql.append(tableType.getSuffix());
+		sql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, CustProduct,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values(:CustCIF , :CustFName , :CustLName , :CustDOB ,  :CustCRCPR , :CustPassportNo ,:MobileNumber , :CustNationality ,:CustProduct, ");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		sql.append(" :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(policeCaseDetail);
+		
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return policeCaseDetail.getId();
+	}
+
+	@Override
+	public void update(PoliceCaseDetail policeCaseDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder();
+		sql.append("update PoliceCaseCustomers");
+		sql.append(tableType.getSuffix());
+		sql.append(" set CustFName=:CustFName , CustLName=:CustLName , ");
+		sql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, CustProduct=:CustProduct, ");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" wHERE CustCIF=:CustCIF ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(policeCaseDetail);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void delete(PoliceCaseDetail policeCaseDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL
+		StringBuilder sql = new StringBuilder();
+		sql.append("delete from PoliceCaseCustomers");
+		sql.append(tableType.getSuffix());
+		sql.append(" where CustCIF =:CustCIF");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		
+		// Execute the SQL, binding the arguments.
+	    logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(policeCaseDetail);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

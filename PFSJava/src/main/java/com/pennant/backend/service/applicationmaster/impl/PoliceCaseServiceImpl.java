@@ -1,8 +1,5 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -17,6 +14,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.PoliceCaseService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> implements PoliceCaseService {
 	private static Logger logger = Logger.getLogger(PoliceCaseServiceImpl.class);
@@ -47,16 +46,17 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+	
 		PoliceCaseDetail policeCaseDetail = (PoliceCaseDetail) auditHeader.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (policeCaseDetail.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (policeCaseDetail.isNew()) {
@@ -113,13 +113,13 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		PoliceCaseDetail policeCaseDetail = (PoliceCaseDetail) auditHeader.getAuditDetail().getModelData();
-		getPoliceCaseDAO().delete(policeCaseDetail, "");
+		getPoliceCaseDAO().delete(policeCaseDetail, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -146,16 +146,22 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		PoliceCaseDetail policeCaseDetail = new PoliceCaseDetail();
 		BeanUtils.copyProperties((PoliceCaseDetail) auditHeader.getAuditDetail().getModelData(), policeCaseDetail);
+		getPoliceCaseDAO().delete(policeCaseDetail, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(policeCaseDetail.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(policeCaseDAO.getPoliceCaseDetailById(policeCaseDetail.getCustCIF(), ""));
+		}
+		
 		if (policeCaseDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getPoliceCaseDAO().delete(policeCaseDetail, "");
+			getPoliceCaseDAO().delete(policeCaseDetail, TableType.MAIN_TAB);
 		} else {
 			policeCaseDetail.setRoleCode("");
 			policeCaseDetail.setNextRoleCode("");
@@ -166,14 +172,13 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 			if (policeCaseDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				policeCaseDetail.setRecordType("");
-				getPoliceCaseDAO().save(policeCaseDetail, "");
+				getPoliceCaseDAO().save(policeCaseDetail, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				policeCaseDetail.setRecordType("");
-				getPoliceCaseDAO().update(policeCaseDetail, "");
+				getPoliceCaseDAO().update(policeCaseDetail, TableType.MAIN_TAB);
 			}
 		}
-		getPoliceCaseDAO().delete(policeCaseDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -200,14 +205,14 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		PoliceCaseDetail policeCaseDetail  = (PoliceCaseDetail) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPoliceCaseDAO().delete(policeCaseDetail, "_Temp");
+		getPoliceCaseDAO().delete(policeCaseDetail, TableType.TEMP_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -222,10 +227,9 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -240,87 +244,28 @@ public class PoliceCaseServiceImpl extends GenericService<PoliceCaseDetail> impl
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+		logger.debug(Literal.ENTERING);
 
+		// Get the model object.
 		PoliceCaseDetail policeCaseDetail = (PoliceCaseDetail) auditDetail.getModelData();
-		PoliceCaseDetail temppoliceCaseDetail = null;
 
-		if (policeCaseDetail.isWorkflow()) {
-			temppoliceCaseDetail = getPoliceCaseDAO().getPoliceCaseDetailById(policeCaseDetail.getId(), "_Temp");
-
+		// Check the unique keys.
+		if (policeCaseDetail.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(policeCaseDetail.getRecordType())
+				&& policeCaseDAO
+						.isDuplicateKey(policeCaseDetail.getCustCIF(), policeCaseDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[3];
+			parameters[0] = PennantJavaUtil.getLabel("label_CustCIF") + ": " + policeCaseDetail.getCustCIF();
+			
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-
-		PoliceCaseDetail befpoliceCaseDetail = getPoliceCaseDAO().getPoliceCaseDetailById(policeCaseDetail.getId(), "");
-		PoliceCaseDetail oldpoliceCaseDetail = policeCaseDetail.getBefImage() ;
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = policeCaseDetail.getCustCIF();
-		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":"+ valueParm[0];
-
-		if (policeCaseDetail.isNew()) { // for New record or new record into work flow
-
-			if (!policeCaseDetail.isWorkflow()) {// With out Work flow only new records
-				if (befpoliceCaseDetail != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-				if (policeCaseDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
-					if (befpoliceCaseDetail != null || temppoliceCaseDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befpoliceCaseDetail == null || temppoliceCaseDetail != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!policeCaseDetail.isWorkflow()) { // With out Work flow for update and delete
-				if (befpoliceCaseDetail == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldpoliceCaseDetail != null
-							&& !oldpoliceCaseDetail.getLastMntOn().equals(befpoliceCaseDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-				if (temppoliceCaseDetail == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-
-				if (temppoliceCaseDetail != null
-						&& oldpoliceCaseDetail != null
-						&& !oldpoliceCaseDetail.getLastMntOn().equals(temppoliceCaseDetail.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
-		}
-
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !policeCaseDetail.isWorkflow()) {
-			auditDetail.setBefImage(befpoliceCaseDetail);
-		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 

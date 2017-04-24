@@ -1,5 +1,6 @@
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -263,6 +264,9 @@ public class PoliceCaseDetail extends AbstractWorkflowEntity {
 
 	public void setLikeCustLName(String likeCustLName) {
 		this.likeCustLName = likeCustLName;
+	}
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
 }
