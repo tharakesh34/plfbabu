@@ -700,4 +700,78 @@
 		<addPrimaryKey columnNames="INDUSTRYCODE" constraintName="PK_BMTINDUSTRIES_INDUSTRYCODE"
 			tableName="BMTINDUSTRIES" />
 	</changeSet>
+	
+	<changeSet id="52" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAIL_BALANCE_HEADER">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILENAME" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COMPANYNAME" type="varchar(100)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="REPORTNAME" type="varchar(100)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="STARTDATE" type="datetime" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="ENDDATE" type="datetime" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="CURRENCY" type="char(3)" >
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="53" author="ManojKumar P">
+		<addPrimaryKey columnNames="ID" constraintName="PK_STBH_ID"
+			tableName="SAPGL_TRAIL_BALANCE_HEADER" />
+	</changeSet>
+	
+ 	
+ 		<changeSet id="54" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAIL_BALANCE_REPORT">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HOSTACCOUNT" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(50)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="decimal(18,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="decimal(18,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="char(2)" >
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="55" author="ManojKumar P">
+		<addForeignKeyConstraint constraintName="FK_STBR_HID"
+			referencedTableName="SAPGL_TRAIL_BALANCE_HEADER" referencedColumnNames="ID"
+			baseTableName="SAPGL_TRAIL_BALANCE_REPORT" baseColumnNames="HEADERID" />
+	</changeSet>
 </databaseChangeLog>
