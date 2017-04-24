@@ -788,4 +788,50 @@
 		
 	</sql>
 	</changeSet>
+	<changeSet id="81" author="Surekha">
+		<createView viewName="BounceReasons_View" replaceIfExists="true">
+			SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnCode, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons_Temp  T1 INNER JOIN 
+							Rules T2 ON T1.FeeID = T2.RuleId
+				UNION ALL
+				
+				SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnCode, T1.Active		
+							, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons  T1 INNER JOIN 
+							Rules T2 ON T1.FeeID = T2.RuleId
+				WHERE     NOT EXISTS (SELECT 1 FROM BounceReasons_TEMP WHERE BounceID = T1.BounceID)
+		</createView>
+	</changeSet>
+	<changeSet id="82" author="Surekha">
+		<createView viewName="BounceReasons_AView" replaceIfExists="true">
+			SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.FeeID, T1.ReturnCode, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons  T1 INNER JOIN 
+							Rules T2 ON T1.FeeID = T2.RuleId
+		</createView>
+	</changeSet>
+	<changeSet id="83" author="Surekha">
+		<sql>
+			DELETE from ReportList where Code = 'BounceReason';
+			DELETE from ReportList where Code = 'ProfitCenter';
+			DELETE from ReportList where Code = 'CostCenter';
+
+			Insert into ReportList Values('BounceReason', 'BounceReason', 
+			'listheader_BounceCode.label,listheader_ReasonType.label,listheader_ReasonType.label,listheader_ReturnCode.label,listheader_Active.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'bounceCode,reasonType,category,returnCode,active,recordStatus,recordType','String,int,int,String,boolean,String,String','', 'ReportList07', 
+			'Bounce Reason', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+			
+			Insert into ReportList Values('ProfitCenter', 'ProfitCenter', 
+			'listheader_ProfitCenterCode.label,listheader_ProfitCenterDesc.label,listheader_Active.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'profitCenterCode,profitCenterDesc,active,recordStatus,recordType','String,String,boolean,String,String','', 'ReportList05', 
+			'Profit Center', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+			
+			Insert into ReportList Values('CostCenter', 'CostCenter', 
+			'listheader_CostCenterCode.label,listheader_CostCenterDesc.label,listheader_Active.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'costCenterCode,costCenterDesc,active,recordStatus,recordType','String,String,boolean,String,String','', 'ReportList05', 
+			'Cost Center', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+
+		</sql>
+	</changeSet>
 </databaseChangeLog>
