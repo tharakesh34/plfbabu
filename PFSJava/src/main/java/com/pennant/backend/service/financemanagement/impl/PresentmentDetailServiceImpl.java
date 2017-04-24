@@ -42,8 +42,9 @@
  */
 package com.pennant.backend.service.financemanagement.impl;
 
-import java.util.Date;
+import java.sql.ResultSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -338,26 +339,42 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
- 
-	
+
+	/* processPresentmentDetails */
 	@Override
-	public PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq) {
-		return	getPresentmentDetailDAO().getPresentmentDetails(finReference, schDate, schSeq);
+	public String processPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception {
+		try {
+			ResultSet resultSet = getPresentmentDetailDAO().getPresentmentDetails(detailHeader);
+
+			if (resultSet != null) {
+				resultSet.last();
+				resultSet.beforeFirst();
+				if (resultSet.getRow() <= 0) {
+					return " No records are available to extract, please change the search criteria.";
+				}
+			}
+			long reference = getPresentmentDetailDAO().getPresentmentDetailRef("SeqPresentmentDetailRef");
+			String strReference = StringUtils.leftPad(String.valueOf(reference), 10, "0");
+			strReference = "PRE".concat(strReference);
+			detailHeader.setExtractId(reference);
+			detailHeader.setExtractReference(strReference);
+			getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
+
+			while (resultSet.next()) {
+				PresentmentDetail pDetail = new PresentmentDetail();
+				pDetail.setDetailID(reference);
+                doCalculations(pDetail);
+			}
+
+		} catch (Exception e) {
+			throw e;
+		}
+		return null;
 	}
 
-	@Override
-	public void savePresentmentDetails(PresentmentDetail presentmentDetail) {
-		getPresentmentDetailDAO().save(presentmentDetail, TableType.MAIN_TAB);
-	}
-
-	@Override
-	public long getPresentmentDetailRef(String tableName) {
-		return getPresentmentDetailDAO().getPresentmentDetailRef(tableName);
-	}
-
-	@Override
-	public void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader) {
-		 getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
+	private void doCalculations(PresentmentDetail pDetail) {
+		// TODO Auto-generated method stub
+		
 	}
 	 
 }

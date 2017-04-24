@@ -44,9 +44,7 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.sql.Timestamp;
-import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -64,17 +62,9 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.search.Filter;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -98,11 +88,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Datebox fromdate;
 	protected Datebox toDate;
 
-	protected Listbox sortOperator_MandateType;
-	protected Listbox sortOperator_Product;
-
 	private transient PresentmentDetailService presentmentDetailService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -128,15 +114,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList, listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
-		
-		registerField("SCHDATE");
-		registerField("DEFSCHDDATE");
-		registerField("FinReference");
-		registerField("SchSeq");
-		registerField("MandateType", mandateType, SortOrder.NONE, sortOperator_MandateType, Operators.STRING);
-		registerField("LoanType",loanType, SortOrder.NONE, sortOperator_Product, Operators.STRING);
+		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList,
+				listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
 
+		// Render the page and display the data.
+		doRenderPage();
 		doSetFieldProperties();
 
 		logger.debug(Literal.LEAVING);
@@ -166,77 +148,17 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_Extract(Event event) {
-		doSetValidations();
-		search();
-	}
-
-	@Override
-	public void search() {
-		logger.debug("Entering");
-
-		 List<PresentmentDetail> presentmentDetailList = null;
-		 
-		if (paging != null) {
-			this.paging.setActivePage(0);
+		String errorMsg = null;
+		try {
+			doSetValidations();
+			errorMsg = extractDetails();
+		} catch (Exception e) {
+			MessageUtil.showError(e.getMessage());
 		}
-
-		if (enqiryModule) {
-			if (fromApproved != null && fromWorkFlow != null) {
-				if (fromApproved.isChecked()) {
-					this.searchObject.addTabelName(tableName);
-				} else if (fromWorkFlow.isChecked()) {
-					this.searchObject.addTabelName(enquiryTableName);
-				} else {
-					this.searchObject.addTabelName(tableName);
-				}
-			}
-		}
-
-		doAddFilters();
-		
-		String fromDate = PennantAppUtil.formateDate(this.fromdate.getValue(), PennantConstants.DBDateFormat);
-		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
-
-		StringBuilder whereClause = new StringBuilder();
-		whereClause.append("(SCHDATE >= ").append("'").append(fromDate).append("'").append(" AND SCHDATE <= ").append("'").append(toDate).append("'").append(") OR (DEFSCHDDATE >= ");
-		whereClause.append("'").append(fromDate).append("'").append(" AND DEFSCHDDATE <= ").append("'").append(toDate).append("'").append(")");
-
-		this.searchObject.addWhereClause(whereClause.toString());
-
-		
-		presentmentDetailList  = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-		
-		if (presentmentDetailList == null || presentmentDetailList.isEmpty()) {
-			MessageUtil.showError(" No records are available to extract, please change the search criteria.");
+		if (errorMsg != null) {
+			MessageUtil.showError(errorMsg);
 			return;
 		}
-		
-		extractDetails(presentmentDetailList);
-		
-		logger.debug("Leaving");
-	}
-
-	@Override
-	protected void doAddFilters() {
-		logger.debug("Entering");
-
-		for (SearchFilterControl searchControl : searchControls) {
-			Filter filter = searchControl.getFilter();
-			if (filter != null) {
-				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
-						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
-					Filter[] filters = new Filter[2];
-					filters[0] = Filter.isNull(filter.getProperty());
-					filters[1] = filter;
-
-					this.searchObject.addFilterOr(filters);
-				} else {
-					this.searchObject.addFilter(filter);
-				}
-			}
-		}
-
-		logger.debug("Leaving");
 	}
 
 	private void doSetValidations() {
@@ -254,15 +176,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 	}
 
-	private void extractDetails(List<PresentmentDetail> presentmentDetailList) {
-
-		long reference = presentmentDetailService.getPresentmentDetailRef("SeqPresentmentDetailRef");
-		String strReference = StringUtils.leftPad(String.valueOf(reference), 10, "0");
-		strReference = "PRE".concat(strReference);
+	private String extractDetails() throws Exception {
 
 		PresentmentDetailHeader detailHeader = new PresentmentDetailHeader();
-		detailHeader.setExtractId(reference);
-		detailHeader.setExtractReference(strReference);
 		detailHeader.setFromDate(this.fromdate.getValue());
 		detailHeader.setToDate(this.toDate.getValue());
 		detailHeader.setMandateType(this.mandateType.getValue());
@@ -270,19 +186,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		presentmentDetailService.savePresentmentHeaderDetails(detailHeader);
-
-		for (PresentmentDetail item : presentmentDetailList) {
-			item = presentmentDetailService.getPresentmentDetails(item.getFinReference(), item.getSchDate(), item.getSchSeq());
-			item = doCalculations(item);
-			// item.setDetailRef(detailRefStr);
-			presentmentDetailService.savePresentmentDetails(item);
-		}
-	}
-
-	private PresentmentDetail doCalculations(PresentmentDetail item) {
-		// TODO Auto-generated method stub
-		return null;
+		return presentmentDetailService.processPresentmentDetails(detailHeader);
 	}
 
 	/**
@@ -315,7 +219,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doShowHelp(event);
 	}
 
-	
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
 	}

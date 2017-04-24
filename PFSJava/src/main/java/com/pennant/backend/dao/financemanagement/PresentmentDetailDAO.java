@@ -42,7 +42,7 @@
  */
 package com.pennant.backend.dao.financemanagement;
 
-import java.util.Date;
+import java.sql.ResultSet;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
@@ -56,11 +56,11 @@ public interface PresentmentDetailDAO {
 
 	void delete(PresentmentDetail presentmentDetail, TableType tableType);
 
-	PresentmentDetail getPresentmentDetails(String finReference, Date schDate, long schSeq);
-
 	String save(PresentmentDetail presentmentDetail, TableType tableType);
 
 	long getPresentmentDetailRef(String tableName);
 
 	void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader);
+
+	ResultSet getPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
 }
