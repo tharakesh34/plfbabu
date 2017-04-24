@@ -2649,4 +2649,10 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="132" author="Durgaprasad G">
+	<addColumn tableName="PresentmentDetailHeader">
+		<column name="BatchId" type="bigint" />
+	</addColumn>
+  </changeSet>
+	
 </databaseChangeLog>
