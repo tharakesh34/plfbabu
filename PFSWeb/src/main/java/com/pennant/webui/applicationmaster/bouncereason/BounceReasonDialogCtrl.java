@@ -66,7 +66,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.applicationmaster.BounceReasonService;
 import com.pennant.backend.util.PennantConstants;
@@ -348,7 +347,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.reason.setValue(aBounceReason.getReason());
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
 			
-			this.feeID.setObject(new FeeType(aBounceReason.getFeeID()));
+			this.feeID.setObject(new Rule(aBounceReason.getFeeID()));
 			this.feeID.setValue(aBounceReason.getRuleCode(),aBounceReason.getRuleCodeDesc());
 			
 			this.returnCode.setValue(aBounceReason.getReturnCode());
