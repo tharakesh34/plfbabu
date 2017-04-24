@@ -142,6 +142,15 @@
 	    <value>true</value>
 	</library-property>
 
+	<library-property>
+	    <name>org.zkoss.zk.WPD.cache</name>
+	    <value>true</value>
+	</library-property>
+
+<library-property>
+	    <name>org.zkoss.zk.WCS.cache</name>
+	    <value>true</value>
+	</library-property>
 
 	<device-config>
 		<device-type>ajax</device-type>
