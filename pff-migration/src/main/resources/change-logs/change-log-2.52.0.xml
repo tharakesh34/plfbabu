@@ -185,21 +185,35 @@
 			<column name="CostCenter" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="08.1" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes" oldColumnName="ProfitCenter" newColumnName="ProfitCenterID"/>
+	</changeSet>
+	
+	<changeSet id="08.2" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
+	</changeSet>
+	<changeSet id="09.1" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes_Temp" oldColumnName="ProfitCenter" newColumnName="ProfitCenterID"/>
+	</changeSet>
+	
+	<changeSet id="09.2" author="Chaitanya.ch">
+		<renameColumn tableName="RMTAccountTypes_Temp" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
+	</changeSet>
 	<changeSet id="10" author="Surekha">
 		<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
-			 SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenter,T1.CostCenter, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenterID,T1.CostCenterID, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
 			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
 			 FROM         RMTAccountTypes_Temp T1 Left Join
 									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
-									CostCenters T3 ON T1.CostCenter = T3.CostCenterID INNER JOIN
-									ProfitCenters T4 ON T1.ProfitCenter = T4.ProfitCenterID
+									CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN
+									ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
 			 UNION ALL
-			SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenter,T1.CostCenter,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,T1.CostCenterID,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
 			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
 			 FROM         RMTAccountTypes T1 Left Join
 									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
-									CostCenters T3 ON T1.CostCenter = T3.CostCenterID INNER JOIN
-									ProfitCenters T4 ON T1.ProfitCenter = T4.ProfitCenterID
+									CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN
+									ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
 			 WHERE     (NOT EXISTS
 			 (SELECT     1 Expr1
 			 FROM          RMTAccountTypes_Temp
@@ -208,12 +222,12 @@
 	</changeSet>
 	<changeSet id="11" author="Surekha">
 		<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
-			 SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenter,T1.CostCenter, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenterID,T1.CostCenterID, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
 			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
 			 FROM         RMTAccountTypes T1 Left Join
 									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
-									CostCenters T3 ON T1.CostCenter = T3.CostCenterID INNER JOIN
-									ProfitCenters T4 ON T1.ProfitCenter = T4.ProfitCenterID
+									CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN
+									ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
 			
 		</createView>
 	</changeSet>
@@ -526,9 +540,7 @@
 			update RMTAccountTypes_temp set CostCenterID=0;
 		</sql>
 	</changeSet>
-	<changeSet id="37" author="Chaitanya">
-		<dropTable tableName="GLCODEMAPPING"/>
-	</changeSet>
+	
 	<changeSet id="38" author="Chaitanya">
 		<createTable tableName="AccountMapping">
 			<column name="Account" type="varchar(50)">
@@ -834,21 +846,50 @@
 
 		</sql>
 	</changeSet>
-	<changeSet id="84" author="Amit">
+
+	
+		<changeSet id="84" author="pruthvi">
 		<sql>
-		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-		
-		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'EmployerDetailDialog_empIsActive','EmployerDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-		
-		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='EMPLOYERDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='EmployerDetailDialog_empIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-		
-		
-		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-		
-		</sql>
-		</changeSet>
+Insert into REPORTCONFIGURATION (REPORTID,REPORTNAME,REPORTHEADING,PROMPTREQUIRED,REPORTJASPERNAME,DATASOURCENAME,SHOWTEMPLIBRARY,MENUITEMCODE,VERSION,
+LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,ALWMULTIFORMAT) values 
+((select max(reportid+1) from reportconfiguration),'Loan Wise Voucher Details','Loan Wise Voucher Details',1,'LoanwiseVoucherDetails','pfsDatasource',1,'menu_Item_LoanwiseVoucherDetail',
+2,1000,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,0);
+
+
+Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,
+MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,
+FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON) values 
+((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),1,'Post Date','DATERANGE','Post Date','PostDate',null,'---Select----',
+null,null,0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP);
+
+Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,
+MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,
+FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON) values 
+((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),2,'FinReference','TXT','Loan Reference','FinReference',null,null,null,
+null,0,20,0,0,2,1,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP);
+
+	
+update reportfilterfields set mandatory='0'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid=1;
+
+update reportfilterfields set mandatory='0'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=1;
+
+update reportfilterfields set filterrequired='0'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid=2;
+
+update reportfilterfields set filterrequired='0'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=2;
+
+update reportfilterfields set fielderrormessage='Finance Reference is Manadatory'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid=2;
+
+update reportfilterfields set fielderrormessage='Finance Reference is Manadatory'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=2;
+	</sql>
+	</changeSet>
+
+	
 		<changeSet id="85" author="Amit">
 		<createView replaceIfExists="true" viewName="RMTPROVINCEVSCITY_AVIEW">
   SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
@@ -910,5 +951,20 @@
 	</createTable>
 </changeSet>
 		
+	<changeSet id="91" author="Amit">
+		<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'EmployerDetailDialog_empIsActive','EmployerDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='EMPLOYERDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='EmployerDetailDialog_empIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		</sql>
+		</changeSet>	
+
 </databaseChangeLog>

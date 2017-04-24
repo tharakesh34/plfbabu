@@ -26,6 +26,14 @@
 			<column name="CostCenter" type="bigint" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="03.1" author="Chaitanya.ch">
+		<renameColumn tableName="AdtRMTAccountTypes" oldColumnName="ProfitCenter" newColumnName="ProfitCenterID"/>
+	</changeSet>
+	
+	<changeSet id="03.2" author="Chaitanya.ch">
+		<renameColumn tableName="AdtRMTAccountTypes" oldColumnName="CostCenter" newColumnName="CostCenterID"/>
+	</changeSet>
+	
 		<changeSet id="04" author="Chaitanya">
 		<createTable tableName="AdtAccountMapping">
 			<column name="Account" type="varchar(50)">
