@@ -385,4 +385,36 @@
 			<column name="LastMntOn" type="datetime" />
 		</createTable>
 	</changeSet>
+
+	
+	<changeSet id="23" author="ManojKumar P">
+		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT">
+			<column name="ID" type="decimal(10,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)" >
+			    <constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)"/>
+			<column name="UMSKZ" type="varchar(20)"/>
+			<column name="WRBTR" type="decimal(20,2)"/>
+			<column name="GSBER" type="varchar(10)"/>
+			<column name="BUPLA" type="varchar(10)"/>
+			<column name="KOSTL" type="varchar(20)"/>
+			<column name="PRCTR" type="varchar(20)"/>
+			<column name="ZUONR" type="varchar(50)"/>
+			<column name="SGTXT" type="varchar(50)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="24" author="ManojKumar P">
+		<addPrimaryKey columnNames="ID" constraintName="PK_STDR_ID"
+			tableName="SAPGL_TRAN_DETAIL_REPORT" />
+	</changeSet>
+	
+	
+	
 </databaseChangeLog>
