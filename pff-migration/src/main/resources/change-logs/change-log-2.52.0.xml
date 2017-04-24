@@ -966,5 +966,62 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		
 		</sql>
 		</changeSet>	
+	<changeSet id="92" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_FinType');
+			Delete from SecRights where RightName = 'FinTypePartnerBankDialog_FinType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinTypePartnerBankDialog_FinType', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_FinType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_Purpose');
+			Delete from SecRights where RightName = 'FinTypePartnerBankDialog_Purpose';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinTypePartnerBankDialog_Purpose', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_Purpose'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_PaymentMode');
+			Delete from SecRights where RightName = 'FinTypePartnerBankDialog_PaymentMode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinTypePartnerBankDialog_PaymentMode', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_PaymentMode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_PartnerBankID');
+			Delete from SecRights where RightName = 'FinTypePartnerBankDialog_PartnerBankID';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinTypePartnerBankDialog_PartnerBankID', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'FinTypePartnerBankDialog_PartnerBankID'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnNew');
+			Delete from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnNew';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinTypePartnerBankDialog_btnNew', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnEdit');
+			Delete from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnEdit';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinTypePartnerBankDialog_btnEdit', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinTypePartnerBankDialog_btnDelete', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnSave');
+			Delete from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinTypePartnerBankDialog_btnSave', 'FinTypePartnerBankDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_MAKER'), (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCETYPE_APPROVER'), (Select RightID from SecRights where RightName = 'button_FinTypePartnerBankDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+		
+		</sql>
+		</changeSet>	
 
 </databaseChangeLog>
