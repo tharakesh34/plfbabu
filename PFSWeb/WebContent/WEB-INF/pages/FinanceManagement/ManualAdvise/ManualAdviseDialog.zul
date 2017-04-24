@@ -83,26 +83,26 @@
 								<hbox>
 									<extendedcombobox id="finReference" />
 								</hbox>
-								<label id="label_AdviseType"
-									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="false"/>
-								<hbox visible="false">
-									<space spacing="2px"
-										sclass="mandatory" />
-									<combobox id="adviseType"
-										width="90px" />
-								</hbox>
-							</row>
-							<row id="row1">
 								<label id="label_FeeTypeID"
 									value="${c:l('label_ManualAdviseDialog_FeeTypeID.value')}" />
 								<hbox>
 									<extendedcombobox id="feeTypeID" />
 								</hbox>
+							</row>
+							<row id="row1">
 								<label id="label_AdviseAmount"
 									value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
 								<hbox>
 									<currencyBox id="adviseAmount"
 										width="162px" />
+								</hbox>
+								<label id="label_Remarks"
+									value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="remarks"
+										maxlength="100" width="320px" />
 								</hbox>
 							</row>
 							<row id="row2">
@@ -120,13 +120,13 @@
 								</hbox>
 							</row>
 							<row id="row3">
-								<label id="label_Remarks"
-									value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
-								<hbox>
+								<label id="label_AdviseType"
+									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="false"/>
+								<hbox visible="false">
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="remarks"
-										maxlength="100" width="320px" />
+									<combobox id="adviseType"
+										width="90px" />
 								</hbox>
 								<hbox id="hbox_Sequence">
 									<label id="label_Sequence"

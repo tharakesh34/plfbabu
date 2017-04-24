@@ -76,6 +76,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -116,6 +117,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private transient ManualAdviseService manualAdviseService;
 
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
+	
+	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
+
 
 	/**
 	 * default constructor.<br>
@@ -436,7 +440,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				aManualAdvise.setAdviseType(Integer.parseInt(strAdviseType));
 
 			} else {
-				aManualAdvise.setAdviseType(0);
+				aManualAdvise.setAdviseType(DEFAULT_ADVISETYPE);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
