@@ -779,4 +779,13 @@
 		<addPrimaryKey columnNames="INDUSTRYCODE" constraintName="PK_INDUSTRYCODE_TEMP"
 			tableName="BMTINDUSTRIES_TEMP" />
 	</changeSet>
+	<changeSet id="62" author="Surekha">
+	<sql>
+		update ReportList set  REPORTHEADING ='DPD Bucket' , ReportFileName='ReportList05' where Code='DPDBucket';
+		update ReportList set  REPORTHEADING ='NPA Bucket' , ReportFileName='ReportList05' where Code='NPABucket';
+		update ReportList set  REPORTHEADING ='DPD Bucket Configuration' , ReportFileName='ReportList06' where Code='DPDBucketConfiguration';
+		update ReportList set  REPORTHEADING ='NPA Bucket Configuration' , ReportFileName='ReportList05',fieldlabels='listheader_ProductCode.label,listheader_BucketID.label,listheader_DueDays.label,listheader_RecordStatus.label,listheader_RecordType.label',FieldValues='productCode,bucketID,dueDays,recordStatus,recordType',FieldType='String,String,int,String,String' where Code='NPABucketConfiguration';
+		
+	</sql>
+	</changeSet>
 </databaseChangeLog>
