@@ -41,17 +41,27 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Branch model</b> class.<br>
  */
-public interface BranchDAO {
+public interface BranchDAO extends BasicCrudDao<Branch> {
 
 	Branch getBranchById(String id, String type);
-	void update(Branch branch, String type);
-	void delete(Branch branch, String type);
-	String save(Branch branch, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param branchCode
+	 *            branchCode of the branch.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String branchCode, TableType tableType);
 	void updateFinanceBranch(Branch branch, String type);
 	void updateApplicationAccess(String sysParmName,String sysParmValue);
 }

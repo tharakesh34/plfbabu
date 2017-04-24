@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -378,5 +379,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setBranchAddrStreet(String branchAddrStreet) {
 		this.branchAddrStreet = branchAddrStreet;
 	}
-
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

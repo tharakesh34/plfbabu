@@ -71,6 +71,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Branch</b>.<br>
@@ -131,16 +133,16 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
 		Branch branch = (Branch) auditHeader.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (branch.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (branch.isNew()) {
@@ -288,14 +290,14 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		Branch branch = (Branch) auditHeader.getAuditDetail().getModelData();
-		getBranchDAO().delete(branch,"");
+		getBranchDAO().delete(branch, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -347,7 +349,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		logger.debug("Entering");
 
 		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -355,11 +357,16 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 
 		Branch branch = new Branch();
 		BeanUtils.copyProperties((Branch) auditHeader.getAuditDetail().getModelData(), branch);
+		getBranchDAO().delete(branch, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(branchDAO.getBranchById(branch.getBranchCode(), ""));
+		}
 
 		if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
 
-			getBranchDAO().delete(branch,"");
+			getBranchDAO().delete(branch, TableType.MAIN_TAB);
 
 		} else {
 			branch.setRoleCode("");
@@ -371,15 +378,14 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			if (branch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType=PennantConstants.TRAN_ADD;
 				branch.setRecordType("");
-				getBranchDAO().save(branch,"");
+				getBranchDAO().save(branch, TableType.MAIN_TAB);
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				branch.setRecordType("");
-				getBranchDAO().update(branch,"");
+				getBranchDAO().update(branch, TableType.MAIN_TAB);
 			}
 		}
 
-		getBranchDAO().delete(branch,"_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -436,7 +442,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public AuditHeader  doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -444,7 +450,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 
 		Branch branch= (Branch) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getBranchDAO().delete(branch,"_Temp");
+		getBranchDAO().delete(branch, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -461,11 +467,10 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -481,89 +486,30 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,
-			String method) {
-		logger.debug("Entering");
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
+		logger.debug(Literal.ENTERING);
 
+		// Get the model object.
 		Branch branch = (Branch) auditDetail.getModelData();
-		Branch tempBranch = null;
-		if (branch.isWorkflow()) {
-			tempBranch = getBranchDAO().getBranchById(branch.getId(), "_Temp");
+		String code = branch.getBranchCode();
+
+		// Check the unique keys.
+		if (branch.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())
+				&& branchDAO
+						.isDuplicateKey(code, branch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + code;
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		Branch befBranch = getBranchDAO().getBranchById(branch.getId(), "");
-
-		Branch oldBranch = branch.getBefImage();
-
-		String[] valueParm = new String[1];
-		String[] errParm= new String[1];
-
-		valueParm[0] = branch.getBranchCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_BranchCode") + ":"+ valueParm[0];
-
-		if (branch.isNew()) { // for New record or new record into work flow
-
-			if (!branch.isWorkflow()) {// With out Work flow only new records
-				if (befBranch != null) { // Record Already Exists in the table
-					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-				}
-			} else { // with work flow
-				if (branch.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befBranch != null || tempBranch != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befBranch == null || tempBranch != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!branch.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befBranch == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldBranch != null
-							&& !oldBranch.getLastMntOn().equals(
-									befBranch.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-			} else {
-
-				if (tempBranch == null) { // if records not exists in the Work
-					// flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempBranch != null && oldBranch != null
-						&& !oldBranch.getLastMntOn().equals(
-								tempBranch.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-			}
-		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !branch.isWorkflow()) {
-			auditDetail.setBefImage(befBranch);
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
+	
 }
