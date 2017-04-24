@@ -184,21 +184,21 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
-		StringBuilder limitRowsSql = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 
 		if (offset > 0) {
-			limitRowsSql.append("select * from ( select row_.*, rownum rownum_ from ( ");
+			result.append("select * from ( select row_.*, rownum rownum_ from ( ");
 		} else {
-			limitRowsSql.append("select * from ( ");
+			result.append("select * from ( ");
 		}
-		limitRowsSql.append(sql);
+		result.append(sql);
 		if (offset > 0) {
-			limitRowsSql.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
+			result.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
 		} else {
-			limitRowsSql.append(" ) where rownum <= " + pageSize);
+			result.append(" ) where rownum <= " + pageSize);
 		}
 
-		return limitRowsSql.toString();
+		return result.toString();
 	}
 
 	public static String getMYSQLLimitString(String sql, boolean hasOffset, int startRow, int endRow) {
