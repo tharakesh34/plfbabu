@@ -860,5 +860,9 @@
 
 		</createView>
 	</changeSet>
-		
+	<changeSet id="86" author="DDP">
+		<sql>
+		update errordetails set errormessage = 'Extended details should be matched with configured extended details in {0}.' where errorcode = '90265';
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
