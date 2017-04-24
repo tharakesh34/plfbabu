@@ -966,6 +966,7 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		
 		</sql>
 		</changeSet>	
+
 	<changeSet id="92" author="Kesav">
 		<sql>
 			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
@@ -1023,5 +1024,103 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		
 		</sql>
 		</changeSet>	
+
+<changeSet id="93" author="pruthvi">
+		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, 
+                      T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, 
+                      T1.FinStartDate, T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  
+                     T7.FinTypeDesc lovDescFinTypeName, T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId,  T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.NextDepDate, T1.LastDepDate, T7.FinRvwRateApplFor,  T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.DownPayBank, T1.DownPaySupl, T1.GraceTerms, T1.GrcProfitDaysBasis, 
+                      T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps,  T1.LinkedFinRef, T7.Product LovDescFinProduct, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, 
+                      T1.RpyMaxRate,T1.ManualSchedule, T1.TakeOverFinance, 
+                      T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                      T1.SupplementRent, T1.IncreasedCost, T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , 
+		      T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay
+FROM          WIFFinanceMain T1 INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType
+                       </createView>
+                       </changeSet>
+                       
+          	<changeSet id="94" author="pruthvi">
+		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">             
+  SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, T1.FinType, 
+                      T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, T1.FinStartDate, 
+                      T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T15.CustCIF lovDescCustCIF, 
+                     T7.FinTypeDesc lovDescFinTypeName, T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId, T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.DepreciationFrq, T1.FinCommitmentRef, T1.FinCurrAssetValue, T1.FinContractDate, T1.NextDepDate, 
+                      T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,    
+                        T7.FinRvwRateApplFor, 
+                      T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, 
+                      T1.EffectiveRateOfReturn, T1.DownPayBank, T1.DownPaySupl, T7.FinDivision LovDescFinDivisionName, T1.GraceTerms, 
+                      T14.FacilityType, T15.CustShrtName lovDescCustShrtName, T16.BranchDesc lovDescFinBranchName,
+                      T1.TotalGrossGrcPft, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps, 
+                     T1.LinkedFinRef, T7. Product LovDescFinProduct, 
+                      T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate,  T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+                      T1.RpyAdvMargin, T1.RpyAdvPftRate,T1.SupplementRent, T1.IncreasedCost, 
+                     T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay
+FROM          WIFFinanceMain_Temp T1 LEFT OUTER JOIN
+                       WIFIndicativeTermDetail_Temp T14 ON T14.FinReference = T1.FinReference LEFT OUTER JOIN
+                       Customers T15 ON T15.CustID = T1.CustID INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                       RMTBranches T16 ON T1.FinBranch = T16.BranchCode 
+UNION ALL
+SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, T1.FinType, 
+                      T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, T1.FinStartDate, 
+                      T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T15.CustCIF lovDescCustCIF, 
+                     T7.FinTypeDesc lovDescFinTypeName,T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId, T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.DepreciationFrq, T1.FinCommitmentRef, T1.FinCurrAssetValue, T1.FinContractDate, T1.NextDepDate, 
+                      T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,    
+                        T7.FinRvwRateApplFor,
+                      T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, 
+                      T1.EffectiveRateOfReturn, T1.DownPayBank, T1.DownPaySupl, T7.FinDivision LovDescFinDivisionName, T1.GraceTerms, 
+                      T14.FacilityType, T15.CustShrtName lovDescCustShrtName, T16.BranchDesc lovDescFinBranchName,
+                      T1.TotalGrossGrcPft, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps, 
+                     T1.LinkedFinRef, T7. Product LovDescFinProduct, 
+                      T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+                      T1.RpyAdvMargin, T1.RpyAdvPftRate,T1.SupplementRent, T1.IncreasedCost, 
+                       T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay
+FROM          WIFFinanceMain T1 LEFT OUTER JOIN
+                       WIFIndicativeTermDetail_Temp T14 ON T14.FinReference = T1.FinReference LEFT OUTER JOIN
+                       Customers T15 ON T15.CustID = T1.CustID INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                       RMTBranches T16 ON T1.FinBranch = T16.BranchCode 
+                      WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          WIFFinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+                            </createView>
+                            </changeSet>
 
 </databaseChangeLog>
