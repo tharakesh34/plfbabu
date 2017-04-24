@@ -74,7 +74,7 @@ public class DPDBucketConfigurationListModelItemRenderer implements ListitemRend
 		Listcell lc;
 	  	lc = new Listcell(dPDBucketConfiguration.getProductCode());
 		lc.setParent(item);
-	  	lc = new Listcell(String.valueOf(dPDBucketConfiguration.getBucketID()));
+	  	lc = new Listcell(dPDBucketConfiguration.getBucketCode());
 		lc.setParent(item);
 	  	lc = new Listcell(PennantApplicationUtil.formateInt(dPDBucketConfiguration.getDueDays()));
 	  	lc.setParent(item);

@@ -139,7 +139,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 
 		registerField("configID");
 		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
-		registerField("bucketID", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
+		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
 		// Render the page and display the data.
 		doRenderPage();

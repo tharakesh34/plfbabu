@@ -140,7 +140,7 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 
 		registerField("configID");
 		registerField("productCode", listheader_ProductCode, SortOrder.NONE, productCode, sortOperator_ProductCode, Operators.STRING);
-		registerField("bucketID", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
+		registerField("bucketCode", listheader_BucketID, SortOrder.NONE, bucketID, sortOperator_BucketID, Operators.NUMERIC);
 		registerField("dueDays", listheader_DueDays, SortOrder.NONE, dueDays, sortOperator_DueDays, Operators.NUMERIC);
 		registerField("suspendProfit", listheader_SuspendProfit, SortOrder.NONE, suspendProfit, sortOperator_SuspendProfit, Operators.BOOLEAN);
 

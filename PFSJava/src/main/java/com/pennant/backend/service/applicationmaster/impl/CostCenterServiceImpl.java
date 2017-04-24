@@ -77,6 +77,14 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	
+	public AccountTypeDAO getAccountTypeDAO() {
+		return accountTypeDAO;
+	}
+
+	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
+		this.accountTypeDAO = accountTypeDAO;
+	}
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
