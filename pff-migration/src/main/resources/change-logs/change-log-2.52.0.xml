@@ -415,6 +415,9 @@
 			tableName="SAPGL_TRAN_DETAIL_REPORT" />
 	</changeSet>
 	
+	<changeSet id="25" author="Irfan">
 	
+	<modifyDataType tableName="PartnerBankModes" columnName="PaymentMode" newDataType="varchar(8)"/>
+	</changeSet>
 	
 </databaseChangeLog>
