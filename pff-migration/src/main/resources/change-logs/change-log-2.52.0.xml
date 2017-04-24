@@ -1567,4 +1567,18 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		</createTable>
 </changeSet>
 	
+	
+	<changeSet id="117" author="durgaprasad G">
+		<createTable tableName="SeqPresentmentDetails">
+			<column name="SEQNO" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="118" author="durgaprasad G">
+		<sql>
+			Insert into SeqPresentmentDetails values (0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
