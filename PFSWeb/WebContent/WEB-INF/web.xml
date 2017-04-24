@@ -50,6 +50,25 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<filter>
+    	<filter-name>cache</filter-name>
+    	<filter-class>com.pennant.web.filters.CacheFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+	    <filter-name>cache</filter-name>
+	    <url-pattern>*.png</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>cache</filter-name>
+	    <url-pattern>*.jpg</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>cache</filter-name>
+	    <url-pattern>*.gif</url-pattern>
+	</filter-mapping>
+
 	<listener>
 		<listener-class>
 			org.springframework.security.web.session.HttpSessionEventPublisher
