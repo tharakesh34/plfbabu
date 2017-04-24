@@ -8,6 +8,12 @@
 	<!-- LimitTransactionDetail validations -->
 	<bean class="com.pennant.backend.model.limit.LimitTransactionDetail">
 		<field name="custCIF">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>Cif is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>cif should have maximum 12 characters</message>
 				<groups>
@@ -45,6 +51,12 @@
 
 
 		<field name="referenceNumber">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>ReferenceNumber is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>referenceNumber should have maximum 20 characters</message>
 				<groups>
@@ -70,23 +82,23 @@
 			</constraint>
 		</field>
 
-		<field name="transactionAmount">
+		<field name="limitAmount">
 			<constraint annotation="javax.validation.constraints.Min">
-				<message>transactionAmount should be Positive</message>
+				<message>Amount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.DecimalMax">
-				<message>transactionAmount allow 21 digits only</message>
+				<message>Amount allow 21 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">999999999999999999999</element>
 			</constraint>
 		</field>
-
+<!-- 
       <field name="validateLimitTransactionDetail">
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>cif and customerGroup are mutually exclusive</message>
@@ -111,7 +123,7 @@
 	           
 				</element>
 			</constraint>
-		</field>
+		</field> -->
 
 
 

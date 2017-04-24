@@ -15,7 +15,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -67,7 +66,6 @@ public class FinanceValidationService {
 	private BankBranchService bankBranchService;
 	private BranchService branchService;
 	private BankDetailService bankDetailService;
-	private CurrencyDAO currencyDAO;
 	private BaseRateDAO baseRateDAO;
 	private FlagDAO flagDAO;
 	private RuleDAO ruleDAO;
@@ -989,12 +987,6 @@ public class FinanceValidationService {
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
-
-	@Autowired
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
 	@Autowired
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;

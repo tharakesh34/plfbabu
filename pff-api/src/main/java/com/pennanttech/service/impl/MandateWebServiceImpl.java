@@ -15,6 +15,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -43,6 +44,7 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	private BankBranchService bankBranchService;
 	private MandateService mandateService;
 	private FinanceMainService financeMainService;
+	private BankDetailService bankDetailService;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -345,6 +347,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getIFSC();
 				return getErrorDetails("90301", valueParm);
+			} else{
+				mandate.setBankCode(bankBranch.getBankCode());
 			}
 		} else if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getBranchCode())) {
 			BankBranch bankBranch = bankBranchService
@@ -354,9 +358,20 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[0] = mandate.getBankCode();
 				valueParm[1] = mandate.getBranchCode();
 				return getErrorDetails("90302", valueParm);
+			} else {
+				mandate.setBankCode(bankBranch.getBankCode());
 			}
 		}
-
+		//validate AccNumber length
+		if(StringUtils.isNotBlank(mandate.getBankCode())){
+			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			if(mandate.getAccNumber().length()!=accNoLength){
+				String[] valueParm = new String[2];
+				valueParm[0] = "AccountNumber";
+				valueParm[1] = String.valueOf(accNoLength)+" characters";
+				return getErrorDetails("30570", valueParm);
+			}
+		}
 		//validate Dates
 		if(mandate.getStartDate().compareTo(mandate.getExpiryDate())>0) {
 			String[] valueParm = new String[2];
@@ -420,4 +435,9 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+	@Autowired
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 }

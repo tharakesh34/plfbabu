@@ -150,12 +150,12 @@
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>accNumber should have maximum 13 characters</message>
+				<message>accNumber should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="max">13</element>
+				<element name="max">50</element>
 			</constraint>
 		</field>
 

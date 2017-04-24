@@ -219,7 +219,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 	public WSReturnStatus cancelLimitReserve(LimitTransactionDetail limitTransDetail) {
 		logger.debug("Entering");
 		WSReturnStatus returnStatus = null;
-
+		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
 		limitTransDetail.setReferenceCode(LimitConstants.FINANCE);
 		// validate limit transaction details
 		returnStatus = doLimitReserveValidations(limitTransDetail);
@@ -243,6 +243,20 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 	 */
 	private WSReturnStatus doLimitReserveValidations(LimitTransactionDetail limitTransDetail) {
 		logger.debug("Enrtering");
+
+		// validate amount
+		if (limitTransDetail.getLimitAmount() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Amount";
+			return APIErrorHandlerService.getFailedStatus("90242", valueParm);
+		} /*else {
+			if(limitTransDetail.getLimitAmount().compareTo(BigDecimal.ZERO)>0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Amount";
+				valueParm[1] = "0";
+				return APIErrorHandlerService.getFailedStatus("91125", valueParm);
+			}
+		}*/
 
 		// validate limitId
 		if (limitTransDetail.getHeaderId() != Long.MIN_VALUE) {
@@ -337,7 +351,6 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			}
 		}
 
-		// validate amount
 		logger.debug("Enrtering");
 
 		return new WSReturnStatus();
