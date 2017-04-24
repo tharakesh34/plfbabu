@@ -621,4 +621,14 @@
 
 		</createView>
 	</changeSet>
+	<changeSet id="46" author="Surekha">
+		<addForeignKeyConstraint constraintName="FK_NPABUCKETS_CONFIG"
+			referencedTableName="NPABUCKETS" referencedColumnNames="bucketID"
+			baseTableName="NPABUCKETSCONFIG" baseColumnNames="bucketID" />
+	</changeSet>
+	<changeSet id="47" author="Surekha">
+		<addForeignKeyConstraint constraintName="FK_DPDBUCKETS_CONFIG"
+			referencedTableName="DPDBUCKETS" referencedColumnNames="bucketID"
+			baseTableName="DPDBUCKETSCONFIG" baseColumnNames="bucketID" />
+	</changeSet>
 </databaseChangeLog>
