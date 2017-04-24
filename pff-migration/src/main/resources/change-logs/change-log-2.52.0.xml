@@ -573,6 +573,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
  	</changeSet>
+
  	<changeSet id="40" author="Amit">
 		<addColumn tableName="RMTProvinceVsCity">
 			<column name="CityIsActive" type="number(1,0)" defaultValue="0" >
@@ -597,4 +598,8 @@
 		</createView>
 	</changeSet>
 	
+      <changeSet id="43" author="ManojKumar P">
+		<renameTable newTableName="SAPGL_TRAN_DETAIL_REPORT_STAGE" oldTableName="SAPGL_TRAN_DETAIL_REPORT_TEMP1" />
+	</changeSet>
+ 	
 </databaseChangeLog>
