@@ -175,7 +175,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("BranchDesc");
 		registerField("LLDATE");
 		
-		registerField("PartnerBankId", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
+		registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes, sortOperator_DisbType, Operators.STRING);
 		registerField("FromDate", listheader_Disbursement_FromDate, SortOrder.NONE, fromDate, sortOperator_FromDate, Operators.DATE);
 		registerField("ToDate ", listheader_Disbursement_ToDate, SortOrder.NONE, toDate, sortOperator_ToDate, Operators.DATE);
@@ -219,9 +219,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setDisplayStyle(2);
-		this.partnerBank.setValueColumn("PartnerBankId");
+		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
-		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
+		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBank.setMandatoryStyle(true);
 		
 		this.branch.setModuleName("BankBranch");
@@ -397,11 +397,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finType.setErrorMessage("");
 	
 		if(StringUtils.trimToNull(this.partnerBank.getValue()) == null){
-			throw new WrongValueException(this.partnerBank, "PartnerBank should be mandatory. ");
+			throw new WrongValueException(this.partnerBank, "Partner Bank should be mandatory. ");
 		}
 		
 		if(StringUtils.trimToNull(this.finType.getValue()) == null){
-			throw new WrongValueException(this.finType, "FinType should be mandatory. ");
+			throw new WrongValueException(this.finType, "Loan Type should be mandatory. ");
 		}
 	}
 
