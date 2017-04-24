@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -57,13 +56,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Designation;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -72,10 +67,8 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>Designation model</b> class.<br>
- * 
  */
 public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements DesignationDAO {
-
 	private static Logger logger = Logger.getLogger(DesignationDAOImpl.class);
 
 	// Spring Named JDBC Template
@@ -129,23 +122,10 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	/**
-	 * This method Deletes the Record from the BMTDesignations or
-	 * BMTDesignations_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Designations by key DesgCode
-	 * 
-	 * @param Designations
-	 *            (designation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Designation designation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
+
 		StringBuilder deleteSql = new StringBuilder();
 		
 		deleteSql.append("Delete From BMTDesignations");
@@ -156,6 +136,7 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		logger.trace(Literal.SQL + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
 
+		int recordCount = 0;
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
@@ -170,20 +151,6 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method insert new Records into BMTDesignations or
-	 * BMTDesignations_Temp.
-	 * 
-	 * save Designations
-	 * 
-	 * @param Designations
-	 *            (designation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
 	public String save(Designation designation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -210,24 +177,10 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		return designation.getId();
 	}
 
-	/**
-	 * This method updates the Record BMTDesignations or BMTDesignations_Temp.
-	 * if Record not updated then throws DataAccessException with error 41004.
-	 * update Designations by key DesgCode and Version
-	 * 
-	 * @param Designations
-	 *            (designation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Designation designation, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
+
 		StringBuilder updateSql = new StringBuilder();
 		
 		updateSql.append("Update BMTDesignations");
@@ -239,10 +192,10 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 		updateSql.append(" Where DesgCode =:DesgCode ");
 		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		logger.debug("updateSql: "+ updateSql.toString());
+		logger.debug(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
+
+		int recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -250,21 +203,6 @@ public class DesignationDAOImpl extends BasisCodeDAO<Designation> implements Des
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	/*private ErrorDetails  getError(String errorId, String desgCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = desgCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_DesgCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}*/
 	
 	@Override
 	public boolean isDuplicateKey(String designationCode, TableType tableType) {
