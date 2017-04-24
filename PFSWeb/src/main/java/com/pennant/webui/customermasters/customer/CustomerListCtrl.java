@@ -121,7 +121,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		super.moduleCode = "Customer";
 		super.pageRightName = "CustomerList";
 		super.tableName = "Customers_AView";
-		super.queueTableName = "Customers_View";
+		super.queueTableName = "Customers_LView";
 		super.enquiryTableName = "Customers_TView";
 	}
 
