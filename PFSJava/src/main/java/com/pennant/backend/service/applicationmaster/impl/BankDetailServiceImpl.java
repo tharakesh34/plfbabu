@@ -116,7 +116,6 @@ public class BankDetailServiceImpl extends
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader);
