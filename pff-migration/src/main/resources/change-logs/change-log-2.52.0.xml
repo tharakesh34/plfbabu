@@ -1581,4 +1581,62 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 			Insert into SeqPresentmentDetails values (0);
 		</sql>
 	</changeSet>
+	<changeSet id="119" author="Irfan">
+	<renameColumn tableName="FeeTypes" oldColumnName="AccountingSetId" newColumnName="AccountSetId"/>
+</changeSet>
+<changeSet id="120" author="Irfan">
+	<renameColumn tableName="FeeTypes_Temp" oldColumnName="AccountingSetId" newColumnName="AccountSetId"/>
+</changeSet>
+
+
+<changeSet id="121" author="Irfan">
+	<createView viewName="FeeTypes_AView" replaceIfExists="true">
+		  SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ApplicableFor, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+            T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes  T1
+         LEFT JOIN RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID    
+	
+	
+	</createView>
+
+</changeSet>
+
+<changeSet id="122" author="Irfan">
+	<createView viewName="FeeTypes_TView" replaceIfExists="true">
+	  SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ApplicableFor, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+            T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes_Temp  T1
+               LEFT JOIN RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+	
+	
+	</createView>
+
+</changeSet>
+<changeSet id="123" author="Irfan">
+	<createView viewName="FeeTypes_View" replaceIfExists="true">
+	  
+   SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ApplicableFor, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+            T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes_Temp  T1 
+  		 LEFT JOIN RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			UNION ALL
+
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ApplicableFor, T1.AccountSetId, T1.Active,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+            T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes  T1 
+			  		 LEFT JOIN RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			WHERE     	NOT EXISTS (SELECT 1 FROM FeeTypes_TEMP WHERE FeeTypeID = T1.FeeTypeID)
+
+	
+	</createView>
+
+</changeSet>
+	
 </databaseChangeLog>
