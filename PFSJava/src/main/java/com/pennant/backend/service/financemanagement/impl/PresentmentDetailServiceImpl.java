@@ -42,21 +42,28 @@
  */
 package com.pennant.backend.service.financemanagement.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -68,6 +75,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -372,9 +381,64 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		return null;
 	}
 
-	private void doCalculations(PresentmentDetail pDetail) {
-		// TODO Auto-generated method stub
-		
-	}
+	private void doCalculations(String finReference, List<PresentmentDetail> presentmentDetails, PresentmentDetailHeader detailHeader) {
+			logger.debug(Literal.ENTERING);
+			BigDecimal emiInAdvanceAmt; 
+			FinExcessAmount excessAmount = finExcessAmountDAO.
+					getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			
+			if(excessAmount != null){
+				emiInAdvanceAmt = excessAmount.getBalanceAmt();
+			} else{
+				emiInAdvanceAmt = BigDecimal.ZERO;
+			}
+			BigDecimal advanceAmount = BigDecimal.ZERO;
+			
+			for (PresentmentDetail presentmentDetail : presentmentDetails) {
+				
+				//EMI HOLD 
+				if(DateUtility.compare(presentmentDetail.getDefSchdDate(), detailHeader.getToDate()) > 0){
+					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_EMIHOLD);
+					continue;
+				}
+				
+				//Mandate Hold 
+				if(MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
+					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
+					continue;
+				}
+				
+				//Mandate Not Approved 
+				if(!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && 
+						MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
+					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
+				}
+
+				//Mandate Expired 
+				if(!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && 
+						MandateConstants.STATUS_HOLD.equals(presentmentDetail.getMandateStatus())){
+					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_MANDATEHOLD);
+				}
+				
+				
+				//EMI IN ADVANCE 
+				if(emiInAdvanceAmt.compareTo(presentmentDetail.getPresentmentAmt()) > 0){
+					advanceAmount = presentmentDetail.getPresentmentAmt();
+					presentmentDetail.setExcludeReason(RepayConstants.PRESENTMENT_EXC_EMIINADVANCE);
+				}else{
+					advanceAmount = emiInAdvanceAmt;
+				}
+				presentmentDetail.setAdvanceAmt(advanceAmount);
+				presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advanceAmount));
+				
+						
+				
+				
+			}
+			
+			
+			
+			logger.debug(Literal.LEAVING);
+		}		
 	 
 }

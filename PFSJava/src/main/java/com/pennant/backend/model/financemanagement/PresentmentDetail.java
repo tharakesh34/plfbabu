@@ -80,6 +80,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private long schSeq;
 	private long mandateID;
 	private String mandateType;
+	private Date mandateExpiry;
 	private BigDecimal schAmtDue;
 	private BigDecimal schPriDue;
 	private BigDecimal schPftDue;
@@ -100,6 +101,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String customerCif;
 	private String loanType;
 	private String loanTypeName;
+	private String mandateStatus;
+
 
 	@XmlTransient
 	private boolean newRecord = false;
@@ -418,6 +421,22 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setDetailID(long detailID) {
 		this.detailID = detailID;
+	}
+
+	public String getMandateStatus() {
+		return mandateStatus;
+	}
+
+	public void setMandateStatus(String mandateStatus) {
+		this.mandateStatus = mandateStatus;
+	}
+
+	public Date getMandateExpiry() {
+		return mandateExpiry;
+	}
+
+	public void setMandateExpiry(Date mandateExpiry) {
+		this.mandateExpiry = mandateExpiry;
 	}
 
 }
