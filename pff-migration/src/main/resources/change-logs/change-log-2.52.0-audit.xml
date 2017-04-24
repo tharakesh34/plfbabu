@@ -26,4 +26,11 @@
 			<column name="CostCenter" type="bigint" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="05" author="Amit">
+		<addColumn tableName="AdtRMTProvinceVsCity">
+			<column name="CityIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
 </databaseChangeLog>
