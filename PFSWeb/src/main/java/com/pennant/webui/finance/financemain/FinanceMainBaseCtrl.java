@@ -10123,20 +10123,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner) || isOverDraft) {
-				String frqCode = this.repayFrq.getFrqCodeValue();
-
-				if(this.odYearlyTerms.intValue()<1 && this.odMnthlyTerms.intValue()>0){
-					if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 4){
-						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(4)}));
-					}else if(FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 6){
-						throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(6)}));
-
-
-					}
-				}
-			}
-
 			if (this.rpyPftFrqRow.isVisible()) {
 				if (!this.nextRepayPftDate.isDisabled() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())) {
 					if (this.nextRepayPftDate.getValue() != null) {
@@ -10548,28 +10534,40 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			try {
 				int tenor = 0;
+				
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner) || isOverDraft) {
+					String frqCode = this.repayFrq.getFrqCodeValue();
+
+					if(this.odYearlyTerms.intValue()<1 && this.odMnthlyTerms.intValue()>0){
+						if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 4){
+							throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(4),"Months"}));
+						}else if(FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode) && this.odMnthlyTerms.intValue()< 6){
+							throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(6),"Months"}));
+						}else if(FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode) && this.odYearlyTerms.intValue()< 1){
+							throw new WrongValueException(this.odYearlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(1),"Year"}));
+						}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)){
+							//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
+							int minNoofMonths;
+							if (!financeType.isDroplineOD()) {
+								minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(),
+										DateUtility.getAppDate());
+							} else {
+								minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(),
+										DateUtility.getAppDate());
+							}
+							if (tenor < minNoofMonths) {
+								throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel(
+										"NUMBER_MINVALUE",
+										new String[] { Labels.getLabel("label_FinanceMainDialog_ODTenor.value"),
+												String.valueOf(minNoofMonths) + " Months" }));
+							}
+						}
+					}
+				}
+				
 				if (this.odMnthlyTerms.intValue() >= 0) {
 					tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
 				}
-
-				//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
-					int minNoofMonths;
-					if (!financeType.isDroplineOD()) {
-						minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(),
-								DateUtility.getAppDate());
-					} else {
-						minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(),
-								DateUtility.getAppDate());
-					}
-					if (tenor < minNoofMonths) {
-						throw new WrongValueException(this.odYearlyTerms, Labels.getLabel(
-								"NUMBER_MINVALUE",
-								new String[] { Labels.getLabel("label_FinanceMainDialog_ODTenor.value"),
-										String.valueOf(minNoofMonths) + " Months" }));
-					}
-				}
-
 				aFinanceMain.setNumberOfTerms(tenor);
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -15579,7 +15577,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return null;
 		}
 
-		if(this.odYearlyTerms.intValue()<=SysParamUtil.getValueAsInt("MAX_FIN_YEARS") && this.odMnthlyTerms.getValue()<=11){
+		if(this.odYearlyTerms.intValue()<=SysParamUtil.getValueAsInt("MAX_FIN_YEARS") && this.odMnthlyTerms.intValue()<=11){
 			int tenorMonths = (12 * this.odYearlyTerms.intValue()) + (this.odMnthlyTerms.intValue());
 			if(tenorMonths <= 0){
 				return null;
