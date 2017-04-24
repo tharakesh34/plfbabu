@@ -163,7 +163,11 @@ public class FinanceSuspHeadDAOImpl  extends BasisCodeDAO<FinanceSuspHead> imple
 			logger.warn("Exception: ", e);
 		}
 		logger.debug("Leaving");
-		return financeSuspHead.getFinSuspDate();
+		if (financeSuspHead!=null) {
+			return financeSuspHead.getFinSuspDate();
+		}else{
+			return null;
+		}
 	}
 
 	

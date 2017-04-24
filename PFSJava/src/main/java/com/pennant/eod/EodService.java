@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -21,7 +19,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.DateRollOverService;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
@@ -147,6 +144,10 @@ public class EodService {
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
 
+		//Rate review
+		//FIXME Rate review process should checked after the completion new method in schedule calculator
+		rateReviewService.processRateReview(connection, custId, date);
+
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
 
@@ -169,12 +170,7 @@ public class EodService {
 		//		serviceUtil.processQueue(connection, custId, date);
 
 		//Date roll over
-		List <FinEODEvent> finEODEvents=dateRollOverService.preoarefinEODEvents(connection, custId, date);
-		
-		dateRollOverService.process(connection, finEODEvents);
-
-		//Rate review
-		rateReviewService.processRateReview(connection, finEODEvents);
+		dateRollOverService.process(connection, custId, date);
 
 		//Accrual
 		accrualService.processAccrual(connection, custId, date);

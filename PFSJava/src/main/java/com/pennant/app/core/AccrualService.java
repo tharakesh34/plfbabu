@@ -100,6 +100,10 @@ public class AccrualService extends ServiceHelper {
 
 		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
 
+		if (profitDetail==null) {
+			return;
+		}
+		
 		FinanceProfitDetail finPftDetail = AEAmounts.calProfitDetails(financeMain, scheduleDetailList, profitDetail,
 				valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
