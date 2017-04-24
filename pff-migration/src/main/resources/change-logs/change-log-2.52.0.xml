@@ -573,4 +573,19 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
  	</changeSet>
+ 	<changeSet id="40" author="Amit">
+		<addColumn tableName="RMTProvinceVsCity">
+			<column name="CityIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="41" author="Amit">
+		<addColumn tableName="RMTProvinceVsCity_Temp">
+			<column name="CityIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
 </databaseChangeLog>
