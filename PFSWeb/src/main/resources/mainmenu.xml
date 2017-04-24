@@ -429,7 +429,7 @@
 		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>
 		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> -->
 		
-		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdvise/ManualAdviseEnquiryList.zul?enqiryModule=Y"  iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_finance_ManualAdviseEnquiry"/>
+		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdvise/ManualAdviseEnquiryList.zul?enqiryModule=Y"  iconName="" rightName="menuItem_finance_ManualAdviseEnquiry"/>
 		
 	</menu>
 

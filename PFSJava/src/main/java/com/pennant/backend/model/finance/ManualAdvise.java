@@ -43,6 +43,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -238,6 +239,10 @@ private static final long serialVersionUID = 1L;
 
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
 }

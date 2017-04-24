@@ -76,7 +76,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -206,7 +207,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
 		this.feeTypeID.setMandatoryStyle(true);
-
+		this.feeTypeID.setFilters(new Filter[] { new Filter("ApplicableFor",1, Filter.OP_EQUAL) });
+		
 		this.adviseAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.adviseAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.adviseAmount.setScale(PennantConstants.defaultCCYDecPos);
@@ -392,9 +394,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.ENTERING);
 		
 		//FIXME to be changed on adding the payable advises. As of now Advise type is not visible
-		this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
+	//	this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
 		
-		//fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
+		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
@@ -412,7 +414,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setDescription("");
 		} else {
 			this.finReference.setDescription(aManualAdvise.getFinReferenceName());
-			this.feeTypeID.setDescription(aManualAdvise.getFeeTypeCode());
+			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
+			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -455,9 +458,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		// Fee Type ID
 		try {
 			this.feeTypeID.getValidatedValue();
-			Long obj = (long) this.feeTypeID.getAttribute("FeeTypeID");
-			if (obj != null) {
-				aManualAdvise.setFeeTypeID(obj);
+			FeeType feeType = (FeeType) this.feeTypeID.getObject();
+			if (feeType != null) {
+				aManualAdvise.setFeeTypeID(feeType.getFeeTypeID());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -714,7 +717,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.finReference);
 			readOnlyComponent(true, this.feeTypeID);
-			readOnlyComponent(true, this.adviseAmount);
+			//readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.paidAmount);
 			readOnlyComponent(true, this.waivedAmount);
 			readOnlyComponent(true, this.adviseType);
@@ -722,6 +725,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 
 		readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
+		readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
