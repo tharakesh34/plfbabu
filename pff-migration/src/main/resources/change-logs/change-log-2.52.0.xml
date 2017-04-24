@@ -2057,7 +2057,15 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 	</createView>
 </changeSet>
 
- 
+ <changeSet id="133" author="Irfan">
+<sql>
+		Update FeeTypes set ApplicableFor=1 where ApplicableFor = 0;
+		Update FeeTypes set ApplicableFor=1 where ApplicableFor =0;
+		Update FeeTypes_Temp set ApplicableFor=1 where ApplicableFor = 0;
+		Update FeeTypes_Temp set ApplicableFor=1 where ApplicableFor =0;
+
+</sql>
+</changeSet>
 	
 	
 	
