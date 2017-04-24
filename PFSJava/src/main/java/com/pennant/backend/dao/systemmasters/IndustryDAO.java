@@ -42,16 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Industry;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Industry model</b> class.<br>
  * 
  */
-public interface IndustryDAO {
+public interface IndustryDAO extends BasicCrudDao<Industry> {
 
 	Industry getIndustryById(String id,String type);
-	void update(Industry industry,String type);
-	void delete(Industry industry,String type);
-	void save(Industry industry,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param industryCode
+	 *            industryCode of the industry.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String industryCode, TableType tableType);
+
 }

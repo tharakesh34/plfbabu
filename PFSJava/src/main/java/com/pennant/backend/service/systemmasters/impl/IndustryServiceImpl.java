@@ -40,15 +40,10 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.IndustryDAO;
@@ -60,6 +55,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.IndustryService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Industry</b>.<br>
@@ -116,17 +112,17 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
 		Industry industry = (Industry) auditHeader.getAuditDetail()
 		.getModelData();
 
+		TableType tableType = TableType.MAIN_TAB;
 		if (industry.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (industry.isNew()) {
@@ -160,14 +156,14 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Industry industry = (Industry) auditHeader.getAuditDetail().getModelData();
 
-		getIndustryDAO().delete(industry, "");
+		getIndustryDAO().delete(industry, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -226,7 +222,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -235,11 +231,17 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		Industry industry = new Industry();
 		BeanUtils.copyProperties((Industry) auditHeader.getAuditDetail()
 				.getModelData(), industry);
+		
+		getIndustryDAO().delete(industry, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(industryDAO.getIndustryById(industry.getIndustryCode(), ""));
+		}
 
 		if (industry.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getIndustryDAO().delete(industry, "");
+			getIndustryDAO().delete(industry, TableType.MAIN_TAB);
 
 		} else {
 			industry.setRoleCode("");
@@ -251,15 +253,14 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 			if (industry.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				industry.setRecordType("");
-				getIndustryDAO().save(industry, "");
+				getIndustryDAO().save(industry, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				industry.setRecordType("");
-				getIndustryDAO().update(industry, "");
+				getIndustryDAO().update(industry, TableType.MAIN_TAB);
 			}
 		}
 
-		getIndustryDAO().delete(industry, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -289,7 +290,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -297,7 +298,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		Industry industry = (Industry) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getIndustryDAO().delete(industry, "_Temp");
+		getIndustryDAO().delete(industry, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -314,10 +315,9 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -333,97 +333,30 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage){
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		Industry industry = (Industry) auditDetail.getModelData();
-		Industry tempIndustry = null;
+		String code = industry.getIndustryCode();
 
-		if (industry.isWorkflow()) {
-			tempIndustry = getIndustryDAO().getIndustryById(industry.getId(),"_Temp");
-		}
+		// Check the unique keys.
+		if (industry.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())
+				&& industryDAO.isDuplicateKey(code, industry.isWorkflow() ? TableType.BOTH_TAB
+						: TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_IndustryCode") + ": " + code;
 
-		Industry befIndustry = getIndustryDAO().getIndustryById(industry.getId(), "");
-		Industry oldIndustry = industry.getBefImage();
-
-		String[] valueParm = new String[1];
-		String[] errParm = new String[1];
-
-		valueParm[0] = industry.getIndustryCode();
-		//valueParm[1] = industry.getSubSectorCode();
-
-		errParm[0] = PennantJavaUtil.getLabel("label_IndustryCode") + ":"+ valueParm[0];
-		//errParm[1] = PennantJavaUtil.getLabel("label_Industry_SubSectorCode")+ ":" + valueParm[1];
-
-		if (industry.isNew()) { // for New record or new record into work flow
-
-			if (!industry.isWorkflow()) {// With out Work flow only new records
-				if (befIndustry != null) { // Record Already Exists in the table
-					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-
-				if (industry.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befIndustry != null || tempIndustry != null) { // if
-						// records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befIndustry == null || tempIndustry != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!industry.isWorkflow()) { // With out Work flow for update and
-				// delete
-
-				if (befIndustry == null) { // if records not exists in the main
-					// table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-
-					if (oldIndustry != null
-							&& !oldIndustry.getLastMntOn().equals(befIndustry.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-
-			} else {
-				if (tempIndustry == null) { // if records not exists in the Work
-					// flow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-				if (tempIndustry != null
-						&& oldIndustry != null
-						&& !oldIndustry.getLastMntOn().equals(tempIndustry.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !industry.isWorkflow()) {
-			auditDetail.setBefImage(befIndustry);
-		}
+
 		logger.debug("Leaving");
-		return auditDetail;
+		return auditDetail;	
 	}
 
 }
