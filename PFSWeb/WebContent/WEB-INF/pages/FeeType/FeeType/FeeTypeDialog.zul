@@ -91,19 +91,19 @@
 									</hbox>
 								</row>
 								<row id="row1">
-									<label id="label_Purpose"
-										value="${c:l('label_FeeTypeDialog_Purpose.value')}" />
-									<hbox id="hlayout_Purpose">
-										<space id="space_Purpose"
-											spacing="2px" sclass="mandatory"/>
-										<combobox id="Purpose"
-											maxlength="8" width="72px" />
+									<label id="label_ApplicableFor"
+										value="${c:l('label_FeeTypeDialog_ApplicableFor.value')}" />
+									<hbox id="hlayout_ApplicableFor">
+										<space id="space_ApplicableFor"
+											spacing="2px" />
+										<checkbox id="applicableFor" />
+
 									</hbox>
-									<label id="label_AccountingSetID"
+									<label id="label_AccountingSetID" visible="false"
 										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
-									<hbox id="hlayout_AccountingSetID">
+									<hbox id="hlayout_AccountingSetID" visible="false">
 										<space id="space_AccountingSetID"
-											spacing="2px" sclass="mandatory"/>
+											spacing="2px" />
 										<extendedcombobox id="accountingSetID"
 											 width="200px" />
 									</hbox>

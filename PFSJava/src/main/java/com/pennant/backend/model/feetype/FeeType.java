@@ -60,6 +60,10 @@ private static final long serialVersionUID = 1L;
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
+	private boolean applicableFor;
+	private Long 	accountSetId;
+	private String 	accountSetCode;
+	private String 	accountSetCodeName;
 	private boolean active;
 	private boolean newRecord;
 	private String lovValue;
@@ -81,6 +85,8 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
+		excludeFields.add("accountSetCode");
+		excludeFields.add("accountSetCodeName");
 	return excludeFields;
 	}
 
@@ -150,6 +156,39 @@ private static final long serialVersionUID = 1L;
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public boolean isApplicableFor() {
+		return applicableFor;
+	}
+
+	public void setApplicableFor(boolean applicableFor) {
+		this.applicableFor = applicableFor;
+	}
+
+
+	public Long getAccountSetId() {
+		return accountSetId;
+	}
+
+	public void setAccountSetId(Long accountSetId) {
+		this.accountSetId = accountSetId;
+	}
+
+	public String getAccountSetCode() {
+		return accountSetCode;
+	}
+
+	public void setAccountSetCode(String accountSetCode) {
+		this.accountSetCode = accountSetCode;
+	}
+
+	public String getAccountSetCodeName() {
+		return accountSetCodeName;
+	}
+
+	public void setAccountSetCodeName(String accountSetCodeName) {
+		this.accountSetCodeName = accountSetCodeName;
 	}
 
 }

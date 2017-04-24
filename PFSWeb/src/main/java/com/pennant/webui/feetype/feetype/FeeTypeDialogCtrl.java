@@ -56,7 +56,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
@@ -69,6 +69,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.util.PennantConstants;
@@ -99,29 +100,29 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	protected Row						row0;
 	protected Label						label_FeeTypeCode;
-	protected Hlayout					hlayout_FeeTypeCode;
+	protected Hbox						hlayout_FeeTypeCode;
 	protected Space						space_FeeTypeCode;
 	protected Uppercasebox				feeTypeCode;
 
 	protected Label						label_FeeTypeDesc;
-	protected Hlayout					hlayout_FeeTypeDesc;
+	protected Hbox						hlayout_FeeTypeDesc;
 	protected Space						space_FeeTypeDesc;
 	protected Textbox					feeTypeDesc;
 
 	protected Row						row1;
 	protected Label						label_ApplicableFor;
-	protected Hlayout					hlayout_ApplicableFor;
+	protected Hbox						hlayout_ApplicableFor;
 	protected Space						space_ApplicableFor;
-	protected Uppercasebox				applicableFor;
+	protected Checkbox					applicableFor;
 
 	protected Label						label_AccountingSetID;
-	protected Hlayout					hlayout_AccountingSetID;
+	protected Hbox						hlayout_AccountingSetID;
 	protected Space						space_AccountingSetID;
 	protected ExtendedCombobox			accountingSetID;
 	
 	protected Row						row2;
 	protected Label						label_Active;
-	protected Hlayout					hlayout_Active;
+	protected Hbox						hlayout_Active;
 	protected Space						space_Active;
 
 	protected Checkbox					active;
@@ -429,8 +430,25 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 		this.feeTypeCode.setValue(aFeeType.getFeeTypeCode());
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
+		this.applicableFor.setChecked(aFeeType.isApplicableFor());
+		if (this.applicableFor.isChecked()) {
+			this.label_AccountingSetID.setVisible(true);
+			this.hlayout_AccountingSetID.setVisible(true);
+			if(aFeeType.getAccountSetId() != null){
+				this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
+				this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
+			}
+		} else {
+			this.label_AccountingSetID.setVisible(false);
+			this.hlayout_AccountingSetID.setVisible(false);
+			this.accountingSetID.setValue("");
+		}
 		this.active.setChecked(aFeeType.isActive());
-
+		
+		if(aFeeType.isNew() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -455,6 +473,24 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//Description
 		try {
 			aFeeType.setFeeTypeDesc(this.feeTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Accounting Set ID
+		try {
+			
+			AccountingSet accountingSet = (AccountingSet) this.accountingSetID.getObject();
+			if(accountingSet != null){
+				aFeeType.setAccountSetId(accountingSet.getAccountSetid());
+			}	
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//ApplicableFor
+		try {
+			aFeeType.setApplicableFor(this.applicableFor.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -541,6 +577,20 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private void refreshList() {
 		feeTypeListCtrl.search();
 	}
+	
+	public void onCheck$applicableFor(Event event) {
+		logger.debug("Entering");
+		if (this.applicableFor.isChecked()) {
+			this.label_AccountingSetID.setVisible(true);
+			this.hlayout_AccountingSetID.setVisible(true);
+			this.accountingSetID.setValue("");
+
+		}else{
+			this.label_AccountingSetID.setVisible(false);
+			this.hlayout_AccountingSetID.setVisible(false);
+			this.accountingSetID.setValue("");
+		}
+	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
@@ -562,6 +612,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.feeTypeDesc.setReadonly(isReadOnly("FeeTypeDialog_FeeTypeDesc"));
 		readOnlyComponent(isReadOnly("FeeTypeDialog_Active"), this.active);
+		this.applicableFor.setDisabled(isReadOnly("FeeTypeDialog_ApplicableFor"));
+		this.accountingSetID.setReadonly(isReadOnly("FeeTypeDialog_AccountSetId"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -699,6 +751,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.feeTypeCode.setValue("");
 		this.feeTypeDesc.setValue("");
+		this.applicableFor.setValue("");
 		this.active.setValue("");
 		logger.debug("Leaving");
 	}
