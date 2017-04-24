@@ -370,7 +370,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" ExpiryDate = :ExpiryDate , MaxLimit = :MaxLimit, Periodicity = :Periodicity,");
 		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode,");
 		updateSql.append(" PhoneNumber = :PhoneNumber, Status = :Status, ApprovalID = :ApprovalID,");
-		updateSql.append(" InputDate = :InputDate, Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
+		updateSql.append("  Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
@@ -422,7 +422,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		updateSql.append(" ExpiryDate = :ExpiryDate , MaxLimit = :MaxLimit, Periodicity = :Periodicity,");
 		updateSql.append(" PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode,");
 		updateSql.append(" PhoneNumber = :PhoneNumber, ApprovalID = :ApprovalID,");
-		updateSql.append(" InputDate = :InputDate, Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
+		updateSql.append(" Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy,");
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
