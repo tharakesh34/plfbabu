@@ -82,7 +82,7 @@
 									<listbox id="sortOperator_BucketID"
 										width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<intbox id="bucketID" width="72px"
+									<textbox id="bucketID" width="72px"
 										maxlength="5" />
 								</row>
 								<row>

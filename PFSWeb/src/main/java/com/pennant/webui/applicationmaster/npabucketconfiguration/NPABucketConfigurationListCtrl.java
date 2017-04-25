@@ -93,7 +93,7 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 
 	// Search Fields
 	protected Textbox productCode; // autowired
-	protected Intbox bucketID; // autowired
+	protected Textbox bucketID; // autowired
   	protected Intbox dueDays; // autowired
 	protected Checkbox suspendProfit; // autowired
 	

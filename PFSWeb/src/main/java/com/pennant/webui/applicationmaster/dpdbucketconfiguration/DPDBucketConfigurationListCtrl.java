@@ -94,7 +94,7 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 
 	// Search Fields
 	protected Textbox productCode; // autowired
-	protected Intbox bucketID; // autowired
+	protected Textbox bucketID; // autowired
   	protected Intbox dueDays; // autowired
 	protected Checkbox suspendProfit; // autowired
 	
