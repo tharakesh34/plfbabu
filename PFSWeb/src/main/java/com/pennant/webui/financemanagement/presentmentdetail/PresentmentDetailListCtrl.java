@@ -77,6 +77,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -192,22 +193,22 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
 
-		if (!StringUtils.trimToEmpty(this.mandateType.getValue()).equals("")) {
-			searchObject.addFilterEqual("MandateType", this.mandateType.getValue());
+		if (this.mandateType.getSelectedItem() !=null && !PennantConstants.List_Select.equals(this.mandateType.getSelectedItem().getValue())){
+			this.searchObject.addFilterEqual("MandateType", this.mandateType.getSelectedItem().getValue());
 		}
 		
-		if (!StringUtils.trimToEmpty(this.product.getValue()).equals("")) {
-			searchObject.addFilterEqual(" ", this.product.getValue());
+		if (StringUtils.isNotEmpty(this.product.getTextbox().getValue())) {
+			this.searchObject.addFilterEqual("FinType", this.product.getValue());
 		}
 		
 		
-		if (!StringUtils.trimToEmpty(this.exclusionStatus.getValue()).equals("")) {
-			searchObject.addFilterEqual(" ", this.exclusionStatus.getValue());
+		if (this.exclusionStatus.getSelectedItem() !=null && !PennantConstants.List_Select.equals(this.exclusionStatus.getSelectedItem().getValue())) {
+			this.searchObject.addFilterEqual("ExcludeReason", this.exclusionStatus.getSelectedItem().getValue());
 		}
 		
 		
 		getPagedListWrapper().setPagedListService(pagedListService);
-		getPagedListWrapper().init(searchObject, this.listbox, this.paging);
+		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
 		logger.debug("Leaving");
 	}
 	
@@ -289,15 +290,15 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
-		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
-
+        this.mandateType.setSelectedIndex(0);
+		
 		this.product.setValue("");
 		this.product.setDescription("");
 		if (listBoxPresentmentDetail.getItems() != null) {
 			this.listBoxPresentmentDetail.getItems().clear();
 
 		}
-
+        search();
 		logger.debug(Literal.LEAVING);
 
 	}
