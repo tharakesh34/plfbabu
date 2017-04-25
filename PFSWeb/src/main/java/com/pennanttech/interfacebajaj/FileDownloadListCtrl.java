@@ -161,8 +161,13 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 		switch (fileContol) {
 		case DISBURSEMENT:
+				
+			searchObject.removeField("PARTNERBANKNAME");
+			searchObject.removeField("ALWFILEDOWNLOAD");
+			
 			this.searchObject.addField("PARTNERBANKNAME");
 			this.searchObject.addField("ALWFILEDOWNLOAD");
+			
 			list.add("DISB_HDFC_EXPORT");
 			list.add("DISB_IMPS_EXPORT");
 			list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
@@ -265,7 +270,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 				downlaod.setDisabled(true);
 			}
 
-			FileControl fileContol = FileControl.valueOf(fileDownlaod.getName());
+			FileControl fileContol = FileControl.valueOf(module);
 
 			switch (fileContol) {
 			case DISBURSEMENT:
@@ -288,23 +293,6 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			default:
 				break;
 			}
-
-			if ("MANDATES".equals(module)) {
-				downlaod.setTooltiptext("Mandates download.");
-
-			} else if ("DISBURSEMENT".equals(module)) {
-
-				if (0 == fileDownlaod.getAlwFileDownload()
-						|| !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
-					downlaod.setDisabled(true);
-				}
-
-				if (0 == fileDownlaod.getAlwFileDownload()) {
-					downlaod.setTooltiptext("Not allowed to downlaod.");
-				}
-
-			}
-
 			lc.setParent(item);
 
 		}
