@@ -15,6 +15,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementService;
 
 public class DisbursementServiceImpl implements DisbursementService {
@@ -29,7 +30,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void processDisbursements(Object... params) throws Exception {
+	public void sendDisbursementRequest(Object... params) throws Exception {
 		this.finType = (String) params[0];
 		this.disbusments = (List<FinAdvancePayments>) params[1];
 		this.userId = (long) params[2];
@@ -46,7 +47,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 	}
 
 	private void processDisbursements() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, StringBuilder> paymentTypes = new HashMap<>();
 		String partnerbankCode = null;
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -84,7 +85,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 				process(paymentTypes, configName, partnerbankCode);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode) {
@@ -123,8 +124,10 @@ public class DisbursementServiceImpl implements DisbursementService {
 			export.setParameterMap(parameterMap);
 			export.exportData(configName);
 		} catch (Exception e) {
-
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
+			export = null;
+			parameterMap = null;
 		}
 	}
 
@@ -133,8 +136,9 @@ public class DisbursementServiceImpl implements DisbursementService {
 		try {
 			proce.processData(configName, paymentIds.toString());
 		} catch (Exception e) {
-
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
+			proce = null;
 		}
 
 	}
@@ -157,6 +161,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 			return jdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
 
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			sql = null;
 			parameter = null;
@@ -177,7 +182,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 			try {
 				processDisbursements();
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}

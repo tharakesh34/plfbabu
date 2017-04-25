@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.GeneralLedgerService;
 import com.pennanttech.pff.core.util.DateUtil;
 
@@ -43,7 +44,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 	private String						fileName		= null;
 
 	@Override
-	public void processGL(Object... params) throws Exception {
+	public void generateGLReport(Object... params) throws Exception {
 		this.userId = (long) params[0];
 		try {
 			prepareGLDates();
@@ -95,7 +96,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to prpare the transaction summary report.");
 		} finally {
 			paramMap = null;
@@ -129,7 +130,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to prpare the transaction summary report.");
 		} finally {
 			paramMap = null;
@@ -170,7 +171,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert trail balance header.");
 		} finally {
 			paramMap = null;
@@ -357,7 +358,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			namedJdbcTemplate.update(sql.toString(), parameterSource);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert the summary records for the page " + pageItr);
 		}
 	}
@@ -451,7 +452,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 			return namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			paramMap = null;
 			sql = null;
@@ -565,7 +566,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			return namedJdbcTemplate.update(sql.toString(), parameterSource);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			e.printStackTrace();
 		}
 
@@ -586,7 +587,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			e.printStackTrace();
 		}
 
@@ -604,7 +605,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, type);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("The parameter code " + sysParmCode + " not configured.");
 		}
 	}
@@ -622,7 +623,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			return namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to update the " + sysParmCode + ".");
 		}
 	}

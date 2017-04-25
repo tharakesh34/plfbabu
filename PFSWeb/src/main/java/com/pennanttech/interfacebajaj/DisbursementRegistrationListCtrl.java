@@ -470,7 +470,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			disbursementService.processDisbursements(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			disbursementService.sendDisbursementRequest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			Map<String,Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
 			

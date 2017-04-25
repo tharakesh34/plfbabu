@@ -3601,7 +3601,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
 		try {
-			disbursementService.processDisbursements(finMain.getFinType(), list, finMain.getLastMntBy());
+			disbursementService.sendDisbursementRequest(finMain.getFinType(), list, finMain.getLastMntBy());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
