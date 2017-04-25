@@ -120,6 +120,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		// Render the page and display the data.
 		doRenderPage();
 		doSetFieldProperties();
+		
+		registerField("FromDt");;
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -149,8 +151,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 */
 	public void onClick$button_PresentmentDetailList_Extract(Event event) {
 		String errorMsg = null;
+		doSetValidations();
 		try {
-			doSetValidations();
 			errorMsg = extractDetails();
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
@@ -196,7 +198,27 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
-		doReset();
+		doResetInitValues();
+	}
+
+	private void doResetInitValues() {
+		logger.debug(Literal.ENTERING);
+
+		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+
+		this.loanType.setValue("");
+		this.loanType.setDescription("");
+
+		this.fromdate.setValue(null);
+		this.toDate.setValue(null);
+
+		if (listBoxPresentmentExtractDetail.getItems() != null) {
+			this.listBoxPresentmentExtractDetail.getItems().clear();
+
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**

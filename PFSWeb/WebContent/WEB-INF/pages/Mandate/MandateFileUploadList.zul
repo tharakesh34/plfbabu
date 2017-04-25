@@ -96,9 +96,8 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingMandateList" height="35px" />
+					<paging id="pagingMandateList"/>
 				</south>
-
 			</borderlayout>
 		</window>
 	</window>

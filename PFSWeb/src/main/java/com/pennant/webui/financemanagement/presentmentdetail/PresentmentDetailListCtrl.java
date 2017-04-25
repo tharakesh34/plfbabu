@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -68,12 +69,14 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -118,7 +121,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	protected void doSetProperties() {
 		super.moduleCode = "PresentmentDetail";
 		super.pageRightName = "PresentmentDetailList";
-		super.tableName = "PresentmentDetails";
+		super.tableName = "PRESENTMENTDETAIL_SEARCHVIEW";
 		super.queueTableName = "PresentmentDetails";
 	}
 
@@ -189,9 +192,22 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
 
+		if (!StringUtils.trimToEmpty(this.mandateType.getValue()).equals("")) {
+			searchObject.addFilterEqual("MandateType", this.mandateType.getValue());
+		}
+		
+		if (!StringUtils.trimToEmpty(this.product.getValue()).equals("")) {
+			searchObject.addFilterEqual(" ", this.product.getValue());
+		}
+		
+		
+		if (!StringUtils.trimToEmpty(this.exclusionStatus.getValue()).equals("")) {
+			searchObject.addFilterEqual(" ", this.exclusionStatus.getValue());
+		}
+		
+		
 		getPagedListWrapper().setPagedListService(pagedListService);
-		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
-
+		getPagedListWrapper().init(searchObject, this.listbox, this.paging);
 		logger.debug("Leaving");
 	}
 	
@@ -261,7 +277,29 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
-		doReset();
+		doResetInitValues();
+	}
+
+	
+	/**
+	 * Resets the initial values from member variables. <br>
+	 */
+	private void doResetInitValues() {
+		logger.debug(Literal.ENTERING);
+
+		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
+		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
+
+		this.product.setValue("");
+		this.product.setDescription("");
+		if (listBoxPresentmentDetail.getItems() != null) {
+			this.listBoxPresentmentDetail.getItems().clear();
+
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -319,16 +357,47 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 			lc = new Listcell("Customer");
 			lc.setParent(item);
 
-			lc = new Listcell();
+			lc = new Listcell(presentmentDetail.getFinReference());
 			lc.setParent(item);
 
-			lc = new Listcell();
+			lc = new Listcell(presentmentDetail.getFinTypeDesc());
 			lc.setParent(item);
 
-			lc = new Listcell();
+			lc = new Listcell(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
 			lc.setParent(item);
 
-			lc = new Listcell();
+			// FIX ME Amount(what amt to take)
+			lc = new Listcell(PennantApplicationUtil.formatRate(presentmentDetail.getAdvanceAmt().doubleValue(), 9));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			
+			String mandateTypeDesc = null;
+			
+			ArrayList<ValueLabel> mandatelist = PennantStaticListUtil.getMandateTypeList();
+			for (ValueLabel valueLabel : mandatelist) {
+				if (String.valueOf(presentmentDetail.getMandateType()).equals(valueLabel.getValue())) {
+					mandateTypeDesc = valueLabel.getLabel();
+				}
+			}
+			if (mandateTypeDesc != null) {
+				lc = new Listcell(mandateTypeDesc);
+			}
+
+			lc.setParent(item);
+			
+			String excludedStatus = null;
+
+			ArrayList<ValueLabel> exclusionlist = PennantStaticListUtil.getPresentmentExclusionList();
+			for (ValueLabel valueLabel : exclusionlist) {
+				if (String.valueOf(presentmentDetail.getExcludeReason()).equals(valueLabel.getValue())) {
+					excludedStatus = valueLabel.getLabel();
+				}
+			}
+			if (excludedStatus != null) {
+				lc = new Listcell(String.valueOf(excludedStatus));
+			}
+
 			lc.setParent(item);
 
 			lc = new Listcell();

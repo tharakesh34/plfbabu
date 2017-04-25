@@ -74,6 +74,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private long presentmentID = Long.MIN_VALUE;
 	private String presentmentIDName;
 	private String finReference;
+	private String finTypeDesc;
 	private String finReferenceName;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schDate;
@@ -140,6 +141,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("loanType");
 		excludeFields.add("loanTypeName");
 		excludeFields.add("mandateType");
+		excludeFields.add("finTypeDesc");
 		return excludeFields;
 	}
 
@@ -445,6 +447,15 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setMandateExpiry(Date mandateExpiry) {
 		this.mandateExpiry = mandateExpiry;
+	}
+
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
 	}
 
 }
