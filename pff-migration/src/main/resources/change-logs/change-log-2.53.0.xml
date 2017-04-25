@@ -315,7 +315,7 @@ WHERE NOT EXISTS
 			
 		</sql>
 	</changeSet>
-	<changeSet id="27" author="Surekha">
+	<changeSet id="27.1" author="Surekha">
 		<addNotNullConstraint tableName="RMTFinanceTypes"
 			columnName="PROFITCENTERID" columnDataType="bigint" />
 	</changeSet>
