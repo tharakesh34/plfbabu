@@ -2242,5 +2242,7 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		</createView>
 	</changeSet>
 		
-	
+	<changeSet id="141" author="Durgaprasad G">
+	<renameTable newTableName="PDC_CONSL_EMI_DTL" oldTableName="PresentationRequest" />
+</changeSet>
 </databaseChangeLog>
