@@ -2290,4 +2290,28 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		delete SecRights where rightName='button_AccountTypeDialog_btnDelete';
 	</sql>
 </changeSet>
+<changeSet id="148" author="Surekha">
+	<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'BOUNCERULE_MAKER','WF Maker for Bounce Rule', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'BOUNCERULE_APPROVER','WF Maker for Bounce Rule', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_RulesFactory_BounceRule', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BOUNCERULE_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_BounceRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BOUNCERULE_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_BounceRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'BOUNCERULE_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'BOUNCERULE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+</changeSet>
 </databaseChangeLog>
