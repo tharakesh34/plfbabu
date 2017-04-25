@@ -499,6 +499,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			}
 
 			break;
+		case RuleConstants.MODULE_BOUNCE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
 		}
 
 		// Window Title

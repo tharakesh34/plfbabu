@@ -47,6 +47,7 @@ public class RuleConstants {
 	public static final String EVENT_CUSTOMER = "CUSTOMER";
 	public static final String EVENT_BANK = "BANK";
 	public static final String EVENT_LTVRULE = "LTVRULE";
+	public static final String EVENT_BOUNCE = "BOUNCE";
 
 	public static final String RETURNTYPE_DECIMAL = "D";
 	public static final String RETURNTYPE_STRING = "S";
