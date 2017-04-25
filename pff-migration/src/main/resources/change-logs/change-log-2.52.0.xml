@@ -2254,4 +2254,10 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 	
 </sql>
 </changeSet>
+<changeSet id="143" author="Surekha">
+	<renameColumn tableName="BounceReasons" oldColumnName="FeeID" newColumnName="RuleID"/>
+</changeSet>
+<changeSet id="144" author="Surekha">
+	<renameColumn tableName="BounceReasons_Temp" oldColumnName="FeeID" newColumnName="RuleID"/>
+</changeSet>
 </databaseChangeLog>
