@@ -308,5 +308,16 @@ WHERE NOT EXISTS
 		INSERT INTO ReportList Values('EMailType','EMailType','listheader_EmailTypeCode.label,listheader_EmailTypeDesc.label,listheader_EmailTypeIsActive.label','emailTypeCode,emailTypeDesc,emailTypeIsActive','String,String,boolean','','ReportList03',' Email Types','System Masters',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 	</sql>
 </changeSet>
+<changeSet id="26" author="Surekha">
+		<sql>
+			update RMTFinanceTypes set PROFITCENTERID=1;
+			update RMTFinanceTypes_temp set PROFITCENTERID=1;
+			
+		</sql>
+	</changeSet>
+	<changeSet id="27" author="Surekha">
+		<addNotNullConstraint tableName="RMTFinanceTypes"
+			columnName="PROFITCENTERID" columnDataType="bigint" />
+	</changeSet>
 	
 </databaseChangeLog>
