@@ -609,7 +609,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBounceReason.getBounceCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_BounceReasonDialog_BounceCode.value") + " : " + aBounceReason.getBounceCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		

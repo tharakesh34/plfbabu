@@ -486,10 +486,11 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aNPABucket.getBucketCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_NPABucketDialog_BucketCode.value") +" : " +aNPABucket.getBucketCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
-		
+
 		int conf =  (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true));
 
 		if (conf==MultiLineMessageBox.YES){

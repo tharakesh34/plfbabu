@@ -469,7 +469,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDPDBucket.getBucketCode();
+				+ Labels.getLabel("label_DPDBucketDialog_BucketCode.value") + " : " + aDPDBucket.getBucketCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 

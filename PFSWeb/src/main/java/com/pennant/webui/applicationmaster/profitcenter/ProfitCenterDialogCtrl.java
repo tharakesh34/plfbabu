@@ -499,7 +499,9 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aProfitCenter.getProfitCenterCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value") + " : "
+				+ aProfitCenter.getProfitCenterCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
