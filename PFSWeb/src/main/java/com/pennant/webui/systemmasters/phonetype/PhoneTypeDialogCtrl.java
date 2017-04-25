@@ -56,9 +56,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -90,7 +92,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	protected Textbox 	phoneTypeCode; 					
 	protected Textbox 	phoneTypeDesc; 					
 	protected Intbox 	phoneTypePriority; 				
-	protected Checkbox 	phoneTypeIsActive; 				
+	protected Checkbox 	phoneTypeIsActive; 	
+	protected Row		row_PhoneTypePriority;
 
 	// not autoWired variables
 	private 		  PhoneType 		phoneType; 			// over handed per parameter
@@ -305,7 +308,12 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 		this.phoneTypeCode.setValue(aPhoneType.getPhoneTypeCode());
 		this.phoneTypeDesc.setValue(aPhoneType.getPhoneTypeDesc());
-		this.phoneTypePriority.setValue(aPhoneType.getPhoneTypePriority());
+		if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
+			this.phoneTypePriority.setValue(aPhoneType.getPhoneTypePriority());
+			this.row_PhoneTypePriority.setVisible(true);
+		} else {
+			this.row_PhoneTypePriority.setVisible(false);
+		}
 		this.phoneTypeIsActive.setChecked(aPhoneType.isPhoneTypeIsActive());
 		this.recordStatus.setValue(aPhoneType.getRecordStatus());
 		
@@ -339,7 +347,11 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			wve.add(we);
 		}
 		try {
-			aPhoneType.setPhoneTypePriority(this.phoneTypePriority.getValue());
+			if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
+				aPhoneType.setPhoneTypePriority(this.phoneTypePriority.getValue());
+			} else {
+				aPhoneType.setPhoneTypePriority(0);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

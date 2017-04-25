@@ -56,9 +56,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -92,6 +94,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	protected Textbox 	emailTypeDesc; 			// autoWired
 	protected Intbox 	emailTypePriority; 		// autoWired
 	protected Checkbox 	emailTypeIsActive; 		// autoWired
+	protected Row		row_EmailTypePriority;
 
 	
 
@@ -312,7 +315,12 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		logger.debug("Entering");
 		this.emailTypeCode.setValue(aEMailType.getEmailTypeCode());
 		this.emailTypeDesc.setValue(aEMailType.getEmailTypeDesc());
-		this.emailTypePriority.setValue(aEMailType.getEmailTypePriority());
+		if (ImplementationConstants.ALLOW_EMIALTYPE_PRIORITY) {
+			this.emailTypePriority.setValue(aEMailType.getEmailTypePriority());
+			this.row_EmailTypePriority.setVisible(true);
+		} else {
+			this.row_EmailTypePriority.setVisible(false);
+		}
 		this.emailTypeIsActive.setChecked(aEMailType.isEmailTypeIsActive());
 		this.recordStatus.setValue(aEMailType.getRecordStatus());
 		
@@ -346,7 +354,11 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 			wve.add(we);
 		}
 		try {
-			aEMailType.setEmailTypePriority(this.emailTypePriority.getValue());
+			if (ImplementationConstants.ALLOW_EMIALTYPE_PRIORITY) {
+				aEMailType.setEmailTypePriority(this.emailTypePriority.getValue());
+			} else {
+				aEMailType.setEmailTypePriority(0);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

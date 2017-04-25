@@ -56,9 +56,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -92,6 +94,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	protected Textbox 		addrTypeDesc; 				// autoWired
 	protected Intbox 		addrTypePriority; 			// autoWired
 	protected Checkbox 		addrTypeIsActive; 			// autoWired
+	protected Row			row_AddrTypePriority;		// autoWired
 
 
 	// not autoWired Var's
@@ -304,7 +307,12 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		logger.debug("Entering");
 		this.addrTypeCode.setValue(aAddressType.getAddrTypeCode());
 		this.addrTypeDesc.setValue(aAddressType.getAddrTypeDesc());
-		this.addrTypePriority.setValue(aAddressType.getAddrTypePriority());
+		if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
+			this.addrTypePriority.setValue(aAddressType.getAddrTypePriority());
+			this.row_AddrTypePriority.setVisible(true);
+		}else{
+			this.row_AddrTypePriority.setVisible(false);
+		}
 		this.addrTypeIsActive.setChecked(aAddressType.isAddrTypeIsActive());
 		this.recordStatus.setValue(aAddressType.getRecordStatus());
 		
@@ -338,7 +346,11 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 			wve.add(we);
 		}
 		try {
-			aAddressType.setAddrTypePriority(this.addrTypePriority.getValue());
+			if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
+				aAddressType.setAddrTypePriority(this.addrTypePriority.getValue());
+			} else {
+				aAddressType.setAddrTypePriority(0);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

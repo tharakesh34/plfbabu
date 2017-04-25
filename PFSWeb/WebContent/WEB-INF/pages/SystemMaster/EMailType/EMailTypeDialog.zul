@@ -91,7 +91,7 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row id="row_EmailTypePriority">
 								<label
 									id="label_EMailTypeDialog_EmailTypePriority"
 									value="${c:l('label_EMailTypeDialog_EmailTypePriority.value')}" />

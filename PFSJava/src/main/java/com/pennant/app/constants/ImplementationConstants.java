@@ -93,4 +93,13 @@ public class ImplementationConstants {
 	
 	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
 	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
+	
+	// Address Type Details
+	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY      = false;
+	
+	//Email Type Details
+	public static final boolean	ALLOW_EMIALTYPE_PRIORITY     	= false;
+	
+	//Phone Type Details
+	public static final boolean	ALLOW_PHONETYPE_PRIORITY     	= false;
 }
