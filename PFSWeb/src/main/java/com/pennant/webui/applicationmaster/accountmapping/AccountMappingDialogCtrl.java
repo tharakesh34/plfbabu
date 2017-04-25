@@ -209,6 +209,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		} else {
 			FinanceType financeType = (FinanceType) dataObject;
 			List<String> subHeadRuleList = new ArrayList<>();
+			Map<String, Rule> subHeadMap = null;
 			
 			
 			List<TransactionEntry> transactionEntries = null;
@@ -222,11 +223,12 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 						subHeadRuleList.add(transactionEntry.getAccountSubHeadRule());
 					}
 				}
+				
+				subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
 			}
-			
-			Map<String, Rule> subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
-			
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
