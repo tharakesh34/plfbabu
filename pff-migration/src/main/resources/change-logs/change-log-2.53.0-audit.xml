@@ -31,4 +31,10 @@
 		</addColumn>
 	</changeSet> 
 	
+	<changeSet id="05" author="Kesav">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="FinType" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
