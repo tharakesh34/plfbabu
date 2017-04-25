@@ -1439,7 +1439,7 @@
 													id="fInIsAlwGrace" checked="false" />
 											</hbox>
 										</row>
-										<row visible="true">
+										<row id='row_finDepreciation'>
 											<label
 												id="label_FinanceTypeDialog_FinIsAlwMD"
 												value="${c:l('label_OverDraftFinanceTypeDialog_FinIsAlwMD.value')}" />
@@ -1451,7 +1451,7 @@
 											<label
 												id="label_FinanceTypeDialog_FinDepreciationReq"
 												value="${c:l('label_OverDraftFinanceTypeDialog_FinDepreciationReq.value')}" />
-											<hbox>
+											<hbox id="hbox_FinDepreciationReq">
 												<space spacing="2px" />
 												<checkbox
 													id="finDepreciationReq" />

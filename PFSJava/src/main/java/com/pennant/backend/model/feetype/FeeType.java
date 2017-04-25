@@ -60,7 +60,7 @@ private static final long serialVersionUID = 1L;
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
-	private boolean applicableFor;
+	private boolean manualAdvice;
 	private Long 	accountSetId;
 	private String 	accountSetCode;
 	private String 	accountSetCodeName;
@@ -158,15 +158,6 @@ private static final long serialVersionUID = 1L;
 		this.active = active;
 	}
 
-	public boolean isApplicableFor() {
-		return applicableFor;
-	}
-
-	public void setApplicableFor(boolean applicableFor) {
-		this.applicableFor = applicableFor;
-	}
-
-
 	public Long getAccountSetId() {
 		return accountSetId;
 	}
@@ -189,6 +180,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setAccountSetCodeName(String accountSetCodeName) {
 		this.accountSetCodeName = accountSetCodeName;
+	}
+
+	public boolean isManualAdvice() {
+		return manualAdvice;
+	}
+
+	public void setManualAdvice(boolean manualAdvice) {
+		this.manualAdvice = manualAdvice;
 	}
 
 }

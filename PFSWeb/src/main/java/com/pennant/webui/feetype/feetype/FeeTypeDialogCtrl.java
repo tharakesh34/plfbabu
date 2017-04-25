@@ -110,10 +110,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Textbox					feeTypeDesc;
 
 	protected Row						row1;
-	protected Label						label_ApplicableFor;
-	protected Hbox						hlayout_ApplicableFor;
-	protected Space						space_ApplicableFor;
-	protected Checkbox					applicableFor;
+	protected Label						label_ManualAdvice;
+	protected Hbox						hlayout_ManualAdvice;
+	protected Space						space_ManualAdvice;
+	protected Checkbox					manualAdvice;
 
 	protected Label						label_AccountingSetID;
 	protected Hbox						hlayout_AccountingSetID;
@@ -356,7 +356,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		readOnlyComponent(true, this.feeTypeCode);
 		readOnlyComponent(true, this.feeTypeDesc);
-		readOnlyComponent(true, this.applicableFor);
+		readOnlyComponent(true, this.manualAdvice);
 		readOnlyComponent(true, this.accountingSetID);
 		readOnlyComponent(true, this.active);
 
@@ -430,8 +430,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 		this.feeTypeCode.setValue(aFeeType.getFeeTypeCode());
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
-		this.applicableFor.setChecked(aFeeType.isApplicableFor());
-		if (this.applicableFor.isChecked()) {
+		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
+		if (this.manualAdvice.isChecked()) {
 			this.label_AccountingSetID.setVisible(true);
 			this.hlayout_AccountingSetID.setVisible(true);
 			if(aFeeType.getAccountSetId() != null){
@@ -490,7 +490,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		//ApplicableFor
 		try {
-			aFeeType.setApplicableFor(this.applicableFor.isChecked());
+			aFeeType.setManualAdvice(this.manualAdvice.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -530,6 +530,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
+		if (!this.accountingSetID.isReadonly()) {
+				this.accountingSetID.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, this.manualAdvice.isChecked()));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -540,6 +544,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 		this.feeTypeCode.setConstraint("");
 		this.feeTypeDesc.setConstraint("");
+		this.accountingSetID.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -578,9 +583,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		feeTypeListCtrl.search();
 	}
 	
-	public void onCheck$applicableFor(Event event) {
+	public void onCheck$manualAdvice(Event event) {
 		logger.debug("Entering");
-		if (this.applicableFor.isChecked()) {
+		if (this.manualAdvice.isChecked()) {
 			this.label_AccountingSetID.setVisible(true);
 			this.hlayout_AccountingSetID.setVisible(true);
 			this.accountingSetID.setValue("");
@@ -612,7 +617,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.feeTypeDesc.setReadonly(isReadOnly("FeeTypeDialog_FeeTypeDesc"));
 		readOnlyComponent(isReadOnly("FeeTypeDialog_Active"), this.active);
-		this.applicableFor.setDisabled(isReadOnly("FeeTypeDialog_ApplicableFor"));
+		this.manualAdvice.setDisabled(isReadOnly("FeeTypeDialog_ApplicableFor"));
 		this.accountingSetID.setReadonly(isReadOnly("FeeTypeDialog_AccountSetId"));
 
 		if (isWorkFlowEnabled()) {
@@ -751,7 +756,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		this.feeTypeCode.setValue("");
 		this.feeTypeDesc.setValue("");
-		this.applicableFor.setValue("");
+		this.manualAdvice.setValue("");
+		this.accountingSetID.setValue("");
 		this.active.setValue("");
 		logger.debug("Leaving");
 	}

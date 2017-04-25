@@ -102,4 +102,5 @@ public class ImplementationConstants {
 	
 	//Phone Type Details
 	public static final boolean	ALLOW_PHONETYPE_PRIORITY     	= false;
+	public static final boolean	ALLOW_DEPRECIATION    			= false; 					//DEPRECIATION   Required or Not 
 }

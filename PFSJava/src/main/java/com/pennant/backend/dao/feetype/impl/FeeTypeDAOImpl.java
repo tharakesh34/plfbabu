@@ -95,7 +95,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		feeType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select feeTypeID,feeTypeCode,feeTypeDesc,active,ApplicableFor, AccountSetId,");
+		selectSql.append(" Select feeTypeID,feeTypeCode,feeTypeDesc,active,manualAdvice, AccountSetId,");
 		if(type.contains("View")){
 			selectSql.append(" AccountSetCode, AccountSetCodeName," );
 		}
@@ -197,10 +197,10 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into FeeTypes");
 		sql.append(StringUtils.trimToEmpty(type) );
-		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, ApplicableFor, AccountSetId, active,");
+		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AccountSetId, active,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
-		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :ApplicableFor, :AccountSetId, :active,");
+		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AccountSetId, :active,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
@@ -234,7 +234,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
-		sql.append(" ApplicableFor = :ApplicableFor, AccountSetId = :AccountSetId,");
+		sql.append(" manualAdvice = :manualAdvice, AccountSetId = :AccountSetId,");
 		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where FeeTypeID =:FeeTypeID");
 

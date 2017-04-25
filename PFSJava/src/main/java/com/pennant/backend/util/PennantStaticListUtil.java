@@ -2377,7 +2377,10 @@ public class PennantStaticListUtil {
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_RATCHG, Labels.getLabel("label_AccountingEvent_RATCHG"),true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_GRACEEND, Labels.getLabel("label_AccountingEvent_GRACEEND"),false));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_SCDCHG, Labels.getLabel("label_AccountingEvent_SCDCHG"),true));
-			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DPRCIATE, Labels.getLabel("label_AccountingEvent_DPRCIATE"),false));
+			if (ImplementationConstants.ALLOW_DEPRECIATION) {
+				accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DPRCIATE, Labels
+						.getLabel("label_AccountingEvent_DPRCIATE"), false));
+			}
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_REAGING, Labels.getLabel("label_AccountingEvent_REAGING"),true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EMIHOLIDAY, Labels.getLabel("label_AccountingEvent_EMIHOLIDAY"),true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EARLYSTL, Labels.getLabel("label_AccountingEvent_EARLYSTL"),true));

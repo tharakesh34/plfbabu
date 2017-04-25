@@ -256,6 +256,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Decimalbox grcAdvPftRate; // autoWired
 	protected Row row_GrcAdvBaseRate; // autoWired
 	protected Row row_GrcAdvMargin; // autoWired
+	protected Row row_finDepreciation; // autoWired
+	protected Label label_FinanceTypeDialog_FinDepreciationReq;// autoWired
+	protected Hbox hbox_FinDepreciationReq;// autoWired
 
 	// Repay Schedule Details Tab'
 	protected Space space_cbfinRateType;
@@ -881,7 +884,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		//Accounting Details
 		this.profitDetails.setMaxlength(8);
-		this.profitDetails.setMandatoryStyle(false);
+		this.profitDetails.setMandatoryStyle(true);
 		this.profitDetails.setModuleName("ProfitCenter");
 		this.profitDetails.setValueColumn("ProfitCenterCode");
 		this.profitDetails.setDescColumn("ProfitCenterDesc");
@@ -890,8 +893,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.product.setFilters(filter);
-
+		if (!this.isOverdraft) {
+			row_finDepreciation.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		}
+		label_FinanceTypeDialog_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		hbox_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		
 		logger.debug("Leaving");
+		
 	}
 
 	/**
@@ -3392,6 +3401,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(Labels
 						.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
 			}
+		}
+		if (!this.profitDetails.isReadonly()) {
+			this.profitDetails.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_FinanceTypeDialog_ProfitDetails.value"), null,true));
 		}
 
 		logger.debug("Leaving");

@@ -69,7 +69,7 @@
 								<column width="15%" />
 								<column width="35%" />
 								<column width="15%" />
-								<column width="35%" />
+								<column width="45%" />
 							</columns>
 							<rows>
 								<row id="row0">
@@ -91,12 +91,12 @@
 									</hbox>
 								</row>
 								<row id="row1">
-									<label id="label_ApplicableFor"
-										value="${c:l('label_FeeTypeDialog_ApplicableFor.value')}" />
-									<hbox id="hlayout_ApplicableFor">
-										<space id="space_ApplicableFor"
+									<label id="label_ManualAdvice"
+										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
+									<hbox id="hlayout_ManualAdvice">
+										<space id="space_ManualAdvice"
 											spacing="2px" />
-										<checkbox id="applicableFor" />
+										<checkbox id="manualAdvice" />
 
 									</hbox>
 									<label id="label_AccountingSetID" visible="false"
