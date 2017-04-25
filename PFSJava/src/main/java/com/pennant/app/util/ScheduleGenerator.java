@@ -594,6 +594,9 @@ public class ScheduleGenerator {
 						}else{
 							startCalFrom = FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, prvSchd.getSchDate(), "A", false).getNextFrequencyDate();
 						}
+						if(DateUtility.compare(startCalFrom, financeMain.getMaturityDate()) >= 0){
+							startCalFrom =  financeMain.getMaturityDate();
+						}
 						break;
 					}
 					prvSchd = curSchd;

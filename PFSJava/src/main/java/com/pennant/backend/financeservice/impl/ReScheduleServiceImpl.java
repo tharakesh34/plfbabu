@@ -513,6 +513,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				if(DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15){
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false).getNextFrequencyDate(); 
 				}
+				if(DateUtility.compare(startCalFrom,finMain.getMaturityDate())>=0){
+					startCalFrom = finMain.getMaturityDate();
+				}
 				break;
 			}
 			prvSchd = curSchd;
