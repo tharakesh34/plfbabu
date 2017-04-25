@@ -559,12 +559,12 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			wve.add(we);
 		}
 		
-		try {
+		/*try {
 			aAccountType.setAssertOrLiability(this.assertOrLiability.getSelectedItem()
 					.getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
-		}
+		}*/
 		
 		try {
 			aAccountType.setOnBalanceSheet(this.onBalanceSheet.isChecked());
@@ -601,9 +601,13 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		try {
 			this.costCenter.getValidatedValue();
 			CostCenter costCenter = (CostCenter) this.costCenter.getObject();
-			aAccountType.setCostCenterID(costCenter.getCostCenterID());
-			aAccountType.setCostCenterCode(costCenter.getCostCenterCode());
-			aAccountType.setCostCenterDesc(costCenter.getCostCenterDesc());
+			if(costCenter != null){
+				aAccountType.setCostCenterID(costCenter.getCostCenterID());
+				aAccountType.setCostCenterCode(costCenter.getCostCenterCode());
+				aAccountType.setCostCenterDesc(costCenter.getCostCenterDesc());
+			}else{
+				aAccountType.setCostCenterID(null);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -762,7 +766,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		if (!this.acTypeGrpId.isReadonly()) {
 			this.acTypeGrpId.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_AccountTypeDialog_AcTypeGrpId.value"), null,
-					false));
+					true));
 		}
 		if (!this.profitCenter.isReadonly()) {
 			this.profitCenter.setConstraint(new PTStringValidator(Labels

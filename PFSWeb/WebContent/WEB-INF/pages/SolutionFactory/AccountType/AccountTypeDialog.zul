@@ -130,7 +130,7 @@
 										width="40px" maxlength="4" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									value="${c:l('label_AccountTypeDialog_AcLmtCategory.value')}" />
 								<hbox>
@@ -186,7 +186,7 @@
 										checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
 								<label
 									id="label_AccountTypeDialog_AssertOrLiability"
 									value="${c:l('label_AccountTypeDialog_AssertOrLiability.value')}" />
@@ -196,7 +196,7 @@
 									<combobox id="assertOrLiability" readonly="true" width="120px"/>
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
 								<label
 									id="label_AccountTypeDialog_OnBalanceSheet"
 									value="${c:l('label_AccountTypeDialog_OnBalanceSheet.value')}" />
@@ -206,7 +206,7 @@
 										checked="false" />
 								</hbox>
 							</row>
-							<row>
+							<row visible="false">
 								<label
 									id="label_AccountTypeDialog_AllowOverDraw"
 									value="${c:l('label_AccountTypeDialog_AllowOverDraw.value')}" />
