@@ -2147,5 +2147,100 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 	</sql>
 </changeSet>
+
+<changeSet id="136" author="Amit">
+		<addColumn tableName="EmployerDetail">
+			<column name="EmpIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="137" author="Amit">
+		<addColumn tableName="EmployerDetail_Temp">
+			<column name="EmpIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="138" author="Amit">
+		<createView replaceIfExists="true" viewName="EMPLOYERDETAIL_AVIEW">
+   SELECT T1.EmployerId ,T1.EmpIndustry ,T1.EmpName ,T1.EstablishDate ,T1.EmpAddrHNbr ,
+          T1.EmpFlatNbr ,T1.EmpAddrStreet ,T1.EmpAddrLine1 ,T1.EmpAddrLine2 ,T1.EmpPOBox ,T1.EmpCountry ,T1.EmpPhone ,T1.EmpFax ,T1.EmpTelexNo ,T1.EmpEmailId ,T1.EmpProvince ,T1.EmpCity ,
+          T1.EmpWebSite ,T1.ContactPersonName ,T1.ContactPersonNo ,T1.EmpAlocationType ,T1.BankRefNo, T1.EmpIsActive, T1.Version ,T1.LastMntBy ,T1.LastMntOn ,
+          T2.UsrLogin ,T2.UsrFName ,T2.UsrMName ,T2.UsrLName ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId ,
+          T1.RecordType ,T1.WorkflowId ,T3.EMPTYPEDESC lovDescIndustryDesc,T4.CountryDesc lovDescCountryDesc,T5.CPProvinceName lovDescProvinceName  ,T6.PCCityName lovDescCityName  
+     FROM EmployerDetail T1
+            JOIN SecUsers T2   ON T1.LastMntBy = T2.UsrID
+            JOIN RMTEMPTYPES T3   ON T1.EmpIndustry = T3.EMPTYPE
+            JOIN BMTCountries T4   ON T1.EmpCountry = T4.CountryCode
+            JOIN RMTCountryVsProvince T5   ON T1.EmpProvince = T5.CPProvince
+            AND T1.EmpCountry = T5.CPCountry
+            LEFT JOIN RMTProvinceVsCity T6   ON T1.EmpCity = T6.PCCity
+            AND T1.EmpProvince = T6.PCProvince
+            AND T1.EmpCountry = T6.PCCountry
+
+		</createView>
+	</changeSet>
+	
+	<changeSet id="139" author="Amit">
+		<createView replaceIfExists="true" viewName="EMPLOYERDETAIL_TVIEW">
+ SELECT T1.EmployerId ,T1.EmpIndustry ,T1.EmpName ,T1.EstablishDate ,T1.EmpAddrHNbr ,
+          T1.EmpFlatNbr ,T1.EmpAddrStreet ,T1.EmpAddrLine1 ,T1.EmpAddrLine2 ,T1.EmpPOBox ,T1.EmpCountry ,T1.EmpPhone ,T1.EmpFax ,T1.EmpTelexNo ,T1.EmpEmailId ,T1.EmpProvince ,T1.EmpCity ,
+          T1.EmpWebSite ,T1.ContactPersonName ,T1.ContactPersonNo ,T1.EmpAlocationType ,T1.BankRefNo, T1.EmpIsActive, T1.Version ,T1.LastMntBy ,T1.LastMntOn ,
+          T2.UsrLogin ,T2.UsrFName ,T2.UsrMName ,T2.UsrLName ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId ,
+          T1.RecordType ,T1.WorkflowId ,T3.EMPTYPEDESC lovDescIndustryDesc,T4.CountryDesc lovDescCountryDesc,T5.CPProvinceName lovDescProvinceName  ,T6.PCCityName lovDescCityName  
+     FROM EmployerDetail_Temp T1
+            JOIN SecUsers T2   ON T1.LastMntBy = T2.UsrID
+            JOIN RMTEMPTYPES T3   ON T1.EmpIndustry = T3.EMPTYPE
+            JOIN BMTCountries T4   ON T1.EmpCountry = T4.CountryCode
+            JOIN RMTCountryVsProvince T5   ON T1.EmpProvince = T5.CPProvince
+            AND T1.EmpCountry = T5.CPCountry
+            LEFT JOIN RMTProvinceVsCity T6   ON T1.EmpCity = T6.PCCity
+            AND T1.EmpProvince = T6.PCProvince
+            AND T1.EmpCountry = T6.PCCountry
+
+		</createView>
+	</changeSet>
+	
+	<changeSet id="140" author="Amit">
+		<createView replaceIfExists="true" viewName="EMPLOYERDETAIL_VIEW">
+ SELECT T1.EmployerId ,T1.EmpIndustry ,T1.EmpName ,T1.EstablishDate ,T1.EmpAddrHNbr ,
+          T1.EmpFlatNbr ,T1.EmpAddrStreet ,T1.EmpAddrLine1 ,T1.EmpAddrLine2 ,T1.EmpPOBox ,T1.EmpCountry ,T1.EmpPhone ,T1.EmpFax ,T1.EmpTelexNo ,T1.EmpEmailId ,T1.EmpProvince ,T1.EmpCity ,
+          T1.EmpWebSite ,T1.ContactPersonName ,T1.ContactPersonNo ,T1.EmpAlocationType ,T1.BankRefNo, T1.EmpIsActive,T1.Version ,T1.LastMntBy ,T1.LastMntOn ,
+          T2.UsrLogin ,T2.UsrFName ,T2.UsrMName ,T2.UsrLName ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId ,
+          T1.RecordType ,T1.WorkflowId ,T3.EMPTYPEDESC lovDescIndustryDesc,T4.CountryDesc lovDescCountryDesc,T5.CPProvinceName lovDescProvinceName  ,T6.PCCityName lovDescCityName  
+     FROM EmployerDetail_Temp T1
+            JOIN SecUsers T2   ON T1.LastMntBy = T2.UsrID
+            JOIN RMTEMPTYPES T3   ON T1.EmpIndustry = T3.EMPTYPE
+            JOIN BMTCountries T4   ON T1.EmpCountry = T4.CountryCode
+            JOIN RMTCountryVsProvince T5   ON T1.EmpProvince = T5.CPProvince
+            AND T1.EmpCountry = T5.CPCountry
+            LEFT JOIN RMTProvinceVsCity T6   ON T1.EmpCity = T6.PCCity
+            AND T1.EmpProvince = T6.PCProvince
+            AND T1.EmpCountry = T6.PCCountry
+   UNION ALL 
+  SELECT T1.EmployerId ,T1.EmpIndustry ,T1.EmpName ,T1.EstablishDate ,T1.EmpAddrHNbr ,
+          T1.EmpFlatNbr ,T1.EmpAddrStreet ,T1.EmpAddrLine1 ,T1.EmpAddrLine2 ,T1.EmpPOBox ,T1.EmpCountry ,T1.EmpPhone ,T1.EmpFax ,T1.EmpTelexNo ,T1.EmpEmailId ,T1.EmpProvince ,T1.EmpCity ,
+          T1.EmpWebSite ,T1.ContactPersonName ,T1.ContactPersonNo ,T1.EmpAlocationType ,T1.BankRefNo, T1.EmpIsActive,T1.Version ,T1.LastMntBy ,T1.LastMntOn ,
+          T2.UsrLogin ,T2.UsrFName ,T2.UsrMName ,T2.UsrLName ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId ,
+          T1.RecordType ,T1.WorkflowId ,T3.EMPTYPEDESC lovDescIndustryDesc,T4.CountryDesc lovDescCountryDesc,T5.CPProvinceName lovDescProvinceName  ,T6.PCCityName lovDescCityName  
+     FROM EmployerDetail T1
+            JOIN SecUsers T2   ON T1.LastMntBy = T2.UsrID
+            JOIN RMTEMPTYPES T3   ON T1.EmpIndustry = T3.EMPTYPE
+            JOIN BMTCountries T4   ON T1.EmpCountry = T4.CountryCode
+            JOIN RMTCountryVsProvince T5   ON T1.EmpProvince = T5.CPProvince
+            AND T1.EmpCountry = T5.CPCountry
+           LEFT JOIN RMTProvinceVsCity T6   ON T1.EmpCity = T6.PCCity
+            AND T1.EmpProvince = T6.PCProvince
+            AND T1.EmpCountry = T6.PCCountry
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM EmployerDetail_Temp 
+                          WHERE EmployerId = T1.EmployerId )
+
+		</createView>
+	</changeSet>
+		
 	
 </databaseChangeLog>
