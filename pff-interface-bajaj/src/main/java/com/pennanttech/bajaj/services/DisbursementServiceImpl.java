@@ -1,15 +1,13 @@
 package com.pennanttech.bajaj.services;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
@@ -18,15 +16,13 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementService;
 
-public class DisbursementServiceImpl implements DisbursementService {
-	private static final Logger			logger	= Logger.getLogger(DisbursementServiceImpl.class);
+public class DisbursementServiceImpl extends BajajServices implements DisbursementService {
+	private final Logger logger = Logger.getLogger(getClass());
 
 	private String						finType;
 	private List<FinAdvancePayments>	disbusments;
 	private long						userId;
 
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	jdbcTemplate;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -120,6 +116,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		try {
+			export.setValueDate((Date)getSMTParameter("APP_VALUEDATE", Date.class));
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			export.exportData(configName);
@@ -134,6 +131,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds) {
 		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name());
 		try {
+			proce.setValueDate((Date)getSMTParameter("APP_VALUEDATE", Date.class));
 			proce.processData(configName, paymentIds.toString());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -158,7 +156,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 			parameter.addValue("PARTNERBANKID", disbursment.getPartnerBankID());
 			parameter.addValue("PAYMENTTYPE", disbursment.getPaymentType());
 
-			return jdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
+			return namedJdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -168,12 +166,6 @@ public class DisbursementServiceImpl implements DisbursementService {
 		}
 		return null;
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	public class DisbursementProcess extends Thread {
 		private final Logger	logger	= Logger.getLogger(DisbursementProcess.class);
 

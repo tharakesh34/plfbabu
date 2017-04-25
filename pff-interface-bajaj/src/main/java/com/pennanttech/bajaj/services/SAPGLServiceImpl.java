@@ -8,16 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
@@ -25,15 +21,10 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.GeneralLedgerService;
 import com.pennanttech.pff.core.util.DateUtil;
 
-public class SAPGLServiceImpl implements GeneralLedgerService {
-	private static final Logger			logger			= Logger.getLogger(SAPGLServiceImpl.class);
+public class SAPGLServiceImpl extends BajajServices implements GeneralLedgerService {
+	private final Logger logger = Logger.getLogger(getClass());
 
 	private long						userId;
-
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	namedJdbcTemplate;
-	private JdbcTemplate				jdbcTemplate;
-
 	private Date						valueDate			= null;
 	private Date						glDate			= null;
 	private Date						monthStartDate	= null;
@@ -86,11 +77,11 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("BLDAT", monthEndDate);
-		paramMap.addValue("BLART", getParameter("BLART", String.class));
-		paramMap.addValue("BUKRS", getParameter("BUKRS", String.class));
+		paramMap.addValue("BLART", getSMTParameter("BLART", String.class));
+		paramMap.addValue("BUKRS", getSMTParameter("BUKRS", String.class));
 		paramMap.addValue("BUDAT", monthEndDate);
 		paramMap.addValue("MONAT", getFinancialMonth());
-		paramMap.addValue("APP_DFT_CURR", getParameter("APP_DFT_CURR", String.class));
+		paramMap.addValue("APP_DFT_CURR", getSMTParameter("APP_DFT_CURR", String.class));
 		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
 		paramMap.addValue("BKTXT", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
 
@@ -144,8 +135,8 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		createNextId();
 		createFileName();
 
-		currency = (String) getParameter("APP_DFT_CURR", String.class);
-		companyName = (String) getParameter("SAPGL_TBR_COMPANY", String.class);
+		currency = (String) getSMTParameter("APP_DFT_CURR", String.class);
+		companyName = (String) getSMTParameter("SAPGL_TBR_COMPANY", String.class);
 		reportName = "Consolidated Trial Balance - Ledger A/C wise";
 
 		MapSqlParameterSource paramMap;
@@ -163,11 +154,11 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ID", headerId);
 		paramMap.addValue("FILENAME", fileName);
-		paramMap.addValue("COMPANYNAME", getParameter("SAPGL_TBR_COMPANY", String.class));
+		paramMap.addValue("COMPANYNAME", getSMTParameter("SAPGL_TBR_COMPANY", String.class));
 		paramMap.addValue("REPORTNAME", "Trial Balance Report");
 		paramMap.addValue("STARTDATE", monthStartDate);
 		paramMap.addValue("ENDDATE", monthEndDate);
-		paramMap.addValue("CURRENCY", getParameter("APP_DFT_CURR", String.class));
+		paramMap.addValue("CURRENCY", getSMTParameter("APP_DFT_CURR", String.class));
 
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
@@ -265,7 +256,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 			throw new Exception("Transaction details not avialble.");
 		}
 
-		int pageSize = (Integer) getParameter("SAPGL_TRAN_RECORD_COUNT", Integer.class);
+		int pageSize = (Integer) getSMTParameter("SAPGL_TRAN_RECORD_COUNT", Integer.class);
 
 		int pages = totalTransactions / pageSize;
 		if (pages == 0) {
@@ -443,10 +434,10 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		paramMap.addValue("DR", "D");
 		paramMap.addValue("CR", "C");
 		paramMap.addValue("POSTSTATUS", "S");
-		paramMap.addValue("UMSKZ", getParameter("UMSKZ", String.class));
-		paramMap.addValue("GSBER", getParameter("GSBER", String.class));
-		paramMap.addValue("BUPLA", getParameter("BUPLA", String.class));
-		paramMap.addValue("KOSTL", getParameter("KOSTL", String.class));
+		paramMap.addValue("UMSKZ", getSMTParameter("UMSKZ", String.class));
+		paramMap.addValue("GSBER", getSMTParameter("GSBER", String.class));
+		paramMap.addValue("BUPLA", getSMTParameter("BUPLA", String.class));
+		paramMap.addValue("KOSTL", getSMTParameter("KOSTL", String.class));
 		paramMap.addValue("ZUONR", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
 		paramMap.addValue("SGTXT", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
 
@@ -464,8 +455,8 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 
 	private void prepareGLDates() throws Exception {
 		logger.info("Preparing GL Dates..");
-		int year = (Integer) getParameter("SAPGL_LAST_RUN_YEAR", Integer.class);
-		int month = (Integer) getParameter("SAPGL_LAST_RUN_MONTH", Integer.class);
+		int year = (Integer) getSMTParameter("SAPGL_LAST_RUN_YEAR", Integer.class);
+		int month = (Integer) getSMTParameter("SAPGL_LAST_RUN_MONTH", Integer.class);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
@@ -476,7 +467,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		monthStartDate = DateUtil.getMonthStart(glDate);
 		monthEndDate = DateUtil.getMonthEnd(glDate);
 		
-		valueDate = (Date)getParameter("APP_VALUEDATE", Date.class);
+		valueDate = (Date)getSMTParameter("APP_VALUEDATE", Date.class);
 	}
 
 	private int groupTranactions() {
@@ -594,41 +585,6 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 
 	}
 
-	private Object getParameter(String sysParmCode, Class<?> type) throws Exception {
-		MapSqlParameterSource paramMap;
-
-		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
-
-		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE = :SYSPARMCODE");
-		paramMap.addValue("SYSPARMCODE", sysParmCode);
-
-		try {
-			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, type);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new Exception("The parameter code " + sysParmCode + " not configured.");
-		}
-	}
-
-	private int updateParameter(String sysParmCode, Object value) throws Exception {
-		MapSqlParameterSource paramMap;
-
-		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
-
-		sql.append("UPDATE SMTPARAMETERS SET SYSPARMVALUE = :SYSPARMVALUE where SYSPARMCODE = :SYSPARMCODE");
-		paramMap.addValue("SYSPARMCODE", sysParmCode);
-		paramMap.addValue("SYSPARMVALUE", value);
-
-		try {
-			return namedJdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new Exception("Unable to update the " + sysParmCode + ".");
-		}
-	}
-
 	private void generateGLReport() throws Exception {
 		logger.info("Generating GL Report..");
 
@@ -689,11 +645,4 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		updateParameter("SAPGL_LAST_RUN_YEAR", DateUtil.getYear(monthEndDate));
 		updateParameter("SAPGL_LAST_RUN_MONTH", DateUtil.getMonth(monthEndDate));
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 }
