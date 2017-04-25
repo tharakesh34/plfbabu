@@ -157,6 +157,19 @@ WHERE NOT EXISTS
 		  INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID=PL.REFID2
 	  </createView>
 	</changeSet>
-	
-	
+	<changeSet author="Surekha" id="09">
+	<sql>
+		Update FeeTypes set ApplicableFor=NULL where ApplicableFor=1;
+		Update FeeTypes_Temp set ApplicableFor=NULL where ApplicableFor=1;
+	</sql>
+	</changeSet>
+	<changeSet author="Surekha" id="10">
+	<renameColumn columnDataType="int" newColumnName="ManualAdvice"
+		oldColumnName="APPLICABLEFOR" tableName="FEETYPES" />
+	</changeSet>
+
+	<changeSet author="Surekha" id="11">
+		<modifyDataType columnName="ManualAdvice" newDataType="bit"
+			tableName="FEETYPES" />
+	</changeSet>
 </databaseChangeLog>
