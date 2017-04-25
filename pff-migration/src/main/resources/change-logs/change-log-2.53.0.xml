@@ -334,4 +334,14 @@ WHERE NOT EXISTS
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="30" author="Kesav">
+		<addNotNullConstraint tableName="AccountMapping"
+			columnName="FinType" columnDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet id="31" author="Kesav">
+		<addNotNullConstraint tableName="AccountMapping_Temp"
+			columnName="FinType" columnDataType="varchar(8)" />
+	</changeSet>
+	
 </databaseChangeLog>
