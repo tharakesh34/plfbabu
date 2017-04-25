@@ -22,5 +22,13 @@
 		<modifyDataType columnName="ManualAdvice" newDataType="bit"
 			tableName="AdtFEETYPES" />
 	</changeSet>
- 
+	
+ <changeSet id="04" author="Amit">
+		<addColumn tableName="AdtRMTCountryVsProvince">
+			<column name="CPIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
 </databaseChangeLog>
