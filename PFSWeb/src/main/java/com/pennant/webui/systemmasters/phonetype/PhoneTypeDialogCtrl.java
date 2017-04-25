@@ -350,7 +350,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
 				aPhoneType.setPhoneTypePriority(this.phoneTypePriority.getValue());
 			} else {
-				aPhoneType.setPhoneTypePriority(0);
+				aPhoneType.setPhoneTypePriority(aPhoneType.getPhoneTypePriority());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

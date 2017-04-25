@@ -56,9 +56,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.systemmasters.EMailType;
 import com.pennant.backend.service.systemmasters.EMailTypeService;
 import com.pennant.webui.systemmasters.emailtype.model.EMailTypeListModelItemRenderer;
@@ -93,6 +95,7 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 	protected Textbox emailTypeDesc;
 	protected Intbox emailTypePriority;
 	protected Checkbox emailTypeIsActive;
+	protected Row	   row_EmailTypePriority;
 
 	protected Listbox sortOperator_emailTypeCode;
 	protected Listbox sortOperator_emailTypeDesc;
@@ -143,6 +146,14 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 				sortOperator_emailTypePriority, Operators.NUMERIC);
 		registerField("emailTypeIsActive", listheader_EmailTypeIsActive, SortOrder.NONE, emailTypeIsActive,
 				sortOperator_emailTypeIsActive, Operators.BOOLEAN);
+		
+		if (ImplementationConstants.ALLOW_EMIALTYPE_PRIORITY) {
+			this.row_EmailTypePriority.setVisible(true);
+			this.listheader_EmailTypePriority.setVisible(true);
+		} else {
+			this.row_EmailTypePriority.setVisible(false);
+			this.listheader_EmailTypePriority.setVisible(false);
+		}
 
 		// Render the page and display the data.
 		doRenderPage();

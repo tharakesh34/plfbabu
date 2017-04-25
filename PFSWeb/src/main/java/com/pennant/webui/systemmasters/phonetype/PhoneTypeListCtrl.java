@@ -56,9 +56,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.webui.systemmasters.phonetype.model.PhoneTypeListModelItemRenderer;
@@ -87,6 +89,7 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> {
 	protected Textbox phoneTypeDesc;
 	protected Intbox phoneTypePriority;
 	protected Checkbox phoneTypeIsActive;
+	protected Row	   row_PhoneTypePriority;
 
 	protected Listbox sortOperator_phoneTypeDesc;
 	protected Listbox sortOperator_phoneTypeCode;
@@ -143,6 +146,13 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> {
 				sortOperator_phoneTypePriority, Operators.NUMERIC);
 		registerField("phoneTypeIsActive", listheader_PhoneTypeIsActive, SortOrder.NONE, phoneTypeIsActive,
 				sortOperator_phoneTypeIsActive, Operators.BOOLEAN);
+		if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
+			this.row_PhoneTypePriority.setVisible(true);
+			this.listheader_PhoneTypePriority.setVisible(true);
+		} else {
+			this.row_PhoneTypePriority.setVisible(false);
+			this.listheader_PhoneTypePriority.setVisible(false);
+		}
 
 		// Render the page and display the data.
 		doRenderPage();

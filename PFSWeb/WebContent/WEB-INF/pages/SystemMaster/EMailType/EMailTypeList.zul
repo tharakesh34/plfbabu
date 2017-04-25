@@ -92,7 +92,7 @@
 									<textbox id="emailTypeDesc"
 										width="300px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_EmailTypePriority">
 									<label
 										id="label_EMailTypeSearch_EmailTypePriority"
 										value="${c:l('label_EMailTypeSearch_EmailTypePriority.value')}" />
@@ -101,6 +101,8 @@
 										rows="1" />
 									<intbox id="emailTypePriority"
 										width="100px" maxlength="10" />
+								</row>
+								<row>
 									<label
 										id="label_EMailTypeSearch_EmailTypeIsActive"
 										value="${c:l('label_EMailTypeSearch_EmailTypeIsActive.value')}" />

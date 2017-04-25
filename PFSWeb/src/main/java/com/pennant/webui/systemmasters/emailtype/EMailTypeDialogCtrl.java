@@ -357,7 +357,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 			if (ImplementationConstants.ALLOW_EMIALTYPE_PRIORITY) {
 				aEMailType.setEmailTypePriority(this.emailTypePriority.getValue());
 			} else {
-				aEMailType.setEmailTypePriority(0);
+				aEMailType.setEmailTypePriority(aEMailType.getEmailTypePriority());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

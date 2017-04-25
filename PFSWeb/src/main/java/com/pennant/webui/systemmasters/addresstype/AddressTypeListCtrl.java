@@ -56,9 +56,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.systemmasters.AddressTypeService;
 import com.pennant.webui.systemmasters.addresstype.model.AddressTypeListModelItemRenderer;
@@ -87,6 +89,7 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 	protected Textbox addrTypeDesc;
 	protected Intbox addrTypePriority;
 	protected Checkbox addrTypeIsActive;
+	protected Row	   row_AddrTypePriority;
 
 	protected Listbox sortOperator_addrTypeCode;
 	protected Listbox sortOperator_addrTypeDesc;
@@ -144,6 +147,13 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 				sortOperator_addrTypePriority, Operators.STRING);
 		registerField("addrTypeIsActive", listheader_AddrTypeIsActive, SortOrder.NONE, addrTypeIsActive,
 				sortOperator_addrTypeIsActive, Operators.BOOLEAN);
+		if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
+			this.row_AddrTypePriority.setVisible(true);
+			this.listheader_AddrTypePriority.setVisible(true);
+		} else {
+			this.row_AddrTypePriority.setVisible(false);
+			this.listheader_AddrTypePriority.setVisible(false);
+		}
 
 		// Render the page and display the data.
 		doRenderPage();

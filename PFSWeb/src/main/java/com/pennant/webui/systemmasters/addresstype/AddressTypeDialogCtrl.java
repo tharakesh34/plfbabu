@@ -349,7 +349,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 			if (ImplementationConstants.ALLOW_ADDRESSTYPE_PRIORITY) {
 				aAddressType.setAddrTypePriority(this.addrTypePriority.getValue());
 			} else {
-				aAddressType.setAddrTypePriority(0);
+				aAddressType.setAddrTypePriority(aAddressType.getAddrTypePriority());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -93,7 +93,7 @@
 									<textbox id="addrTypeDesc"
 										width="320px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_AddrTypePriority">
 									<label
 										id="label_AddressTypeSearch_AddrTypePriority"
 										value="${c:l('label_AddressTypeSearch_AddrTypePriority.value')}" />
@@ -102,6 +102,8 @@
 										rows="1" />
 									<intbox id="addrTypePriority"
 										width="80px" maxlength="4" />
+								</row>
+								<row>	
 									<label
 										id="label_AddressTypeSearch_AddrTypeIsActive"
 										value="${c:l('label_AddressTypeSearch_AddrTypeIsActive.value')}" />
@@ -111,6 +113,7 @@
 									<checkbox id="addrTypeIsActive"
 										checked="false" />
 								</row>
+								
 								<row id="row_AlwWorkflow">
 									<label
 										id="label_AddressTypeSearch_RecordStatus"

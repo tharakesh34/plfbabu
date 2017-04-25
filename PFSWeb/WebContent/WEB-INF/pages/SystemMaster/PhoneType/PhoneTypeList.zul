@@ -92,7 +92,7 @@
 									<textbox id="phoneTypeDesc"
 										width="320px" maxlength="50" />
 								</row>
-								<row>
+								<row id="row_PhoneTypePriority">
 									<label
 										id="label_PhoneTypeSearch_PhoneTypePriority"
 										value="${c:l('label_PhoneTypeSearch_PhoneTypePriority.value')}" />
@@ -101,6 +101,8 @@
 										rows="1" />
 									<intbox id="phoneTypePriority"
 										width="150px" maxlength="10" />
+								</row>
+								<row>
 									<label
 										id="label_PhoneTypeSearch_PhoneTypeIsActive"
 										value="${c:l('label_PhoneTypeSearch_PhoneTypeIsActive.value')}" />
