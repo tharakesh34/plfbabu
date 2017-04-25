@@ -266,7 +266,39 @@
 				<element name="max">50</element>
 			</constraint>
 		</field>
+<field name="phoneCountryCode">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneCountryCode should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
 
+
+		<field name="phoneAreaCode">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneAreaCode should have maximum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">3</element>
+			</constraint>
+		</field>
+
+		<field name="phoneNumber">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
 	 <field name="validateMandate">
 			 <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>specify any one of BankCode and BranchName Or ifsc code </message>

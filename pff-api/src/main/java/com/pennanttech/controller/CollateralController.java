@@ -31,6 +31,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
@@ -189,23 +190,23 @@ public class CollateralController {
 		logger.debug("Entering");
 
 		try {
-		// fetch collateral details to delete
-		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(setup.getCollateralRef(),"", false);
-		if(collateralSetup != null) {
-			// set required values
-			doSetRequiredValues(collateralSetup, PROCESS_TYPE_DELETE);
-			
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(collateralSetup, ""); 
-			auditHeader.setApiHeader(reqHeaderDetails);
-			// call delete method
-			auditHeader = collateralSetupService.delete(auditHeader);
-			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+			// fetch collateral details to delete
+			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(setup.getCollateralRef(),"", false);
+			if(collateralSetup != null) {
+				// set required values
+				doSetRequiredValues(collateralSetup, PROCESS_TYPE_DELETE);
+
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+				AuditHeader auditHeader = getAuditHeader(collateralSetup, ""); 
+				auditHeader.setApiHeader(reqHeaderDetails);
+				// call delete method
+				auditHeader = collateralSetupService.delete(auditHeader);
+				if (auditHeader.getErrorMessage() != null) {
+					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+						return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+					}
 				}
 			}
-		}
 		}catch(Exception e) {
 			logger.error("Exception: ", e);
 			return APIErrorHandlerService.getFailedStatus();
@@ -372,7 +373,6 @@ public class CollateralController {
 		
 		// get Collateral structure details
 		CollateralStructure collateralStructure = null;
-		
 		String collateralType = collateralSetup.getCollateralType();
 		if (StringUtils.isNotBlank(collateralType)) {
 			collateralStructure = collateralStructureService.getApprovedCollateralStructureByType(collateralType);
@@ -386,7 +386,6 @@ public class CollateralController {
 		// process Extended field details
 		int totalUnits = 0;
 		BigDecimal totalValue = BigDecimal.ZERO;
-		
 		List<ExtendedField> extendedFields = collateralSetup.getExtendedDetails();
 		if(extendedFields != null) {
 			List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
@@ -472,6 +471,10 @@ public class CollateralController {
 				collateralSetup.setBankLTV(collateralStructure.getLtvPercentage());
 			} else if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.VARIABLE_LTV)) {
 				Object ruleResult = null;
+				CustomerDetails customerDetails = customerDetailsService.getCustomerById(collateralSetup.getDepositorId());
+				if(customerDetails != null) {
+					collateralSetup.setCustomerDetails(customerDetails);
+				}
 				HashMap<String, Object> declaredMap = collateralSetup.getCustomerDetails().getCustomer()
 						.getDeclaredFieldValues();
 				declaredMap.put("collateralType", collateralSetup.getCollateralType());
@@ -500,7 +503,6 @@ public class CollateralController {
 				colValue = collateralSetup.getMaxCollateralValue();
 			}
 			collateralSetup.setBankValuation(colValue);
-
 			collateralSetup.setCollateralStructure(collateralStructure);
 		}
 		

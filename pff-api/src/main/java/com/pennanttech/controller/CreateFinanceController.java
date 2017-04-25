@@ -214,13 +214,10 @@ public class CreateFinanceController extends SummaryDetailService {
 					finScheduleData.setPlanEMIHmonths(planEMIHmonths);
 					if (finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
 						finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
-						finScheduleData.getFinanceMain().setEventToDate(
-								finScheduleData.getFinanceMain().getMaturityDate());
-						finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayDate());
-						finScheduleData.getFinanceMain().setRecalToDate(
-								finScheduleData.getFinanceMain().getMaturityDate());
-						finScheduleData.getFinanceMain().setRecalSchdMethod(
-								finScheduleData.getFinanceMain().getScheduleMethod());
+						finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());
+						finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayPftDate());
+						finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
+						finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
 
 						if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 								FinanceConstants.PLANEMIHMETHOD_FRQ)) {
