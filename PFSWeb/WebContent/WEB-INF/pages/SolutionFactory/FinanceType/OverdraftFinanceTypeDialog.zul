@@ -604,6 +604,24 @@
 										<rows>
 											<row visible="false">
 												<label
+													id="label_FinanceTypeDialog_ProfitDetails"
+													value="${c:l('label_FinanceTypeDialog_ProfitDetails.value')}" />
+												<extendedcombobox
+													id="profitDetails" />
+											</row>
+										</rows>
+									</grid>
+									<grid sclass="GridLayoutNoBorder"
+										fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="false">
+												<label
 													id="label_FinanceTypeDialog_AlwVasProducts"
 													value="${c:l('label_OverDraftFinanceTypeDialog_AlwVasProducts.value')}" />
 												<hbox>
@@ -806,7 +824,7 @@
 											<frequencybox
 												id="finGrcRvwFrq" />
 										</row>
-										<row visible="true">
+										<row id="row_FinGrcRvwRateApplFor" visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
 												value="${c:l('label_OverDraftFinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
