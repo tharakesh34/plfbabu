@@ -172,4 +172,13 @@ WHERE NOT EXISTS
 		<modifyDataType columnName="ManualAdvice" newDataType="bit"
 			tableName="FEETYPES" />
 	</changeSet>
+	<changeSet author="Surekha" id="12">
+	<renameColumn columnDataType="int" newColumnName="ManualAdvice"
+		oldColumnName="APPLICABLEFOR" tableName="FEETYPES_Temp" />
+	</changeSet>
+
+	<changeSet author="Surekha" id="13">
+		<modifyDataType columnName="ManualAdvice" newDataType="bit"
+			tableName="FEETYPES_Temp" />
+	</changeSet>
 </databaseChangeLog>

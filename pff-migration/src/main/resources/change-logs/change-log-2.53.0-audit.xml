@@ -8,6 +8,19 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+<changeSet author="Surekha" id="01">
+	<sql>
+		Update AdtFeeTypes set ApplicableFor=NULL where ApplicableFor=1;
+	</sql>
+	</changeSet>
+<changeSet author="Surekha" id="02">
+	<renameColumn columnDataType="int" newColumnName="ManualAdvice"
+		oldColumnName="APPLICABLEFOR" tableName="AdtFEETYPES" />
+	</changeSet>
 
+	<changeSet author="Surekha" id="03">
+		<modifyDataType columnName="ManualAdvice" newDataType="bit"
+			tableName="AdtFEETYPES" />
+	</changeSet>
  
 </databaseChangeLog>
