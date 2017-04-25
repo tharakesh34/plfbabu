@@ -489,4 +489,12 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 	<renameColumn tableName="AdtBounceReasons" oldColumnName="FeeID" newColumnName="RuleID"/>
 </changeSet>
 
+<changeSet id="14" author="Amit">
+		<addColumn tableName="AdtRMTEmpTypes">
+			<column name="EmpTypeIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+
 </databaseChangeLog>
