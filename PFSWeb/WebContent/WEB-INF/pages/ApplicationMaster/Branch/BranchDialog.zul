@@ -255,8 +255,7 @@
 									id="label_BranchDialog_BranchSortCode"
 									value="${c:l('label_BranchDialog_BranchSortCode.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
+									<space spacing="2px"/>
 									<uppercasebox id="branchSortCode"
 										maxlength="4" width="180px" />
 								</hbox>
