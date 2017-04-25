@@ -150,7 +150,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getMandateTypeList(), "");//FIXME
+		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
 		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
 
 		this.product.setMaxlength(LengthConstants.LEN_MASTER_CODE);
@@ -185,7 +185,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		JdbcSearchObject<PresentmentDetail> searchObject = new JdbcSearchObject<>();
 		searchObject.addField("DETAILID");
-		searchObject.addFilterEqual("EXTRACTID", Long.valueOf(this.batchReference.getValue()));
+		searchObject.addFilterEqual("EXTRACTID", Long.valueOf(this.batchReference.getSelectedItem().getValue().toString()));
 
 		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
 
@@ -291,8 +291,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		JdbcSearchObject<ValueLabel> so = new JdbcSearchObject<ValueLabel>(ValueLabel.class);
 
 		so.addTabelName("PRESENTMENTDETAILHEADER");
-		so.addField(" ExtractId Value");
-		so.addField(" ExtractReference AS Label");
+		so.addField(" ExtractId Label");	
+		so.addField(" ExtractReference  Value");
 		List<ValueLabel> ids = service.getBySearchObject(so);
 
 		ValueLabel label = null;

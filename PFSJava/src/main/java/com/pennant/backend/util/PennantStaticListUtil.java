@@ -2103,7 +2103,18 @@ public class PennantStaticListUtil {
 		}
 		return mandateTypeList;
 	}
-
+	
+	public static ArrayList<ValueLabel> getPresentmentExclusionList() {
+		if (presentmentExclusionList == null) {
+			presentmentExclusionList = new ArrayList<ValueLabel>(5);
+			presentmentExclusionList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Emiinadvance")));
+			presentmentExclusionList.add(new ValueLabel("2", Labels.getLabel("label_Represent_Emihold")));
+			presentmentExclusionList.add(new ValueLabel("3", Labels.getLabel("label_Represent_Mandate_Hold")));
+			presentmentExclusionList.add(new ValueLabel("4", Labels.getLabel("label_Represent_Mandate_Notapprove")));
+			presentmentExclusionList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Mandate_Expiry")));
+		}
+		return presentmentExclusionList;
+	}
 
 	public static ArrayList<ValueLabel> getAccTypeList() {
 		if(accTypeList == null){
@@ -2603,15 +2614,6 @@ public class PennantStaticListUtil {
 		return actionList;
 	}
 	
-	public static ArrayList<ValueLabel> getPresentmentExclusionList(){
-		
-		if(presentmentExclusionList == null){
-			presentmentExclusionList = new ArrayList<ValueLabel>(2);
-			presentmentExclusionList.add(new ValueLabel("1",Labels.getLabel("label_IGNORE")));
-			presentmentExclusionList.add(new ValueLabel("2",Labels.getLabel("label_REPRESENT")));
-		}
-		return presentmentExclusionList;
-	}
 
 	public static ArrayList<ValueLabel> getPurposeList() {
 		if (purposeList == null) {
