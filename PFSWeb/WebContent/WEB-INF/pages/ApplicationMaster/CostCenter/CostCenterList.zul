@@ -71,7 +71,7 @@
 									<listbox
 										id="sortOperator_CostCenterCode" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="costCenterCode"
+									<uppercasebox id="costCenterCode"
 										width="135px" maxlength="15" />
 									<label
 										id="label_CostCenterList_CostCenterDesc"

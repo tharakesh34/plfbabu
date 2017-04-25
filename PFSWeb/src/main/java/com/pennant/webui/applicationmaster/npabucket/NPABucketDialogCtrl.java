@@ -414,10 +414,10 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.bucketCode.isReadonly()){
-			this.bucketCode.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketCode.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.bucketCode.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.bucketDesc.isReadonly()){
-			this.bucketDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.bucketDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_NPABucketDialog_BucketDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
 		}
 	
 		logger.debug(Literal.LEAVING);

@@ -398,11 +398,11 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 		if (!this.bucketCode.isReadonly()) {
 			this.bucketCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketCode.value"), PennantRegularExpressions.REGEX_NAME, true));
+					.getLabel("label_DPDBucketDialog_BucketCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.bucketDesc.isReadonly()) {
 			this.bucketDesc.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_DPDBucketDialog_BucketDesc.value"), PennantRegularExpressions.REGEX_NAME, true));
+					.getLabel("label_DPDBucketDialog_BucketDesc.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug(Literal.LEAVING);

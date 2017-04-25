@@ -515,7 +515,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.bounceCode.isReadonly()){
-			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_BounceCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.category.isDisabled()){
 			this.category.setConstraint(new StaticListValidator(listCategory,Labels.getLabel("label_BounceReasonDialog_Category.value")));

@@ -70,7 +70,7 @@
 									<listbox
 										id="sortOperator_ProfitCenterCode" width="43px" mold="select"
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="profitCenterCode"
+									<uppercasebox id="profitCenterCode"
 										width="135px" maxlength="15" />
 									<label
 										id="label_ProfitCenterList_ProfitCenterDesc"

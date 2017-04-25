@@ -83,7 +83,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="statusCode"
+									<uppercasebox id="statusCode"
 										maxlength="8" width="180px" />
 								</hbox>
 							</row>

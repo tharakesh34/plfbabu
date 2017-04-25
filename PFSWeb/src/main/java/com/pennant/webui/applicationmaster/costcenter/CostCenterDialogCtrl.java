@@ -427,7 +427,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.costCenterCode.isReadonly()){
-			this.costCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+			this.costCenterCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		if (!this.costCenterDesc.isReadonly()){
 			this.costCenterDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_CostCenterDialog_CostCenterDesc.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));

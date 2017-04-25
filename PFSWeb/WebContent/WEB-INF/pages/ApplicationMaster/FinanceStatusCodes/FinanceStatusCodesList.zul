@@ -44,7 +44,8 @@
 							autodisable="button_FinanceStatusCodeList_FinanceStatusCodeSearch,print,button_FinanceStatusCodeList_NewFinanceStatusCode,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="help" label="${c:l('label_Help')}" visible="false"
+						<button id="help" label="${c:l('label_Help')}"
+							visible="false"
 							autodisable="button_FinanceStatusCodeList_FinanceStatusCodeSearch,print,button_FinanceStatusCodeList_NewFinanceStatusCode,btnRefresh,help"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							sclass="z-toolbarbutton" />
@@ -73,7 +74,7 @@
 									<listbox
 										id="sortOperator_statusCode" width="43px" mold="select"
 										rows="1" />
-									<textbox id="statusCode"
+									<uppercasebox id="statusCode"
 										width="100px" maxlength="8" />
 									<label
 										id="label_FinanceStatusCodeSearch_StatusDesc"

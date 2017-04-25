@@ -81,7 +81,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="profitCenterCode"
+									<uppercasebox id="profitCenterCode"
 										maxlength="15" width="100px" />
 								</hbox>
 								<label id="label_ProfitCenterDesc"
