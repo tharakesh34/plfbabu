@@ -42,17 +42,30 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.SubSector;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods Declarations for the <b>SubSector model</b> class.<br>
  * 
  */
-public interface SubSectorDAO {
+public interface SubSectorDAO extends BasicCrudDao<SubSector> {
 	
 	SubSector getSubSectorById(String id,String subSectorCode ,String type);
 	SubSector getSubSectorBySubSectorCode(String subSectorCode ,String type);
-	void update(SubSector subSector,String type);
-	void delete(SubSector subSector,String type);
-	void save(SubSector subSector,String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param sectorCode
+	 *            sectorCode of the subSector.
+	 * @param subSectorCode
+	 *            subSectorCode of the subSector.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String sectorCode, String subSectorCode, TableType tableType);
+	
 }
