@@ -344,4 +344,10 @@ WHERE NOT EXISTS
 			columnName="FinType" columnDataType="varchar(8)" />
 	</changeSet>
 	
+	<changeSet id="32" author="Kesav">
+		<createTable tableName="SEQ_PDC_CONSL_EMI_DTL">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
