@@ -2284,4 +2284,10 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 							Rules T2 ON T1.RuleID = T2.RuleId
 	</createView>
 </changeSet>
+<changeSet id="147" author="Surekha">
+	<sql>
+		delete SECGROUPRIGHTS where rightId=(select rightID from SecRights where rightName='button_AccountTypeDialog_btnDelete') and grpId=(select grpId from SecGroups where grpCode='AccountType_Maker');
+		delete SecRights where rightName='button_AccountTypeDialog_btnDelete';
+	</sql>
+</changeSet>
 </databaseChangeLog>
