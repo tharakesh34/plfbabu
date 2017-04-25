@@ -320,4 +320,18 @@ WHERE NOT EXISTS
 			columnName="PROFITCENTERID" columnDataType="bigint" />
 	</changeSet>
 	
+	<changeSet id="28" author="Kesav">
+		<addColumn tableName="AccountMapping">
+			<column name="FinType" type="varchar(8)">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="29" author="Kesav">
+		<addColumn tableName="AccountMapping_Temp">
+			<column name="FinType" type="varchar(8)">
+			</column>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
