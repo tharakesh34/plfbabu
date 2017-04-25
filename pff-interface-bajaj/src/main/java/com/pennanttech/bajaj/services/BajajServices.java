@@ -11,11 +11,13 @@ import com.pennanttech.pff.core.Literal;
 
 public abstract class BajajServices {
 	private static final Logger				logger	= Logger.getLogger(BajajServices.class);
+	
 	protected DataSource					dataSource;
 	protected JdbcTemplate					jdbcTemplate;
 	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
-
-	protected void setDataSource(DataSource dataSource) {
+	
+	
+	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
