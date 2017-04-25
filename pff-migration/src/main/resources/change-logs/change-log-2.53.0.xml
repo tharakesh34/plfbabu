@@ -90,7 +90,15 @@ WHERE NOT EXISTS
 		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
 		BMTBankDetail T4  ON T1.BankCode=T4.BankCode LEFT OUTER JOIN
 		 PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId
-
 		</createView>
+	</changeSet>
+	
+	<changeSet id="04" author="murthy.y">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+		  SELECT DS.ID, DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME,  DS.STATUS 
+		  FROM DATA_ENGINE_CONFIG DC
+		  INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+		  ORDER BY DS.ID
+	  </createView>
 	</changeSet>
 </databaseChangeLog>
