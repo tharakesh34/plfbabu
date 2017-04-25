@@ -65,5 +65,4 @@ public interface FinTypeAccountingDAO {
 	Long getAccountSetID(String finType, String event, int moduleId);
 	List<String> getFinTypeAccounting(String event,Long accountSetId, int moduleId);
 	List<Long> getFinTypeAccounting(String fintype, List<String> events, int moduleId);
-
 }

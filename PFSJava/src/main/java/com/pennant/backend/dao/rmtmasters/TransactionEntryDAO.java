@@ -70,4 +70,7 @@ public interface TransactionEntryDAO {
 	 List<String> getListFeeCodes(long accountSetId);
 	 List<String> getFeeCodeList(List<Long> accountSetId);
 	 Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
+	List<TransactionEntry> getTransactionEntriesbyFinType(String fintype, String type);
+	List<Rule> getSubheadRules(List<String> subHeadRules, String string);
+
 }

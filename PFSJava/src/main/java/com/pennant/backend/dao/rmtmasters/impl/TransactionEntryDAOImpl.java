@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -757,6 +758,45 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(entries.toArray());
 		logger.debug("Leaving");
 		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+	}
+	
+	@Override
+	public List<TransactionEntry> getTransactionEntriesbyFinType(String fintype, String type) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("FinType", fintype);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select Distinct AccountType, AccountSubHeadRule " );
+		selectSql.append(" from RMTTransactionEntry" );
+		selectSql.append(type );
+		selectSql.append("  where AccountSetID IN (select AccountSetID from FintypeAccounting where FinType = :finType)" );
+		
+		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TransactionEntry.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
+
+	@Override
+	public List<Rule> getSubheadRules(List<String> subHeadRules, String type) {
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select RuleCode, SqlRule, Fields " );
+		selectSql.append(" from Rules" );
+		selectSql.append(type );
+		selectSql.append("  where RuleCode IN  (:RuleCode) )" );
+		
+		source.addValue("RuleCode", Arrays.asList(subHeadRules));
+		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 }

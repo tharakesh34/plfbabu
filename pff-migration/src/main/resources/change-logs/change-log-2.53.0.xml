@@ -19,7 +19,7 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-
+ 
 	 <changeSet id="01" author="Madhubabu">
 		<createView replaceIfExists="true" viewName="FINADVANCEPAYMENTS_VIEW">
  SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,

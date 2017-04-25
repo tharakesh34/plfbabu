@@ -9726,6 +9726,7 @@
 
  	<bean name="accountMappingServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.AccountMappingServiceImpl">
        <property name="accountMappingDAO" ref="accountMappingDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+       	<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+        <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
 </beans>

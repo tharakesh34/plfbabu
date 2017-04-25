@@ -42,84 +42,41 @@
 */
 package com.pennant.webui.applicationmaster.accountmapping;
 
-import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.sql.Timestamp;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
-import org.zkoss.spring.SpringUtil;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Hlayout;
-import org.zkoss.zul.ListModelList;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Radio;
-import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Timebox;
-import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.impl.InputElement;
 
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.service.NotesService;
-import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.model.ErrorDetails;
-import com.pennant.util.ErrorControl;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.util.PennantAppUtil;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.model.Notes;
-import com.pennant.webui.util.ButtonStatusCtrl;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
-import com.pennant.backend.model.applicationmaster.AccountMapping;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
-import com.pennant.backend.service.applicationmaster.AccountMappingService;
-import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTDecimalValidator;
-import com.pennant.util.Constraint.PTNumberValidator;
-import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.util.Constraint.StaticListValidator;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennant.webui.util.ScreenCTL;
 import com.pennant.ExtendedCombobox;
-import com.pennant.search.Filter;
-import com.pennanttech.pff.core.Literal;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.applicationmaster.AccountMappingService;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.Literal;
 	
 
 /**
@@ -140,6 +97,10 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	protected Textbox 		account; 
 	protected Textbox 		hostAccount; 
 	private AccountMapping accountMapping; // overhanded per param
+	protected  ExtendedCombobox finType;	
+	
+	Listbox listBoxAccountMap;
+	
 
 	private transient AccountMappingListCtrl accountMappingListCtrl; // overhanded per param
 	private transient AccountMappingService accountMappingService;
@@ -178,10 +139,11 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		// Set the page level components.
 		setPageComponents(window_AccountMappingDialog);
 
+		doSetFieldProperties();
 		
 		try {
 			// Get the required arguments.
-			this.accountMapping = (AccountMapping) arguments.get("accountMapping");
+			/*	this.accountMapping = (AccountMapping) arguments.get("accountMapping");
 			this.accountMappingListCtrl = (AccountMappingListCtrl) arguments.get("accountMappingListCtrl");
 
 			if (this.accountMapping == null) {
@@ -204,9 +166,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
 			}
 
-			doSetFieldProperties();
 			doCheckRights();
-			doShowDialog(this.accountMapping);
+			doShowDialog(this.accountMapping);*/
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			closeDialog();
@@ -223,12 +184,49 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		
-			this.account.setMaxlength(50);
-			this.hostAccount.setMaxlength(20);
-		
-		setStatusDetails();
-		
+		// Finance Type
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType", "LovDescProductCodeDesc", "FinTypeDesc" });
+		this.finType.setMandatoryStyle(true);
+ 		
 		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$finType(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = finType.getObject();
+		
+		if (dataObject instanceof String) {
+			this.finType.setValue(dataObject.toString());
+			this.finType.setDescription("");
+		} else {
+			FinanceType financeType = (FinanceType) dataObject;
+			List<String> subHeadRuleList = new ArrayList<>();
+			
+			
+			List<TransactionEntry> transactionEntries = null;
+			if (financeType != null) {
+				 transactionEntries = accountMappingService.getTransactionEntriesByFintype(financeType.getFinType());
+			}
+			
+			if(transactionEntries != null){
+				for (TransactionEntry transactionEntry : transactionEntries) {
+					if(!subHeadRuleList.contains(transactionEntry.getAccountSubHeadRule())) {
+						subHeadRuleList.add(transactionEntry.getAccountSubHeadRule());
+					}
+				}
+			}
+			
+			Map<String, Rule> subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
+			
+		}
 	}
 	
 	/**
@@ -355,10 +353,34 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	}
 	
 	
-	private void setAccountMapping(){
+	/*private void setAccountMapping(){
 		
-		List<TransactionEntry> transactionEntry = 
+		FinanceType finType = new FinanceType();
+		HashMap<String, Object> executionMap = new HashMap<String, Object>();
+
 		
+		
+		List<TransactionEntry> transactionEntries = new ArrayList<>();
+		for (TransactionEntry transactionEntry : transactionEntries) {
+			
+			Rule subHeadRule = transactionEntry.getAccountSubHeadRule();
+			transactionEntry.getAccountType();
+			
+			if (subHeadRule.getFields() != null) {
+				String[] fields = feeRule.getFields().split(",");
+				for(String field : fields) {
+					if (!executionMap.containsKey(field)) {
+						getRuleExecutionUtil().setExecutionMap(field, objectList, executionMap);
+					}
+				}
+			}
+			
+			
+			
+			
+			
+			
+		}
 		
 		
 		
@@ -368,7 +390,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		
 		
 	}
-	
+	*/
+		
 	
 
 

@@ -42,21 +42,25 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.BeanUtils;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.audit.AuditDetail;
 
+import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
+import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
-import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
-import com.pennant.backend.model.applicationmaster.AccountMapping;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.app.util.ErrorUtil;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -69,6 +73,8 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountMappingDAO accountMappingDAO;
+	private FinTypeAccountingDAO finTypeAccountingDAO;
+	private TransactionEntryDAO transactionEntryDAO;
 
 
 	// ******************************************************//
@@ -354,5 +360,31 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
 		}
+
+		public TransactionEntryDAO getTransactionEntryDAO() {
+			return transactionEntryDAO;
+		}
+		
+		public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
+			this.transactionEntryDAO = transactionEntryDAO;
+		}
+		
+		@Override
+		public List<TransactionEntry> getTransactionEntriesByFintype(String finType) {
+			return transactionEntryDAO.getTransactionEntriesbyFinType(finType, "");
+		}
+
+		@Override
+		public Map<String, Rule> getSubheadRules(List<String> subHeadRules) {
+			List<Rule> rulesList = this.transactionEntryDAO.getSubheadRules(subHeadRules, "_AView");
+			Map<String, Rule> rulesMap = new HashMap<String, Rule>();
+			if(rulesList != null) {
+				for(Rule rule : rulesList) {
+					rulesMap.put(rule.getRuleCode(), rule);
+				}
+			}
+			return rulesMap;
+		}
+
 
 }

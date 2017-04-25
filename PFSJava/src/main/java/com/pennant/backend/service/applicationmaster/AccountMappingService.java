@@ -42,8 +42,13 @@
 */
 package com.pennant.backend.service.applicationmaster;
 
+import java.util.List;
+import java.util.Map;
+
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.rulefactory.Rule;
 
 public interface AccountMappingService {
 
@@ -53,4 +58,6 @@ public interface AccountMappingService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	List<TransactionEntry> getTransactionEntriesByFintype(String finType);
+	Map<String, Rule> getSubheadRules(List<String> subHeadRules) ; 
 }
