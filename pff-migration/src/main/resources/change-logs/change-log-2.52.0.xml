@@ -2340,8 +2340,8 @@ INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = TBH.CURRENCY
 		</createView>
 	</changeSet>
 
-<!-- 	 <changeSet id="112" author="durgaprasad G"> <dropTable tableName="SeqPresentmentDetailRef" 
-		/> </changeSet>  -->
+	 <changeSet id="112" author="durgaprasad G"> <dropTable tableName="SeqPresentmentDetailRef" 
+		/> </changeSet>  
 
 	<changeSet id="113" author="durgaprasad G">
 		<createTable tableName="SeqPresentmentDetailRef">
