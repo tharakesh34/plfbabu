@@ -83,10 +83,20 @@
 									<datebox id="startDate" width="171px" />
 								</row>
 								
+								<!-- <row>
+									<label value="${c:l('label_Branches.value')}" />
+									<cell colspan = "3">
+										<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
+										<space spacing="8px"></space>
+										<uppercasebox id="branchDetails" width="320px" />
+										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
+									</cell>
+								</row> -->
+								
 							</rows>
 						</grid>
 						
-						<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+					<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
 							<columns>
 								<column width="150px" />
 								<column />
@@ -95,15 +105,15 @@
 								<row>
 									<label value="${c:l('label_Branches.value')}" />
 									<hbox>
-										<space spacing="12px"></space>
+										<space spacing="15px"></space>
 										<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
 										<space spacing="8px"></space>
-										<uppercasebox id="branchDetails" width="320px" />
+										<uppercasebox id="branchDetails" width="285px" />
 										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 							</rows>
-						</grid>
+						</grid> 
 
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
