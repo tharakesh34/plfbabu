@@ -39,38 +39,46 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.financemanagement.presentmentheader;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
+import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentHeaderList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentHeaderList.zul file.
  * 
  */
 public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader> {
@@ -82,25 +90,16 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Paging pagingPresentmentHeaderList;
 	protected Listbox listBoxPresentmentHeader;
 
-	// List headers
-	protected Listheader listheader_MandateType;
-	protected Listheader listheader_PartnerBankID;
-	protected Listheader listheader_Status;
+	protected Button btnApprove;
 
-	// checkRights
-	protected Button button_PresentmentHeaderList_NewPresentmentHeader;
-	protected Button button_PresentmentHeaderList_PresentmentHeaderSearch;
+	protected Listheader listHeader_CheckBox_Name;
+	protected Listcell listCell_Checkbox;
+	protected Listitem listItem_Checkbox;
+	protected Checkbox listHeader_CheckBox_Comp;
+	protected Checkbox list_CheckBox;
 
-	// Search Fields
-    protected Combobox mandateType; // autowired
-	protected Textbox partnerBankID; // autowired
-    protected Combobox status; // autowired
-	
-	protected Listbox sortOperator_MandateType;
-	protected Listbox sortOperator_PartnerBankID;
-	protected Listbox sortOperator_Status;
-	
-	private transient PresentmentHeaderService presentmentHeaderService;
+	private transient PresentmentDetailService presentmentDetailService;
+	private Map<Long, Object> presentmentMap = new HashMap<Long, Object>();
 
 	/**
 	 * default constructor.<br>
@@ -113,9 +112,9 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected void doSetProperties() {
 		super.moduleCode = "PresentmentHeader";
 		super.pageRightName = "PresentmentHeaderList";
-		super.tableName = "PresentmentHeader_AView";
-		super.queueTableName = "PresentmentHeader_View";
-		super.enquiryTableName = "PresentmentHeader_View";
+		super.tableName = "PresentmentHeader";
+		super.queueTableName = "PresentmentHeader";
+		super.enquiryTableName = "PresentmentHeader";
 	}
 
 	/**
@@ -131,32 +130,97 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 				pagingPresentmentHeaderList);
 		setItemRender(new PresentmentHeaderListModelItemRenderer());
 
-		// Register buttons and fields.
-		registerButton(button_PresentmentHeaderList_PresentmentHeaderSearch);
-		registerButton(button_PresentmentHeaderList_NewPresentmentHeader, "button_PresentmentHeaderList_NewPresentmentHeader", true);
+		registerButton(btnApprove);
 
-		registerField("presentmentID");
-		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
-		registerField("mandateTypeName");
-		registerField("partnerBankID", listheader_PartnerBankID, SortOrder.NONE, partnerBankID, sortOperator_PartnerBankID, Operators.STRING);
-		registerField("partnerBankIDName");
-		registerField("presentmentDate");		
-		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
-		registerField("statusName");
+		registerField("PresentmentID");
+		registerField("LastMntBy");
+		registerField("LastMntOn");
+		registerField("Status");
 
-		// Render the page and display the data.
+		doSetFieldProperties();
 		doRenderPage();
 		search();
 	}
 
+	private void doSetFieldProperties() {
+
+		listItem_Checkbox = new Listitem();
+		listCell_Checkbox = new Listcell();
+		listHeader_CheckBox_Comp = new Checkbox();
+		listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
+		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_listHeaderCheckBox");
+		listItem_Checkbox.appendChild(listCell_Checkbox);
+
+		if (listHeader_CheckBox_Name.getChildren() != null) {
+			listHeader_CheckBox_Name.getChildren().clear();
+		}
+		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
+	}
+
 	/**
-	 * The framework calls this event handler when user clicks the search button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick$button_PresentmentHeaderList_PresentmentHeaderSearch(Event event) {
-		search();
+	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+
+		for (int i = 0; i < listBoxPresentmentHeader.getItems().size(); i++) {
+			Listitem listitem = listBoxPresentmentHeader.getItems().get(i);
+			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
+			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
+		}
+
+		if (listHeader_CheckBox_Comp.isChecked() && listBoxPresentmentHeader.getItems().size() > 0) {
+			presentmentMap = getPresentmentMap();
+		} else {
+			presentmentMap.clear();
+		}
+
+		logger.debug("Leaving");
+	}
+
+	private Map<Long, Object> getPresentmentMap() {
+
+		JdbcSearchObject<Map<Long, Object>> searchObject = new JdbcSearchObject<>();
+		searchObject.addField("presentmentid");
+		searchObject.addTabelName(this.tableName);
+
+		List<Map<Long, Object>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+
+		Map<Long, Object> preMap = new HashMap<Long, Object>();
+
+		if (list != null && !list.isEmpty()) {
+			for (int i = 0; i < list.size(); i++) {
+				Map<Long, Object> map = (Map<Long, Object>) list.get(i);
+				long paymentid = Long.parseLong(String.valueOf(map.get("presentmentid")));
+				preMap.put(paymentid, null);
+			}
+		}
+		return preMap;
+	}
+
+	/**
+	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
+	 */
+	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+
+		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
+
+		long id = (Long) checkBox.getAttribute("iD");
+
+		if (checkBox.isChecked()) {
+			presentmentMap.put(id, null);
+		} else {
+			presentmentMap.remove(id);
+		}
+
+		if (presentmentMap.size() == this.pagingPresentmentHeaderList.getTotalSize()) {
+			listHeader_CheckBox_Comp.setChecked(true);
+		} else {
+			listHeader_CheckBox_Comp.setChecked(false);
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -168,89 +232,6 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	public void onClick$btnRefresh(Event event) {
 		doReset();
 		search();
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_PresentmentHeaderList_NewPresentmentHeader(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		// Create a new entity.
-		PresentmentHeader presentmentheader = new PresentmentHeader();
-		presentmentheader.setNewRecord(true);
-		presentmentheader.setWorkflowId(getWorkFlowId());
-		// Display the dialog page.
-		doShowDialogPage(presentmentheader);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-
-	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-
-	public void onPresentmentHeaderItemDoubleClicked(Event event) {
-		logger.debug("Entering");
-		
-		// Get the selected record.
-		Listitem selectedItem = this.listBoxPresentmentHeader.getSelectedItem();
-		final long presentmentID = (long) selectedItem.getAttribute("presentmentID");
-		PresentmentHeader presentmentheader = presentmentHeaderService.getPresentmentHeader(presentmentID);
-
-		if (presentmentheader == null) {
-			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-			return;
-		}
-		
-		StringBuffer whereCond= new StringBuffer();
-		whereCond.append("  AND  PresentmentID = ");
-		whereCond.append( presentmentheader.getPresentmentID());
-		whereCond.append(" AND  version=");
-		whereCond.append(presentmentheader.getVersion());
-	
-		if (doCheckAuthority(presentmentheader, whereCond.toString())) {
-			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && presentmentheader.getWorkflowId() == 0) {
-				presentmentheader.setWorkflowId(getWorkFlowId());
-			}
-			doShowDialogPage(presentmentheader);
-		} else {
-			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-	
-	/**
-	 * Displays the dialog page with the required parameters as map.
-	 * 
-	 * @param presentmentheader
-	 *            The entity that need to be passed to the dialog.
-	 */
-	private void doShowDialogPage(PresentmentHeader presentmentheader) {
-		logger.debug(Literal.ENTERING);
-
-		Map<String, Object> arg = getDefaultArguments();
-		arg.put("presentmentheader", presentmentheader);
-		arg.put("presentmentheaderListCtrl", this);
-		
-		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.financemanagement/PresentmentHeader/PresentmentHeaderDialog.zul", null, arg);
-		} catch (Exception e) {
-			logger.error("Exception:", e);
-			MessageUtil.showError(e);
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -272,25 +253,61 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
-	/**
-	 * When user clicks on "fromApproved"
-	 * 
-	 * @param event
-	 */
-	public void onCheck$fromApproved(Event event) {
-		search();
-	}
 
 	/**
-	 * When user clicks on "fromWorkFlow"
+	 * When user clicks on "btnApprove"
 	 * 
 	 * @param event
+	 * @throws InterruptedException
 	 */
-	public void onCheck$fromWorkFlow(Event event) {
-		search();
+	public void onClick$btnApprove(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		List<Long> presentmentList;
+
+		if (listHeader_CheckBox_Comp.isChecked()) {
+			presentmentMap.clear();
+			presentmentMap = getPresentmentMap();
+			presentmentList = new ArrayList<Long>(presentmentMap.keySet());
+		} else {
+			presentmentList = new ArrayList<Long>(presentmentMap.keySet());
+		}
+
+		if (listBoxPresentmentHeader.getItems().size() > 0) {
+			listHeader_CheckBox_Comp.setDisabled(false);
+		} else {
+			listHeader_CheckBox_Comp.setDisabled(true);
+		}
+
+		if (presentmentList.isEmpty() || listBoxPresentmentHeader.getItems().size() <= 0) {
+			MessageUtil.showErrorMessage("Please Select Atleast One Record");
+			return;
+		}
+
+		// Show a confirm box
+
+		String msg = " " + this.pagingPresentmentHeaderList.getTotalSize() + "/" + this.presentmentMap.size()
+				+ " batches are selected for process.\n Do you want to continue? ";
+		MultiLineMessageBox.doSetTemplate();
+		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
+				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+		if (conf == MultiLineMessageBox.NO) {
+			return;
+		}
+		try {
+			btnApprove.setDisabled(true);
+			presentmentDetailService.processDetails(presentmentList);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+		} finally {
+			this.presentmentMap.clear();
+			this.listHeader_CheckBox_Comp.setChecked(false);
+			search();
+			btnApprove.setDisabled(false);
+			logger.debug("Leaving");
+		}
 	}
-	
+
 	/**
 	 * Item renderer for list items in the list box.
 	 * 
@@ -300,11 +317,38 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, PresentmentHeader presentmentDetail, int count) throws Exception {
+		public void render(Listitem item, PresentmentHeader object, int count) throws Exception {
+
+			Listcell lc;
+			lc = new Listcell();
+			list_CheckBox = new Checkbox();
+			list_CheckBox.setAttribute("iD", object.getPresentmentID());
+			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
+			lc.appendChild(list_CheckBox);
+			if (listHeader_CheckBox_Comp.isChecked()) {
+				list_CheckBox.setChecked(true);
+			} else {
+				list_CheckBox.setChecked(presentmentMap.containsKey(object.getPresentmentID()));
+			}
+			lc.setParent(item);
+
+			lc = new Listcell("BT".concat(StringUtils.leftPad(String.valueOf(object.getPresentmentID()), 10, "0")));
+			lc.setParent(item);
+
+			lc = new Listcell(getUserWorkspace().getUserDetails().getUsername());
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtility.formatToLongDate(object.getLastMntOn()));
+			lc.setParent(item);
+
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(object.getStatus()),
+					PennantStaticListUtil.getPresentmentBatchStatusList()));
+			lc.setParent(item);
 		}
 	}
-	
-	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
-		this.presentmentHeaderService = presentmentHeaderService;
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
 	}
+
 }

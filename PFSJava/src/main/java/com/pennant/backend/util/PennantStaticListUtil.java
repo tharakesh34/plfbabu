@@ -187,6 +187,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> actionList;
 	private static ArrayList<ValueLabel> purposeList;
 	private static ArrayList<ValueLabel> presentmentExclusionList;
+	private static ArrayList<ValueLabel> presentmentBatchStatusList;
 
 	
 
@@ -2628,5 +2629,18 @@ public class PennantStaticListUtil {
 		return purposeList;
 	}
 	
+	
+	public static ArrayList<ValueLabel> getPresentmentBatchStatusList() {
+		if (presentmentBatchStatusList == null) {
+			presentmentBatchStatusList = new ArrayList<ValueLabel>(5);
+			presentmentBatchStatusList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Extract")));
+			presentmentBatchStatusList.add(new ValueLabel("2", Labels.getLabel("label_Represent_Batch_Created")));
+			presentmentBatchStatusList.add(new ValueLabel("3", Labels.getLabel("label_Represent_Awaiting_Conf")));
+			presentmentBatchStatusList.add(new ValueLabel("4", Labels.getLabel("label_Represent_Send_Represent")));
+			presentmentBatchStatusList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Cleared")));
+			presentmentBatchStatusList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Bounced")));
+		}
+		return presentmentBatchStatusList;
+	}
 }
 

@@ -63,9 +63,12 @@ public interface PresentmentDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	String processPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
+	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	void savePresentmentHeader(PresentmentHeader presentmentHeader);
+	String savePresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
 
-	void processPresentmentDetails(List<Long> extractIdList);
+	void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception;
+
+	void processDetails(List<Long> presentmentList) throws Exception;
+
 }

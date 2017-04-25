@@ -101,6 +101,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private long bounceID;
 	private String bounceIDName;
 	private String customerCif;
+	private String customerName;
 	private String loanType;
 	private String loanTypeName;
 	private String mandateStatus;
@@ -138,6 +139,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("statusName");
 		excludeFields.add("bounceIDName");
 		excludeFields.add("customerCif");
+		excludeFields.add("customerName");
 		excludeFields.add("loanType");
 		excludeFields.add("loanTypeName");
 		excludeFields.add("mandateType");
@@ -456,6 +458,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 }

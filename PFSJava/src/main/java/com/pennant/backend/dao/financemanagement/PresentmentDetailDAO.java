@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.financemanagement;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
@@ -65,5 +66,7 @@ public interface PresentmentDetailDAO {
 
 	ResultSet getPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
 
-	void savePresentmentHeader(PresentmentHeader presentmentHeader);
+	long savePresentmentHeader(PresentmentHeader presentmentHeader);
+
+	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
 }

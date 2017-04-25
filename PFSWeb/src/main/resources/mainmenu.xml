@@ -620,10 +620,10 @@
   -->
 	 	
 <!--//APPEND AFTER THIS//-->
-
-<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/> <!-- menuItem_financemanagement_PresentmentHeader -->
-<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
-<menuItem id="menu_Item_PresentmentHeader" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul"  rightName="menuItem_financemanagement_PresentmentHeader"/>
-
+	<menu id="menu_Category_PresentmentDetails" rightName="menuCat_PresentmentDetails">
+		<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailExtractList.zul" rightName="menuItem_PresentmentDetail_PresentmentExtract"/>
+		<menuItem id="menu_Item_PresentmentDetail" zulNavigation="/WEB-INF/pages/financemanagement/PresentmentDetail/PresentmentDetailList.zul" rightName="menuItem_PresentmentDetail_PresentmentBatchCreation"/>
+		<menuItem id="menu_Item_PresentmentHeader" 	zulNavigation="/WEB-INF/pages/financemanagement/PresentmentHeader/PresentmentHeaderList.zul" rightName="menuItem_PresentmentDetail_PresentmentReview" />
+	</menu>
 
 </ns2:XMLRootMenu>

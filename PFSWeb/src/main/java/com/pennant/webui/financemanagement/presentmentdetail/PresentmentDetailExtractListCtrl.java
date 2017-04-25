@@ -154,13 +154,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doSetValidations();
 		try {
 			errorMsg = extractDetails();
+			MessageUtil.showError(errorMsg);
+			return;
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
-		if (errorMsg != null) {
-			MessageUtil.showError(errorMsg);
-			return;
-		}
+		
 	}
 
 	private void doSetValidations() {
@@ -188,7 +187,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		return presentmentDetailService.processPresentmentDetails(detailHeader);
+		return presentmentDetailService.savePresentmentDetails(detailHeader);
 	}
 
 	/**

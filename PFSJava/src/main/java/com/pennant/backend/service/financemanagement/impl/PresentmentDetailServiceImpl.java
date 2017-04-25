@@ -69,6 +69,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dbengine.DataEngineDBProcess;
+import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -365,26 +366,26 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 
 	/* processPresentmentDetails */
 	@Override
-	public String processPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception {
+	public String savePresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
+		
+		boolean isEmptyRecords = false;
 
 		try {
 			ResultSet rs = getPresentmentDetailDAO().getPresentmentDetails(detailHeader);
 
-			if (rs != null) {
-				if (rs.getRow() <= 0) {
-					// return " No records are available to extract, please change the search criteria.";
-				}
-			}
-
-			long reference = 000007;// getPresentmentDetailDAO().getPresentmentDetailRef("SeqPresentmentDetailRef");
+			long reference = getPresentmentDetailDAO().getPresentmentDetailRef("SeqPresentmentDetailRef");
 			String strReference = StringUtils.leftPad(String.valueOf(reference), 10, "0");
 			strReference = "PRE".concat(strReference);
 			detailHeader.setExtractId(reference);
 			detailHeader.setExtractReference(strReference);
-			getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
 
 			while (rs.next()) {
+				if (!isEmptyRecords) {
+					getPresentmentDetailDAO().savePresentmentHeaderDetails(detailHeader);
+				}
+				isEmptyRecords = true;
+				
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setFinReference(rs.getString("FINREFERENCE"));
 
@@ -409,6 +410,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 
 				pDetail.setBounceID(1L);
 				pDetail.setStatus(RepayConstants.PEXC_EXTRACT);
+				pDetail.setExcludeReason(0);
 
 				pDetail.setVersion(0);
 				pDetail.setLastMntBy(detailHeader.getLastMntBy());
@@ -428,12 +430,15 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 				getPresentmentDetailDAO().save(pDetail, TableType.MAIN_TAB);
 			}
 
+			if (!isEmptyRecords) {
+				return " No records are available to extract, please change the search criteria.";
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return " Extracted successfully.";
 	}
 
 	private void doCalculations(PresentmentDetail presentmentDetail, PresentmentDetailHeader detailHeader) {
@@ -496,28 +501,35 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	}
 
 	@Override
-	public void savePresentmentHeader(PresentmentHeader presentmentHeader) {
-		getPresentmentDetailDAO().savePresentmentHeader(presentmentHeader);
+	public long savePresentmentHeader(PresentmentHeader presentmentHeader) {
+		return getPresentmentDetailDAO().savePresentmentHeader(presentmentHeader);
 	}
 
 	@Override
-	public void processPresentmentDetails(List<Long> extractIdList) {
+	public void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception {
+		getPresentmentDetailDAO().updatePresentmentDetailId(presentmentId, detaildList);
+	}
 
+	@Override
+	public void processDetails(List<Long> presentmentList) throws Exception{
+		logger.debug(Literal.ENTERING);
+		
 		StringBuilder ids = new StringBuilder();
-		for (Long id : extractIdList) {
+		for (Long id : presentmentList) {
 			if (ids.length() > 0) {
 				ids.append(",");
 			} else {
 				ids.append(id);
 			}
 		}
-		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, 1000, "ORACLE");
+		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, 1000, App.DATABASE.name());
 		try {
-			proce.processData("PRESENTATION_REQUEST", ids.toString());
+			proce.processData("PRESENTMENT_REQUEST", ids.toString());
 		} catch (Exception e) {
-
-		} finally {
-		}
+			logger.error("Exception :", e);
+			throw e;
+		} 
+		logger.debug(Literal.LEAVING);
 	}
-	
+
 }

@@ -4653,7 +4653,7 @@
 		<!-- PresentmentHeader -->
 	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentheader.PresentmentHeaderListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 	
 	<!-- FinType Partner Bank -->

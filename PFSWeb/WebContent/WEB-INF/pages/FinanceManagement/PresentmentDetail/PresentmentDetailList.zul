@@ -69,6 +69,11 @@
 									<label value="${c:l('label_PresentmentDetailList_ExclusionStatus.value')}" />
 									<combobox id = "exclusionStatus" width="200px"  />
 								</row>
+								
+								<row>
+									<label value="${c:l('label_PresentmentDetailList_PartnerBank.value')}" />
+									<extendedcombobox id = "partnerBank"/>
+								</row>
 							</rows>
 						</grid>
 					<listbox id="listBoxPresentmentDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true">
