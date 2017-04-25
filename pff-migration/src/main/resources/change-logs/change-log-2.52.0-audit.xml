@@ -478,9 +478,12 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 	</addColumn>
 </changeSet>
 
-
-
-
-
+<changeSet id="12" author="Amit">
+		<addColumn tableName="AdtEmployerDetail">
+			<column name="EmpIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
 
 </databaseChangeLog>
