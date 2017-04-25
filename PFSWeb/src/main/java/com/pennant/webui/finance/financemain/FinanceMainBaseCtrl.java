@@ -152,8 +152,8 @@ import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -861,7 +861,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		finDivision = financeType.getFinDivision();
-
+		StringBuilder whereClause = new StringBuilder();
+		
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -963,9 +964,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.finLimitRef);
 			readOnlyComponent(true, this.mMAReference);
 		}
-
 		this.finPurpose.setProperties("PurposeDetail", "PurposeCode", "PurposeDesc", true, 8);
-		this.finBranch.setProperties("Branch", "BranchCode", "BranchDesc", true, LengthConstants.LEN_BRANCH);
+		this.finBranch.setProperties("UserDivBranch", "UsrID", "UserBranchDesc", true, LengthConstants.LEN_BRANCH);
+		whereClause.append("usrID = ");
+		whereClause.append(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		whereClause.append(" AND ");
+		whereClause.append("UserDivision = '");
+		whereClause.append(this.finDivision);
+		whereClause.append("'");
+		this.finBranch.setWhereClause(whereClause.toString());
 
 		this.downPayBank.setProperties(true, finFormatter);
 		this.downPaySupl.setProperties(false, finFormatter);
@@ -7773,7 +7780,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finBranch.setDescription(getFinanceDetail().getCustomerDetails().getCustomer()
 					.getLovDescCustDftBranchName());
 		} else {
-			Branch branch = (Branch) this.finBranch.getObject();
+			SecurityUserDivBranch branch = (SecurityUserDivBranch) this.finBranch.getObject();
 			if (branch != null) {
 				getFinanceDetail().getCustomerDetails().getCustomer()
 						.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());

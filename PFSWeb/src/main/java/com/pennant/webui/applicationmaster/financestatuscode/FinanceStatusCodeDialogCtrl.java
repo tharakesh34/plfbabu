@@ -381,7 +381,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 		if (!this.statusCode.isReadonly()) {
 			this.statusCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FinanceStatusCodeDialog_StatusCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.statusDesc.isReadonly()) {
 			this.statusDesc.setConstraint(new PTStringValidator(Labels
