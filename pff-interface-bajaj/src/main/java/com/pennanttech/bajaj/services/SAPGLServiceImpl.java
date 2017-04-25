@@ -189,6 +189,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		builder.append(DateUtil.format(monthEndDate, "ddMMYYYY"));
 		builder.append("_");
 		builder.append(String.valueOf(headerId));
+		builder.append(".CSV");
 
 		fileName = builder.toString();
 	}
@@ -451,7 +452,6 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			return namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			paramMap = null;
@@ -546,7 +546,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 		try {
 			count = count + namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return count;
 	}
@@ -567,7 +567,6 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 			return namedJdbcTemplate.update(sql.toString(), parameterSource);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			e.printStackTrace();
 		}
 
 		return 0;
@@ -588,7 +587,6 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			e.printStackTrace();
 		}
 
 	}
