@@ -501,6 +501,13 @@ public class SAPGLServiceImpl extends BajajServices implements GeneralLedgerServ
 					paramMap.addValue("PRCTR", rs.getString("PRCTR"));
 					paramMap.addValue("ZUONR", rs.getString("ZUONR"));
 					paramMap.addValue("SGTXT", rs.getString("SGTXT"));
+					
+					if ((Integer) paramMap.getValue("BSCHL") == 40) {
+						BigDecimal amount = (BigDecimal) paramMap.getValue("WRBTR");
+						paramMap.addValue("WRBTR", amount.negate());
+					}
+					
+					
 
 					if (rs.getInt("COUNT") == 1) {
 						count = saveTransactions(count, paramMap);

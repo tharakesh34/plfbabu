@@ -47,6 +47,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -66,6 +68,7 @@ import org.zkoss.zul.Window;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -75,21 +78,25 @@ import com.pennanttech.interfacebajaj.model.FileDownlaod;
  */
 public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FileDownloadListCtrl.class);
+	private static final long	serialVersionUID	= 1L;
+	private final static Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
 
-	protected Window window_FleDownloadList;
-	protected Borderlayout borderLayout_FileDownloadList;
-	protected Paging pagingFileDownloadList;
-	protected Listbox listBoxFileDownload;
-	protected Button btnRefresh;
+	protected Window			window_FleDownloadList;
+	protected Borderlayout		borderLayout_FileDownloadList;
+	protected Paging			pagingFileDownloadList;
+	protected Listbox			listBoxFileDownload;
+	protected Button			btnRefresh;
 
-	protected Listheader listheader_FirstHeader;
-	
-	private Button downlaod;
+	protected Listheader		listheader_FirstHeader;
 
-	
-	String module = null;
+	private Button				downlaod;
+
+	private enum FileControl {
+		MANDATES, DISBURSEMENT, SAPGL;
+	}
+
+	String	module	= null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -101,14 +108,27 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	protected void doSetProperties() {
 		super.moduleCode = "FileDownload";
 		super.pageRightName = "FileDownload";
+
 		this.module = getArgument("module");
-		if ("MANDATES".equals(module)) {
-			super.tableName = "MANDATE_FILE_DOWNLOAD_VIEW";
-			super.queueTableName = "MANDATE_FILE_DOWNLOAD_VIEW";
-		} else if ("DISBURSEMENT".equals(module)) {
-			super.tableName = "FILE_DOWNLOAD_VIEW";
-			super.queueTableName = "FILE_DOWNLOAD_VIEW";
+		FileControl fileContol = FileControl.valueOf(this.module);
+
+		switch (fileContol) {
+		case MANDATES:
+			super.tableName = "DE_FILE_CONTROL_VIEW";
+			super.queueTableName = "DE_FILE_CONTROL_VIEW";
+			break;
+		case DISBURSEMENT:
+			super.tableName = "DE_DISBURSE_FILE_CONTROL_VIEW";
+			super.queueTableName = "DE_DISBURSE_FILE_CONTROL_VIEW";
+			break;
+		case SAPGL:
+			super.tableName = "DE_FILE_CONTROL_VIEW";
+			super.queueTableName = "DE_FILE_CONTROL_VIEW";
+			break;
+		default:
+			break;
 		}
+
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -116,38 +136,59 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	public void onCreate$window_FleDownloadList(Event event) throws Exception {
-		logger.debug("Entering");
-		
+		logger.debug(Literal.ENTERING);
+
 		// Set the page level components.
-		setPageComponents(window_FleDownloadList, borderLayout_FileDownloadList, listBoxFileDownload, pagingFileDownloadList);
+		setPageComponents(window_FleDownloadList, borderLayout_FileDownloadList, listBoxFileDownload,
+				pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
-		
-		if ("DISBURSEMENT".equals(module)) {
-			super.tableName = "FILE_DOWNLOAD_VIEW";
-			super.queueTableName = "FILE_DOWNLOAD_VIEW";
-			registerField("PartnerBankName");
-			registerField("AlwFileDownload");
-		}
-		
+
 		registerField("Name");
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
-		
+
 		doRenderPage();
 		search();
-		
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doAddFilters() {
+		super.doAddFilters();
+		FileControl fileContol = FileControl.valueOf(this.module);
+		List<String> list = new ArrayList<>();
+
+		switch (fileContol) {
+		case DISBURSEMENT:
+			this.searchObject.addField("PARTNERBANKNAME");
+			this.searchObject.addField("ALWFILEDOWNLOAD");
+			list.add("DISB_HDFC_EXPORT");
+			list.add("DISB_IMPS_EXPORT");
+			list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
+			list.add("DISB_OTHER_NEFT_RTGS_EXPORT");
+			break;
+		case MANDATES:
+			list.add("MANDATES_EXPORT");
+			break;
+		case SAPGL:
+			list.add("GL_TRAIL_BALANCE_EXPORT");
+			list.add("GL_TRANSACTION_EXPORT");
+			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
+			break;
+		default:
+			break;
+		}
+
+		this.searchObject.addFilterIn("NAME", list);
 	}
 
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
-		logger.debug(event.toString());
 		doReset();
 		search();
-		logger.debug("Leaving");
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
@@ -189,29 +230,27 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	 * 
 	 */
 	private class FileDownloadListModelItemRenderer implements ListitemRenderer<FileDownlaod>, Serializable {
-
-		private static final long serialVersionUID = 1L;
+		private static final long	serialVersionUID	= 1L;
 
 		@Override
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
-
 			Listcell lc;
-			
-			if ("MANDATES".equals(module)) {
+
+			if ("DISBURSEMENT".equals(module)) {
+				lc = new Listcell(fileDownlaod.getPartnerBankName());
+				lc.setParent(item);
+			} else {
 				lc = new Listcell(fileDownlaod.getName());
 				lc.setParent(item);
 				listheader_FirstHeader.setLabel("Name");
-			} else if ("DISBURSEMENT".equals(module)) {
-				lc = new Listcell(fileDownlaod.getPartnerBankName());
-				lc.setParent(item);
 			}
-		 
+
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getFileLocation());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
 
@@ -221,18 +260,42 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
 			downlaod.setAttribute("object", fileDownlaod);
-			
-			
-			if ("MANDATES".equals(module)) {
-				if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
-					downlaod.setDisabled(true);
+
+			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				downlaod.setDisabled(true);
+			}
+
+			FileControl fileContol = FileControl.valueOf(fileDownlaod.getName());
+
+			switch (fileContol) {
+			case DISBURSEMENT:
+				downlaod.setTooltiptext("Disbursement request download.");
+				break;
+			case MANDATES:
+				if (0 == fileDownlaod.getAlwFileDownload()) {
+					downlaod.setTooltiptext("Not allow to download disbursement request file.");
 				}
+
+				if (StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")) {
+					downlaod.setDisabled(true);
+					downlaod.setTooltiptext("IMPS Disbursement.");
+				}
+
+				break;
+			case SAPGL:
+				downlaod.setTooltiptext("SAPGL Files download.");
+				break;
+			default:
+				break;
+			}
+
+			if ("MANDATES".equals(module)) {
 				downlaod.setTooltiptext("Mandates download.");
-				
 
 			} else if ("DISBURSEMENT".equals(module)) {
 
-				if (0 == fileDownlaod.getAlwFileDownload() || !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				if (0 == fileDownlaod.getAlwFileDownload()
+						|| !ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 					downlaod.setDisabled(true);
 				}
 
@@ -240,15 +303,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 					downlaod.setTooltiptext("Not allowed to downlaod.");
 				}
 
-				if (StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")) {
-					downlaod.setDisabled(true);
-					downlaod.setTooltiptext("IMPS Disbursement.");
-				}
 			}
-			
-			
+
 			lc.setParent(item);
-			
+
 		}
 	}
 
