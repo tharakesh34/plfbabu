@@ -61,6 +61,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>RelationshipOfficer model</b> class.<br>
@@ -158,12 +159,10 @@ public class RelationshipOfficerDAOImpl extends BasisCodeDAO<RelationshipOfficer
 				};
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", relationshipOfficer.getROfficerCode(), 
-					relationshipOfficer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
+		
+		
 		logger.debug("Leaving");
 	}
 	

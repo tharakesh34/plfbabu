@@ -62,6 +62,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>TransactionCode model</b> class.<br>
@@ -158,11 +159,7 @@ public class TransactionCodeDAOImpl extends BasisCodeDAO<TransactionCode>  imple
 				};
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",transactionCode.getId() ,
-					transactionCode.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
