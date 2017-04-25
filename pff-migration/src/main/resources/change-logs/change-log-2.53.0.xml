@@ -196,4 +196,8 @@ WHERE NOT EXISTS
 		</sql>
 	</changeSet>
 	
+	<changeSet id="16" author="durgaprasad G">
+		<dropNotNullConstraint tableName="PresentmentHeader" columnName="MANDATETYPE" columnDataType="VARCHAR2(20)" />
+	</changeSet>
+	
 </databaseChangeLog>
