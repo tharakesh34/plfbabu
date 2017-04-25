@@ -235,4 +235,65 @@ WHERE NOT EXISTS
 		</createView>
 	</changeSet>
 	
+	<changeSet id="20" author="Amit">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_CPIsActive','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROVINCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ProvinceDialog_CPIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21" author="Amit">
+		<addColumn tableName="RMTCountryVsProvince">
+			<column name="CPIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="22" author="Amit">
+		<addColumn tableName="RMTCountryVsProvince_Temp">
+			<column name="CPIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="23" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTCOUNTRYVSPROVINCE_AVIEW">
+ SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+
+		</createView>
+	</changeSet>
+	
+	<changeSet id="24" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTCOUNTRYVSPROVINCE_VIEW">
+  SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince_Temp T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			UNION ALL
+			SELECT     T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+			                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+			FROM         RMTCountryVsProvince  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			WHERE     NOT EXISTS
+			                          (SELECT     1
+                            FROM          RMTCountryVsProvince_Temp
+                            WHERE      CPCountry = T1.CPCountry AND CPProvince = T1.CPProvince)
+
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
