@@ -44,8 +44,11 @@ package com.pennant.webui.applicationmaster.accountmapping;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -210,6 +213,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			FinanceType financeType = (FinanceType) dataObject;
 			List<String> subHeadRuleList = new ArrayList<>();
 			Map<String, Rule> subHeadMap = null;
+			HashMap<String, Object> finTypeMap = financeType.getDeclaredFieldValues();
+			HashMap<String, Object> fieldsMap = new HashMap<String, Object>();
 			
 			
 			List<TransactionEntry> transactionEntries = null;
@@ -225,7 +230,19 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 				}
 				
 				subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
+				Rule rule = null;
+				Set<String> fieldSet = new HashSet<String>();
+				for (TransactionEntry transactionEntry : transactionEntries) {
+					String acType = transactionEntry.getAccountType();
+					rule = subHeadMap.get(transactionEntry.getAccountSubHeadRule());
+					
+					for(String field : rule.getFields().split(",")) {
+						fieldSet.add(field);
+					}
+				}
 			}
+			
+			
 		}
 		
 		logger.debug(Literal.LEAVING);
