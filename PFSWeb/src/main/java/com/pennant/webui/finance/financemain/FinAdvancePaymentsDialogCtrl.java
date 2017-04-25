@@ -662,8 +662,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setDescColumn("");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
-
-		this.partnerBankID.setModuleName("PartnerBank");
+		
+		this.partnerBankID.setButtonDisabled(true);
+		this.partnerBankID.setReadonly(true);
+		this.partnerBankID.setModuleName("FinTypePartnerBank");
 		this.partnerBankID.setMandatoryStyle(true);
 		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
@@ -1671,6 +1673,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onChange$paymentType(Event event) {
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
+		this.partnerBankID.setButtonDisabled(false);
+		this.partnerBankID.setReadonly(false);
+		Filter[] filters = new Filter[3];
+		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose","D", Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode",dType, Filter.OP_EQUAL);
+		this.partnerBankID.setFilters(filters);
 		checkPaymentType(dType);
 	}
 
