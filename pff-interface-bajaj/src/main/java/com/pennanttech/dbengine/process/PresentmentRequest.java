@@ -17,20 +17,20 @@ import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.dbengine.constants.DataEngineDBConstants.Status;
 
-public class PresentationRequest extends DBProcessEngine {
+public class PresentmentRequest extends DBProcessEngine {
 
-	private static final Logger logger = Logger.getLogger(PresentationRequest.class);
+	private static final Logger logger = Logger.getLogger(PresentmentRequest.class);
 	
 	private Connection destConnection = null;;
 	private Connection sourceConnection = null;
 	private DataEngineStatus executionStatus = null;
 
-	public PresentationRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
+	public PresentmentRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
 		this.executionStatus = executionStatus;
 	}
 
-	public void process(long userId, Configuration config) {
+	public void process(long userId, Configuration config, String ids) {
 		logger.debug("Entering");
 
 		executionStatus.setStartTime(DateUtil.getSysDate());
@@ -40,6 +40,7 @@ public class PresentationRequest extends DBProcessEngine {
 		executionStatus.setStatus(ExecutionStatus.I.name());
 		executionStatus.setRemarks("Loading configuration..");
 
+		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		StringBuilder remarks = new StringBuilder();
 		try {
@@ -48,7 +49,8 @@ public class PresentationRequest extends DBProcessEngine {
 			executionStatus.setRemarks("Loading destination database connection...");
 			destConnection = getConnection(config);
 			executionStatus.setRemarks("Fetching data from source table...");
-			resultSet = getSourceData();
+			statement = getStatement(ids);
+			resultSet = getResultSet(ids, statement);;
 
 			if (resultSet != null) {
 				resultSet.last();
@@ -183,5 +185,51 @@ public class PresentationRequest extends DBProcessEngine {
 		}
 		logger.debug("Leaving");
 		return rs;
+	}
+	
+	private ResultSet getResultSet(String paymentIds, PreparedStatement statement) throws Exception {
+		String[] paymentId = paymentIds.split(",");
+
+		ResultSet rs = null;
+		try {
+
+			for (int i = 1; i <= paymentId.length; i++) {
+				statement.setLong(i, Long.parseLong(paymentId[i - 1]));
+			}
+
+			rs = statement.executeQuery();
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		return rs;
+	}
+
+	private PreparedStatement getStatement(String paymentIds) throws Exception {
+		PreparedStatement statement = null;
+
+		String[] paymentId = paymentIds.split(",");
+
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder();
+			sql.append(" SELECT * FROM Presentmentdetails WHERE DETAILID IN (");
+
+			for (int i = 0; i < paymentId.length; i++) {
+				if (i > 0) {
+					sql.append(",");
+				}
+				sql.append("?");
+
+			}
+			sql.append(")");
+
+			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+
+		} catch (SQLException e) {
+			logger.error("Exception: ", e);
+		}
+		return statement;
 	}
 }

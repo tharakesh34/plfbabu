@@ -9679,6 +9679,7 @@
        <property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
        <property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	   <property name="dataSource" ref="pfsDatasource" />
    </bean>
    
    

@@ -16,6 +16,6 @@ public interface FinExcessAmountDAO {
 
 	FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType);
 
-	void updateReserved(FinExcessAmount finExcessAmount);
+	void updateExcessAmount(long excessID, String amountType, BigDecimal amount);
 
 }

@@ -46,6 +46,7 @@ import java.sql.ResultSet;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface PresentmentDetailDAO {
@@ -63,4 +64,6 @@ public interface PresentmentDetailDAO {
 	void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader);
 
 	ResultSet getPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
+
+	void savePresentmentHeader(PresentmentHeader presentmentHeader);
 }

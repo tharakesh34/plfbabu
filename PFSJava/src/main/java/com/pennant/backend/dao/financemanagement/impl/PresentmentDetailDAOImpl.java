@@ -45,6 +45,7 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -60,10 +61,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -82,18 +86,18 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	public PresentmentDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 
-	 * @param dataSource  The JDBC data source to access.
+	 * @param dataSource
+	 *            The JDBC data source to access.
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
-	
+
 	@Override
 	public PresentmentDetail getPresentmentDetail(long detailID, String type) {
 		logger.debug(Literal.ENTERING);
@@ -134,7 +138,6 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 		return presentmentDetail;
 	}
-
 
 	@Override
 	public void update(PresentmentDetail presentmentDetail, TableType tableType) {
@@ -198,30 +201,29 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public long getPresentmentDetailRef(String tableName) {
 		return getNextidviewDAO().getNextId(tableName);
 	}
-	
+
 	@Override
 	public String save(PresentmentDetail presentmentDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		if (presentmentDetail.getExtractID() == Long.MIN_VALUE) {
-			presentmentDetail.setExtractID(getNextidviewDAO().getNextId("SeqPresentmentDetails"));
+		if (presentmentDetail.getDetailID() == Long.MIN_VALUE) {
+			presentmentDetail.setDetailID(getNextidviewDAO().getNextId("SeqPresentmentDetails"));
 		}
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert into PresentmentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DetailID, ExtractID , PresentmentID, FinReference, SchDate, SchSeq, MandateID, ");
+		sql.append(" (DetailID, ExtractID , PresentmentID, FinReference, SchDate, MandateID, ");
 		sql.append(" SchAmtDue, SchPriDue, SchPftDue, SchFeeDue, SchInsDue, SchPenaltyDue, ");
 		sql.append(" AdvanceAmt, ExcessID, AdviseAmt, ExcludeReason, PresentmentAmt, Status, ");
 		sql.append(" BounceID, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :DetailID, :ExtractID, :PresentmentID, :FinReference, :SchDate, :SchSeq, :MandateID, ");
+		sql.append(" :DetailID, :ExtractID, :PresentmentID, :FinReference, :SchDate, :MandateID, ");
 		sql.append(" :SchAmtDue, :SchPriDue, :SchPftDue, :SchFeeDue, :SchInsDue, :SchPenaltyDue, ");
 		sql.append(" :AdvanceAmt, :ExcessID, :AdviseAmt, :ExcludeReason, :PresentmentAmt, :Status, ");
 		sql.append(" :BounceID, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
@@ -235,7 +237,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -243,7 +245,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	@Override
 	public void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert into PresentmentDetailHeader");
 		sql.append("(ExtractId, ExtractReference, FromDate, ToDate, MandateType, LoanType, LastMntBy, LastMntOn) ");
@@ -271,7 +273,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, ");
+			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE, ");
 			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T2.MANDATEID, T4.MANDATETYPE  FROM FINSCHEDULEDETAILS T1 ");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE  ");
 			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE ");
@@ -279,6 +281,8 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?) ");
 			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
+			System.out.println(detailHeader.getFromDate());
+			System.out.println(detailHeader.getToDate());
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
 				sql.append(" AND (FINTYPE = ?)");
 			}
@@ -288,12 +292,18 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			logger.trace(Literal.SQL + sql.toString());
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
-			stmt = conn.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			stmt = conn.prepareStatement(sql.toString());
 			stmt.setString(1, "1");
-			stmt.setDate(2, new java.sql.Date(detailHeader.getFromDate().getTime()));
-			stmt.setDate(3, new java.sql.Date(detailHeader.getToDate().getTime()));
-			stmt.setDate(4, new java.sql.Date(detailHeader.getFromDate().getTime()));
-			stmt.setDate(5, new java.sql.Date(detailHeader.getToDate().getTime()));
+			stmt.setDate(2, getDate(detailHeader.getFromDate()));
+			stmt.setDate(3, getDate(detailHeader.getToDate()));
+			stmt.setDate(4, getDate(detailHeader.getFromDate()));
+			stmt.setDate(5, getDate(detailHeader.getToDate()));
+			/*
+			 * stmt.setDate(2, new java.sql.Date(detailHeader.getFromDate().getTime())); stmt.setDate(3, new
+			 * java.sql.Date(detailHeader.getToDate().getTime())); stmt.setDate(4, new
+			 * java.sql.Date(detailHeader.getFromDate().getTime())); stmt.setDate(5, new
+			 * java.sql.Date(detailHeader.getToDate().getTime()));
+			 */
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
 				stmt.setString(6, detailHeader.getLoanType());
@@ -306,14 +316,43 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-				stmt = null;
-			}
+			/*
+			 * if (stmt != null) { stmt.close(); stmt = null; }
+			 */
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
 		return rs;
 	}
-	
+
+	private java.sql.Date getDate(Date date) {
+		return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
+				PennantConstants.DBDateFormat);
+	}
+
+	@Override
+	public void savePresentmentHeader(PresentmentHeader presentmentHeader) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" insert into PresentmentHeader");
+		sql.append(" (presentmentID, mandateType, partnerBankID, presentmentDate, status, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(");
+		sql.append(" :presentmentID, :mandateType, :partnerBankID, :presentmentDate, :status, ");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentHeader);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

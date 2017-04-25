@@ -158,29 +158,6 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		}
 	}
 
-	
-	@Override
-	public void updateReserved(FinExcessAmount finExcessAmount) {
-		logger.debug("Entering");
-
-		int recordCount = 0;
-
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set UtilisedAmt = :UtilisedAmt, ReservedAmt = :ReservedAmt ");
-		updateSql.append(" Where ExcessID =:ExcessID");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", finExcessAmount.getExcessID(), PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-	}
 
 	@Override
 	public void saveExcessMovement(FinExcessMovement movement) {
@@ -210,5 +187,36 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		parms[0][0] = PennantJavaUtil.getLabel("label_ExcessID") + ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
 				parms[0], parms[1]), userLanguage);
+	}
+
+	@Override
+	public void updateExcessAmount(long excessID, String amountType, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		FinExcessAmount finExcessAmount = new FinExcessAmount();
+		finExcessAmount.setExcessID(excessID);
+		finExcessAmount.setAmount(amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		if ("R".equals(amountType)) {
+			updateSql.append(" Set ReservedAmt = ReservedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
+		} else if ("U".equals(amountType)) {
+			updateSql.append(" Set ReservedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
+		}
+		updateSql.append(" Where ExcessID =:ExcessID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004", finExcessAmount.getExcessID(),
+					PennantConstants.default_Language);
+			throw new DataAccessException(errorDetails.getError()) {
+			};
+		}
 	}
 }

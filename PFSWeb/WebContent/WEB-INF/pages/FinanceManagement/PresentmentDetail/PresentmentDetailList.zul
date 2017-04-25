@@ -47,57 +47,29 @@
 					<div>
 						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" >
 							<columns>
-								<column width="15%" />
-								<column width="5%" />
+								<column width="20%" />
 								<column width="30%" />
-								<column width="15%" />
-								<column width="5%" />
+								<column width="20%" />
 								<column width="30%" />
 							</columns>
 							<rows>
 								<row>
 									<label  value="${c:l('label_PresentmentDetailList_BatchReference.value')}" />
-									<listbox id="sortOperator_BatchReference" width="43px" mold="select" rows="1"/>
 									<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<combobox id="batchReference"  width="200px"/>
 									</hbox>
-								</row>
-								<row>
 									<label  value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
-									<listbox id="sortOperator_MandateType" width="43px" mold="select" rows="1"/>
 									<combobox id="mandateType"  width="200px"/>
-									
+								</row>
+								
+								<row>
 									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
-									<listbox id="sortOperator_Product" width="43px" mold="select" rows="1" />
 									<extendedcombobox id = "product"/>
-								</row>
-								
-								<row>
-									<label  value="${c:l('label_PresentmentDetailList_Bank.value')}" />
-									<listbox id="sortOperator_Bank" width="43px" mold="select" rows="1"/>
-									<extendedcombobox id="partnerBank"/>
-								</row>
-								
-								<row>
-									<label  value="${c:l('label_PresentmentDetailList_Fromdate.value')}" />
-									<listbox id="sortOperator_Fromdate" width="43px" mold="select" rows="1"/>
-									<datebox id = "fromdate" width="171px"  />
-									
-									<label value="${c:l('label_PresentmentDetailList_ToDate.value')}" />
-									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1" />
-									<datebox id = "toDate" width="171px"  />
-								</row>
-								
-								<row>
-									<label  value="${c:l('label_PresentmentDetailList_Exclusions.value')}" />
-									<listbox id="sortOperator_Exclusions" width="43px" mold="select" rows="1"/>
-									<combobox id = "exclusion" width="180px"  />
-									
 									<label value="${c:l('label_PresentmentDetailList_ExclusionStatus.value')}" />
-									<listbox id="sortOperator_exclusionStatus" width="43px" mold="select" rows="1" />
 									<combobox id = "exclusionStatus" width="180px"  />
-								</row>
+								<row>
+								
 							</rows>
 						</grid>
 					<listbox id="listBoxPresentmentDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true">
@@ -109,7 +81,6 @@
 								<listheader id="listheader_PresentmentDetail_Amount" label="${c:l('listheader_PresentmentDetail_Amount.label')}"  hflex="min" />
 								<listheader id="listheader_PresentmentDetail_MandateType" label="${c:l('listheader_PresentmentDetail_MandateType.label')}" hflex="min" />
 								<listheader id="listheader_PresentmentDetail_ExcludeStatus"  label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center"/>
-								<listheader id="listHeader_CheckBox_Name"  label="${c:l('listheader_PresentmentDetail_Exclude.label')}" hflex="min" align="center"/>
 						</listhead>		
 					</listbox>
 				</div>	

@@ -42,9 +42,12 @@
  */
 package com.pennant.backend.service.financemanagement;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
 public interface PresentmentDetailService {
 
@@ -61,4 +64,8 @@ public interface PresentmentDetailService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	String processPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
+
+	void savePresentmentHeader(PresentmentHeader presentmentHeader);
+
+	void processPresentmentDetails(List<Long> extractIdList);
 }

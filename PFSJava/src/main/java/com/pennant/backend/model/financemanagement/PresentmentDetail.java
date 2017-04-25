@@ -89,7 +89,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private BigDecimal schInsDue;
 	private BigDecimal schPenaltyDue;
 	private BigDecimal advanceAmt;
-	private long excessID;
+	private Long excessID;
 	private String excessIDName;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
@@ -271,11 +271,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.advanceAmt = advanceAmt;
 	}
 
-	public long getExcessID() {
+	public Long getExcessID() {
 		return excessID;
 	}
 
-	public void setExcessID(long excessID) {
+	public void setExcessID(Long excessID) {
 		this.excessID = excessID;
 	}
 

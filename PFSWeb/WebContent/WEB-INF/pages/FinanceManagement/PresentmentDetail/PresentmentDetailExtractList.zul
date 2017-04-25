@@ -57,7 +57,7 @@
 							<rows>
 								<row>
 									<label value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
-									<combobox id="mandateType" width="200px" />
+									<combobox id="mandateType" width="250px" />
 
 									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
 									<extendedcombobox id="loanType" />
@@ -66,13 +66,13 @@
 									<label value="${c:l('label_PresentmentDetailList_Fromdate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="fromdate" width="171px" />
+										<datebox id="fromdate" width="155px" />
 									</hbox>
 
 									<label value="${c:l('label_PresentmentDetailList_ToDate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="toDate" width="171px" />
+										<datebox id="toDate" width="155px" />
 									</hbox>
 								</row>
 							</rows>
