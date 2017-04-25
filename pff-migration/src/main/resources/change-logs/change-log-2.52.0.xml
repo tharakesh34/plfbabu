@@ -2260,4 +2260,28 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 <changeSet id="144" author="Surekha">
 	<renameColumn tableName="BounceReasons_Temp" oldColumnName="FeeID" newColumnName="RuleID"/>
 </changeSet>
+<changeSet id="145" author="Surekha">
+	<createView viewName="BounceReasons_View" replaceIfExists="true">
+		SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.RuleID, T1.ReturnCode, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons_Temp  T1 INNER JOIN 
+							Rules T2 ON T1.RuleID = T2.RuleId
+				UNION ALL
+				
+				SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.RuleID, T1.ReturnCode, T1.Active		
+							, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons  T1 INNER JOIN 
+							Rules T2 ON T1.RuleID = T2.RuleId
+				WHERE     NOT EXISTS (SELECT 1 FROM BounceReasons_TEMP WHERE BounceID = T1.BounceID)
+		
+	</createView>
+</changeSet>
+<changeSet id="146" author="Surekha">
+	<createView viewName="BounceReasons_AView" replaceIfExists="true">
+		SELECT		T1.BounceID, T1.BounceCode, T1.ReasonType, T1.Category, T1.Reason, T1.Action, T1.RuleID, T1.ReturnCode, T1.Active		
+					, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.RuleCode,T2.RuleCodeDesc
+				FROM    	BounceReasons  T1 INNER JOIN 
+							Rules T2 ON T1.RuleID = T2.RuleId
+	</createView>
+</changeSet>
 </databaseChangeLog>
