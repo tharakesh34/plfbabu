@@ -778,7 +778,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.branchSwiftBrnCde.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSwiftBrnCde.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL3, true));
 		}	
 		if (!this.branchSortCode.isReadonly()){
-			this.branchSortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSortCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, true));
+			this.branchSortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchSortCode.value"),PennantRegularExpressions.REGEX_ALPHANUM_FL4, false));
 		}	
 		if (!this.branchCountry.isReadonly()) {
 			this.branchCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCountry.value"), null, true,true));
