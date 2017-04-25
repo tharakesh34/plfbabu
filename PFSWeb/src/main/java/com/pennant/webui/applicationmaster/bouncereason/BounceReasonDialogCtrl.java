@@ -101,7 +101,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
  	protected Combobox 		category; 
 	protected Textbox 		reason; 
  	protected Combobox 		action; 
-    protected ExtendedCombobox 		feeID; 
+    protected ExtendedCombobox 		ruleID; 
     protected Textbox 		returnCode; 
     protected Checkbox 		active; 
 	private BounceReason bounceReason; // overhanded per param
@@ -193,14 +193,14 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		
 			this.bounceCode.setMaxlength(8);
 			this.reason.setMaxlength(50);
-			this.feeID.setModuleName("Rule");
-			this.feeID.setMandatoryStyle(true);
-			this.feeID.setValueColumn("RuleCode");
-			this.feeID.setDescColumn("RuleCodeDesc");
-			this.feeID.setValidateColumns(new String[] {"RuleCode"});
+			this.ruleID.setModuleName("Rule");
+			this.ruleID.setMandatoryStyle(true);
+			this.ruleID.setValueColumn("RuleCode");
+			this.ruleID.setDescColumn("RuleCodeDesc");
+			this.ruleID.setValidateColumns(new String[] {"RuleCode"});
 			Filter[] filters = new Filter[1] ;
 			filters[0]=new Filter("RuleModule", "BOUNCE", Filter.OP_EQUAL);
-			this.feeID.setFilters(filters);
+			this.ruleID.setFilters(filters);
 			
 			this.returnCode.setMaxlength(8);
 			
@@ -347,8 +347,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			this.reason.setValue(aBounceReason.getReason());
 			fillComboBox(this.action, String.valueOf(aBounceReason.getAction()), listAction,"");
 			
-			this.feeID.setObject(new Rule(aBounceReason.getFeeID()));
-			this.feeID.setValue(aBounceReason.getRuleCode(),aBounceReason.getRuleCodeDesc());
+			this.ruleID.setObject(new Rule(aBounceReason.getRuleID()));
+			this.ruleID.setValue(aBounceReason.getRuleCode(),aBounceReason.getRuleCodeDesc());
 			
 			this.returnCode.setValue(aBounceReason.getReturnCode());
 			this.active.setChecked(aBounceReason.isActive());
@@ -432,9 +432,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		}
 		//Fee ID
 		try {
-			this.feeID.getValidatedValue();
-			Rule rule = (Rule) this.feeID.getObject();
-			aBounceReason.setFeeID(rule.getRuleId());
+			this.ruleID.getValidatedValue();
+			Rule rule = (Rule) this.ruleID.getObject();
+			aBounceReason.setRuleID(rule.getRuleId());
 			aBounceReason.setRuleCode(rule.getRuleCode());
 			aBounceReason.setRuleCodeDesc(rule.getRuleCodeDesc());
 		}catch (WrongValueException we ) {
@@ -526,8 +526,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		if (!this.reason.isReadonly()){
 			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_Reason.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
 		}
-		if (!this.feeID.isReadonly()){
-			this.feeID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_FeeID.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+		if (!this.ruleID.isReadonly()){
+			this.ruleID.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_RuleID.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.returnCode.isReadonly()){
 			this.returnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BounceReasonDialog_ReturnCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
@@ -547,7 +547,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		this.category.setConstraint("");
 		this.reason.setConstraint("");
 		this.action.setConstraint("");
-		this.feeID.setConstraint("");
+		this.ruleID.setConstraint("");
 		this.returnCode.setConstraint("");
 	
 	logger.debug(Literal.LEAVING);
@@ -668,7 +668,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Category"), this.category);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.feeID);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
 			
@@ -702,7 +702,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(true, this.category);
 			readOnlyComponent(true, this.reason);
 			readOnlyComponent(true, this.action);
-			readOnlyComponent(true, this.feeID);
+			readOnlyComponent(true, this.ruleID);
 			readOnlyComponent(true, this.returnCode);
 			readOnlyComponent(true, this.active);
 
@@ -729,8 +729,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			 	this.category.setSelectedIndex(0);
 				this.reason.setValue("");
 			 	this.action.setSelectedIndex(0);
-			  	this.feeID.setValue("");
-			  	this.feeID.setDescription("");
+			  	this.ruleID.setValue("");
+			  	this.ruleID.setDescription("");
 			  	this.returnCode.setValue("");
 				this.active.setChecked(false);
 

@@ -151,7 +151,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		registerField("category", listheader_Category, SortOrder.NONE, category, sortOperator_Category, Operators.STRING);
 		registerField("reason");		
 		registerField("action");		
-		registerField("feeID");		
+		registerField("ruleID");		
 		registerField("returnCode", listheader_ReturnCode, SortOrder.NONE, returnCode, sortOperator_ReturnCode, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 

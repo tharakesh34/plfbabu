@@ -70,7 +70,7 @@ private static final long serialVersionUID = 1L;
 	private int category;
 	private String reason;
 	private int action;
-	private long feeID=0;
+	private long ruleID=0;
 	private String ruleCode;
 	private String ruleCodeDesc;
 	private String returnCode;
@@ -151,12 +151,6 @@ private static final long serialVersionUID = 1L;
 	public void setAction(int action) {
 		this.action = action;
 	}
-	public long getFeeID() {
-		return feeID;
-	}
-	public void setFeeID(long feeID) {
-		this.feeID = feeID;
-	}
 	public boolean isActive() {
 		return active;
 	}
@@ -223,6 +217,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setRuleCodeDesc(String ruleCodeDesc) {
 		this.ruleCodeDesc = ruleCodeDesc;
+	}
+
+	public long getRuleID() {
+		return ruleID;
+	}
+
+	public void setRuleID(long ruleID) {
+		this.ruleID = ruleID;
 	}
 
 	

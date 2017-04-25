@@ -120,9 +120,9 @@
 										sclass="mandatory" />
 									<combobox id="action" width="130px" />
 								</hbox>
-								<label id="label_FeeID"
-									value="${c:l('label_BounceReasonDialog_FeeID.value')}" />
-								<extendedcombobox id="feeID" />
+								<label id="label_RuleID"
+									value="${c:l('label_BounceReasonDialog_RuleID.value')}" />
+								<extendedcombobox id="ruleID" />
 							</row>
 							<row id="row3">
 								<label id="label_ReturnCode"

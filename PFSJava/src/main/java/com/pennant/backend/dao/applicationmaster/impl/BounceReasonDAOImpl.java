@@ -83,7 +83,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" feeID, returnCode, active, ");
+		sql.append(" ruleID, returnCode, active, ");
 		if (type.contains("View")) {
 			sql.append(" ruleCode, ruleCodeDesc,");
 		}
@@ -157,11 +157,11 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		StringBuilder sql =new StringBuilder(" insert into BounceReasons");
 		sql.append(tableType.getSuffix());
 		sql.append("(bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" feeID, returnCode, active, ");
+		sql.append(" ruleID, returnCode, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :bounceID, :bounceCode, :reasonType, :category, :reason, :action, ");
-		sql.append(" :feeID, :returnCode, :active, ");
+		sql.append(" :ruleID, :returnCode, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (bounceReason.getBounceID() <= 0) {
@@ -190,7 +190,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		StringBuilder	sql =new StringBuilder("update BounceReasons" );
 		sql.append(tableType.getSuffix());
 		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
-		sql.append(" reason = :reason, action = :action, feeID = :feeID, ");
+		sql.append(" reason = :reason, action = :action, ruleID = :ruleID, ");
 		sql.append(" returnCode = :returnCode, active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
