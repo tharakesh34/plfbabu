@@ -290,6 +290,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
+		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
         this.mandateType.setSelectedIndex(0);
 		
 		this.product.setValue("");
