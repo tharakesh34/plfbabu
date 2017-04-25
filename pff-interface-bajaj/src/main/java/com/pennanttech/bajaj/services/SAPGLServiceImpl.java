@@ -34,6 +34,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 	private NamedParameterJdbcTemplate	namedJdbcTemplate;
 	private JdbcTemplate				jdbcTemplate;
 
+	private Date						valueDate			= null;
 	private Date						glDate			= null;
 	private Date						monthStartDate	= null;
 	private Date						monthEndDate	= null;
@@ -474,6 +475,8 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 
 		monthStartDate = DateUtil.getMonthStart(glDate);
 		monthEndDate = DateUtil.getMonthEnd(glDate);
+		
+		valueDate = (Date)getParameter("APP_VALUEDATE", Date.class);
 	}
 
 	private int groupTranactions() {
@@ -639,12 +642,14 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 	private void generateTransactionReport() throws Exception {
 		logger.info("Generating Transaction Detail Report ..");
 		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
 
 	private void generateTransactionSummaryReport() throws Exception {
 		logger.info("Generating Transaction Summary Report ..");
 		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
@@ -675,6 +680,7 @@ public class SAPGLServiceImpl implements GeneralLedgerService {
 
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
+		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
 
 	}
