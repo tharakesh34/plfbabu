@@ -138,4 +138,14 @@ WHERE NOT EXISTS
 		<dropView viewName="MANDATE_FILE_DOWNLOAD_VIEW"/>
 	</changeSet>
 	
+	<changeSet id="07" author="Kesav">
+		<createView viewName="FINTYPEPARTNERBANKS_AVIEW" replaceIfExists="true">
+		  SELECT	 T1.ID, T1.FinType, T1.Purpose, T1.PaymentMode, T1.PartnerBankID	, T1.Version , 
+					 T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+					 T2.PARTNERBANKCODE, T2.PARTNERBANKNAME
+			FROM     FinTypePartnerBanks  T1 
+					 LEFT JOIN PartnerBanks T2  ON T1.PartnerBankID =  T2.PartnerBankID
+	  </createView>
+	</changeSet>
+	
 </databaseChangeLog>
