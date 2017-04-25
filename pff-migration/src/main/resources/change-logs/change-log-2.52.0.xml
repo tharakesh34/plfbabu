@@ -3507,12 +3507,14 @@ FROM         RMTEmpTypes
 	<changeSet id="168" author="Kesav" dbms="Oracle">
 		<sql>
 			Delete from FinTypePartnerBanks;
+			Drop table SeqFinTypePartnerBanks; 
 			CREATE SEQUENCE SeqFinTypePartnerBanks START WITH 100 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE;
 		</sql>
 	</changeSet>
 	<changeSet id="169" author="Kesav" dbms="mssql">
 		<sql>
 			Delete from FinTypePartnerBanks;
+			Drop table SeqFinTypePartnerBanks;
 			CREATE TABLE SeqFinTypePartnerBanks(
 			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
 			Value 				int NOT NULL
