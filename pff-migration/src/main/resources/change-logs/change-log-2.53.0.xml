@@ -181,4 +181,19 @@ WHERE NOT EXISTS
 		<modifyDataType columnName="ManualAdvice" newDataType="bit"
 			tableName="FEETYPES_Temp" />
 	</changeSet>
+	
+	<changeSet id="14" author="Durgaprasad G">
+		<createTable tableName="SeqPresentmentHeader">
+			<column name="SEQNO" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+ 	<changeSet id="15" author="durgaprasad G">
+		<sql>
+			Insert into SeqPresentmentHeader values (0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
