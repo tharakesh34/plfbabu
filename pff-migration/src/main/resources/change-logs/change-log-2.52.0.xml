@@ -3442,4 +3442,66 @@ INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = TBH.CURRENCY
 			Insert into RBFIELDDETAILS  values ('BOUNCE','BOUNCE','reqProduct','Requested product','nvarchar',8,'0','1','Product','static,global,dbvalue','Product');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="152" author="Amit">
+		<addColumn tableName="RMTEmpTypes">
+			<column name="EmpTypeIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="153" author="Amit">
+		<addColumn tableName="RMTEmpTypes_Temp">
+			<column name="EmpTypeIsActive" type="number(1,0)" defaultValue="1" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="154" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTEMPTYPES_AVIEW">
+   SELECT     EmpType, EmpTypeDesc, EmpTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, 
+                      WorkflowId
+FROM         RMTEmpTypes
+
+		</createView>
+	</changeSet>
+	
+	<changeSet id="155" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTEMPTYPES_VIEW">
+ (SELECT EmpType ,
+           EmpTypeDesc ,
+		   EmpTypeIsActive,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTEmpTypes_Temp )
+   UNION ALL 
+   (SELECT EmpType ,
+           EmpTypeDesc ,
+		   EmpTypeIsActive,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTEmpTypes 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM RMTEmpTypes_Temp 
+                          WHERE EmpType = RMTEmpTypes.EmpType ))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
