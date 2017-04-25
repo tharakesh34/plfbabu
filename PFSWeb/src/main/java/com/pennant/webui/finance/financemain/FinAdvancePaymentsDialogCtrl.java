@@ -665,7 +665,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		
 		this.partnerBankID.setButtonDisabled(true);
 		this.partnerBankID.setReadonly(true);
-		this.partnerBankID.setModuleName("FinTypePartnerBank");
+		this.partnerBankID.setModuleName("FinTypePartner");
 		this.partnerBankID.setMandatoryStyle(true);
 		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
