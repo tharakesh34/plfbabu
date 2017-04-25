@@ -485,5 +485,8 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 			</column>
 		</addColumn>
 	</changeSet> 
+	<changeSet id="13" author="Surekha">
+	<renameColumn tableName="AdtBounceReasons" oldColumnName="FeeID" newColumnName="RuleID"/>
+</changeSet>
 
 </databaseChangeLog>
