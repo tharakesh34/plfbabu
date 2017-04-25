@@ -1,5 +1,7 @@
 package com.pennanttech.bajaj.services;
 
+import java.util.Date;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -7,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.Literal;
 
 public abstract class BajajServices {
@@ -57,4 +60,10 @@ public abstract class BajajServices {
 			throw new Exception("Unable to update the " + sysParmCode + ".");
 		}
 	}
+	
+	protected Date getAppDate() throws Exception {
+		String appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
+		return DateUtil.parse(appDate, "yyyy-MM-dd"); //FIXME Deriving Application date should be from core.
+	}
+	
 }

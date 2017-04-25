@@ -116,11 +116,12 @@ public class DisbursementServiceImpl extends BajajServices implements Disburseme
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		try {
-			export.setValueDate((Date)getSMTParameter("APP_VALUEDATE", Date.class));
+			export.setValueDate(getAppDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			export.exportData(configName);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			export = null;
