@@ -84,6 +84,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -1134,9 +1135,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 		} else {
-			PartnerBank partnerBank = (PartnerBank) dataObject;
+			FinTypePartnerBank partnerBank = (FinTypePartnerBank) dataObject;
 			if (partnerBank != null) {
-				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankId());
+				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
 				this.finAdvancePayments.setPartnerbankCode(partnerBank.getPartnerBankCode());
 				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
 				
