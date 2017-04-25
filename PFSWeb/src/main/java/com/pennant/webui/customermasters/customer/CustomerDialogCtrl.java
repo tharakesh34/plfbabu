@@ -3285,7 +3285,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					return false;
 				}
 				if (StringUtils.equals(PennantConstants.CPRCODE, custDocument.getCustDocCategory())) {
-					if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
+					if (isRetailCustomer && !this.custDOB.isDisabled() && this.custDOB.getValue() != null
 							&& custDocument.getCustDocIssuedOn() != null
 							&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
 						doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
