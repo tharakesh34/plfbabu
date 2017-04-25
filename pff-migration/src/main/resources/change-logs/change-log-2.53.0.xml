@@ -750,5 +750,21 @@ WHERE NOT EXISTS
 </createView>
 </changeSet>
 
+	<changeSet id="34" author="Chaitanya.ch">
+		<sql> Update RMTTransactionEntry set AccountSubheadRule = 'GLCODE' where AccountSubheadRule Is Null</sql>
+	</changeSet>
+	
+	<changeSet id="35" author="Kesav">
+		<sql> 
+			Insert into COSTCENTERS (COSTCENTERID,COSTCENTERCODE,COSTCENTERDESC,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,
+WORKFLOWID) values ((Select MAX(COSTCENTERID) + 1 from COSTCENTERS),'/','Default Cost Center',1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+
+Update COSTCENTERS Set SeqNo = (Select MAX(COSTCENTERID) + 1 from COSTCENTERS);
+		
+		</sql>
+	</changeSet>
+	
+	
+
 
 </databaseChangeLog>
