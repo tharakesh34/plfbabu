@@ -462,7 +462,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		// Show a confirm box
 		
-		String msg = " " + this.pagingDisbursementList.getTotalSize() + "/" + this.disbursementMap.size() + " Disbursements selected for process.\n Do you want to continue? ";
+		String msg = " " + this.disbursementMap.size() + "/" + this.pagingDisbursementList.getTotalSize()  + " Disbursements selected for process.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
