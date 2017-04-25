@@ -2245,4 +2245,13 @@ INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Bala
 	<changeSet id="141" author="Durgaprasad G">
 	<renameTable newTableName="PDC_CONSL_EMI_DTL" oldTableName="PresentationRequest" />
 </changeSet>
+<changeSet id="142" author="Surekha">
+<sql>
+	Insert into ReportList Values('FinanceStatusCode', 'FinanceStatusCode', 
+			'listheader_StatusCode.label,listheader_StatusDesc.label,listheader_RecordStatus.label,listheader_RecordType.label',
+			'statusCode,statusDesc,recordStatus,recordType','String,String,String,String','', 'ReportList04', 
+			'Finance Status Code', 'Application Masters',0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0,0);
+	
+</sql>
+</changeSet>
 </databaseChangeLog>
