@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -81,12 +83,12 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" account, hostAccount, ");
+		sql.append(" account, hostAccount, FinType,");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From AccountMapping");
 		sql.append(type);
-		sql.append(" Where account = :account");
+		sql.append(" Where Account = :Account");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -109,6 +111,37 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 	}		
 	
 	@Override
+	public List<AccountMapping> getAccountMappingFinType(String finType, String type) {
+
+		logger.debug(Literal.ENTERING);
+
+		AccountMapping accountMapping = new AccountMapping();
+		accountMapping.setFinType(finType);
+
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" account, hostAccount, FinType,");
+		if (type.contains("View")) {
+			sql.append("");
+		}
+
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From AccountMapping");
+		sql.append(type);
+		sql.append(" Where FinType = :FinType");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountMapping);
+		RowMapper<AccountMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AccountMapping.class);
+
+		logger.debug(Literal.LEAVING);
+		
+		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+	}		
+	
+	@Override
 	public String save(AccountMapping accountMapping,TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
@@ -116,10 +149,10 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		StringBuilder sql =new StringBuilder(" insert into AccountMapping");
 		sql.append(tableType.getSuffix());
 		sql.append(" (account, hostAccount, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinType)" );
 		sql.append(" values(");
 		sql.append(" :account, :hostAccount, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :FinType)");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -145,7 +178,7 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		sql.append("  set hostAccount = :hostAccount, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, FinType = :FinType");
 		sql.append(" where account = :account ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	
@@ -200,6 +233,35 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	@Override
+	public void delete(String finType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		AccountMapping accountMapping = new AccountMapping();
+		accountMapping.setFinType(finType);
+		StringBuilder sql = new StringBuilder("delete from AccountMapping");
+		sql.append(tableType.getSuffix());
+		sql.append(" where FinType = :FinType ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
+		int recordCount = 0;
+
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 	
 }	

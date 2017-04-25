@@ -244,7 +244,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.profitCenter.setDescColumn("ProfitCenterDesc");
 		this.profitCenter.setDisplayStyle(2);
 		this.profitCenter.setValidateColumns(new String[] {"ProfitCenterCode" });
-
 		
 		this.costCenter.setModuleName("CostCenter");
 		this.costCenter.setMandatoryStyle(false);
@@ -252,8 +251,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.costCenter.setDescColumn("CostCenterDesc");
 		this.costCenter.setDisplayStyle(2);
 		this.costCenter.setValidateColumns(new String[] {"CostCenterCode" });
-
-
+		this.costCenter.setMandatoryStyle(true);
+		
 		if ("Y".equals(CBI_Available)) {
 			this.acHeadCode.setValue("0000");
 			this.row_headcode.setVisible(false);
@@ -776,9 +775,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		if (!this.costCenter.isReadonly()) {
 			this.costCenter.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_AccountTypeDialog_CostCenter.value"), null,
-					false));
+					true, true));
 		}
-
+		
 		logger.debug("Leaving");
 	}
 

@@ -60,4 +60,6 @@ public interface AccountMappingService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<TransactionEntry> getTransactionEntriesByFintype(String finType);
 	Map<String, Rule> getSubheadRules(List<String> subHeadRules) ; 
+	
+	void save(List<AccountMapping> accountMappingList, String finType);
 }

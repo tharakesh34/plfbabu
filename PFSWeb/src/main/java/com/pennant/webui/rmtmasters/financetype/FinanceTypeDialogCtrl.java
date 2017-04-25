@@ -889,6 +889,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.profitDetails.setValueColumn("ProfitCenterCode");
 		this.profitDetails.setDescColumn("ProfitCenterDesc");
 		this.profitDetails.setValidateColumns(new String[] { "ProfitCenterCode", "ProfitCenterDesc" });
+		this.profitDetails.setMandatoryStyle(true);
 		
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
@@ -3003,6 +3004,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			profitDetails.getValidatedValue();
+			ProfitCenter profitCenter = (ProfitCenter) this.profitDetails.getObject();
+			aFinanceType.setProfitCenterID(profitCenter.getId());
+			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
+			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
+		} catch (WrongValueException we) {
+			//aFinanceType.setProfitCenterID(0);
+			wve.add(we);
+		}
+		
 		if (isOverdraft) {
 			showErrorDetails(wve, basicDetails);
 		} else {
@@ -3058,14 +3071,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setQuickDisb(this.quickDisb.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			ProfitCenter profitCenter = (ProfitCenter) this.profitDetails.getObject();
-			aFinanceType.setProfitCenterID(profitCenter.getId());
-			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
-			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3404,7 +3409,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		if (!this.profitDetails.isReadonly()) {
 			this.profitDetails.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceTypeDialog_ProfitDetails.value"), null,true));
+					.getLabel("label_FinanceTypeDialog_ProfitDetails.value"), null,true, true));
 		}
 
 		logger.debug("Leaving");

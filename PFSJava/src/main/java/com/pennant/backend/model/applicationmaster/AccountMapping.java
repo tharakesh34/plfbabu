@@ -64,6 +64,7 @@ private static final long serialVersionUID = 1L;
 
 	private String account;
 	private String hostAccount;
+	private String finType;
 	private boolean newRecord=false;
 	private String lovValue;
 	private AccountMapping befImage;
@@ -142,6 +143,14 @@ private static final long serialVersionUID = 1L;
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 }

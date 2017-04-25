@@ -4670,6 +4670,7 @@
 	</bean>
 	<bean id="accountMappingDialogCtrl" class="com.pennant.webui.applicationmaster.accountmapping.AccountMappingDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="accountMappingService" ref="accountMappingService"/>
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	
 

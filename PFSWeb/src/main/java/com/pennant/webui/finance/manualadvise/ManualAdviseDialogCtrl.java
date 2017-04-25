@@ -76,7 +76,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -566,6 +565,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
+		
+		
+		this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"), null, true, true));
+
+		this.feeTypeID.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
+
 
 		if (!this.adviseType.isReadonly()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,

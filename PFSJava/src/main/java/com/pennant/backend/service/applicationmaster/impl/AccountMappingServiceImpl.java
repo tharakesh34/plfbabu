@@ -51,7 +51,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -73,7 +72,6 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountMappingDAO accountMappingDAO;
-	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 
 
@@ -192,7 +190,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 */
 	@Override
 	public AccountMapping getAccountMapping(String account) {
-		return getAccountMappingDAO().getAccountMapping(account,"_View");
+		return getAccountMappingDAO().getAccountMapping(account,"");
 	}
 
 	/**
@@ -386,5 +384,15 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 			return rulesMap;
 		}
 
-
+		@Override
+		public void save(List<AccountMapping> accountMappingList, String finType) {
+			List<AccountMapping> accMapList = this.accountMappingDAO.getAccountMappingFinType(finType, "");
+			if(accMapList != null && !accMapList.isEmpty()) {
+				this.accountMappingDAO.delete(finType, TableType.MAIN_TAB);
+			}
+			
+			for(AccountMapping accountMapping : accountMappingList) {
+				this.accountMappingDAO.save(accountMapping, TableType.MAIN_TAB);
+			}
+		}
 }

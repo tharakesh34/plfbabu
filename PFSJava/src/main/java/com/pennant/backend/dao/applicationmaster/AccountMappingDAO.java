@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennanttech.pff.core.TableType;
@@ -59,5 +61,9 @@ public interface AccountMappingDAO extends BasicCrudDao<AccountMapping> {
 	 * @return AccountMapping
 	 */
 	AccountMapping getAccountMapping(String account,String type);
+
+	void delete(String finType, TableType mainTab);
+
+	List<AccountMapping> getAccountMappingFinType(String finType, String type);
 	
 }

@@ -45,10 +45,8 @@ package com.pennant.webui.applicationmaster.accountmapping;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,12 +56,16 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -74,6 +76,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -99,14 +102,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	protected Window window_AccountMappingDialog; 
 	protected Textbox 		account; 
 	protected Textbox 		hostAccount; 
+	protected Listbox 		listBoxAccountMap; 
 	private AccountMapping accountMapping; // overhanded per param
 	protected  ExtendedCombobox finType;	
 	
-	Listbox listBoxAccountMap;
-	
-
 	private transient AccountMappingListCtrl accountMappingListCtrl; // overhanded per param
 	private transient AccountMappingService accountMappingService;
+	private RuleExecutionUtil ruleExecutionUtil;
 	
 
 	/**
@@ -203,7 +205,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	public void onFulfill$finType(Event event) {
 		logger.debug("Entering" + event.toString());
-
+		
+		listBoxAccountMap.getItems().clear();
 		Object dataObject = finType.getObject();
 		
 		if (dataObject instanceof String) {
@@ -213,9 +216,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			FinanceType financeType = (FinanceType) dataObject;
 			List<String> subHeadRuleList = new ArrayList<>();
 			Map<String, Rule> subHeadMap = null;
-			HashMap<String, Object> finTypeMap = financeType.getDeclaredFieldValues();
-			HashMap<String, Object> fieldsMap = new HashMap<String, Object>();
-			
 			
 			List<TransactionEntry> transactionEntries = null;
 			if (financeType != null) {
@@ -229,16 +229,59 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					}
 				}
 				
+				if (subHeadRuleList == null || subHeadRuleList.isEmpty()) {
+					Messagebox.show("Transaction Entries are not defined for this loan type");
+					return;
+				}
+				
 				subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
 				Rule rule = null;
-				Set<String> fieldSet = new HashSet<String>();
+				Listitem item = null;
+				Listcell cell = null;
+				
+				Label label = null;
+				Textbox textbox = null;
+				int count = 0;
+				AccountMapping accountMapping = null;
+				String account = null;
+				String hostAccount = null;
 				for (TransactionEntry transactionEntry : transactionEntries) {
-					String acType = transactionEntry.getAccountType();
+					HashMap<String, Object> executeMap = new HashMap<String, Object>();
 					rule = subHeadMap.get(transactionEntry.getAccountSubHeadRule());
 					
-					for(String field : rule.getFields().split(",")) {
-						fieldSet.add(field);
+					executeMap.put("reqFinAcType", transactionEntry.getAccountType());
+					executeMap.put("reqFinType", financeType.getFinType());
+					String result = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null, RuleReturnType.CALCSTRING);
+					
+					accountMapping = this.accountMappingService.getAccountMapping(result);
+					if(accountMapping == null) {
+						account = result;
+						hostAccount = "";
+					} else {
+						account = accountMapping.getAccount();
+						hostAccount = accountMapping.getHostAccount();
 					}
+					
+					item = new Listitem();
+					item.setId("item_"+count);
+					
+					cell = new Listcell();
+					label = new Label(result);
+					label.setId("result_"+count);
+					label.setParent(cell);
+					cell.setParent(item);
+
+					cell = new Listcell();
+					textbox = new Textbox();
+					textbox.setParent(cell);
+					textbox.setId("value_"+count);
+					textbox.setValue(hostAccount);
+					textbox.setConstraint("no empty");
+					
+					cell.setParent(item);
+					item.setParent(listBoxAccountMap);
+					
+					count++;
 				}
 			}
 			
@@ -251,7 +294,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
-	private void doCheckRights() {
+	/*private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnNew"));
@@ -261,7 +304,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
-	}
+	}*/
 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
@@ -271,7 +314,51 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		doSave();
+		//doSave();
+		
+		List<Listitem> items = listBoxAccountMap.getItems();
+		int count = 0;
+		Textbox valueTb = null;
+		Label result = null;
+		AccountMapping accountMapping = null;
+		//Finance Type
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_FinType.value"), null, true, true));
+		this.finType.getValidatedValue();
+		 
+		FinanceType financedType = (FinanceType) this.finType.getObject();
+		String finTypeValue = financedType.getFinType();
+		List<AccountMapping> accountMappingList = new ArrayList<>();
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		
+		for (Listitem listItem : items) {
+			accountMapping = new AccountMapping();
+			result = (Label) listItem.getFellow("result_"+count);
+			valueTb = (Textbox) listItem.getFellow("value_"+count);
+			try {
+				accountMapping.setAccount(result.getValue());
+			}catch (WrongValueException we ) {
+				wve.add(we);
+			}
+			try {
+				accountMapping.setHostAccount(valueTb.getValue());
+			}catch (WrongValueException we ) {
+				wve.add(we);
+			}
+			accountMapping.setFinType(finTypeValue);
+			accountMappingList.add(accountMapping);
+			count++;
+		}
+		
+		if (wve.size()>0) {
+			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		
+		accountMappingService.save(accountMappingList, finTypeValue);
+		
 		logger.debug(Literal.LEAVING);
 		
 	}
@@ -427,6 +514,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	
 			this.account.setValue(aAccountMapping.getAccount());
 			this.hostAccount.setValue(aAccountMapping.getHostAccount());
+			this.finType.setObject(new FinanceType(aAccountMapping.getFinType()));
 		
 		
 		logger.debug(Literal.LEAVING);
@@ -930,6 +1018,14 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 		public void setAccountMappingService(AccountMappingService accountMappingService) {
 			this.accountMappingService = accountMappingService;
+		}
+
+		public RuleExecutionUtil getRuleExecutionUtil() {
+			return ruleExecutionUtil;
+		}
+
+		public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+			this.ruleExecutionUtil = ruleExecutionUtil;
 		}
 			
 }
