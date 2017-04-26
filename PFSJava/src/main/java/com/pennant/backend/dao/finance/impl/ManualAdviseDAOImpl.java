@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -244,6 +245,32 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		List<ManualAdvise> adviseList = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return adviseList;
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdviseMovements(long id) {
+		logger.debug("Entering");
+
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setAdviseID(id);
+
+		StringBuilder selectSql = new StringBuilder("Select T1.MovementID , T1.AdviseID, T1.MovementDate, T1.MovementAmount, ");
+		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T1.PayAgainstID,T3.FeeTypeCode   From ManualAdviseMovements T1 ");
+		selectSql.append(" LEFT OUTER JOIN ");
+		selectSql.append(" FinReceiptHeader T2 ON T1.PayAgainstID = T2.ReceiptID");
+		selectSql.append(" LEFT OUTER JOIN ");
+		selectSql.append(" FeeTypes T3 ON T1.PayAgainstID = T3.FeeTypeID");
+		selectSql.append(" Where AdviseID = :AdviseID  ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
+		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		logger.debug("Leaving");
+		return list;
 	}		
 	
 }	

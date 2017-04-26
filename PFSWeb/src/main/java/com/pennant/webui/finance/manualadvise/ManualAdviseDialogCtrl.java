@@ -58,18 +58,23 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -85,6 +90,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
@@ -108,6 +114,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected CurrencyBox waivedAmount;
 	protected Textbox remarks;
 	private ManualAdvise manualAdvise;
+	protected Listbox listBoxAdviseMovements;
 
 	protected Hbox hbox_Sequence;
 	protected Hbox hbox_WaivedAmount;
@@ -177,7 +184,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			} else {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
-
+			this.listBoxAdviseMovements.setHeight(borderLayoutHeight - 210 + "px");
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.manualAdvise);
@@ -228,7 +235,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.hbox_WaivedAmount.setVisible(false);
 		this.hbox_Sequence.setVisible(false);
 
-		setStatusDetails();
+		if (enqiryModule) {
+			this.groupboxWf.setVisible(false);
+		} else {
+			setStatusDetails();
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -416,8 +427,51 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
 		}
+		List<ManualAdviseMovements> advisemovementList = manualAdviseService.getAdivseMovements(this.manualAdvise.getAdviseID());
+		doFillMovementDetails(advisemovementList);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Method for Rendering 
+	 * @param advisemovementList
+	 */
+	private void doFillMovementDetails(List<ManualAdviseMovements> movementList) {
+		logger.debug("Entering");
+		
+		this.listBoxAdviseMovements.getItems().clear();
+		if(movementList != null && !movementList.isEmpty()){
+			for (ManualAdviseMovements movement : movementList) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				
+				lc = new Listcell(DateUtility.formatDate(movement.getMovementDate(),DateFormat.LONG_DATE.getPattern()));
+				item.appendChild(lc);
+
+				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getMovementAmount().doubleValue(),2));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+				
+				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getPaidAmount().doubleValue(),2));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+				
+				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getWaivedAmount().doubleValue(),2));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
+				
+				lc = new Listcell(movement.getStatus());
+				item.appendChild(lc);
+				
+				lc = new Listcell(String.valueOf(movement.getPayAgainstID()));
+				item.appendChild(lc);
+
+				this.listBoxAdviseMovements.appendChild(item);
+			}
+		}
+		
+		logger.debug("Leaving");
 	}
 
 	/**

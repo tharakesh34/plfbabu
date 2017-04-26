@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.finance.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -50,6 +52,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantConstants;
@@ -351,6 +354,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		@Override
+		public List<ManualAdviseMovements> getAdivseMovements(long id) {
+			return getManualAdviseDAO().getAdviseMovements(id);
 		}
 
 }

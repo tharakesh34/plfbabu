@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 
 public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	
@@ -63,5 +64,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	// Receipts
 	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
+
+	List<ManualAdviseMovements> getAdviseMovements(long id);
 	
 }

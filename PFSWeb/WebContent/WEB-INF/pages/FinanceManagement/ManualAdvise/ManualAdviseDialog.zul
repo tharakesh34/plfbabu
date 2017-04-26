@@ -138,6 +138,33 @@
 							</row>
 						</rows>
 					</grid>
+					<groupbox>
+						<listbox id="listBoxAdviseMovements"
+							fixedLayout="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" multiple="true"
+							width="99.8%" sizedByContent="true" height="100px">
+							<listhead sizable="true">
+								<listheader
+									label="${c:l('listheader_AdviseMovement_MovementDate.label')}"
+									hflex="min" />
+								<listheader
+									label="${c:l('listheader_AdviseMovement_MovementAmount.label')}"
+									hflex="min" align="right" />
+								<listheader
+									label="${c:l('listheader_AdviseMovement_PaidAmount.label')}"
+									hflex="min" align="right" />
+								<listheader
+									label="${c:l('listheader_AdviseMovement_WaivedAmount.label')}"
+									hflex="min" align="right" />
+								<listheader
+									label="${c:l('listheader_AdviseMovement_Status.label')}"
+									hflex="min" />
+								<listheader
+									label="${c:l('listheader_AdviseMovement_ReceiptDetails.label')}"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
 				</groupbox>
 			</center>
 			<south sclass="south-dialog">
