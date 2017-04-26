@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -414,5 +415,8 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
+	}
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }
