@@ -71,4 +71,6 @@ public interface PresentmentDetailService {
 
 	void processDetails(List<Long> presentmentList) throws Exception;
 
+	void updatePresentmentDetailHeader(long presentmentId, long extractId);
+
 }

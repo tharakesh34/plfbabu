@@ -357,7 +357,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	}
 
 	@Override
-	public void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception{
+	public void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
@@ -381,4 +381,28 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void updatePresentmentDetailId(long presentmentId, long extractId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" update PRESENTMENTDETAILHEADER Set BATCHID = :BATCHID Where EXTRACTID = :EXTRACTID ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("BATCHID", extractId);
+		source.addValue("EXTRACTID", presentmentId);
+
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+ 
 }

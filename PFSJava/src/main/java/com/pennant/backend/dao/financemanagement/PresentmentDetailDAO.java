@@ -69,4 +69,6 @@ public interface PresentmentDetailDAO {
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
 	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
+
+	void updatePresentmentDetailId(long presentmentId, long extractId);
 }

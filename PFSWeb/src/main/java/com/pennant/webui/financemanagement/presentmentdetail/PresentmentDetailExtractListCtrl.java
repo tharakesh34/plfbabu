@@ -60,6 +60,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
@@ -181,11 +182,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
 		}
 
-		if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > 10) {
-			throw new WrongValueException(this.toDate, "To Date should not be greater than 10 days from From Date");
+		int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
+		if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
+			throw new WrongValueException(this.toDate, " From Date and To Date difference should be should  be less than are equal to " + diffentDays);
 		}
 	}
-	
 	
 
 	private String extractDetails() throws Exception {

@@ -242,7 +242,16 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		}
 
 		try {
-			List<Long> detaildList = getPresentmentIds();
+			
+			long extractId = Long.valueOf(this.batchReference.getSelectedItem().getValue().toString());
+			
+			List<Long> detaildList = getPresentmentIds(extractId);
+
+			if (detaildList != null && detaildList.size() <= 0) {
+				MessageUtil.showErrorMessage("No records are available to extract.");
+				return;
+			}
+
 			PresentmentHeader detail = new PresentmentHeader();
 			detail.setMandateType(this.mandateType.getValue());
 			detail.setPartnerBankID(Long.valueOf(this.partnerBank.getValue()));
@@ -262,6 +271,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 			long presentmentId = presentmentDetailService.savePresentmentHeader(detail);
 
 			presentmentDetailService.updatePresentmentDetails(presentmentId, detaildList);
+			presentmentDetailService.updatePresentmentDetailHeader(presentmentId, extractId);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			MessageUtil.showErrorMessage(e.getMessage());
@@ -276,10 +286,10 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	/**
 	 * Getting the Presentment list using JdbcSearchObject with search criteria..
 	 */
-	private List<Long> getPresentmentIds() {
+	private List<Long> getPresentmentIds(long extractId) {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addFilterEqual("EXTRACTID", Long.valueOf(this.batchReference.getSelectedItem().getValue().toString()));
+		searchObject.addFilterEqual("EXTRACTID", extractId);
 		searchObject.addField("DETAILID");
 		searchObject.addFilterEqual("EXCLUDEREASON", 0);
 		searchObject.addTabelName(this.tableName);
@@ -369,6 +379,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		so.addTabelName("PRESENTMENTDETAILHEADER");
 		so.addField(" ExtractId Label");
 		so.addField(" ExtractReference  Value");
+		so.addFilterNotEqual("BATCHID", 0);
 		List<ValueLabel> ids = service.getBySearchObject(so);
 
 		ValueLabel label = null;

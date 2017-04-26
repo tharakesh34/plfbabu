@@ -379,6 +379,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 			strReference = "PRE".concat(strReference);
 			detailHeader.setExtractId(reference);
 			detailHeader.setExtractReference(strReference);
+			detailHeader.setBatchId(0);
 
 			while (rs.next()) {
 				if (!isEmptyRecords) {
@@ -411,7 +412,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 				pDetail.setBounceID(1L);
 				pDetail.setStatus(RepayConstants.PEXC_EXTRACT);
 				pDetail.setExcludeReason(0);
-
+				pDetail.setPresentmentID(0);
 				pDetail.setVersion(0);
 				pDetail.setLastMntBy(detailHeader.getLastMntBy());
 				pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -510,6 +511,12 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		getPresentmentDetailDAO().updatePresentmentDetailId(presentmentId, detaildList);
 	}
 
+	
+	@Override
+	public void updatePresentmentDetailHeader(long presentmentId, long extractId) {
+		getPresentmentDetailDAO().updatePresentmentDetailId(presentmentId, extractId);
+	}
+	
 	@Override
 	public void processDetails(List<Long> presentmentList) throws Exception{
 		logger.debug(Literal.ENTERING);
