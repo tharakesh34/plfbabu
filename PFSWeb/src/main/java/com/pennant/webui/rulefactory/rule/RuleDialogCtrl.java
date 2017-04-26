@@ -83,7 +83,6 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -494,9 +493,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.label_RuleDialog_ruleCodeDesc.setValue(Labels.getLabel("label_LimitLineDialog_Desc.value"));
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
 
-			if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_CUST, event)) {
+			/*if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_CUST, event)) {
 				this.row_Revolving.setVisible(true);
-			}
+			}*/
 
 			break;
 		case RuleConstants.MODULE_BOUNCE:
