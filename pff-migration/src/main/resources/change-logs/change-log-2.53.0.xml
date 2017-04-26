@@ -1042,5 +1042,15 @@ FROM         RMTBaseRates T1 INNER JOIN
 	<changeSet id="58" author="murthy.y">
 		<addPrimaryKey columnNames="HKONT,UMSKZ" constraintName="PK_STDR_T" tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP" />
 	</changeSet>
+	<changeSet id="59" author="Irfan">
+	<sql>
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+	
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_LOAN_ENQUIRY') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_finance_ManualAdviseEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+		
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+	</sql>
+	
+	</changeSet>
 
 </databaseChangeLog>
