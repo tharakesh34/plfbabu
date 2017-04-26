@@ -44,5 +44,12 @@
 			</column>
 		</addColumn>
 	</changeSet> 
-	
+	 
+	<changeSet id="07" author="Amit">
+		<addColumn tableName="AdtRMTGenDepartments">
+			<column name="GenDeptIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
