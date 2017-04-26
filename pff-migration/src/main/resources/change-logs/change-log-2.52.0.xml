@@ -107,168 +107,136 @@
 			INSERT INTO SecGroups SELECT (select (SeqNo+1) from
 			SeqSecGroups),
 			'BOUNCEREASON_VIEW', 'Allow to view BounceReason',
-			0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM
+			0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM
 			SeqSecGroups WHERE
 			0=0;
 			INSERT INTO SecGroups SELECT (select (SeqNo+2)
 			from
 			SeqSecGroups), 'BOUNCEREASON_MAKER', 'WF Maker for BounceReason',
-			0,1000,'2017-04-22 06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM
+			0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM
 			SeqSecGroups WHERE 0=0;
 			INSERT INTO SecGroups SELECT (select (SeqNo+3)
 			from SeqSecGroups), 'BOUNCEREASON_APPROVER', 'WF Approver for
-			BounceReason', 0,1000,'2017-04-22 06:40:40','Approved',' ',' ',' ','
+			BounceReason', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroups WHERE 0=0;
 
 			INSERT INTO SecRights SELECT
 			(select (SeqNo+3) from
-			SeqSecRights),0,'menuItem_applicationmaster_BounceReason','MENU',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),0,'menuItem_applicationmaster_BounceReason','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+4) from
-			SeqSecRights),0,'menuItem_applicationmaster_BounceReasonEnquiry','MENU',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),0,'menuItem_applicationmaster_BounceReasonEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+5) from
-			SeqSecRights),2,'button_BounceReasonList_PrintList','BounceReasonList',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonList_PrintList','BounceReasonList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+6) from
-			SeqSecRights),2,'button_BounceReasonList_NewBounceReason','BounceReasonList',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonList_NewBounceReason','BounceReasonList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+7) from
-			SeqSecRights),2,'button_BounceReasonDialog_btnNew','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonDialog_btnNew','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+8) from
-			SeqSecRights),2,'button_BounceReasonDialog_btnEdit','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonDialog_btnEdit','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+9) from
-			SeqSecRights),2,'button_BounceReasonDialog_btnDelete','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonDialog_btnDelete','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10) from
-			SeqSecRights),2,'button_BounceReasonDialog_btnSave','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),2,'button_BounceReasonDialog_btnSave','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from
-			SeqSecRights),3,'BounceReasonDialog_BounceID','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_BounceID','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from
-			SeqSecRights),3,'BounceReasonDialog_BounceCode','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_BounceCode','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from
-			SeqSecRights),3,'BounceReasonDialog_ReasonType','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_ReasonType','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from
-			SeqSecRights),3,'BounceReasonDialog_Category','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_Category','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+5) from
-			SeqSecRights),3,'BounceReasonDialog_Reason','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_Reason','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+6) from
-			SeqSecRights),3,'BounceReasonDialog_Action','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_Action','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+7) from
-			SeqSecRights),3,'BounceReasonDialog_FeeID','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_FeeID','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+8) from
-			SeqSecRights),3,'BounceReasonDialog_ReturnCode','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_ReturnCode','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 			INSERT INTO SecRights SELECT (select (SeqNo+10+9) from
-			SeqSecRights),3,'BounceReasonDialog_Active','BounceReasonDialog',0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			SeqSecRights),3,'BounceReasonDialog_Active','BounceReasonDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
 			0=0;
 
 			-- for View
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+2)
 			from
 			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
-			(SeqNo+4) from SeqSecRights),1,0,10000,'2017-04-22 06:40:40',' ','
+			(SeqNo+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,' ','
 			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 
 			-- For _MAKER
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
 			max(RightID) from SecRights WHERE
-			RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22
-			06:40:40',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			RightName='menuCat_applicationmaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+6) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+9) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+2) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+5) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+5) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+6) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+6) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+7) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+7) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+7) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+8) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+8) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+9) from
 			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+10+9) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 
 			-- For _Approver
@@ -277,46 +245,40 @@
 			from SeqSecGroupRights), (select (SeqNo+3) from
 			SeqSecGroups),
 			(select max(RightID) from SecRights WHERE
-			RightName='menuCat_applicationmaster'),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			RightName='menuCat_applicationmaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+9) from
 			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
-			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+9) from
 			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
-			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			(SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
 			WHERE 0=0;
 
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from
 			SeqSecRoleGroups),
 			(select (SeqNo+2) from SeqSecGroups), (select
 			roleid from SecRoles
-			where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
+			where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
 			WHERE 0=0;
 			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from
 			SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select
 			roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'),
-			0,1000,'2017-04-22 06:40:40','Approved',' ',' ',' ',' ',' ',0 FROM
+			0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM
 			SeqSecRoleGroups WHERE 0=0;
 
 			INSERT INTO PTMenuDetails SELECT (select
 			(SeqNo+1) from
 			SeqPTMenuDetails),(SELECT AppID FROM
 			PTApplicationDetails WHERE
-			AppCode='PFF'),'BounceReason','menu_Item_BounceReason','/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonList.zul',0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ','
+			AppCode='PFF'),'BounceReason','menu_Item_BounceReason','/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ','
 			',0,'menuItem_applicationmaster_BounceReason' FROM SeqPTMenuDetails
 			WHERE 0=0;
 			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from
 			SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE
 			AppCode='PFF'),'BounceReasonEnquiry','menu_Item_BounceReasonEnquiry?enqiryModule=Y"
-			','/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonEnquiryList.zul',0,10000,'2017-04-22
-			06:40:40','Approved',' ',' ',' ',' ','
+			','/WEB-INF/pages/applicationmaster/BounceReason/BounceReasonEnquiryList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ','
 			',0,'menuItem_applicationmaster_BounceReason' FROM SeqPTMenuDetails
 			WHERE 0=0;
 
@@ -389,8 +351,8 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="09" author="Surekha">
-		<addColumn tableName="RMTAccountTypes_Temp">
-			<column name="ProfitCenter" type="bigint">
+	    <addColumn tableName="RMTAccountTypes_Temp">
+			<column name="ProfitCenter" type="bigint" defaultValue="1">
 				<constraints nullable="false" />
 			</column>
 			<column name="CostCenter" type="bigint" />
@@ -2037,7 +1999,6 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 FROM SAPGL_TRAN_DETAIL_REPORT DR
 INNER JOIN SAPGL_TRAN_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
 INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
-ORDER BY LINK
 		</createView>
 	</changeSet>
 
@@ -2232,7 +2193,7 @@ INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = TBH.CURRENCY
 		'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
 		'' PAYMENTDETAILS1,'' PAYMENTDETAILS2, '' PAYMENTDETAILS3, '' PAYMENTDETAILS4, '' PAYMENTDETAILS5, '' PAYMENTDETAILS6, '' PAYMENTDETAILS7,
 		DISB.LLREFERENCENO, DISB.LLDATE, DISB.LLDATE FromDate, DISB.LLDATE ToDate, BANK.BANKCODE, BANK.BANKNAME, BRANCH.MICR, BRANCH.IFSC, BRANCH.BRANCHCODE, BRANCH.BRANCHDESC, CITY.PCCITYNAME, CPPROVINCENAME,
-		DISB.PHONECOUNTRYCODE||DISB.PHONEAREACODE||DISB.PHONENUMBER AS BENEFICIARY_MOBILE,  BNY.EMAIL BENEFICIARY_EMAIL, CM.CUSTEMAIL CUSTOMER_EMAIL,
+		DISB.PHONECOUNTRYCODE${call.concatenate}DISB.PHONEAREACODE${call.concatenate}DISB.PHONENUMBER AS BENEFICIARY_MOBILE,  BNY.EMAIL BENEFICIARY_EMAIL, CM.CUSTEMAIL CUSTOMER_EMAIL,
 		PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, '' DDCHARGES, FM.FINTYPE, DISB.REMARKS, CU.CUSTSHRTNAME
 		FROM  FINADVANCEPAYMENTS DISB
 		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DISB.PARTNERBANKID
@@ -3520,7 +3481,7 @@ FROM         RMTEmpTypes
 			Value 				int NOT NULL
 			);	
 		
-			Exec('DBCC CHECKIDENT(''SeqProspectCustomer'', RESEED,''100'' )');
+			Exec('DBCC CHECKIDENT(''SeqProspectCustomer'', RESEED,100 )');
 			
 		</sql>
 	</changeSet>

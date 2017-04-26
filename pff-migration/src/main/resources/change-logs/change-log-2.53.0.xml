@@ -98,8 +98,7 @@ WHERE NOT EXISTS
 		  SELECT DS.ID, DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME,  DS.STATUS 
 		  FROM DATA_ENGINE_CONFIG DC
 		  INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
-		  ORDER BY DS.ID
-	  </createView>
+		   </createView>
 	</changeSet>
 	
 	<changeSet id="05" author="Amit">
@@ -784,7 +783,7 @@ Update seqCOSTCENTERS Set SeqNo = (Select coalesce(MAX(COSTCENTERID),0) + 2 from
 		<sql> 
 			Update FeeTypes set ManualAdvice = '0'; 
 			Update FeeTypes_Temp set ManualAdvice = '0'; 
-		
+
 		</sql>
 	</changeSet>
 	

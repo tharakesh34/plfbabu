@@ -3627,7 +3627,7 @@ SELECT     T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmoun
                       T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, 
                       T3.FinCategory lovDescProductCodeName, T1.FinBranch, T3.FinDivision lovdescfindivision, T3.Product lovdescFinProduct, T2.CustCRCPR LovDescCustCRCPR, 
                       T2.CustPassportNo lovDescCustPassportNo, T2.CustDOB LovDescCustDOB, T1.FinContractDate, T1.LinkedFinRef, T1.NextUserId, T1.Priority, 
-                      COALESCE(T4.RoleDesc, FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage, T2.PhoneNumber, T1.WorkflowId, T1.TaskId, T1.NextTaskId,
+                      COALESCE(T4.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage, T2.PhoneNumber, T1.WorkflowId, T1.TaskId, T1.NextTaskId,
                       T1.DeviationApproval, T1.FinPurpose,
                       T1.InitiateDate,T3.FinTypeDesc lovDescFinTypeName,T1.FinPreApprovedRef, T1.RcdMaintainSts,T1.InsuranceAmt,T1.FinCurrAssetValue
 FROM         FinanceMain_Temp T1 INNER JOIN

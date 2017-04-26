@@ -272,7 +272,7 @@ FROM FinanceMain_AView T1 INNER JOIN
 	 RMTBaseRates T8 ON T1.RepayBaseRate = T8.BRType
 		</createView>
 		<createView replaceIfExists="true" viewName="INT_ALM_VIEW">
-		select ${call.substr}(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+		select ${call.substr}(F.FinReference,${call.collength}(F.FinReference)-7,${call.collength}(F.FinReference)) AGREEMENTID,F.ApplicationNo AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
 		(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
 		'' ACCRUEDON,'N' ADVFLAG
 		from FinanceMain F
@@ -5813,8 +5813,30 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 
 		</sql>
 	</changeSet>
+<changeSet id="109" author="satish" dbms="mssql">
+		<sql>
+			drop table BATCH_JOB_EXECUTION_SEQ;
+			drop table BATCH_JOB_SEQ;
+			drop table BATCH_STEP_EXECUTION_SEQ;
 
-	<changeSet id="109" author="satish">
+
+			CREATE TABLE BATCH_JOB_EXECUTION_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);
+			
+			CREATE TABLE BATCH_JOB_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);
+			
+				CREATE TABLE BATCH_STEP_EXECUTION_SEQ(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);
+		</sql>
+	</changeSet>
+	<changeSet id="109" author="satish" dbms="oracle">
 		<sql>
 			drop table BATCH_JOB_EXECUTION_SEQ;
 			drop table BATCH_JOB_SEQ;
@@ -5919,7 +5941,7 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 		INNER JOIN FINADVANCEPAYMENTS DIS ON DIS.PAYMENTID = L.REFID1
 		INNER JOIN DATA_ENGINE_STATUS DS ON DS.ID = L.FILEID
 		inner join DATA_ENGINE_CONFIG DC on DC.name = DS.name
-		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DIS.PARTNERBANKID order by L.ID desc
+		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DIS.PARTNERBANKID
 	</createView>
 </changeSet>
 	
@@ -6939,7 +6961,7 @@ From FinanceMain FM inner join
 		(NOInst-NOPaidInst) NO_OF_EMI_OS,T2.CURODDAYS DPD,cast(null as numeric(3,0)) CURRENT_BUCKET,
 		T2.FinBranch BRANCH_NAME,FinTypeDesc SCHEME_NAME,cast(null as numeric(3,0)) DERIVED_BUCKET,'' ASSETDESC,
 		'' MAKE,'' CHASISNUM,'' REGDNUM,'' ENGINENUM,cast(null as numeric(16,2)) INVOICEAMT,'' SUPPLIERDESC,
-		'' INSTRUMENT,sysdate  REPO_DATE,'' LOCAL_OUTSTATION_FLAG,
+		'' INSTRUMENT,${call.date}  REPO_DATE,'' LOCAL_OUTSTATION_FLAG,
 		T2.FirstODDate FIRST_REPAYDUE_DATE
  from   FinanceMain T1 Inner join
 		FinPftDetails T2 on T2.FinReference=T1.FinReference Inner join

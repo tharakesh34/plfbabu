@@ -777,7 +777,7 @@ FROM    	Mandates  T1 INNER JOIN
 		<sql>
 		delete from errordetails where errorcode ='90320';
 			insert into errordetails (errorcode, errorlanguage, errorseverity, errormessage, recordstatus, workflowid, lastmnton, lastmntby, version) 
-  				values ('90320', 'EN', 'E', 'The installment amount against the mandate is more than the max limit.', 'Approved', 0, sysdate, 1000, 1);
+  				values ('90320', 'EN', 'E', 'The installment amount against the mandate is more than the max limit.', 'Approved', 0, CURRENT_TIMESTAMP, 1000, 1);
 		</sql>
 	</changeSet>
 		  <changeSet id="38" author="Durga Prasad G">
@@ -948,7 +948,7 @@ FROM    	Mandates  T1 INNER JOIN
 		'' ADDRESS1,'' ADDRESS2, '' ADDRESS3, '' ADDRESS4, ''ADDRESS5, DISB.PAYMENTID, DISB.FINREFERENCE, 'bafl@bajajfinserve.com' BAFLMAILID,
 		'' PAYMENTDETAILS1,'' PAYMENTDETAILS2, '' PAYMENTDETAILS3, '' PAYMENTDETAILS4, '' PAYMENTDETAILS5, '' PAYMENTDETAILS6, '' PAYMENTDETAILS7,
 		DISB.LLREFERENCENO, DISB.LLDATE, DISB.LLDATE FromDate, DISB.LLDATE ToDate, BANK.BANKCODE, BANK.BANKNAME, BRANCH.MICR, BRANCH.IFSC, BRANCH.BRANCHCODE, BRANCH.BRANCHDESC, CITY.PCCITYNAME, CPPROVINCENAME,
-		DISB.PHONECOUNTRYCODE||DISB.PHONEAREACODE||DISB.PHONENUMBER AS BENEFICIARY_MOBILE,  BNY.EMAIL BENEFICIARY_EMAIL, CM.CUSTEMAIL CUSTOMER_EMAIL,
+		DISB.PHONECOUNTRYCODE${call.concatenate}DISB.PHONEAREACODE${call.concatenate}DISB.PHONENUMBER AS BENEFICIARY_MOBILE,  BNY.EMAIL BENEFICIARY_EMAIL, CM.CUSTEMAIL CUSTOMER_EMAIL,
 		PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, '' DDCHARGES, FM.FINTYPE, DISB.REMARKS, CU.CUSTSHRTNAME
 		FROM  FINADVANCEPAYMENTS DISB
 		INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = DISB.PARTNERBANKID
@@ -1555,14 +1555,18 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			</column>
 		</createTable>	
 </changeSet>
-
+<changeSet id="66.1" author="Siva" dbms="oracle">
+    <sql>
+      alter table ReceiptAllocationDetail_Temp  drop constraint PK_RECEIPTALLOCATIONDETAIL_TEM;  
+    </sql>
+    </changeSet>
 <changeSet id="66" author="Siva">
 		<createTable tableName="ReceiptAllocationDetail_Temp">
 			<column name="ReceiptID" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
+				<constraints nullable="false" />
 			</column>
 			<column name="AllocationID" type="int">
-			<constraints primaryKey="true" nullable="false" />
+			<constraints nullable="false" />
 			</column>
 			<column name="AllocationType" type="varchar(8)" >
 			<constraints nullable="false" />
@@ -1575,6 +1579,9 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="WaivedAmount" type="number(18,0)"/>
 		</createTable>
 </changeSet>
+<changeSet id="66.2" author="Siva">
+    <addPrimaryKey tableName="ReceiptAllocationDetail_Temp" constraintName="PK_RECEIPTALLOCATIONDTL_TEMP" columnNames="ReceiptID, AllocationID"/>
+    </changeSet>
 <changeSet id="67" author="Siva">
 		<createTable tableName="ReceiptAllocationDetail">
 			<column name="ReceiptID" type="bigint">
