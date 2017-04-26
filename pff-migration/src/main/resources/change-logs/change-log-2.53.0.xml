@@ -849,4 +849,82 @@ FROM         RMTBaseRateCodes
 		</createView>
 	</changeSet>	
 
+
+<changeSet id="43" author="Amit">
+		<sql>
+        UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'GeneralDepartmentDialog_GenDeptIsActive','GeneralDepartmentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GENERALDEPARTMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GeneralDepartmentDialog_GenDeptIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+      </sql>
+	</changeSet>
+
+<changeSet id="44" author="Amit">
+		<addColumn tableName="RMTGenDepartments">
+			<column name="GenDeptIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="45" author="Amit">
+		<addColumn tableName="RMTGenDepartments_Temp">
+			<column name="GenDeptIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="46" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTGENDEPARTMENTS_AVIEW">
+ SELECT     GenDepartment, GenDeptDesc, GenDeptIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, 
+                      WorkflowId
+FROM         RMTGenDepartments
+		</createView>
+	</changeSet>
+	
+	<changeSet id="47" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTGENDEPARTMENTS_VIEW">
+ (SELECT GenDepartment ,
+           GenDeptDesc ,
+		   GenDeptIsActive ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTGenDepartments_Temp )
+   UNION ALL 
+   (SELECT GenDepartment ,
+           GenDeptDesc ,
+		   GenDeptIsActive ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTGenDepartments 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM RMTGenDepartments_Temp 
+                          WHERE GenDepartment = RMTGenDepartments.GenDepartment ))
+		</createView>
+	</changeSet>
+
+
 </databaseChangeLog>
