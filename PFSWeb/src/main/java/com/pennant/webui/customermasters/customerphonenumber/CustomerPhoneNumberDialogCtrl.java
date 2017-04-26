@@ -108,8 +108,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 	protected Longbox phoneCustID; // autowired
 	protected ExtendedCombobox phoneTypeCode; // autowired
-	protected Textbox phoneCountryCode; // autowired
-	protected Textbox phoneAreaCode; // autowired
+	//protected Textbox phoneCountryCode; // autowired
+	//protected Textbox phoneAreaCode; // autowired
 	protected Textbox phoneNumber; // autowired
 	protected Textbox custCIF; // autowired
 	protected Label custShrtName; // autowired
@@ -139,7 +139,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private String userRole = "";
 	private boolean isFinanceProcess = false;
 	protected Row row_phoneNumber;
-	protected Row row_mobileNumber;
 	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
 			.getCustomerEmailPriority();
 
@@ -263,12 +262,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneTypeCode.setDescColumn("PhoneTypeDesc");
 		this.phoneTypeCode.setValidateColumns(new String[] { "PhoneTypeCode" });
 
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneCountryCode.setWidth("50px");
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneAreaCode.setWidth("50px");
-		this.phoneNumber.setMaxlength(8);
-		this.phoneNumber.setWidth("100px");
+		this.phoneNumber.setMaxlength(10);
 		
 		this.mobileNumber.setMaxlength(10);
 
@@ -397,18 +391,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		}
 
 		this.phoneTypeCode.setValue(aCustomerPhoneNumber.getPhoneTypeCode());
-		if (!StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, aCustomerPhoneNumber.getPhoneTypeCode())) {
-			this.row_phoneNumber.setVisible(true);
-			this.row_mobileNumber.setVisible(false);
-			this.phoneCountryCode.setValue(aCustomerPhoneNumber.getPhoneCountryCode());
-			this.phoneAreaCode.setValue(aCustomerPhoneNumber.getPhoneAreaCode());
-			this.phoneNumber.setValue(aCustomerPhoneNumber.getPhoneNumber());
-		}else{
-			this.row_mobileNumber.setVisible(true);
-			this.row_phoneNumber.setVisible(false);
-			this.mobileNumber.setValue(aCustomerPhoneNumber.getPhoneNumber());
-		}
-		
+		this.phoneNumber.setValue(aCustomerPhoneNumber.getPhoneNumber());
 		
 		this.custCIF.setValue(aCustomerPhoneNumber.getLovDescCustCIF() == null ? "" : aCustomerPhoneNumber
 				.getLovDescCustCIF().trim());
@@ -455,8 +438,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 		try {
 			if(this.row_phoneNumber.isVisible()){
-			aCustomerPhoneNumber.setPhoneCountryCode(this.phoneCountryCode.getValue());
-			aCustomerPhoneNumber.setPhoneAreaCode(this.phoneAreaCode.getValue());
 			aCustomerPhoneNumber.setPhoneNumber(this.phoneNumber.getValue());
 			}else{
 			aCustomerPhoneNumber.setPhoneNumber(this.mobileNumber.getValue());
@@ -551,8 +532,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 	private void doCheckEnquiry() {
 		if ("ENQ".equals(this.moduleType)) {
-			this.phoneCountryCode.setReadonly(true);
-			this.phoneAreaCode.setReadonly(true);
 			this.phoneNumber.setReadonly(true);
 			this.custPhonePriority.setDisabled(true);
 			this.btnSave.setVisible(false);
@@ -571,22 +550,9 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			this.custCIF.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_CustomerPhoneNumberDialog_PhoneCustID.value"), null, true));
 		}
-		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneCountryCode.value"), true, 1));
-		}
-		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneAreaCode.value"), true, 2));
-		}
 		if (this.row_phoneNumber.isVisible() && !this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true, 3));
-		}
-		
-		if (this.row_mobileNumber.isVisible() && !this.mobileNumber.isReadonly()) {
-			this.mobileNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_MobileNumber.value"), true));
+			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
+					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true));
 		}
 		
 		if (!this.custPhonePriority.isDisabled()) {
@@ -603,8 +569,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.custCIF.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		this.custPhonePriority.setConstraint("");
 		this.mobileNumber.setConstraint("");
@@ -637,8 +601,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	protected void doClearMessage() {
 		logger.debug("Entering");
 		this.custCIF.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.phoneTypeCode.setErrorMessage("");
 		this.custPhonePriority.setErrorMessage("");
@@ -744,8 +706,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.custPhonePriority.setDisabled(isReadOnly("CustomerPhoneNumberDialog_phonePriority"));
 		this.phoneCustID.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneCustID"));
 		this.custCIF.setReadonly(true);
-		this.phoneCountryCode.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneCountryCode"));
-		this.phoneAreaCode.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneAreaCode"));
 		this.phoneNumber.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneNumber"));
 		this.mobileNumber.setReadonly(isReadOnly("CustomerPhoneNumberDialog_mobileNumber"));
 
@@ -799,8 +759,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneCustID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.phoneTypeCode.setReadonly(true);
-		this.phoneCountryCode.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
 		this.phoneNumber.setReadonly(true);
 		this.custPhonePriority.setDisabled(true);
 
@@ -827,8 +785,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.custShrtName.setValue("");
 		this.phoneTypeCode.setValue("");
 		this.phoneTypeCode.setDescription("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		this.phoneNumber.setValue("");
 		this.custPhonePriority.setText("");
 		logger.debug("Leaving");
@@ -1191,14 +1147,6 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		} else {
 			PhoneType details = (PhoneType) dataObject;
 			if (details != null) {
-				
-				if(StringUtils.equals(PennantConstants.PHONETYPE_MOBILE,details.getPhoneTypeCode())){
-					this.row_mobileNumber.setVisible(true);
-					this.row_phoneNumber.setVisible(false);
-				}else{
-					this.row_mobileNumber.setVisible(false);
-					this.row_phoneNumber.setVisible(true);
-				}
 				this.phoneTypeCode.setValue(details.getPhoneTypeCode());
 				this.phoneTypeCode.setDescription(details.getPhoneTypeDesc());
 			}

@@ -101,11 +101,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<hbox>
-										<textbox id="phoneCountryCode"/>
-										<label value="-" style="display:inline-block;padding-top:4px;"/>
-										<textbox id="phoneAreaCode"/>
-										<label value="-" style="display:inline-block;padding-top:4px;"/>
-										<textbox id="phoneNumber"/>
+										<textbox id="phoneNumber" />
 									</hbox>
 								</hbox>
 							</row>
