@@ -1485,7 +1485,25 @@ FROM         FinanceMain_Temp T1 INNER JOIN
              customerphonenumbers T5 ON T5.phonecustid=T2.CustID
 	</createView>
 	</changeSet>
-	
+	<changeSet id="85" author="murthy.y">
+		<dropTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP"/>
+	</changeSet>
+	<changeSet id="86" author="murthy.y">
+		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
+			<column name="ID" type="decimal(10,0)"/>
+			<column name="LINK" type="decimal(5,0)"/>
+			<column name="BSCHL" type="decimal(5,0)"/>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
 	
 	<changeSet id="87" author="DurgaPrasad G">
 		<sql>
