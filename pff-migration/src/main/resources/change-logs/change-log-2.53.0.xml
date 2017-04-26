@@ -1230,5 +1230,53 @@ FROM         RMTBaseRates T1 INNER JOIN
 		</createView>
 	</changeSet>
 	
+	<changeSet id="72" author="Subba Rao">
+<sql>
+Delete from SecRoleGroups where RoleID IN (
+  Select RoleID from SECROLES where ROLECD = 'LIMITS_MAKER'
+);
+
+Delete from SecRoleGroups where RoleID IN (
+  Select RoleID from SECROLES where ROLECD = 'LIMITS_APPROVER'
+);
+
+delete from secoperationroles where roleid in (Select roleid  from SECROLES where ROLECD = 'LIMITS_MAKER');
+delete from secoperationroles where roleid in (Select roleid  from SECROLES where ROLECD = 'LIMITS_APPROVER');
+delete from SECROLES where ROLECD = 'LIMITS_MAKER';
+delete from SECROLES where ROLECD = 'LIMITS_APPROVER';
+
+insert into SECROLES values ((select max(Roleid)+1 from SECROLES),1,'LIMITS_MAKER','LIMITS_MAKER',null,0,1000,null,null,null,null,null,null,null,0);
+insert into SECROLES values ((select max(ROLEID)+1 from SECROLES),1,'LIMITS_APPROVER','LIMITS_APPROVER',null,0,1000,null,null,null,null,null,null,null,0);
+
+update SEQSECROLES set SEQNO = (select max(ROLEID) from SECROLES);
+ 
+Insert into SECROLEGROUPS values((select max(ROLEGRPID) +1 from SECROLEGROUPS), (select GRPID from SECGROUPS where GRPCODE = 'LIMITHEADER_MAKER'), 
+(select ROLEID from SECROLES where ROLECD = 'LIMITS_MAKER'), 
+0, 1000, CURRENT_TIMESTAMP, null, null, null ,null, null, null, 0); 
+
+Insert into SECROLEGROUPS values((select max(ROLEGRPID) +1 from SECROLEGROUPS), (select GRPID from SECGROUPS where GRPCODE = 'LIMITDETAIL_MAKER'), 
+(select ROLEID from SECROLES where ROLECD = 'LIMITS_MAKER'), 
+0, 1000, CURRENT_TIMESTAMP, null, null, null ,null, null, null, 0);
+
+Insert into SECROLEGROUPS values((select max(ROLEGRPID) +1 from SECROLEGROUPS), (select GRPID from SECGROUPS where GRPCODE = 'LIMITHEADER_APPROVER'), 
+(select ROLEID from SECROLES where ROLECD = 'LIMITS_APPROVER'), 
+0, 1000, CURRENT_TIMESTAMP, null, null, null ,null, null, null, 0); 
+
+Insert into SECROLEGROUPS values((select max(ROLEGRPID) +1 from SECROLEGROUPS), (select GRPID from SECGROUPS where GRPCODE = 'LIMITDETAIL_APPROVER'), 
+(select ROLEID from SECROLES where ROLECD = 'LIMITS_APPROVER'), 
+0, 1000, CURRENT_TIMESTAMP, null, null, null ,null, null, null, 0);
+
+UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+
+INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), 
+(select OprID from SecOperations WHERE OprCode='INPUTTER'), (select RoleID from SecRoles where RoleCd='LIMITS_MAKER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+
+INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), 
+(select OprID from SecOperations WHERE OprCode='APPROVER'), (select RoleID from SecRoles where RoleCd='LIMITS_APPROVER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+</sql>
+</changeSet>
 	
 </databaseChangeLog>
