@@ -1364,4 +1364,99 @@ INSERT INTO ErrorDetails VALUES('90904','EN','E','Collateral third party custome
 	</sql>
 </changeSet>
 
+<changeSet id="79" author="Prakash">
+		<sql>
+        UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BlacklistCustomerDialog_CustIsActive','BlacklistCustomerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BLACKLISTCUSTOMER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BlacklistCustomerDialog_CustIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+       </sql>
+</changeSet>
+
+<changeSet id="80" author="Prakash">
+	<addColumn tableName="BlackListCustomer">
+		<column name="CustIsActive" type="number(1,0)" defaultValue="0">
+			<constraints nullable="false" />
+		</column>
+	</addColumn>
+</changeSet>
+
+	<changeSet id="81" author="Prakash">
+		<addColumn tableName="BlackListCustomer_Temp">
+			<column name="CustIsActive" type="number(1,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+<changeSet id="82" author="Prakash">
+	<createView replaceIfExists="true" viewName="BlackListCustomer_VIEW">
+         SELECT    
+          CustCIF, 
+          CustFName,
+          CustLName,
+          CustDOB,
+          CustCRCPR,
+          MobileNumber,
+          CustNationality,
+          CustPassportNo,
+          Employer,
+          CustIsActive, 
+          T1.Version, 
+          T1.LastMntBy, 
+          T1.LastMntOn, 
+          T1.RecordStatus, 
+          T1.RoleCode, 
+          T1.NextRoleCode, 
+          T1.TaskId, 
+          T1.NextTaskId, 
+          T1.RecordType, 
+          T1.WorkflowId,
+			T2.NationalityDesc lovDescNationalityDesc,
+			T3.EmpName lovDescEmpName
+         FROM          
+         BlackListCustomer_Temp T1  LEFT OUTER JOIN
+              BMTNationalityCodes T2 on T2.NationalityCode = T1.CustNationality LEFT OUTER JOIN
+              EmployerDetail T3 on T3.EmployerId = T1.Employer 
+         Union all
+         SELECT     
+         CustCIF, 
+         CustFName, 
+         CustLName,
+         CustDOB,
+         CustCRCPR,
+         MobileNumber,
+         CustNationality,
+         CustPassportNo,
+         Employer, 
+         CustIsActive, 
+         T1.Version, 
+         T1.LastMntBy, 
+         T1.LastMntOn, 
+         T1.RecordStatus, 
+         T1.RoleCode, 
+         T1.NextRoleCode, 
+         T1.TaskId, 
+         T1.NextTaskId, 
+         T1.RecordType, 
+         T1.WorkflowId,
+			T2.NationalityDesc lovDescNationalityDesc,
+			T3.EmpName lovDescEmpName
+       FROM          
+       BlackListCustomer T1  LEFT OUTER JOIN
+              BMTNationalityCodes T2 on T2.NationalityCode = T1.CustNationality LEFT OUTER JOIN
+              EmployerDetail T3 on T3.EmployerId = T1.Employer 
+
+       WHERE     
+       NOT EXISTS
+                          (SELECT     1
+                            FROM         BlackListCustomer_Temp
+                            WHERE      CustCIF= T1.CustCIF)
+	</createView>
+</changeSet>
+
 </databaseChangeLog>
