@@ -1030,7 +1030,16 @@ FROM         RMTBaseRates T1 INNER JOIN
 	<changeSet id="56" author="murthy.y">
 		<dropTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP"/>
 	</changeSet>
-	<changeSet id="57" author="murthy.y">
+	<changeSet id="57.1" author="murthy.y" dbms="mssql">
+	    <createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
+			<column name="HKONT" type="varchar(20)">
+			    <constraints nullable="false" /></column>
+			<column name="UMSKZ" type="varchar(20)">
+			    <constraints nullable="false" /></column>
+			<column name="WRBTR" type="decimal(20,0)"/>
+		</createTable>
+	    </changeSet>
+	<changeSet id="57" author="murthy.y" dbms="oracle">
 		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
 			<column name="HKONT" type="varchar(20)"/>
 			<column name="UMSKZ" type="varchar(20)"/>
@@ -1124,7 +1133,16 @@ FROM         RMTBaseRates T1 INNER JOIN
 	<changeSet id="64" author="murthy.y">
 		<dropTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP"/>
 	</changeSet>
-	<changeSet id="65" author="murthy.y">
+	<changeSet id="65.1" author="murthy.y" dbms="mssql">
+	    <createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
+			<column name="HKONT" type="varchar(20)">
+			    <constraints nullable="false" /></column>
+			<column name="PRCTR" type="varchar(20)">
+			    <constraints nullable="false" /></column>
+			<column name="WRBTR" type="decimal(20,0)"/>
+		</createTable>
+	    </changeSet>
+	<changeSet id="65" author="murthy.y" dbms="oracle">
 		<createTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP">
 			<column name="HKONT" type="varchar(20)"/>
 			<column name="PRCTR" type="varchar(20)"/>
