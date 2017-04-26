@@ -156,8 +156,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Combobox						finRequestStage;													// autoWired
 	protected Listbox						sortOperator_finQueuePriority;										// autoWired
 	protected Combobox						finQueuePriority;													// autoWired
-	protected Textbox						phoneCountryCode;
-	protected Textbox						phoneAreaCode;
 	protected Textbox						recordStatus;														// autoWired
 	protected Listbox						recordType;														// autoWired
 	protected Listbox						sortOperator_recordStatus;											// autoWired
@@ -850,8 +848,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finRequestStage.setSelectedIndex(0);
 		this.sortOperator_finQueuePriority.setSelectedIndex(0);
 		this.finQueuePriority.setSelectedIndex(0);
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		this.oldVar_sortOperator_finType = 0;
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);
@@ -1000,13 +996,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					PennantApplicationUtil.unFormatEIDNumber(this.finEIDNumber.getValue().trim()), "LovDescCustCRCPR");
 		}
 		// finMobileNumber
-		if (StringUtils.isNotBlank(this.finMobileNumber.getValue())
-				&& StringUtils.isNotBlank(this.phoneAreaCode.getValue())
-				&& StringUtils.isNotBlank(this.phoneCountryCode.getValue())) {
-			String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.finMobileNumber.getValue());
+		if (StringUtils.isNotBlank(this.finMobileNumber.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_mobileNumber.getSelectedItem(),
-					phoneNumber.trim(), "PhoneNumber");
+					this.finMobileNumber.getValue().trim(), "PhoneNumber");
 		}
 
 		// InitiateDate
@@ -1205,9 +1197,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.fincustName.setMaxlength(50);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.finMobileNumber.setMaxlength(LengthConstants.LEN_MASTER_CODE);
+		this.finMobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 		this.finRequestDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finDateofBirth.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finPromotion.setMaxlength(8);
