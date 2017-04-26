@@ -1578,4 +1578,8 @@ FROM         FinanceMain_Temp T1 INNER JOIN
       							'LATEPAY','NORM_PD','NORM_PIS','PD_NORM','PD_PIS','PIS_NORM','PIS_PD','PROVSN','REPAY','WRITEBK','WRITEOFF'); 
 		</sql>
 	</changeSet>
+	<changeSet id="90" author="murthy.y">
+		<addPrimaryKey columnNames="ID" constraintName="PK_STDR_T_ID"
+			tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP" />
+	</changeSet>
 </databaseChangeLog>
