@@ -93,23 +93,21 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(AccountMappingDialogCtrl.class);
-	
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_AccountMappingDialog; 
-	protected Textbox 		account; 
-	protected Textbox 		hostAccount; 
-	protected Listbox 		listBoxAccountMap; 
+	protected Window window_AccountMappingDialog;
+	protected Textbox account;
+	protected Textbox hostAccount;
+	protected Listbox listBoxAccountMap;
 	private AccountMapping accountMapping; // overhanded per param
-	protected  ExtendedCombobox finType;	
-	
+	protected ExtendedCombobox finType;
+
 	private transient AccountMappingListCtrl accountMappingListCtrl; // overhanded per param
 	private transient AccountMappingService accountMappingService;
 	private RuleExecutionUtil ruleExecutionUtil;
-	
 
 	/**
 	 * default constructor.<br>
@@ -122,14 +120,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	protected void doSetProperties() {
 		super.pageRightName = "AccountMappingDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(this.accountMapping.getAccount());
+		StringBuffer referenceBuffer = new StringBuffer(this.accountMapping.getAccount());
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -204,11 +201,11 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 * @param event
 	 */
 	public void onFulfill$finType(Event event) {
-		logger.debug("Entering" + event.toString());
-		
+		logger.debug(Literal.ENTERING);
+
 		listBoxAccountMap.getItems().clear();
 		Object dataObject = finType.getObject();
-		
+
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 			this.finType.setDescription("");
@@ -216,78 +213,75 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			FinanceType financeType = (FinanceType) dataObject;
 			List<String> subHeadRuleList = new ArrayList<>();
 			Map<String, Rule> subHeadMap = null;
-			
+
 			List<TransactionEntry> transactionEntries = null;
 			if (financeType != null) {
-				 transactionEntries = accountMappingService.getTransactionEntriesByFintype(financeType.getFinType());
+				transactionEntries = this.accountMappingService
+						.getTransactionEntriesByFintype(financeType.getFinType());
 			}
-			
-			if(transactionEntries != null){
+
+			if (transactionEntries != null) {
 				for (TransactionEntry transactionEntry : transactionEntries) {
-					if(!subHeadRuleList.contains(transactionEntry.getAccountSubHeadRule())) {
+					if (!subHeadRuleList.contains(transactionEntry.getAccountSubHeadRule())) {
 						subHeadRuleList.add(transactionEntry.getAccountSubHeadRule());
 					}
 				}
-				
+
 				if (subHeadRuleList == null || subHeadRuleList.isEmpty()) {
 					Messagebox.show("Transaction Entries are not defined for this loan type");
 					return;
 				}
-				
-				subHeadMap = accountMappingService.getSubheadRules(subHeadRuleList);
+
+				subHeadMap = this.accountMappingService.getSubheadRules(subHeadRuleList);
 				Rule rule = null;
+				HashMap<String, Object> executeMap = null;
 				Listitem item = null;
 				Listcell cell = null;
-				
-				Label label = null;
-				Textbox textbox = null;
+
+				Label glCode_Label = null;
+				Textbox sapGlCode_Textbox = null;
 				int count = 0;
 				AccountMapping accountMapping = null;
-				String account = null;
 				String hostAccount = null;
+
 				for (TransactionEntry transactionEntry : transactionEntries) {
-					HashMap<String, Object> executeMap = new HashMap<String, Object>();
+					executeMap = new HashMap<String, Object>();
 					rule = subHeadMap.get(transactionEntry.getAccountSubHeadRule());
-					
+
 					executeMap.put("reqFinAcType", transactionEntry.getAccountType());
 					executeMap.put("reqFinType", financeType.getFinType());
-					String result = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null, RuleReturnType.CALCSTRING);
-					
-					accountMapping = this.accountMappingService.getAccountMapping(result);
-					if(accountMapping == null) {
-						account = result;
+					String glCode = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null,
+							RuleReturnType.CALCSTRING);
+
+					accountMapping = this.accountMappingService.getAccountMapping(glCode);
+					if (accountMapping == null) {
 						hostAccount = "";
 					} else {
-						account = accountMapping.getAccount();
 						hostAccount = accountMapping.getHostAccount();
 					}
-					
+
 					item = new Listitem();
-					item.setId("item_"+count);
-					
+					item.setId("item_" + count);
+
 					cell = new Listcell();
-					label = new Label(result);
-					label.setId("result_"+count);
-					label.setParent(cell);
+					glCode_Label = new Label(glCode);
+					glCode_Label.setId("glCode_" + count);
+					glCode_Label.setParent(cell);
 					cell.setParent(item);
 
 					cell = new Listcell();
-					textbox = new Textbox();
-					textbox.setParent(cell);
-					textbox.setId("value_"+count);
-					textbox.setValue(hostAccount);
-					textbox.setConstraint("no empty");
-					
+					sapGlCode_Textbox = new Textbox();
+					sapGlCode_Textbox.setParent(cell);
+					sapGlCode_Textbox.setId("sapGlCode_" + count);
+					sapGlCode_Textbox.setValue(hostAccount);
 					cell.setParent(item);
-					item.setParent(listBoxAccountMap);
-					
+
 					count++;
+					item.setParent(listBoxAccountMap);
 				}
 			}
-			
-			
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -318,10 +312,11 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		
 		List<Listitem> items = listBoxAccountMap.getItems();
 		int count = 0;
-		Textbox valueTb = null;
-		Label result = null;
+		Textbox sapGlCode_Textbox = null;
+		Label glCode_Label = null;
 		AccountMapping accountMapping = null;
 		//Finance Type
+		this.finType.setErrorMessage("");
 		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_FinType.value"), null, true, true));
 		this.finType.getValidatedValue();
 		 
@@ -332,18 +327,24 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		
 		for (Listitem listItem : items) {
 			accountMapping = new AccountMapping();
-			result = (Label) listItem.getFellow("result_"+count);
-			valueTb = (Textbox) listItem.getFellow("value_"+count);
+			glCode_Label = (Label) listItem.getFellow("glCode_" + count);
+			sapGlCode_Textbox = (Textbox) listItem.getFellow("sapGlCode_" + count);
+			sapGlCode_Textbox.setErrorMessage("");
+			sapGlCode_Textbox.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_HostAccount.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			//GL Code
 			try {
-				accountMapping.setAccount(result.getValue());
-			}catch (WrongValueException we ) {
+				accountMapping.setAccount(glCode_Label.getValue());
+			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			//SAP GL Code
 			try {
-				accountMapping.setHostAccount(valueTb.getValue());
-			}catch (WrongValueException we ) {
+				accountMapping.setHostAccount(sapGlCode_Textbox.getValue());
+			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			sapGlCode_Textbox.setConstraint("");
 			accountMapping.setFinType(finTypeValue);
 			accountMappingList.add(accountMapping);
 			count++;
@@ -458,51 +459,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		logger.debug(Literal.LEAVING);
 	}
 	
-	
-	/*private void setAccountMapping(){
-		
-		FinanceType finType = new FinanceType();
-		HashMap<String, Object> executionMap = new HashMap<String, Object>();
-
-		
-		
-		List<TransactionEntry> transactionEntries = new ArrayList<>();
-		for (TransactionEntry transactionEntry : transactionEntries) {
-			
-			Rule subHeadRule = transactionEntry.getAccountSubHeadRule();
-			transactionEntry.getAccountType();
-			
-			if (subHeadRule.getFields() != null) {
-				String[] fields = feeRule.getFields().split(",");
-				for(String field : fields) {
-					if (!executionMap.containsKey(field)) {
-						getRuleExecutionUtil().setExecutionMap(field, objectList, executionMap);
-					}
-				}
-			}
-			
-			
-			
-			
-			
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-	}
-	*/
-		
-	
-
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -511,12 +467,11 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	public void doWriteBeanToComponents(AccountMapping aAccountMapping) {
 		logger.debug(Literal.ENTERING);
-	
-			this.account.setValue(aAccountMapping.getAccount());
-			this.hostAccount.setValue(aAccountMapping.getHostAccount());
-			this.finType.setObject(new FinanceType(aAccountMapping.getFinType()));
-		
-		
+
+		this.account.setValue(aAccountMapping.getAccount());
+		this.hostAccount.setValue(aAccountMapping.getHostAccount());
+		this.finType.setObject(new FinanceType(aAccountMapping.getFinType()));
+
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -637,9 +592,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 		
-		//Account
-		//Host Account
-		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -672,152 +624,35 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final AccountMapping aAccountMapping = new AccountMapping();
 		BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aAccountMapping.getAccount();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aAccountMapping.getAccount();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
-		
-		int conf =  (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true));
 
-		if (conf==MultiLineMessageBox.YES){
+		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
+				Messagebox.QUESTION, true));
+
+		if (conf == MultiLineMessageBox.YES) {
 			logger.debug("doDelete: Yes");
 
-			if (StringUtils.trimToEmpty(aAccountMapping.getRecordType()).equals("")){
-				aAccountMapping.setVersion(aAccountMapping.getVersion()+1);
+			if (StringUtils.trimToEmpty(aAccountMapping.getRecordType()).equals("")) {
+				aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
 				aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aAccountMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aAccountMapping.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAccountMapping.getNextTaskId(), aAccountMapping);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aAccountMapping,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_AccountMappingDialog,e);
-			}
-			
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.accountMapping.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.account);
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.account);
-			
-		}
-	
-			readOnlyComponent(isReadOnly("AccountMappingDialog_HostAccount"), this.hostAccount);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.accountMapping.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAccountMapping.getNextTaskId(),
+							aAccountMapping);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.account);
-			readOnlyComponent(true, this.hostAccount);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.account.setValue("");
-				this.hostAccount.setValue("");
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final AccountMapping aAccountMapping = new AccountMapping();
-			BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aAccountMapping);
-
-			isNew = aAccountMapping.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aAccountMapping.getRecordType())) {
-					aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
-					if (isNew) {
-						aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aAccountMapping.setNewRecord(true);
-					}
-				}
-			} else {
-				aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -827,205 +662,322 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
-				logger.error(e);
-				MessageUtil.showError(e);
+			} catch (DataAccessException e) {
+				logger.error("Exception", e);
+				showErrorMessage(this.window_AccountMappingDialog, e);
 			}
-			logger.debug("Leaving");
+
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(AccountMapping aAccountMapping, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			aAccountMapping.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aAccountMapping.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aAccountMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.accountMapping.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.account);
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.account);
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aAccountMapping.getNextTaskId());
+		}
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aAccountMapping);
-					}
+		readOnlyComponent(isReadOnly("AccountMappingDialog_HostAccount"), this.hostAccount);
 
-					if (isNotesMandatory(taskId, aAccountMapping)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aAccountMapping.setTaskId(taskId);
-				aAccountMapping.setNextTaskId(nextTaskId);
-				aAccountMapping.setRoleCode(getRole());
-				aAccountMapping.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aAccountMapping, tranType);
-				String operationRefs = getServiceOperations(taskId, aAccountMapping);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aAccountMapping, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.accountMapping.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aAccountMapping, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			AccountMapping aAccountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		readOnlyComponent(true, this.account);
+		readOnlyComponent(true, this.hostAccount);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = accountMappingService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.account.setValue("");
+		this.hostAccount.setValue("");
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final AccountMapping aAccountMapping = new AccountMapping();
+		BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aAccountMapping);
+
+		isNew = aAccountMapping.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aAccountMapping.getRecordType())) {
+				aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
+				if (isNew) {
+					aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aAccountMapping.setNewRecord(true);
+				}
+			}
+		} else {
+			aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aAccountMapping, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(AccountMapping aAccountMapping, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aAccountMapping.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aAccountMapping.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aAccountMapping.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aAccountMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aAccountMapping.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aAccountMapping);
+				}
+
+				if (isNotesMandatory(taskId, aAccountMapping)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aAccountMapping.setTaskId(taskId);
+			aAccountMapping.setNextTaskId(nextTaskId);
+			aAccountMapping.setRoleCode(getRole());
+			aAccountMapping.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aAccountMapping, tranType);
+			String operationRefs = getServiceOperations(taskId, aAccountMapping);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aAccountMapping, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aAccountMapping, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		AccountMapping aAccountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = accountMappingService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = accountMappingService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = accountMappingService.doApprove(auditHeader);
+
+						if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = accountMappingService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = accountMappingService.doReject(auditHeader);
+						if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = accountMappingService.doApprove(auditHeader);
-
-							if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = accountMappingService.doReject(auditHeader);
-							if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_AccountMappingDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_AccountMappingDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.accountMapping), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+								.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_AccountMappingDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_AccountMappingDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.accountMapping), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(AccountMapping aAccountMapping, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccountMapping.getBefImage(), aAccountMapping);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aAccountMapping.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setAccountMappingService(AccountMappingService accountMappingService) {
-			this.accountMappingService = accountMappingService;
-		}
+	private AuditHeader getAuditHeader(AccountMapping aAccountMapping, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAccountMapping.getBefImage(), aAccountMapping);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aAccountMapping.getUserDetails(),
+				getOverideMap());
+	}
 
-		public RuleExecutionUtil getRuleExecutionUtil() {
-			return ruleExecutionUtil;
-		}
+	public void setAccountMappingService(AccountMappingService accountMappingService) {
+		this.accountMappingService = accountMappingService;
+	}
 
-		public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-			this.ruleExecutionUtil = ruleExecutionUtil;
-		}
-			
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
 }
