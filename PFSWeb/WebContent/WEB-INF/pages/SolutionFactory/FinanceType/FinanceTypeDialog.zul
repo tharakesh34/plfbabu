@@ -536,6 +536,13 @@
 														id="manualSchedule" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_ProfitCenter"
+													value="${c:l('label_FinanceTypeDialog_ProfitCenter.value')}" />
+												<extendedcombobox
+													id="profitCenter" />
+											</row>
 										</rows>
 									</grid>
 								</groupbox>
@@ -1586,28 +1593,6 @@
 												<decimalbox
 													id="oDMaxWaiverPerc" width="120px" maxlength="5" />
 											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="gb_AccountingDetails">
-								<caption
-									label="${c:l('label_FinanceTypeDialog_AccountingDetails')}" />
-								<grid sclass="GridLayoutNoBorder"
-									fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="260px" />
-										<column />
-										<column width="260px" />
-										<column />
-									</columns>
-									<rows>
-										<row>
-											<label
-												id="label_FinanceTypeDialog_ProfitDetails"
-												value="${c:l('label_FinanceTypeDialog_ProfitDetails.value')}" />
-											<extendedcombobox
-													id="profitDetails" />
 										</row>
 									</rows>
 								</grid>

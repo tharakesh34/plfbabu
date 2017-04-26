@@ -168,7 +168,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// Basic Details Tab
 	protected Row row_Product; // autoWired
 	protected ExtendedCombobox product; // autoWired
-	protected ExtendedCombobox profitDetails; // autoWired
+	protected ExtendedCombobox profitCenter; // autoWired
 	protected Row row_PromoDates; // autoWired
 	protected Space space_startDate;
 	protected Datebox startDate; // autoWired
@@ -883,13 +883,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.row_ApplyGracePricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 		
 		//Accounting Details
-		this.profitDetails.setMaxlength(8);
-		this.profitDetails.setMandatoryStyle(true);
-		this.profitDetails.setModuleName("ProfitCenter");
-		this.profitDetails.setValueColumn("ProfitCenterCode");
-		this.profitDetails.setDescColumn("ProfitCenterDesc");
-		this.profitDetails.setValidateColumns(new String[] { "ProfitCenterCode", "ProfitCenterDesc" });
-		this.profitDetails.setMandatoryStyle(true);
+		this.profitCenter.setMaxlength(8);
+		this.profitCenter.setMandatoryStyle(true);
+		this.profitCenter.setModuleName("ProfitCenter");
+		this.profitCenter.setValueColumn("ProfitCenterCode");
+		this.profitCenter.setDescColumn("ProfitCenterDesc");
+		this.profitCenter.setValidateColumns(new String[] { "ProfitCenterCode", "ProfitCenterDesc" });
+		this.profitCenter.setMandatoryStyle(true);
 		
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
@@ -1419,9 +1419,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
 		
-		this.profitDetails.setValue(aFinanceType.getProfitcenterCode());
-		this.profitDetails.setDescription(aFinanceType.getProfitCenterDesc());
-		this.profitDetails.setObject(new ProfitCenter(aFinanceType.getProfitCenterID()));
+		this.profitCenter.setValue(aFinanceType.getProfitcenterCode());
+		this.profitCenter.setDescription(aFinanceType.getProfitCenterDesc());
+		this.profitCenter.setObject(new ProfitCenter(aFinanceType.getProfitCenterID()));
 
 		appendFeeDetailTab();
 		appendAccountingDetailsTab();
@@ -1874,6 +1874,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		try {
 			aFinanceType.setManualSchedule(this.manualSchedule.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			profitCenter.getValidatedValue();
+			ProfitCenter profitCenter = (ProfitCenter) this.profitCenter.getObject();
+			aFinanceType.setProfitCenterID(profitCenter.getId());
+			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
+			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3005,17 +3015,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		
-		try {
-			profitDetails.getValidatedValue();
-			ProfitCenter profitCenter = (ProfitCenter) this.profitDetails.getObject();
-			aFinanceType.setProfitCenterID(profitCenter.getId());
-			aFinanceType.setProfitcenterCode(profitCenter.getProfitCenterCode());
-			aFinanceType.setProfitCenterDesc(profitCenter.getProfitCenterDesc());
-		} catch (WrongValueException we) {
-			//aFinanceType.setProfitCenterID(0);
-			wve.add(we);
-		}
-		
 		if (isOverdraft) {
 			showErrorDetails(wve, basicDetails);
 		} else {
@@ -3407,9 +3406,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
 			}
 		}
-		if (!this.profitDetails.isReadonly()) {
-			this.profitDetails.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinanceTypeDialog_ProfitDetails.value"), null,true, true));
+		if (!this.profitCenter.isReadonly()) {
+			this.profitCenter.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_FinanceTypeDialog_ProfitCenter.value"), null,true, true));
 		}
 
 		logger.debug("Leaving");
@@ -3647,6 +3646,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.label_FinanceTypeDialog_EqualRepayment.setVisible(false);
 		this.equalRepayment.setVisible(false);
+		readOnlyComponent(isCompReadonly, this.profitCenter);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

@@ -379,6 +379,13 @@
 														id="manualSchedule" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_ProfitCenter"
+													value="${c:l('label_FinanceTypeDialog_ProfitCenter.value')}" />
+												<extendedcombobox
+													id="profitCenter" />
+											</row>
 										</rows>
 									</grid>
 									<grid sclass="GridLayoutNoBorder"
@@ -590,24 +597,6 @@
 													<checkbox
 														id="finIsActive" checked="false" />
 												</hbox>
-											</row>
-										</rows>
-									</grid>
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="260px" />
-											<column />
-											<column width="260px" />
-											<column />
-										</columns>
-										<rows>
-											<row visible="false">
-												<label
-													id="label_FinanceTypeDialog_ProfitDetails"
-													value="${c:l('label_FinanceTypeDialog_ProfitDetails.value')}" />
-												<extendedcombobox
-													id="profitDetails" />
 											</row>
 										</rows>
 									</grid>
