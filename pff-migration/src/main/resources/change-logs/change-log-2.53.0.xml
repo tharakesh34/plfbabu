@@ -1459,4 +1459,15 @@ INSERT INTO ErrorDetails VALUES('90904','EN','E','Collateral third party custome
 	</createView>
 </changeSet>
 
+	<changeSet author="Kesav" id="83">
+		<addColumn tableName="BMTAEevents">
+			<column name="Mandatory" type="boolean" defaultValueBoolean="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ODApplicable" type="boolean" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
