@@ -69,4 +69,12 @@
 		</addColumn>
 	</changeSet> 
 	
+	<changeSet id="10" author="Prakash">
+		<addColumn tableName="AdtBlackListCustomer">
+			<column name="CustIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
