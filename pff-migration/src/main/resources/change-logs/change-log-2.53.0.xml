@@ -1320,4 +1320,11 @@ INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperation
 UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 </sql>
 </changeSet>
+<changeSet id="74" author="Srikanth">
+<sql>
+Delete from ErrorDetails Where Errorcode in('90242','90904');
+INSERT INTO ErrorDetails VALUES('90242','EN','E','Invalid property value({0}), It should be numeric.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+INSERT INTO ErrorDetails VALUES('90904','EN','E','Collateral third party customer does not exists with cif {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
