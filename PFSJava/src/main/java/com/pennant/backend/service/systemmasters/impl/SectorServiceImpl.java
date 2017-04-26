@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -61,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.SectorService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Sector</b>.<br>
@@ -115,15 +113,16 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+
 		Sector sector = (Sector) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		if (sector.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		if (sector.isNew()) {
 			sector.setSectorCode(getSectorDAO().save(sector, tableType));
@@ -153,13 +152,14 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Sector sector = (Sector) auditHeader.getAuditDetail().getModelData();
-		getSectorDAO().delete(sector, "");
+
+		getSectorDAO().delete(sector, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -216,7 +216,7 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -224,9 +224,14 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 		Sector sector = new Sector();
 		BeanUtils.copyProperties((Sector) auditHeader.getAuditDetail().getModelData(), sector);
 
+		getSectorDAO().delete(sector, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(sector.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(sectorDAO.getSectorById(sector.getSectorCode(), ""));
+		}
 		if (sector.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getSectorDAO().delete(sector, "");
+			getSectorDAO().delete(sector, TableType.MAIN_TAB);
 		} else {
 			sector.setRoleCode("");
 			sector.setNextRoleCode("");
@@ -237,15 +242,14 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 			if (sector.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				sector.setRecordType("");
-				getSectorDAO().save(sector, "");
+				getSectorDAO().save(sector, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				sector.setRecordType("");
-				getSectorDAO().update(sector, "");
+				getSectorDAO().update(sector, TableType.MAIN_TAB);
 			}
 		}
 
-		getSectorDAO().delete(sector, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -272,14 +276,15 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		Sector sector = (Sector) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getSectorDAO().delete(sector, "_Temp");
+
+		getSectorDAO().delete(sector, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -296,9 +301,9 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -317,87 +322,27 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+	 private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+			logger.debug("Entering");
 
-		Sector sector = (Sector) auditDetail.getModelData();
-		Sector tempSector = null;
+			// Get the model object.
+			Sector sector = (Sector) auditDetail.getModelData();
+			String code = sector.getSectorCode();
 
-		if (sector.isWorkflow()) {
-			tempSector = getSectorDAO().getSectorById(sector.getId(), "_Temp");
-		}
+			// Check the unique keys.
+			if (sector.isNew()
+					&& PennantConstants.RECORD_TYPE_NEW.equals(sector.getRecordType())
+					&& sectorDAO.isDuplicateKey(code, sector.isWorkflow() ? TableType.BOTH_TAB
+							: TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_Sector_Code") + ": " + code;
 
-		Sector befSector = getSectorDAO().getSectorById(sector.getId(), "");
-		Sector oldSector = sector.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = sector.getSectorCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_Sector_Code") + ":"+ valueParm[0];
-
-		if (sector.isNew()) { // for New record or new record into work flow
-
-			if (!sector.isWorkflow()) {// With out Work flow only new records
-				if (befSector != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-
-				if (sector.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSector != null || tempSector != null) { //if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befSector == null || tempSector != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!sector.isWorkflow()) { // With out Work flow for update and delete
+			
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-				if (befSector == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldSector != null
-							&& !oldSector.getLastMntOn().equals(befSector.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempSector == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-				if (tempSector != null
-						&& oldSector != null
-						&& !oldSector.getLastMntOn().equals(tempSector.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			logger.debug("Leaving");
+			return auditDetail;
 		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !sector.isWorkflow()) {
-			auditDetail.setBefImage(befSector);
-		}
-		logger.debug("Leaving");
-		return auditDetail;
-	}
-
 }

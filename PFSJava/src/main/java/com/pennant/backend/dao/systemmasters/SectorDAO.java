@@ -42,16 +42,28 @@
  */
 
 package com.pennant.backend.dao.systemmasters;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Sector;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declarations for the <b>Sector model</b> class.<br>
  * 
  */
-public interface SectorDAO {
-	
-	Sector getSectorById(String id,String type);
-	void update(Sector sector,String type);
-	void delete(Sector sector,String type);
-	String save(Sector sector,String type);
+public interface SectorDAO extends BasicCrudDao<Sector> {
+
+	Sector getSectorById(String id, String type);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param sectorCode
+	 *            SectorCode of the sector
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String sectorCode, TableType tableType);
+
 }
