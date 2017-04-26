@@ -1485,4 +1485,12 @@ FROM         FinanceMain_Temp T1 INNER JOIN
              customerphonenumbers T5 ON T5.phonecustid=T2.CustID
 	</createView>
 	</changeSet>
+	
+	
+	<changeSet id="87" author="DurgaPrasad G">
+		<sql>
+		Delete from SMTparameters where SysParmCode = 'PRESENTMENT_DAYS_DEF';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_DAYS_DEF', 'Number of Days between from date and to date.', 'int', '1', '10', 10, 0, NULL, NULL,'Number of Days between from date and to date.' , 0, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		</sql>
+	</changeSet> 
 </databaseChangeLog>
