@@ -49,7 +49,6 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -521,9 +520,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 					closeDialog();
 				}
 
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -656,11 +654,10 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 				closeDialog();
 			}
 
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+		}  catch (Exception e) {
 			MessageUtil.showError(e);
-			
 		}
+		
 		logger.debug("Leaving");
 	}
 
