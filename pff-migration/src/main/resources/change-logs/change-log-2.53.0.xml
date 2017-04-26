@@ -1117,6 +1117,11 @@ FROM         RMTBaseRates T1 INNER JOIN
 			<where>workflowtype='BAJAJ_LOAN_ORG'and workflowactive=1</where>
 		</update>
 	</changeSet>
+<changeSet id="63.1" author="Prasad">	
+<sql>
+	Update seqworkflowdetails set seqno = (select max(workflowid)+1 from workflowdetails);
+	</sql>
+	</changeSet>
 	<changeSet id="64" author="murthy.y">
 		<dropTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP"/>
 	</changeSet>
