@@ -42,14 +42,24 @@
  */
 package com.pennant.backend.dao.feetype;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennanttech.pff.core.TableType;
 
-public interface FeeTypeDAO {
+public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	FeeType getFeeTypeById(long id, String type);
-
-	void update(FeeType feeType, String type);
-
-	void delete(FeeType feeType, String type);
-
-	long save(FeeType feeType, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param feeTypeID
+	 *             feeTypeID of the feeType.
+	 * @param feeTypeCode
+	 *            feeTypeCode of the feeType.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(long feeTypeID, String feeTypeCode, TableType tableType);
+	
 }

@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -737,13 +736,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 					refreshList();
 					closeDialog();
 				}
-
-			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_FeeTypeDialog, e);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
-
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -777,7 +774,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			aFeeType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFeeType.getNextTaskId(), aFeeType);
 		}
-
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// force validation, if on, than execute by component.getValue()
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -822,9 +818,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				closeDialog();
 			}
 
-		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_FeeTypeDialog, e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

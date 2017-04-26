@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.feetype;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -157,7 +158,9 @@ private static final long serialVersionUID = 1L;
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 	public Long getAccountSetId() {
 		return accountSetId;
 	}

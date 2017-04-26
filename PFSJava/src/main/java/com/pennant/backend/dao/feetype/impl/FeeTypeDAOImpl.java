@@ -48,24 +48,26 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.feetype.FeeType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>FeeType model</b> class.<br>
- * 
+ * Data access layer implementation for <code>FeeType</code> with set of CRUD operations.
  */
 
 public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTypeDAO {
@@ -91,6 +93,7 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 	@Override
 	public FeeType getFeeTypeById(final long id, String type) {
 		logger.debug("Entering");
+		
 		FeeType feeType = new FeeType();
 		feeType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
@@ -115,10 +118,134 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 			logger.warn("Exception: ", e);
 			feeType = null;
 		}
+		
 		logger.debug("Leaving");
 		return feeType;
 	}
+	
+	@Override
+	public boolean isDuplicateKey(long feeTypeID, String feeTypeCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 
+		// Prepare the SQL.
+		String sql;
+		String whereClause ="FeeTypeCode = :feeTypeCode and FeeTypeID != :feeTypeID";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("FeeTypes", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("FeeTypes_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "FeeTypes_Temp", "FeeTypes" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("feeTypeID", feeTypeID);
+		paramSource.addValue("feeTypeCode", feeTypeCode);
+		
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+	
+	@Override
+	public String save(FeeType feeType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AccountSetId, active,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(");
+		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AccountSetId, :active,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		// Get the identity sequence number.
+		if (feeType.getId() == Long.MIN_VALUE) {
+			feeType.setId(getNextidviewDAO().getNextId("SeqFeeTypes"));
+		}
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeType);
+		
+		try {
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		
+		logger.debug("Leaving");
+		return String.valueOf(feeType.getFeeTypeID());
+	}
+	
+	@Override
+	public void update(FeeType feeType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder("update FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
+		sql.append(" active=:active,");
+		sql.append(" manualAdvice = :manualAdvice, AccountSetId = :AccountSetId,");
+		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where FeeTypeID =:FeeTypeID");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void delete(FeeType feeType, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+
+		StringBuilder sql = new StringBuilder("delete From FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" where FeeTypeID =:FeeTypeID");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
+		int recordCount = 0;
+		
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+    	}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * To Set dataSource
 	 * 
@@ -127,141 +254,5 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	/**
-	 * This method Deletes the Record from the FeeTypes or FeeTypes_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete FeeType by key FeeTypeID
-	 * 
-	 * @param FeeType
-	 *            (feeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(FeeType feeType, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Delete From FeeTypes");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FeeTypeID =:FeeTypeID");
-
-		logger.debug("sql: " + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		try {
-			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", feeType.getFeeTypeID(), feeType.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-			ErrorDetails errorDetails = getError("41006", feeType.getFeeTypeID(), feeType.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method insert new Records into FeeTypes or FeeTypes_Temp. it fetches the available Sequence form SeqFeeTypes
-	 * by using getNextidviewDAO().getNextId() method.
-	 *
-	 * save FeeType
-	 * 
-	 * @param FeeType
-	 *            (feeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@Override
-	public long save(FeeType feeType, String type) {
-		logger.debug("Entering");
-		if (feeType.getId() == Long.MIN_VALUE) {
-			feeType.setId(getNextidviewDAO().getNextId("SeqFeeTypes"));
-		}
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into FeeTypes");
-		sql.append(StringUtils.trimToEmpty(type) );
-		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AccountSetId, active,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(");
-		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AccountSetId, :active,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.debug("sql: " + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return feeType.getId();
-	}
-
-	/**
-	 * This method updates the Record FeeTypes or FeeTypes_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update FeeType by key FeeTypeID and Version
-	 * 
-	 * @param FeeType
-	 *            (feeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@SuppressWarnings("serial")
-	@Override
-	public void update(FeeType feeType, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FeeTypes");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
-		sql.append(" active=:active,");
-		sql.append(" manualAdvice = :manualAdvice, AccountSetId = :AccountSetId,");
-		sql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" Where FeeTypeID =:FeeTypeID");
-
-		if (!type.endsWith("_Temp")) {
-			sql.append("  AND Version= :Version-1");
-		}
-
-		logger.debug("Sql: " + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", feeType.getFeeTypeID(), feeType.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, long feeTypeID, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(feeTypeID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_FeeTypeID") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 }

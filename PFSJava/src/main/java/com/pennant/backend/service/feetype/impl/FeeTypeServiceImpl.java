@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.feetype.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>FeeType</b>.<br>
@@ -130,16 +128,16 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-
-		String tableType = "";
+		
 		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (feeType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (feeType.isNew()) {
-			feeType.setId(getFeeTypeDAO().save(feeType, tableType));
+			feeType.setFeeTypeID(Long.parseLong(getFeeTypeDAO().save(feeType, tableType)));
 			auditHeader.getAuditDetail().setModelData(feeType);
 			auditHeader.setAuditReference(String.valueOf(feeType.getFeeTypeID()));
 		} else {
@@ -165,6 +163,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
+		
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
@@ -173,7 +172,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		}
 
 		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
-		getFeeTypeDAO().delete(feeType, "");
+		getFeeTypeDAO().delete(feeType, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -233,10 +232,19 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 		FeeType feeType = new FeeType();
 		BeanUtils.copyProperties((FeeType) auditHeader.getAuditDetail().getModelData(), feeType);
+		
+		
+		getFeeTypeDAO().delete(feeType, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(feeType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(feeTypeDAO.getFeeTypeById(feeType.getFeeTypeID(), ""));
+		}
 
 		if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFeeTypeDAO().delete(feeType, "");
+			
+			getFeeTypeDAO().delete(feeType,TableType.MAIN_TAB);
+			
 		} else {
 			feeType.setRoleCode("");
 			feeType.setNextRoleCode("");
@@ -247,15 +255,14 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				feeType.setRecordType("");
-				getFeeTypeDAO().save(feeType, "");
+				getFeeTypeDAO().save(feeType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				feeType.setRecordType("");
-				getFeeTypeDAO().update(feeType, "");
+				getFeeTypeDAO().update(feeType, TableType.MAIN_TAB);
 			}
 		}
 
-		getFeeTypeDAO().delete(feeType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -290,11 +297,10 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFeeTypeDAO().delete(feeType, "_Temp");
+		getFeeTypeDAO().delete(feeType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-
 		return auditHeader;
 	}
 
@@ -308,7 +314,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -326,84 +332,26 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
-		FeeType feeType = (FeeType) auditDetail.getModelData();
+	
+	 private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+			logger.debug("Entering");
 
-		FeeType tempFeeType = null;
-		if (feeType.isWorkflow()) {
-			tempFeeType = getFeeTypeDAO().getFeeTypeById(feeType.getId(), "_Temp");
-		}
-		FeeType befFeeType = getFeeTypeDAO().getFeeTypeById(feeType.getId(), "");
+			// Get the model object.
+			FeeType feeType = (FeeType) auditDetail.getModelData();
 
-		FeeType oldFeeType = feeType.getBefImage();
+			// Check the unique keys.
+			if (feeType.isNew()
+					&& feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(),feeType.getFeeTypeCode(), feeType.isWorkflow() ? TableType.BOTH_TAB
+							: TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
 
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(feeType.getId());
-		errParm[0] = PennantJavaUtil.getLabel("label_FeeTypeID") + ":" + valueParm[0];
-
-		if (feeType.isNew()) { // for New record or new record into work flow
-
-			if (!feeType.isWorkflow()) {// With out Work flow only new records  
-				if (befFeeType != null) { // Record Already Exists in the table then error  
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
-				}
-			} else { // with work flow
-				if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFeeType != null || tempFeeType != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befFeeType == null || tempFeeType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
-					}
-				}
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!feeType.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befFeeType == null) { // if records not exists in the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
-				} else {
-					if (oldFeeType != null && !oldFeeType.getLastMntOn().equals(befFeeType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
-						}
-					}
-				}
-			} else {
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-				if (tempFeeType == null) { // if records not exists in the Work flow table 
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
-				}
-
-				if (tempFeeType != null && oldFeeType != null && !oldFeeType.getLastMntOn().equals(tempFeeType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
-				}
-			}
+			logger.debug("Leaving");
+			return auditDetail;
 		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		if (StringUtils.trimToEmpty(method).equals("doApprove") || !feeType.isWorkflow()) {
-			auditDetail.setBefImage(befFeeType);
-		}
-
-		return auditDetail;
-	}
-
 }
