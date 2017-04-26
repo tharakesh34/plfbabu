@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.partnerbank;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -330,7 +331,9 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	public void setAlwReceipt(boolean alwReceipt) {
 		this.alwReceipt = alwReceipt;
 	}
-
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 	public String getHostGLCode() {
 		return hostGLCode;
 	}
