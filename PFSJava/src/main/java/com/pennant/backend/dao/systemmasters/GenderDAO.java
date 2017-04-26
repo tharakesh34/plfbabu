@@ -42,17 +42,27 @@
 */
 
 package com.pennant.backend.dao.systemmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.Gender;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>Gender model</b> class.<br>
  * 
  */
-public interface GenderDAO {
+public interface GenderDAO extends BasicCrudDao<Gender>{
 
 	Gender getGenderById(String id,String type);
-	void update(Gender gender,String type);
-	void delete(Gender gender,String type);
-	String save(Gender gender,String type);
 	String getSystemDefaultCount(String genderCode);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param genderCode
+	 *              genderCode of the gender
+	 * @param tableType
+	 *              The type of the table.
+	 * @return  true if the record exists
+	 */
+	boolean isDuplicateKey(String genderCode, TableType tableType);
 }

@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.dao.systemmasters.impl;
 
 import javax.sql.DataSource;
@@ -48,24 +47,26 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.GenderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.Gender;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>Gender model</b> class.<br>
- * 
+ * Data access layer implementation for <code>Gender</code> with set of CRUD operations.
  */
 public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 
@@ -77,7 +78,7 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 	public GenderDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * Fetch the Record Genders details by key field
 	 * 
@@ -89,17 +90,18 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 	 */
 	@Override
 	public Gender getGenderById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		Gender gender = new Gender();
 		gender.setId(id);
 		StringBuilder selectSql = new StringBuilder();
-		
-		selectSql.append("SELECT GenderCode, GenderDesc, GenderIsActive,SystemDefault," );
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		selectSql.append("SELECT GenderCode, GenderDesc, GenderIsActive,SystemDefault,");
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTGenders");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where GenderCode =:GenderCode") ;
-				
+		selectSql.append(" Where GenderCode =:GenderCode");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
 		RowMapper<Gender> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Gender.class);
@@ -110,141 +112,131 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 			logger.error("Exception: ", e);
 			gender = null;
 		}
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 		return gender;
 	}
 
-	/**
-	 * @param dataSource
-	 *            the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	@Override
+	public boolean isDuplicateKey(String genderCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "GenderCode = :genderCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BMTGenders", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BMTGenders_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BMTGenders_Temp", "BMTGenders" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("genderCode", genderCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 
-	/**
-	 * This method Deletes the Record from the BMTGenders or BMTGenders_Temp. if
-	 * Record not deleted then throws DataAccessException with error 41003.
-	 * delete Genders by key GenderCode
-	 * 
-	 * @param Genders
-	 *            (gender)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(Gender gender, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-		
-		deleteSql.append("Delete From BMTGenders");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where GenderCode =:GenderCode");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
+	@Override
+	public String save(Gender gender, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into BMTGenders");
+		sql.append(tableType.getSuffix());
+		sql.append(" (GenderCode, GenderDesc, GenderIsActive,SystemDefault,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" values(:GenderCode, :GenderDesc, :GenderIsActive, :SystemDefault, ");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gender);
 
 		try {
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", gender.getGenderCode(), gender.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
-			}
-		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", gender.getGenderCode(), gender.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-		logger.debug("Leaving");
-	}
 
-	/**
-	 * This method insert new Records into BMTGenders or BMTGenders_Temp.
-	 * 
-	 * save Genders
-	 * 
-	 * @param Genders
-	 *            (gender)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public String save(Gender gender, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-		
-		insertSql.append("Insert Into BMTGenders");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (GenderCode, GenderDesc, GenderIsActive,SystemDefault," );
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:GenderCode, :GenderDesc, :GenderIsActive, :SystemDefault, " );
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		insertSql.append(" :RecordType, :WorkflowId)");
-		
-		logger.debug("insertSql: "+ insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return gender.getId();
 	}
 
-	/**
-	 * This method updates the Record BMTGenders or BMTGenders_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Genders by key GenderCode and Version
-	 * 
-	 * @param Genders
-	 *            (gender)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
 	@Override
-	public void update(Gender gender, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder();
-		
-		updateSql.append("Update BMTGenders");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  GenderDesc = :GenderDesc, GenderIsActive = :GenderIsActive, SystemDefault=:SystemDefault," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId," );
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId" );
-		updateSql.append(" Where GenderCode =:GenderCode ");
-		if (!type.endsWith("_Temp")){
-			updateSql.append(" AND Version= :Version-1");
+	public void update(Gender gender, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update BMTGenders");
+		sql.append(tableType.getSuffix());
+		sql.append(" set  GenderDesc = :GenderDesc, GenderIsActive = :GenderIsActive, SystemDefault=:SystemDefault,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
+		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where GenderCode =:GenderCode ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gender);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
 
-		logger.debug("updateSql: "+ updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
-		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
-
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41003", gender.getGenderCode(), gender.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
-	
+
+	@Override
+	public void delete(Gender gender, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL;
+		StringBuilder sql = new StringBuilder("delete from BMTGenders");
+		sql.append(tableType.getSuffix());
+		sql.append(" where GenderCode =:GenderCode");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gender);
+		int recordCount = 0;
+
+		try {
+			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Fetch the count of system default values by key field
 	 * 
@@ -264,34 +256,30 @@ public class GenderDAOImpl extends BasisCodeDAO<Gender> implements GenderDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append("SELECT GenderCode FROM  BMTGenders_View ");
-		selectSql.append(" Where GenderCode != :GenderCode and SystemDefault = :SystemDefault");
+		selectSql
+				.append(" Where GenderCode != :GenderCode and SystemDefault = :SystemDefault");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
+				gender);
 		String dftGenderCode = "";
 		try {
-			dftGenderCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-        } catch (EmptyResultDataAccessException e) {
-        	logger.warn("Exception: ", e);
-        	dftGenderCode = "";
-        }
+			dftGenderCode = this.namedParameterJdbcTemplate.queryForObject(
+					selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			dftGenderCode = "";
+		}
 		logger.debug("Leaving");
 		return dftGenderCode;
 	}
 
-	
 	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
+	 * @param dataSource
+	 *            the dataSource to set
 	 */
-	private ErrorDetails  getError(String errorId, String genderCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = genderCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_GenderCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
+				dataSource);
 	}
 }

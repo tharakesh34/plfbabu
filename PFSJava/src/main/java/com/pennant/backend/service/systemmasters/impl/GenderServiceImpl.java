@@ -43,8 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -61,6 +59,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.GenderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Gender</b>.<br>
@@ -123,11 +122,12 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		Gender gender = (Gender) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 
 		if (gender.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (gender.isNew()) {
@@ -137,13 +137,11 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 		} else {
 			getGenderDAO().update(gender, tableType);
 
-			if (StringUtils.isEmpty(tableType)) {
+			if (StringUtils.isEmpty("")) {
 				resetSalutionSystemDefault(gender); 
 	        }
 		}
 
-	
-	
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -174,7 +172,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 		}
 		Gender gender = (Gender) auditHeader.getAuditDetail().getModelData();
 
-		getGenderDAO().delete(gender, "");
+		getGenderDAO().delete(gender, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -244,11 +242,17 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 		Gender gender = new Gender();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(),
 				gender);
+		
+		getGenderDAO().delete(gender, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(gender.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(genderDAO.getGenderById(gender.getGenderCode(), ""));
+		}
 
 		if (gender.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getGenderDAO().delete(gender, "");
+			getGenderDAO().delete(gender, TableType.MAIN_TAB);
 
 		} else {
 			gender.setRoleCode("");
@@ -260,16 +264,16 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 			if (gender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				gender.setRecordType("");
-				getGenderDAO().save(gender, "");
+				getGenderDAO().save(gender, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				gender.setRecordType("");
-				getGenderDAO().update(gender, "");
+				getGenderDAO().update(gender, TableType.MAIN_TAB);
 				resetSalutionSystemDefault(gender);
 			}
 		}
 
-		getGenderDAO().delete(gender, "_Temp");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -306,7 +310,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 		Gender gender = (Gender) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getGenderDAO().delete(gender, "_Temp");
+		getGenderDAO().delete(gender, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -327,7 +331,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 			String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -343,129 +347,39 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+	 private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+			logger.debug("Entering");
 
-		Gender gender = (Gender) auditDetail.getModelData();
-		Gender tempGender = null;
+			// Get the model object.
+			Gender gender = (Gender) auditDetail.getModelData();
+			String code = gender.getGenderCode();
 
-		if (gender.isWorkflow()) {
-			tempGender = getGenderDAO().getGenderById(gender.getId(), "_Temp");
-		}
+			// Check the unique keys.
+			if (gender.isNew()
+					&& PennantConstants.RECORD_TYPE_NEW.equals(gender.getRecordType())
+					&& genderDAO.isDuplicateKey(code, gender.isWorkflow() ? TableType.BOTH_TAB
+							: TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_GenderCode") + ": " + code;
 
-		Gender befGender = getGenderDAO().getGenderById(gender.getId(), "");
-		Gender oldGender = gender.getBefImage();
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = gender.getGenderCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_GenderCode") + ":"
-				+ valueParm[0];
-
-		if (gender.isNew()) { // for New record or new record into work flow
-
-			if (!gender.isWorkflow()) {// With out Work flow only new records
-				if (befGender != null) { // Record Already Exists in the table
-					// then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (gender.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-					// is new
-					if (befGender != null || tempGender != null) { // if
-						  						// records already exists
-							 					// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befGender == null || tempGender != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!gender.isWorkflow()) { // With out Work flow for update and
-				// delete
-
-				if (befGender == null) { // if records not exists in the main
-					// table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-					if (oldGender != null
-							&& !oldGender.getLastMntOn().equals(
-									befGender.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
+			
+			if (gender.isSystemDefault()) {
+				String dftGenderCode = getGenderDAO().getSystemDefaultCount(gender.getGenderCode());
+				if (StringUtils.isNotEmpty(dftGenderCode)) {
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
+					        new String[]{dftGenderCode,PennantJavaUtil.getLabel("Gender")}, null));
 				}
+	        }
 
-			} else {
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-				if (tempGender == null) { // if records not exists in the Work
-					// flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempGender != null
-						&& oldGender != null
-						&& !oldGender.getLastMntOn().equals(
-								tempGender.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
+			logger.debug("Leaving");
+			return auditDetail;
 		}
-		if (gender.isSystemDefault()) {
-			String dftGenderCode = getGenderDAO().getSystemDefaultCount(gender.getGenderCode());
-			if (StringUtils.isNotEmpty(dftGenderCode)) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60501",
-				        new String[]{dftGenderCode,PennantJavaUtil.getLabel("Gender")}, null));
-			}
-        }
-
-		
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !gender.isWorkflow()) {
-			auditDetail.setBefImage(befGender);
-		}
-		logger.debug("Leaving");
-		return auditDetail;
-	}
 
 	private void resetSalutionSystemDefault(Gender gender) {
 		if (!gender.isSystemDefault()) {
@@ -480,6 +394,4 @@ public class GenderServiceImpl extends GenericService<Gender> implements
 	public void setSalutationDAO(SalutationDAO salutationDAO) {
 	    this.salutationDAO = salutationDAO;
     }
-	
-	
 }
