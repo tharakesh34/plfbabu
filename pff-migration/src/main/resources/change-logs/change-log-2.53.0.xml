@@ -315,6 +315,22 @@ WHERE NOT EXISTS
 			
 		</sql>
 	</changeSet>
+	
+	<changeSet id="27" author="Irfan">
+	<sql>
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'BaseRateCodeDialog_BRTypeIsActive','BaseRateCodeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BASERATECODE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BaseRateCodeDialog_BRTypeIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+</sql>
+</changeSet>
+	
 	<changeSet id="27.1" author="Surekha">
 		<addNotNullConstraint tableName="RMTFinanceTypes"
 			columnName="PROFITCENTERID" columnDataType="bigint" />
@@ -772,7 +788,65 @@ Update seqCOSTCENTERS Set SeqNo = (Select coalesce(MAX(COSTCENTERID),0) + 2 from
 		</sql>
 	</changeSet>
 	
+<changeSet id="39" author="Amit">
+		<addColumn tableName="RMTBaseRateCodes">
+			<column name="BRTypeIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 	
+	 <changeSet id="40" author="Amit">
+		<addColumn tableName="RMTBaseRateCodes_Temp">
+			<column name="BRTypeIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="41" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTBASERATECODES_AVIEW">
+ SELECT     BRType, BRTypeDesc, BRTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+FROM         RMTBaseRateCodes
+		</createView>
+	</changeSet>
+	
+	<changeSet id="42" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTBASERATECODES_VIEW">
+ (SELECT BRType ,
+           BRTypeDesc ,
+		   BRTypeIsActive ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTBaseRateCodes_Temp )
+   UNION ALL 
+   (SELECT BRType ,
+           BRTypeDesc ,
+		   BRTypeIsActive ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId 
+     FROM RMTBaseRateCodes 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM RMTBaseRateCodes_Temp 
+                          WHERE BRType = RMTBaseRateCodes.BRType ))
 
+		</createView>
+	</changeSet>	
 
 </databaseChangeLog>
