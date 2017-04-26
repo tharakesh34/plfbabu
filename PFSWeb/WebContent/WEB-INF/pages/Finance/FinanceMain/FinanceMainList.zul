@@ -104,16 +104,8 @@
 								<listbox id="sortOperator_mobileNumber"
 									width="43px" mold="select" rows="1" />
 								<hbox>
-									<textbox id="phoneCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										 width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
 									<textbox id="finMobileNumber"
-										width="80px" />
+										width="180px" />
 								</hbox>
 							</row>
 							<row>
