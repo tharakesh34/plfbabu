@@ -59,6 +59,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -164,6 +165,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinCollateralsDAO				finCollateralsDAO;
 	private FinTypeAccountingDAO			finTypeAccountingDAO;
 	private FinPlanEmiHolidayDAO			finPlanEmiHolidayDAO;
+	private OverdraftScheduleDetailDAO 		overdraftScheduleDetailDAO;
 
 	// DocumentManagerDAO
 	private DocumentManagerDAO				documentManagerDAO;
@@ -3684,6 +3686,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	public OverdraftScheduleDetailDAO getOverdraftScheduleDetailDAO() {
+		return overdraftScheduleDetailDAO;
+	}
+
+	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
+		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
 	}
 
 }

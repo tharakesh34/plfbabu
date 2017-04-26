@@ -196,6 +196,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
 		        finReference,FinanceConstants.MODULE_NAME,procEdtEvent, "_View"));
 		
+		//Overdraft Details
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())){
+			scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "", false));
+		}
+		
 		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			if(StringUtils.isNotBlank(scheduleData.getFinanceMain().getRecordType())){
 				financeDetail.setFinwriteoffPayment(getFinanceWriteoffDAO().getFinWriteoffPaymentById(finReference, "_Temp"));
@@ -749,49 +754,53 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 			list = null;
 		}
+	
 		
 		//Finance Write off Posting Process Execution
 		//=====================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
 		boolean isRIAFinance = getFinanceTypeDAO().checkRIAFinance(financeMain.getFinType());
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(financeMain.getFinReference());
 
 		AEAmountCodes amountCodes = null;
 		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_WRITEBK, curBDay, financeMain.getMaturityDate());		
-		amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),profitDetail, curBDay);
-		//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
-		if(financeDetail.getFinwriteoffPayment()!=null){
-			dataSet.setFinWriteoffPayAc(financeDetail.getFinwriteoffPayment().getWriteoffPayAccount());
-			amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
+		if(profitDetail!=null){
+			amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),profitDetail, curBDay);
+			//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
+			if(financeDetail.getFinwriteoffPayment()!=null){
+				dataSet.setFinWriteoffPayAc(financeDetail.getFinwriteoffPayment().getWriteoffPayAccount());
+				amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
+			}
+
+			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
+					isRIAFinance, "Y", curBDay, false, Long.MIN_VALUE);
+
+			if(!(Boolean) returnList.get(0)){
+				String errParm = (String) returnList.get(3);
+				throw new PFFInterfaceException("9999",errParm);
+			}
+
+			long linkedTranId = (Long) returnList.get(1);
+
+			//Save Finance WriteOffPayment Details
+			FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();
+			if(financeDetail.getFinwriteoffPayment()!=null){
+				financeWriteoffPayment.setLinkedTranId(linkedTranId);
+				getFinanceWriteoffDAO().saveFinWriteoffPayment(financeWriteoffPayment, "");
+			}
 		}
-
-		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
-				isRIAFinance, "Y", curBDay, false, Long.MIN_VALUE);
-
-		if(!(Boolean) returnList.get(0)){
-			String errParm = (String) returnList.get(3);
-			throw new PFFInterfaceException("9999",errParm);
-		}
-
-		long linkedTranId = (Long) returnList.get(1);
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
 		financeMain.setNextRoleCode("");
 		financeMain.setTaskId("");
 		financeMain.setNextTaskId("");
 		financeMain.setWorkflowId(0);
-
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
+		
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
-
-		//Save Finance WriteOffPayment Details
-		FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();
-		if(financeDetail.getFinwriteoffPayment()!=null){
-			financeWriteoffPayment.setLinkedTranId(linkedTranId);
-			getFinanceWriteoffDAO().saveFinWriteoffPayment(financeWriteoffPayment, "");
-		}
-
+		
 		//Finance Penalty OD Rate Details
 		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 		if (penaltyRate == null) {
@@ -807,6 +816,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 		penaltyRate.setFinReference(financeMain.getFinReference());
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "");
 		getFinODPenaltyRateDAO().save(penaltyRate, "");
 
 		// Save Document Details

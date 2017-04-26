@@ -5940,6 +5940,7 @@
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="mandateDAO" ref="mandateDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
