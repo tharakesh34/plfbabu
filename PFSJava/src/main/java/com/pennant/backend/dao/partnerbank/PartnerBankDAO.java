@@ -45,15 +45,25 @@ package com.pennant.backend.dao.partnerbank;
 
 import java.util.List;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennanttech.pff.core.TableType;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
 
-public interface PartnerBankDAO {
+public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	PartnerBank getPartnerBankById(long id, String type);
-	void update(PartnerBank partnerBank, String type);
-	void delete(PartnerBank partnerBank, String type);
-	String save(PartnerBank partnerBank, String type);
+	
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param PartnerBankCode
+	 *            PartnerBankCode of the partnerBank.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(long partnerBankId,String PartnerBankCode, TableType tableType);
 	void saveList(List<PartnerBankModes> list,long id);
 	void updateList(List<PartnerBankModes> list);
 	void deletePartner(PartnerBank partnerBankModes);
@@ -62,5 +72,4 @@ public interface PartnerBankDAO {
 	List<PartnerBranchModes> getPartnerBranchModesId(long id);
 	void deletePartnerBranch(PartnerBank partnerBank);
 	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
-	
 }
