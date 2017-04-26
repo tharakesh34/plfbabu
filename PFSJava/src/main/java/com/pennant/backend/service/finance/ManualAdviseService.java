@@ -42,9 +42,11 @@
 */
 package com.pennant.backend.service.finance;
 
-import com.pennant.backend.model.finance.ManualAdvise;
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 
 public interface ManualAdviseService {
 
@@ -54,4 +56,5 @@ public interface ManualAdviseService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	List<ManualAdviseMovements> getAdivseMovements(long id);
 }
