@@ -1327,4 +1327,24 @@ INSERT INTO ErrorDetails VALUES('90242','EN','E','Invalid property value({0}), I
 INSERT INTO ErrorDetails VALUES('90904','EN','E','Collateral third party customer does not exists with cif {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 </sql>
 </changeSet>
+
+
+<changeSet id="78" author="murthy.y">
+	<sql>
+		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('SAPGL_LAST_RUN_YEAR', 'SAPGL_LAST_RUN_MONTH', 'SAPGL_TRAN_RECORD_COUNT', 'UMSKZ', 'KOSTL', 'PRCTR', 'GSBER', 'BUPLA', 'BLART', 'BUKRS', 'SAPGL_TBR_COMPANY', 'SAPGL_CODE');
+		INSERT INTO SMTPARAMETERS VALUES ('SAPGL_LAST_RUN_YEAR',      'SAP GL Last Execution Year',       		'int',  		1,  '2017',   				'10', 	0, NULL, NULL, 'SAP GL Last Execution Year',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('SAPGL_LAST_RUN_MONTH',     'SAP GL Last Execution Month',      		'int',  		1,  '01',     				'10', 	0, NULL, NULL, 'SAP GL Last Execution Month',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TRAN_RECORD_COUNT',  'SAP GL Transaction Record Count',  		'int',  		1,  '1000',   				'10', 	0, NULL, NULL, 'SAP GL Transaction Record Count',		1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('UMSKZ',                    'SAPGL DETAIL REPORT CONSTANT',     		'String',  		1,  '/',      				'10', 	0, NULL, NULL, 'SAPGL DETAIL REPORT CONSTANT',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('KOSTL',                    'SAPGL SAP Cost Center',            		'String',  		1,  '/',      				'10', 	0, NULL, NULL, 'SAPGL DETAIL REPORT CONSTANT',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('PRCTR',                    'SAPGL SAP Profit Center',          		'String',  		1,  '/',      				'10', 	0, NULL, NULL, 'SAPGL DETAIL REPORT CONSTANT',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('GSBER',                    'Business Area',                    		'String',  		1,  'GSBER',  				'10', 	0, NULL, NULL, 'Business Area',							1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('BUPLA',                    'Business Unit',                    		'String',  		1,  'BUPLA',  				'10', 	0, NULL, NULL, 'Business Unit',							1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('BLART',                    'BLART',                    		  		'String',  		1,  'ZC',					'10', 	0, NULL, NULL, 'BLART',									1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('BUKRS',                    'BUKRS',                    		  		'String',  		1,  'BAFL',					'10', 	0, NULL, NULL, 'BUKRS',									1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('SAPGL_TBR_COMPANY',        'SAP GL Trail Balance Report Company',   	'String',      	1,  'BAJAJ FINANCE LTD',	'100', 	0, NULL, NULL, 'SAP GL Trail Balance Report Company',	1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		INSERT INTO SMTPARAMETERS VALUES ('SAPGL_CODE',               'SAP GL Code for additional transaction',	'String',  		1,  'BAFL',					'20', 	0, NULL, NULL, 'SAP GL Code for additional transaction',1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);			
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
