@@ -206,7 +206,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
 		this.feeTypeID.setValidateColumns(new String[] { "FeeTypeCode" });
 		this.feeTypeID.setMandatoryStyle(true);
-		this.feeTypeID.setFilters(new Filter[] { new Filter("ApplicableFor",1, Filter.OP_EQUAL) });
+		this.feeTypeID.setFilters(new Filter[] { new Filter("ManualAdvice",1, Filter.OP_EQUAL) });
 		
 		this.adviseAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.adviseAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
