@@ -42,9 +42,6 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.FlagService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>Flag</b>.<br>
@@ -139,15 +137,17 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) {
 		logger.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
+		
 		Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		
 		if (flag.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (flag.isNew()) {
@@ -182,7 +182,7 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		}
 		
 		Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
-		getFlagDAO().delete(flag,"");
+		getFlagDAO().delete(flag,TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -228,8 +228,10 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
+
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
+
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -237,10 +239,14 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		Flag flag = new Flag();
 		BeanUtils.copyProperties((Flag) auditHeader.getAuditDetail().getModelData(), flag);
 
+		getFlagDAO().delete(flag, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(flagDAO.getFlagById(flag.getFlagCode(), ""));
+		}
 		if (flag.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-
-			getFlagDAO().delete(flag, "");
+			getFlagDAO().delete(flag, TableType.MAIN_TAB);
 
 		} else {
 			flag.setRoleCode("");
@@ -252,15 +258,14 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 			if (flag.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				flag.setRecordType("");
-				getFlagDAO().save(flag, "");
+				getFlagDAO().save(flag, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				flag.setRecordType("");
-				getFlagDAO().update(flag, "");
+				getFlagDAO().update(flag, TableType.MAIN_TAB);
 			}
 		}
 
-		getFlagDAO().delete(flag, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -270,7 +275,6 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-
 		return auditHeader;
 	}
 
@@ -284,23 +288,23 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 	 * @return auditHeader
 	 */
 	
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.debug("Entering");
-			auditHeader = businessValidation(auditHeader,"doApprove",false);
-			if (!auditHeader.isNextProcess()) {
-				return auditHeader;
-			}
-
-			Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getFlagDAO().delete(flag,"_Temp");
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			logger.debug("Leaving");
-			
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.debug("Entering");
+		auditHeader = businessValidation(auditHeader, "doApprove", false);
+		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
+
+		Flag flag = (Flag) auditHeader.getAuditDetail().getModelData();
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getFlagDAO().delete(flag, TableType.TEMP_TAB);
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+
+		return auditHeader;
+	}
 
 		/**
 		 * businessValidation method do the following steps.
@@ -314,17 +318,17 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		 */
 
 		
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method,boolean onlineRequest){
+		private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest){
 			logger.debug("Entering");
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-
-		/**
+		
+        /**
 		 * Validation method do the following steps.
 		 * 1)	get the details from the auditHeader. 
 		 * 2)	fetch the details from the tables
@@ -337,75 +341,27 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		 * @return auditHeader
 		 */
 		
-		private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method,boolean onlineRequest){
+		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 			logger.debug("Entering");
-			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
+
+			// Get the model object.
 			Flag flag= (Flag) auditDetail.getModelData();
-			
-			Flag tempFlag= null;
-			if (flag.isWorkflow()){
-				tempFlag = getFlagDAO().getFlagById(flag.getId(), "_Temp");
-			}
-			Flag befFlag= getFlagDAO().getFlagById(flag.getId(), "");
-			
-			Flag oldFlag= flag.getBefImage();
-			
-			
-			String[] errParm= new String[1];
-			String[] valueParm= new String[1];
-			valueParm[0]=flag.getId();
-			errParm[0]=PennantJavaUtil.getLabel("label_FlagCode")+":"+valueParm[0];
-			
-			if (flag.isNew()){ // for New record or new record into work flow
+
+			// Check the unique keys.
+			if (flag.isNew() 
+					&& PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType())
+					&& flagDAO.isDuplicateKey(flag.getFlagCode(), flag.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_FlagCode") + ": " + flag.getFlagCode();
 				
-				if (!flag.isWorkflow()){// With out Work flow only new records  
-					if (befFlag !=null){	// Record Already Exists in the table then error  
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-					}	
-				}else{ // with work flow
-					if (flag.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-						if (befFlag !=null || tempFlag!=null ){ // if records already exists in the main table
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
-						}
-					}else{ // if records not exists in the Main flow table
-						if (befFlag ==null || tempFlag!=null ){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-						}
-					}
-				}
-			}else{
-				// for work flow process records or (Record to update or Delete with out work flow)
-				if (!flag.isWorkflow()){	// With out Work flow for update and delete
-				
-					if (befFlag ==null){ // if records not exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
-					}else{
-						if (oldFlag!=null && !oldFlag.getLastMntOn().equals(befFlag.getLastMntOn())){
-							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,valueParm), usrLanguage));
-							}else{
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,valueParm), usrLanguage));
-							}
-						}
-					}
-				}else{
-				
-					if (tempFlag==null ){ // if records not exists in the Work flow table 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-					
-					if (tempFlag!=null && oldFlag!=null && !oldFlag.getLastMntOn().equals(tempFlag.getLastMntOn())){ 
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,valueParm), usrLanguage));
-					}
-				}
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			if("doApprove".equals(StringUtils.trimToEmpty(method)) || !flag.isWorkflow()){
-				auditDetail.setBefImage(befFlag);	
-			}
 
+			logger.debug("Leaving");
 			return auditDetail;
 		}
 
