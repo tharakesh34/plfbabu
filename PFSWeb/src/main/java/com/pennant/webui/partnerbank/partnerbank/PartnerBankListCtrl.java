@@ -209,9 +209,13 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		// Get the selected entity.
 		long id =  (long) selectedItem.getAttribute("id");
 		PartnerBank partnerBank = partnerBankService.getPartnerBankById(id);
+
+		if (partnerBank == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
 		
-		//get the disb modes list.
-		
+		// Get the disbursement modes list.
 		List<PartnerBankModes> modesList=this.partnerBankService.getPartnerBankModesId(id);
 		List<PartnerBranchModes> branchList=this.partnerBankService.getPartnerBranchModesId(id);
 		if(modesList!=null && !modesList.isEmpty()){
@@ -220,11 +224,7 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		if(branchList!=null && !branchList.isEmpty()){
 			partnerBank.setPartnerBranchModesList(branchList);
 		}
-		if (partnerBank == null) {
-			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-			return;
-		}
-
+		
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND PartnerBankCode='" + partnerBank.getPartnerBankCode() + "' AND version="
 				+ partnerBank.getVersion() + " ";
