@@ -43,10 +43,8 @@
 
 package com.pennant.backend.service.partnerbank.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -64,6 +62,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>PartnerBank</b>.<br>
@@ -124,16 +124,17 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
-
+		TableType tableType = TableType.MAIN_TAB;
+		
 		if (partnerBank.isWorkflow()) {
-			tableType = "_TEMP";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (partnerBank.isNew()) {
@@ -183,14 +184,14 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
-		getPartnerBankDAO().delete(partnerBank, "");
+		getPartnerBankDAO().delete(partnerBank, TableType.MAIN_TAB);
 		getPartnerBankDAO().deletePartner(partnerBank);
 		getPartnerBankDAO().deletePartnerBranch(partnerBank);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -251,18 +252,23 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
 
 		PartnerBank partnerBank = new PartnerBank();
 		BeanUtils.copyProperties((PartnerBank) auditHeader.getAuditDetail().getModelData(), partnerBank);
-
+		getPartnerBankDAO().delete(partnerBank, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(partnerBank.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(partnerBankDAO.getPartnerBankById(partnerBank.getPartnerBankId(), ""));
+		}
+		
 		if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getPartnerBankDAO().delete(partnerBank, "");
+			getPartnerBankDAO().delete(partnerBank, TableType.MAIN_TAB);
 
 		} else {
 			partnerBank.setRoleCode("");
@@ -274,15 +280,14 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				partnerBank.setRecordType("");
-				getPartnerBankDAO().save(partnerBank, "");
+				getPartnerBankDAO().save(partnerBank, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				partnerBank.setRecordType("");
-				getPartnerBankDAO().update(partnerBank, "");
+				getPartnerBankDAO().update(partnerBank, TableType.MAIN_TAB);
 			}
 		}
 
-		getPartnerBankDAO().delete(partnerBank, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -309,7 +314,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -317,7 +322,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		PartnerBank partnerBank = (PartnerBank) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPartnerBankDAO().delete(partnerBank, "_TEMP");
+		getPartnerBankDAO().delete(partnerBank, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -335,9 +340,9 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	 * @return auditHeader
 	 */
 
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -356,104 +361,32 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	 * @param boolean onlineRequest
 	 * @return auditHeader
 	 */
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+		// Get the model object.
 		PartnerBank partnerBank = (PartnerBank) auditDetail.getModelData();
-
-		PartnerBank tempPartnerBank = null;
-		if (partnerBank.isWorkflow()) {
-			tempPartnerBank = getPartnerBankDAO().getPartnerBankById(partnerBank.getId(), "_Temp");
-		}
-		PartnerBank befPartnerBank = getPartnerBankDAO().getPartnerBankById(partnerBank.getId(), "");
-
-		PartnerBank old_PartnerBank = partnerBank.getBefImage();
-
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 		valueParm[0] = partnerBank.getPartnerBankCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ":" + valueParm[0];
 
-		if (partnerBank.isNew()) { // for New record or new record into work flow
-			
-			if (!partnerBank.isWorkflow()) {// With out Work flow only new records  
-				if (befPartnerBank != null) { // Record Already Exists in the table then error  
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
-				}
-			} else { // with work flow
-				if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befPartnerBank != null || tempPartnerBank != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,
-								valueParm));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befPartnerBank == null || tempPartnerBank != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
-								valueParm));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!partnerBank.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befPartnerBank == null) { // if records not exists in the main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
-				} else {
-					if (old_PartnerBank != null
-							&& !old_PartnerBank.getLastMntOn().equals(befPartnerBank.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm,
-									valueParm));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm,
-									valueParm));
-						}
-					}
-				}
-			} else {
-
-				if (tempPartnerBank == null) { // if records not exists in the Work flow table 
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
-				}
-
-				if (old_PartnerBank != null && !old_PartnerBank.getLastMntOn().equals(tempPartnerBank.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
-				}
-			}
+		// Check the unique keys.
+		if (partnerBank.isNew()
+				&& partnerBankDAO.isDuplicateKey(partnerBank.getPartnerBankId(), partnerBank.getPartnerBankCode(),
+						partnerBank.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, null));
 		}
-		
-		//Duplicate Partner Bank Code 
-		if(partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && partnerBank.isNewRecord() && 
-				getPartnerCodeExist(partnerBank.getPartnerBankCode(), "_View")){
-			auditDetail
-			.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
-		}
-		
-		if (StringUtils.trimToEmpty(partnerBank.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = finAdvancePaymentsDAO.getAdvancePaymentsCountByPartnerBank(partnerBank.getPartnerBankId(), "_View");//FIXME for FinanceMain
-			if (count != 0) {
-				String[] parameters = new String[2];
 
-				parameters[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ": " + partnerBank.getPartnerBankCode();
-
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
-			}
+		// Duplicate Partner Bank Code
+		if (partnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && partnerBank.isNewRecord()
+				&& getPartnerCodeExist(partnerBank.getPartnerBankCode(), "_View")) {
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
 		}
-		
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if (StringUtils.trimToEmpty(method).equals("doApprove") || !partnerBank.isWorkflow()) {
-			auditDetail.setBefImage(befPartnerBank);
-		}
-
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -484,6 +417,4 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
-
-
 }
