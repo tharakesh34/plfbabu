@@ -244,7 +244,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		if (employerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getEmployerDetailDAO().delete(employerDetail, TableType.TEMP_TAB);
+			getEmployerDetailDAO().delete(employerDetail, TableType.MAIN_TAB);
 
 		} else {
 			employerDetail.setRoleCode("");
