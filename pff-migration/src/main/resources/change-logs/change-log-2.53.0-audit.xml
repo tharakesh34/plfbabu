@@ -37,4 +37,12 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="06" author="Amit">
+		<addColumn tableName="AdtRMTBaseRateCodes">
+			<column name="BRTypeIsActive" type="number(1,0)" defaultValue="0" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
+	
 </databaseChangeLog>
