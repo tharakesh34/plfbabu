@@ -369,7 +369,7 @@ public class CustomerController {
 					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "01") && 
+					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03") && 
 							StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}

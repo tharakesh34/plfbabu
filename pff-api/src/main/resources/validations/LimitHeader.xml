@@ -19,7 +19,7 @@
 
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Max">
-				<message>invalid data for limitId</message>
+				<message>limitId Applicable only for update limit</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>

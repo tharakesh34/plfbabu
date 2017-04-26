@@ -36,8 +36,8 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Max">
-				<message>invalid data for beneficiaryId</message>
+			 <constraint annotation="javax.validation.constraints.Max">
+				<message>beneficiaryID Applicable only for update Beneficiary</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>

@@ -16,8 +16,8 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Max">
-				<message>invalid data for Mandate Id</message>
+			 <constraint annotation="javax.validation.constraints.Max">
+				<message>mandateID Applicable only for update Mandate</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
