@@ -38,6 +38,8 @@ public class ImplementationConstants {
 	// L = Late pay Profit
 	// I = Profit
 	public static final String	REPAY_INTEREST_HIERARCHY		= "LI";
+	//Calculate PastDue on Day zero
+	public static final boolean CALCULATE_PD_DAYZERO			= false;
 	//Re payment methods
 	public static final boolean	AUTO_ALLOWED					= false;
 	public static final boolean	DDA_ALLOWED						= false;
@@ -84,16 +86,6 @@ public class ImplementationConstants {
 	public static final String	CLIENT_BFL						= "BFL";
 	public static final String	CLIENT_NAME						= CLIENT_BFL;
 	
-	public static final String	NBFC							= "NBFC";
-	public static final String	BANK							= "BANK";
-	public static final String	CLIENTTYPE						=  NBFC;
-	
-	// Partial Payment only with Principal Amount Adjustment
-	public static final boolean	EARLYPAY_ADJ_PRI				=  true;
-	
-	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
-	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
-	
 	// Address Type Details
 	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY      = false;
 	
@@ -103,4 +95,15 @@ public class ImplementationConstants {
 	//Phone Type Details
 	public static final boolean	ALLOW_PHONETYPE_PRIORITY     	= false;
 	public static final boolean	ALLOW_DEPRECIATION    			= false; 					//DEPRECIATION   Required or Not 
+	
+	public static final String	NBFC							= "NBFC";
+	public static final String	BANK							= "BANK";
+	public static final String	CLIENTTYPE						=  NBFC;
+	
+	// Partial Payment only with Principal Amount Adjustment
+	public static final boolean	EARLYPAY_ADJ_PRI				=  true;
+	
+	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
+	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
+	public static final boolean	ALLOW_CUST_INSERVICE			= false;					// RIA Required or Not 
 }

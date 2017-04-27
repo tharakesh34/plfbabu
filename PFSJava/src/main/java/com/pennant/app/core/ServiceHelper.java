@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,12 +56,10 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.AccountEngineExecutionRIA;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinancePremiumDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
@@ -68,18 +67,11 @@ import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
-import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinancePremiumDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.model.rulefactory.DataSetFiller;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 
@@ -87,7 +79,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	private static final long			serialVersionUID	= 4165353615228874397L;
 	private static Logger				logger				= Logger.getLogger(ServiceHelper.class);
-	
+
 	private DataSource					dataSource;
 	private FinanceTypeDAO				financeTypeDAO;
 	private FinanceMainDAO				financeMainDAO;
@@ -98,10 +90,8 @@ abstract public class ServiceHelper implements Serializable {
 	private CustomerStatusCodeDAO		customerStatusCodeDAO;
 
 	private FinContributorDetailDAO		finContributorDetailDAO;
-	private FinancePremiumDetailDAO		premiumDetailDAO;
 	private AccountEngineExecution		engineExecution;
-	private AccountEngineExecutionRIA	engineExecutionRIA;
-	private FinTypeAccountingDAO	    finTypeAccountingDAO;
+	private FinTypeAccountingDAO		finTypeAccountingDAO;
 
 	/**
 	 * @param dataSet
@@ -110,29 +100,16 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public final List<ReturnDataSet> prepareAccounting(DataSet dataSet, AEAmountCodes amountCodes, FinanceType financeType) throws Exception {
+	public final List<ReturnDataSet> prepareAccounting(HashMap<String, Object> executingMap, FinanceType financeType)
+			throws Exception {
 		logger.debug(" Entering ");
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		boolean isRia = false;
 
 		try {
-			String product = "";
-			if (financeType != null) {
-				isRia = financeType.isAllowRIAInvestment();
-				product = financeType.getFinCategory();
-			}
+			//String product = "";
 
-			if (isRia) {
-				List<FinContributorDetail> contributorDetailList = getFinContributorDetailDAO().getFinContributorDetailByFinRef(dataSet.getFinReference(), "_AView");
-				List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(contributorDetailList, dataSet.getFinReference());
-				list = getEngineExecutionRIA().getAccEngineExecResults(dataSet, amountCodes, "Y", riaDetailList, null);
-			} else {
-				FinancePremiumDetail premiumDetail = null;
-				if (product.equals(FinanceConstants.PRODUCT_SUKUK)) {
-					premiumDetail = getPremiumDetailDAO().getFinPremiumDetailsById(dataSet.getFinReference(), "");
-				}
-				list = getEngineExecution().getAccEngineExecResults(dataSet, amountCodes, "Y", null, false, financeType, premiumDetail);
-			}
+			financeType.getDeclaredFieldValues(executingMap);
+			list = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -142,9 +119,9 @@ abstract public class ServiceHelper implements Serializable {
 		return list;
 	}
 
-	public List<ReturnDataSet> processAccountingByEvent(DataSet dataSet, DataSetFiller dataSetFiller, String acSetEvent) throws Exception {
+	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap) throws Exception {
 		try {
-			return getEngineExecution().processAccountingByEvent(dataSet, dataSetFiller, acSetEvent, "Y");
+			return getEngineExecution().processAccountingByEvent(executingMap, "Y");
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -186,7 +163,8 @@ abstract public class ServiceHelper implements Serializable {
 	 * @param finRepay
 	 * @return
 	 */
-	public final List<ReturnDataSet> setOtherDetails(List<ReturnDataSet> list, List<SecondaryAccount> listSecondary, FinRepayQueue finRepay) {
+	public final List<ReturnDataSet> setOtherDetails(List<ReturnDataSet> list, List<SecondaryAccount> listSecondary,
+			FinRepayQueue finRepay) {
 
 		for (ReturnDataSet returnDataSet : list) {
 			returnDataSet.setSecondaryAccounts(getSecordayAccounts(listSecondary));
@@ -290,7 +268,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
-
+ 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
 	}
@@ -307,22 +285,6 @@ abstract public class ServiceHelper implements Serializable {
 		this.engineExecution = engineExecution;
 	}
 
-	public AccountEngineExecutionRIA getEngineExecutionRIA() {
-		return engineExecutionRIA;
-	}
-
-	public void setEngineExecutionRIA(AccountEngineExecutionRIA engineExecutionRIA) {
-		this.engineExecutionRIA = engineExecutionRIA;
-	}
-
-	public FinancePremiumDetailDAO getPremiumDetailDAO() {
-		return premiumDetailDAO;
-	}
-
-	public void setPremiumDetailDAO(FinancePremiumDetailDAO premiumDetailDAO) {
-		this.premiumDetailDAO = premiumDetailDAO;
-	}
-
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
@@ -337,6 +299,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+		AccrualService.financeTypeDAO=financeTypeDAO;
 	}
 
 	public FinanceMainDAO getFinanceMainDAO() {

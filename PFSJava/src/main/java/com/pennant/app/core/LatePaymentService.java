@@ -38,6 +38,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,7 +48,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -61,7 +61,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 
@@ -101,18 +100,19 @@ public class LatePaymentService extends ServiceHelper {
 			BigDecimal waiverAmt = finODDetails.getTotWaived();
 
 			if (penalty.compareTo(BigDecimal.ZERO) > 0) {
-				// DataSet Creation
-				DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_LATEPAY,
-						DateUtility.getValueDate(), schdDate);
-				dataSet.setNewRecord(false);
-
 				AEAmountCodes amountCodes = new AEAmountCodes();
 				amountCodes.setFinReference(finMain.getFinReference());
-				amountCodes.setPENALTY(penalty);
-				amountCodes.setWAIVER(waiverAmt);
+				amountCodes.setPenalty(penalty);
+				amountCodes.setWaiver(waiverAmt);
+				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				amountCodes.setValueDate(DateUtility.getValueDate());
+				amountCodes.setSchdDate(schdDate);
+
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+
 				FinanceType financeType = getFinanceType(finRepay.getFinType());
 
-				list = prepareAccounting(dataSet, amountCodes, financeType);
+				list = prepareAccounting(executingMap, financeType);
 				list = setOtherDetails(list, finMain.getSecondaryAccount(), finRepay);
 			}
 		}
@@ -243,22 +243,23 @@ public class LatePaymentService extends ServiceHelper {
 		// Calculate Pending Penalty Balance
 		if (penalty.compareTo(BigDecimal.ZERO) > 0) {
 
-			// DataSet Creation
-			DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_LATEPAY,
-					DateUtility.getValueDate(), schdDate);
-			dataSet.setNewRecord(false);
 			/*
 			 * AmountCodes Preparation
 			 */
 			AEAmountCodes amountCodes = new AEAmountCodes();
 			amountCodes.setFinReference(odDetails.getFinReference());
-			amountCodes.setPENALTY(penalty);
-			amountCodes.setWAIVER(odDetails.getTotWaived());
+			amountCodes.setPenalty(penalty);
+			amountCodes.setWaiver(odDetails.getTotWaived());
+			amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+			amountCodes.setValueDate(DateUtility.getValueDate());
+			amountCodes.setSchdDate(schdDate);
+
+			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 			// Accounting Set Execution to get Posting Details List
 			FinanceType financeType = getFinanceType(finRepay.getFinType());
 
-			list = prepareAccounting(dataSet, amountCodes, financeType);
+			list = prepareAccounting(executingMap, financeType);
 			saveAccounting(list);
 		}
 		return list;

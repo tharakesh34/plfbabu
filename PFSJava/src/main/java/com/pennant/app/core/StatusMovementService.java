@@ -47,6 +47,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -57,7 +58,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
 
@@ -88,7 +88,7 @@ public class StatusMovementService extends ServiceHelper {
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
-		} 
+		}
 	}
 
 	public void processMovement(ChunkContext context, Connection connection, String sql, String event, Date valueDate,
@@ -163,19 +163,26 @@ public class StatusMovementService extends ServiceHelper {
 
 	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
 		// Amount Codes preparation using FinProfitDetails
-		AEAmountCodes amountCodes = getAEAmountCodes(resultSet);
-		FinanceType financeType = getFinanceType(resultSet.getString("FinType").trim());
-		// DataSet Object preparation for AccountingSet Execution
-		DataSet dataSet = getDataSet(resultSet, event);
-		dataSet.setValueDate(valueDate);
+		AEAmountCodes amountCodes = getAEAmountCodes(resultSet, event,  valueDate);
+		FinanceType financeType = getFinanceType(amountCodes.getFinType());
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
-		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, financeType);
+		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
 		saveAccounting(list);
 	}
 
-	private AEAmountCodes getAEAmountCodes(ResultSet resultSet) throws SQLException {
+	private AEAmountCodes getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {
 		AEAmountCodes amountCodes = new AEAmountCodes();
 		amountCodes.setFinReference(resultSet.getString("FinReference"));
+		amountCodes.setFinType(resultSet.getString("FinType").trim());
+
+		amountCodes.setFinEvent(event);
+		amountCodes.setBranch(resultSet.getString("FinBranch"));
+		amountCodes.setCcy(resultSet.getString("FinCcy"));
+		amountCodes.setPostDate(DateUtility.getSysDate());
+		amountCodes.setSchdDate(resultSet.getDate("NextRpySchDate"));
+		amountCodes.setCustID(resultSet.getLong("CustID"));
+		
 
 		//FIXME: PV: 14APR17 change as per new finpftdetails
 		amountCodes.setDAccrue(resultSet.getBigDecimal(""));
@@ -187,30 +194,12 @@ public class StatusMovementService extends ServiceHelper {
 		amountCodes.setPftSP(resultSet.getBigDecimal("TdSchdPftPaid"));
 		amountCodes.setAccrueTsfd(resultSet.getBigDecimal("pftAccrued").subtract(
 				resultSet.getBigDecimal("PftAccrueSusp")));// Distributed
+		amountCodes.setValueDate(valueDate);
+		amountCodes.setSchdDate(valueDate);
 		return amountCodes;
 	}
 
-	private DataSet getDataSet(ResultSet resultSet, String eventCode) throws SQLException {
-		DataSet dataSet = new DataSet();
-		dataSet.setFinReference(resultSet.getString("FinReference"));
-		dataSet.setFinEvent(eventCode);
-		dataSet.setFinBranch(resultSet.getString("FinBranch"));
-		dataSet.setFinCcy(resultSet.getString("FinCcy"));
-		dataSet.setPostDate(DateUtility.getAppDate());
-		dataSet.setSchdDate(resultSet.getDate("NextRpySchDate"));
-		dataSet.setFinType(resultSet.getString("FinType"));
-		dataSet.setFinAccount(resultSet.getString("FinAccount"));
-		dataSet.setFinCustPftAccount(resultSet.getString("FinCustPftAccount"));
-		dataSet.setCustId(resultSet.getLong("CustID"));
-		dataSet.setDisburseAccount(resultSet.getString("DisbAccountId"));
-		dataSet.setRepayAccount(resultSet.getString("RepayAccountId"));
-		dataSet.setFinAmount(resultSet.getBigDecimal("FinAmount"));
-		dataSet.setDisburseAmount(resultSet.getBigDecimal("FinAmount"));
-		dataSet.setDownPayment(resultSet.getBigDecimal("DownPayment"));
-		dataSet.setNewRecord(false);
-		return dataSet;
-	}
-
+	
 	@SuppressWarnings("unused")
 	private String getPSIToNormal() {
 		StringBuilder sqlQuery = new StringBuilder();

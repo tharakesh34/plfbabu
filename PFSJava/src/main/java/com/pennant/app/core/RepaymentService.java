@@ -45,6 +45,7 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -66,7 +67,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -104,10 +104,7 @@ public class RepaymentService extends ServiceHelper {
 		pftDetail.setPftAmzSusp(finRepay.getPftAmzSusp());
 		pftDetail.setAmzTillLBD(finRepay.getAmzTillLBD());
 
-		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
-		dataSet.setNewRecord(false);
-
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, schdDate);
+		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
 		// Fee Details
 		amountCodes.setInsPay(finRepay.getSchdInsBal());
 		amountCodes.setSuplRentPay(finRepay.getSchdSuplRentBal());
@@ -115,12 +112,14 @@ public class RepaymentService extends ServiceHelper {
 		amountCodes.setRefund(finRepay.getRefundAmount());
 		amountCodes.setSchFeePay(finRepay.getSchdFeeBal());
 		amountCodes.setRebate(finRepay.getRebate());
-		dataSet.setRebate(finRepay.getRebate());
 		// Set Repay Amount Codes
 		amountCodes.setRpPft(finRepay.getSchdPftBal());
 		amountCodes.setRpPri(finRepay.getSchdPriBal());
 		amountCodes.setRpTot(amountCodes.getRpPft().add(amountCodes.getRpPri()));
-		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, financeType);
+		
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+
+		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
 		list = setOtherDetails(list, finMain.getSecondaryAccount(), finRepay);
 
 		logger.debug("Leaving");
@@ -173,9 +172,7 @@ public class RepaymentService extends ServiceHelper {
 		}
 		setPaidAmounts(finRepay, totalpaidAmount, repaymethod);
 
-		DataSet dataSet = AEAmounts.createDataSet(finMain, AccountEventConstants.ACCEVENT_REPAY, date, finRepay.getRpyDate());
-		dataSet.setNewRecord(false);
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, schdDate);
+		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
 		// Set Repay Amount Codes
 		amountCodes.setRpPft(finRepay.getSchdPftPayNow());
 		amountCodes.setRpPri(finRepay.getSchdPriPayNow());
@@ -187,9 +184,11 @@ public class RepaymentService extends ServiceHelper {
 		amountCodes.setSuplRentPay(finRepay.getSchdSuplRentPayNow());
 		amountCodes.setIncrCostPay(finRepay.getSchdIncrCostPayNow());
 		amountCodes.setRebate(finRepay.getRebate());
-		dataSet.setRebate(finRepay.getRebate());
+		
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
-		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, financeType);
+
+		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
 		long linkedid = saveAccounting(list);
 		// update Schedule details depends
 		FinanceScheduleDetail scheduleDetail = updateSchdlDetail(finRepay);
@@ -242,13 +241,14 @@ public class RepaymentService extends ServiceHelper {
 		if (totalpaidAmount.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
+		BigDecimal totalRunning = totalpaidAmount;
+	
 		// Repayments Amount calculation
 		BigDecimal schdIns = finRepay.getSchdInsBal();
 		BigDecimal schdSuplRent = finRepay.getSchdSuplRentBal();
 		BigDecimal schdIncrCost = finRepay.getSchdIncrCostBal();
 		BigDecimal schdFee = finRepay.getSchdFeeBal();
 		BigDecimal latePayPftBal = finRepay.getLatePayPftBal();
-		BigDecimal totalRunning = totalpaidAmount;
 		BigDecimal paidNow = BigDecimal.ZERO;
 		BigDecimal totRpyPft = finRepay.getSchdPftBal();
 		BigDecimal totRpyPri = finRepay.getSchdPriBal();
@@ -422,7 +422,6 @@ public class RepaymentService extends ServiceHelper {
 		repayment.setFinSchdPftPaid(queue.getSchdPftPayNow());
 		repayment.setFinSchdPriPaid(queue.getSchdPriPayNow());
 		repayment.setFinTotSchdPaid(queue.getSchdPftPayNow().add(queue.getSchdPriPayNow()));
-		repayment.setFinFee(BigDecimal.ZERO);
 		repayment.setFinWaiver(queue.getWaivedAmount());
 		repayment.setFinRefund(queue.getRefundAmount());
 

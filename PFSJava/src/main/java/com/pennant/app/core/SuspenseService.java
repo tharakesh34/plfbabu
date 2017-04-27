@@ -42,16 +42,15 @@
  */
 package com.pennant.app.core;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -64,10 +63,8 @@ import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 
 public class SuspenseService extends ServiceHelper {
 	private static final long		serialVersionUID	= -7469564513544156223L;
@@ -113,10 +110,12 @@ public class SuspenseService extends ServiceHelper {
 	 * @param isEODProcess
 	 * @throws Exception
 	 */
-	private void suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate, boolean isPastDeferment) throws Exception {
+	private void suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate,
+			boolean isPastDeferment) throws Exception {
 		logger.debug("Entering");
 
-		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate(), repayQueue.getFinRpyFor());
+		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
+				repayQueue.getRpyDate(), repayQueue.getFinRpyFor());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -126,7 +125,8 @@ public class SuspenseService extends ServiceHelper {
 
 		FinanceType fintype = getFinanceType(repayQueue.getFinType());
 		// Check suspense has hold or not
-		boolean holdsuspense = getFinSuspHoldDAO().holdSuspense(fintype.getFinCategory(), fintype.getFinType(), repayQueue.getFinReference(), financeMain.getCustID());
+		boolean holdsuspense = getFinSuspHoldDAO().holdSuspense(fintype.getFinCategory(), fintype.getFinType(),
+				repayQueue.getFinReference(), financeMain.getCustID());
 		if (holdsuspense) {
 			return;
 		}
@@ -137,15 +137,18 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		//Finance Related Details Fetching
-		BigDecimal suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(), valueDate);
+		BigDecimal suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(),
+				valueDate);
 
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_NORM_PIS, valueDate, valueDate);
 		AEAmountCodes amountCodes = new AEAmountCodes();
-		amountCodes.setFinReference(dataSet.getFinReference());
-		amountCodes.setSUSPNOW(suspAmount);
-		dataSet.setNewRecord(false);
+		amountCodes.setSuspNow(suspAmount);
+		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		amountCodes.setValueDate(valueDate);
+		amountCodes.setSchdDate(valueDate);
 
-		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, fintype);
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+
+		List<ReturnDataSet> list = prepareAccounting(executingMap, fintype);
 		long linkedTranId = saveAccounting(list);
 
 		if (suspHead != null) {
@@ -169,7 +172,8 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		// Insert Finance Suspend Details data
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(), suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
+		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspHead.getFinSuspAmt(),
+				suspHead.getFinSuspSeq(), valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");
@@ -185,7 +189,8 @@ public class SuspenseService extends ServiceHelper {
 	 * @param isEODProcess
 	 * @throws Exception
 	 */
-	private void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount, FinRepayQueue finRepayQueue, Date valueDate) throws Exception {
+	private void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount,
+			FinRepayQueue finRepayQueue, Date valueDate) throws Exception {
 		logger.debug("Entering");
 
 		// Fetch the Finance Suspend head
@@ -225,15 +230,17 @@ public class SuspenseService extends ServiceHelper {
 			}
 		}
 
-		// Creating DataSet using Finance Details
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_PIS_NORM, valueDate, suspFromDate);
-		amountCodes.setFinReference(dataSet.getFinReference());
-		amountCodes.setSUSPRLS(suspAmtToMove);
-		dataSet.setNewRecord(false);
+		amountCodes.setSuspRls(suspAmtToMove);
+		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		amountCodes.setValueDate(valueDate);
+		amountCodes.setSchdDate(suspFromDate);
+
+		
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		FinanceType fintype = getFinanceType(finRepayQueue.getFinType());
 		// Postings Preparation
-		List<ReturnDataSet> list = prepareAccounting(dataSet, amountCodes, fintype);
+		List<ReturnDataSet> list = prepareAccounting(executingMap, fintype);
 		long linkedTranId = saveAccounting(list);
 
 		// Finance Suspend Head
@@ -246,84 +253,8 @@ public class SuspenseService extends ServiceHelper {
 		getFinanceSuspHeadDAO().update(suspHead, "");
 
 		// Finance Suspend Details Record Insert
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1, valueDate, finRepayQueue.getRpyDate(), "R", suspFromDate, linkedTranId);
-		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for update of Finance Suspend Data for Release
-	 * 
-	 * @param financeMain
-	 * @param profitDetail
-	 * @param details
-	 * @param valueDate
-	 * @param isEODProcess
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
-	 */
-	public void capitalizationSuspRelease(Date date, DataSet dataSet, AEAmountCodes amountCodes, boolean isEODProcess, boolean isRIAFinance) throws PFFInterfaceException, IllegalAccessException,
-			InvocationTargetException {
-		logger.debug("Entering");
-
-		boolean isInSuspNow = true;
-		BigDecimal suspAmtToMove = BigDecimal.ZERO;
-		Date suspFromDate = null;
-
-		// Fetch the Finance Suspend head
-		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(dataSet.getFinReference(), "");
-		if (suspHead == null || !suspHead.isFinIsInSusp()) {
-			return;
-		}
-
-		// Pending OverDue Details for that particular Schedule date and overDue
-		// For
-		int curOverDueDays = getFinODDetailsDAO().getPendingOverDuePayment(dataSet.getFinReference());
-		int suspenceGraceDays = SysParamUtil.getValueAsInt("SUSP_AFTER");
-		Date odDate = null;
-		if (curOverDueDays > suspenceGraceDays) {
-
-			suspFromDate = DateUtility.addDays(dataSet.getValueDate(), -suspenceGraceDays);
-
-			// Suspend Amount Calculation
-			if (suspFromDate.compareTo(date) > 0 && !suspHead.isManualSusp()) {
-				suspAmtToMove = suspHead.getFinCurSuspAmt();
-				isInSuspNow = false;
-			} else {
-				suspAmtToMove = amountCodes.getSUSPRLS();
-				isInSuspNow = true;
-			}
-
-			int odGraceDays = SysParamUtil.getValueAsInt("ODC_GRACE");
-			odDate = DateUtility.addDays(dataSet.getValueDate(), -(suspenceGraceDays + odGraceDays));
-
-		} else {
-
-			suspFromDate = suspHead.getFinSuspDate();
-			if (!suspHead.isManualSusp()) {
-				suspAmtToMove = suspHead.getFinCurSuspAmt();
-				isInSuspNow = false;
-			}
-		}
-
-		amountCodes.setSUSPRLS(suspAmtToMove);
-
-		// Postings Preparation
-		Date dateAppDate = DateUtility.getAppDate();
-		long linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, isEODProcess, isRIAFinance, "Y", dateAppDate, false, Long.MIN_VALUE).get(1);
-
-		// Finance Suspend Head
-		suspHead.setFinIsInSusp(isInSuspNow);
-		suspHead.setFinCurSuspAmt(suspHead.getFinCurSuspAmt().subtract(suspAmtToMove));
-		if (suspHead.getFinCurSuspAmt().compareTo(BigDecimal.ZERO) == 0 && !suspHead.isManualSusp()) {
-			suspHead.setFinIsInSusp(false);
-		}
-		getFinanceSuspHeadDAO().update(suspHead, "");
-
-		// Finance Suspend Details Record Insert
-		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1, date, odDate, "R", suspFromDate, linkedTranId);
+		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1, valueDate,
+				finRepayQueue.getRpyDate(), "R", suspFromDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
 
 		logger.debug("Leaving");
@@ -338,7 +269,8 @@ public class SuspenseService extends ServiceHelper {
 	 * @param suspAmount
 	 * @return
 	 */
-	private FinanceSuspHead prepareSuspHeadData(FinanceSuspHead head, FinRepayQueue repayQueue, Date suspFromDate, BigDecimal suspAmount, boolean isPastDeferment) {
+	private FinanceSuspHead prepareSuspHeadData(FinanceSuspHead head, FinRepayQueue repayQueue, Date suspFromDate,
+			BigDecimal suspAmount, boolean isPastDeferment) {
 		logger.debug("Entering");
 		if (head == null) {
 			head = new FinanceSuspHead();
@@ -373,7 +305,8 @@ public class SuspenseService extends ServiceHelper {
 	 * @param oDDate
 	 * @return
 	 */
-	private FinanceSuspDetails prepareSuspDetail(FinanceSuspHead head, BigDecimal suspAmt, int suspSeq, Date valueDate, Date oDDate, String trfMvt, Date suspFromDate, long linkedTranId) {
+	private FinanceSuspDetails prepareSuspDetail(FinanceSuspHead head, BigDecimal suspAmt, int suspSeq, Date valueDate,
+			Date oDDate, String trfMvt, Date suspFromDate, long linkedTranId) {
 		logger.debug("Entering");
 
 		FinanceSuspDetails suspDetails = new FinanceSuspDetails();

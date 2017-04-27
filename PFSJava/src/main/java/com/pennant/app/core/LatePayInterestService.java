@@ -47,6 +47,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -136,8 +137,11 @@ public class LatePayInterestService extends ServiceHelper {
 	}
 
 	public void computeLPI(ResultSet resultSet, Date valueDate) throws Exception {
-		
-		Date businessDate = DateUtility.addDays(valueDate, 1);
+
+		Date businessDate = valueDate;
+		if (ImplementationConstants.CALCULATE_PD_DAYZERO) {
+			businessDate = DateUtility.addDays(valueDate, 1);
+		}
 
 		String calMethod = resultSet.getString("PastduePftCalMthd");
 
@@ -183,7 +187,9 @@ public class LatePayInterestService extends ServiceHelper {
 			recovery.setPenalty(CalculationUtil.calInterest(businessDate, recovery.getMovementDate(), finCurODPri,
 					profitDaysBasis, rateToApply));
 			recovery.setPenaltyBal(getPenaltyBal(recovery));
-			recoveries.add(recovery);
+			if (recovery.getODDays() > 0) {
+				recoveries.add(recovery);
+			}
 
 		} else {
 
@@ -193,7 +199,7 @@ public class LatePayInterestService extends ServiceHelper {
 				map.put(financeRepayments.getFinValueDate(), financeRepayments);
 			}
 
-			Date movementDate = DateUtility.addDays(finODSchdDate, 1);;;
+			Date movementDate = DateUtility.addDays(finODSchdDate, 1);
 			for (FinanceRepayments financeRepayments : list) {
 				Date payDate = financeRepayments.getFinValueDate();
 
@@ -226,14 +232,16 @@ public class LatePayInterestService extends ServiceHelper {
 
 					recovery.setPenaltyBal(getPenaltyBal(recovery));
 					movementDate = payDate;
-					recoveries.add(recovery);
+					if (recovery.getODDays() > 0) {
+						recoveries.add(recovery);
+					}
 				}
 			}
 
 		}
 
 		if (!recoveries.isEmpty()) {
-			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate,finODFor, "");
+			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate, finODFor, "");
 			for (OverdueChargeRecovery overdueChargeRecovery : recoveries) {
 				recoveryDAO.save(overdueChargeRecovery, "");
 			}

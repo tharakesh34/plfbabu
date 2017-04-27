@@ -48,6 +48,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -148,7 +149,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal finCurODPft = odDetails.getFinCurODPft();
 		BigDecimal total = finCurODPft.add(finCurODPri);
 
-		Date businessDate = DateUtility.addDays(valueDate, 1);
+		Date businessDate = valueDate;
+		if (ImplementationConstants.CALCULATE_PD_DAYZERO) {
+			businessDate = DateUtility.addDays(valueDate, 1);
+		}
 
 		FinODPenaltyRate penaltyrate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "");
 
@@ -196,7 +200,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 				recovery.setPenalty(calculatePenaltyAmount(recovery, valueDate, recovery.getMovementDate(),
 						profitDaysBasis));
 				recovery.setPenaltyBal(getPenaltyBal(recovery));
-				recoveryDAO.save(recovery, "");
+				if (recovery.getODDays() > 0) {
+					recoveryDAO.save(recovery, "");
+				}
 			} else {
 				recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
 				recoveryDAO.updateChargeRecovery(recovery);
@@ -239,9 +245,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 			recovery.setRcdCanDel(true);
 			recovery.setMovementDate(finODSchdDate);
 			recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
-			recovery.setPenalty(calculatePenaltyAmount(recovery, businessDate, recovery.getMovementDate(), profitDaysBasis));
+			recovery.setPenalty(calculatePenaltyAmount(recovery, businessDate, recovery.getMovementDate(),
+					profitDaysBasis));
 			recovery.setPenaltyBal(getPenaltyBal(recovery));
-			recoveries.add(recovery);
+			if (recovery.getODDays() > 0) {
+				recoveries.add(recovery);
+			}
 		}
 
 		int seq = 0;
@@ -250,7 +259,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 			map.put(financeRepayments.getFinValueDate(), financeRepayments);
 		}
 
-		Date movementDate = DateUtility.addDays(finODSchdDate, 1);;
+		Date movementDate = finODSchdDate;
+		if (ImplementationConstants.CALCULATE_PD_DAYZERO) {
+			movementDate = DateUtility.addDays(finODSchdDate, 1);
+		}
+
 		for (FinanceRepayments financeRepayments : list) {
 			Date payDate = financeRepayments.getFinValueDate();
 
@@ -282,12 +295,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 						profitDaysBasis));
 				recovery.setPenaltyBal(getPenaltyBal(recovery));
 				movementDate = payDate;
-				recoveries.add(recovery);
+				if (recovery.getODDays() > 0) {
+					recoveries.add(recovery);
+				}
 			}
 		}
 
 		if (!recoveries.isEmpty()) {
-			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate,finODFor, "");
+			recoveryDAO.deleteByFinRefAndSchdate(finReference, finODSchdDate, finODFor, "");
 			for (OverdueChargeRecovery overdueChargeRecovery : recoveries) {
 				recoveryDAO.save(overdueChargeRecovery, "");
 			}
