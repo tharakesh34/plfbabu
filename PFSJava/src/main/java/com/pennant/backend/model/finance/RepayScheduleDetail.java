@@ -94,6 +94,8 @@ public class RepayScheduleDetail {
 	private String chargeType = "";
 	private long linkedTranId = 0;
 	private long repayID = 0;// Only setting from Repay Header
+	private int repaySchID = 0;
+
 	
 	public RepayScheduleDetail() {
 		
@@ -473,6 +475,14 @@ public class RepayScheduleDetail {
 
 	public void setLatePftSchdPayNow(BigDecimal latePftSchdPayNow) {
 		this.latePftSchdPayNow = latePftSchdPayNow;
+	}
+
+	public int getRepaySchID() {
+		return repaySchID;
+	}
+
+	public void setRepaySchID(int repaySchID) {
+		this.repaySchID = repaySchID;
 	}
 	
 	

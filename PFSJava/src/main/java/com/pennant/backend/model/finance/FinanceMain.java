@@ -495,6 +495,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean smecustomer = false;
 	private boolean cadrequired = false;
 	private boolean feeExists = false;
+	private String receiptMode;
 
 	// ===========================================
 	// =========Purpose to Other Modules==========
@@ -601,6 +602,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date firstDisbDate;
 	@XmlElement
 	private Date lastDisbDate;
+	private int dueBucket=0;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -708,6 +710,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("firstDisbDate");
 		excludeFields.add("lastDisbDate");
 		excludeFields.add("swiftBranchCode");
+		excludeFields.add("receiptMode");
 		
 		return excludeFields;
 	}
@@ -2211,19 +2214,25 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	@XmlTransient
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();
+		HashMap<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
+		
+		getDeclaredFieldValues(fieldsAndValuesMap);
+		
+		return fieldsAndValuesMap;
+	}
+
+	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"fm_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				customerScoringMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass()
+				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass()
 						.getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return customerScoringMap;
 	}
-
+	
 	public String getLovDescCustCRCPR() {
 		return lovDescCustCRCPR;
 	}
@@ -3420,5 +3429,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setPastduePftMargin(BigDecimal pastduePftMargin) {
 		this.pastduePftMargin = pastduePftMargin;
 	}
+
+	public String getReceiptMode() {
+		return receiptMode;
+	}
+
+	public void setReceiptMode(String receiptMode) {
+		this.receiptMode = receiptMode;
+	}
+
+	public int getDueBucket() {
+		return dueBucket;
+	}
+
+	public void setDueBucket(int dueBucket) {
+		this.dueBucket = dueBucket;
+	}
+
 	
 }

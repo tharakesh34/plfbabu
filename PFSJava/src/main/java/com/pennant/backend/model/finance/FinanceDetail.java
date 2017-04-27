@@ -108,7 +108,6 @@ public class FinanceDetail implements java.io.Serializable {
 
 	private IndicativeTermDetail indicativeTermDetail;
 	
-	private FinancePremiumDetail premiumDetail;
 	private EtihadCreditBureauDetail etihadCreditBureauDetail;
 	private BundledProductsDetail bundledProductsDetail;
 	private TATDetail tatDetail;
@@ -617,15 +616,6 @@ public class FinanceDetail implements java.io.Serializable {
 	    return dataFetchComplete;
     }
 
-	public FinancePremiumDetail getPremiumDetail() {
-	    return premiumDetail;
-    }
-
-	public void setPremiumDetail(FinancePremiumDetail premiumDetail) {
-	    this.premiumDetail = premiumDetail;
-    }
-
-	
 	public EtihadCreditBureauDetail getEtihadCreditBureauDetail() {
 		return etihadCreditBureauDetail;
 	}

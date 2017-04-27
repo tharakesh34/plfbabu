@@ -64,6 +64,8 @@ public class FinFeeScheduleDetail {
 	private BigDecimal waiverAmount = BigDecimal.ZERO;
 	private BigDecimal writeoffAmount = BigDecimal.ZERO;
 	
+	private String feeTypeCode;
+	
 	
 	public FinFeeScheduleDetail() {
 		super();
@@ -72,6 +74,7 @@ public class FinFeeScheduleDetail {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("finReference");
+		excludeFields.add("feeTypeCode");
 		return excludeFields;
 	}
 	
@@ -135,6 +138,14 @@ public class FinFeeScheduleDetail {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 	
 }

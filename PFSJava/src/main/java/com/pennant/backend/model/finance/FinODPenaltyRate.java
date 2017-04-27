@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
+
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
 		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinODPenaltyRate implements java.io.Serializable {
-
-	private static final long serialVersionUID = 279834448061406028L;
+public class FinODPenaltyRate implements Entity {
 
 	private String finReference;
 	private Date finEffectDate;
@@ -33,6 +33,7 @@ public class FinODPenaltyRate implements java.io.Serializable {
 	private boolean oDAllowWaiver;
 	@XmlElement(name = "odMaxWaiverPerc")
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
+	private long logKey = 0;
 	
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -46,6 +47,21 @@ public class FinODPenaltyRate implements java.io.Serializable {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return logKey;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.logKey = id;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}
@@ -124,6 +140,14 @@ public class FinODPenaltyRate implements java.io.Serializable {
 
 	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
 		this.oDMaxWaiverPerc = oDMaxWaiverPerc;
+	}
+
+	public long getLogKey() {
+		return logKey;
+	}
+
+	public void setLogKey(long logKey) {
+		this.logKey = logKey;
 	}
 
 }
