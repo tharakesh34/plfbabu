@@ -1720,19 +1720,25 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> customerMap = new HashMap<String, Object>();
+		
+		return getDeclaredFieldValues(customerMap);
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
+		customerMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				map.put("ct_" + this.getClass().getDeclaredFields()[i].getName(),
+				customerMap.put("ct_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return map;
+		return customerMap;
 	}
-
+	
 	public String getRuleCode() {
 		return ruleCode;
 	}
